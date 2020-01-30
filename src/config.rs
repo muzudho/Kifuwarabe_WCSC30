@@ -1,6 +1,6 @@
-/**
- * 設定
- */
+//!
+//! 設定
+//!
 
 // USI対応コンピューター将棋ソフトの名前☆（＾～＾）
 pub const ENGINE_NAME: &'static str = "Kifuwarabe WCSC30";

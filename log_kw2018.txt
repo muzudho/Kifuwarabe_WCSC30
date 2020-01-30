@@ -1,4 +1,0 @@
-id name Kifuwarabe WCSC28
-id author TAKAHASHI, Satoshi
-usiok
-len==0
