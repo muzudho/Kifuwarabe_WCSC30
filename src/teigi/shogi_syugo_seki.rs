@@ -3,6 +3,7 @@
 //! 積☆（＾～＾）　要するに組み合わせ
 //!
 
+use super::super::model::master::piece::Piece;
 use super::super::teigi::shogi_syugo::*;
 
 /************
@@ -11,7 +12,7 @@ use super::super::teigi::shogi_syugo::*;
 
 pub struct MsKm {
     ms: umasu,
-    km: Koma,
+    km: Piece,
 }
 
 /****************

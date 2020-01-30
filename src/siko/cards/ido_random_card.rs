@@ -5,6 +5,7 @@
 
 use super::super::super::consoles::asserts::*;
 use super::super::super::jotai::uchu::*;
+use super::super::super::model::master::piece::Piece;
 use super::super::super::siko::randommove;
 use super::super::super::siko::results::jisatusyu_result::*;
 use super::super::super::syazo::sasite_seisei::*;
@@ -19,7 +20,7 @@ use std::collections::HashSet;
  *
  * km_dst : 移動した先の駒
  */
-pub fn get_ido_ss_by_km_random(uchu: &Uchu, km_dst: &Koma) -> Sasite {
+pub fn get_ido_ss_by_km_random(uchu: &Uchu, km_dst: &Piece) -> Sasite {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ

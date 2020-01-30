@@ -1,18 +1,18 @@
 //!
 //! 結果：駒を取られる手
 //!
-use std::collections::HashSet;
-use std::fmt;
-
 use super::super::super::consoles::asserts::*;
 use super::super::super::jotai::uchu::*;
 use super::super::super::meidai::math_meidai::*;
+use super::super::super::model::master::piece::Piece;
 use super::super::super::syazo::sasite_seisei::*;
 use super::super::super::syazo::sasite_sentaku::*;
 use super::super::super::teigi::conv::*;
 use super::super::super::teigi::geometries::geo_teigi::*;
 use super::super::super::teigi::shogi_syugo::*;
 use super::super::super::tusin::usi::*;
+use std::collections::HashSet;
+use std::fmt;
 
 /********************
  * 駒取り結果の結果 *
@@ -36,7 +36,7 @@ pub enum KomatoriResultResult {
  */
 pub struct KomatoriResult {
     // 要因：王手をしてきている駒（１つ）
-    km_attacker: Koma,
+    km_attacker: Piece,
     // 要因：アタッカーが居る升
     ms_attacker: umasu,
     // 要因：狙われている駒が居る升

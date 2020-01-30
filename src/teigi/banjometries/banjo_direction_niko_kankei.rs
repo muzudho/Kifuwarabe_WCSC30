@@ -3,6 +3,7 @@
 //! 盤上の二項関係☆（＾～＾）
 //!
 use super::super::super::consoles::asserts::*;
+use super::super::super::model::master::piece::Piece;
 use super::super::conv::*;
 use super::super::geometries::geo_direction_niko_kankei::*;
 use super::super::geometries::geo_teigi::*;
@@ -16,7 +17,7 @@ use super::super::shogi_syugo::*;
  */
 pub fn get_dir8_to_slider_from_target(
     ms_slider: umasu,
-    km_slider: &Koma,
+    km_slider: &Piece,
     ms_target: umasu,
 ) -> Dir8 {
     debug_assert!(

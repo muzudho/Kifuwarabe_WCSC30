@@ -16,11 +16,12 @@ pub mod consoles;
 pub mod jotai;
 pub mod kasetu;
 pub mod meidai;
+pub mod model;
 pub mod siko;
 pub mod syazo;
 pub mod teigi;
-//mod teiri;
 pub mod tusin;
+//mod teiri;
 
 use std::collections::HashSet;
 use std::io;
