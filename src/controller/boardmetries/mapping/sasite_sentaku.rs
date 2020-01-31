@@ -5,10 +5,10 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::super::consoles::asserts::*;
 use super::super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::controller::thinking::results::komatori_result::*;
 use super::super::super::super::model::master::person::Person;

@@ -3,11 +3,11 @@
 //! ランダム移動カード
 //!
 
-use super::super::super::super::consoles::asserts::*;
 use super::super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
 use super::super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::controller::thinking::randommove;
 use super::super::super::super::controller::thinking::results::jisatusyu_result::*;

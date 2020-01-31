@@ -2,7 +2,7 @@
 //! 変換
 //!
 #![allow(dead_code)]
-use super::super::super::consoles::asserts::*;
+use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
 use super::super::super::model::master::person::Person;

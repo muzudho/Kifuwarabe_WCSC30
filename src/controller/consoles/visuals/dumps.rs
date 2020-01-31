@@ -2,10 +2,10 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
-use super::super::super::controller::status::uchu::*;
-use super::super::super::model::master::place::*;
+use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::controller::status::uchu::*;
+use super::super::super::super::model::master::place::*;
 use std::collections::HashSet;
 
 /******

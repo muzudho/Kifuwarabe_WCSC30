@@ -12,17 +12,16 @@ extern crate lazy_static;
  */
 // use したい モジュールは、最初に読み取られる　この main.rs ファイルに並べる
 pub mod config;
-pub mod consoles;
 pub mod controller;
 pub mod model;
 
 use config::*;
-use consoles::unit_test::*;
-use consoles::visuals::dumps::*;
-use consoles::visuals::title::*;
 use controller::boardmetries::mapping::sasite_seisei::*;
 use controller::common::conv::*;
 use controller::communication::usi::*;
+use controller::consoles::unit_test::*;
+use controller::consoles::visuals::dumps::*;
+use controller::consoles::visuals::title::*;
 use controller::status::uchu::*;
 use controller::thinking::think::*;
 use model::master::constants::*;
@@ -100,7 +99,7 @@ fn main() {
             controller::communication::usi::read_position(&KY1.to_string(), &mut uchu);
         } else if 5 < len && &line[starts..6] == "kikisu" {
             // 利き数表示
-            consoles::commands::cmd_kikisu(&uchu);
+            controller::consoles::commands::cmd_kikisu(&uchu);
         } else if 5 < len && &line[starts..6] == "rndkms" {
             g_writeln("5<len rndkms");
             // 乱駒種類

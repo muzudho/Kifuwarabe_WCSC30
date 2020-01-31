@@ -2,11 +2,11 @@
 //! コマンド一覧
 //!
 
-use super::super::controller::status::uchu::*;
-use super::super::model::master::phase::Phase;
-use super::super::model::master::phase::*;
-use super::super::model::master::piece::Piece;
-use super::super::model::master::piece::*;
+use super::super::super::controller::status::uchu::*;
+use super::super::super::model::master::phase::Phase;
+use super::super::super::model::master::phase::*;
+use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece::*;
 
 /**
  * 利き数表示

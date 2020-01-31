@@ -1,7 +1,7 @@
 //!
 //! 値チェック
 //!
-use super::super::model::master::place::umasu;
+use super::super::super::model::master::place::umasu;
 
 ///
 /// 打はテストできない

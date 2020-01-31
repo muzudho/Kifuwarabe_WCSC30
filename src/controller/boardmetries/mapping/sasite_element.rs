@@ -2,8 +2,8 @@
 //! 指し手の要素☆（＾～＾）
 //!
 
-use super::super::super::super::consoles::asserts::*;
 use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::phase::*;
