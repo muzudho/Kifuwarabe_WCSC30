@@ -5,6 +5,7 @@
 //!
 use super::super::jotai::uchu::*;
 use super::super::meidai::math_meidai::*;
+use super::super::model::master::piece_type::PieceType;
 use super::super::siko::randommove;
 use super::super::syazo::sasite_element::*;
 use super::super::teigi::conv::*;
@@ -58,7 +59,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
             g_writeln(&format!("移動可能な駒がある升={}", ms_src));
             ss.dst = ms_dst;
             ss.pro = pro_dst;
-            ss.drop = KmSyurui::Kara;
+            ss.drop = PieceType::Kara;
             break;
         }
         g_writeln(&format!("指し手にすると={}", ss));
@@ -67,7 +68,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         // 駒の移動元升
         {
             g_writeln("利きテスト1");
-            let kms = KmSyurui::PH; // ぱわーあっぷひよこ
+            let kms = PieceType::PH; // ぱわーあっぷひよこ
             let km = sn_kms_to_km(&Sengo::Go, &kms); // △ph
             let ms_dst = 79;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
@@ -81,7 +82,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         }
         {
             g_writeln("利きテスト2");
-            let kms = KmSyurui::PH; // ぱわーあっぷひよこ
+            let kms = PieceType::PH; // ぱわーあっぷひよこ
             let km = sn_kms_to_km(&Sengo::Go, &kms); // △ph
             let ms_dst = 68;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
@@ -95,7 +96,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         }
         {
             g_writeln("利きテスト3");
-            let kms = KmSyurui::PH; // ぱわーあっぷひよこ
+            let kms = PieceType::PH; // ぱわーあっぷひよこ
             let km = sn_kms_to_km(&Sengo::Go, &kms); // △ph
             let ms_dst = 77;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
@@ -109,7 +110,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         }
         {
             g_writeln("利きテスト2");
-            let kms = KmSyurui::R; // らいおん
+            let kms = PieceType::R; // らいおん
             let km = sn_kms_to_km(&Sengo::Sen, &kms); // ▼ら
             let ms_dst = 58;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));

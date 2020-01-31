@@ -187,7 +187,8 @@ pub fn filtering_ss_except_sennitite(ss_hashset_input: &mut HashSet<u64>, uchu: 
     let mut ss_hashset_pickup = HashSet::new();
 
     // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）
-    'idea: for hash_ss_potential in ss_hashset_input.iter() {
+    // 'idea:
+    for hash_ss_potential in ss_hashset_input.iter() {
         let ss = Sasite::from_hash(*hash_ss_potential);
         //ss_hashset.insert( *hash_ss_potential );
 

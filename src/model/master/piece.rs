@@ -1,3 +1,5 @@
+use std::fmt;
+
 /**
  * 先後付きの駒と空白
  */
@@ -63,4 +65,46 @@ pub enum Piece {
     Kara,
     // 要素数より1小さい数。該当なしや、エラー値用としても兼用する
     Owari,
+}
+
+// 持ち駒の駒のうち、最大の枚数は歩の 18。
+pub const MG_MAX: usize = 18;
+pub const KM_LN: usize = 30;
+impl fmt::Display for Piece {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
+        use super::super::super::model::master::piece::Piece::*;
+        match *self {
+            R0 => write!(f, "▼ら"),
+            K0 => write!(f, "▼き"),
+            Z0 => write!(f, "▼ぞ"),
+            I0 => write!(f, "▼い"),
+            N0 => write!(f, "▼ね"),
+            U0 => write!(f, "▼う"),
+            S0 => write!(f, "▼し"),
+            H0 => write!(f, "▼ひ"),
+            PK0 => write!(f, "▼PK"),
+            PZ0 => write!(f, "▼PZ"),
+            PN0 => write!(f, "▼PN"),
+            PU0 => write!(f, "▼PU"),
+            PS0 => write!(f, "▼PS"),
+            PH0 => write!(f, "▼PH"),
+            R1 => write!(f, "△ラ"),
+            K1 => write!(f, "△キ"),
+            Z1 => write!(f, "△ゾ"),
+            I1 => write!(f, "△イ"),
+            N1 => write!(f, "△ネ"),
+            U1 => write!(f, "△ウ"),
+            S1 => write!(f, "△シ"),
+            H1 => write!(f, "△ヒ"),
+            PK1 => write!(f, "△pk"),
+            PZ1 => write!(f, "△pz"),
+            PN1 => write!(f, "△pn"),
+            PU1 => write!(f, "△pu"),
+            PS1 => write!(f, "△ps"),
+            PH1 => write!(f, "△ph"),
+            Kara => write!(f, "　　"),
+            Owari => write!(f, "××"),
+        }
+    }
 }

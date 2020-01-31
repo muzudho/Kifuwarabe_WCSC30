@@ -4,6 +4,7 @@
 extern crate rand;
 use rand::Rng;
 
+use super::super::model::master::piece_type::PieceType;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;
 
@@ -11,7 +12,7 @@ use super::super::teigi::shogi_syugo::*;
  * ランダムに真偽を返す。
  */
 #[allow(dead_code)]
-pub fn rnd_bool() -> (bool) {
+pub fn rnd_bool() -> bool {
     rand::thread_rng().gen_range(0, 2) == 0
 }
 
@@ -28,6 +29,6 @@ pub fn rnd_ms() -> umasu {
 /**
  * ランダムに 駒の種類を返す
  */
-pub fn rnd_kms() -> &'static KmSyurui {
+pub fn rnd_kms() -> &'static PieceType {
     &KMS_ARRAY[rand::thread_rng().gen_range(0, KMS_ARRAY_LN)]
 }

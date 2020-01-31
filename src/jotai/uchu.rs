@@ -9,6 +9,8 @@ use rand::Rng;
 
 use super::super::config::*;
 use super::super::model::master::piece::Piece;
+use super::super::model::master::piece::*;
+use super::super::model::master::piece_type::PieceType;
 use super::super::siko::visions::vision_tree::*;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;
@@ -842,7 +844,7 @@ impl Uchu {
     pub fn set_sasite_pro(&mut self, pro: bool) {
         self.kifu[self.teme].pro = pro
     }
-    pub fn set_sasite_drop(&mut self, kms: KmSyurui) {
+    pub fn set_sasite_drop(&mut self, kms: PieceType) {
         self.kifu[self.teme].drop = kms
     }
     pub fn set_ky0_hash(&mut self, hash: u64) {
@@ -1175,7 +1177,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             g_writeln(""); //改行
         }
     }
-    pub fn hyoji_kmugoki_dir(&self, kms: &KmSyurui) {
+    pub fn hyoji_kmugoki_dir(&self, kms: &PieceType) {
         for kmdir in KM_UGOKI.back[kms_to_num(kms)].iter() {
             match *kmdir {
                 KmDir::Owari => break,

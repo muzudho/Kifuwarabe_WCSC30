@@ -4,6 +4,7 @@
 //!
 
 use super::super::model::master::piece::Piece;
+use super::super::model::master::piece_type::PieceType;
 use super::super::teigi::shogi_syugo::*;
 
 /************
@@ -21,5 +22,5 @@ pub struct MsKm {
 
 pub struct MsKms {
     ms: umasu,
-    kms: KmSyurui,
+    kms: PieceType,
 }

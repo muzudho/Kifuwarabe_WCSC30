@@ -5,6 +5,7 @@
 use super::super::consoles::asserts::*;
 use super::super::jotai::uchu::*;
 use super::super::model::master::piece::Piece;
+use super::super::model::master::piece_type::PieceType;
 use super::super::syazo::sasite_element::*;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;
@@ -51,7 +52,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                             src: ms_src,
                             dst: *ms_dst,
                             pro: false, // 成らず
-                            drop: KmSyurui::Kara,
+                            drop: PieceType::Kara,
                         }
                         .to_hash(),
                     );
@@ -71,7 +72,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                             src: ms_src,
                             dst: *ms_dst,
                             pro: true, // 成り
-                            drop: KmSyurui::Kara,
+                            drop: PieceType::Kara,
                         }
                         .to_hash(),
                     );
@@ -163,7 +164,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
         ss_hash_builder.src = *ms_src;
         // 成らず
         ss_hash_builder.pro = false;
-        ss_hash_builder.drop = KmSyurui::Kara;
+        ss_hash_builder.drop = PieceType::Kara;
         ss_hashset.insert(ss_hash_builder.to_hash());
     }
 
@@ -178,7 +179,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
         ss_hash_builder.src = *ms_src;
         // 成り
         ss_hash_builder.pro = true;
-        ss_hash_builder.drop = KmSyurui::Kara;
+        ss_hash_builder.drop = PieceType::Kara;
         ss_hashset.insert(ss_hash_builder.to_hash());
     }
 }

@@ -2,6 +2,7 @@
 //! 思考部だぜ☆（＾～＾）
 //!
 use super::super::super::jotai::uchu::*;
+use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::syazo::sasite_element::*;
 use super::super::super::teigi::conv::*;
 use super::super::super::teigi::shogi_syugo::*;
@@ -69,7 +70,7 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
                             src: *ms_src,
                             dst: ms_dst,
                             pro: *pro,
-                            drop: KmSyurui::Kara,
+                            drop: PieceType::Kara,
                         }
                         .to_hash();
                         &uchu.vision_tree_by_sn[sn_to_num(sn)]

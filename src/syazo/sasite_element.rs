@@ -374,7 +374,7 @@ pub fn insert_narumae_src_by_ms_km(
     // 「ぱひ」は、敵陣の１～３段目にいて、動きが北だった場合、元が「ひ」の可能性がある。
     let kms_src_narumae = prokms_to_kms(&kms_dst);
 
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+    use super::super::model::master::piece_type::PieceType::*;
     match kms_src_narumae {
         Kara => {
             return;
@@ -1913,11 +1913,11 @@ pub fn get_ms_vec_as_aigoma(
     sn_atk:&Sengo,
     ms_atk:umasu,
     ms_tgt:umasu,
-    kms_atk:&KmSyurui
+    kms_atk:&PieceType
     )->Vec<umasu> {
     let vec = Vec::new();
 
-    use teigi::shogi_syugo::KmSyurui::*;
+    use teigi::shogi_syugo::PieceType::*;
     match *kms_atk {
         K => {
             // 北方向

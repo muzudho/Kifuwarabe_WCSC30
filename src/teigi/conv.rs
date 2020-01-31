@@ -4,6 +4,7 @@
 #![allow(dead_code)]
 use super::super::consoles::asserts::*;
 use super::super::model::master::piece::Piece;
+use super::super::model::master::piece_type::PieceType;
 use super::geometries::geo_teigi::*;
 use super::shogi_syugo::*;
 
@@ -407,11 +408,9 @@ pub fn km_is_nagaikiki(km: &Piece) -> bool {
 /**
  * 先後付き駒→駒種類
  */
-pub fn km_to_sn_kms(km: &Piece) -> (Sengo, KmSyurui) {
-    // use super::super::teigi::shogi_syugo::KmSyurui;
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
-    // use super::super::teigi::shogi_syugo::Piece;
+pub fn km_to_sn_kms(km: &Piece) -> (Sengo, PieceType) {
     use super::super::model::master::piece::Piece::*;
+    use super::super::model::master::piece_type::PieceType::*;
     use super::super::teigi::shogi_syugo::Sengo::*;
     match *km {
         R0 => (Sen, R),
@@ -442,8 +441,8 @@ pub fn km_to_sn_kms(km: &Piece) -> (Sengo, KmSyurui) {
         PU1 => (Go, PU),
         PS1 => (Go, PS),
         PH1 => (Go, PH),
-        Piece::Kara => (Sengo::Owari, KmSyurui::Kara),
-        Piece::Owari => (Sengo::Owari, KmSyurui::Owari),
+        Piece::Kara => (Sengo::Owari, PieceType::Kara),
+        Piece::Owari => (Sengo::Owari, PieceType::Owari),
     }
 }
 /**
@@ -489,11 +488,9 @@ pub fn km_to_sn(km: &Piece) -> Sengo {
 /**
  * 先後付き駒→駒種類
  */
-pub fn km_to_kms(km: &Piece) -> KmSyurui {
-    // use super::super::teigi::shogi_syugo::KmSyurui;
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
-    // use super::super::teigi::shogi_syugo::Piece;
+pub fn km_to_kms(km: &Piece) -> PieceType {
     use super::super::model::master::piece::Piece::*;
+    use super::super::model::master::piece_type::PieceType::*;
     match *km {
         R0 => R,
         K0 => K,
@@ -523,8 +520,8 @@ pub fn km_to_kms(km: &Piece) -> KmSyurui {
         PU1 => PU,
         PS1 => PS,
         PH1 => PH,
-        Piece::Kara => KmSyurui::Kara,
-        Piece::Owari => KmSyurui::Owari,
+        Piece::Kara => PieceType::Kara,
+        Piece::Owari => PieceType::Owari,
     }
 }
 /**
@@ -574,8 +571,8 @@ pub fn km_to_mg(km_cap: Piece) -> Piece {
 /**
  * 駒種類の数値化
  */
-pub fn kms_to_num(kms: &KmSyurui) -> usize {
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+pub fn kms_to_num(kms: &PieceType) -> usize {
+    use super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => 0,
         K => 1,
@@ -598,8 +595,8 @@ pub fn kms_to_num(kms: &KmSyurui) -> usize {
 /**
  * 数値の駒種類化
  */
-pub fn num_to_kms(n: usize) -> KmSyurui {
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+pub fn num_to_kms(n: usize) -> PieceType {
+    use super::super::model::master::piece_type::PieceType::*;
     match n {
         0 => R,
         1 => K,
@@ -622,21 +619,21 @@ pub fn num_to_kms(n: usize) -> KmSyurui {
 /**
  * ハッシュ値を作る
  */
-pub fn push_kms_to_hash(hash: u64, kms: &KmSyurui) -> u64 {
+pub fn push_kms_to_hash(hash: u64, kms: &PieceType) -> u64 {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
     (hash << 4) + kms_to_num(kms) as u64
 }
 /**
  * ハッシュ値から作る
  */
-pub fn pop_kms_from_hash(hash: u64) -> (u64, KmSyurui) {
+pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
     let kms_num = num_to_kms((hash & 0b1111) as usize);
     (hash >> 4, kms_num)
 }
 // 駒種類→｛　成駒,（不成駒、それ以外）　｝
-pub fn kms_is_pro(kms: &KmSyurui) -> bool {
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+pub fn kms_is_pro(kms: &PieceType) -> bool {
+    use super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => false,
@@ -657,8 +654,8 @@ pub fn kms_is_pro(kms: &KmSyurui) -> bool {
     }
 }
 // 成り駒種類→成る前の駒種類。成り駒でなければ、空に戻る。
-pub fn prokms_to_kms(kms: &KmSyurui) -> KmSyurui {
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+pub fn prokms_to_kms(kms: &PieceType) -> PieceType {
+    use super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => Kara,
         K => Kara,
@@ -682,8 +679,8 @@ pub fn prokms_to_kms(kms: &KmSyurui) -> KmSyurui {
  * 駒種類→｛　長い利きの駒か否か　｝
  * 合い駒で防ぎえる可能性があれば真
  */
-pub fn kms_is_nagaikiki(kms: &KmSyurui) -> bool {
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+pub fn kms_is_nagaikiki(kms: &PieceType) -> bool {
+    use super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,
@@ -706,8 +703,8 @@ pub fn kms_is_nagaikiki(kms: &KmSyurui) -> bool {
 /**
  * 成れる駒
  */
-pub fn kms_can_pro(kms: &KmSyurui) -> bool {
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+pub fn kms_can_pro(kms: &PieceType) -> bool {
+    use super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,
@@ -730,8 +727,8 @@ pub fn kms_can_pro(kms: &KmSyurui) -> bool {
 /**
  * 打てる駒
  */
-pub fn kms_can_da(kms: &KmSyurui) -> bool {
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+pub fn kms_can_da(kms: &PieceType) -> bool {
+    use super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,
@@ -752,9 +749,9 @@ pub fn kms_can_da(kms: &KmSyurui) -> bool {
     }
 }
 // 先後＆駒種類→先後付き駒
-pub fn sn_kms_to_km(sn: &Sengo, kms: &KmSyurui) -> Piece {
+pub fn sn_kms_to_km(sn: &Sengo, kms: &PieceType) -> Piece {
     use super::super::model::master::piece::Piece::*;
-    use super::super::teigi::shogi_syugo::KmSyurui::*;
+    use super::super::model::master::piece_type::PieceType::*;
     match *sn {
         Sengo::Sen => match *kms {
             R => R0,

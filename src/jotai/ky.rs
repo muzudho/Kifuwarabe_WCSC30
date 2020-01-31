@@ -10,7 +10,8 @@
 
 use super::super::jotai::uchu::*;
 use super::super::model::master::piece::Piece;
-use super::super::model::master::piece::Piece::*;
+use super::super::model::master::piece::*;
+use super::super::model::master::piece_type::*;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;
 use super::super::tusin::usi::*;
@@ -35,6 +36,7 @@ pub struct Kyokumen {
 }
 impl Kyokumen {
     pub fn new() -> Kyokumen {
+        use super::super::model::master::piece::Piece::Kara;
         Kyokumen {
             // 盤上
             ban: [
@@ -59,7 +61,7 @@ impl Kyokumen {
         }
     }
     pub fn clear(&mut self) {
-        // use super::super::teigi::shogi_syugo::Piece::Kara;
+        use super::super::model::master::piece::Piece::Kara;
         self.ban = [
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
@@ -86,7 +88,7 @@ impl Kyokumen {
             let ms = suji_dan_to_ms(suji, dan);
             let km = self.get_km_by_ms(ms);
             let (sn_km, kms) = km_to_sn_kms(&km);
-            if match_sn(&sn_km, sn) && match_kms(&kms, &KmSyurui::H) {
+            if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
                 return true;
             }
         }
