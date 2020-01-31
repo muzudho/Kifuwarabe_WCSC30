@@ -2,9 +2,9 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
+use super::super::super::controller::common::conv::*;
 use super::super::super::jotai::uchu::*;
 use super::super::super::model::master::place::*;
-use super::super::super::teigi::conv::*;
 use super::super::super::tusin::usi::*;
 use std::collections::HashSet;
 

@@ -3,9 +3,9 @@
 //! 積☆（＾～＾）　要するに組み合わせ
 //!
 
-use super::super::model::master::piece::Piece;
-use super::super::model::master::piece_type::PieceType;
-use super::super::model::master::place::*;
+use super::super::master::piece::Piece;
+use super::super::master::piece_type::PieceType;
+use super::super::master::place::*;
 
 /************
  * 升 × 駒 *

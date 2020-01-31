@@ -4,10 +4,10 @@
 extern crate rand;
 use rand::Rng;
 
+use super::super::controller::common::conv::*;
 use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::place::*;
-use super::super::teigi::conv::*;
 
 /**
  * ランダムに真偽を返す。

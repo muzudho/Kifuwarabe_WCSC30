@@ -2,9 +2,9 @@
 //! 駒種類集合
 //!
 
+use super::super::super::controller::common::conv::*;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::piece_type::*;
-use super::super::super::teigi::conv::*;
 use std::collections::HashSet;
 
 pub struct PieceTypeSet {

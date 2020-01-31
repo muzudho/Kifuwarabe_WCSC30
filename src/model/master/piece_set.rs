@@ -2,12 +2,12 @@
 //! 駒集合
 //!
 
+use super::super::super::controller::common::conv::*;
 use super::super::super::jotai::uchu::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
-use super::super::super::teigi::conv::*;
 use std::collections::HashSet;
 
 pub struct PieceSet {

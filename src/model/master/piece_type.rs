@@ -2,7 +2,7 @@
 //! 駒種類
 //!
 
-use super::super::super::teigi::conv::*;
+use super::super::super::controller::common::conv::*;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;

@@ -2,15 +2,15 @@
 //! 変換
 //!
 #![allow(dead_code)]
-use super::super::consoles::asserts::*;
-use super::super::model::master::direction::*;
-use super::super::model::master::person::Person;
-use super::super::model::master::phase::Phase;
-use super::super::model::master::piece::Piece;
-use super::super::model::master::piece_direction::PieceDirection;
-use super::super::model::master::piece_type::PieceType;
-use super::super::model::master::place::*;
-use super::geometries::geo_teigi::*;
+use super::super::super::consoles::asserts::*;
+use super::super::super::model::master::direction::*;
+use super::super::super::model::master::person::Person;
+use super::super::super::model::master::phase::Phase;
+use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece_direction::PieceDirection;
+use super::super::super::model::master::piece_type::PieceType;
+use super::super::super::model::master::place::*;
+use super::super::super::teigi::geometries::geo_teigi::*;
 
 /**********
  * 論理値 *
@@ -61,7 +61,7 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
  *********/
 #[allow(dead_code)]
 pub fn dir8_to_num(dir: &Dir8) -> usize {
-    use super::super::model::master::direction::Dir8::*;
+    use super::super::super::model::master::direction::Dir8::*;
     match *dir {
         E => 0,
         NE => 1,
@@ -76,7 +76,7 @@ pub fn dir8_to_num(dir: &Dir8) -> usize {
 }
 #[allow(dead_code)]
 pub fn num_to_dir8(n: usize) -> Dir8 {
-    use super::super::model::master::direction::Dir8::*;
+    use super::super::super::model::master::direction::Dir8::*;
     match n {
         0 => E,
         1 => NE,
@@ -111,7 +111,7 @@ pub fn pop_dir8_from_hash(hash: u64) -> (u64, Dir8) {
  * 先後 *
  ********/
 pub fn sn_to_num(sn: &Phase) -> usize {
-    use super::super::model::master::phase::Phase::*;
+    use super::super::super::model::master::phase::Phase::*;
     match *sn {
         Sen => 0,
         Go => 1,
@@ -119,7 +119,7 @@ pub fn sn_to_num(sn: &Phase) -> usize {
     }
 }
 pub fn hanten_sn(sn: &Phase) -> Phase {
-    use super::super::model::master::phase::Phase::*;
+    use super::super::super::model::master::phase::Phase::*;
     match *sn {
         Sen => Go,
         Go => Sen,
@@ -131,7 +131,7 @@ pub fn hanten_sn(sn: &Phase) -> Phase {
  * 自分相手 *
  ************/
 pub fn jiai_to_num(jiai: &Person) -> usize {
-    use super::super::model::master::person::Person::*;
+    use super::super::super::model::master::person::Person::*;
     match *jiai {
         Ji => 0,
         Ai => 1,
@@ -139,7 +139,7 @@ pub fn jiai_to_num(jiai: &Person) -> usize {
     }
 }
 pub fn hanten_jiai(jiai: &Person) -> Person {
-    use super::super::model::master::person::Person::*;
+    use super::super::super::model::master::person::Person::*;
     match *jiai {
         Ji => Ai,
         Ai => Ji,
@@ -228,7 +228,7 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
 pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
-    use super::super::model::master::phase::Phase::*;
+    use super::super::super::model::master::phase::Phase::*;
     match *sn {
         Sen => BAN_MAX - ms + BAN_MIN,
         _ => ms,
@@ -243,7 +243,7 @@ pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
  * 先後付き駒の数値化
  */
 pub fn km_to_num(km: &Piece) -> usize {
-    use super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece::Piece::*;
     match *km {
         R0 => 0,
         K0 => 1,
@@ -278,7 +278,7 @@ pub fn km_to_num(km: &Piece) -> usize {
     }
 }
 pub fn num_to_km(km_num: usize) -> Piece {
-    use super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece::Piece::*;
     match km_num {
         0 => R0,
         1 => K0,
@@ -331,7 +331,7 @@ pub fn pop_km_from_hash(hash: u64) -> (u64, Piece) {
  * 駒→成駒　（成れない駒は、そのまま）
  */
 pub fn km_to_prokm(km: &Piece) -> Piece {
-    use super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece::Piece::*;
     match *km {
         R0 => R0,
         K0 => PK0,
@@ -369,7 +369,7 @@ pub fn km_to_prokm(km: &Piece) -> Piece {
  * 成駒→駒
  */
 pub fn prokm_to_km(km: &Piece) -> Piece {
-    use super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece::Piece::*;
     match *km {
         R0 => R0,
         K0 => K0,
@@ -413,9 +413,9 @@ pub fn km_is_nagaikiki(km: &Piece) -> bool {
  * 先後付き駒→駒種類
  */
 pub fn km_to_sn_kms(km: &Piece) -> (Phase, PieceType) {
-    use super::super::model::master::phase::Phase::*;
-    use super::super::model::master::piece::Piece::*;
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::phase::Phase::*;
+    use super::super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *km {
         R0 => (Sen, R),
         K0 => (Sen, K),
@@ -454,8 +454,8 @@ pub fn km_to_sn_kms(km: &Piece) -> (Phase, PieceType) {
  */
 #[allow(dead_code)]
 pub fn km_to_sn(km: &Piece) -> Phase {
-    use super::super::model::master::phase::Phase::*;
-    use super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::phase::Phase::*;
+    use super::super::super::model::master::piece::Piece::*;
     match *km {
         R0 => Sen,
         K0 => Sen,
@@ -493,8 +493,8 @@ pub fn km_to_sn(km: &Piece) -> Phase {
  * 先後付き駒→駒種類
  */
 pub fn km_to_kms(km: &Piece) -> PieceType {
-    use super::super::model::master::piece::Piece::*;
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *km {
         R0 => R,
         K0 => K,
@@ -533,7 +533,7 @@ pub fn km_to_kms(km: &Piece) -> PieceType {
  * 持ち駒にするので、先後は反転するぜ☆（＾～＾）
  */
 pub fn km_to_mg(km_cap: Piece) -> Piece {
-    use super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece::Piece::*;
     match km_cap {
         R0 => Owari,
         K0 => K1,
@@ -576,7 +576,7 @@ pub fn km_to_mg(km_cap: Piece) -> Piece {
  * 駒種類の数値化
  */
 pub fn kms_to_num(kms: &PieceType) -> usize {
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => 0,
         K => 1,
@@ -600,7 +600,7 @@ pub fn kms_to_num(kms: &PieceType) -> usize {
  * 数値の駒種類化
  */
 pub fn num_to_kms(n: usize) -> PieceType {
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match n {
         0 => R,
         1 => K,
@@ -637,7 +637,7 @@ pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
 }
 // 駒種類→｛　成駒,（不成駒、それ以外）　｝
 pub fn kms_is_pro(kms: &PieceType) -> bool {
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => false,
@@ -659,7 +659,7 @@ pub fn kms_is_pro(kms: &PieceType) -> bool {
 }
 // 成り駒種類→成る前の駒種類。成り駒でなければ、空に戻る。
 pub fn prokms_to_kms(kms: &PieceType) -> PieceType {
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => Kara,
         K => Kara,
@@ -684,7 +684,7 @@ pub fn prokms_to_kms(kms: &PieceType) -> PieceType {
  * 合い駒で防ぎえる可能性があれば真
  */
 pub fn kms_is_nagaikiki(kms: &PieceType) -> bool {
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,
@@ -708,7 +708,7 @@ pub fn kms_is_nagaikiki(kms: &PieceType) -> bool {
  * 成れる駒
  */
 pub fn kms_can_pro(kms: &PieceType) -> bool {
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,
@@ -732,7 +732,7 @@ pub fn kms_can_pro(kms: &PieceType) -> bool {
  * 打てる駒
  */
 pub fn kms_can_da(kms: &PieceType) -> bool {
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,
@@ -754,8 +754,8 @@ pub fn kms_can_da(kms: &PieceType) -> bool {
 }
 // 先後＆駒種類→先後付き駒
 pub fn sn_kms_to_km(sn: &Phase, kms: &PieceType) -> Piece {
-    use super::super::model::master::piece::Piece::*;
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::master::piece::Piece::*;
+    use super::super::super::model::master::piece_type::PieceType::*;
     match *sn {
         Phase::Sen => match *kms {
             R => R0,
@@ -803,7 +803,7 @@ pub fn sn_kms_to_km(sn: &Phase, kms: &PieceType) -> Piece {
  * 上下反転
  */
 pub fn hanten_kmdir_joge(kmdir: &PieceDirection) -> PieceDirection {
-    use super::super::model::master::piece_direction::PieceDirection::*;
+    use super::super::super::model::master::piece_direction::PieceDirection::*;
     match *kmdir {
         // 東
         E(b) => E(b),

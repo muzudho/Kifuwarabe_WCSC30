@@ -3,7 +3,7 @@
 //!
 //! 先後とは別物
 
-use super::super::super::teigi::conv::*;
+use super::super::super::controller::common::conv::*;
 use std::fmt;
 
 pub const JIAI_LN: usize = 3;

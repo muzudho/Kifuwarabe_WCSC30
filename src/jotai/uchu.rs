@@ -8,6 +8,7 @@ extern crate rand;
 use rand::Rng;
 
 use super::super::config::*;
+use super::super::controller::common::conv::*;
 use super::super::model::master::misc::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
@@ -20,7 +21,6 @@ use super::super::model::master::piece_type::*;
 use super::super::model::master::place::*;
 use super::super::model::master::ply::*;
 use super::super::siko::visions::vision_tree::*;
-use super::super::teigi::conv::*;
 use super::super::tusin::usi::*;
 use super::ky::*;
 use super::number_board::*;

@@ -13,6 +13,7 @@ extern crate lazy_static;
 // use したい モジュールは、最初に読み取られる　この main.rs ファイルに並べる
 pub mod config;
 pub mod consoles;
+pub mod controller;
 pub mod jotai;
 pub mod kasetu;
 pub mod meidai;
@@ -30,13 +31,13 @@ use config::*;
 use consoles::unit_test::*;
 use consoles::visuals::dumps::*;
 use consoles::visuals::title::*;
+use controller::common::conv::*;
 use jotai::uchu::*;
+use model::master::constants::*;
 use model::master::misc::*;
 use rand::Rng;
 use siko::think::*;
 use syazo::sasite_seisei::*;
-use teigi::constants::*;
-use teigi::conv::*;
 use tusin::usi::*;
 
 fn main() {

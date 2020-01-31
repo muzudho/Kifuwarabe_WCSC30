@@ -2,14 +2,14 @@
 //!
 //! 頭金仮説
 //!
+use super::super::controller::common::conv::*;
 use super::super::jotai::uchu::*;
+use super::super::model::combine::multiplication::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::person::*;
 use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type_set::*;
 use super::super::teigi::banjometries::*;
-use super::super::teigi::conv::*;
-use super::super::teigi::shogi_syugo_seki::*;
 
 /**
  * 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？

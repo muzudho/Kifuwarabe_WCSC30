@@ -3,6 +3,7 @@
 //!
 
 use super::super::consoles::asserts::*;
+use super::super::controller::common::conv::*;
 use super::super::jotai::uchu::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
@@ -11,7 +12,6 @@ use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::place::*;
 use super::super::syazo::sasite_element::*;
-use super::super::teigi::conv::*;
 use super::super::tusin::usi::*;
 use std::collections::HashSet;
 

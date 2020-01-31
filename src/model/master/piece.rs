@@ -4,7 +4,7 @@
 //! 先後付き駒
 //!
 
-use super::super::super::teigi::conv::*;
+use super::super::super::controller::common::conv::*;
 use super::phase::*;
 use std::fmt;
 

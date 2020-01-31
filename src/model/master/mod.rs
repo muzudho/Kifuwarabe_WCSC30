@@ -1,3 +1,4 @@
+pub mod constants;
 pub mod direction;
 pub mod misc;
 pub mod person;

@@ -3,8 +3,8 @@
 //! 結果：自殺手。移動先が敵の利き
 //!
 
+use super::super::super::controller::common::conv::*;
 use super::super::super::jotai::uchu::*;
-use super::super::super::teigi::conv::*;
 use super::super::super::tusin::usi::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
