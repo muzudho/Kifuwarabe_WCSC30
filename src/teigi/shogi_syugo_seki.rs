@@ -5,7 +5,7 @@
 
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece_type::PieceType;
-use super::super::teigi::shogi_syugo::*;
+use super::super::model::master::place::*;
 
 /************
  * 升 × 駒 *

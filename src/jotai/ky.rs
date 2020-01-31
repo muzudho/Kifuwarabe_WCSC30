@@ -13,6 +13,7 @@ use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
 use super::super::model::master::piece_type::*;
+use super::super::model::master::place::*;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;
 use super::super::tusin::usi::*;

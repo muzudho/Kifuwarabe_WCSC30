@@ -7,6 +7,7 @@ use super::super::model::master::person::Person;
 use super::super::model::master::phase::Phase;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece_type::PieceType;
+use super::super::model::master::place::*;
 use super::geometries::geo_teigi::*;
 use super::shogi_syugo::*;
 

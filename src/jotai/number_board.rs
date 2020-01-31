@@ -1,4 +1,4 @@
-use super::super::teigi::shogi_syugo::*;
+use super::super::model::master::place::*;
 
 /**
  * 升に数が書いている将棋盤

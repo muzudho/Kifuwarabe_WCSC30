@@ -4,6 +4,7 @@
 //!
 use super::super::super::consoles::asserts::*;
 use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::place::*;
 use super::super::conv::*;
 use super::super::geometries::geo_direction_niko_kankei::*;
 use super::super::geometries::geo_teigi::*;

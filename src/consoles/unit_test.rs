@@ -8,14 +8,15 @@ use super::super::meidai::math_meidai::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::Phase;
 use super::super::model::master::piece_type::PieceType;
+use super::super::model::master::place::umasu;
 use super::super::siko::randommove;
 use super::super::syazo::sasite_element::*;
 use super::super::teigi::conv::*;
 use super::super::teigi::geometries::geo_teigi::*;
-use super::super::teigi::shogi_syugo::*;
 use super::super::tusin::usi::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;
+
 /**
  * test 2
  * といったコマンドに対応☆（＾～＾）

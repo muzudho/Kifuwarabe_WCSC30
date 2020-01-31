@@ -1,7 +1,7 @@
 //!
 //! 値チェック
 //!
-use super::super::teigi::shogi_syugo::umasu;
+use super::super::model::master::place::umasu;
 
 ///
 /// 打はテストできない

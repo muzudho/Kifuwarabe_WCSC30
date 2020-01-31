@@ -13,6 +13,7 @@ use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
 use super::super::model::master::piece_type::PieceType;
+use super::super::model::master::place::*;
 use super::super::model::master::ply::*;
 use super::super::siko::visions::vision_tree::*;
 use super::super::teigi::conv::*;

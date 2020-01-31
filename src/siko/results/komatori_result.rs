@@ -6,6 +6,7 @@ use super::super::super::jotai::uchu::*;
 use super::super::super::meidai::math_meidai::*;
 use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::place::*;
 use super::super::super::syazo::sasite_seisei::*;
 use super::super::super::syazo::sasite_sentaku::*;
 use super::super::super::teigi::conv::*;
