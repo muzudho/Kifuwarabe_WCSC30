@@ -17,7 +17,6 @@ pub mod controller;
 pub mod jotai;
 pub mod model;
 pub mod siko;
-pub mod tusin;
 
 use std::collections::HashSet;
 use std::io;
@@ -28,12 +27,12 @@ use consoles::visuals::dumps::*;
 use consoles::visuals::title::*;
 use controller::boardmetries::mapping::sasite_seisei::*;
 use controller::common::conv::*;
+use controller::communication::usi::*;
 use jotai::uchu::*;
 use model::master::constants::*;
 use model::master::misc::*;
 use rand::Rng;
 use siko::think::*;
-use tusin::usi::*;
 
 fn main() {
     // 宇宙
@@ -92,7 +91,7 @@ fn main() {
             uchu.clear_ky01();
         } else if line.starts_with("position") {
             // positionコマンドの読取を丸投げ
-            tusin::usi::read_position(&line, &mut uchu);
+            controller::communication::usi::read_position(&line, &mut uchu);
         } else if 6 < len && &line[starts..7] == "isready" {
             g_writeln("readyok");
         } else if 6 < len && &line[starts..7] == "kmugoki" {
@@ -101,7 +100,7 @@ fn main() {
             uchu.hyoji_kmugoki();
         } else if 5 < len && &line[starts..6] == "hirate" {
             // 平手初期局面
-            tusin::usi::read_position(&KY1.to_string(), &mut uchu);
+            controller::communication::usi::read_position(&KY1.to_string(), &mut uchu);
         } else if 5 < len && &line[starts..6] == "kikisu" {
             // 利き数表示
             consoles::commands::cmd_kikisu(&uchu);

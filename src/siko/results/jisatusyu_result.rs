@@ -4,8 +4,8 @@
 //!
 
 use super::super::super::controller::common::conv::*;
+use super::super::super::controller::communication::usi::*;
 use super::super::super::jotai::uchu::*;
-use super::super::super::tusin::usi::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい

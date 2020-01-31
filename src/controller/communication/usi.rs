@@ -1,13 +1,13 @@
 //!
 //! USIプロトコル
 //!
-use super::super::consoles::asserts::*;
-use super::super::controller::common::conv::*;
-use super::super::jotai::uchu::*;
-use super::super::model::master::constants::*;
-use super::super::model::master::piece::Piece;
-use super::super::model::master::piece_type::PieceType;
-use super::super::model::master::place::*;
+use super::super::super::consoles::asserts::*;
+use super::super::super::controller::common::conv::*;
+use super::super::super::jotai::uchu::*;
+use super::super::super::model::master::constants::*;
+use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece_type::PieceType;
+use super::super::super::model::master::place::*;
 use std::fmt;
 
 /**
@@ -84,7 +84,7 @@ impl fmt::Display for Sasite {
         let (dx, dy) = ms_to_suji_dan(self.dst);
 
         if self.src == SS_SRC_DA {
-            use super::super::model::master::piece_type::PieceType::*;
+            use super::super::super::model::master::piece_type::PieceType::*;
             write!(
                 f,
                 "{}*{}{}{}",
@@ -777,7 +777,7 @@ pub fn read_position(line: &String, uchu: &mut Uchu) {
                         _ => {} // 駒の名前か、エラーなら次へ
                     }
 
-                    use super::super::model::master::piece::Piece::*;
+                    use super::super::super::model::master::piece::Piece::*;
                     let km: Piece;
                     match &line[starts..(starts + 1)] {
                         "R" => {

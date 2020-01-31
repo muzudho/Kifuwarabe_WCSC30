@@ -8,3 +8,4 @@ pub mod board_metrics;
 pub mod hypothesis;
 pub mod mapping;
 pub mod proposition;
+pub mod visions;

@@ -1,14 +1,13 @@
 //!
 //! 思考部だぜ☆（＾～＾）
 //!
-use super::super::super::controller::boardmetries::mapping::sasite_element::*;
-use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
-use super::super::super::jotai::uchu::*;
-use super::super::super::model::master::phase::*;
-use super::super::super::model::master::piece_type::PieceType;
-use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::place::*;
+use super::super::super::super::controller::boardmetries::mapping::sasite_element::*;
+use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::jotai::uchu::*;
+use super::super::super::super::model::master::phase::*;
+use super::super::super::super::model::master::piece_type::*;
+use super::super::super::super::model::master::place::*;
 use std::collections::HashSet;
 
 /**

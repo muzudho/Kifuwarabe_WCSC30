@@ -9,13 +9,13 @@
 //!
 
 use super::super::controller::common::conv::*;
+use super::super::controller::communication::usi::*;
 use super::super::jotai::uchu::*;
 use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::place::*;
-use super::super::tusin::usi::*;
 
 // 局面
 pub struct Kyokumen {

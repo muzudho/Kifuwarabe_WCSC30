@@ -6,6 +6,7 @@
 use super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::controller::boardmetries::proposition::math_meidai::*;
 use super::super::controller::common::conv::*;
+use super::super::controller::communication::usi::*;
 use super::super::controller::geometries::geo_teigi::*;
 use super::super::jotai::uchu::*;
 use super::super::model::master::person::Person;
@@ -13,7 +14,6 @@ use super::super::model::master::phase::Phase;
 use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::place::umasu;
 use super::super::siko::randommove;
-use super::super::tusin::usi::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;
 

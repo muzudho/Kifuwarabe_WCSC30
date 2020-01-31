@@ -7,12 +7,12 @@ use super::super::super::consoles::asserts::*;
 use super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
 use super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
 use super::super::super::controller::common::conv::*;
+use super::super::super::controller::communication::usi::*;
 use super::super::super::jotai::uchu::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::siko::randommove;
 use super::super::super::siko::results::jisatusyu_result::*;
-use super::super::super::tusin::usi::*;
 use std::collections::HashSet;
 
 /**
