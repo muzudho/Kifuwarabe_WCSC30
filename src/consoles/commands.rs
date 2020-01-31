@@ -2,7 +2,7 @@
 //! コマンド一覧
 //!
 
-use super::super::jotai::uchu::*;
+use super::super::controller::status::uchu::*;
 use super::super::model::master::phase::Phase;
 use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;

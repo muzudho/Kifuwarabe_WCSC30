@@ -4,7 +4,7 @@
 //!
 use super::super::super::super::controller::boardmetries::board_metrics;
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::jotai::uchu::*;
+use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::combine::multiplication::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::person::*;

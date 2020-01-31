@@ -7,21 +7,21 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::config::*;
-use super::super::controller::common::conv::*;
-use super::super::controller::communication::usi::*;
-use super::super::controller::thinking::visions::vision_tree::*;
-use super::super::model::master::misc::*;
-use super::super::model::master::person::Person;
-use super::super::model::master::phase::*;
-use super::super::model::master::piece::Piece;
-use super::super::model::master::piece::*;
-use super::super::model::master::piece_direction::PieceDirection;
-use super::super::model::master::piece_movement::*;
-use super::super::model::master::piece_type::PieceType;
-use super::super::model::master::piece_type::*;
-use super::super::model::master::place::*;
-use super::super::model::master::ply::*;
+use super::super::super::config::*;
+use super::super::super::controller::common::conv::*;
+use super::super::super::controller::communication::usi::*;
+use super::super::super::controller::thinking::visions::vision_tree::*;
+use super::super::super::model::master::misc::*;
+use super::super::super::model::master::person::Person;
+use super::super::super::model::master::phase::*;
+use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece::*;
+use super::super::super::model::master::piece_direction::PieceDirection;
+use super::super::super::model::master::piece_movement::*;
+use super::super::super::model::master::piece_type::PieceType;
+use super::super::super::model::master::piece_type::*;
+use super::super::super::model::master::place::*;
+use super::super::super::model::master::ply::*;
 use super::ky::*;
 use super::number_board::*;
 use std::fs::File;
@@ -816,7 +816,7 @@ impl Uchu {
     }
     // 手番
     pub fn get_teban(&self, jiai: &Person) -> Phase {
-        use super::super::model::master::person::Person::*;
+        use super::super::super::model::master::person::Person::*;
         match *jiai {
             Ji => {
                 // 手番
@@ -901,9 +901,9 @@ impl Uchu {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<umasu> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
-            super::super::model::master::region::SenteJin::to_elm()
+            super::super::super::model::master::region::SenteJin::to_elm()
         } else {
-            super::super::model::master::region::GoteJin::to_elm()
+            super::super::super::model::master::region::GoteJin::to_elm()
         }
     }
     /**
@@ -912,9 +912,9 @@ impl Uchu {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<umasu> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
-            super::super::model::master::region::GoteJin::to_elm()
+            super::super::super::model::master::region::GoteJin::to_elm()
         } else {
-            super::super::model::master::region::SenteJin::to_elm()
+            super::super::super::model::master::region::SenteJin::to_elm()
         }
     }
 
@@ -1249,7 +1249,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         let mut hash = self.ky.create_hash(&self);
 
         // 手番ハッシュ
-        use super::super::model::master::phase::Phase::*;
+        use super::super::super::model::master::phase::Phase::*;
         match self.get_teban(&Person::Ji) {
             Sen => hash ^= self.ky_hash_seed.sn[SN_SEN],
             Go => hash ^= self.ky_hash_seed.sn[SN_GO],

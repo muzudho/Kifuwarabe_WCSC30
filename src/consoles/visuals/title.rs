@@ -1,4 +1,4 @@
-use super::super::super::jotai::uchu::*;
+use super::super::super::controller::status::uchu::*;
 
 // 対話モードのタイトル画面
 pub fn hyoji_title() {

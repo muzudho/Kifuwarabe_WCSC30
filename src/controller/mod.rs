@@ -7,4 +7,5 @@ pub mod boardmetries;
 pub mod common;
 pub mod communication;
 pub mod geometries;
+pub mod status;
 pub mod thinking;

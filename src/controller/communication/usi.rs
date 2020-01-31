@@ -3,7 +3,7 @@
 //!
 use super::super::super::consoles::asserts::*;
 use super::super::super::controller::common::conv::*;
-use super::super::super::jotai::uchu::*;
+use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::constants::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_type::PieceType;

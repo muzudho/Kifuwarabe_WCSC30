@@ -1,4 +1,4 @@
-use super::super::model::master::place::*;
+use super::super::super::model::master::place::*;
 
 /**
  * 升に数が書いている将棋盤

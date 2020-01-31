@@ -14,7 +14,6 @@ extern crate lazy_static;
 pub mod config;
 pub mod consoles;
 pub mod controller;
-pub mod jotai;
 pub mod model;
 
 use config::*;
@@ -24,8 +23,8 @@ use consoles::visuals::title::*;
 use controller::boardmetries::mapping::sasite_seisei::*;
 use controller::common::conv::*;
 use controller::communication::usi::*;
+use controller::status::uchu::*;
 use controller::thinking::think::*;
-use jotai::uchu::*;
 use model::master::constants::*;
 use model::master::misc::*;
 use rand::Rng;

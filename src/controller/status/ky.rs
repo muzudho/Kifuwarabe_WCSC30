@@ -8,14 +8,14 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::controller::common::conv::*;
-use super::super::controller::communication::usi::*;
-use super::super::jotai::uchu::*;
-use super::super::model::master::phase::*;
-use super::super::model::master::piece::Piece;
-use super::super::model::master::piece::*;
-use super::super::model::master::piece_type::*;
-use super::super::model::master::place::*;
+use super::super::super::controller::common::conv::*;
+use super::super::super::controller::communication::usi::*;
+use super::super::super::controller::status::uchu::*;
+use super::super::super::model::master::phase::*;
+use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece::*;
+use super::super::super::model::master::piece_type::*;
+use super::super::super::model::master::place::*;
 
 // 局面
 pub struct Kyokumen {
@@ -37,7 +37,7 @@ pub struct Kyokumen {
 }
 impl Kyokumen {
     pub fn new() -> Kyokumen {
-        use super::super::model::master::piece::Piece::Kara;
+        use super::super::super::model::master::piece::Piece::Kara;
         Kyokumen {
             // 盤上
             ban: [
@@ -62,7 +62,7 @@ impl Kyokumen {
         }
     }
     pub fn clear(&mut self) {
-        use super::super::model::master::piece::Piece::Kara;
+        use super::super::super::model::master::piece::Piece::Kara;
         self.ban = [
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
@@ -106,7 +106,7 @@ impl Kyokumen {
      */
     pub fn set_km_by_ms(&mut self, ms: umasu, km: Piece) {
         self.ban[ms] = km;
-        use super::super::model::master::phase::Phase::*;
+        use super::super::super::model::master::phase::Phase::*;
         match km {
             Piece::R0 => self.ms_r[Sen as usize] = ms,
             Piece::R1 => self.ms_r[Go as usize] = ms,

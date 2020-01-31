@@ -8,7 +8,7 @@ use super::super::super::super::controller::boardmetries::proposition::math_meid
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::super::jotai::uchu::*;
+use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_type::*;

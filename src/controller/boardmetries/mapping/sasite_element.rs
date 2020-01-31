@@ -4,7 +4,7 @@
 
 use super::super::super::super::consoles::asserts::*;
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::jotai::uchu::*;
+use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::Piece;
