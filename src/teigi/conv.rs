@@ -3,13 +3,14 @@
 //!
 #![allow(dead_code)]
 use super::super::consoles::asserts::*;
+use super::super::model::master::direction::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::Phase;
 use super::super::model::master::piece::Piece;
+use super::super::model::master::piece_direction::PieceDirection;
 use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::place::*;
 use super::geometries::geo_teigi::*;
-use super::shogi_syugo::*;
 
 /**********
  * 論理値 *
@@ -60,7 +61,7 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
  *********/
 #[allow(dead_code)]
 pub fn dir8_to_num(dir: &Dir8) -> usize {
-    use super::super::teigi::shogi_syugo::Dir8::*;
+    use super::super::model::master::direction::Dir8::*;
     match *dir {
         E => 0,
         NE => 1,
@@ -75,7 +76,7 @@ pub fn dir8_to_num(dir: &Dir8) -> usize {
 }
 #[allow(dead_code)]
 pub fn num_to_dir8(n: usize) -> Dir8 {
-    use super::super::teigi::shogi_syugo::Dir8::*;
+    use super::super::model::master::direction::Dir8::*;
     match n {
         0 => E,
         1 => NE,
@@ -801,8 +802,8 @@ pub fn sn_kms_to_km(sn: &Phase, kms: &PieceType) -> Piece {
 /**
  * 上下反転
  */
-pub fn hanten_kmdir_joge(kmdir: &KmDir) -> KmDir {
-    use super::super::teigi::shogi_syugo::KmDir::*;
+pub fn hanten_kmdir_joge(kmdir: &PieceDirection) -> PieceDirection {
+    use super::super::model::master::piece_direction::PieceDirection::*;
     match *kmdir {
         // 東
         E(b) => E(b),
@@ -833,8 +834,8 @@ pub fn hanten_kmdir_joge(kmdir: &KmDir) -> KmDir {
     }
 }
 /*
-pub fn kmdir_id(kmdir:&KmDir) -> usize{
-    use teigi::shogi_syugo::KmDir::*;
+pub fn kmdir_id(kmdir:&PieceDirection) -> usize{
+    use teigi::shogi_syugo::PieceDirection::*;
     match *kmdir {
         E  (b)=>if b { 0}else{ 1},
         NE (b)=>if b { 2}else{ 3},

@@ -31,12 +31,12 @@ use consoles::unit_test::*;
 use consoles::visuals::dumps::*;
 use consoles::visuals::title::*;
 use jotai::uchu::*;
+use model::master::misc::*;
 use rand::Rng;
 use siko::think::*;
 use syazo::sasite_seisei::*;
 use teigi::constants::*;
 use teigi::conv::*;
-use teigi::shogi_syugo::*;
 use tusin::usi::*;
 
 fn main() {

@@ -6,9 +6,9 @@ use super::super::jotai::uchu::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::person::*;
 use super::super::model::master::piece_type::PieceType;
+use super::super::model::master::piece_type_set::*;
 use super::super::teigi::banjometries::*;
 use super::super::teigi::conv::*;
-use super::super::teigi::shogi_syugo::*;
 use super::super::teigi::shogi_syugo_seki::*;
 
 /**
@@ -94,7 +94,7 @@ pub fn is_atamakin(
     let ms_ai_r = uchu.get_ms_r(&Person::Ai);
 
     // らいおん以外の相手の駒種類
-    let mut kms_set_ai_c_r = KmsSyugo::new_all();
+    let mut kms_set_ai_c_r = PieceTypeSet::new_all();
     kms_set_ai_c_r.remove(&PieceType::R);
 
     // kの下段左中右＝移動不可升　※現局面２手先の動き？

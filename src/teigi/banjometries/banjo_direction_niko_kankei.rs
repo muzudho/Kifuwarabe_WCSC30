@@ -3,12 +3,12 @@
 //! 盤上の二項関係☆（＾～＾）
 //!
 use super::super::super::consoles::asserts::*;
+use super::super::super::model::master::direction::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::place::*;
 use super::super::conv::*;
 use super::super::geometries::geo_direction_niko_kankei::*;
 use super::super::geometries::geo_teigi::*;
-use super::super::shogi_syugo::*;
 
 /**
  * 狙われている駒から見た、長い利きの駒の居る方向（８方向）
