@@ -8,9 +8,11 @@ extern crate rand;
 use rand::Rng;
 
 use super::super::config::*;
+use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
 use super::super::model::master::piece_type::PieceType;
+use super::super::model::master::ply::*;
 use super::super::siko::visions::vision_tree::*;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;
@@ -21,7 +23,6 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
-// use super::super::teigi::*;
 
 // グローバル定数
 //
@@ -809,26 +810,26 @@ impl Uchu {
         self.teme
     }
     // 手番
-    pub fn get_teban(&self, jiai: &Jiai) -> Sengo {
+    pub fn get_teban(&self, jiai: &Jiai) -> Phase {
         use super::super::teigi::shogi_syugo::Jiai::*;
         match *jiai {
             Ji => {
                 // 手番
                 if self.teme % 2 == 0 {
-                    Sengo::Sen
+                    Phase::Sen
                 } else {
-                    Sengo::Go
+                    Phase::Go
                 }
             }
             Ai => {
                 // 相手番
                 if self.teme % 2 == 0 {
-                    Sengo::Go
+                    Phase::Go
                 } else {
-                    Sengo::Sen
+                    Phase::Sen
                 }
             }
-            _ => Sengo::Owari,
+            _ => Phase::Owari,
         }
     }
 
@@ -894,7 +895,7 @@ impl Uchu {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<umasu> {
-        if let Sengo::Sen = self.get_teban(&Jiai::Ji) {
+        if let Phase::Sen = self.get_teban(&Jiai::Ji) {
             super::super::teigi::shogi_syugo::SenteJin::to_elm()
         } else {
             super::super::teigi::shogi_syugo::GoteJin::to_elm()
@@ -905,7 +906,7 @@ impl Uchu {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<umasu> {
-        if let Sengo::Sen = self.get_teban(&Jiai::Ji) {
+        if let Phase::Sen = self.get_teban(&Jiai::Ji) {
             super::super::teigi::shogi_syugo::GoteJin::to_elm()
         } else {
             super::super::teigi::shogi_syugo::SenteJin::to_elm()
@@ -1056,9 +1057,9 @@ impl Uchu {
     /**
      * 表示
      */
-    pub fn kaku_number_board(&self, sn: &Sengo, km: &Piece) -> String {
+    pub fn kaku_number_board(&self, sn: &Phase, km: &Piece) -> String {
         let nb = match *sn {
-            Sengo::Owari => &self.kiki_su_by_km[km_to_num(&km)],
+            Phase::Owari => &self.kiki_su_by_km[km_to_num(&km)],
             _ => &self.kiki_su_by_sn[sn_to_num(&sn)],
         };
 
@@ -1243,7 +1244,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         let mut hash = self.ky.create_hash(&self);
 
         // 手番ハッシュ
-        use super::super::teigi::shogi_syugo::Sengo::*;
+        use super::super::model::master::phase::Phase::*;
         match self.get_teban(&Jiai::Ji) {
             Sen => hash ^= self.ky_hash_seed.sn[SN_SEN],
             Go => hash ^= self.ky_hash_seed.sn[SN_GO],

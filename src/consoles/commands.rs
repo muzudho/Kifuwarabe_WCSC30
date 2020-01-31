@@ -3,6 +3,7 @@
 //!
 
 use super::super::jotai::uchu::*;
+use super::super::model::master::phase::Phase;
 use super::super::model::master::piece::Piece;
 use super::super::teigi::shogi_syugo::*;
 
@@ -12,7 +13,7 @@ use super::super::teigi::shogi_syugo::*;
 pub fn cmd_kikisu(uchu: &Uchu) {
     for km in KM_ARRAY.iter() {
         g_writeln(&format!("利き数：{}", km));
-        let s = uchu.kaku_number_board(&Sengo::Owari, &km);
+        let s = uchu.kaku_number_board(&Phase::Owari, &km);
         g_writeln(&s);
     }
 

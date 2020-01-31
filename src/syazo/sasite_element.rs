@@ -4,6 +4,7 @@
 
 use super::super::consoles::asserts::*;
 use super::super::jotai::uchu::*;
+use super::super::model::master::phase::Phase;
 use super::super::model::master::piece::Piece;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;
@@ -80,7 +81,7 @@ pub fn insert_narazu_src_by_ms_km(
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &KmDir;
-        if match_sn(&Sengo::Sen, &sn) {
+        if match_sn(&Phase::Sen, &sn) {
             p_kmdir = &KM_UGOKI.back[kms_num][i_dir]
         } else {
             _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[kms_num][i_dir]);
@@ -388,7 +389,7 @@ pub fn insert_narumae_src_by_ms_km(
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &KmDir;
-        if match_sn(&Sengo::Sen, &sn) {
+        if match_sn(&Phase::Sen, &sn) {
             p_kmdir = &KM_UGOKI.back[kms_narumae_num][i_dir]
         } else {
             _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[kms_narumae_num][i_dir]);
@@ -773,7 +774,7 @@ pub fn insert_dst_by_ms_km(
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &KmDir;
-        if match_sn(&Sengo::Sen, &sn) {
+        if match_sn(&Phase::Sen, &sn) {
             _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[kms_num][i_dir]);
             p_kmdir = &_kmdir;
         } else {
@@ -794,7 +795,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -821,7 +822,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -858,7 +859,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -895,7 +896,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -922,7 +923,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -949,7 +950,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -986,7 +987,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -1023,7 +1024,7 @@ pub fn insert_dst_by_ms_km(
                             if !match_sn(&sn_ms, &sn) {
                                 result.insert(ms_src);
                             }
-                            if !match_sn(&sn_ms, &Sengo::Owari) {
+                            if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
                             }
                         }
@@ -1201,7 +1202,7 @@ pub fn insert_dst_by_ms_km(
  * TODO 成りの動きも考えたい。升だけではなく、成りの有無☆（＾～＾）
  */
 pub fn insert_narazu_src_by_sn_ms(
-    sn: &Sengo,
+    sn: &Phase,
     ms_dst: umasu,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
@@ -1249,7 +1250,7 @@ pub fn insert_narazu_src_by_sn_ms(
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
             let p_kmdir: &KmDir;
-            if match_sn(&Sengo::Sen, &sn) {
+            if match_sn(&Phase::Sen, &sn) {
                 p_kmdir = &KM_UGOKI.back[kms_num][i_dir];
             // g_writeln(&format!("get_src_by_sn_ms 先手なら kms={} kms_num={} p_kmdir={}",
             //     kms, kms_num, p_kmdir
@@ -1278,7 +1279,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1307,7 +1308,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1347,7 +1348,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1390,7 +1391,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1419,7 +1420,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1448,7 +1449,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1488,7 +1489,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1531,7 +1532,7 @@ pub fn insert_narazu_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1557,7 +1558,7 @@ pub fn insert_narazu_src_by_sn_ms(
  * 移動元升生成（成る前）
  */
 pub fn insert_narumae_src_by_sn_ms(
-    sn: &Sengo,
+    sn: &Phase,
     ms_dst: umasu,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
@@ -1594,7 +1595,7 @@ pub fn insert_narumae_src_by_sn_ms(
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
             let p_kmdir: &KmDir;
-            if match_sn(&Sengo::Sen, &sn) {
+            if match_sn(&Phase::Sen, &sn) {
                 p_kmdir = &KM_UGOKI.back[kms_num][i_dir];
             // g_writeln(&format!("get_src_by_sn_ms 先手なら kms={} kms_num={} p_kmdir={}",
             //     kms, kms_num, p_kmdir
@@ -1623,7 +1624,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1652,7 +1653,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1692,7 +1693,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1735,7 +1736,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1764,7 +1765,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1793,7 +1794,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1833,7 +1834,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1876,7 +1877,7 @@ pub fn insert_narumae_src_by_sn_ms(
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
-                                if !match_sn(&sn_ms, &Sengo::Owari) {
+                                if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
                                 }
                             }
@@ -1910,7 +1911,7 @@ pub fn insert_narumae_src_by_sn_ms(
 /*
 #[allow(dead_code)]
 pub fn get_ms_vec_as_aigoma(
-    sn_atk:&Sengo,
+    sn_atk:&Phase,
     ms_atk:umasu,
     ms_tgt:umasu,
     kms_atk:&PieceType
@@ -1932,7 +1933,7 @@ pub fn get_ms_vec_as_aigoma(
             // 南東方向
         },
         S => {
-            if match_sn(&Sengo::Sen, &sn_atk) {
+            if match_sn(&Phase::Sen, &sn_atk) {
                 // 北方向
 
             } else {

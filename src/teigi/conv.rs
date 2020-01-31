@@ -3,6 +3,7 @@
 //!
 #![allow(dead_code)]
 use super::super::consoles::asserts::*;
+use super::super::model::master::phase::Phase;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece_type::PieceType;
 use super::geometries::geo_teigi::*;
@@ -106,16 +107,16 @@ pub fn pop_dir8_from_hash(hash: u64) -> (u64, Dir8) {
 /********
  * 先後 *
  ********/
-pub fn sn_to_num(sn: &Sengo) -> usize {
-    use super::super::teigi::shogi_syugo::Sengo::*;
+pub fn sn_to_num(sn: &Phase) -> usize {
+    use super::super::model::master::phase::Phase::*;
     match *sn {
         Sen => 0,
         Go => 1,
         Owari => 2,
     }
 }
-pub fn hanten_sn(sn: &Sengo) -> Sengo {
-    use super::super::teigi::shogi_syugo::Sengo::*;
+pub fn hanten_sn(sn: &Phase) -> Phase {
+    use super::super::model::master::phase::Phase::*;
     match *sn {
         Sen => Go,
         Go => Sen,
@@ -223,8 +224,8 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
 /****************************************************
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
-pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Sengo) -> umasu {
-    use super::super::teigi::shogi_syugo::Sengo::*;
+pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
+    use super::super::model::master::phase::Phase::*;
     match *sn {
         Sen => BAN_MAX - ms + BAN_MIN,
         _ => ms,
@@ -408,10 +409,10 @@ pub fn km_is_nagaikiki(km: &Piece) -> bool {
 /**
  * 先後付き駒→駒種類
  */
-pub fn km_to_sn_kms(km: &Piece) -> (Sengo, PieceType) {
+pub fn km_to_sn_kms(km: &Piece) -> (Phase, PieceType) {
+    use super::super::model::master::phase::Phase::*;
     use super::super::model::master::piece::Piece::*;
     use super::super::model::master::piece_type::PieceType::*;
-    use super::super::teigi::shogi_syugo::Sengo::*;
     match *km {
         R0 => (Sen, R),
         K0 => (Sen, K),
@@ -441,17 +442,17 @@ pub fn km_to_sn_kms(km: &Piece) -> (Sengo, PieceType) {
         PU1 => (Go, PU),
         PS1 => (Go, PS),
         PH1 => (Go, PH),
-        Piece::Kara => (Sengo::Owari, PieceType::Kara),
-        Piece::Owari => (Sengo::Owari, PieceType::Owari),
+        Piece::Kara => (Phase::Owari, PieceType::Kara),
+        Piece::Owari => (Phase::Owari, PieceType::Owari),
     }
 }
 /**
  * 先後付き駒　を　先後　へ変換。
  */
 #[allow(dead_code)]
-pub fn km_to_sn(km: &Piece) -> Sengo {
+pub fn km_to_sn(km: &Piece) -> Phase {
+    use super::super::model::master::phase::Phase::*;
     use super::super::model::master::piece::Piece::*;
-    use super::super::teigi::shogi_syugo::Sengo::*;
     match *km {
         R0 => Sen,
         K0 => Sen,
@@ -481,8 +482,8 @@ pub fn km_to_sn(km: &Piece) -> Sengo {
         PU1 => Go,
         PS1 => Go,
         PH1 => Go,
-        Kara => Sengo::Owari,
-        Piece::Owari => Sengo::Owari,
+        Kara => Phase::Owari,
+        Piece::Owari => Phase::Owari,
     }
 }
 /**
@@ -749,11 +750,11 @@ pub fn kms_can_da(kms: &PieceType) -> bool {
     }
 }
 // 先後＆駒種類→先後付き駒
-pub fn sn_kms_to_km(sn: &Sengo, kms: &PieceType) -> Piece {
+pub fn sn_kms_to_km(sn: &Phase, kms: &PieceType) -> Piece {
     use super::super::model::master::piece::Piece::*;
     use super::super::model::master::piece_type::PieceType::*;
     match *sn {
-        Sengo::Sen => match *kms {
+        Phase::Sen => match *kms {
             R => R0,
             K => K0,
             Z => Z0,
@@ -770,7 +771,7 @@ pub fn sn_kms_to_km(sn: &Sengo, kms: &PieceType) -> Piece {
             PH => PH0,
             _ => Piece::Owari,
         },
-        Sengo::Go => match *kms {
+        Phase::Go => match *kms {
             R => R1,
             K => K1,
             Z => Z1,
@@ -787,7 +788,7 @@ pub fn sn_kms_to_km(sn: &Sengo, kms: &PieceType) -> Piece {
             PH => PH1,
             _ => Piece::Owari,
         },
-        Sengo::Owari => Piece::Owari,
+        Phase::Owari => Piece::Owari,
     }
 }
 

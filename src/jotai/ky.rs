@@ -9,6 +9,7 @@
 //!
 
 use super::super::jotai::uchu::*;
+use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
 use super::super::model::master::piece_type::*;
@@ -83,7 +84,7 @@ impl Kyokumen {
     /**
      * 歩が置いてあるか確認
      */
-    pub fn exists_fu_by_sn_suji(&self, sn: &Sengo, suji: i8) -> bool {
+    pub fn exists_fu_by_sn_suji(&self, sn: &Phase, suji: i8) -> bool {
         for dan in DAN_1..DAN_10 {
             let ms = suji_dan_to_ms(suji, dan);
             let km = self.get_km_by_ms(ms);
@@ -105,7 +106,7 @@ impl Kyokumen {
      */
     pub fn set_km_by_ms(&mut self, ms: umasu, km: Piece) {
         self.ban[ms] = km;
-        use super::super::teigi::shogi_syugo::Sengo::*;
+        use super::super::model::master::phase::Phase::*;
         match km {
             Piece::R0 => self.ms_r[Sen as usize] = ms,
             Piece::R1 => self.ms_r[Go as usize] = ms,
@@ -128,7 +129,7 @@ impl Kyokumen {
      *
      * return : 取った駒
      */
-    pub fn do_sasite(&mut self, sn: &Sengo, ss: &Sasite) -> Piece {
+    pub fn do_sasite(&mut self, sn: &Phase, ss: &Sasite) -> Piece {
         // 動かす駒
         let km;
         // 取った駒
@@ -170,7 +171,7 @@ impl Kyokumen {
      * 指し手の　進む戻る　を逆さにして、盤上の駒配置を動かすぜ☆（＾～＾）
      * 手目のカウントが増えたりはしないぜ☆（＾～＾）
      */
-    pub fn undo_sasite(&mut self, sn: &Sengo, ss: &Sasite, cap: &Piece) {
+    pub fn undo_sasite(&mut self, sn: &Phase, ss: &Sasite, cap: &Piece) {
         // 移動先の駒
         let km;
 
@@ -223,7 +224,7 @@ impl Kyokumen {
     /**
      * 指定の升にある駒の先後、または空升
      */
-    pub fn get_sn_by_ms(&self, ms: umasu) -> Sengo {
+    pub fn get_sn_by_ms(&self, ms: umasu) -> Phase {
         km_to_sn(&self.get_km_by_ms(ms))
     }
 

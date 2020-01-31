@@ -4,6 +4,7 @@
 use super::super::super::consoles::asserts::*;
 use super::super::super::jotai::uchu::*;
 use super::super::super::meidai::math_meidai::*;
+use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::syazo::sasite_seisei::*;
 use super::super::super::syazo::sasite_sentaku::*;
@@ -165,7 +166,7 @@ impl KomatoriResult {
  *
  * return u64 : KomatoriResult のハッシュ
  */
-pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Sengo, ms_target: umasu) -> HashSet<u64> {
+pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<u64> {
     assert_banjo_ms(
         ms_target,
         &format!("(119)Ｌookup_banjo_catch sn={} ms_target={}", sn, ms_target),

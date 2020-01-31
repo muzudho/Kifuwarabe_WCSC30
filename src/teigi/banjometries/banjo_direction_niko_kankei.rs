@@ -33,8 +33,8 @@ pub fn get_dir8_to_slider_from_target(
     let p_target = ms_to_p(ms_target);
 
     let (sn_slider, kms) = km_to_sn_kms(&km_slider);
+    use super::super::super::model::master::phase::Phase::*;
     use super::super::super::model::master::piece_type::PieceType::*;
-    use super::super::super::teigi::shogi_syugo::Sengo::*;
     match kms {
         K => {
             // 筋か、段かのどちらかが同じ

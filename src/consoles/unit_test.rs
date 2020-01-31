@@ -5,6 +5,7 @@
 //!
 use super::super::jotai::uchu::*;
 use super::super::meidai::math_meidai::*;
+use super::super::model::master::phase::Phase;
 use super::super::model::master::piece_type::PieceType;
 use super::super::siko::randommove;
 use super::super::syazo::sasite_element::*;
@@ -69,7 +70,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = sn_kms_to_km(&Sengo::Go, &kms); // △ph
+            let km = sn_kms_to_km(&Phase::Go, &kms); // △ph
             let ms_dst = 79;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -83,7 +84,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = sn_kms_to_km(&Sengo::Go, &kms); // △ph
+            let km = sn_kms_to_km(&Phase::Go, &kms); // △ph
             let ms_dst = 68;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -97,7 +98,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = sn_kms_to_km(&Sengo::Go, &kms); // △ph
+            let km = sn_kms_to_km(&Phase::Go, &kms); // △ph
             let ms_dst = 77;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -111,7 +112,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
-            let km = sn_kms_to_km(&Sengo::Sen, &kms); // ▼ら
+            let km = sn_kms_to_km(&Phase::Sen, &kms); // ▼ら
             let ms_dst = 58;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
