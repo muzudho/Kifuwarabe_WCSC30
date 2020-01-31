@@ -1,3 +1,11 @@
+//!
+//! 駒
+//!
+//! 先後付き駒
+//!
+
+use super::super::super::teigi::conv::*;
+use super::phase::*;
 use std::fmt;
 
 /**
@@ -108,3 +116,93 @@ impl fmt::Display for Piece {
         }
     }
 }
+
+/**
+ * 駒の一致比較
+ */
+pub fn match_km(a: &Piece, b: &Piece) -> bool {
+    km_to_num(a) == km_to_num(b)
+}
+
+pub const KM_ARRAY_HALF_LN: usize = 14;
+pub const KM_ARRAY_LN: usize = 28;
+pub const KM_ARRAY: [Piece; KM_ARRAY_LN] = [
+    Piece::R0,  // らいおん
+    Piece::K0,  // きりん
+    Piece::Z0,  // ぞう
+    Piece::I0,  // いぬ
+    Piece::N0,  // ねこ
+    Piece::U0,  // うさぎ
+    Piece::S0,  // いのしし
+    Piece::H0,  // ひよこ
+    Piece::PK0, // ぱわーあっぷきりん
+    Piece::PZ0, // ぱわーあっぷぞう
+    Piece::PN0, // ぱわーあっぷねこ
+    Piece::PU0, // ぱわーあっぷうさぎ
+    Piece::PS0, // ぱわーあっぷいのしし
+    Piece::PH0, // ぱわーあっぷひよこ
+    Piece::R1,  // らいおん
+    Piece::K1,  // きりん
+    Piece::Z1,  // ぞう
+    Piece::I1,  // いぬ
+    Piece::N1,  // ねこ
+    Piece::U1,  // うさぎ
+    Piece::S1,  // いのしし
+    Piece::H1,  // ひよこ
+    Piece::PK1, // ぱわーあっぷきりん
+    Piece::PZ1, // ぱわーあっぷぞう
+    Piece::PN1, // ぱわーあっぷねこ
+    Piece::PU1, // ぱわーあっぷうさぎ
+    Piece::PS1, // ぱわーあっぷいのしし
+    Piece::PH1, // ぱわーあっぷひよこ
+];
+pub const SN_KM_ARRAY: [[Piece; KM_ARRAY_HALF_LN]; SN_LN] = [
+    [
+        Piece::R0,  // らいおん
+        Piece::K0,  // きりん
+        Piece::Z0,  // ぞう
+        Piece::I0,  // いぬ
+        Piece::N0,  // ねこ
+        Piece::U0,  // うさぎ
+        Piece::S0,  // いのしし
+        Piece::H0,  // ひよこ
+        Piece::PK0, // ぱわーあっぷきりん
+        Piece::PZ0, // ぱわーあっぷぞう
+        Piece::PN0, // ぱわーあっぷねこ
+        Piece::PU0, // ぱわーあっぷうさぎ
+        Piece::PS0, // ぱわーあっぷいのしし
+        Piece::PH0, // ぱわーあっぷひよこ
+    ],
+    [
+        Piece::R1,  // らいおん
+        Piece::K1,  // きりん
+        Piece::Z1,  // ぞう
+        Piece::I1,  // いぬ
+        Piece::N1,  // ねこ
+        Piece::U1,  // うさぎ
+        Piece::S1,  // いのしし
+        Piece::H1,  // ひよこ
+        Piece::PK1, // ぱわーあっぷきりん
+        Piece::PZ1, // ぱわーあっぷぞう
+        Piece::PN1, // ぱわーあっぷねこ
+        Piece::PU1, // ぱわーあっぷうさぎ
+        Piece::PS1, // ぱわーあっぷいのしし
+        Piece::PH1, // ぱわーあっぷひよこ
+    ],
+    [
+        Piece::Owari, // らいおん
+        Piece::Owari, // きりん
+        Piece::Owari, // ぞう
+        Piece::Owari, // いぬ
+        Piece::Owari, // ねこ
+        Piece::Owari, // うさぎ
+        Piece::Owari, // いのしし
+        Piece::Owari, // ひよこ
+        Piece::Owari, // ぱわーあっぷきりん
+        Piece::Owari, // ぱわーあっぷぞう
+        Piece::Owari, // ぱわーあっぷねこ
+        Piece::Owari, // ぱわーあっぷうさぎ
+        Piece::Owari, // ぱわーあっぷいのしし
+        Piece::Owari, // ぱわーあっぷひよこ
+    ],
+];

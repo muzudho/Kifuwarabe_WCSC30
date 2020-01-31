@@ -1,3 +1,8 @@
+//!
+//! 駒種類
+//!
+
+use super::super::super::teigi::conv::*;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
@@ -61,3 +66,71 @@ impl fmt::Display for PieceType {
         }
     }
 }
+
+// 駒の動ける方向数、終端子込み
+pub const KM_UGOKI_LN: usize = 9;
+/**
+ * 駒種類の一致比較
+ */
+pub fn match_kms(a: &PieceType, b: &PieceType) -> bool {
+    kms_to_num(a) == kms_to_num(b)
+}
+
+// 駒種類数
+pub const KMS_ARRAY_LN: usize = 14;
+// 駒種類
+pub const KMS_ARRAY: [PieceType; KMS_ARRAY_LN] = [
+    PieceType::R,  // らいおん
+    PieceType::K,  // きりん
+    PieceType::Z,  // ぞう
+    PieceType::I,  // いぬ
+    PieceType::N,  // ねこ
+    PieceType::U,  // うさぎ
+    PieceType::S,  // いのしし
+    PieceType::H,  // ひよこ
+    PieceType::PK, // ぱわーあっぷきりん
+    PieceType::PZ, // ぱわーあっぷぞう
+    PieceType::PN, // ぱわーあっぷねこ
+    PieceType::PU, // ぱわーあっぷうさぎ
+    PieceType::PS, // ぱわーあっぷいのしし
+    PieceType::PH, // ぱわーあっぷひよこ
+];
+
+// 非成 駒種類数
+pub const KMS_NPRO_ARRAY_LN: usize = 8;
+// 非成 駒種類
+pub const KMS_NPRO_ARRAY: [PieceType; KMS_NPRO_ARRAY_LN] = [
+    PieceType::R, // らいおん
+    PieceType::K, // きりん
+    PieceType::Z, // ぞう
+    PieceType::I, // いぬ
+    PieceType::N, // ねこ
+    PieceType::U, // うさぎ
+    PieceType::S, // いのしし
+    PieceType::H, // ひよこ
+];
+
+// 成 駒種類数
+pub const KMS_PRO_ARRAY_LN: usize = 6;
+// 成 駒種類
+pub const KMS_PRO_ARRAY: [PieceType; KMS_PRO_ARRAY_LN] = [
+    PieceType::PK, // ぱわーあっぷきりん
+    PieceType::PZ, // ぱわーあっぷぞう
+    PieceType::PN, // ぱわーあっぷねこ
+    PieceType::PU, // ぱわーあっぷうさぎ
+    PieceType::PS, // ぱわーあっぷいのしし
+    PieceType::PH, // ぱわーあっぷひよこ
+];
+
+// 持駒種類数
+pub const MGS_ARRAY_LN: usize = 7;
+// 持駒種類
+pub const MGS_ARRAY: [PieceType; MGS_ARRAY_LN] = [
+    PieceType::K,
+    PieceType::Z,
+    PieceType::I,
+    PieceType::N,
+    PieceType::U,
+    PieceType::S,
+    PieceType::H,
+];

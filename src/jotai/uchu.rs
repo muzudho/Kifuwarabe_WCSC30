@@ -13,6 +13,7 @@ use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
 use super::super::model::master::piece_type::PieceType;
+use super::super::model::master::piece_type::*;
 use super::super::model::master::place::*;
 use super::super::model::master::ply::*;
 use super::super::siko::visions::vision_tree::*;
@@ -898,9 +899,9 @@ impl Uchu {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<umasu> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
-            super::super::teigi::shogi_syugo::SenteJin::to_elm()
+            super::super::model::master::region::SenteJin::to_elm()
         } else {
-            super::super::teigi::shogi_syugo::GoteJin::to_elm()
+            super::super::model::master::region::GoteJin::to_elm()
         }
     }
     /**
@@ -909,9 +910,9 @@ impl Uchu {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<umasu> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
-            super::super::teigi::shogi_syugo::GoteJin::to_elm()
+            super::super::model::master::region::GoteJin::to_elm()
         } else {
-            super::super::teigi::shogi_syugo::SenteJin::to_elm()
+            super::super::model::master::region::SenteJin::to_elm()
         }
     }
 
