@@ -16,10 +16,6 @@ pub mod consoles;
 pub mod controller;
 pub mod jotai;
 pub mod model;
-pub mod siko;
-
-use std::collections::HashSet;
-use std::io;
 
 use config::*;
 use consoles::unit_test::*;
@@ -28,11 +24,13 @@ use consoles::visuals::title::*;
 use controller::boardmetries::mapping::sasite_seisei::*;
 use controller::common::conv::*;
 use controller::communication::usi::*;
+use controller::thinking::think::*;
 use jotai::uchu::*;
 use model::master::constants::*;
 use model::master::misc::*;
 use rand::Rng;
-use siko::think::*;
+use std::collections::HashSet;
+use std::io;
 
 fn main() {
     // 宇宙
@@ -83,7 +81,7 @@ fn main() {
             //}else if 9<len && &line[0..10] == "kmugokidir" {
             g_writeln("9<len kmugokidir");
             // 駒の動きの移動元として有りえる方角
-            let kms = siko::randommove::rnd_kms();
+            let kms = controller::thinking::randommove::rnd_kms();
             g_writeln(&format!("{}のムーブ元", &kms));
             uchu.hyoji_kmugoki_dir(kms);
             g_writeln(""); //改行
@@ -107,7 +105,7 @@ fn main() {
         } else if 5 < len && &line[starts..6] == "rndkms" {
             g_writeln("5<len rndkms");
             // 乱駒種類
-            let kms = siko::randommove::rnd_kms();
+            let kms = controller::thinking::randommove::rnd_kms();
             g_writeln(&format!("乱駒種類={}", &kms));
         } else if 5 < len && &line[starts..6] == "sasite" {
             // FIXME 合法手とは限らない
@@ -118,7 +116,7 @@ fn main() {
             g_writeln("----指し手生成 ここまで----");
         } else if 4 < len && &line[starts..5] == "rndms" {
             // 乱升
-            let ms = siko::randommove::rnd_ms();
+            let ms = controller::thinking::randommove::rnd_ms();
             g_writeln(&format!("乱升={}", ms));
         } else if 3 < len && &line[starts..4] == "teigi::conv" {
             g_writeln("teigi::convのテスト");

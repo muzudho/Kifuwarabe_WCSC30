@@ -9,11 +9,11 @@ use super::super::super::super::consoles::asserts::*;
 use super::super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::controller::thinking::results::komatori_result::*;
 use super::super::super::super::jotai::uchu::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::place::*;
 use super::super::super::super::model::master::ply::*;
-use super::super::super::super::siko::results::komatori_result::*;
 use std::collections::HashSet;
 
 pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {

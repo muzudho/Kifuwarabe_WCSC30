@@ -1,18 +1,18 @@
 //!
 //! 結果：駒を取られる手
 //!
-use super::super::super::consoles::asserts::*;
-use super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
-use super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
-use super::super::super::controller::boardmetries::proposition::math_meidai::*;
-use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
-use super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::jotai::uchu::*;
-use super::super::super::model::master::phase::Phase;
-use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::place::*;
+use super::super::super::super::consoles::asserts::*;
+use super::super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
+use super::super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
+use super::super::super::super::controller::boardmetries::proposition::math_meidai::*;
+use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::controller::geometries::geo_teigi::*;
+use super::super::super::super::jotai::uchu::*;
+use super::super::super::super::model::master::phase::Phase;
+use super::super::super::super::model::master::piece::Piece;
+use super::super::super::super::model::master::piece_type::*;
+use super::super::super::super::model::master::place::*;
 use std::collections::HashSet;
 use std::fmt;
 

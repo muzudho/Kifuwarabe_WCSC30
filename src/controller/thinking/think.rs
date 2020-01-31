@@ -6,13 +6,13 @@ extern crate rand;
 use rand::Rng;
 use std::collections::HashSet;
 
-use super::super::controller::boardmetries::hypothesis::atamakin;
-use super::super::controller::boardmetries::mapping::sasite_seisei::*;
-use super::super::controller::boardmetries::mapping::sasite_sentaku::*;
-use super::super::controller::communication::usi::*;
-use super::super::jotai::mediators::med_kikisu::*;
-use super::super::jotai::uchu::*;
-use super::super::siko::visions::vision_tree::*;
+use super::super::super::controller::boardmetries::hypothesis::atamakin;
+use super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
+use super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
+use super::super::super::controller::communication::usi::*;
+use super::super::super::controller::thinking::visions::vision_tree::*;
+use super::super::super::jotai::mediators::med_kikisu::*;
+use super::super::super::jotai::uchu::*;
 
 /**
  * 現局面での最善手を返すぜ☆（*＾～＾*）
