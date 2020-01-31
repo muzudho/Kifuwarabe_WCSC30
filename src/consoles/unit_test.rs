@@ -5,6 +5,7 @@
 //!
 use super::super::jotai::uchu::*;
 use super::super::meidai::math_meidai::*;
+use super::super::model::master::person::Person;
 use super::super::model::master::phase::Phase;
 use super::super::model::master::piece_type::PieceType;
 use super::super::siko::randommove;
@@ -15,7 +16,6 @@ use super::super::teigi::shogi_syugo::*;
 use super::super::tusin::usi::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;
-
 /**
  * test 2
  * といったコマンドに対応☆（＾～＾）
@@ -30,7 +30,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         // 駒の移動元升
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
-        let km = sn_kms_to_km(&uchu.get_teban(&Jiai::Ji), kms);
+        let km = sn_kms_to_km(&uchu.get_teban(&Person::Ji), kms);
         let ms_dst = randommove::rnd_ms();
         g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
         let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -44,7 +44,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         *starts += 4;
         // 移動後の駒
         let kms = randommove::rnd_kms();
-        let km = sn_kms_to_km(&uchu.get_teban(&Jiai::Ji), &kms);
+        let km = sn_kms_to_km(&uchu.get_teban(&Person::Ji), &kms);
         // 移動先の升、および　不成駒／成駒
         let ms_dst = randommove::rnd_ms();
         let pro_dst = randommove::rnd_bool();

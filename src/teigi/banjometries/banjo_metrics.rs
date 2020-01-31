@@ -2,13 +2,15 @@
 //! 盤上いろいろ☆（＾～＾）
 //!
 use super::super::super::jotai::uchu::*;
+use super::super::super::model::master::person::Person;
+use super::super::super::model::master::phase::*;
 use super::super::conv::*;
 use super::super::shogi_syugo::*;
 
 pub fn is_ji_km_by_ms(ms: umasu, uchu: &Uchu) -> bool {
     let km = uchu.ky.get_km_by_ms(ms);
     let (sn, _kms) = km_to_sn_kms(&km);
-    match_sn(&sn, &uchu.get_teban(&Jiai::Ji))
+    match_sn(&sn, &uchu.get_teban(&Person::Ji))
 }
 
 // TODO

@@ -3,6 +3,7 @@
 //!
 #![allow(dead_code)]
 use super::super::consoles::asserts::*;
+use super::super::model::master::person::Person;
 use super::super::model::master::phase::Phase;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece_type::PieceType;
@@ -127,16 +128,16 @@ pub fn hanten_sn(sn: &Phase) -> Phase {
 /************
  * 自分相手 *
  ************/
-pub fn jiai_to_num(jiai: &Jiai) -> usize {
-    use super::super::teigi::shogi_syugo::Jiai::*;
+pub fn jiai_to_num(jiai: &Person) -> usize {
+    use super::super::model::master::person::Person::*;
     match *jiai {
         Ji => 0,
         Ai => 1,
         Owari => 2,
     }
 }
-pub fn hanten_jiai(jiai: &Jiai) -> Jiai {
-    use super::super::teigi::shogi_syugo::Jiai::*;
+pub fn hanten_jiai(jiai: &Person) -> Person {
+    use super::super::model::master::person::Person::*;
     match *jiai {
         Ji => Ai,
         Ai => Ji,

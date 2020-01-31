@@ -5,6 +5,7 @@
 use super::super::consoles::asserts::*;
 use super::super::jotai::uchu::*;
 use super::super::model::master::phase::Phase;
+use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::teigi::conv::*;
 use super::super::teigi::shogi_syugo::*;

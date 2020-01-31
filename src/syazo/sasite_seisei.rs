@@ -4,6 +4,8 @@
 
 use super::super::consoles::asserts::*;
 use super::super::jotai::uchu::*;
+use super::super::model::master::person::Person;
+use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece_type::PieceType;
 use super::super::syazo::sasite_element::*;
@@ -30,7 +32,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
             let km_src = uchu.ky.get_km_by_ms(ms_src);
             let sn = km_to_sn(&km_src);
 
-            if match_sn(&sn, &uchu.get_teban(&Jiai::Ji)) {
+            if match_sn(&sn, &uchu.get_teban(&Person::Ji)) {
                 // 手番の駒
 
                 let mut dst_hashset: HashSet<umasu> = HashSet::new();
@@ -94,7 +96,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
 
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
-                        let km_motigoma = sn_kms_to_km(&uchu.get_teban(&Jiai::Ji), kms_motigoma);
+                        let km_motigoma = sn_kms_to_km(&uchu.get_teban(&Person::Ji), kms_motigoma);
                         if 0 < uchu.ky.get_mg(&km_motigoma) {
                             // 駒を持っていれば
                             insert_da_kms_by_ms_km(

@@ -7,6 +7,7 @@ use rand::Rng;
 
 use super::super::consoles::asserts::*;
 use super::super::jotai::uchu::*;
+use super::super::model::master::person::Person;
 use super::super::model::master::ply::*;
 use super::super::siko::results::komatori_result::*;
 use super::super::syazo::sasite_element::*;
@@ -38,12 +39,12 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
  */
 pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Uchu) {
     // 自玉の位置
-    let ms_r = uchu.get_ms_r(&Jiai::Ji);
+    let ms_r = uchu.get_ms_r(&Person::Ji);
     g_writeln(&format!("info string My raion {}.", ms_r));
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> =
-        lookup_banjo_catch(uchu, &uchu.get_teban(&Jiai::Ai), ms_r);
+        lookup_banjo_catch(uchu, &uchu.get_teban(&Person::Ai), ms_r);
     if 0 < komatori_result_hashset.len() {
         // 王手されていれば
 
@@ -104,7 +105,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
     // 自玉の位置
-    let ms_r = uchu.ky.ms_r[sn_to_num(&uchu.get_teban(&Jiai::Ji))];
+    let ms_r = uchu.ky.ms_r[sn_to_num(&uchu.get_teban(&Person::Ji))];
 
     // 王手回避カードを発行する
     // TODO 王手が２か所から掛かっていたら、全部回避しないといけない☆
@@ -130,14 +131,14 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<umasu> = HashSet::new();
         insert_narazu_src_by_sn_ms(
-            &uchu.get_teban(&Jiai::Ji), // 指定の升に駒を動かそうとしている手番
-            ms_r_new,                   // 指定の升
+            &uchu.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            ms_r_new,                     // 指定の升
             &uchu,
             &mut attackers,
         );
         insert_narumae_src_by_sn_ms(
-            &uchu.get_teban(&Jiai::Ji), // 指定の升に駒を動かそうとしている手番
-            ms_r_new,                   // 指定の升
+            &uchu.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            ms_r_new,                     // 指定の升
             &uchu,
             &mut attackers,
         );
@@ -148,7 +149,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
             "info {} evaluated => {} attackers. offence={}->{}",
             ss_potential,
             attackers.len(),
-            uchu.get_teban(&Jiai::Ji),
+            uchu.get_teban(&Person::Ji),
             ms_r_new
         ));
         for ms_atk in attackers.iter() {

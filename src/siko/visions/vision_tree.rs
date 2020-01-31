@@ -2,6 +2,7 @@
 //! 思考部だぜ☆（＾～＾）
 //!
 use super::super::super::jotai::uchu::*;
+use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::syazo::sasite_element::*;
 use super::super::super::teigi::conv::*;

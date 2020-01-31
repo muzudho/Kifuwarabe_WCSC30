@@ -4,7 +4,7 @@
 //!
 
 use super::super::jotai::uchu::*;
-use super::super::model::master::phase::Phase;
+use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece_type::PieceType;
@@ -12,53 +12,6 @@ use super::super::model::master::piece_type::*;
 use super::conv::*;
 use std::collections::HashSet;
 use std::fmt;
-
-/**
- * 先後の一致比較
- */
-pub fn match_sn(a: &Phase, b: &Phase) -> bool {
-    sn_to_num(a) == sn_to_num(b)
-}
-
-pub const SN_ARRAY_LN: usize = 2;
-pub const SN_ARRAY: [Phase; SN_ARRAY_LN] = [Phase::Sen, Phase::Go];
-
-/************
- * 自分相手 *
- ************/
-// 先後とは別物
-pub const JIAI_LN: usize = 3;
-/**
- * 先後。単純にプレイヤー１を先手、プレイヤー２を後手とする。
- * 駒落ち戦での通称　上手／下手　の場合、上手は先手、下手は後手とする。
- */
-#[derive(Clone)]
-pub enum Jiai {
-    Ji,
-    Ai,
-    Owari,
-}
-pub const JIAI_JI: usize = 0;
-pub const JIAI_AI: usize = 1;
-impl fmt::Display for Jiai {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use super::super::teigi::shogi_syugo::Jiai::*;
-        match *self {
-            Ji => write!(f, "自"),
-            Ai => write!(f, "相"),
-            Owari => write!(f, "×"),
-        }
-    }
-}
-/**
- * 一致比較
- */
-pub fn match_jiai(a: &Jiai, b: &Jiai) -> bool {
-    jiai_to_num(a) == jiai_to_num(b)
-}
-
-pub const JIAI_ARRAY_LN: usize = 2;
-pub const JIAI_ARRAY: [Jiai; JIAI_ARRAY_LN] = [Jiai::Ji, Jiai::Ai];
 
 /******************
  * 盤、升、筋、段 *
@@ -278,7 +231,7 @@ impl KmSyugo {
     /**
      * 自分相手
      */
-    pub fn new_jiai(&self, jiai: &Jiai, uchu: &Uchu) -> KmSyugo {
+    pub fn new_jiai(&self, jiai: &Person, uchu: &Uchu) -> KmSyugo {
         let sn0 = uchu.get_teban(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {

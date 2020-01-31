@@ -8,6 +8,7 @@ extern crate rand;
 use rand::Rng;
 
 use super::super::config::*;
+use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
 use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
@@ -789,13 +790,13 @@ impl Uchu {
     pub fn set_ky0_mg(&mut self, km: Piece, maisu: i8) {
         self.ky0.mg[km as usize] = maisu;
     }
-    pub fn get_jiai_by_km(&self, km: &Piece) -> Jiai {
+    pub fn get_jiai_by_km(&self, km: &Piece) -> Person {
         let (sn, _kms) = km_to_sn_kms(km);
 
-        if match_sn(&sn, &self.get_teban(&Jiai::Ji)) {
-            Jiai::Ji
+        if match_sn(&sn, &self.get_teban(&Person::Ji)) {
+            Person::Ji
         } else {
-            Jiai::Ai
+            Person::Ai
         }
     }
 
@@ -810,8 +811,8 @@ impl Uchu {
         self.teme
     }
     // 手番
-    pub fn get_teban(&self, jiai: &Jiai) -> Phase {
-        use super::super::teigi::shogi_syugo::Jiai::*;
+    pub fn get_teban(&self, jiai: &Person) -> Phase {
+        use super::super::model::master::person::Person::*;
         match *jiai {
             Ji => {
                 // 手番
@@ -895,7 +896,7 @@ impl Uchu {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<umasu> {
-        if let Phase::Sen = self.get_teban(&Jiai::Ji) {
+        if let Phase::Sen = self.get_teban(&Person::Ji) {
             super::super::teigi::shogi_syugo::SenteJin::to_elm()
         } else {
             super::super::teigi::shogi_syugo::GoteJin::to_elm()
@@ -906,7 +907,7 @@ impl Uchu {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<umasu> {
-        if let Phase::Sen = self.get_teban(&Jiai::Ji) {
+        if let Phase::Sen = self.get_teban(&Person::Ji) {
             super::super::teigi::shogi_syugo::GoteJin::to_elm()
         } else {
             super::super::teigi::shogi_syugo::SenteJin::to_elm()
@@ -1049,7 +1050,7 @@ impl Uchu {
             ky.mg[Piece::S1 as usize],
             ky.mg[Piece::H1 as usize],
             self.get_teme(),
-            self.get_teban(&Jiai::Ji),
+            self.get_teban(&Person::Ji),
             self.count_same_ky()
         )
     }
@@ -1190,7 +1191,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     // 入れた指し手の通り指すぜ☆（＾～＾）
     pub fn do_ss(&mut self, ss: &Sasite) {
         // もう入っているかも知れないが、棋譜に入れる☆
-        let sn = self.get_teban(&Jiai::Ji);
+        let sn = self.get_teban(&Person::Ji);
         let cap = self.ky.do_sasite(&sn, ss);
         let teme = self.teme;
         self.kifu[teme] = *ss;
@@ -1207,7 +1208,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         if 0 < self.teme {
             // 棋譜から読取、手目も減る
             self.teme -= 1;
-            let sn = self.get_teban(&Jiai::Ji);
+            let sn = self.get_teban(&Person::Ji);
             let ss = &self.get_sasite();
             let cap = self.cap[self.teme];
             self.ky.undo_sasite(&sn, &ss, &cap);
@@ -1245,7 +1246,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
         // 手番ハッシュ
         use super::super::model::master::phase::Phase::*;
-        match self.get_teban(&Jiai::Ji) {
+        match self.get_teban(&Person::Ji) {
             Sen => hash ^= self.ky_hash_seed.sn[SN_SEN],
             Go => hash ^= self.ky_hash_seed.sn[SN_GO],
             _ => {}

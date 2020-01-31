@@ -2,6 +2,7 @@
 //! 先後
 //!
 
+use super::super::super::teigi::conv::*;
 use std::fmt;
 
 pub const SN_LN: usize = 3;
@@ -32,3 +33,13 @@ impl fmt::Display for Phase {
         }
     }
 }
+
+/**
+ * 先後の一致比較
+ */
+pub fn match_sn(a: &Phase, b: &Phase) -> bool {
+    sn_to_num(a) == sn_to_num(b)
+}
+
+pub const SN_ARRAY_LN: usize = 2;
+pub const SN_ARRAY: [Phase; SN_ARRAY_LN] = [Phase::Sen, Phase::Go];

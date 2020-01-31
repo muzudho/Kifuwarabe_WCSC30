@@ -5,13 +5,13 @@
 
 use super::super::super::consoles::asserts::*;
 use super::super::super::jotai::uchu::*;
+use super::super::super::model::master::person::Person;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::siko::randommove;
 use super::super::super::siko::results::jisatusyu_result::*;
 use super::super::super::syazo::sasite_seisei::*;
 use super::super::super::syazo::sasite_sentaku::*;
 use super::super::super::teigi::conv::*;
-use super::super::super::teigi::shogi_syugo::*;
 use super::super::super::tusin::usi::*;
 use std::collections::HashSet;
 
@@ -55,7 +55,7 @@ pub fn get_ss_by_random(uchu: &Uchu) -> Sasite {
         assert_banjo_ms(ms_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
-        let km_dst = sn_kms_to_km(&uchu.get_teban(&Jiai::Ji), randommove::rnd_kms());
+        let km_dst = sn_kms_to_km(&uchu.get_teban(&Person::Ji), randommove::rnd_kms());
 
         ss_hashset.clear();
         insert_ss_by_ms_km_on_banjo(&uchu, ms_dst, &km_dst, &mut ss_hashset);

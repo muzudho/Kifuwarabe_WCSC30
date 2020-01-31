@@ -3,6 +3,8 @@
 //! 頭金仮説
 //!
 use super::super::jotai::uchu::*;
+use super::super::model::master::person::Person;
+use super::super::model::master::person::*;
 use super::super::model::master::piece_type::PieceType;
 use super::super::teigi::banjometries::*;
 use super::super::teigi::conv::*;
@@ -14,7 +16,7 @@ use super::super::teigi::shogi_syugo_seki::*;
  */
 pub fn is_s(uchu: &Uchu) -> bool {
     // 相手玉の位置
-    let ms_r = uchu.get_ms_r(&Jiai::Ai);
+    let ms_r = uchu.get_ms_r(&Person::Ai);
 
     let p_r = ms_to_p(ms_r);
     let p_south_r = p_r.to_south();
@@ -25,7 +27,7 @@ pub fn is_s(uchu: &Uchu) -> bool {
     let ms_south_r = p_to_ms(&p_south_r);
     let km = uchu.ky.get_km_by_ms(ms_south_r);
     let jiai_km = uchu.get_jiai_by_km(&km);
-    if !match_jiai(&jiai_km, &Jiai::Ji) {
+    if !match_jiai(&jiai_km, &Person::Ji) {
         return true;
     }
 
@@ -89,7 +91,7 @@ pub fn is_atamakin(
     uchu: &Uchu,
 ) -> bool {
     // 相手らいおんのマス
-    let ms_ai_r = uchu.get_ms_r(&Jiai::Ai);
+    let ms_ai_r = uchu.get_ms_r(&Person::Ai);
 
     // らいおん以外の相手の駒種類
     let mut kms_set_ai_c_r = KmsSyugo::new_all();
