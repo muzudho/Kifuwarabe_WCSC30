@@ -2,14 +2,14 @@
 //!
 //! 頭金仮説
 //!
-use super::super::controller::boardmetries::board_metrics;
-use super::super::controller::common::conv::*;
-use super::super::jotai::uchu::*;
-use super::super::model::combine::multiplication::*;
-use super::super::model::master::person::Person;
-use super::super::model::master::person::*;
-use super::super::model::master::piece_type::PieceType;
-use super::super::model::master::piece_type_set::*;
+use super::super::super::super::controller::boardmetries::board_metrics;
+use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::jotai::uchu::*;
+use super::super::super::super::model::combine::multiplication::*;
+use super::super::super::super::model::master::person::Person;
+use super::super::super::super::model::master::person::*;
+use super::super::super::super::model::master::piece_type::PieceType;
+use super::super::super::super::model::master::piece_type_set::*;
 
 /**
  * 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
@@ -38,7 +38,7 @@ pub fn is_s(uchu: &Uchu) -> bool {
 
     let kms = km_to_kms(&km);
 
-    use super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::super::model::master::piece_type::PieceType::*;
     match kms {
         Z | S => {
             return false;

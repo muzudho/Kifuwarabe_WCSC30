@@ -6,9 +6,9 @@ extern crate rand;
 use rand::Rng;
 use std::collections::HashSet;
 
+use super::super::controller::boardmetries::hypothesis::atamakin;
 use super::super::jotai::mediators::med_kikisu::*;
 use super::super::jotai::uchu::*;
-use super::super::kasetu;
 use super::super::siko::visions::vision_tree::*;
 use super::super::syazo::sasite_seisei::*;
 use super::super::syazo::sasite_sentaku::*;
@@ -27,7 +27,7 @@ pub fn think(mut uchu: &mut Uchu) -> Sasite {
     // 相手の利き升調べ（自殺手防止のため）
     read_kikisu(&mut uchu);
 
-    g_writeln(&format!("info test is_s={}", kasetu::atamakin::is_s(&uchu)));
+    g_writeln(&format!("info test is_s={}", atamakin::is_s(&uchu)));
 
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
     let mut ss_hashset: HashSet<u64> = HashSet::new();

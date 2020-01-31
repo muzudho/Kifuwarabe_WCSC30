@@ -15,7 +15,6 @@ pub mod config;
 pub mod consoles;
 pub mod controller;
 pub mod jotai;
-pub mod kasetu;
 pub mod meidai;
 pub mod model;
 pub mod siko;
