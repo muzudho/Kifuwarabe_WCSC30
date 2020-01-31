@@ -4,6 +4,7 @@
 //! test コマンドで実行しろだぜ☆（＾～＾）
 //!
 use super::super::controller::common::conv::*;
+use super::super::controller::geometries::geo_teigi::*;
 use super::super::jotai::uchu::*;
 use super::super::meidai::math_meidai::*;
 use super::super::model::master::person::Person;
@@ -12,7 +13,6 @@ use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::place::umasu;
 use super::super::siko::randommove;
 use super::super::syazo::sasite_element::*;
-use super::super::teigi::geometries::geo_teigi::*;
 use super::super::tusin::usi::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;

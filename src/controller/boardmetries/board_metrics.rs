@@ -1,11 +1,11 @@
 //!
 //! 盤上いろいろ☆（＾～＾）
 //!
-use super::super::super::controller::common::conv::*;
 use super::super::super::jotai::uchu::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::place::*;
+use super::super::common::conv::*;
 
 pub fn is_ji_km_by_ms(ms: umasu, uchu: &Uchu) -> bool {
     let km = uchu.ky.get_km_by_ms(ms);

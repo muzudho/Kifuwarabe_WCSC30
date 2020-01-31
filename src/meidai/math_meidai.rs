@@ -1,7 +1,7 @@
 //!
 //! 命題
 //!
-use super::super::teigi::geometries::geo_teigi::*;
+use super::super::controller::geometries::geo_teigi::*;
 
 /**
  * 升Pは、点ABで作る平面上にあるか？

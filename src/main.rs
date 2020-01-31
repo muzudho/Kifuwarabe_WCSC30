@@ -20,9 +20,7 @@ pub mod meidai;
 pub mod model;
 pub mod siko;
 pub mod syazo;
-pub mod teigi;
 pub mod tusin;
-//mod teiri;
 
 use std::collections::HashSet;
 use std::io;

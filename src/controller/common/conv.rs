@@ -3,6 +3,7 @@
 //!
 #![allow(dead_code)]
 use super::super::super::consoles::asserts::*;
+use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::Phase;
@@ -10,7 +11,6 @@ use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_direction::PieceDirection;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::place::*;
-use super::super::super::teigi::geometries::geo_teigi::*;
 
 /**********
  * 論理値 *
