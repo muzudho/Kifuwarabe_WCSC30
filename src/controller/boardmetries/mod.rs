@@ -6,4 +6,5 @@
 pub mod board_direction_niko_kankei;
 pub mod board_metrics;
 pub mod hypothesis;
+pub mod mapping;
 pub mod proposition;

@@ -17,7 +17,6 @@ pub mod controller;
 pub mod jotai;
 pub mod model;
 pub mod siko;
-pub mod syazo;
 pub mod tusin;
 
 use std::collections::HashSet;
@@ -27,13 +26,13 @@ use config::*;
 use consoles::unit_test::*;
 use consoles::visuals::dumps::*;
 use consoles::visuals::title::*;
+use controller::boardmetries::mapping::sasite_seisei::*;
 use controller::common::conv::*;
 use jotai::uchu::*;
 use model::master::constants::*;
 use model::master::misc::*;
 use rand::Rng;
 use siko::think::*;
-use syazo::sasite_seisei::*;
 use tusin::usi::*;
 
 fn main() {
