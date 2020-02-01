@@ -12,7 +12,7 @@ use std::fmt;
 /// 先後付きの駒と空白
 ///
 // #[derive(Copy, Clone)]
-#[derive(Clone, PartialEq)]
+#[derive(Clone)]
 pub enum Piece {
     // ▼玉
     King1,
