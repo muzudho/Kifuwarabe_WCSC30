@@ -421,145 +421,145 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu
             }
             "1" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
             }
             "2" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
             }
             "3" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
             }
             "4" => {
                 *starts += 1;
                 for _i_kara in 0..4 {
-                    uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "5" => {
                 *starts += 1;
                 for _i_kara in 0..5 {
-                    uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "6" => {
                 *starts += 1;
                 for _i_kara in 0..6 {
-                    uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "7" => {
                 *starts += 1;
                 for _i_kara in 0..7 {
-                    uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "8" => {
                 *starts += 1;
                 for _i_kara in 0..8 {
-                    uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "9" => {
                 *starts += 1;
                 for _i_kara in 0..9 {
-                    uchu.set_ky0_ban_km(suji, dan, Piece::Kara);
+                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "K" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::King1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::King1);
                 suji -= 1;
             }
             "R" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Rook1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Rook1);
                 suji -= 1;
             }
             "B" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Bishop1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Bishop1);
                 suji -= 1;
             }
             "G" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Gold1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Gold1);
                 suji -= 1;
             }
             "S" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Silver1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Silver1);
                 suji -= 1;
             }
             "N" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Knight1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Knight1);
                 suji -= 1;
             }
             "L" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Lance1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Lance1);
                 suji -= 1;
             }
             "P" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Pawn1);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Pawn1);
                 suji -= 1;
             }
             "k" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::King2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::King2);
                 suji -= 1;
             }
             "r" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Rook2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Rook2);
                 suji -= 1;
             }
             "b" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Bishop2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Bishop2);
                 suji -= 1;
             }
             "g" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Gold2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Gold2);
                 suji -= 1;
             }
             "s" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Silver2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Silver2);
                 suji -= 1;
             }
             "n" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Knight2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Knight2);
                 suji -= 1;
             }
             "l" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Lance2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Lance2);
                 suji -= 1;
             }
             "p" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Pawn2);
+                uchu.set_ky0_ban_km(suji, dan, &Piece::Pawn2);
                 suji -= 1;
             }
             "+" => {
@@ -567,62 +567,62 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu
                 match &line[*starts..(*starts + 1)] {
                     "R" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedRook1);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedRook1);
                         suji -= 1;
                     }
                     "B" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedBishop1);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedBishop1);
                         suji -= 1;
                     }
                     "S" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedSilver1);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedSilver1);
                         suji -= 1;
                     }
                     "N" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedKnight1);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedKnight1);
                         suji -= 1;
                     }
                     "L" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedLance1);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedLance1);
                         suji -= 1;
                     }
                     "P" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedPawn1);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedPawn1);
                         suji -= 1;
                     }
                     "r" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedRook2);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedRook2);
                         suji -= 1;
                     }
                     "b" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedBishop2);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedBishop2);
                         suji -= 1;
                     }
                     "s" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedSilver2);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedSilver2);
                         suji -= 1;
                     }
                     "n" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedKnight2);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedKnight2);
                         suji -= 1;
                     }
                     "l" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedLance2);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedLance2);
                         suji -= 1;
                     }
                     "p" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedPawn2);
+                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedPawn2);
                         suji -= 1;
                     }
                     _ => {

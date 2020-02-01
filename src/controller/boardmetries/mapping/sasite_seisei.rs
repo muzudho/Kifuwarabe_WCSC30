@@ -100,11 +100,11 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
 
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
-                        let km_motigoma = PieceStruct::from_phase_piece_type(
+                        let ps_motigoma = PieceStruct::from_phase_piece_type(
                             &uchu.get_teban(&Person::Ji),
                             kms_motigoma,
-                        )
-                        .piece();
+                        );
+                        let km_motigoma = ps_motigoma.piece();
                         if 0 < uchu.ky.get_mg(&km_motigoma) {
                             // 駒を持っていれば
                             insert_da_kms_by_ms_km(
