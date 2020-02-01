@@ -14,6 +14,7 @@ use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
+use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::place::*;
 
@@ -144,7 +145,7 @@ impl Kyokumen {
             // 打で無ければ、元の升の駒を消す。
             if ss.pro {
                 // 成りなら
-                km = km_to_prokm(&self.get_km_by_ms(ss.src));
+                km = PieceStruct::from_piece(&self.get_km_by_ms(ss.src)).promote();
             } else {
                 km = self.get_km_by_ms(ss.src);
             }

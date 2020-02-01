@@ -10,6 +10,7 @@ use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_direction::*;
 use super::super::super::super::model::master::piece_movement::*;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
 use std::collections::HashSet;
@@ -1584,7 +1585,7 @@ pub fn insert_narumae_src_by_sn_ms(
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
 
-        let prokm_src = km_to_prokm(&km_src);
+        let prokm_src = PieceStruct::from_piece(&km_src).promote();
         match prokm_src {
             Piece::Kara => {
                 continue;

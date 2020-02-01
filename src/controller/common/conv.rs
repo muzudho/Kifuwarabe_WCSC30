@@ -328,44 +328,6 @@ pub fn pop_km_from_hash(hash: u64) -> (u64, Piece) {
     (hash >> 5, km_num)
 }
 /**
- * 駒→成駒　（成れない駒は、そのまま）
- */
-pub fn km_to_prokm(km: &Piece) -> Piece {
-    use super::super::super::model::master::piece::Piece::*;
-    match *km {
-        King1 => King1,
-        Rook1 => PromotedRook1,
-        Bishop1 => PromotedBishop1,
-        Gold1 => Gold1,
-        Silver1 => PromotedSilver1,
-        Knight1 => PromotedKnight1,
-        Lance1 => PromotedLance1,
-        Pawn1 => PromotedPawn1,
-        PromotedRook1 => PromotedRook1,
-        PromotedBishop1 => PromotedBishop1,
-        PromotedSilver1 => PromotedSilver1,
-        PromotedKnight1 => PromotedKnight1,
-        PromotedLance1 => PromotedLance1,
-        PromotedPawn1 => PromotedPawn1,
-        King2 => King2,
-        Rook2 => PromotedRook2,
-        Bishop2 => PromotedBishop2,
-        Gold2 => Gold2,
-        Silver2 => PromotedSilver2,
-        Knight2 => PromotedKnight2,
-        Lance2 => PromotedLance2,
-        Pawn2 => PromotedPawn2,
-        PromotedRook2 => PromotedRook2,
-        PromotedBishop2 => PromotedBishop2,
-        PromotedSilver2 => PromotedSilver2,
-        PromotedKnight2 => PromotedKnight2,
-        PromotedLance2 => PromotedLance2,
-        PromotedPawn2 => PromotedPawn2,
-        Kara => Kara,
-        Owari => Owari,
-    }
-}
-/**
  * 成駒→駒
  */
 pub fn prokm_to_km(km: &Piece) -> Piece {
