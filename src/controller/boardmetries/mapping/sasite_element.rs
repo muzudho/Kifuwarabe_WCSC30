@@ -350,7 +350,6 @@ pub fn insert_narumae_src_by_ms_km(
     // | 移動後は成り駒か？ |
     // +--------------------+
     let ps_dst = PieceStruct::from_piece(&km_dst);
-    let kms_dst = ps_dst.piece_type();
     if !ps_dst.is_promoted() {
         return; // 成り駒でないなら、成りの動きをしていない
     }
@@ -358,7 +357,8 @@ pub fn insert_narumae_src_by_ms_km(
     // +--------------------+
     // | 移動前は成る前の駒 |
     // +--------------------+
-    let kms_src = prokms_to_kms(&kms_dst);
+    // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
+    let kms_src = PieceStruct::from_piece(ps_dst.demote()).piece_type();
     let km_src =
         PieceStruct::from_phase_piece_type(&PieceStruct::from_piece(km_dst).phase(), &kms_src)
             .piece()
@@ -380,17 +380,13 @@ pub fn insert_narumae_src_by_ms_km(
     // 例えば移動先の駒種類が「ぱひ」なら、「ぱひ」が動いた可能性の他に、
     // 「ひ」が動いたのかもしれない。
     // 「ぱひ」は、敵陣の１～３段目にいて、動きが北だった場合、元が「ひ」の可能性がある。
-    let kms_src_narumae = prokms_to_kms(&kms_dst);
-
-    use super::super::super::super::model::master::piece_type::PieceType::*;
-    match kms_src_narumae {
-        Kara => {
-            return;
-        } // 成れない駒は、成る動きを考えなくていいぜ☆（＾～＾）
-        _ => {} // 成れる駒は、成る前の駒の動きも調べる
+    //
+    // 成る前に戻れない駒は、成ったかどうかを考えなくていいぜ☆（＾～＾）
+    if !ps_dst.can_demote() {
+        return;
     }
 
-    let kms_narumae_num = kms_to_num(&kms_src_narumae);
+    let kms_narumae_num = kms_to_num(&PieceStruct::from_piece(ps_dst.demote()).piece_type());
 
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向

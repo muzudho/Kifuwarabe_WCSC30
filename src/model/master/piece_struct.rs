@@ -9,7 +9,7 @@ pub struct PieceStruct {
     phase_piece_type: (Phase, PieceType),
     /// 駒→成駒　（成れない駒は、そのまま）
     promoted: Piece,
-    /// 成駒→駒
+    /// 成駒→駒　（成っていない駒は、そのまま）
     demoted: Piece,
     /// 先後付き駒　を　持ち駒種類　へ変換。
     /// 持ち駒にするので、先後は反転するぜ☆（＾～＾）
@@ -374,6 +374,12 @@ impl PieceStruct {
 
     pub fn demote(&self) -> &Piece {
         &self.demoted
+    }
+
+    // 降格できるか。
+    pub fn can_demote(&self) -> bool {
+        // 降格後の駒が、今の駒と異なっていれば、降格できるぜ☆（＾～＾）
+        self.piece != self.demoted
     }
 
     /// 持ち駒にするぜ☆（＾～＾）相手の持ち物になるぜ☆（＾～＾）

@@ -314,28 +314,6 @@ pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
     let kms_num = num_to_kms((hash & 0b1111) as usize);
     (hash >> 4, kms_num)
 }
-// 成り駒種類→成る前の駒種類。成り駒でなければ、空に戻る。
-pub fn prokms_to_kms(kms: &PieceType) -> PieceType {
-    use super::super::super::model::master::piece_type::PieceType::*;
-    match *kms {
-        R => Kara,
-        K => Kara,
-        Z => Kara,
-        I => Kara,
-        N => Kara,
-        U => Kara,
-        S => Kara,
-        H => Kara,
-        PK => K,
-        PZ => Z,
-        PN => N,
-        PU => U,
-        PS => S,
-        PH => H,
-        Kara => Kara,
-        Owari => Owari,
-    }
-}
 /**
  * 駒種類→｛　長い利きの駒か否か　｝
  * 合い駒で防ぎえる可能性があれば真
