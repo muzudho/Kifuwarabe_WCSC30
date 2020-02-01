@@ -48,8 +48,8 @@ pub fn insert_narazu_src_by_ms_km(
      */
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = ms_to_suji_dan(ms_dst);
-    let sn = km_to_sn(km_dst);
-    let kms_dst = km_to_kms(&km_dst);
+    let sn = PieceStruct::from_piece(km_dst).phase();
+    let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
     let kms_num = kms_to_num(&kms_dst);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
@@ -350,7 +350,7 @@ pub fn insert_narumae_src_by_ms_km(
     // +--------------------+
     // | 移動後は成り駒か？ |
     // +--------------------+
-    let kms_dst = km_to_kms(&km_dst);
+    let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
     if !kms_is_pro(&kms_dst) {
         return; // 成り駒でないなら、成りの動きをしていない
     }
@@ -358,7 +358,7 @@ pub fn insert_narumae_src_by_ms_km(
     // +--------------------+
     // | 移動前は成る前の駒 |
     // +--------------------+
-    let sn = km_to_sn(km_dst);
+    let sn = PieceStruct::from_piece(km_dst).phase();
     let kms_src = prokms_to_kms(&kms_dst);
     let km_src = sn_kms_to_km(&sn, &kms_src);
 
@@ -655,7 +655,7 @@ pub fn insert_da_kms_by_ms_km(
 ) {
     assert_banjo_ms(ms_dst, "Ｉnsert_da_kms_by_ms_km");
 
-    let kms_dst = km_to_kms(&km_dst);
+    let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
     if !kms_can_da(&kms_dst) {
         return; // 打って出てくることがない駒なら終了
     }
@@ -691,7 +691,7 @@ pub fn insert_da_kms_by_ms_km(
      * 12 22 32
      * 11 21 31 ...
      */
-    let sn = km_to_sn(km_dst);
+    let sn = PieceStruct::from_piece(km_dst).phase();
     let ms = kaiten180_ms_by_ms_sn(ms_dst, &sn);
 
     assert_banjo_ms(ms, "Ｉnsert_da_kms_by_ms_km＜その２＞");
@@ -764,8 +764,8 @@ pub fn insert_dst_by_ms_km(
 
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = ms_to_suji_dan(ms_src);
-    let sn = km_to_sn(&km_src);
-    let kms_src = km_to_kms(&km_src);
+    let sn = PieceStruct::from_piece(&km_src).phase();
+    let kms_src = PieceStruct::from_piece(&km_src).piece_type();
 
     // +--------------+
     // | 成れる駒か？ |
@@ -1280,7 +1280,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if dx + i_east < SUJI_10 {
                                 let ms_src = suji_dan_to_ms(dx + i_east, dy);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1294,7 +1295,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if dx + 1 < SUJI_10 {
                             let ms_src = suji_dan_to_ms(dx + 1, dy);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1309,7 +1311,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                                 let ms_src = suji_dan_to_ms(dx + i_ne, dy + i_ne);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1323,7 +1326,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                             let ms_src = suji_dan_to_ms(dx + 1, dy + 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1335,7 +1339,8 @@ pub fn insert_narazu_src_by_sn_ms(
                     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                         let ms_src = suji_dan_to_ms(dx + 1, dy + 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1349,7 +1354,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if dy + i_south < DAN_10 {
                                 let ms_src = suji_dan_to_ms(dx, dy + i_south);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1363,7 +1369,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if dy + 1 < DAN_10 {
                             let ms_src = suji_dan_to_ms(dx, dy + 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1378,7 +1385,8 @@ pub fn insert_narazu_src_by_sn_ms(
                     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                         let ms_src = suji_dan_to_ms(dx - 1, dy + 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1392,7 +1400,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                                 let ms_src = suji_dan_to_ms(dx - i_se, dy + i_se);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1406,7 +1415,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                             let ms_src = suji_dan_to_ms(dx - 1, dy + 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1421,7 +1431,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if SUJI_0 < dx - i_east {
                                 let ms_src = suji_dan_to_ms(dx - i_east, dy);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1435,7 +1446,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if SUJI_0 < dx - 1 {
                             let ms_src = suji_dan_to_ms(dx - 1, dy);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1450,7 +1462,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                                 let ms_src = suji_dan_to_ms(dx - i_ne, dy - i_ne);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1464,7 +1477,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                             let ms_src = suji_dan_to_ms(dx - 1, dy - 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1476,7 +1490,8 @@ pub fn insert_narazu_src_by_sn_ms(
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                         let ms_src = suji_dan_to_ms(dx - 1, dy - 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1490,7 +1505,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if DAN_0 < dy - i_north {
                                 let ms_src = suji_dan_to_ms(dx, dy - i_north);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1504,7 +1520,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if DAN_0 < dy - 1 {
                             let ms_src = suji_dan_to_ms(dx, dy - 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1519,7 +1536,8 @@ pub fn insert_narazu_src_by_sn_ms(
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                         let ms_src = suji_dan_to_ms(dx + 1, dy - 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1533,7 +1551,8 @@ pub fn insert_narazu_src_by_sn_ms(
                             if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                                 let ms_src = suji_dan_to_ms(dx + i_nw, dy - i_nw);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1547,7 +1566,8 @@ pub fn insert_narazu_src_by_sn_ms(
                         if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                             let ms_src = suji_dan_to_ms(dx + 1, dy - 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1580,7 +1600,7 @@ pub fn insert_narumae_src_by_sn_ms(
         // +--------------------+
         // | 移動前は非成駒か？ |
         // +--------------------+
-        let kms_src = km_to_kms(&km_src);
+        let kms_src = PieceStruct::from_piece(&km_src).piece_type();
         if kms_is_pro(&kms_src) {
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
@@ -1625,7 +1645,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if dx + i_east < SUJI_10 {
                                 let ms_src = suji_dan_to_ms(dx + i_east, dy);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1639,7 +1660,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if dx + 1 < SUJI_10 {
                             let ms_src = suji_dan_to_ms(dx + 1, dy);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1654,7 +1676,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                                 let ms_src = suji_dan_to_ms(dx + i_ne, dy + i_ne);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1668,7 +1691,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                             let ms_src = suji_dan_to_ms(dx + 1, dy + 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1680,7 +1704,8 @@ pub fn insert_narumae_src_by_sn_ms(
                     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                         let ms_src = suji_dan_to_ms(dx + 1, dy + 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1694,7 +1719,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if dy + i_south < DAN_10 {
                                 let ms_src = suji_dan_to_ms(dx, dy + i_south);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1708,7 +1734,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if dy + 1 < DAN_10 {
                             let ms_src = suji_dan_to_ms(dx, dy + 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1723,7 +1750,8 @@ pub fn insert_narumae_src_by_sn_ms(
                     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                         let ms_src = suji_dan_to_ms(dx - 1, dy + 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1737,7 +1765,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                                 let ms_src = suji_dan_to_ms(dx - i_se, dy + i_se);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1751,7 +1780,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                             let ms_src = suji_dan_to_ms(dx - 1, dy + 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1766,7 +1796,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if SUJI_0 < dx - i_east {
                                 let ms_src = suji_dan_to_ms(dx - i_east, dy);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1780,7 +1811,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if SUJI_0 < dx - 1 {
                             let ms_src = suji_dan_to_ms(dx - 1, dy);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1795,7 +1827,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                                 let ms_src = suji_dan_to_ms(dx - i_ne, dy - i_ne);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1809,7 +1842,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                             let ms_src = suji_dan_to_ms(dx - 1, dy - 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }
@@ -1821,7 +1855,8 @@ pub fn insert_narumae_src_by_sn_ms(
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                         let ms_src = suji_dan_to_ms(dx - 1, dy - 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1835,7 +1870,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if DAN_0 < dy - i_north {
                                 let ms_src = suji_dan_to_ms(dx, dy - i_north);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1849,7 +1885,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if DAN_0 < dy - 1 {
                             let ms_src = suji_dan_to_ms(dx, dy - 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1864,7 +1901,8 @@ pub fn insert_narumae_src_by_sn_ms(
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                         let ms_src = suji_dan_to_ms(dx + 1, dy - 2);
                         let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                        let kms_ms =
+                            PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(ms_src);
                         }
@@ -1878,7 +1916,8 @@ pub fn insert_narumae_src_by_sn_ms(
                             if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                                 let ms_src = suji_dan_to_ms(dx + i_nw, dy - i_nw);
                                 let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                                let kms_ms = PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src))
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(ms_src);
                                 }
@@ -1892,7 +1931,8 @@ pub fn insert_narumae_src_by_sn_ms(
                         if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                             let ms_src = suji_dan_to_ms(dx + 1, dy - 1);
                             let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = km_to_kms(&uchu.ky.get_km_by_ms(ms_src));
+                            let kms_ms =
+                                PieceStruct::from_piece(&uchu.ky.get_km_by_ms(ms_src)).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(ms_src);
                             }

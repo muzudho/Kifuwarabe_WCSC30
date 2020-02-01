@@ -273,6 +273,14 @@ impl PieceStruct {
         self.phase_piece_type
     }
 
+    pub fn phase(self) -> Phase {
+        self.phase_piece_type.0
+    }
+
+    pub fn piece_type(self) -> PieceType {
+        self.phase_piece_type.1
+    }
+
     pub fn promote(self) -> Piece {
         self.promoted
     }

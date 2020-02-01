@@ -227,7 +227,7 @@ impl Kyokumen {
      * 指定の升にある駒の先後、または空升
      */
     pub fn get_sn_by_ms(&self, ms: umasu) -> Phase {
-        km_to_sn(&self.get_km_by_ms(ms))
+        PieceStruct::from_piece(&self.get_km_by_ms(ms)).phase()
     }
 
     /**
@@ -235,9 +235,9 @@ impl Kyokumen {
      */
     pub fn is_natta(&self, ms_src: umasu, ms_dst: umasu) -> bool {
         let km_src = &self.get_km_by_ms(ms_src);
-        let kms_src = km_to_kms(&km_src);
+        let kms_src = PieceStruct::from_piece(&km_src).piece_type();
         let km_dst = &self.get_km_by_ms(ms_dst);
-        let kms_dst = km_to_kms(&km_dst);
+        let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = kms_is_pro(&kms_dst);
         let pro_src = kms_is_pro(&kms_src);

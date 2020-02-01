@@ -8,6 +8,7 @@ use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::combine::multiplication::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::person::*;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type_set::*;
 
@@ -36,7 +37,7 @@ pub fn is_s(uchu: &Uchu) -> bool {
         ms_r, km, jiai_km
     ));
 
-    let kms = km_to_kms(&km);
+    let kms = PieceStruct::from_piece(&km).piece_type();
 
     use super::super::super::super::model::master::piece_type::PieceType::*;
     match kms {
