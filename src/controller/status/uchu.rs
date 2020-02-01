@@ -18,6 +18,7 @@ use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_direction::PieceDirection;
 use super::super::super::model::master::piece_movement::*;
+use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::place::*;
@@ -1064,7 +1065,7 @@ impl Uchu {
      */
     pub fn kaku_number_board(&self, sn: &Phase, km: &Piece) -> String {
         let nb = match *sn {
-            Phase::Owari => &self.kiki_su_by_km[km_to_num(&km)],
+            Phase::Owari => &self.kiki_su_by_km[PieceStruct::from_piece(&km).piece_serial_number()],
             _ => &self.kiki_su_by_sn[sn_to_num(&sn)],
         };
 

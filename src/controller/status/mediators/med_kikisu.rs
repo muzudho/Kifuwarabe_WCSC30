@@ -7,6 +7,7 @@ use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::place::*;
 use std::collections::HashSet;
 
@@ -18,7 +19,7 @@ use std::collections::HashSet;
 pub fn read_kikisu(uchu: &mut Uchu) {
     // ゼロ・リセット
     for km in KM_ARRAY.iter() {
-        &uchu.kiki_su_by_km[km_to_num(km)].clear();
+        &uchu.kiki_su_by_km[PieceStruct::from_piece(km).piece_serial_number()].clear();
     }
 
     for sn in SN_ARRAY.iter() {
@@ -42,7 +43,8 @@ pub fn read_kikisu(uchu: &mut Uchu) {
                 let sn = km_to_sn(&km_dst);
 
                 // 駒別
-                uchu.kiki_su_by_km[km_to_num(&km_dst)].add_su_by_ms(ms_dst, kikisu as i8);
+                uchu.kiki_su_by_km[PieceStruct::from_piece(&km_dst).piece_serial_number()]
+                    .add_su_by_ms(ms_dst, kikisu as i8);
 
                 // 先後別
                 uchu.kiki_su_by_sn[sn_to_num(&sn)].add_su_by_ms(ms_dst, kikisu as i8);

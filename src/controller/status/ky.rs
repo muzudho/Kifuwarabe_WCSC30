@@ -118,10 +118,10 @@ impl Kyokumen {
      * 持ち駒の枚数を加算
      */
     pub fn add_mg(&mut self, mg: Piece, maisu: i8) {
-        self.mg[km_to_num(&mg)] += maisu;
+        self.mg[PieceStruct::from_piece(&mg).piece_serial_number()] += maisu;
     }
     pub fn get_mg(&self, mg: &Piece) -> i8 {
-        self.mg[km_to_num(mg)]
+        self.mg[PieceStruct::from_piece(mg).piece_serial_number()]
     }
 
     /**
@@ -254,14 +254,14 @@ impl Kyokumen {
         // 盤上の駒
         for i_ms in MASU_0..BAN_SIZE {
             let km = self.get_km_by_ms(i_ms as umasu);
-            let num_km = km_to_num(&km);
+            let num_km = PieceStruct::from_piece(&km).piece_serial_number();
             hash ^= uchu.ky_hash_seed.km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
         for i_km in 0..KM_ARRAY_LN {
             let km = KM_ARRAY[i_km];
-            let num_km = km_to_num(&km);
+            let num_km = PieceStruct::from_piece(&km).piece_serial_number();
 
             let maisu = self.get_mg(&km);
             debug_assert!(

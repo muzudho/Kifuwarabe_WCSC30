@@ -4,8 +4,8 @@
 //! 先後付き駒
 //!
 
-use super::super::super::controller::common::conv::*;
 use super::phase::*;
+use super::piece_struct::PieceStruct;
 use std::fmt;
 
 /**
@@ -121,7 +121,8 @@ impl fmt::Display for Piece {
  * 駒の一致比較
  */
 pub fn match_km(a: &Piece, b: &Piece) -> bool {
-    km_to_num(a) == km_to_num(b)
+    PieceStruct::from_piece(a).piece_serial_number()
+        == PieceStruct::from_piece(b).piece_serial_number()
 }
 
 pub const KM_ARRAY_HALF_LN: usize = 14;
