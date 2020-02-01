@@ -6,10 +6,10 @@ use super::super::super::model::master::phase::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::universe::*;
 
-pub fn is_ji_km_by_sq(sq: &Square, uchu: &Universe) -> bool {
+pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe) -> bool {
     match_sn(
-        &uchu.ky.get_piece_struct_by_sq(&sq).phase(),
-        &uchu.get_teban(&Person::Ji),
+        &universe.ky.get_piece_struct_by_sq(&sq).phase(),
+        &universe.get_teban(&Person::Ji),
     )
 }
 

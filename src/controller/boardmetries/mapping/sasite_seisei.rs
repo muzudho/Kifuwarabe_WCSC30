@@ -24,18 +24,18 @@ use std::collections::HashSet;
  *
  * 王手回避漏れや、千日手などのチェックは行っていない
  */
-pub fn insert_potential_move(uchu: &Universe, ss_hashset: &mut HashSet<u64>) {
+pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>) {
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
     for dan_src in 1..10 {
         for suji_src in 1..10 {
             let sq_src = Square::from_file_rank(suji_src, dan_src);
-            let km_src = uchu.ky.get_piece_struct_by_sq(&sq_src).piece();
+            let km_src = universe.ky.get_piece_struct_by_sq(&sq_src).piece();
 
             if match_sn(
                 &PieceStruct::from_piece(&km_src).phase(),
-                &uchu.get_teban(&Person::Ji),
+                &universe.get_teban(&Person::Ji),
             ) {
                 // 手番の駒
 
@@ -44,7 +44,7 @@ pub fn insert_potential_move(uchu: &Universe, ss_hashset: &mut HashSet<u64>) {
                     &sq_src,
                     &km_src,
                     false, // 成らず
-                    &uchu,
+                    &universe,
                     &mut dst_hashset,
                 );
 
@@ -69,7 +69,7 @@ pub fn insert_potential_move(uchu: &Universe, ss_hashset: &mut HashSet<u64>) {
                     &sq_src,
                     &km_src,
                     true, // 成り
-                    &uchu,
+                    &universe,
                     &mut dst_hashset,
                 );
                 for sq_dst in &dst_hashset {
@@ -93,26 +93,26 @@ pub fn insert_potential_move(uchu: &Universe, ss_hashset: &mut HashSet<u64>) {
     for dan_dst in 1..10 {
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
-            let km_dst = uchu.ky.get_piece_struct_by_sq(&sq_dst).piece();
+            let km_dst = universe.ky.get_piece_struct_by_sq(&sq_dst).piece();
             match km_dst {
                 Piece::Kara => {
                     // 駒が無いところに打つ
 
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
-                        let ps_motigoma = uchu
+                        let ps_motigoma = universe
                             .piece_struct_master()
                             .get_piece_struct_by_phase_and_piece_type(
-                                &uchu.get_teban(&Person::Ji),
+                                &universe.get_teban(&Person::Ji),
                                 kms_motigoma,
                             );
                         let km_motigoma = ps_motigoma.piece();
-                        if 0 < uchu.ky.get_mg(&km_motigoma) {
+                        if 0 < universe.ky.get_mg(&km_motigoma) {
                             // 駒を持っていれば
                             insert_da_kms_by_sq_km(
                                 &sq_dst,
                                 &km_motigoma,
-                                &uchu,
+                                &universe,
                                 &mut da_kms_hashset,
                             );
                         }
@@ -143,7 +143,7 @@ pub fn insert_potential_move(uchu: &Universe, ss_hashset: &mut HashSet<u64>) {
  * 盤上の駒の移動の最初の１つ。打を除く
  */
 pub fn insert_ss_by_ms_km_on_banjo(
-    uchu: &Universe,
+    universe: &Universe,
     sq_dst: &Square,
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
@@ -155,7 +155,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     let (sn, _kms_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(&uchu.ky.get_sn_by_sq(&sq_dst), &sn) {
+    if match_sn(&universe.ky.get_sn_by_sq(&sq_dst), &sn) {
         return;
     }
 
@@ -170,7 +170,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+    insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 
@@ -185,7 +185,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // | 盤上（成り） |
     // +--------------+
     mv_src_hashset.clear();
-    insert_narumae_src_by_sq_km(sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+    insert_narumae_src_by_sq_km(sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 
@@ -203,7 +203,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
  * 2. 移動先駒指定  km_dst
  */
 pub fn insert_ss_by_ms_km_on_da(
-    uchu: &Universe,
+    universe: &Universe,
     sq_dst: &Square,
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
@@ -215,7 +215,7 @@ pub fn insert_ss_by_ms_km_on_da(
     let (sn, _kms_dst) = piece_struct_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(&uchu.ky.get_sn_by_sq(&sq_dst), &sn) {
+    if match_sn(&universe.ky.get_sn_by_sq(&sq_dst), &sn) {
         return;
     }
 
@@ -232,7 +232,7 @@ pub fn insert_ss_by_ms_km_on_da(
     // +----+
 
     let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-    insert_da_kms_by_sq_km(&sq_dst, &km_dst, &uchu, &mut da_kms_hashset);
+    insert_da_kms_by_sq_km(&sq_dst, &km_dst, &universe, &mut da_kms_hashset);
     // 打
     for num_kms_da in da_kms_hashset.iter() {
         let kms_da = num_to_kms(*num_kms_da);

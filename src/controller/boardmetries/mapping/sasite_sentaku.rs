@@ -37,14 +37,14 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
 /**
  * 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
  */
-pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Universe) {
+pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, universe: &mut Universe) {
     // 自玉の位置
-    let sq_r = uchu.get_sq_r(&Person::Ji).clone();
+    let sq_r = universe.get_sq_r(&Person::Ji).clone();
     g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> =
-        lookup_banjo_catch(uchu, &uchu.get_teban(&Person::Ai), &sq_r);
+        lookup_banjo_catch(universe, &universe.get_teban(&Person::Ai), &sq_r);
     if 0 < komatori_result_hashset.len() {
         // 王手されていれば
 
@@ -100,14 +100,14 @@ pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut 
  * 王手されていれば、王手を解除しろだぜ☆（＾～＾）
  * 千日手には喜んで飛び込めだぜ☆（＾▽＾）ｗｗｗ
  */
-pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Universe) {
+pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, universe: &mut Universe) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
     // 自玉の位置
-    let sq_r = uchu
+    let sq_r = universe
         .ky
-        .get_sq_r(sn_to_num(&uchu.get_teban(&Person::Ji)))
+        .get_sq_r(sn_to_num(&universe.get_teban(&Person::Ji)))
         .clone();
 
     // 王手回避カードを発行する
@@ -118,9 +118,9 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         let ss_potential = Sasite::from_hash(*hash_ss_potential);
 
         // その手を指してみる
-        uchu.do_ss(&ss_potential);
+        universe.do_ss(&ss_potential);
         // // 現局面表示
-        // let s1 = &uchu.kaku_ky( &KyNums::Current );
+        // let s1 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
 
         // 狙われている方の玉の位置
@@ -134,15 +134,15 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
         insert_narazu_src_by_sn_sq(
-            &uchu.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                    // 指定の升
-            &uchu,
+            &universe.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                        // 指定の升
+            &universe,
             &mut attackers,
         );
         insert_narumae_src_by_sn_sq(
-            &uchu.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                    // 指定の升
-            &uchu,
+            &universe.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                        // 指定の升
+            &universe,
             &mut attackers,
         );
 
@@ -152,7 +152,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
             "info {} evaluated => {} attackers. offence={}->{}",
             ss_potential,
             attackers.len(),
-            uchu.get_teban(&Person::Ji),
+            universe.get_teban(&Person::Ji),
             sq_r_new.to_umasu()
         ));
         for sq_atk in attackers.iter() {
@@ -160,9 +160,9 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         }
 
         // 手を戻す
-        uchu.undo_ss();
+        universe.undo_ss();
         // // 現局面表示
-        // let s2 = &uchu.kaku_ky( &KyNums::Current );
+        // let s2 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );
 
         if jisatusyu {
@@ -188,7 +188,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
  *
  * ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
  */
-pub fn filtering_ss_except_sennitite(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Universe) {
+pub fn filtering_ss_except_sennitite(ss_hashset_input: &mut HashSet<u64>, universe: &mut Universe) {
     let mut ss_hashset_pickup = HashSet::new();
 
     // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）
@@ -198,22 +198,22 @@ pub fn filtering_ss_except_sennitite(ss_hashset_input: &mut HashSet<u64>, uchu: 
         //ss_hashset.insert( *hash_ss_potential );
 
         // その手を指してみる
-        uchu.do_ss(&ss);
+        universe.do_ss(&ss);
         // 現局面表示
-        // let s1 = &uchu.kaku_ky( &KyNums::Current );
+        // let s1 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
 
         // 千日手かどうかを判定する☆（＾～＾）
-        if uchu.count_same_ky() < SENNTITE_NUM {
+        if universe.count_same_ky() < SENNTITE_NUM {
             ss_hashset_pickup.insert(*hash_ss_potential);
         } else {
             // 千日手
         }
 
         // 手を戻す FIXME: 打った象が戻ってない？
-        uchu.undo_ss();
+        universe.undo_ss();
         // 現局面表示
-        // let s2 = &uchu.kaku_ky( &KyNums::Current );
+        // let s2 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );
     }
 

@@ -13,9 +13,9 @@ use super::super::super::super::model::master::square::*;
 use super::super::super::super::model::universe::*;
 
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
-pub fn is_s(uchu: &Universe) -> bool {
+pub fn is_s(universe: &Universe) -> bool {
     // 相手玉の位置
-    let sq_r = uchu.get_sq_r(&Person::Ai).clone();
+    let sq_r = universe.get_sq_r(&Person::Ai).clone();
 
     let p_r = sq_r.to_point();
     let p_south_r = p_r.to_south();
@@ -24,8 +24,8 @@ pub fn is_s(uchu: &Universe) -> bool {
     }
 
     let sq_south_r = Square::from_point(&p_south_r);
-    let ps = uchu.ky.get_piece_struct_by_sq(&sq_south_r);
-    let jiai_km = uchu.get_jiai_by_km(&ps);
+    let ps = universe.ky.get_piece_struct_by_sq(&sq_south_r);
+    let jiai_km = universe.get_jiai_by_km(&ps);
     if !match_jiai(&jiai_km, &Person::Ji) {
         return true;
     }
@@ -87,10 +87,10 @@ pub fn is_atamakin(
     _mskms_s: &SqKms,
     _mskms_a: &SqKms,
     _mskms_b: &SqKms,
-    uchu: &Universe,
+    universe: &Universe,
 ) -> bool {
     // 相手らいおんのマス
-    let sq_ai_r = uchu.get_sq_r(&Person::Ai).clone();
+    let sq_ai_r = universe.get_sq_r(&Person::Ai).clone();
 
     // らいおん以外の相手の駒種類
     let mut kms_set_ai_c_r = PieceTypeSet::new_all();
@@ -101,9 +101,9 @@ pub fn is_atamakin(
     // 単に下３つに移動できるか調べられたらいい。８１升別　利きを作るか？
     // 駒、相手の利き
     let p_k = sq_ai_r.to_point();
-    if board_metrics::is_ji_km_by_sq(&Square::from_point(&p_k.to_south_west()), &uchu) {}
+    if board_metrics::is_ji_km_by_sq(&Square::from_point(&p_k.to_south_west()), &universe) {}
 
-    if board_metrics::is_ai_kiki_by_sq(&Square::from_point(&p_k.to_south_west()), &uchu) {}
+    if board_metrics::is_ai_kiki_by_sq(&Square::from_point(&p_k.to_south_west()), &universe) {}
 
     // ms_ai_r （北０） ms_atama
     // if ms_north_of_ms( ms_ai_r, 0, ms_atama ) { }

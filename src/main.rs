@@ -33,17 +33,17 @@ use std::io;
 
 fn main() {
     // 宇宙
-    let mut uchu: Universe = Universe::new();
-    uchu.big_bang();
+    let mut universe: Universe = Universe::new();
+    universe.big_bang();
 
     // [Ctrl]+[C] で強制終了
     loop {
         let mut line: String;
-        if uchu.is_empty_command() {
+        if universe.is_empty_command() {
             line = String::new();
         } else {
             // バッファーに溜まっていれば☆（＾～＾）
-            line = uchu.pop_command();
+            line = universe.pop_command();
             //g_writeln( &line );
         }
 
@@ -63,16 +63,16 @@ fn main() {
 
         if len == 0 {
             g_writeln("len==0");
-            if !&uchu.dialogue_mode {
+            if !&universe.dialogue_mode {
                 // 空打ち１回目なら、対話モードへ☆（＾～＾）
-                uchu.dialogue_mode = true;
+                universe.dialogue_mode = true;
                 // タイトル表示
                 // １画面は２５行だが、最後の２行は開けておかないと、
                 // カーソルが２行分場所を取るんだぜ☆（＾～＾）
                 hyoji_title();
             } else {
                 // 局面表示
-                let s = &uchu.kaku_ky(&KyNums::Current);
+                let s = &universe.kaku_ky(&KyNums::Current);
                 g_writeln(&s);
             }
         // 文字数の長いものからチェック
@@ -82,25 +82,25 @@ fn main() {
             // 駒の動きの移動元として有りえる方角
             let kms = controller::thinking::randommove::rnd_kms();
             g_writeln(&format!("{}のムーブ元", &kms));
-            uchu.hyoji_kmugoki_dir(kms);
+            universe.hyoji_kmugoki_dir(kms);
             g_writeln(""); //改行
         } else if 9 < len && &line[starts..10] == "usinewgame" {
-            uchu.clear_ky01();
+            universe.clear_ky01();
         } else if line.starts_with("position") {
             // positionコマンドの読取を丸投げ
-            controller::communication::usi::read_position(&line, &mut uchu);
+            controller::communication::usi::read_position(&line, &mut universe);
         } else if 6 < len && &line[starts..7] == "isready" {
             g_writeln("readyok");
         } else if 6 < len && &line[starts..7] == "kmugoki" {
             g_writeln("6<len kmugoki");
             // 駒の動きを出力
-            uchu.hyoji_kmugoki();
+            universe.hyoji_kmugoki();
         } else if 5 < len && &line[starts..6] == "hirate" {
             // 平手初期局面
-            controller::communication::usi::read_position(&KY1.to_string(), &mut uchu);
+            controller::communication::usi::read_position(&KY1.to_string(), &mut universe);
         } else if 5 < len && &line[starts..6] == "kikisu" {
             // 利き数表示
-            controller::consoles::commands::cmd_kikisu(&uchu);
+            controller::consoles::commands::cmd_kikisu(&universe);
         } else if 5 < len && &line[starts..6] == "rndkms" {
             g_writeln("5<len rndkms");
             // 乱駒種類
@@ -109,7 +109,7 @@ fn main() {
         } else if 5 < len && &line[starts..6] == "sasite" {
             // FIXME 合法手とは限らない
             let mut ss_potential_hashset = HashSet::new();
-            insert_potential_move(&uchu, &mut ss_potential_hashset);
+            insert_potential_move(&universe, &mut ss_potential_hashset);
             g_writeln("----指し手生成 ここから----");
             hyoji_ss_hashset(&ss_potential_hashset);
             g_writeln("----指し手生成 ここまで----");
@@ -136,11 +136,11 @@ fn main() {
             }
         } else if 3 < len && &line[starts..4] == "hash" {
             g_writeln("局面ハッシュ表示");
-            let s = uchu.kaku_ky_hash();
+            let s = universe.kaku_ky_hash();
             g_writeln(&s);
         } else if 3 < len && &line[starts..4] == "kifu" {
             g_writeln("棋譜表示");
-            let s = uchu.kaku_kifu();
+            let s = universe.kaku_kifu();
             g_writeln(&s);
         } else if 3 < len && &line[starts..4] == "quit" {
             // ループを抜けて終了
@@ -151,7 +151,7 @@ fn main() {
             let secret_number = rand::thread_rng().gen_range(1, 101); //1~100
             g_writeln(&format!("乱数={}", secret_number));
         } else if 3 < len && &line[starts..4] == "same" {
-            let count = uchu.count_same_ky();
+            let count = universe.count_same_ky();
             g_writeln(&format!("同一局面調べ count={}", count));
         } else if 3 < len && &line[starts..4] == "test" {
             starts += 4;
@@ -161,26 +161,29 @@ fn main() {
             }
             // いろいろな動作テスト
             g_writeln(&format!("test starts={} len={}", starts, len));
-            test(&line, &mut starts, len, &mut uchu);
-        //g_writeln( &uchu.pop_command() );
+            test(&line, &mut starts, len, &mut universe);
+        //g_writeln( &universe.pop_command() );
         } else if 3 < len && &line[starts..4] == "undo" {
-            if !uchu.undo_ss() {
-                g_writeln(&format!("teme={} を、これより戻せません", uchu.teme));
+            if !universe.undo_ss() {
+                g_writeln(&format!(
+                    "ply={} を、これより戻せません",
+                    universe.get_search_part().get_ply()
+                ));
             }
         } else if 2 < len && &line[starts..3] == "do " {
             starts += 3;
             // コマンド読取。棋譜に追加され、手目も増える
-            if read_sasite(&line, &mut starts, len, &mut uchu) {
+            if read_sasite(&line, &mut starts, len, &mut universe) {
                 // 手目を戻す
-                uchu.teme -= 1;
+                universe.get_search_part_mut().add_ply(-1);
                 // 入っている指し手の通り指すぜ☆（＾～＾）
-                let teme = uchu.teme;
-                let ss = uchu.kifu[teme].clone();
-                uchu.do_ss(&ss);
+                let ply = universe.get_search_part().get_ply();
+                let ss = universe.kifu[ply as usize].clone();
+                universe.do_ss(&ss);
             }
         } else if 2 < len && &line[starts..3] == "ky0" {
             // 初期局面表示
-            let s = uchu.kaku_ky(&KyNums::Start);
+            let s = universe.kaku_ky(&KyNums::Start);
             g_writeln(&s);
         } else if 2 < len && &line[starts..3] == "usi" {
             g_writeln(&format!("id name {}", ENGINE_NAME));
@@ -189,12 +192,12 @@ fn main() {
         } else if 1 < len && &line[starts..2] == "go" {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = think(&mut uchu);
+            let bestmove = think(&mut universe);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove));
         } else if 1 < len && &line[starts..2] == "ky" {
             // 現局面表示
-            let s = &uchu.kaku_ky(&KyNums::Current);
+            let s = &universe.kaku_ky(&KyNums::Current);
             g_writeln(&s);
         }
     } //loop

@@ -17,7 +17,7 @@ use super::super::super::model::universe::*;
 /**
  * 現局面での最善手を返すぜ☆（*＾～＾*）
  */
-pub fn think(mut uchu: &mut Universe) -> Sasite {
+pub fn think(mut universe: &mut Universe) -> Sasite {
     // TODO 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
 
     // +----------------------+
@@ -25,31 +25,31 @@ pub fn think(mut uchu: &mut Universe) -> Sasite {
     // +----------------------+
 
     // 相手の利き升調べ（自殺手防止のため）
-    read_kikisu(&mut uchu);
+    read_kikisu(&mut universe);
 
-    g_writeln(&format!("info test is_s={}", atamakin::is_s(&uchu)));
+    g_writeln(&format!("info test is_s={}", atamakin::is_s(&universe)));
 
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
     let mut ss_hashset: HashSet<u64> = HashSet::new();
-    insert_potential_move(&uchu, &mut ss_hashset);
+    insert_potential_move(&universe, &mut ss_hashset);
     // g_writeln("テスト ポテンシャルムーブ.");
     // use consoles::visuals::dumps::*;
     // hyoji_ss_hashset( &ss_hashset );
 
-    filtering_ss_except_oute(&mut ss_hashset, &mut uchu);
+    filtering_ss_except_oute(&mut ss_hashset, &mut universe);
 
     // 現局面を見て、ビジョンを作り直せだぜ☆（＾～＾）
-    &uchu.remake_visions();
-    insert_rakkansuji(&mut uchu);
+    &universe.remake_visions();
+    insert_rakkansuji(&mut universe);
     // TODO 楽観筋はまだ使ってない☆（＾～＾）
 
     // 楽観王手の一覧はできているはず。
 
     // FIXME 負けてても、千日手は除くぜ☆（＾～＾）ただし、千日手を取り除くと手がなくなる場合は取り除かないぜ☆（＾～＾）
-    filtering_ss_except_sennitite(&mut ss_hashset, &mut uchu);
+    filtering_ss_except_sennitite(&mut ss_hashset, &mut universe);
 
     // 自殺手は省くぜ☆（＾～＾）
-    filtering_ss_except_jisatusyu(&mut ss_hashset, uchu);
+    filtering_ss_except_jisatusyu(&mut ss_hashset, universe);
 
     if ss_hashset.len() == 0 {
         // 投了

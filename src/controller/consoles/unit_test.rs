@@ -20,7 +20,7 @@ use std::collections::HashSet;
  * test 2
  * といったコマンドに対応☆（＾～＾）
  */
-pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) {
+pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Universe) {
     // いろいろな動作テスト
     g_writeln(&format!("test starts={} len={}", *starts, len));
 
@@ -30,9 +30,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
         // 駒の移動元升
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
-        let ps = uchu
+        let ps = universe
             .piece_struct_master()
-            .get_piece_struct_by_phase_and_piece_type(&uchu.get_teban(&Person::Ji), kms);
+            .get_piece_struct_by_phase_and_piece_type(&universe.get_teban(&Person::Ji), kms);
         let km = ps.piece();
         let sq_dst = randommove::random_square();
         g_writeln(&format!(
@@ -43,18 +43,18 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-        insert_narumae_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-        insert_da_kms_by_sq_km(&sq_dst, &km, &uchu, &mut da_kms_hashset);
+        insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+        insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+        insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
         hyoji_sq_hashset(&mv_src_hashset);
         hyoji_kms_hashset(&da_kms_hashset);
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
         *starts += 4;
         // 移動後の駒
         let kms = randommove::rnd_kms();
-        let ps = uchu
+        let ps = universe
             .piece_struct_master()
-            .get_piece_struct_by_phase_and_piece_type(&uchu.get_teban(&Person::Ji), &kms);
+            .get_piece_struct_by_phase_and_piece_type(&universe.get_teban(&Person::Ji), &kms);
         // 移動先の升、および　不成駒／成駒
         let sq_dst = randommove::random_square();
         let pro_dst = randommove::rnd_bool();
@@ -62,9 +62,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-        insert_narumae_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-        //insert_da_kms_by_sq_km      ( ms_dst, &km, &uchu, &mut da_kms_hashset );
+        insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+        insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+        //insert_da_kms_by_sq_km      ( ms_dst, &km, &universe, &mut da_kms_hashset );
         for sq_src in mv_src_hashset {
             ss.src = sq_src.clone();
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
@@ -80,7 +80,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
         {
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let ps = uchu
+            let ps = universe
                 .piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
             let km = ps.piece(); // △ph
@@ -93,16 +93,16 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_da_kms_by_sq_km(&sq_dst, &km, &uchu, &mut da_kms_hashset);
+            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }
         {
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let ps = uchu
+            let ps = universe
                 .piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
             let km = ps.piece(); // △ph
@@ -115,16 +115,16 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_da_kms_by_sq_km(&sq_dst, &km, &uchu, &mut da_kms_hashset);
+            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }
         {
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let ps = uchu
+            let ps = universe
                 .piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
             let km = ps.piece(); // △ph
@@ -137,16 +137,16 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_da_kms_by_sq_km(&sq_dst, &km, &uchu, &mut da_kms_hashset);
+            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }
         {
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
-            let ps = uchu
+            let ps = universe
                 .piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Sen, &kms);
             let km = ps.piece(); // ▼ら
@@ -159,9 +159,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_sq_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
-            insert_da_kms_by_sq_km(&sq_dst, &km, &uchu, &mut da_kms_hashset);
+            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }
@@ -578,12 +578,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) 
         ));
     } else {
         //g_writeln( &format!( "未定義のテスト「{}」", &line[*starts..len-1] ) );
-        uchu.push_command( &"position startpos moves 6i5h 8c8d 9i9h 8d8e 3g3f 8e8f 5h4h 8f8g+ 1i1h 8g9h 2g2f 9h8h 9g9f 8h7i 2i3g 8b8i+ 2f2e 7i7h".to_string() );
-        uchu.push_command(&"ky".to_string());
-        //g_writeln( &uchu.pop_command() );
+        universe.push_command( &"position startpos moves 6i5h 8c8d 9i9h 8d8e 3g3f 8e8f 5h4h 8f8g+ 1i1h 8g9h 2g2f 9h8h 9g9f 8h7i 2i3g 8b8i+ 2f2e 7i7h".to_string() );
+        universe.push_command(&"ky".to_string());
+        //g_writeln( &universe.pop_command() );
     }
 
     // positionコマンドの読取を丸投げ
-    // tusin::usi::read_position(&KY593.to_string(), &mut uchu);
-    // tusin::usi::read_position(&KY2.to_string(), &mut uchu);
+    // tusin::usi::read_position(&KY593.to_string(), &mut universe);
+    // tusin::usi::read_position(&KY2.to_string(), &mut universe);
 }

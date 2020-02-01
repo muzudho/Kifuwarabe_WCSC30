@@ -38,12 +38,13 @@ impl VisionTree {
 /**
  * 楽観筋
  */
-pub fn insert_rakkansuji(uchu: &mut Universe) {
+pub fn insert_rakkansuji(universe: &mut Universe) {
     for sn in SN_ARRAY.iter() {
         let ai_sn = hanten_sn(sn);
 
         // 相手の　らいおん　の位置を覚える
-        &uchu.vision_tree_by_sn[sn_to_num(sn)].set_ai_r(uchu.ky.get_sq_r(sn_to_num(&ai_sn)));
+        &universe.vision_tree_by_sn[sn_to_num(sn)]
+            .set_ai_r(universe.ky.get_sq_r(sn_to_num(&ai_sn)));
         // 盤上に相手の　らいおん１枚　しかないと想定して、アタックする手
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
@@ -57,15 +58,15 @@ pub fn insert_rakkansuji(uchu: &mut Universe) {
 
                     mv_src_hashset.clear();
                     //da_kms_hashset.clear();
-                    insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
-                    insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                    insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
+                    insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
                     // TODO 王手になるところに打ちたい
-                    //insert_da_kms_by_sq_km      ( &ms_dst, &km_dst, &uchu, &mut da_kms_hashset );
+                    //insert_da_kms_by_sq_km      ( &ms_dst, &km_dst, &universe, &mut da_kms_hashset );
 
                     // 盤上
                     for sq_src in mv_src_hashset.iter() {
                         // 成り
-                        let pro = &uchu.ky.is_natta(&sq_src, &sq_dst);
+                        let pro = &universe.ky.is_natta(&sq_src, &sq_dst);
 
                         let hash_ss = Sasite {
                             src: sq_src.clone(),
@@ -74,7 +75,7 @@ pub fn insert_rakkansuji(uchu: &mut Universe) {
                             drop: PieceType::Kara,
                         }
                         .to_hash();
-                        &uchu.vision_tree_by_sn[sn_to_num(sn)]
+                        &universe.vision_tree_by_sn[sn_to_num(sn)]
                             .ss_tume_hashset
                             .insert(hash_ss);
                     }
@@ -89,7 +90,7 @@ pub fn insert_rakkansuji(uchu: &mut Universe) {
                             pro:false,
                             drop:km_da,
                         }.to_hash();
-                        &uchu.vision_tree_by_sn[sn].ss_tume_hashset.insert( hash_ss );
+                        &universe.vision_tree_by_sn[sn].ss_tume_hashset.insert( hash_ss );
                     }
                     */
                 }

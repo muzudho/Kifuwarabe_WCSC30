@@ -26,6 +26,7 @@ use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::ply::*;
 use super::super::model::master::square::*;
+use super::search::search_part::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -112,8 +113,6 @@ pub struct Universe {
     pub ky: Kyokumen,
     /// 局面ハッシュ種
     pub ky_hash_seed: KyHashSeed,
-    /// 手目
-    pub teme: usize,
     /// 棋譜
     pub kifu: [Sasite; TEME_LN],
     /// 初期局面ハッシュ
@@ -130,6 +129,8 @@ pub struct Universe {
     pub vision_tree_by_sn: [VisionTree; SN_LN],
     /// 駒構造体・マスター
     piece_struct_master: PieceStructMaster,
+    /// 探索部
+    search_part: SearchPart,
 }
 
 impl Universe {
@@ -149,7 +150,6 @@ impl Universe {
                 // 先後
                 sn: [0; SN_LN],
             },
-            teme: 0,
             kifu: [
                 // 1行16要素で並べるぜ☆（＾～＾）
                 Sasite::new(),
@@ -721,6 +721,7 @@ impl Universe {
             ],
             vision_tree_by_sn: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
             piece_struct_master: PieceStructMaster::new(),
+            search_part: SearchPart::new(),
         }
     }
     /**
@@ -756,7 +757,7 @@ impl Universe {
     pub fn clear_ky01(&mut self) {
         self.ky0.clear();
         self.ky.clear();
-        self.set_teme(0);
+        self.get_search_part_mut().set_ply(0);
     }
     /**
      * 初期局面を、現局面にコピーします
@@ -774,6 +775,12 @@ impl Universe {
         }
     }
 
+    pub fn get_search_part_mut(&mut self) -> &mut SearchPart {
+        &mut self.search_part
+    }
+    pub fn get_search_part(&self) -> &SearchPart {
+        &self.search_part
+    }
     pub fn position(&self) -> &Kyokumen {
         &self.ky
     }
@@ -824,19 +831,13 @@ impl Universe {
      * 棋譜 *
      ********/
 
-    pub fn set_teme(&mut self, teme: usize) {
-        self.teme = teme
-    }
-    pub fn get_teme(&self) -> usize {
-        self.teme
-    }
     // 手番
     pub fn get_teban(&self, jiai: &Person) -> Phase {
         use super::master::person::Person::*;
         match *jiai {
             Ji => {
                 // 手番
-                if self.teme % 2 == 0 {
+                if self.get_search_part().get_ply() % 2 == 0 {
                     Phase::Sen
                 } else {
                     Phase::Go
@@ -844,7 +845,7 @@ impl Universe {
             }
             Ai => {
                 // 相手番
-                if self.teme % 2 == 0 {
+                if self.get_search_part().get_ply() % 2 == 0 {
                     Phase::Go
                 } else {
                     Phase::Sen
@@ -858,44 +859,44 @@ impl Universe {
      * 棋譜の作成
      */
     pub fn set_sasite_src(&mut self, src: &Square) {
-        self.kifu[self.teme].src = src.clone()
+        self.kifu[self.get_search_part().get_ply() as usize].src = src.clone()
     }
     pub fn set_sasite_dst(&mut self, dst: &Square) {
-        self.kifu[self.teme].dst = dst.clone()
+        self.kifu[self.get_search_part().get_ply() as usize].dst = dst.clone()
     }
     pub fn set_sasite_pro(&mut self, pro: bool) {
-        self.kifu[self.teme].pro = pro
+        self.kifu[self.get_search_part().get_ply() as usize].pro = pro
     }
     pub fn set_sasite_drop(&mut self, kms: PieceType) {
-        self.kifu[self.teme].drop = kms
+        self.kifu[self.get_search_part().get_ply() as usize].drop = kms
     }
     pub fn set_ky0_hash(&mut self, hash: u64) {
         self.ky0_hash = hash
     }
     pub fn set_ky1_hash(&mut self, hash: u64) {
-        self.ky_hash[self.teme] = hash
+        self.ky_hash[self.get_search_part().get_ply() as usize] = hash
     }
     #[allow(dead_code)]
-    pub fn set_cap(&mut self, teme: usize, km: Piece) {
-        self.cap[teme] = km
+    pub fn set_cap(&mut self, ply1: usize, km: Piece) {
+        self.cap[ply1] = km
     }
     pub fn get_sasite(&self) -> &Sasite {
-        &self.kifu[self.teme]
+        &self.kifu[self.get_search_part().get_ply() as usize]
     }
     #[allow(dead_code)]
     pub fn get_ky_hash(&mut self) -> u64 {
-        self.ky_hash[self.teme]
+        self.ky_hash[self.get_search_part().get_ply() as usize]
     }
     /**
      * 使い方
-     * let s = uchu.kaku_kifu();
+     * let s = universe.kaku_kifu();
      * g_writeln( &s );
      */
     pub fn kaku_kifu(&self) -> String {
         let mut s = String::new();
-        for teme in 0..self.teme {
-            let ss = &self.kifu[teme];
-            s.push_str(&format!("[{}] {}", teme, ss));
+        for ply in 0..self.get_search_part().get_ply() {
+            let ss = &self.kifu[ply as usize];
+            s.push_str(&format!("[{}] {}", ply, ss));
         }
         s
     }
@@ -903,10 +904,10 @@ impl Universe {
         let mut s = String::new();
         s.push_str(&format!("[ini] {:20}\n", &self.ky0_hash));
 
-        for teme in 0..self.teme {
-            let hash = &self.ky_hash[teme];
+        for ply in 0..self.get_search_part().get_ply() {
+            let hash = &self.ky_hash[ply as usize];
             // 64bitは10進数20桁。改行する
-            s.push_str(&format!("[{:3}] {:20}\n", teme, hash));
+            s.push_str(&format!("[{:3}] {:20}\n", ply, hash));
         }
         s
     }
@@ -1069,7 +1070,7 @@ impl Universe {
             ky.mg[Piece::Knight2 as usize],
             ky.mg[Piece::Lance2 as usize],
             ky.mg[Piece::Pawn2 as usize],
-            self.get_teme(),
+            self.get_search_part().get_ply(),
             self.get_teban(&Person::Ji),
             self.count_same_ky()
         )
@@ -1211,25 +1212,29 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     // 入れた指し手の通り指すぜ☆（＾～＾）
     pub fn do_ss(&mut self, ss: &Sasite) {
         // もう入っているかも知れないが、棋譜に入れる☆
-        let teme = self.teme;
-        self.kifu[teme] = (*ss).clone();
+        let ply = self.get_search_part().get_ply();
+        self.kifu[ply as usize] = (*ss).clone();
         let cap = self.ky.do_sasite(&self.get_teban(&Person::Ji), ss);
-        self.set_cap(teme, cap.clone());
+        self.set_cap(ply as usize, cap.clone());
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash();
         self.set_ky1_hash(ky_hash);
 
-        self.teme += 1;
+        self.get_search_part_mut().add_ply(1);
     }
 
     pub fn undo_ss(&mut self) -> bool {
-        if 0 < self.teme {
+        if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
-            self.teme -= 1;
+            self.get_search_part_mut().add_ply(-1);
             let sn = self.get_teban(&Person::Ji);
             let ss = &self.get_sasite().clone();
-            self.ky.undo_sasite(&sn, &ss, &self.cap[self.teme]);
+            self.ky.undo_sasite(
+                &sn,
+                &ss,
+                &self.cap[self.get_search_part().get_ply() as usize],
+            );
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -1278,24 +1283,24 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
      * 現局面は、同一局面が何回目かを調べるぜ☆（＾～＾）
      */
     pub fn count_same_ky(&self) -> i8 {
-        if self.get_teme() < 1 {
+        if self.get_search_part().get_ply() < 1 {
             return 0;
         }
 
         let mut count = 0;
-        let last_teme = self.get_teme() - 1;
-        let new_teme = self.get_teme();
-        // g_writeln( &format!( "Ｃount_same_ky last_teme={} new_teme={}", last_teme ,new_teme ) );
-        for i_teme in 0..new_teme {
-            let t = last_teme - i_teme;
-            // g_writeln( &format!( "i_teme={} t={}", i_teme, t ) );
-            if self.ky_hash[t] == self.ky_hash[last_teme] {
+        let last_ply = self.get_search_part().get_ply() - 1;
+        let new_ply = self.get_search_part().get_ply();
+        // g_writeln( &format!( "Ｃount_same_ky last_ply={} new_ply={}", last_ply ,new_ply ) );
+        for i_ply in 0..new_ply {
+            let t = last_ply - i_ply;
+            // g_writeln( &format!( "i_ply={} t={}", i_ply, t ) );
+            if self.ky_hash[t as usize] == self.ky_hash[last_ply as usize] {
                 count += 1;
             }
         }
 
         // 初期局面のハッシュ
-        if self.ky0_hash == self.ky_hash[last_teme] {
+        if self.ky0_hash == self.ky_hash[last_ply as usize] {
             count += 1;
         }
 

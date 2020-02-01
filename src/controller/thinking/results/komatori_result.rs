@@ -166,7 +166,7 @@ impl KomatoriResult {
  *
  * return u64 : KomatoriResult のハッシュ
  */
-pub fn lookup_banjo_catch(uchu: &Universe, sn: &Phase, sq_target: &Square) -> HashSet<u64> {
+pub fn lookup_banjo_catch(universe: &Universe, sn: &Phase, sq_target: &Square) -> HashSet<u64> {
     assert_banjo_sq(
         &sq_target,
         &format!(
@@ -186,7 +186,7 @@ pub fn lookup_banjo_catch(uchu: &Universe, sn: &Phase, sq_target: &Square) -> Ha
 
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
-        let ps_dst = uchu
+        let ps_dst = universe
             .piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(&sn, kms_dst);
         let km_dst = ps_dst.piece();
@@ -195,7 +195,7 @@ pub fn lookup_banjo_catch(uchu: &Universe, sn: &Phase, sq_target: &Square) -> Ha
         // 打は除く
 
         ss_hashset.clear();
-        insert_ss_by_ms_km_on_banjo(&uchu, &sq_target, &km_dst, &mut ss_hashset);
+        insert_ss_by_ms_km_on_banjo(&universe, &sq_target, &km_dst, &mut ss_hashset);
 
         // g_writeln( &format!("テスト lookup_banjo_catch insert_ss_by_ms_km_on_banjo kms_dst={}.",kms_dst) );
         // use consoles::visuals::dumps::*;

@@ -14,14 +14,14 @@ use std::collections::HashSet;
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn read_kikisu(uchu: &mut Universe) {
+pub fn read_kikisu(universe: &mut Universe) {
     // ゼロ・リセット
     for km in KM_ARRAY.iter() {
-        &uchu.kiki_su_by_km[PieceStruct::from_piece(km).serial_piece_number()].clear();
+        &universe.kiki_su_by_km[PieceStruct::from_piece(km).serial_piece_number()].clear();
     }
 
     for sn in SN_ARRAY.iter() {
-        &uchu.kiki_su_by_sn[sn_to_num(sn)].clear();
+        &universe.kiki_su_by_sn[sn_to_num(sn)].clear();
     }
 
     // カウント
@@ -36,17 +36,18 @@ pub fn read_kikisu(uchu: &mut Universe) {
 
                 // 移動元の升
                 let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-                insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
-                insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
+                insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
                 // 打は考えない。盤上の利き数なので
                 let kikisu = mv_src_hashset.len();
 
                 // 駒別
-                uchu.kiki_su_by_km[ps_dst.serial_piece_number()]
+                universe.kiki_su_by_km[ps_dst.serial_piece_number()]
                     .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別
-                uchu.kiki_su_by_sn[sn_to_num(ps_dst.phase())].add_su_by_sq(&sq_dst, kikisu as i8);
+                universe.kiki_su_by_sn[sn_to_num(ps_dst.phase())]
+                    .add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }
     }

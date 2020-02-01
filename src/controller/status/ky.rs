@@ -450,7 +450,7 @@ impl Kyokumen {
     /**
      * 局面ハッシュを作り直す
      */
-    pub fn create_hash(&self, uchu: &Universe) -> u64 {
+    pub fn create_hash(&self, universe: &Universe) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒
@@ -458,7 +458,7 @@ impl Kyokumen {
             let i_sq = Square::from_umasu(i_ms as umasu);
             let km = self.get_piece_struct_by_sq(&i_sq).piece();
             let num_km = PieceStruct::from_piece(&km).serial_piece_number();
-            hash ^= uchu.ky_hash_seed.km[i_ms][num_km];
+            hash ^= universe.ky_hash_seed.km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
@@ -475,7 +475,7 @@ impl Kyokumen {
                 MG_MAX
             );
 
-            hash ^= uchu.ky_hash_seed.mg[num_km][maisu as usize];
+            hash ^= universe.ky_hash_seed.mg[num_km][maisu as usize];
         }
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）

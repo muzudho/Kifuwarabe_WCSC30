@@ -156,7 +156,7 @@ impl fmt::Debug for Sasite {
  * 読み取った指し手は、棋譜に入れる。
  * 現在の手目のところに入れ、手目のカウントアップも行う。
  */
-pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) -> bool {
+pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut Universe) -> bool {
     // 4文字か5文字あるはず。
     if (len - *starts) < 4 {
         // 指し手読取終了時にここを通るぜ☆（＾～＾）
@@ -169,38 +169,38 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uni
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            uchu.set_sasite_src(&Square::from_umasu(0));
-            uchu.set_sasite_drop(PieceType::K);
+            universe.set_sasite_src(&Square::from_umasu(0));
+            universe.set_sasite_drop(PieceType::K);
         }
         "B" => {
             *starts += 2;
-            uchu.set_sasite_src(&Square::from_umasu(0));
-            uchu.set_sasite_drop(PieceType::Z);
+            universe.set_sasite_src(&Square::from_umasu(0));
+            universe.set_sasite_drop(PieceType::Z);
         }
         "G" => {
             *starts += 2;
-            uchu.set_sasite_src(&Square::from_umasu(0));
-            uchu.set_sasite_drop(PieceType::I);
+            universe.set_sasite_src(&Square::from_umasu(0));
+            universe.set_sasite_drop(PieceType::I);
         }
         "S" => {
             *starts += 2;
-            uchu.set_sasite_src(&Square::from_umasu(0));
-            uchu.set_sasite_drop(PieceType::N);
+            universe.set_sasite_src(&Square::from_umasu(0));
+            universe.set_sasite_drop(PieceType::N);
         }
         "N" => {
             *starts += 2;
-            uchu.set_sasite_src(&Square::from_umasu(0));
-            uchu.set_sasite_drop(PieceType::U);
+            universe.set_sasite_src(&Square::from_umasu(0));
+            universe.set_sasite_drop(PieceType::U);
         }
         "L" => {
             *starts += 2;
-            uchu.set_sasite_src(&Square::from_umasu(0));
-            uchu.set_sasite_drop(PieceType::S);
+            universe.set_sasite_src(&Square::from_umasu(0));
+            universe.set_sasite_drop(PieceType::S);
         }
         "P" => {
             *starts += 2;
-            uchu.set_sasite_src(&Square::from_umasu(0));
-            uchu.set_sasite_drop(PieceType::H);
+            universe.set_sasite_src(&Square::from_umasu(0));
+            universe.set_sasite_drop(PieceType::H);
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
@@ -292,8 +292,8 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uni
                 }
             }
 
-            uchu.set_sasite_src(&Square::from_file_rank(suji, dan));
-            uchu.set_sasite_drop(PieceType::Kara);
+            universe.set_sasite_src(&Square::from_file_rank(suji, dan));
+            universe.set_sasite_drop(PieceType::Kara);
         }
     }
 
@@ -388,13 +388,13 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uni
         }
     }
 
-    uchu.set_sasite_dst(&Square::from_file_rank(suji, dan));
+    universe.set_sasite_dst(&Square::from_file_rank(suji, dan));
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..(*starts + 1)] == "+" {
-        uchu.set_sasite_pro(true);
+        universe.set_sasite_pro(true);
         *starts += 1;
     } else {
-        uchu.set_sasite_pro(false);
+        universe.set_sasite_pro(false);
     }
 
     // 続きにスペース「 」が１つあれば読み飛ばす
@@ -402,14 +402,14 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uni
         *starts += 1;
     }
 
-    uchu.teme += 1;
+    universe.get_search_part_mut().add_ply(1);
     true
 }
 
 /**
  * position コマンド 盤上部分のみ 読取
  */
-pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) {
+pub fn read_banjo(line: &String, starts: &mut usize, len: usize, universe: &mut Universe) {
     // 盤部
     let mut suji = SUJI_9; //９筋から右方向へ読取
     let mut dan = DAN_1;
@@ -422,145 +422,145 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Univ
             }
             "1" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
             }
             "2" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
             }
             "3" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                 suji -= 1;
             }
             "4" => {
                 *starts += 1;
                 for _i_kara in 0..4 {
-                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                    universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "5" => {
                 *starts += 1;
                 for _i_kara in 0..5 {
-                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                    universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "6" => {
                 *starts += 1;
                 for _i_kara in 0..6 {
-                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                    universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "7" => {
                 *starts += 1;
                 for _i_kara in 0..7 {
-                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                    universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "8" => {
                 *starts += 1;
                 for _i_kara in 0..8 {
-                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                    universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "9" => {
                 *starts += 1;
                 for _i_kara in 0..9 {
-                    uchu.set_ky0_ban_km(suji, dan, &Piece::Kara);
+                    universe.set_ky0_ban_km(suji, dan, &Piece::Kara);
                     suji -= 1;
                 }
             }
             "K" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::King1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::King1);
                 suji -= 1;
             }
             "R" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Rook1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Rook1);
                 suji -= 1;
             }
             "B" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Bishop1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Bishop1);
                 suji -= 1;
             }
             "G" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Gold1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Gold1);
                 suji -= 1;
             }
             "S" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Silver1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Silver1);
                 suji -= 1;
             }
             "N" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Knight1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Knight1);
                 suji -= 1;
             }
             "L" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Lance1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Lance1);
                 suji -= 1;
             }
             "P" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Pawn1);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Pawn1);
                 suji -= 1;
             }
             "k" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::King2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::King2);
                 suji -= 1;
             }
             "r" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Rook2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Rook2);
                 suji -= 1;
             }
             "b" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Bishop2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Bishop2);
                 suji -= 1;
             }
             "g" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Gold2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Gold2);
                 suji -= 1;
             }
             "s" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Silver2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Silver2);
                 suji -= 1;
             }
             "n" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Knight2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Knight2);
                 suji -= 1;
             }
             "l" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Lance2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Lance2);
                 suji -= 1;
             }
             "p" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, &Piece::Pawn2);
+                universe.set_ky0_ban_km(suji, dan, &Piece::Pawn2);
                 suji -= 1;
             }
             "+" => {
@@ -568,62 +568,62 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Univ
                 match &line[*starts..(*starts + 1)] {
                     "R" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedRook1);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedRook1);
                         suji -= 1;
                     }
                     "B" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedBishop1);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedBishop1);
                         suji -= 1;
                     }
                     "S" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedSilver1);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedSilver1);
                         suji -= 1;
                     }
                     "N" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedKnight1);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedKnight1);
                         suji -= 1;
                     }
                     "L" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedLance1);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedLance1);
                         suji -= 1;
                     }
                     "P" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedPawn1);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedPawn1);
                         suji -= 1;
                     }
                     "r" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedRook2);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedRook2);
                         suji -= 1;
                     }
                     "b" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedBishop2);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedBishop2);
                         suji -= 1;
                     }
                     "s" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedSilver2);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedSilver2);
                         suji -= 1;
                     }
                     "n" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedKnight2);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedKnight2);
                         suji -= 1;
                     }
                     "l" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedLance2);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedLance2);
                         suji -= 1;
                     }
                     "p" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, &Piece::PromotedPawn2);
+                        universe.set_ky0_ban_km(suji, dan, &Piece::PromotedPawn2);
                         suji -= 1;
                     }
                     _ => {
@@ -642,28 +642,33 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Univ
     }
 
     // 初期局面ハッシュを作り直す
-    let ky_hash = uchu.create_ky0_hash();
-    uchu.set_ky0_hash(ky_hash);
+    let ky_hash = universe.create_ky0_hash();
+    universe.set_ky0_hash(ky_hash);
 }
 
 /**
  * position コマンド読取
  */
-pub fn read_position(line: &String, uchu: &mut Universe) {
+pub fn read_position(line: &String, universe: &mut Universe) {
     let mut starts = 0;
 
     // 全体の長さ
     let len = line.chars().count();
 
     // 局面をクリアー。手目も 0 に戻します。
-    uchu.clear_ky01();
+    universe.clear_ky01();
 
     if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
         // 'position startpos' を読み飛ばし
         starts += 17;
         // 別途用意した平手初期局面文字列を読取
         let mut local_starts = 0;
-        read_banjo(&STARTPOS.to_string(), &mut local_starts, STARTPOS_LN, uchu);
+        read_banjo(
+            &STARTPOS.to_string(),
+            &mut local_starts,
+            STARTPOS_LN,
+            universe,
+        );
 
         if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
             // ' ' を読み飛ばした。
@@ -671,7 +676,7 @@ pub fn read_position(line: &String, uchu: &mut Universe) {
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_banjo(line, &mut starts, len, uchu);
+        read_banjo(line, &mut starts, len, universe);
 
         if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
             starts += 1;
@@ -842,7 +847,7 @@ pub fn read_position(line: &String, uchu: &mut Universe) {
                         } // 持駒部 正常終了
                     }
 
-                    uchu.set_ky0_mg(km, maisu);
+                    universe.set_ky0_mg(km, maisu);
                 } //if
             } //loop
         } //else
@@ -864,18 +869,18 @@ pub fn read_position(line: &String, uchu: &mut Universe) {
     }
 
     // 初期局面を、現局面にコピーします
-    uchu.copy_ky0_to_ky1();
+    universe.copy_ky0_to_ky1();
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
-    while read_sasite(line, &mut starts, len, uchu) {
+    while read_sasite(line, &mut starts, len, universe) {
         // 手目を戻す
-        uchu.teme -= 1;
+        universe.get_search_part_mut().add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let teme = uchu.teme;
-        uchu.do_ss(&uchu.kifu[teme].clone());
+        let ply = universe.get_search_part().get_ply();
+        universe.do_ss(&universe.kifu[ply as usize].clone());
 
         // 現局面表示
-        //let s1 = &uchu.kaku_ky( &KyNums::Current );
+        //let s1 = &universe.kaku_ky( &KyNums::Current );
         //g_writeln( &s1 );
     }
 }

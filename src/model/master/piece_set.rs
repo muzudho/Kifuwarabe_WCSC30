@@ -31,8 +31,8 @@ impl PieceSet {
     /**
      * 自分相手
      */
-    pub fn new_jiai(&self, jiai: &Person, uchu: &Universe) -> PieceSet {
-        let sn0 = uchu.get_teban(&jiai);
+    pub fn new_jiai(&self, jiai: &Person, universe: &Universe) -> PieceSet {
+        let sn0 = universe.get_teban(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
             let ps = PieceStruct::from_piece(km);
