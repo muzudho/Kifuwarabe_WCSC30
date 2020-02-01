@@ -351,7 +351,7 @@ impl PieceStruct {
         (hash >> 5, ps)
     }
 
-    pub fn piece(self) -> Piece {
+    pub fn piece(&self) -> Piece {
         self.piece
     }
 
@@ -359,24 +359,24 @@ impl PieceStruct {
         (&self.phase_piece_type.0, &self.phase_piece_type.1)
     }
 
-    pub fn phase(self) -> Phase {
+    pub fn phase(&self) -> Phase {
         self.phase_piece_type.0
     }
 
-    pub fn piece_type(self) -> PieceType {
+    pub fn piece_type(&self) -> PieceType {
         self.phase_piece_type.1
     }
 
-    pub fn promote(self) -> Piece {
+    pub fn promote(&self) -> Piece {
         self.promoted
     }
 
-    pub fn demote(self) -> Piece {
+    pub fn demote(&self) -> Piece {
         self.demoted
     }
 
     /// 持ち駒にするぜ☆（＾～＾）相手の持ち物になるぜ☆（＾～＾）
-    pub fn capture(self) -> Piece {
+    pub fn capture(&self) -> Piece {
         self.captured
     }
 
@@ -387,7 +387,7 @@ impl PieceStruct {
     /**
      * 駒の一致比較
      */
-    pub fn equals_piece(self, b: &PieceStruct) -> bool {
+    pub fn equals_piece(&self, b: &PieceStruct) -> bool {
         self.serial_piece_number() == b.serial_piece_number()
     }
 

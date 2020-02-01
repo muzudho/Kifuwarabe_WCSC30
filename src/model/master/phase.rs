@@ -10,7 +10,7 @@ pub const SN_LN: usize = 3;
  * 先後。単純にプレイヤー１を先手、プレイヤー２を後手とする。
  * 駒落ち戦での通称　上手／下手　の場合、上手は先手、下手は後手とする。
  */
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub enum Phase {
     Sen,
     Go,
