@@ -413,8 +413,8 @@ impl Kyokumen {
     /**
      * 指定の升にある駒の先後、または空升
      */
-    pub fn get_sn_by_ms(&self, ms: umasu) -> Phase {
-        self.get_piece_struct_by_ms(ms).phase()
+    pub fn get_sn_by_ms(&self, ms: umasu) -> &Phase {
+        &self.get_piece_struct_by_ms(ms).phase()
     }
 
     /**

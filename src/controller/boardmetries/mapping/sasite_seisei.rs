@@ -32,9 +32,11 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
         for suji_src in 1..10 {
             let ms_src = suji_dan_to_ms(suji_src, dan_src);
             let km_src = uchu.ky.get_piece_struct_by_ms(ms_src).piece();
-            let sn = PieceStruct::from_piece(&km_src).phase();
 
-            if match_sn(&sn, &uchu.get_teban(&Person::Ji)) {
+            if match_sn(
+                &PieceStruct::from_piece(&km_src).phase(),
+                &uchu.get_teban(&Person::Ji),
+            ) {
                 // 手番の駒
 
                 let mut dst_hashset: HashSet<umasu> = HashSet::new();

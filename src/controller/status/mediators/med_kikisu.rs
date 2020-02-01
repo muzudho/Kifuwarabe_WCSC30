@@ -40,14 +40,14 @@ pub fn read_kikisu(uchu: &mut Uchu) {
                 insert_narumae_src_by_ms_km(ms_dst, &km_dst, &uchu, &mut mv_src_hashset);
                 // 打は考えない。盤上の利き数なので
                 let kikisu = mv_src_hashset.len();
-                let sn = PieceStruct::from_piece(&km_dst).phase();
 
                 // 駒別
                 uchu.kiki_su_by_km[PieceStruct::from_piece(&km_dst).serial_piece_number()]
                     .add_su_by_ms(ms_dst, kikisu as i8);
 
                 // 先後別
-                uchu.kiki_su_by_sn[sn_to_num(&sn)].add_su_by_ms(ms_dst, kikisu as i8);
+                uchu.kiki_su_by_sn[sn_to_num(&PieceStruct::from_piece(&km_dst).phase())]
+                    .add_su_by_ms(ms_dst, kikisu as i8);
             }
         }
     }
