@@ -6,6 +6,7 @@ use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::place::*;
+use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 
 /******
@@ -15,10 +16,11 @@ use std::collections::HashSet;
 /**
  * 升を表示
  */
-pub fn hyoji_ms_hashset(ms_hashset: &HashSet<umasu>) {
-    g_writeln(&format!("ms_hashset.len()={}", ms_hashset.len()));
-    for ms in ms_hashset {
-        match *ms {
+pub fn hyoji_sq_hashset(sq_hashset: &HashSet<Square>) {
+    g_writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
+    for sq in sq_hashset {
+        let ms = (*sq).to_umasu();
+        match ms {
             MASU_0 => break,
             _ => g_writeln(&format!("ms({})", ms)),
         }

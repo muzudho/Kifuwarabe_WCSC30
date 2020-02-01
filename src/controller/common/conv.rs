@@ -167,15 +167,6 @@ pub fn sq_to_p(sq: &Square) -> Point {
         y: (ms % 10) as i8,
     }
 }
-pub fn suji_dan_to_sq(suji: i8, dan: i8) -> Square {
-    debug_assert!(
-        (SUJI_0 < suji && suji < SUJI_10) && (DAN_0 < dan && dan < DAN_10),
-        "(204)suji_dan_to_sq suji={},dan={}",
-        suji,
-        dan
-    );
-    Square::from_umasu((suji * 10 + dan) as umasu)
-}
 pub fn p_in_ban(p: &Point) -> bool {
     (SUJI_0 < p.x && p.x < SUJI_10) && (DAN_0 < p.y && p.y < DAN_10)
 }

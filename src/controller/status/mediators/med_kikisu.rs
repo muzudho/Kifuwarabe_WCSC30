@@ -36,9 +36,9 @@ pub fn read_kikisu(uchu: &mut Uchu) {
                 assert_banjo_sq(&sq_dst, "think 利き調べ");
 
                 // 移動元の升
-                let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
-                insert_narazu_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
-                insert_narumae_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
+                insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                 // 打は考えない。盤上の利き数なので
                 let kikisu = mv_src_hashset.len();
 

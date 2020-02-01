@@ -47,7 +47,7 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
         // 相手の　らいおん　の位置を覚える
         &uchu.vision_tree_by_sn[sn_to_num(sn)].set_ai_r(&uchu.ky.get_sq_r(sn_to_num(&ai_sn)));
         // 盤上に相手の　らいおん１枚　しかないと想定して、アタックする手
-        let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
+        let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
 
         for kms_dst in KMS_ARRAY.iter() {
@@ -59,19 +59,18 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
 
                     mv_src_hashset.clear();
                     //da_kms_hashset.clear();
-                    insert_narazu_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
-                    insert_narumae_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                    insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                    insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                     // TODO 王手になるところに打ちたい
                     //insert_da_kms_by_sq_km      ( &ms_dst, &km_dst, &uchu, &mut da_kms_hashset );
 
                     // 盤上
-                    for ms_src in mv_src_hashset.iter() {
-                        let sq_src = Square::from_umasu(*ms_src);
+                    for sq_src in mv_src_hashset.iter() {
                         // 成り
-                        let pro = &uchu.ky.is_natta(&sq_src, &sq_dst);
+                        let pro = &uchu.ky.is_natta(sq_src, &sq_dst);
 
                         let hash_ss = Sasite {
-                            src: sq_src,
+                            src: sq_src.clone(),
                             dst: sq_dst.clone(),
                             pro: *pro,
                             drop: PieceType::Kara,

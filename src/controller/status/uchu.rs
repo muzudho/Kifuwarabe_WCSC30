@@ -916,7 +916,7 @@ impl Uchu {
      * 自陣
      */
     #[allow(dead_code)]
-    pub fn get_ji_jin(&self) -> Vec<umasu> {
+    pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
             super::super::super::model::master::region::SenteJin::to_elm()
         } else {
@@ -927,7 +927,7 @@ impl Uchu {
      * 相手陣
      */
     #[allow(dead_code)]
-    pub fn get_aite_jin(&self) -> Vec<umasu> {
+    pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
             super::super::super::model::master::region::GoteJin::to_elm()
         } else {

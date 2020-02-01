@@ -6,8 +6,11 @@
 //! 93 83 73
 //!
 use super::super::super::model::master::place::*;
+use std::cmp::Eq;
+use std::cmp::PartialEq;
+use std::hash::Hash;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Square {
     /// 行番号。いわゆる段。上から 1, 2, 3 ...
     rank: i8,
@@ -27,7 +30,6 @@ impl Square {
             file: file1,
         }
     }
-
     pub fn to_umasu(&self) -> umasu {
         (self.file * 10 + self.rank) as umasu
     }
