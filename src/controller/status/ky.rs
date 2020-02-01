@@ -108,8 +108,8 @@ impl Kyokumen {
         self.ban[ms] = km;
         use super::super::super::model::master::phase::Phase::*;
         match km {
-            Piece::R0 => self.ms_r[Sen as usize] = ms,
-            Piece::R1 => self.ms_r[Go as usize] = ms,
+            Piece::King1 => self.ms_r[Sen as usize] = ms,
+            Piece::King2 => self.ms_r[Go as usize] = ms,
             _ => {}
         }
     }

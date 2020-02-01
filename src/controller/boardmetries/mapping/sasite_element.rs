@@ -54,25 +54,25 @@ pub fn insert_narazu_src_by_ms_km(
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     use super::super::super::super::model::master::piece::Piece::*;
     match *km_dst {
-        U0 => {
+        Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
             if dy < DAN_3 {
                 return;
             }
         }
-        S0 | H0 => {
+        Lance1 | Pawn1 => {
             // ▼しし、▼ひよこ　は１段目には進めない
             if dy < DAN_2 {
                 return;
             }
         }
-        U1 => {
+        Knight2 => {
             // △うさぎ　は８、９段目には進めない
             if DAN_7 < dy {
                 return;
             }
         }
-        S1 | H1 => {
+        Lance2 | Pawn2 => {
             // △しし、△ひよこ　は９段目には進めない
             if DAN_8 < dy {
                 return;
@@ -699,37 +699,37 @@ pub fn insert_da_kms_by_ms_km(
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     use super::super::super::super::model::master::piece::Piece::*;
     match *km_dst {
-        U0 => {
+        Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
             if dy < DAN_3 {
                 return;
             }
         }
         // ▼しし、▼ひよこ　は１段目には進めない
-        S0 => {
+        Lance1 => {
             if dy < DAN_2 {
                 return;
             }
         }
-        H0 => {
+        Pawn1 => {
             // ▼ひよこ　は２歩できない
             if dy < DAN_2 || uchu.ky.exists_fu_by_sn_suji(&sn, suji) {
                 return;
             }
         }
-        U1 => {
+        Knight2 => {
             // △うさぎ　は８、９段目には進めない
             if DAN_7 < dy {
                 return;
             }
         }
         // △しし、△ひよこ　は９段目には進めない
-        S1 => {
+        Lance2 => {
             if DAN_8 < dy {
                 return;
             }
         }
-        H1 => {
+        Pawn2 => {
             // △ひよこ　は２歩できない
             if DAN_8 < dy || uchu.ky.exists_fu_by_sn_suji(&sn, suji) {
                 return;
@@ -1054,7 +1054,7 @@ pub fn insert_dst_by_ms_km(
         // +------------------------------+
         use super::super::super::super::model::master::piece::Piece::*;
         match *km_src {
-            K0 | Z0 | N0 => {
+            Rook1 | Bishop1 | Silver1 => {
                 // ▼きりん、▼ぞう、▼ねこ　は
                 // 移動元または移動先が　１～３段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
@@ -1071,7 +1071,7 @@ pub fn insert_dst_by_ms_km(
                     result.insert(*ms_dst);
                 }
             }
-            U0 | S0 | H0 => {
+            Knight1 | Lance1 | Pawn1 => {
                 // ▼うさぎ、▼しし、▼ひよこ　は
                 // 移動先が　１～３段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
@@ -1087,7 +1087,7 @@ pub fn insert_dst_by_ms_km(
                     result.insert(*ms_dst);
                 }
             }
-            K1 | Z1 | N1 => {
+            Rook2 | Bishop2 | Silver2 => {
                 // △きりん、△ぞう、△ねこ　は
                 // 移動元または移動先が　７～９段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
@@ -1104,7 +1104,7 @@ pub fn insert_dst_by_ms_km(
                     result.insert(*ms_dst);
                 }
             }
-            U1 | S1 | H1 => {
+            Knight2 | Lance2 | Pawn2 => {
                 // △うさぎ、△しし、△ひよこ　は
                 // 移動先が　７～９段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
@@ -1128,7 +1128,7 @@ pub fn insert_dst_by_ms_km(
         // +----------------------------------------+
         use super::super::super::super::model::master::piece::Piece::*;
         match *km_src {
-            U0 => {
+            Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
@@ -1144,7 +1144,7 @@ pub fn insert_dst_by_ms_km(
                     result.insert(*ms_dst);
                 }
             }
-            S0 | H0 => {
+            Lance1 | Pawn1 => {
                 // ▼しし、▼ひよこ　は１段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
@@ -1160,7 +1160,7 @@ pub fn insert_dst_by_ms_km(
                     result.insert(*ms_dst);
                 }
             }
-            U1 => {
+            Knight2 => {
                 // △うさぎ　は８、９段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
@@ -1176,7 +1176,7 @@ pub fn insert_dst_by_ms_km(
                     result.insert(*ms_dst);
                 }
             }
-            S1 | H1 => {
+            Lance2 | Pawn2 => {
                 // △しし、△ひよこ　は９段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
@@ -1222,25 +1222,25 @@ pub fn insert_narazu_src_by_sn_ms(
         let km = sn_kms_to_km(&sn, &kms);
         use super::super::super::super::model::master::piece::Piece::*;
         match km {
-            U0 => {
+            Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
                 if dy < DAN_3 {
                     continue;
                 }
             }
-            S0 | H0 => {
+            Lance1 | Pawn1 => {
                 // ▼しし、▼ひよこ　は１段目には進めない
                 if dy < DAN_2 {
                     continue;
                 }
             }
-            U1 => {
+            Knight2 => {
                 // △うさぎ　は８、９段目には進めない
                 if DAN_7 < dy {
                     continue;
                 }
             }
-            S1 | H1 => {
+            Lance2 | Pawn2 => {
                 // △しし、△ひよこ　は９段目には進めない
                 if DAN_8 < dy {
                     continue;

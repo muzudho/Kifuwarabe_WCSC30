@@ -484,82 +484,82 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu
             }
             "K" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::R0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::King1);
                 suji -= 1;
             }
             "R" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::K0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Rook1);
                 suji -= 1;
             }
             "B" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Z0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Bishop1);
                 suji -= 1;
             }
             "G" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::I0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Gold1);
                 suji -= 1;
             }
             "S" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::N0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Silver1);
                 suji -= 1;
             }
             "N" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::U0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Knight1);
                 suji -= 1;
             }
             "L" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::S0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Lance1);
                 suji -= 1;
             }
             "P" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::H0);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Pawn1);
                 suji -= 1;
             }
             "k" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::R1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::King2);
                 suji -= 1;
             }
             "r" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::K1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Rook2);
                 suji -= 1;
             }
             "b" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::Z1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Bishop2);
                 suji -= 1;
             }
             "g" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::I1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Gold2);
                 suji -= 1;
             }
             "s" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::N1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Silver2);
                 suji -= 1;
             }
             "n" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::U1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Knight2);
                 suji -= 1;
             }
             "l" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::S1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Lance2);
                 suji -= 1;
             }
             "p" => {
                 *starts += 1;
-                uchu.set_ky0_ban_km(suji, dan, Piece::H1);
+                uchu.set_ky0_ban_km(suji, dan, Piece::Pawn2);
                 suji -= 1;
             }
             "+" => {
@@ -567,62 +567,62 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu
                 match &line[*starts..(*starts + 1)] {
                     "R" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PK0);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedRook1);
                         suji -= 1;
                     }
                     "B" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PZ0);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedBishop1);
                         suji -= 1;
                     }
                     "S" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PN0);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedSilver1);
                         suji -= 1;
                     }
                     "N" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PU0);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedKnight1);
                         suji -= 1;
                     }
                     "L" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PS0);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedLance1);
                         suji -= 1;
                     }
                     "P" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PH0);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedPawn1);
                         suji -= 1;
                     }
                     "r" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PK1);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedRook2);
                         suji -= 1;
                     }
                     "b" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PZ1);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedBishop2);
                         suji -= 1;
                     }
                     "s" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PN1);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedSilver2);
                         suji -= 1;
                     }
                     "n" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PU1);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedKnight2);
                         suji -= 1;
                     }
                     "l" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PS1);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedLance2);
                         suji -= 1;
                     }
                     "p" => {
                         *starts += 1;
-                        uchu.set_ky0_ban_km(suji, dan, Piece::PH1);
+                        uchu.set_ky0_ban_km(suji, dan, Piece::PromotedPawn2);
                         suji -= 1;
                     }
                     _ => {
@@ -781,59 +781,59 @@ pub fn read_position(line: &String, uchu: &mut Uchu) {
                     let km: Piece;
                     match &line[starts..(starts + 1)] {
                         "R" => {
-                            km = K0;
+                            km = Rook1;
                             starts += 1;
                         }
                         "B" => {
-                            km = Z0;
+                            km = Bishop1;
                             starts += 1;
                         }
                         "G" => {
-                            km = I0;
+                            km = Gold1;
                             starts += 1;
                         }
                         "S" => {
-                            km = N0;
+                            km = Silver1;
                             starts += 1;
                         }
                         "N" => {
-                            km = U0;
+                            km = Knight1;
                             starts += 1;
                         }
                         "L" => {
-                            km = S0;
+                            km = Lance1;
                             starts += 1;
                         }
                         "P" => {
-                            km = H0;
+                            km = Pawn1;
                             starts += 1;
                         }
                         "r" => {
-                            km = K1;
+                            km = Rook2;
                             starts += 1;
                         }
                         "b" => {
-                            km = Z1;
+                            km = Bishop2;
                             starts += 1;
                         }
                         "g" => {
-                            km = I1;
+                            km = Gold2;
                             starts += 1;
                         }
                         "s" => {
-                            km = N1;
+                            km = Silver2;
                             starts += 1;
                         }
                         "n" => {
-                            km = U1;
+                            km = Knight2;
                             starts += 1;
                         }
                         "l" => {
-                            km = S1;
+                            km = Lance2;
                             starts += 1;
                         }
                         "p" => {
-                            km = H1;
+                            km = Pawn2;
                             starts += 1;
                         }
                         _ => {
