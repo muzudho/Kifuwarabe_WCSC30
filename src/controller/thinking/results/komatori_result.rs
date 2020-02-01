@@ -79,7 +79,7 @@ impl KomatoriResult {
         let (hash, ms_atk) = pop_ms_from_hash(hash);
         let (_hash, ms_tgt) = pop_ms_from_hash(hash);
         KomatoriResult {
-            km_attacker: km_atk.piece().clone(),
+            km_attacker: km_atk.piece(),
             ms_attacker: ms_atk,
             ms_target: ms_tgt,
         }
@@ -184,8 +184,7 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
 
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
-        let ps_dst = PieceStruct::from_phase_piece_type(&sn, kms_dst);
-        let km_dst = ps_dst.piece();
+        let km_dst = PieceStruct::from_phase_piece_type(&sn, kms_dst).piece();
         //let km_dst = sn_kms_to_km( &sn, rnd_kms() );
         // 指定マスに移動できるか
         // 打は除く
@@ -208,7 +207,7 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
             );
 
             let oute_result = KomatoriResult {
-                km_attacker: km_dst.clone(),
+                km_attacker: km_dst,
                 ms_attacker: ss.src, // FIXME 打だと 0 になるのでは
                 ms_target: ms_target,
             };

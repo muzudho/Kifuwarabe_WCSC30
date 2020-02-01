@@ -8,11 +8,10 @@ use super::phase::*;
 // use super::piece_struct::PieceStruct;
 use std::fmt;
 
-///
-/// 先後付きの駒と空白
-///
-// #[derive(Copy, Clone)]
-#[derive(Clone)]
+/**
+ * 先後付きの駒と空白
+ */
+#[derive(Copy, Clone)]
 pub enum Piece {
     // ▼玉
     King1,

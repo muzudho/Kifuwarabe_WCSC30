@@ -114,6 +114,7 @@ pub struct Uchu {
     // 手目
     pub teme: usize,
     // 棋譜
+    //#[derive(Copy, Clone)]
     pub kifu: [Sasite; TEME_LN],
     // 初期局面ハッシュ
     pub ky0_hash: u64,
@@ -789,7 +790,7 @@ impl Uchu {
     /**
      * 初期局面の盤上に駒の位置を設定するもの
      */
-    pub fn set_ky0_ban_km(&mut self, suji: i8, dan: i8, km: &Piece) {
+    pub fn set_ky0_ban_km(&mut self, suji: i8, dan: i8, km: Piece) {
         self.ky0.set_km_by_ms(suji_dan_to_ms(suji, dan), km);
     }
     pub fn set_ky0_mg(&mut self, km: Piece, maisu: i8) {
@@ -1216,7 +1217,8 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             self.teme -= 1;
             let sn = self.get_teban(&Person::Ji);
             let ss = &self.get_sasite();
-            self.ky.undo_sasite(&sn, &ss, &self.cap[self.teme]);
+            let cap = self.cap[self.teme];
+            self.ky.undo_sasite(&sn, &ss, &cap);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {

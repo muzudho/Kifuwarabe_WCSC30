@@ -351,8 +351,8 @@ impl PieceStruct {
         (hash >> 5, ps)
     }
 
-    pub fn piece(&self) -> &Piece {
-        &self.piece
+    pub fn piece(&self) -> Piece {
+        self.piece
     }
 
     pub fn phase_piece_type(&self) -> (&Phase, &PieceType) {
@@ -367,17 +367,17 @@ impl PieceStruct {
         self.phase_piece_type.1
     }
 
-    pub fn promote(&self) -> &Piece {
-        &self.promoted
+    pub fn promote(&self) -> Piece {
+        self.promoted
     }
 
-    pub fn demote(&self) -> &Piece {
-        &self.demoted
+    pub fn demote(&self) -> Piece {
+        self.demoted
     }
 
     /// 持ち駒にするぜ☆（＾～＾）相手の持ち物になるぜ☆（＾～＾）
-    pub fn capture(&self) -> &Piece {
-        &self.captured
+    pub fn capture(&self) -> Piece {
+        self.captured
     }
 
     pub fn serial_piece_number(&self) -> usize {

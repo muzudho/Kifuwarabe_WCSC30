@@ -50,8 +50,7 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
 
         for kms_dst in KMS_ARRAY.iter() {
-            let ps_dst = PieceStruct::from_phase_piece_type(&sn, &kms_dst);
-            let km_dst = ps_dst.piece();
+            let km_dst = PieceStruct::from_phase_piece_type(&sn, &kms_dst).piece();
             for x in SUJI_1..SUJI_10 {
                 // 9..0 みたいに降順に書いても動かない？
                 for y in DAN_1..DAN_10 {

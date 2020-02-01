@@ -360,8 +360,7 @@ pub fn insert_narumae_src_by_ms_km(
     let kms_src = prokms_to_kms(&kms_dst);
     let km_src =
         PieceStruct::from_phase_piece_type(&PieceStruct::from_piece(km_dst).phase(), &kms_src)
-            .piece()
-            .clone();
+            .piece();
 
     /*
      * umasu は 将棋盤座標
@@ -1227,9 +1226,7 @@ pub fn insert_narazu_src_by_sn_ms(
     // 駒種類
     for kms in KMS_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-        let km = PieceStruct::from_phase_piece_type(&sn, &kms)
-            .piece()
-            .clone();
+        let km = PieceStruct::from_phase_piece_type(&sn, &kms).piece();
         use super::super::super::super::model::master::piece::Piece::*;
         match km {
             Knight1 => {
@@ -1584,9 +1581,7 @@ pub fn insert_narumae_src_by_sn_ms(
 
     // 駒種類
     for kms in KMS_ARRAY.iter() {
-        let km_src = PieceStruct::from_phase_piece_type(&sn, &kms)
-            .piece()
-            .clone();
+        let km_src = PieceStruct::from_phase_piece_type(&sn, &kms).piece();
 
         // +--------------------+
         // | 移動前は非成駒か？ |
@@ -1596,8 +1591,7 @@ pub fn insert_narumae_src_by_sn_ms(
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
 
-        let ps_src = PieceStruct::from_piece(&km_src);
-        let prokm_src = ps_src.promote();
+        let prokm_src = PieceStruct::from_piece(&km_src).promote();
         match prokm_src {
             Piece::Kara => {
                 continue;

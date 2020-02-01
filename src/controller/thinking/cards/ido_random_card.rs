@@ -55,9 +55,9 @@ pub fn get_ss_by_random(uchu: &Uchu) -> Sasite {
         assert_banjo_ms(ms_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
-        let ps_dst =
-            PieceStruct::from_phase_piece_type(&uchu.get_teban(&Person::Ji), randommove::rnd_kms());
-        let km_dst = ps_dst.piece();
+        let km_dst =
+            PieceStruct::from_phase_piece_type(&uchu.get_teban(&Person::Ji), randommove::rnd_kms())
+                .piece();
 
         ss_hashset.clear();
         insert_ss_by_ms_km_on_banjo(&uchu, ms_dst, &km_dst, &mut ss_hashset);
