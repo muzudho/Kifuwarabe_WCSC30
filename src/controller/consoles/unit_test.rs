@@ -5,13 +5,13 @@
 //!
 use super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::controller::boardmetries::proposition::math_meidai::*;
-use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::controller::status::uchu::*;
 use super::super::super::controller::thinking::randommove;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::Phase;
+use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::place::umasu;
 use super::visuals::dumps::*;
@@ -31,7 +31,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         // 駒の移動元升
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
-        let km = sn_kms_to_km(&uchu.get_teban(&Person::Ji), kms);
+        let km = PieceStruct::from_phase_piece_type(&uchu.get_teban(&Person::Ji), kms).piece();
         let ms_dst = randommove::rnd_ms();
         g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
         let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -45,7 +45,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         *starts += 4;
         // 移動後の駒
         let kms = randommove::rnd_kms();
-        let km = sn_kms_to_km(&uchu.get_teban(&Person::Ji), &kms);
+        let km = PieceStruct::from_phase_piece_type(&uchu.get_teban(&Person::Ji), &kms).piece();
         // 移動先の升、および　不成駒／成駒
         let ms_dst = randommove::rnd_ms();
         let pro_dst = randommove::rnd_bool();
@@ -71,7 +71,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = sn_kms_to_km(&Phase::Go, &kms); // △ph
+            let km = PieceStruct::from_phase_piece_type(&Phase::Go, &kms).piece(); // △ph
             let ms_dst = 79;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -85,7 +85,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = sn_kms_to_km(&Phase::Go, &kms); // △ph
+            let km = PieceStruct::from_phase_piece_type(&Phase::Go, &kms).piece(); // △ph
             let ms_dst = 68;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -99,7 +99,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = sn_kms_to_km(&Phase::Go, &kms); // △ph
+            let km = PieceStruct::from_phase_piece_type(&Phase::Go, &kms).piece(); // △ph
             let ms_dst = 77;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -113,7 +113,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
-            let km = sn_kms_to_km(&Phase::Sen, &kms); // ▼ら
+            let km = PieceStruct::from_phase_piece_type(&Phase::Sen, &kms).piece(); // ▼ら
             let ms_dst = 58;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();

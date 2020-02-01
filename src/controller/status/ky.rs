@@ -138,7 +138,7 @@ impl Kyokumen {
 
         // 打かどうか
         if ss.src == SS_SRC_DA {
-            km = sn_kms_to_km(&sn, &ss.drop);
+            km = PieceStruct::from_phase_piece_type(&sn, &ss.drop).piece();
             // 自分の持ち駒を減らす
             self.add_mg(km, -1);
         } else {
@@ -178,7 +178,7 @@ impl Kyokumen {
 
         // 打かどうか
         if ss.src == SS_SRC_DA {
-            km = sn_kms_to_km(sn, &ss.drop);
+            km = PieceStruct::from_phase_piece_type(sn, &ss.drop).piece();
             // 自分の持ち駒を増やす
             //let mg = km_to_mg(km);
             //self.add_mg(mg,1);

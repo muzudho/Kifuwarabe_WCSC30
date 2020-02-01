@@ -5,7 +5,6 @@
 
 use super::super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
 use super::super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
-use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::status::uchu::*;
@@ -13,6 +12,7 @@ use super::super::super::super::controller::thinking::randommove;
 use super::super::super::super::controller::thinking::results::jisatusyu_result::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::piece::Piece;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use std::collections::HashSet;
 
 /**
@@ -55,7 +55,9 @@ pub fn get_ss_by_random(uchu: &Uchu) -> Sasite {
         assert_banjo_ms(ms_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
-        let km_dst = sn_kms_to_km(&uchu.get_teban(&Person::Ji), randommove::rnd_kms());
+        let km_dst =
+            PieceStruct::from_phase_piece_type(&uchu.get_teban(&Person::Ji), randommove::rnd_kms())
+                .piece();
 
         ss_hashset.clear();
         insert_ss_by_ms_km_on_banjo(&uchu, ms_dst, &km_dst, &mut ss_hashset);

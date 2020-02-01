@@ -482,48 +482,6 @@ pub fn kms_can_da(kms: &PieceType) -> bool {
         Owari => false,
     }
 }
-// 先後＆駒種類→先後付き駒
-pub fn sn_kms_to_km(sn: &Phase, kms: &PieceType) -> Piece {
-    use super::super::super::model::master::piece::Piece::*;
-    use super::super::super::model::master::piece_type::PieceType::*;
-    match *sn {
-        Phase::Sen => match *kms {
-            R => King1,
-            K => Rook1,
-            Z => Bishop1,
-            I => Gold1,
-            N => Silver1,
-            U => Knight1,
-            S => Lance1,
-            H => Pawn1,
-            PK => PromotedRook1,
-            PZ => PromotedBishop1,
-            PN => PromotedSilver1,
-            PU => PromotedKnight1,
-            PS => PromotedLance1,
-            PH => PromotedPawn1,
-            _ => Piece::Owari,
-        },
-        Phase::Go => match *kms {
-            R => King2,
-            K => Rook2,
-            Z => Bishop2,
-            I => Gold2,
-            N => Silver2,
-            U => Knight2,
-            S => Lance2,
-            H => Pawn2,
-            PK => PromotedRook2,
-            PZ => PromotedBishop2,
-            PN => PromotedSilver2,
-            PU => PromotedKnight2,
-            PS => PromotedLance2,
-            PH => PromotedPawn2,
-            _ => Piece::Owari,
-        },
-        Phase::Owari => Piece::Owari,
-    }
-}
 
 /************
  * 駒の動き *

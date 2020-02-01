@@ -11,6 +11,7 @@ use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::piece::Piece;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
 use std::collections::HashSet;
@@ -183,7 +184,7 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
 
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
-        let km_dst = sn_kms_to_km(&sn, kms_dst);
+        let km_dst = PieceStruct::from_phase_piece_type(&sn, kms_dst).piece();
         //let km_dst = sn_kms_to_km( &sn, rnd_kms() );
         // 指定マスに移動できるか
         // 打は除く

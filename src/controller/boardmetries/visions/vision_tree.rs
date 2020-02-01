@@ -6,6 +6,7 @@ use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::*;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
 use std::collections::HashSet;
@@ -49,7 +50,7 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
 
         for kms_dst in KMS_ARRAY.iter() {
-            let km_dst = sn_kms_to_km(&sn, &kms_dst);
+            let km_dst = PieceStruct::from_phase_piece_type(&sn, &kms_dst).piece();
             for x in SUJI_1..SUJI_10 {
                 // 9..0 みたいに降順に書いても動かない？
                 for y in DAN_1..DAN_10 {
