@@ -26,6 +26,7 @@ use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::ply::*;
 use super::super::model::master::square::*;
+use super::application::application_part::*;
 use super::search::search_part::*;
 use std::fs::File;
 use std::io::Write;
@@ -86,19 +87,6 @@ pub fn g_writeln(s: &str) {
 }
 
 /**
- * 局面ハッシュ種
- * ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
- */
-pub struct KyHashSeed {
-    // 盤上の駒
-    pub km: [[u64; KM_LN]; BAN_SIZE],
-    // 持ち駒
-    pub mg: [[u64; MG_MAX]; KM_LN],
-    // 先後
-    pub sn: [u64; SN_LN],
-}
-
-/**
  * グローバル変数の作り方が分からないので、
  * ここに全部入れてあるぜ☆（＾～＾）
  */
@@ -111,8 +99,6 @@ pub struct Universe {
     pub ky0: Kyokumen,
     /// 現局面
     pub ky: Kyokumen,
-    /// 局面ハッシュ種
-    pub ky_hash_seed: KyHashSeed,
     /// 棋譜
     pub kifu: [Sasite; TEME_LN],
     /// 初期局面ハッシュ
@@ -129,6 +115,8 @@ pub struct Universe {
     pub vision_tree_by_sn: [VisionTree; SN_LN],
     /// 駒構造体・マスター
     piece_struct_master: PieceStructMaster,
+    /// アプリケーション部
+    application_part: ApplicationPart,
     /// 探索部
     search_part: SearchPart,
 }
@@ -142,14 +130,6 @@ impl Universe {
             ky0: Kyokumen::new(),
             // 現局面
             ky: Kyokumen::new(),
-            ky_hash_seed: KyHashSeed {
-                // 盤上の駒
-                km: [[0; KM_LN]; BAN_SIZE],
-                // 持ち駒
-                mg: [[0; MG_MAX]; KM_LN],
-                // 先後
-                sn: [0; SN_LN],
-            },
             kifu: [
                 // 1行16要素で並べるぜ☆（＾～＾）
                 Sasite::new(),
@@ -721,6 +701,7 @@ impl Universe {
             ],
             vision_tree_by_sn: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
             piece_struct_master: PieceStructMaster::new(),
+            application_part: ApplicationPart::new(),
             search_part: SearchPart::new(),
         }
     }
@@ -734,20 +715,21 @@ impl Universe {
         for i_ms in MASU_0..BAN_SIZE {
             for i_km in 0..KM_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.ky_hash_seed.km[i_ms][i_km] =
+                self.get_application_part_mut().position_hash_seed.km[i_ms][i_km] =
                     rand::thread_rng().gen_range(0, 18446744073709551615);
             }
         }
         // 持ち駒
         for i_km in 0..KM_LN {
             for i_mg in 0..MG_MAX {
-                self.ky_hash_seed.mg[i_km][i_mg] =
+                self.get_application_part_mut().position_hash_seed.mg[i_km][i_mg] =
                     rand::thread_rng().gen_range(0, 18446744073709551615);
             }
         }
         // 先後
         for i_sn in 0..SN_LN {
-            self.ky_hash_seed.sn[i_sn] = rand::thread_rng().gen_range(0, 18446744073709551615);
+            self.get_application_part_mut().position_hash_seed.sn[i_sn] =
+                rand::thread_rng().gen_range(0, 18446744073709551615);
         }
     }
     /**
@@ -775,12 +757,20 @@ impl Universe {
         }
     }
 
+    pub fn get_application_part_mut(&mut self) -> &mut ApplicationPart {
+        &mut self.application_part
+    }
+    pub fn get_application_part(&self) -> &ApplicationPart {
+        &self.application_part
+    }
+
     pub fn get_search_part_mut(&mut self) -> &mut SearchPart {
         &mut self.search_part
     }
     pub fn get_search_part(&self) -> &SearchPart {
         &self.search_part
     }
+
     pub fn position(&self) -> &Kyokumen {
         &self.ky
     }
@@ -1256,7 +1246,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         let mut hash = self.ky0.create_hash(&self);
 
         // 手番ハッシュ（後手固定）
-        hash ^= self.ky_hash_seed.sn[SN_GO];
+        hash ^= self.get_application_part().position_hash_seed.sn[SN_GO];
 
         hash
     }
@@ -1270,8 +1260,8 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         // 手番ハッシュ
         use super::master::phase::Phase::*;
         match self.get_teban(&Person::Ji) {
-            Sen => hash ^= self.ky_hash_seed.sn[SN_SEN],
-            Go => hash ^= self.ky_hash_seed.sn[SN_GO],
+            Sen => hash ^= self.get_application_part().position_hash_seed.sn[SN_SEN],
+            Go => hash ^= self.get_application_part().position_hash_seed.sn[SN_GO],
             _ => {}
         }
 
