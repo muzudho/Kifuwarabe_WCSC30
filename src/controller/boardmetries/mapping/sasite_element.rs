@@ -753,16 +753,16 @@ pub fn insert_da_kms_by_ms_km(
  * ky       : 現局面
  */
 pub fn insert_dst_by_ms_km(
-    ms_src: umasu,
+    sq_src: &Square,
     km_src: &Piece,
     to_nari: bool,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(ms_src, "Ｉnsert_dst_by_ms_km");
+    assert_banjo_ms(sq_src.to_umasu(), "Ｉnsert_dst_by_ms_km");
 
     // 移動先の筋、段、駒種類、駒種類インデックス
-    let (dx, dy) = ms_to_suji_dan(ms_src);
+    let (dx, dy) = sq_src.to_file_rank();
     let ps_src = PieceStruct::from_piece(&km_src);
     let kms_src = ps_src.piece_type();
 
@@ -1060,7 +1060,7 @@ pub fn insert_dst_by_ms_km(
                 // 移動元または移動先が　１～３段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_sx2, sy2) = ms_to_suji_dan(ms_src);
+                    let (_sx2, sy2) = sq_src.to_file_rank();
                     let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
                     if sy2 < DAN_4 && dy2 < DAN_4 {
                         result2.insert(*ms_dst);
@@ -1093,7 +1093,7 @@ pub fn insert_dst_by_ms_km(
                 // 移動元または移動先が　７～９段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_sx2, sy2) = ms_to_suji_dan(ms_src);
+                    let (_sx2, sy2) = sq_src.to_file_rank();
                     let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
                     if DAN_6 < sy2 && DAN_6 < dy2 {
                         result2.insert(*ms_dst);

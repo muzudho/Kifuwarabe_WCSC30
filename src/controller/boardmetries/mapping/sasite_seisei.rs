@@ -31,8 +31,8 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
     // +----------------+
     for dan_src in 1..10 {
         for suji_src in 1..10 {
-            let ms_src = suji_dan_to_ms(suji_src, dan_src);
-            let km_src = uchu.ky.get_piece_struct_by_ms(ms_src).piece();
+            let sq_src = Square::from_file_rank(suji_src, dan_src);
+            let km_src = uchu.ky.get_piece_struct_by_ms(sq_src.to_umasu()).piece();
 
             if match_sn(
                 &PieceStruct::from_piece(&km_src).phase(),
@@ -42,7 +42,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
 
                 let mut dst_hashset: HashSet<umasu> = HashSet::new();
                 insert_dst_by_ms_km(
-                    ms_src,
+                    &sq_src,
                     &km_src,
                     false, // 成らず
                     &uchu,
@@ -56,7 +56,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                 for ms_dst in &dst_hashset {
                     ss_hashset.insert(
                         Sasite {
-                            src: ms_src,
+                            src: sq_src.to_umasu(),
                             dst: *ms_dst,
                             pro: false, // 成らず
                             drop: PieceType::Kara,
@@ -67,7 +67,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
 
                 dst_hashset.clear();
                 insert_dst_by_ms_km(
-                    ms_src,
+                    &sq_src,
                     &km_src,
                     true, // 成り
                     &uchu,
@@ -76,7 +76,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                 for ms_dst in &dst_hashset {
                     ss_hashset.insert(
                         Sasite {
-                            src: ms_src,
+                            src: sq_src.to_umasu(),
                             dst: *ms_dst,
                             pro: true, // 成り
                             drop: PieceType::Kara,
