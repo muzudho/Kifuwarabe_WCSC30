@@ -355,8 +355,8 @@ impl PieceStruct {
         self.piece
     }
 
-    pub fn phase_piece_type(self) -> (Phase, PieceType) {
-        self.phase_piece_type
+    pub fn phase_piece_type(&self) -> (&Phase, &PieceType) {
+        (&self.phase_piece_type.0, &self.phase_piece_type.1)
     }
 
     pub fn phase(self) -> Phase {

@@ -88,8 +88,9 @@ impl Kyokumen {
     pub fn exists_fu_by_sn_suji(&self, sn: &Phase, suji: i8) -> bool {
         for dan in DAN_1..DAN_10 {
             let ms = suji_dan_to_ms(suji, dan);
-            let km = self.get_km_by_ms(ms);
-            let (sn_km, kms) = PieceStruct::from_piece(&km).phase_piece_type();
+            let km = self.get_piece_struct_by_ms(ms).piece();
+            let piece = PieceStruct::from_piece(&km);
+            let (sn_km, kms) = piece.phase_piece_type();
             if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
                 return true;
             }
@@ -99,8 +100,8 @@ impl Kyokumen {
     /**
      * 升で指定して駒を取る
      */
-    pub fn get_km_by_ms(&self, ms: umasu) -> Piece {
-        self.ban[ms]
+    pub fn get_piece_struct_by_ms(&self, ms: umasu) -> PieceStruct {
+        PieceStruct::from_piece(&self.ban[ms])
     }
     /**
      * 升で指定して駒を置く
@@ -145,19 +146,19 @@ impl Kyokumen {
             // 打で無ければ、元の升の駒を消す。
             if ss.pro {
                 // 成りなら
-                km = PieceStruct::from_piece(&self.get_km_by_ms(ss.src)).promote();
+                km = self.get_piece_struct_by_ms(ss.src).promote();
             } else {
-                km = self.get_km_by_ms(ss.src);
+                km = self.get_piece_struct_by_ms(ss.src).piece();
             }
             self.set_km_by_ms(ss.src, Piece::Kara);
         }
 
         // 移動先升に駒があるかどうか
-        if let Piece::Kara = self.get_km_by_ms(ss.dst) {
+        if let Piece::Kara = self.get_piece_struct_by_ms(ss.dst).piece() {
             cap = Piece::Kara;
         } else {
             // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-            cap = self.get_km_by_ms(ss.dst);
+            cap = self.get_piece_struct_by_ms(ss.dst).piece();
             let mg = PieceStruct::from_piece(&cap).capture();
             self.add_mg(mg, 1);
         }
@@ -187,9 +188,9 @@ impl Kyokumen {
             // 打で無ければ
             if ss.pro {
                 // 成ったなら、成る前へ
-                km = PieceStruct::from_piece(&self.get_km_by_ms(ss.dst)).demote();
+                km = self.get_piece_struct_by_ms(ss.dst).demote();
             } else {
-                km = self.get_km_by_ms(ss.dst);
+                km = self.get_piece_struct_by_ms(ss.dst).piece();
             }
         }
 
@@ -212,7 +213,8 @@ impl Kyokumen {
      * 指定の升に駒があれば真
      */
     pub fn exists_km(&self, ms: umasu) -> bool {
-        !PieceStruct::from_piece(&self.get_km_by_ms(ms))
+        !self
+            .get_piece_struct_by_ms(ms)
             .equals_piece(&PieceStruct::from_piece(&Piece::Kara))
     }
 
@@ -220,23 +222,24 @@ impl Kyokumen {
      * 指定の升に指定の駒があれば真
      */
     pub fn has_ms_km(&self, ms: umasu, km: &Piece) -> bool {
-        PieceStruct::from_piece(&self.get_km_by_ms(ms)).equals_piece(&PieceStruct::from_piece(km))
+        self.get_piece_struct_by_ms(ms)
+            .equals_piece(&PieceStruct::from_piece(km))
     }
 
     /**
      * 指定の升にある駒の先後、または空升
      */
     pub fn get_sn_by_ms(&self, ms: umasu) -> Phase {
-        PieceStruct::from_piece(&self.get_km_by_ms(ms)).phase()
+        self.get_piece_struct_by_ms(ms).phase()
     }
 
     /**
      * 移動先と移動元を比較し、違う駒があれば、成ったと判定するぜ☆（＾～＾）
      */
     pub fn is_natta(&self, ms_src: umasu, ms_dst: umasu) -> bool {
-        let km_src = &self.get_km_by_ms(ms_src);
+        let km_src = &self.get_piece_struct_by_ms(ms_src).piece();
         let kms_src = PieceStruct::from_piece(&km_src).piece_type();
-        let km_dst = &self.get_km_by_ms(ms_dst);
+        let km_dst = &self.get_piece_struct_by_ms(ms_dst).piece();
         let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = kms_is_pro(&kms_dst);
@@ -254,7 +257,7 @@ impl Kyokumen {
 
         // 盤上の駒
         for i_ms in MASU_0..BAN_SIZE {
-            let km = self.get_km_by_ms(i_ms as umasu);
+            let km = self.get_piece_struct_by_ms(i_ms as umasu).piece();
             let num_km = PieceStruct::from_piece(&km).serial_piece_number();
             hash ^= uchu.ky_hash_seed.km[i_ms][num_km];
         }

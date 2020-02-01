@@ -26,7 +26,7 @@ pub fn is_s(uchu: &Uchu) -> bool {
     }
 
     let ms_south_r = p_to_ms(&p_south_r);
-    let km = uchu.ky.get_km_by_ms(ms_south_r);
+    let km = uchu.ky.get_piece_struct_by_ms(ms_south_r).piece();
     let jiai_km = uchu.get_jiai_by_km(&km);
     if !match_jiai(&jiai_km, &Person::Ji) {
         return true;

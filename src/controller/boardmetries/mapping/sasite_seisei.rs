@@ -31,7 +31,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
     for dan_src in 1..10 {
         for suji_src in 1..10 {
             let ms_src = suji_dan_to_ms(suji_src, dan_src);
-            let km_src = uchu.ky.get_km_by_ms(ms_src);
+            let km_src = uchu.ky.get_piece_struct_by_ms(ms_src).piece();
             let sn = PieceStruct::from_piece(&km_src).phase();
 
             if match_sn(&sn, &uchu.get_teban(&Person::Ji)) {
@@ -91,7 +91,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
     for dan_dst in 1..10 {
         for suji_dst in 1..10 {
             let ms_dst = suji_dan_to_ms(suji_dst, dan_dst);
-            let km_dst = uchu.ky.get_km_by_ms(ms_dst);
+            let km_dst = uchu.ky.get_piece_struct_by_ms(ms_dst).piece();
             match km_dst {
                 Piece::Kara => {
                     // 駒が無いところに打つ
@@ -147,7 +147,8 @@ pub fn insert_ss_by_ms_km_on_banjo(
     assert_banjo_ms(ms_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let (sn, _kms_dst) = PieceStruct::from_piece(&km_dst).phase_piece_type();
+    let piece_dst = PieceStruct::from_piece(&km_dst);
+    let (sn, _kms_dst) = piece_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(&uchu.ky.get_sn_by_ms(ms_dst), &sn) {
@@ -206,7 +207,8 @@ pub fn insert_ss_by_ms_km_on_da(
     assert_banjo_ms(ms_dst, "Ｉnsert_ss_by_ms_km_on_da");
 
     // 手番の先後、駒種類
-    let (sn, _kms_dst) = PieceStruct::from_piece(&km_dst).phase_piece_type();
+    let piece_struct_dst = PieceStruct::from_piece(&km_dst);
+    let (sn, _kms_dst) = piece_struct_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(&uchu.ky.get_sn_by_ms(ms_dst), &sn) {

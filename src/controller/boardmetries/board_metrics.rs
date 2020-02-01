@@ -8,8 +8,9 @@ use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::place::*;
 
 pub fn is_ji_km_by_ms(ms: umasu, uchu: &Uchu) -> bool {
-    let km = uchu.ky.get_km_by_ms(ms);
-    let (sn, _kms) = PieceStruct::from_piece(&km).phase_piece_type();
+    let km = uchu.ky.get_piece_struct_by_ms(ms).piece();
+    let piece_struct = PieceStruct::from_piece(&km);
+    let (sn, _kms) = piece_struct.phase_piece_type();
     match_sn(&sn, &uchu.get_teban(&Person::Ji))
 }
 

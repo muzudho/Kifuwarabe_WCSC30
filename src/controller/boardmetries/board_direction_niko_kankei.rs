@@ -7,7 +7,6 @@ use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
-use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::place::*;
 
@@ -19,7 +18,7 @@ use super::super::super::model::master::place::*;
  */
 pub fn get_dir8_to_slider_from_target(
     ms_slider: umasu,
-    km_slider: &Piece,
+    slider_piece_struct: &PieceStruct,
     ms_target: umasu,
 ) -> Dir8 {
     debug_assert!(
@@ -34,7 +33,7 @@ pub fn get_dir8_to_slider_from_target(
     let p_slider = ms_to_p(ms_slider);
     let p_target = ms_to_p(ms_target);
 
-    let (sn_slider, kms) = PieceStruct::from_piece(&km_slider).phase_piece_type();
+    let (sn_slider, kms) = slider_piece_struct.phase_piece_type();
     use super::super::super::model::master::phase::Phase::*;
     use super::super::super::model::master::piece_type::PieceType::*;
     match kms {
