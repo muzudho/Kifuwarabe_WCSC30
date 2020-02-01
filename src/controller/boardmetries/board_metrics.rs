@@ -4,14 +4,13 @@
 use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::place::*;
 
 pub fn is_ji_km_by_ms(ms: umasu, uchu: &Uchu) -> bool {
-    let km = uchu.ky.get_piece_struct_by_ms(ms).piece();
-    let piece_struct = PieceStruct::from_piece(&km);
-    let (sn, _kms) = piece_struct.phase_piece_type();
-    match_sn(&sn, &uchu.get_teban(&Person::Ji))
+    match_sn(
+        &uchu.ky.get_piece_struct_by_ms(ms).phase(),
+        &uchu.get_teban(&Person::Ji),
+    )
 }
 
 // TODO

@@ -168,7 +168,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    insert_narazu_src_by_ms_km(ms_dst, &km_dst, &uchu, &mut mv_src_hashset);
+    insert_narazu_src_by_ms_km(ms_dst, &piece_dst, &uchu, &mut mv_src_hashset);
     for ms_src in &mv_src_hashset {
         assert_banjo_ms(*ms_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 

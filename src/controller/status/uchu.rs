@@ -795,11 +795,8 @@ impl Uchu {
     pub fn set_ky0_mg(&mut self, km: Piece, maisu: i8) {
         self.ky0.mg[km as usize] = maisu;
     }
-    pub fn get_jiai_by_km(&self, km: &Piece) -> Person {
-        let piece = PieceStruct::from_piece(km);
-        let (sn, _kms) = piece.phase_piece_type();
-
-        if match_sn(&sn, &self.get_teban(&Person::Ji)) {
+    pub fn get_jiai_by_km(&self, piece_struct: &PieceStruct) -> Person {
+        if match_sn(&piece_struct.phase(), &self.get_teban(&Person::Ji)) {
             Person::Ji
         } else {
             Person::Ai
