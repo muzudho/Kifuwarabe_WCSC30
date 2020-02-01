@@ -38,7 +38,7 @@ pub fn insert_narazu_src_by_sq_km(
     assert_banjo_sq(&sq_dst, "ｉnsert_narazu_src_by_ms_km");
 
     /*
-     * umasu は 将棋盤座標
+     * Square は 将棋盤座標
      *
      * ...
      * 13 23 33
@@ -367,7 +367,7 @@ pub fn insert_narumae_src_by_sq_km(
         .clone();
 
     /*
-     * umasu は 将棋盤座標
+     * Square は 将棋盤座標
      *
      * ...
      * 13 23 33
@@ -683,7 +683,7 @@ pub fn insert_da_kms_by_sq_km(
     // 回転していない将棋盤から見た筋番号
     let (suji, dy) = sq_dst.to_file_rank();
     /*
-     * umasu は 将棋盤座標
+     * Square は 将棋盤座標
      *
      * 考えることを打に限れば、先手も、後手も、後手から見た座標を使えば十分だぜ☆（＾～＾）
      *
@@ -1926,10 +1926,10 @@ pub fn insert_narumae_src_by_sn_sq(
 #[allow(dead_code)]
 pub fn get_ms_vec_as_aigoma(
     sn_atk:&Phase,
-    ms_atk:umasu,
-    ms_tgt:umasu,
+    ms_atk:&Square,
+    ms_tgt:&Square,
     kms_atk:&PieceType
-    )->Vec<umasu> {
+    )->Vec<Square> {
     let vec = Vec::new();
 
     use teigi::shogi_syugo::PieceType::*;

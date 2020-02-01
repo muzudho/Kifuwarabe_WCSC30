@@ -44,7 +44,7 @@ pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut 
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> =
-        lookup_banjo_catch(uchu, &uchu.get_teban(&Person::Ai), sq_r.to_umasu());
+        lookup_banjo_catch(uchu, &uchu.get_teban(&Person::Ai), &sq_r);
     if 0 < komatori_result_hashset.len() {
         // 王手されていれば
 

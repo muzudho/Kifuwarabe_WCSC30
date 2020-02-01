@@ -152,7 +152,7 @@ pub fn hanten_jiai(jiai: &Person) -> Person {
  ******************/
 
 /**
- * umasu は 将棋盤座標
+ * Square は 将棋盤座標
  *
  * 91 81 71 ...
  * 92 82 72
@@ -171,18 +171,11 @@ pub fn p_in_ban(p: &Point) -> bool {
     (SUJI_0 < p.x && p.x < SUJI_10) && (DAN_0 < p.y && p.y < DAN_10)
 }
 pub fn p_to_sq(p: &Point) -> Square {
-    debug_assert!(p_in_ban(&p), "(204b)p_to_ms x={},y={}", p.x, p.y);
+    debug_assert!(p_in_ban(&p), "(204b)p_to_sq x={},y={}", p.x, p.y);
 
     Square::from_umasu((p.x * 10 + p.y) as umasu)
 }
-pub fn p_to_ms(p: &Point) -> umasu {
-    debug_assert!(p_in_ban(&p), "(204b)p_to_ms x={},y={}", p.x, p.y);
-
-    (p.x * 10 + p.y) as umasu
-}
-/**
- * ハッシュ値を作る
- */
+/// ハッシュ値を作る
 pub fn push_sq_to_hash(hash: u64, sq: &Square) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分

@@ -167,12 +167,11 @@ impl KomatoriResult {
  *
  * return u64 : KomatoriResult のハッシュ
  */
-pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<u64> {
-    let sq_target = Square::from_umasu(ms_target);
+pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, sq_target: &Square) -> HashSet<u64> {
     assert_banjo_sq(
         &sq_target,
         &format!(
-            "(119)Ｌookup_banjo_catch sn={} ms_target={}",
+            "(119)Ｌookup_banjo_catch sn={} sq_target={}",
             sn,
             sq_target.to_umasu()
         ),
@@ -180,7 +179,7 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
 
     let mut hash = HashSet::new();
 
-    if ms_target == MASU_0 {
+    if sq_target.to_umasu() == MASU_0 {
         return hash;
     }
 
@@ -208,8 +207,10 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
             assert_banjo_sq(
                 &ss.src,
                 &format!(
-                    "(123)Ｌookup_banjo_catch ss.src /  ms_target={} km_dst={} ss={}",
-                    ms_target, km_dst, ss
+                    "(123)Ｌookup_banjo_catch ss.src /  sq_target={} km_dst={} ss={}",
+                    sq_target.to_umasu(),
+                    km_dst,
+                    ss
                 ),
             );
 

@@ -226,7 +226,7 @@ pub fn insert_ss_by_ms_km_on_da(
     ss_hash_builder.dst = (*sq_dst).clone();
 
     // 移動元の升
-    //let mut mv_src_hashset : HashSet<umasu> = HashSet::new();
+    //let mut mv_src_hashset : HashSet<Square> = HashSet::<Square>::new();
 
     // +----+
     // | 打 |

@@ -10,7 +10,6 @@ use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::person::*;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type_set::*;
-use super::super::super::super::model::master::square::*;
 
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
 pub fn is_s(uchu: &Uchu) -> bool {
@@ -101,9 +100,9 @@ pub fn is_atamakin(
     // 単に下３つに移動できるか調べられたらいい。８１升別　利きを作るか？
     // 駒、相手の利き
     let p_k = sq_to_p(&sq_ai_r);
-    if board_metrics::is_ji_km_by_ms(&Square::from_umasu(p_to_ms(&p_k.to_south_west())), &uchu) {}
+    if board_metrics::is_ji_km_by_sq(&p_to_sq(&p_k.to_south_west()), &uchu) {}
 
-    if board_metrics::is_ai_kiki_by_ms(&Square::from_umasu(p_to_ms(&p_k.to_south_west())), &uchu) {}
+    if board_metrics::is_ai_kiki_by_sq(&p_to_sq(&p_k.to_south_west()), &uchu) {}
 
     // ms_ai_r （北０） ms_atama
     // if ms_north_of_ms( ms_ai_r, 0, ms_atama ) { }

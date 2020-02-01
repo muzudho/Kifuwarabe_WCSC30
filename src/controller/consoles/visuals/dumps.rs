@@ -30,10 +30,11 @@ pub fn hyoji_sq_hashset(sq_hashset: &HashSet<Square>) {
 /**
  * 升を表示
  */
-pub fn hyoji_ms_vec(ms_vec: &Vec<umasu>) {
-    g_writeln(&format!("ms_vec.len()={}", ms_vec.len()));
-    for ms in ms_vec {
-        match *ms {
+pub fn hyoji_sq_vec(sq_vec: &Vec<Square>) {
+    g_writeln(&format!("sq_vec.len()={}", sq_vec.len()));
+    for sq in sq_vec {
+        let ms = sq.to_umasu();
+        match ms {
             MASU_0 => break,
             _ => g_writeln(&format!("ms({})", ms)),
         }
