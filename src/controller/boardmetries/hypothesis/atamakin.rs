@@ -8,13 +8,11 @@ use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::combine::multiplication::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::person::*;
-use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type_set::*;
+use super::super::super::super::model::master::square::*;
 
-/**
- * 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
- */
+/// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
 pub fn is_s(uchu: &Uchu) -> bool {
     // 相手玉の位置
     let ms_r = uchu.get_ms_r(&Person::Ai);
@@ -26,21 +24,21 @@ pub fn is_s(uchu: &Uchu) -> bool {
     }
 
     let ms_south_r = p_to_ms(&p_south_r);
-    let km = uchu.ky.get_piece_struct_by_ms(ms_south_r).piece();
-    let jiai_km = uchu.get_jiai_by_km(&km);
+    let ps = uchu.ky.get_piece_struct_by_ms(ms_south_r);
+    let jiai_km = uchu.get_jiai_by_km(&ps);
     if !match_jiai(&jiai_km, &Person::Ji) {
         return true;
     }
 
     g_writeln(&format!(
         "info string south of My raion {} = {}. jiai_km={}.",
-        ms_r, km, jiai_km
+        ms_r,
+        ps.piece(),
+        jiai_km
     ));
 
-    let kms = PieceStruct::from_piece(&km).piece_type();
-
     use super::super::super::super::model::master::piece_type::PieceType::*;
-    match kms {
+    match ps.piece_type() {
         Z | S => {
             return false;
         }
@@ -103,9 +101,9 @@ pub fn is_atamakin(
     // 単に下３つに移動できるか調べられたらいい。８１升別　利きを作るか？
     // 駒、相手の利き
     let p_k = ms_to_p(ms_ai_r);
-    if board_metrics::is_ji_km_by_ms(p_to_ms(&p_k.to_south_west()), &uchu) {}
+    if board_metrics::is_ji_km_by_ms(&Square::from_umasu(p_to_ms(&p_k.to_south_west())), &uchu) {}
 
-    if board_metrics::is_ai_kiki_by_ms(p_to_ms(&p_k.to_south_west()), &uchu) {}
+    if board_metrics::is_ai_kiki_by_ms(&Square::from_umasu(p_to_ms(&p_k.to_south_west())), &uchu) {}
 
     // ms_ai_r （北０） ms_atama
     // if ms_north_of_ms( ms_ai_r, 0, ms_atama ) { }

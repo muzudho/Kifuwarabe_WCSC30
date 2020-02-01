@@ -7,9 +7,7 @@ use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::Phase;
-use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_direction::PieceDirection;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::place::*;
 
@@ -236,17 +234,6 @@ pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
     }
 }
 
-/**************
- * 先後付き駒 *
- **************/
-
-/**
- * 駒→長い利きの有無
- */
-pub fn km_is_nagaikiki(km: &Piece) -> bool {
-    kms_is_nagaikiki(&PieceStruct::from_piece(km).piece_type())
-}
-
 /**********
  * 駒種類 *
  **********/
@@ -313,75 +300,6 @@ pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
     let kms_num = num_to_kms((hash & 0b1111) as usize);
     (hash >> 4, kms_num)
-}
-// 駒種類→｛　成駒,（不成駒、それ以外）　｝
-pub fn kms_is_pro(kms: &PieceType) -> bool {
-    use super::super::super::model::master::piece_type::PieceType::*;
-    match *kms {
-        R => false,
-        K => false,
-        Z => false,
-        I => false,
-        N => false,
-        U => false,
-        S => false,
-        H => false,
-        PK => true,
-        PZ => true,
-        PN => true,
-        PU => true,
-        PS => true,
-        PH => true,
-        Kara => false,
-        Owari => false,
-    }
-}
-// 成り駒種類→成る前の駒種類。成り駒でなければ、空に戻る。
-pub fn prokms_to_kms(kms: &PieceType) -> PieceType {
-    use super::super::super::model::master::piece_type::PieceType::*;
-    match *kms {
-        R => Kara,
-        K => Kara,
-        Z => Kara,
-        I => Kara,
-        N => Kara,
-        U => Kara,
-        S => Kara,
-        H => Kara,
-        PK => K,
-        PZ => Z,
-        PN => N,
-        PU => U,
-        PS => S,
-        PH => H,
-        Kara => Kara,
-        Owari => Owari,
-    }
-}
-/**
- * 駒種類→｛　長い利きの駒か否か　｝
- * 合い駒で防ぎえる可能性があれば真
- */
-pub fn kms_is_nagaikiki(kms: &PieceType) -> bool {
-    use super::super::super::model::master::piece_type::PieceType::*;
-    match *kms {
-        R => false,
-        K => true,
-        Z => true,
-        I => false,
-        N => false,
-        U => false,
-        S => true,
-        H => false,
-        PK => true,
-        PZ => true,
-        PN => false,
-        PU => false,
-        PS => false,
-        PH => false,
-        Kara => false,
-        Owari => false,
-    }
 }
 /**
  * 成れる駒

@@ -11,9 +11,9 @@ use super::super::super::controller::status::uchu::*;
 use super::super::super::controller::thinking::randommove;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::Phase;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::place::umasu;
+use super::super::super::model::master::square::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;
 
@@ -31,13 +31,16 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         // 駒の移動元升
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
-        let km = PieceStruct::from_phase_piece_type(&uchu.get_teban(&Person::Ji), kms).piece();
+        let ps = uchu
+            .piece_struct_master()
+            .get_piece_struct_by_phase_and_piece_type(&uchu.get_teban(&Person::Ji), kms);
+        let km = ps.piece();
         let ms_dst = randommove::rnd_ms();
         g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
         let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
         let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
-        insert_narumae_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
+        insert_narazu_src_by_ms_km(&Square::from_umasu(ms_dst), &ps, &uchu, &mut mv_src_hashset);
+        insert_narumae_src_by_ms_km(ms_dst, &ps, &uchu, &mut mv_src_hashset);
         insert_da_kms_by_ms_km(ms_dst, &km, &uchu, &mut da_kms_hashset);
         hyoji_ms_hashset(&mv_src_hashset);
         hyoji_kms_hashset(&da_kms_hashset);
@@ -45,7 +48,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         *starts += 4;
         // 移動後の駒
         let kms = randommove::rnd_kms();
-        let km = PieceStruct::from_phase_piece_type(&uchu.get_teban(&Person::Ji), &kms).piece();
+        let ps = uchu
+            .piece_struct_master()
+            .get_piece_struct_by_phase_and_piece_type(&uchu.get_teban(&Person::Ji), &kms);
         // 移動先の升、および　不成駒／成駒
         let ms_dst = randommove::rnd_ms();
         let pro_dst = randommove::rnd_bool();
@@ -53,8 +58,8 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
-        insert_narumae_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
+        insert_narazu_src_by_ms_km(&Square::from_umasu(ms_dst), &ps, &uchu, &mut mv_src_hashset);
+        insert_narumae_src_by_ms_km(ms_dst, &ps, &uchu, &mut mv_src_hashset);
         //insert_da_kms_by_ms_km      ( ms_dst, &km, &uchu, &mut da_kms_hashset );
         for ms_src in mv_src_hashset {
             ss.src = ms_src;
@@ -71,13 +76,21 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = PieceStruct::from_phase_piece_type(&Phase::Go, &kms).piece(); // △ph
+            let ps = uchu
+                .piece_struct_master()
+                .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
+            let km = ps.piece(); // △ph
             let ms_dst = 79;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
+            insert_narazu_src_by_ms_km(
+                &Square::from_umasu(ms_dst),
+                &ps,
+                &uchu,
+                &mut mv_src_hashset,
+            );
+            insert_narumae_src_by_ms_km(ms_dst, &ps, &uchu, &mut mv_src_hashset);
             insert_da_kms_by_ms_km(ms_dst, &km, &uchu, &mut da_kms_hashset);
             hyoji_ms_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
@@ -85,13 +98,21 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = PieceStruct::from_phase_piece_type(&Phase::Go, &kms).piece(); // △ph
+            let ps = uchu
+                .piece_struct_master()
+                .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
+            let km = ps.piece(); // △ph
             let ms_dst = 68;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
+            insert_narazu_src_by_ms_km(
+                &Square::from_umasu(ms_dst),
+                &ps,
+                &uchu,
+                &mut mv_src_hashset,
+            );
+            insert_narumae_src_by_ms_km(ms_dst, &ps, &uchu, &mut mv_src_hashset);
             insert_da_kms_by_ms_km(ms_dst, &km, &uchu, &mut da_kms_hashset);
             hyoji_ms_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
@@ -99,13 +120,21 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let km = PieceStruct::from_phase_piece_type(&Phase::Go, &kms).piece(); // △ph
+            let ps = uchu
+                .piece_struct_master()
+                .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
+            let km = ps.piece(); // △ph
             let ms_dst = 77;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
+            insert_narazu_src_by_ms_km(
+                &Square::from_umasu(ms_dst),
+                &ps,
+                &uchu,
+                &mut mv_src_hashset,
+            );
+            insert_narumae_src_by_ms_km(ms_dst, &ps, &uchu, &mut mv_src_hashset);
             insert_da_kms_by_ms_km(ms_dst, &km, &uchu, &mut da_kms_hashset);
             hyoji_ms_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
@@ -113,13 +142,21 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         {
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
-            let km = PieceStruct::from_phase_piece_type(&Phase::Sen, &kms).piece(); // ▼ら
+            let ps = uchu
+                .piece_struct_master()
+                .get_piece_struct_by_phase_and_piece_type(&Phase::Sen, &kms);
+            let km = ps.piece(); // ▼ら
             let ms_dst = 58;
             g_writeln(&format!("kms={} km={} ms_dst={}", kms, km, ms_dst));
             let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
-            insert_narumae_src_by_ms_km(ms_dst, &km, &uchu, &mut mv_src_hashset);
+            insert_narazu_src_by_ms_km(
+                &Square::from_umasu(ms_dst),
+                &ps,
+                &uchu,
+                &mut mv_src_hashset,
+            );
+            insert_narumae_src_by_ms_km(ms_dst, &ps, &uchu, &mut mv_src_hashset);
             insert_da_kms_by_ms_km(ms_dst, &km, &uchu, &mut da_kms_hashset);
             hyoji_ms_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);

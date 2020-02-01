@@ -1,14 +1,17 @@
+// use super::super::super::controller::common::conv;
 use super::phase::Phase;
 use super::piece::Piece;
 use super::piece_type::PieceType;
 
+/// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
+/// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
 pub struct PieceStruct {
     piece: Piece,
     /// 先後、駒種類。
     phase_piece_type: (Phase, PieceType),
     /// 駒→成駒　（成れない駒は、そのまま）
     promoted: Piece,
-    /// 成駒→駒
+    /// 成駒→駒　（成っていない駒は、そのまま）
     demoted: Piece,
     /// 先後付き駒　を　持ち駒種類　へ変換。
     /// 持ち駒にするので、先後は反転するぜ☆（＾～＾）
@@ -265,6 +268,7 @@ impl PieceStruct {
         }
     }
 
+    /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
     pub fn from_phase_piece_type(sn: &Phase, kms: &PieceType) -> Self {
         use super::super::super::model::master::piece::Piece::*;
@@ -351,8 +355,8 @@ impl PieceStruct {
         (hash >> 5, ps)
     }
 
-    pub fn piece(&self) -> Piece {
-        self.piece
+    pub fn piece(&self) -> &Piece {
+        &self.piece
     }
 
     pub fn phase_piece_type(&self) -> (&Phase, &PieceType) {
@@ -367,28 +371,80 @@ impl PieceStruct {
         self.phase_piece_type.1
     }
 
-    pub fn promote(&self) -> Piece {
-        self.promoted
+    pub fn promote(&self) -> &Piece {
+        &self.promoted
     }
 
-    pub fn demote(&self) -> Piece {
-        self.demoted
+    pub fn demote(&self) -> &Piece {
+        &self.demoted
+    }
+
+    // 降格できるか。
+    pub fn can_demote(&self) -> bool {
+        // 降格後の駒が、今の駒と異なっていれば、降格できるぜ☆（＾～＾）
+        self.piece != self.demoted
     }
 
     /// 持ち駒にするぜ☆（＾～＾）相手の持ち物になるぜ☆（＾～＾）
-    pub fn capture(&self) -> Piece {
-        self.captured
+    pub fn capture(&self) -> &Piece {
+        &self.captured
     }
 
     pub fn serial_piece_number(&self) -> usize {
         self.serial_piece_number
     }
 
-    /**
-     * 駒の一致比較
-     */
+    /// 駒の一致比較
     pub fn equals_piece(&self, b: &PieceStruct) -> bool {
         self.serial_piece_number() == b.serial_piece_number()
+    }
+
+    /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
+    pub fn is_promoted(&self) -> bool {
+        use super::super::super::model::master::piece_type::PieceType::*;
+        match self.piece_type() {
+            R => false,
+            K => false,
+            Z => false,
+            I => false,
+            N => false,
+            U => false,
+            S => false,
+            H => false,
+            PK => true,
+            PZ => true,
+            PN => true,
+            PU => true,
+            PS => true,
+            PH => true,
+            Kara => false,
+            Owari => false,
+        }
+    }
+
+    /// スライダー（長い利きのある駒）か☆（＾～＾）
+    ///
+    /// 合い駒で、進路を防ぎえる可能性があれば真
+    pub fn is_slider(&self) -> bool {
+        use super::super::super::model::master::piece_type::PieceType::*;
+        match &self.piece_type() {
+            R => false,
+            K => true,
+            Z => true,
+            I => false,
+            N => false,
+            U => false,
+            S => true,
+            H => false,
+            PK => true,
+            PZ => true,
+            PN => false,
+            PU => false,
+            PS => false,
+            PH => false,
+            Kara => false,
+            Owari => false,
+        }
     }
 
     /// ハッシュ値を作る

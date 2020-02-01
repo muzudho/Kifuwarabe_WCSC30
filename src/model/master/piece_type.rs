@@ -1,13 +1,14 @@
 //!
 //! 駒種類
 //!
+//! 先後なしの駒と空白
+//!
 
 use super::super::super::controller::common::conv::*;
-// use super::piece_struct::PieceStruct;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
-// 先後なしの駒と空白
+/// USIでCopyするので、Copyが要る。
 #[derive(Copy, Clone)]
 pub enum PieceType {
     // らいおん

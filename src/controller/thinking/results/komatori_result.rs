@@ -47,16 +47,13 @@ pub struct KomatoriResult {
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
         write!(
             f,
             "KmTori:{}{}{}{}",
             self.ms_attacker,
             self.km_attacker,
-            if km_is_nagaikiki(&self.km_attacker) {
-                "-->"
-            } else {
-                "->"
-            },
+            if ps_attacker.is_slider() { "-->" } else { "->" },
             self.ms_target
         )
     }
@@ -79,7 +76,7 @@ impl KomatoriResult {
         let (hash, ms_atk) = pop_ms_from_hash(hash);
         let (_hash, ms_tgt) = pop_ms_from_hash(hash);
         KomatoriResult {
-            km_attacker: km_atk.piece(),
+            km_attacker: km_atk.piece().clone(),
             ms_attacker: ms_atk,
             ms_target: ms_tgt,
         }
@@ -102,7 +99,8 @@ impl KomatoriResult {
         }
 
         // (2-1)
-        if km_is_nagaikiki(&self.km_attacker) {
+        let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
+        if ps_attacker.is_slider() {
             assert_banjo_ms(ss.dst, "(205b2)Ｇet_result");
             assert_banjo_ms(self.ms_attacker, "(205b3)Ｇet_result");
             assert_banjo_ms(self.ms_target, "(205b4)Ｇet_result");
@@ -184,7 +182,10 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
 
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
-        let km_dst = PieceStruct::from_phase_piece_type(&sn, kms_dst).piece();
+        let ps_dst = uchu
+            .piece_struct_master()
+            .get_piece_struct_by_phase_and_piece_type(&sn, kms_dst);
+        let km_dst = ps_dst.piece();
         //let km_dst = sn_kms_to_km( &sn, rnd_kms() );
         // 指定マスに移動できるか
         // 打は除く
@@ -207,7 +208,7 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
             );
 
             let oute_result = KomatoriResult {
-                km_attacker: km_dst,
+                km_attacker: km_dst.clone(),
                 ms_attacker: ss.src, // FIXME 打だと 0 になるのでは
                 ms_target: ms_target,
             };

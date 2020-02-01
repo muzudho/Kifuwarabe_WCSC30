@@ -19,6 +19,7 @@ use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_direction::PieceDirection;
 use super::super::super::model::master::piece_movement::*;
 use super::super::super::model::master::piece_struct::PieceStruct;
+use super::super::super::model::master::piece_struct_master::PieceStructMaster;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::place::*;
@@ -101,33 +102,34 @@ pub struct KyHashSeed {
  * ここに全部入れてあるぜ☆（＾～＾）
  */
 pub struct Uchu {
-    // 対話モード
+    /// 対話モード
     pub dialogue_mode: bool,
-    // コマンドを溜めておくバッファー
+    /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    // 初期局面
+    /// 初期局面
     pub ky0: Kyokumen,
-    // 現局面
+    /// 現局面
     pub ky: Kyokumen,
-    // 局面ハッシュ種
+    /// 局面ハッシュ種
     pub ky_hash_seed: KyHashSeed,
-    // 手目
+    /// 手目
     pub teme: usize,
-    // 棋譜
-    //#[derive(Copy, Clone)]
+    /// 棋譜
     pub kifu: [Sasite; TEME_LN],
-    // 初期局面ハッシュ
+    /// 初期局面ハッシュ
     pub ky0_hash: u64,
-    // 現局面ハッシュ
+    /// 現局面ハッシュ
     pub ky_hash: [u64; TEME_LN],
     /// 取った駒
     pub cap: [Piece; TEME_LN],
-    // 利きの数（先後別）
+    /// 利きの数（先後別）
     pub kiki_su_by_sn: [NumberBoard; SN_LN],
-    // 利きの数（先後付き駒別）
+    /// 利きの数（先後付き駒別）
     pub kiki_su_by_km: [NumberBoard; KM_LN],
-    // ビジョン・ツリー
+    /// ビジョン・ツリー
     pub vision_tree_by_sn: [VisionTree; SN_LN],
+    /// 駒構造体・マスター
+    piece_struct_master: PieceStructMaster,
 }
 
 impl Uchu {
@@ -718,6 +720,7 @@ impl Uchu {
                 NumberBoard::new(),
             ],
             vision_tree_by_sn: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
+            piece_struct_master: PieceStructMaster::new(),
         }
     }
     /**
@@ -770,6 +773,13 @@ impl Uchu {
         }
     }
 
+    pub fn position(&self) -> &Kyokumen {
+        &self.ky
+    }
+    pub fn position_mut(&mut self) -> &Kyokumen {
+        &self.ky
+    }
+
     /* **********************
      * コマンド・バッファー *
      ************************/
@@ -790,17 +800,14 @@ impl Uchu {
     /**
      * 初期局面の盤上に駒の位置を設定するもの
      */
-    pub fn set_ky0_ban_km(&mut self, suji: i8, dan: i8, km: Piece) {
+    pub fn set_ky0_ban_km(&mut self, suji: i8, dan: i8, km: &Piece) {
         self.ky0.set_km_by_ms(suji_dan_to_ms(suji, dan), km);
     }
     pub fn set_ky0_mg(&mut self, km: Piece, maisu: i8) {
         self.ky0.mg[km as usize] = maisu;
     }
-    pub fn get_jiai_by_km(&self, km: &Piece) -> Person {
-        let piece = PieceStruct::from_piece(km);
-        let (sn, _kms) = piece.phase_piece_type();
-
-        if match_sn(&sn, &self.get_teban(&Person::Ji)) {
+    pub fn get_jiai_by_km(&self, piece_struct: &PieceStruct) -> Person {
+        if match_sn(&piece_struct.phase(), &self.get_teban(&Person::Ji)) {
             Person::Ji
         } else {
             Person::Ai
@@ -1198,11 +1205,10 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     // 入れた指し手の通り指すぜ☆（＾～＾）
     pub fn do_ss(&mut self, ss: &Sasite) {
         // もう入っているかも知れないが、棋譜に入れる☆
-        let sn = self.get_teban(&Person::Ji);
-        let cap = self.ky.do_sasite(&sn, ss);
         let teme = self.teme;
         self.kifu[teme] = *ss;
-        self.set_cap(teme, cap);
+        let cap = self.ky.do_sasite(&self.get_teban(&Person::Ji), ss);
+        self.set_cap(teme, cap.clone());
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash();
@@ -1217,8 +1223,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             self.teme -= 1;
             let sn = self.get_teban(&Person::Ji);
             let ss = &self.get_sasite();
-            let cap = self.cap[self.teme];
-            self.ky.undo_sasite(&sn, &ss, &cap);
+            self.ky.undo_sasite(&sn, &ss, &self.cap[self.teme]);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -1289,5 +1294,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         }
 
         count
+    }
+
+    pub fn piece_struct_master(&self) -> &PieceStructMaster {
+        &self.piece_struct_master
     }
 }

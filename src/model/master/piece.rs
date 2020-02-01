@@ -8,10 +8,12 @@ use super::phase::*;
 // use super::piece_struct::PieceStruct;
 use std::fmt;
 
-/**
- * 先後付きの駒と空白
- */
-#[derive(Copy, Clone)]
+///
+/// 先後付きの駒と空白。
+/// 接尾辞の 1 は先手、 2 は後手。
+///
+// #[derive(Copy, Clone)]
+#[derive(Clone, PartialEq)]
 pub enum Piece {
     // ▼玉
     King1,

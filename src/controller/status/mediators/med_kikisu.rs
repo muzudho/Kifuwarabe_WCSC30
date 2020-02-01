@@ -9,13 +9,12 @@ use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::place::*;
+use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 
-/**
- * 盤上の利き升調べ
- *
- * 用途：自殺手防止他
- */
+/// 盤上の利き升調べ
+///
+/// 用途：自殺手防止他
 pub fn read_kikisu(uchu: &mut Uchu) {
     // ゼロ・リセット
     for km in KM_ARRAY.iter() {
@@ -28,6 +27,8 @@ pub fn read_kikisu(uchu: &mut Uchu) {
 
     // カウント
     for km_dst in KM_ARRAY.iter() {
+        let ps_dst = PieceStruct::from_piece(&km_dst);
+
         for x in SUJI_1..SUJI_10 {
             // 9..0 みたいに降順に書いても動かない？
             for y in DAN_1..DAN_10 {
@@ -36,18 +37,21 @@ pub fn read_kikisu(uchu: &mut Uchu) {
 
                 // 移動元の升
                 let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
-                insert_narazu_src_by_ms_km(ms_dst, &km_dst, &uchu, &mut mv_src_hashset);
-                insert_narumae_src_by_ms_km(ms_dst, &km_dst, &uchu, &mut mv_src_hashset);
+                insert_narazu_src_by_ms_km(
+                    &Square::from_umasu(ms_dst),
+                    &ps_dst,
+                    &uchu,
+                    &mut mv_src_hashset,
+                );
+                insert_narumae_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                 // 打は考えない。盤上の利き数なので
                 let kikisu = mv_src_hashset.len();
 
                 // 駒別
-                uchu.kiki_su_by_km[PieceStruct::from_piece(&km_dst).serial_piece_number()]
-                    .add_su_by_ms(ms_dst, kikisu as i8);
+                uchu.kiki_su_by_km[ps_dst.serial_piece_number()].add_su_by_ms(ms_dst, kikisu as i8);
 
                 // 先後別
-                uchu.kiki_su_by_sn[sn_to_num(&PieceStruct::from_piece(&km_dst).phase())]
-                    .add_su_by_ms(ms_dst, kikisu as i8);
+                uchu.kiki_su_by_sn[sn_to_num(ps_dst.phase())].add_su_by_ms(ms_dst, kikisu as i8);
             }
         }
     }
