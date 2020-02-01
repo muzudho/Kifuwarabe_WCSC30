@@ -149,8 +149,8 @@ pub fn insert_ss_by_ms_km_on_banjo(
     assert_banjo_ms(ms_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let ps_dst = PieceStruct::from_piece(&km_dst);
-    let (sn, _kms_dst) = ps_dst.phase_piece_type();
+    let piece_dst = PieceStruct::from_piece(&km_dst);
+    let (sn, _kms_dst) = piece_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(&uchu.ky.get_sn_by_ms(ms_dst), &sn) {
@@ -168,7 +168,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    insert_narazu_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+    insert_narazu_src_by_ms_km(ms_dst, &piece_dst, &uchu, &mut mv_src_hashset);
     for ms_src in &mv_src_hashset {
         assert_banjo_ms(*ms_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 
@@ -183,7 +183,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // | 盤上（成り） |
     // +--------------+
     mv_src_hashset.clear();
-    insert_narumae_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+    insert_narumae_src_by_ms_km(ms_dst, &km_dst, &uchu, &mut mv_src_hashset);
     for ms_src in &mv_src_hashset {
         assert_banjo_ms(*ms_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 

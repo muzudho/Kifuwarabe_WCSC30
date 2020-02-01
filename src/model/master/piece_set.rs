@@ -20,8 +20,7 @@ impl PieceSet {
     pub fn new_all() -> PieceSet {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = PieceStruct::from_piece(km);
-            num_syugo1.insert(ps.serial_piece_number());
+            num_syugo1.insert(PieceStruct::from_piece(km).serial_piece_number());
         }
         let km_syugo = PieceSet {
             num_syugo: num_syugo1,
@@ -35,10 +34,10 @@ impl PieceSet {
         let sn0 = uchu.get_teban(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = PieceStruct::from_piece(km);
-            let (sn1, _kms) = ps.phase_piece_type();
+            let piece = PieceStruct::from_piece(km);
+            let (sn1, _kms) = piece.phase_piece_type();
             if match_sn(&sn0, &sn1) {
-                num_syugo1.insert(ps.serial_piece_number());
+                num_syugo1.insert(piece.serial_piece_number());
             }
         }
         let km_syugo = PieceSet {
