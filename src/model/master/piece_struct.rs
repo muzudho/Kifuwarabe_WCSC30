@@ -1,3 +1,4 @@
+// use super::super::super::controller::common::conv;
 use super::phase::Phase;
 use super::piece::Piece;
 use super::piece_type::PieceType;
@@ -384,11 +385,32 @@ impl PieceStruct {
         self.serial_piece_number
     }
 
-    /**
-     * 駒の一致比較
-     */
+    /// 駒の一致比較
     pub fn equals_piece(&self, b: &PieceStruct) -> bool {
         self.serial_piece_number() == b.serial_piece_number()
+    }
+
+    /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
+    pub fn is_promoted(&self) -> bool {
+        use super::super::super::model::master::piece_type::PieceType::*;
+        match self.piece_type() {
+            R => false,
+            K => false,
+            Z => false,
+            I => false,
+            N => false,
+            U => false,
+            S => false,
+            H => false,
+            PK => true,
+            PZ => true,
+            PN => true,
+            PU => true,
+            PS => true,
+            PH => true,
+            Kara => false,
+            Owari => false,
+        }
     }
 
     /// ハッシュ値を作る

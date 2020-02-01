@@ -421,12 +421,14 @@ impl Kyokumen {
      */
     pub fn is_natta(&self, ms_src: umasu, ms_dst: umasu) -> bool {
         let km_src = &self.get_piece_struct_by_ms(ms_src).piece();
-        let kms_src = PieceStruct::from_piece(&km_src).piece_type();
+
+        let ps_src = PieceStruct::from_piece(&km_src);
         let km_dst = &self.get_piece_struct_by_ms(ms_dst).piece();
-        let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
+
+        let ps_dst = PieceStruct::from_piece(&km_dst);
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
-        let pro_dst = kms_is_pro(&kms_dst);
-        let pro_src = kms_is_pro(&kms_src);
+        let pro_dst = ps_dst.is_promoted();
+        let pro_src = ps_src.is_promoted();
 
         // 成り
         pro_dst && !pro_src
