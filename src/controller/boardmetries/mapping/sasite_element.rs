@@ -358,7 +358,9 @@ pub fn insert_narumae_src_by_ms_km(
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
     let kms_src = PieceStruct::from_piece(ps_dst.demote()).piece_type();
-    let km_src = PieceStruct::from_phase_piece_type(&ps_dst.phase(), &kms_src)
+    let km_src = uchu
+        .piece_struct_master()
+        .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), &kms_src)
         .piece()
         .clone();
 
@@ -1217,7 +1219,9 @@ pub fn insert_narazu_src_by_sn_ms(
     // 駒種類
     for kms in KMS_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-        let km = PieceStruct::from_phase_piece_type(&sn, &kms)
+        let km = uchu
+            .piece_struct_master()
+            .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
             .piece()
             .clone();
         use super::super::super::super::model::master::piece::Piece::*;
@@ -1574,7 +1578,9 @@ pub fn insert_narumae_src_by_sn_ms(
 
     // 駒種類
     for kms in KMS_ARRAY.iter() {
-        let km_src = PieceStruct::from_phase_piece_type(&sn, &kms)
+        let km_src = uchu
+            .piece_struct_master()
+            .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
             .piece()
             .clone();
 

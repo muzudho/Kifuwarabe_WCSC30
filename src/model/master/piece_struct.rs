@@ -3,6 +3,8 @@ use super::phase::Phase;
 use super::piece::Piece;
 use super::piece_type::PieceType;
 
+/// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
+/// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
 pub struct PieceStruct {
     piece: Piece,
     /// 先後、駒種類。
@@ -266,6 +268,7 @@ impl PieceStruct {
         }
     }
 
+    /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
     pub fn from_phase_piece_type(sn: &Phase, kms: &PieceType) -> Self {
         use super::super::super::model::master::piece::Piece::*;
