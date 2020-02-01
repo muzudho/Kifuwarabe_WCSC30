@@ -15,7 +15,7 @@ use super::super::super::super::model::master::square::*;
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
 pub fn is_s(uchu: &Uchu) -> bool {
     // 相手玉の位置
-    let sq_r = uchu.get_sq_r(&Person::Ai);
+    let sq_r = uchu.get_sq_r(&Person::Ai).clone();
 
     let p_r = sq_to_p(&sq_r);
     let p_south_r = p_r.to_south();
@@ -83,14 +83,14 @@ pub fn is_s(uchu: &Uchu) -> bool {
  * FIXME Aが動いたときの、逆王手が未考慮
  */
 pub fn is_atamakin(
-    _mskms_l: &MsKms,
-    _mskms_s: &MsKms,
-    _mskms_a: &MsKms,
-    _mskms_b: &MsKms,
+    _mskms_l: &SqKms,
+    _mskms_s: &SqKms,
+    _mskms_a: &SqKms,
+    _mskms_b: &SqKms,
     uchu: &Uchu,
 ) -> bool {
     // 相手らいおんのマス
-    let sq_ai_r = uchu.get_sq_r(&Person::Ai);
+    let sq_ai_r = uchu.get_sq_r(&Person::Ai).clone();
 
     // らいおん以外の相手の駒種類
     let mut kms_set_ai_c_r = PieceTypeSet::new_all();

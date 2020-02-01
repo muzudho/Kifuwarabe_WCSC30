@@ -17,22 +17,22 @@ use std::collections::HashSet;
 /// 思考で、内容はどんどん変わっていくぜ☆（＾～＾）
 pub struct VisionTree {
     // 相手玉の位置
-    pub ms_ai_r: umasu,
+    pub sq_ai_r: Square,
     // 相手玉を取る楽観筋
     pub ss_tume_hashset: HashSet<u64>,
 }
 impl VisionTree {
     pub fn new() -> VisionTree {
         VisionTree {
-            ms_ai_r: 0,
+            sq_ai_r: Square::from_umasu(0),
             ss_tume_hashset: HashSet::new(),
         }
     }
     pub fn clear(&mut self) {
         self.ss_tume_hashset.clear();
     }
-    pub fn set_ai_r(&mut self, ms: umasu) {
-        self.ms_ai_r = ms;
+    pub fn set_ai_r(&mut self, sq: &Square) {
+        self.sq_ai_r = sq.clone();
     }
 }
 
@@ -44,7 +44,7 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
         let ai_sn = hanten_sn(sn);
 
         // 相手の　らいおん　の位置を覚える
-        &uchu.vision_tree_by_sn[sn_to_num(sn)].set_ai_r(uchu.ky.ms_r[sn_to_num(&ai_sn)]);
+        &uchu.vision_tree_by_sn[sn_to_num(sn)].set_ai_r(uchu.ky.get_sq_r(sn_to_num(&ai_sn)));
         // 盤上に相手の　らいおん１枚　しかないと想定して、アタックする手
         let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();

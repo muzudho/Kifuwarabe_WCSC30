@@ -18,7 +18,8 @@ use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::place::*;
 use super::super::super::model::master::square::*;
 
-// 局面
+/// 局面
+/// でかいのでコピーもクローンも不可☆（＾～＾）！
 pub struct Kyokumen {
     /**
      * 10の位を筋、1の位を段とする。
@@ -34,7 +35,7 @@ pub struct Kyokumen {
      * らいおんの位置
      * [先後]
      */
-    pub ms_r: [umasu; SN_LN],
+    sq_r: [Square; SN_LN],
 }
 impl Kyokumen {
     pub fn new() -> Kyokumen {
@@ -151,7 +152,11 @@ impl Kyokumen {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
             ],
-            ms_r: [0, 0, 0],
+            sq_r: [
+                Square::from_umasu(0),
+                Square::from_umasu(0),
+                Square::from_umasu(0),
+            ],
         }
     }
     pub fn clear(&mut self) {
@@ -266,6 +271,12 @@ impl Kyokumen {
             0, 0,
         ];
     }
+
+    /// らいおんの位置
+    pub fn get_sq_r(&self, phase_number: usize) -> &Square {
+        &self.sq_r[phase_number]
+    }
+
     /**
      * 歩が置いてあるか確認
      */
@@ -291,12 +302,11 @@ impl Kyokumen {
      * 升で指定して駒を置く
      */
     pub fn set_km_by_sq(&mut self, sq: &Square, km: &Piece) {
-        let ms = sq.to_umasu();
-        self.board[ms] = PieceStruct::from_piece(km);
+        self.board[sq.to_umasu()] = PieceStruct::from_piece(km);
         use super::super::super::model::master::phase::Phase::*;
         match *km {
-            Piece::King1 => self.ms_r[Sen as usize] = ms,
-            Piece::King2 => self.ms_r[Go as usize] = ms,
+            Piece::King1 => self.sq_r[Sen as usize] = sq.clone(),
+            Piece::King2 => self.sq_r[Go as usize] = sq.clone(),
             _ => {}
         }
     }

@@ -781,6 +781,10 @@ impl Uchu {
     pub fn position_mut(&mut self) -> &Kyokumen {
         &self.ky
     }
+    /// らいおんの位置
+    pub fn get_sq_r(&self, jiai: &Person) -> &Square {
+        &self.ky.get_sq_r(sn_to_num(&self.get_teban(jiai)))
+    }
 
     /* **********************
      * コマンド・バッファー *

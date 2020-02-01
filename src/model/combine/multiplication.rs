@@ -5,14 +5,14 @@
 
 use super::super::master::piece::Piece;
 use super::super::master::piece_type::PieceType;
-use super::super::master::place::*;
+use super::super::master::square::*;
 
 /************
  * 升 × 駒 *
  ************/
 
-pub struct MsKm {
-    ms: umasu,
+pub struct SqKm {
+    sq: Square,
     km: Piece,
 }
 
@@ -20,7 +20,7 @@ pub struct MsKm {
  * 升 × 駒種類 *
  ****************/
 
-pub struct MsKms {
-    ms: umasu,
+pub struct SqKms {
+    sq: Square,
     kms: PieceType,
 }

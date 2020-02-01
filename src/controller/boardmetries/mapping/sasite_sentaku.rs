@@ -14,7 +14,6 @@ use super::super::super::super::controller::thinking::results::komatori_result::
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::place::*;
 use super::super::super::super::model::master::ply::*;
-use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 
 pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
@@ -40,7 +39,7 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
  */
 pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Uchu) {
     // 自玉の位置
-    let sq_r = uchu.get_sq_r(&Person::Ji);
+    let sq_r = uchu.get_sq_r(&Person::Ji).clone();
     g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
@@ -106,7 +105,10 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
     // 自玉の位置
-    let ms_r = uchu.ky.ms_r[sn_to_num(&uchu.get_teban(&Person::Ji))];
+    let sq_r = uchu
+        .ky
+        .get_sq_r(sn_to_num(&uchu.get_teban(&Person::Ji)))
+        .clone();
 
     // 王手回避カードを発行する
     // TODO 王手が２か所から掛かっていたら、全部回避しないといけない☆
@@ -122,10 +124,10 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         // g_writeln( &s1 );
 
         // 狙われている方の玉の位置
-        let sq_r_new = if ss_potential.src.to_umasu() == Square::from_umasu(ms_r).to_umasu() {
+        let sq_r_new = if ss_potential.src.to_umasu() == sq_r.to_umasu() {
             ss_potential.dst.clone() // 狙われていた方の玉が動いた先
         } else {
-            Square::from_umasu(ms_r) // 動いていない、狙われていた方の玉の居場所
+            sq_r.clone() // 動いていない、狙われていた方の玉の居場所
         };
 
         // 利きの再計算
