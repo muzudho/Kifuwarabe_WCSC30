@@ -9,8 +9,7 @@ use super::phase::*;
 use std::fmt;
 
 ///
-/// 先後付きの駒と空白。
-/// 接尾辞の 1 は先手、 2 は後手。
+/// 先後付きの駒と空白
 ///
 // #[derive(Copy, Clone)]
 #[derive(Clone, PartialEq)]
