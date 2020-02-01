@@ -26,7 +26,7 @@ pub fn get_ido_ss_by_km_random(uchu: &Uchu, km_dst: &Piece) -> Sasite {
     for _i_retry in 0..1000000 {
         // 移動したい先の升
         let sq_dst = randommove::random_square();
-        assert_banjo_ms(sq_dst.to_umasu(), "get_ido_ss_by_km_random");
+        assert_banjo_sq(&sq_dst, "get_ido_ss_by_km_random");
 
         ss_hashset.clear();
         insert_ss_by_ms_km_on_banjo(&uchu, &sq_dst, &km_dst, &mut ss_hashset);
@@ -51,7 +51,7 @@ pub fn get_ss_by_random(uchu: &Uchu) -> Sasite {
     'random: for _i_retry in 0..1000000 {
         // 移動したい先の升
         let sq_dst = randommove::random_square();
-        assert_banjo_ms(sq_dst.to_umasu(), "Ｇet_ss_by_random");
+        assert_banjo_sq(&sq_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
         let ps_dst = uchu

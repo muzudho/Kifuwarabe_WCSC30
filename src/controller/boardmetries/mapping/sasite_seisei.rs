@@ -56,8 +56,8 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                 for ms_dst in &dst_hashset {
                     ss_hashset.insert(
                         Sasite {
-                            src: sq_src.to_umasu(),
-                            dst: *ms_dst,
+                            src: sq_src.clone(),
+                            dst: Square::from_umasu(*ms_dst),
                             pro: false, // 成らず
                             drop: PieceType::Kara,
                         }
@@ -76,8 +76,8 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                 for ms_dst in &dst_hashset {
                     ss_hashset.insert(
                         Sasite {
-                            src: sq_src.to_umasu(),
-                            dst: *ms_dst,
+                            src: sq_src.clone(),
+                            dst: Square::from_umasu(*ms_dst),
                             pro: true, // 成り
                             drop: PieceType::Kara,
                         }
@@ -122,10 +122,10 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                         let kms = num_to_kms(num_kms_da);
                         ss_hashset.insert(
                             Sasite {
-                                src: SS_SRC_DA,         // 駒大
-                                dst: sq_dst.to_umasu(), // どの升へ行きたいか
-                                pro: false,             // 打に成りは無し
-                                drop: kms,              // 打った駒種類
+                                src: Square::from_umasu(SS_SRC_DA), // 駒大
+                                dst: sq_dst.clone(),                // どの升へ行きたいか
+                                pro: false,                         // 打に成りは無し
+                                drop: kms,                          // 打った駒種類
                             }
                             .to_hash(),
                         );
@@ -149,7 +149,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_ss_by_ms_km_on_banjo");
+    assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
     let ps_dst = PieceStruct::from_piece(&km_dst);
@@ -163,7 +163,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // ハッシュを作るのに使う
     let mut ss_hash_builder = Sasite::new();
 
-    ss_hash_builder.dst = sq_dst.to_umasu();
+    ss_hash_builder.dst = (*sq_dst).clone();
 
     // 移動元の升
     let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
@@ -173,9 +173,10 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     insert_narazu_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
     for ms_src in &mv_src_hashset {
-        assert_banjo_ms(*ms_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
+        let sq_src = Square::from_umasu(*ms_src);
+        assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 
-        ss_hash_builder.src = *ms_src;
+        ss_hash_builder.src = sq_src;
         // 成らず
         ss_hash_builder.pro = false;
         ss_hash_builder.drop = PieceType::Kara;
@@ -188,9 +189,10 @@ pub fn insert_ss_by_ms_km_on_banjo(
     mv_src_hashset.clear();
     insert_narumae_src_by_ms_km(sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
     for ms_src in &mv_src_hashset {
-        assert_banjo_ms(*ms_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
+        let sq_src = Square::from_umasu(*ms_src);
+        assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 
-        ss_hash_builder.src = *ms_src;
+        ss_hash_builder.src = sq_src;
         // 成り
         ss_hash_builder.pro = true;
         ss_hash_builder.drop = PieceType::Kara;
@@ -209,7 +211,7 @@ pub fn insert_ss_by_ms_km_on_da(
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_ss_by_ms_km_on_da");
+    assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_da");
 
     // 手番の先後、駒種類
     let piece_struct_dst = PieceStruct::from_piece(&km_dst);
@@ -223,7 +225,7 @@ pub fn insert_ss_by_ms_km_on_da(
     // ハッシュを作るのに使う
     let mut ss_hash_builder = Sasite::new();
 
-    ss_hash_builder.dst = sq_dst.to_umasu();
+    ss_hash_builder.dst = (*sq_dst).clone();
 
     // 移動元の升
     //let mut mv_src_hashset : HashSet<umasu> = HashSet::new();
@@ -239,8 +241,8 @@ pub fn insert_ss_by_ms_km_on_da(
         let kms_da = num_to_kms(*num_kms_da);
 
         let hash_ss = Sasite {
-            src: SS_SRC_DA,
-            dst: sq_dst.to_umasu(),
+            src: Square::from_umasu(SS_SRC_DA),
+            dst: (*sq_dst).clone(),
             pro: false,
             drop: kms_da,
         }

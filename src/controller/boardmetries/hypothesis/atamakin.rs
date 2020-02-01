@@ -15,9 +15,9 @@ use super::super::super::super::model::master::square::*;
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
 pub fn is_s(uchu: &Uchu) -> bool {
     // 相手玉の位置
-    let ms_r = uchu.get_ms_r(&Person::Ai);
+    let sq_r = uchu.get_sq_r(&Person::Ai);
 
-    let p_r = ms_to_p(ms_r);
+    let p_r = sq_to_p(&sq_r);
     let p_south_r = p_r.to_south();
     if !p_in_ban(&p_south_r) {
         return true;
@@ -32,7 +32,7 @@ pub fn is_s(uchu: &Uchu) -> bool {
 
     g_writeln(&format!(
         "info string south of My raion {} = {}. jiai_km={}.",
-        ms_r,
+        sq_r.to_umasu(),
         ps.piece(),
         jiai_km
     ));
@@ -90,7 +90,7 @@ pub fn is_atamakin(
     uchu: &Uchu,
 ) -> bool {
     // 相手らいおんのマス
-    let ms_ai_r = uchu.get_ms_r(&Person::Ai);
+    let sq_ai_r = uchu.get_sq_r(&Person::Ai);
 
     // らいおん以外の相手の駒種類
     let mut kms_set_ai_c_r = PieceTypeSet::new_all();
@@ -100,7 +100,7 @@ pub fn is_atamakin(
     // A が移動することで、利きは変わるか？　玉の下３つは変わらない
     // 単に下３つに移動できるか調べられたらいい。８１升別　利きを作るか？
     // 駒、相手の利き
-    let p_k = ms_to_p(ms_ai_r);
+    let p_k = sq_to_p(&sq_ai_r);
     if board_metrics::is_ji_km_by_ms(&Square::from_umasu(p_to_ms(&p_k.to_south_west())), &uchu) {}
 
     if board_metrics::is_ai_kiki_by_ms(&Square::from_umasu(p_to_ms(&p_k.to_south_west())), &uchu) {}

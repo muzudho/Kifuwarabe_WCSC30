@@ -35,7 +35,7 @@ pub fn insert_narazu_src_by_ms_km(
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "ｉnsert_narazu_src_by_ms_km");
+    assert_banjo_sq(&sq_dst, "ｉnsert_narazu_src_by_ms_km");
 
     /*
      * umasu は 将棋盤座標
@@ -48,7 +48,7 @@ pub fn insert_narazu_src_by_ms_km(
      * x,y を使うと混乱するので、s,d を使う
      */
     // 移動先の筋、段、駒種類、駒種類インデックス
-    let (dx, dy) = ms_to_suji_dan(sq_dst.to_umasu());
+    let (dx, dy) = sq_dst.to_file_rank();
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     use super::super::super::super::model::master::piece::Piece::*;
@@ -345,7 +345,7 @@ pub fn insert_narumae_src_by_ms_km(
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_narumae_src_by_ms_km");
+    assert_banjo_sq(&sq_dst, "Ｉnsert_narumae_src_by_ms_km");
 
     // +--------------------+
     // | 移動後は成り駒か？ |
@@ -376,7 +376,7 @@ pub fn insert_narumae_src_by_ms_km(
      * x,y を使うと混乱するので、s,d を使う
      */
     // 移動先の筋、段、駒種類、駒種類インデックス
-    let (dx, dy) = ms_to_suji_dan(sq_dst.to_umasu());
+    let (dx, dy) = sq_dst.to_file_rank();
 
     // 例えば移動先の駒種類が「ぱひ」なら、「ぱひ」が動いた可能性の他に、
     // 「ひ」が動いたのかもしれない。
@@ -652,7 +652,7 @@ pub fn insert_da_kms_by_sq_km(
     uchu: &Uchu,
     result_kms: &mut HashSet<usize>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_da_kms_by_ms_km");
+    assert_banjo_sq(&sq_dst, "Ｉnsert_da_kms_by_ms_km");
 
     let ps_dst = PieceStruct::from_piece(&km_dst);
     let kms_dst = ps_dst.piece_type();
@@ -691,9 +691,9 @@ pub fn insert_da_kms_by_sq_km(
      * 12 22 32
      * 11 21 31 ...
      */
-    let ms = kaiten180_ms_by_ms_sn(sq_dst.to_umasu(), &ps_dst.phase());
+    let sq = kaiten180_sq_by_sq_sn(&sq_dst, &ps_dst.phase());
 
-    assert_banjo_ms(ms, "Ｉnsert_da_kms_by_ms_km＜その２＞");
+    assert_banjo_sq(&sq, "Ｉnsert_da_kms_by_ms_km＜その２＞");
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
@@ -759,7 +759,7 @@ pub fn insert_dst_by_ms_km(
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(sq_src.to_umasu(), "Ｉnsert_dst_by_ms_km");
+    assert_banjo_sq(&sq_src, "Ｉnsert_dst_by_ms_km");
 
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = sq_src.to_file_rank();
@@ -1060,8 +1060,9 @@ pub fn insert_dst_by_ms_km(
                 // 移動元または移動先が　１～３段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
+                    let sq_dst = Square::from_umasu(*ms_dst);
                     let (_sx2, sy2) = sq_src.to_file_rank();
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if sy2 < DAN_4 && dy2 < DAN_4 {
                         result2.insert(*ms_dst);
                     }
@@ -1077,7 +1078,8 @@ pub fn insert_dst_by_ms_km(
                 // 移動先が　１～３段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let sq_dst = Square::from_umasu(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if dy2 < DAN_4 {
                         result2.insert(*ms_dst);
                     }
@@ -1093,8 +1095,9 @@ pub fn insert_dst_by_ms_km(
                 // 移動元または移動先が　７～９段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
+                    let sq_dst = Square::from_umasu(*ms_dst);
                     let (_sx2, sy2) = sq_src.to_file_rank();
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if DAN_6 < sy2 && DAN_6 < dy2 {
                         result2.insert(*ms_dst);
                     }
@@ -1110,7 +1113,8 @@ pub fn insert_dst_by_ms_km(
                 // 移動先が　７～９段目なら成れる
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let sq_dst = Square::from_umasu(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if DAN_6 < dy2 {
                         result2.insert(*ms_dst);
                     }
@@ -1133,7 +1137,8 @@ pub fn insert_dst_by_ms_km(
                 // ▼うさぎ　は１、２段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let sq_dst = Square::from_umasu(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if dy2 < DAN_3 {
                     } else {
                         result2.insert(*ms_dst);
@@ -1149,7 +1154,8 @@ pub fn insert_dst_by_ms_km(
                 // ▼しし、▼ひよこ　は１段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let sq_dst = Square::from_umasu(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if dy2 < DAN_2 {
                     } else {
                         result2.insert(*ms_dst);
@@ -1165,7 +1171,8 @@ pub fn insert_dst_by_ms_km(
                 // △うさぎ　は８、９段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let sq_dst = Square::from_umasu(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if DAN_7 < dy2 {
                     } else {
                         result2.insert(*ms_dst);
@@ -1181,7 +1188,8 @@ pub fn insert_dst_by_ms_km(
                 // △しし、△ひよこ　は９段目には進めない
                 let mut result2: HashSet<umasu> = HashSet::new();
                 for ms_dst in result.iter() {
-                    let (_dx2, dy2) = ms_to_suji_dan(*ms_dst);
+                    let sq_dst = Square::from_umasu(*ms_dst);
+                    let (_dx2, dy2) = sq_dst.to_file_rank();
                     if DAN_8 < dy2 {
                     } else {
                         result2.insert(*ms_dst);
@@ -1212,7 +1220,7 @@ pub fn insert_narazu_src_by_sn_ms(
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_narazu_src_by_sn_ms");
+    assert_banjo_sq(&sq_dst, "Ｉnsert_narazu_src_by_sn_ms");
 
     // 移動先の筋、段
     let (dx, dy) = sq_dst.to_file_rank();
@@ -1572,7 +1580,7 @@ pub fn insert_narumae_src_by_sn_ms(
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_narumae_src_by_sn_ms");
+    assert_banjo_sq(&sq_dst, "Ｉnsert_narumae_src_by_sn_ms");
 
     // 移動先の筋、段
     let (dx, dy) = sq_dst.to_file_rank();

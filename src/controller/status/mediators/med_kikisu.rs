@@ -33,7 +33,7 @@ pub fn read_kikisu(uchu: &mut Uchu) {
             // 9..0 みたいに降順に書いても動かない？
             for y in DAN_1..DAN_10 {
                 let sq_dst = Square::from_file_rank(x, y);
-                assert_banjo_ms(sq_dst.to_umasu(), "think 利き調べ");
+                assert_banjo_sq(&sq_dst, "think 利き調べ");
 
                 // 移動元の升
                 let mut mv_src_hashset: HashSet<umasu> = HashSet::new();

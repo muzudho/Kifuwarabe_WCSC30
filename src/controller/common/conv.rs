@@ -159,13 +159,9 @@ pub fn hanten_jiai(jiai: &Person) -> Person {
  * 93 83 73
  * ...
  */
-
-pub fn ms_to_suji_dan(ms: umasu) -> (i8, i8) {
-    assert_banjo_ms(ms, "(203)Ｍs_to_suji_dan");
-    ((ms / 10) as i8, (ms % 10) as i8)
-}
-pub fn ms_to_p(ms: umasu) -> Point {
-    assert_banjo_ms(ms, "(203b)ms_to_p");
+pub fn sq_to_p(sq: &Square) -> Point {
+    let ms = sq.to_umasu();
+    assert_banjo_sq(&sq, "(203b)sq_to_p");
     Point {
         x: (ms / 10) as i8,
         y: (ms % 10) as i8,
@@ -197,19 +193,17 @@ pub fn p_to_ms(p: &Point) -> umasu {
 /**
  * ハッシュ値を作る
  */
-pub fn push_ms_to_hash(hash: u64, ms: umasu) -> u64 {
+pub fn push_sq_to_hash(hash: u64, sq: &Square) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    (hash << 7) + ms as u64
+    (hash << 7) + sq.to_umasu() as u64
 }
-/**
- * ハッシュ値から作る
- */
-pub fn pop_ms_from_hash(hash: u64) -> (u64, umasu) {
+/// ハッシュ値から作る
+pub fn pop_sq_from_hash(hash: u64) -> (u64, Square) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let ms_num = (hash & 0b1111111) as umasu;
-    (hash >> 7, ms_num)
+    let sq_num = Square::from_umasu((hash & 0b1111111) as umasu);
+    (hash >> 7, sq_num)
 }
 
 /**
@@ -232,11 +226,11 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
 /****************************************************
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
-pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
+pub fn kaiten180_sq_by_sq_sn(sq: &Square, sn: &Phase) -> Square {
     use super::super::super::model::master::phase::Phase::*;
     match *sn {
-        Sen => BAN_MAX - ms + BAN_MIN,
-        _ => ms,
+        Sen => Square::from_umasu(BAN_MAX - sq.to_umasu() + BAN_MIN),
+        _ => (*sq).clone(),
     }
 }
 

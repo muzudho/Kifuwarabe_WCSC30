@@ -1,12 +1,13 @@
 //!
 //! 値チェック
 //!
-use super::super::super::model::master::place::umasu;
+use super::super::super::model::master::square::Square;
 
 ///
 /// 打はテストできない
 ///
-pub fn assert_banjo_ms(ms: umasu, hint: &str) {
+pub fn assert_banjo_sq(sq: &Square, hint: &str) {
+    let ms = sq.to_umasu();
     debug_assert!(
         (10 < ms && ms < 20)
             || (20 < ms && ms < 30)

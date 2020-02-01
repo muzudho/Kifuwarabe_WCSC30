@@ -67,19 +67,19 @@ impl KomatoriResult {
     pub fn to_hash(&self) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_ms_to_hash(hash, self.ms_target);
-        hash = push_ms_to_hash(hash, self.ms_attacker);
+        hash = push_sq_to_hash(hash, &Square::from_umasu(self.ms_target));
+        hash = push_sq_to_hash(hash, &Square::from_umasu(self.ms_attacker));
         PieceStruct::from_piece(&self.km_attacker).add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
         let (hash, km_atk) = PieceStruct::from_hash(hash);
-        let (hash, ms_atk) = pop_ms_from_hash(hash);
-        let (_hash, ms_tgt) = pop_ms_from_hash(hash);
+        let (hash, sq_atk) = pop_sq_from_hash(hash);
+        let (_hash, sq_tgt) = pop_sq_from_hash(hash);
         KomatoriResult {
             km_attacker: km_atk.piece().clone(),
-            ms_attacker: ms_atk,
-            ms_target: ms_tgt,
+            ms_attacker: sq_atk.to_umasu(),
+            ms_target: sq_tgt.to_umasu(),
         }
     }
     ///
@@ -95,27 +95,27 @@ impl KomatoriResult {
     /// ss : 現局面での、駒の動き手の１つ
     pub fn get_result(&self, ss: &Sasite) -> KomatoriResultResult {
         // (1)
-        if self.ms_attacker == ss.dst {
+        if self.ms_attacker == ss.dst.to_umasu() {
             return KomatoriResultResult::NoneAttacker;
         }
 
         // (2-1)
         let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
         if ps_attacker.is_slider() {
-            assert_banjo_ms(ss.dst, "(205b2)Ｇet_result");
-            assert_banjo_ms(self.ms_attacker, "(205b3)Ｇet_result");
-            assert_banjo_ms(self.ms_target, "(205b4)Ｇet_result");
+            assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
+            assert_banjo_sq(&Square::from_umasu(self.ms_attacker), "(205b3)Ｇet_result");
+            assert_banjo_sq(&Square::from_umasu(self.ms_target), "(205b4)Ｇet_result");
 
-            let p_dst = ms_to_p(ss.dst);
-            let p_atk = ms_to_p(self.ms_attacker);
-            let p_tgt = ms_to_p(self.ms_target);
+            let p_dst = sq_to_p(&ss.dst);
+            let p_atk = sq_to_p(&Square::from_umasu(self.ms_attacker));
+            let p_tgt = sq_to_p(&Square::from_umasu(self.ms_target));
 
             // 合い駒判定
             if
             // これから動かす駒は、狙われている駒ではないとする
-            ss.src != self.ms_target
+            ss.src.to_umasu() != self.ms_target
                 // あるいは打か
-                || ss.src == SS_SRC_DA
+                || ss.src.to_umasu() == SS_SRC_DA
             {
                 // 利きの線分上に、駒を置いたか？
                 if intersect_point_on_line_segment(&p_dst, &p_atk, &p_tgt) {
@@ -125,8 +125,8 @@ impl KomatoriResult {
             } else {
                 // 狙われている駒を動かす場合
 
-                assert_banjo_ms(ss.src, "(205b1)Ｇet_result");
-                let p_src = ms_to_p(ss.src);
+                assert_banjo_sq(&ss.src, "(205b1)Ｇet_result");
+                let p_src = sq_to_p(&ss.src);
 
                 // スライダー駒との角度
                 let argangle4a = get_argangle4_p_p(&p_atk, &p_tgt);
@@ -147,7 +147,7 @@ impl KomatoriResult {
             }
         } else {
             // (3-2) 狙われている駒を、とりあえず動かす
-            if self.ms_target == ss.src {
+            if self.ms_target == ss.src.to_umasu() {
                 return KomatoriResultResult::NoneMoved;
             }
         }
@@ -169,8 +169,8 @@ impl KomatoriResult {
  */
 pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<u64> {
     let sq_target = Square::from_umasu(ms_target);
-    assert_banjo_ms(
-        sq_target.to_umasu(),
+    assert_banjo_sq(
+        &sq_target,
         &format!(
             "(119)Ｌookup_banjo_catch sn={} ms_target={}",
             sn,
@@ -205,8 +205,8 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
 
         let ss = choice_1ss_by_hashset(&ss_hashset);
         if ss.exists() {
-            assert_banjo_ms(
-                ss.src,
+            assert_banjo_sq(
+                &ss.src,
                 &format!(
                     "(123)Ｌookup_banjo_catch ss.src /  ms_target={} km_dst={} ss={}",
                     ms_target, km_dst, ss
@@ -215,7 +215,7 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
 
             let oute_result = KomatoriResult {
                 km_attacker: km_dst.clone(),
-                ms_attacker: ss.src, // FIXME 打だと 0 になるのでは
+                ms_attacker: ss.src.to_umasu(), // FIXME 打だと 0 になるのでは
                 ms_target: ms_target,
             };
 

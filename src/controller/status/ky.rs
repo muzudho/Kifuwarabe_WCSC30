@@ -290,7 +290,8 @@ impl Kyokumen {
     /**
      * 升で指定して駒を置く
      */
-    pub fn set_km_by_ms(&mut self, ms: umasu, km: &Piece) {
+    pub fn set_km_by_sq(&mut self, sq: &Square, km: &Piece) {
+        let ms = sq.to_umasu();
         self.board[ms] = PieceStruct::from_piece(km);
         use super::super::super::model::master::phase::Phase::*;
         match *km {
@@ -321,7 +322,7 @@ impl Kyokumen {
 
         {
             // 動かす駒
-            let km = if ss.src == SS_SRC_DA {
+            let km = if ss.src.to_umasu() == SS_SRC_DA {
                 // 打なら
                 // 自分の持ち駒を減らす
                 let ps = PieceStruct::from_phase_piece_type(&sn, &ss.drop);
@@ -331,37 +332,27 @@ impl Kyokumen {
                 // 打で無ければ、元の升の駒を消す。
                 let km1 = if ss.pro {
                     // 成りなら
-                    self.get_piece_struct_by_sq(&Square::from_umasu(ss.src))
-                        .promote()
-                        .clone()
+                    self.get_piece_struct_by_sq(&ss.src).promote().clone()
                 } else {
-                    self.get_piece_struct_by_sq(&Square::from_umasu(ss.src))
-                        .piece()
-                        .clone()
+                    self.get_piece_struct_by_sq(&ss.src).piece().clone()
                 };
 
-                self.set_km_by_ms(ss.src, &Piece::Kara);
+                self.set_km_by_sq(&ss.src, &Piece::Kara);
 
                 km1
             };
 
             // 移動先升に駒があるかどうか
-            if let Piece::Kara = self
-                .get_piece_struct_by_sq(&Square::from_umasu(ss.dst))
-                .piece()
-            {
+            if let Piece::Kara = self.get_piece_struct_by_sq(&ss.dst).piece() {
                 cap = Piece::Kara;
             } else {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                cap = self
-                    .get_piece_struct_by_sq(&Square::from_umasu(ss.dst))
-                    .piece()
-                    .clone();
+                cap = self.get_piece_struct_by_sq(&ss.dst).piece().clone();
                 self.add_mg(PieceStruct::from_piece(&cap).capture().clone(), 1);
             }
 
             // 移動先升に駒を置く
-            self.set_km_by_ms(ss.dst, &km);
+            self.set_km_by_sq(&ss.dst, &km);
         }
 
         cap
@@ -373,7 +364,7 @@ impl Kyokumen {
      */
     pub fn undo_sasite(&mut self, sn: &Phase, ss: &Sasite, cap: &Piece) {
         // 移動先の駒
-        let km = if ss.src == SS_SRC_DA {
+        let km = if ss.src.to_umasu() == SS_SRC_DA {
             // 打なら
             let ps = PieceStruct::from_phase_piece_type(sn, &ss.drop);
             // 自分の持ち駒を増やす
@@ -385,18 +376,14 @@ impl Kyokumen {
             // 打で無ければ
             if ss.pro {
                 // 成ったなら、成る前へ
-                self.get_piece_struct_by_sq(&Square::from_umasu(ss.dst))
-                    .demote()
-                    .clone()
+                self.get_piece_struct_by_sq(&ss.dst).demote().clone()
             } else {
-                self.get_piece_struct_by_sq(&Square::from_umasu(ss.dst))
-                    .piece()
-                    .clone()
+                self.get_piece_struct_by_sq(&ss.dst).piece().clone()
             }
         };
 
         // 移動先の駒を、取った駒（あるいは空）に戻す
-        self.set_km_by_ms(ss.dst, cap);
+        self.set_km_by_sq(&ss.dst, cap);
         match *cap {
             Piece::Kara => {}
             _ => {
@@ -406,7 +393,7 @@ impl Kyokumen {
         }
 
         // 移動元升に、動かした駒を置く
-        self.set_km_by_ms(ss.src, &km);
+        self.set_km_by_sq(&ss.src, &km);
     }
 
     /**
@@ -436,15 +423,11 @@ impl Kyokumen {
     /**
      * 移動先と移動元を比較し、違う駒があれば、成ったと判定するぜ☆（＾～＾）
      */
-    pub fn is_natta(&self, ms_src: umasu, ms_dst: umasu) -> bool {
-        let km_src = &self
-            .get_piece_struct_by_sq(&Square::from_umasu(ms_src))
-            .piece();
+    pub fn is_natta(&self, sq_src: &Square, sq_dst: &Square) -> bool {
+        let km_src = &self.get_piece_struct_by_sq(&sq_src).piece();
 
         let ps_src = PieceStruct::from_piece(&km_src);
-        let km_dst = &self
-            .get_piece_struct_by_sq(&Square::from_umasu(ms_dst))
-            .piece();
+        let km_dst = &self.get_piece_struct_by_sq(&sq_dst).piece();
 
         let ps_dst = PieceStruct::from_piece(&km_dst);
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る

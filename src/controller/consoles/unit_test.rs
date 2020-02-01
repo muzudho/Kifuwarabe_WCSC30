@@ -67,9 +67,10 @@ pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
         insert_narumae_src_by_ms_km(&sq_dst, &ps, &uchu, &mut mv_src_hashset);
         //insert_da_kms_by_sq_km      ( ms_dst, &km, &uchu, &mut da_kms_hashset );
         for ms_src in mv_src_hashset {
-            ss.src = ms_src;
-            g_writeln(&format!("移動可能な駒がある升={}", ms_src));
-            ss.dst = sq_dst.to_umasu();
+            let sq_src = Square::from_umasu(ms_src);
+            ss.src = sq_src.clone();
+            g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
+            ss.dst = sq_dst;
             ss.pro = pro_dst;
             ss.drop = PieceType::Kara;
             break;

@@ -66,12 +66,13 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
 
                     // 盤上
                     for ms_src in mv_src_hashset.iter() {
+                        let sq_src = Square::from_umasu(*ms_src);
                         // 成り
-                        let pro = &uchu.ky.is_natta(*ms_src, sq_dst.to_umasu());
+                        let pro = &uchu.ky.is_natta(&sq_src, &sq_dst);
 
                         let hash_ss = Sasite {
-                            src: *ms_src,
-                            dst: sq_dst.to_umasu(),
+                            src: sq_src,
+                            dst: sq_dst.clone(),
                             pro: *pro,
                             drop: PieceType::Kara,
                         }

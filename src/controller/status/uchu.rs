@@ -765,12 +765,9 @@ impl Uchu {
     pub fn copy_ky0_to_ky1(&mut self) {
         // 盤上
         for i_ms in 0..BAN_SIZE {
-            self.ky.set_km_by_ms(
-                i_ms,
-                self.ky0
-                    .get_piece_struct_by_sq(&Square::from_umasu(i_ms))
-                    .piece(),
-            );
+            let i_sq = Square::from_umasu(i_ms);
+            self.ky
+                .set_km_by_sq(&i_sq, self.ky0.get_piece_struct_by_sq(&i_sq).piece());
         }
         // 持ち駒
         for i_mg in 0..KM_LN {
@@ -806,7 +803,8 @@ impl Uchu {
      * 初期局面の盤上に駒の位置を設定するもの
      */
     pub fn set_ky0_ban_km(&mut self, suji: i8, dan: i8, km: &Piece) {
-        self.ky0.set_km_by_ms(suji_dan_to_ms(suji, dan), km);
+        self.ky0
+            .set_km_by_sq(&Square::from_file_rank(suji, dan), km);
     }
     pub fn set_ky0_mg(&mut self, km: Piece, maisu: i8) {
         self.ky0.mg[km as usize] = maisu;
@@ -856,11 +854,11 @@ impl Uchu {
     /**
      * 棋譜の作成
      */
-    pub fn set_sasite_src(&mut self, src: umasu) {
-        self.kifu[self.teme].src = src
+    pub fn set_sasite_src(&mut self, src: &Square) {
+        self.kifu[self.teme].src = src.clone()
     }
-    pub fn set_sasite_dst(&mut self, dst: umasu) {
-        self.kifu[self.teme].dst = dst
+    pub fn set_sasite_dst(&mut self, dst: &Square) {
+        self.kifu[self.teme].dst = dst.clone()
     }
     pub fn set_sasite_pro(&mut self, pro: bool) {
         self.kifu[self.teme].pro = pro
@@ -878,8 +876,8 @@ impl Uchu {
     pub fn set_cap(&mut self, teme: usize, km: Piece) {
         self.cap[teme] = km
     }
-    pub fn get_sasite(&self) -> Sasite {
-        self.kifu[self.teme]
+    pub fn get_sasite(&self) -> &Sasite {
+        &self.kifu[self.teme]
     }
     #[allow(dead_code)]
     pub fn get_ky_hash(&mut self) -> u64 {
@@ -1106,87 +1104,87 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     +----+----+----+----+----+----+----+----+----+
        1    2    3    4    5    6    7    8    9\
 ",
-            nb.get_su_by_ms(19),
-            nb.get_su_by_ms(29),
-            nb.get_su_by_ms(39),
-            nb.get_su_by_ms(49),
-            nb.get_su_by_ms(59),
-            nb.get_su_by_ms(69),
-            nb.get_su_by_ms(79),
-            nb.get_su_by_ms(89),
-            nb.get_su_by_ms(99),
-            nb.get_su_by_ms(18),
-            nb.get_su_by_ms(28),
-            nb.get_su_by_ms(38),
-            nb.get_su_by_ms(48),
-            nb.get_su_by_ms(58),
-            nb.get_su_by_ms(68),
-            nb.get_su_by_ms(78),
-            nb.get_su_by_ms(88),
-            nb.get_su_by_ms(98),
-            nb.get_su_by_ms(17),
-            nb.get_su_by_ms(27),
-            nb.get_su_by_ms(37),
-            nb.get_su_by_ms(47),
-            nb.get_su_by_ms(57),
-            nb.get_su_by_ms(67),
-            nb.get_su_by_ms(77),
-            nb.get_su_by_ms(87),
-            nb.get_su_by_ms(97),
-            nb.get_su_by_ms(16),
-            nb.get_su_by_ms(26),
-            nb.get_su_by_ms(36),
-            nb.get_su_by_ms(46),
-            nb.get_su_by_ms(56),
-            nb.get_su_by_ms(66),
-            nb.get_su_by_ms(76),
-            nb.get_su_by_ms(86),
-            nb.get_su_by_ms(96),
-            nb.get_su_by_ms(15),
-            nb.get_su_by_ms(25),
-            nb.get_su_by_ms(35),
-            nb.get_su_by_ms(45),
-            nb.get_su_by_ms(55),
-            nb.get_su_by_ms(65),
-            nb.get_su_by_ms(75),
-            nb.get_su_by_ms(85),
-            nb.get_su_by_ms(95),
-            nb.get_su_by_ms(14),
-            nb.get_su_by_ms(24),
-            nb.get_su_by_ms(34),
-            nb.get_su_by_ms(44),
-            nb.get_su_by_ms(54),
-            nb.get_su_by_ms(64),
-            nb.get_su_by_ms(74),
-            nb.get_su_by_ms(84),
-            nb.get_su_by_ms(94),
-            nb.get_su_by_ms(13),
-            nb.get_su_by_ms(23),
-            nb.get_su_by_ms(33),
-            nb.get_su_by_ms(43),
-            nb.get_su_by_ms(53),
-            nb.get_su_by_ms(63),
-            nb.get_su_by_ms(73),
-            nb.get_su_by_ms(83),
-            nb.get_su_by_ms(93),
-            nb.get_su_by_ms(12),
-            nb.get_su_by_ms(22),
-            nb.get_su_by_ms(32),
-            nb.get_su_by_ms(42),
-            nb.get_su_by_ms(52),
-            nb.get_su_by_ms(62),
-            nb.get_su_by_ms(72),
-            nb.get_su_by_ms(82),
-            nb.get_su_by_ms(92),
-            nb.get_su_by_ms(11),
-            nb.get_su_by_ms(21),
-            nb.get_su_by_ms(31),
-            nb.get_su_by_ms(41),
-            nb.get_su_by_ms(51),
-            nb.get_su_by_ms(61),
-            nb.get_su_by_ms(71),
-            nb.get_su_by_ms(81),
-            nb.get_su_by_ms(91),
+            nb.get_su_by_sq(&Square::from_umasu(19)),
+            nb.get_su_by_sq(&Square::from_umasu(29)),
+            nb.get_su_by_sq(&Square::from_umasu(39)),
+            nb.get_su_by_sq(&Square::from_umasu(49)),
+            nb.get_su_by_sq(&Square::from_umasu(59)),
+            nb.get_su_by_sq(&Square::from_umasu(69)),
+            nb.get_su_by_sq(&Square::from_umasu(79)),
+            nb.get_su_by_sq(&Square::from_umasu(89)),
+            nb.get_su_by_sq(&Square::from_umasu(99)),
+            nb.get_su_by_sq(&Square::from_umasu(18)),
+            nb.get_su_by_sq(&Square::from_umasu(28)),
+            nb.get_su_by_sq(&Square::from_umasu(38)),
+            nb.get_su_by_sq(&Square::from_umasu(48)),
+            nb.get_su_by_sq(&Square::from_umasu(58)),
+            nb.get_su_by_sq(&Square::from_umasu(68)),
+            nb.get_su_by_sq(&Square::from_umasu(78)),
+            nb.get_su_by_sq(&Square::from_umasu(88)),
+            nb.get_su_by_sq(&Square::from_umasu(98)),
+            nb.get_su_by_sq(&Square::from_umasu(17)),
+            nb.get_su_by_sq(&Square::from_umasu(27)),
+            nb.get_su_by_sq(&Square::from_umasu(37)),
+            nb.get_su_by_sq(&Square::from_umasu(47)),
+            nb.get_su_by_sq(&Square::from_umasu(57)),
+            nb.get_su_by_sq(&Square::from_umasu(67)),
+            nb.get_su_by_sq(&Square::from_umasu(77)),
+            nb.get_su_by_sq(&Square::from_umasu(87)),
+            nb.get_su_by_sq(&Square::from_umasu(97)),
+            nb.get_su_by_sq(&Square::from_umasu(16)),
+            nb.get_su_by_sq(&Square::from_umasu(26)),
+            nb.get_su_by_sq(&Square::from_umasu(36)),
+            nb.get_su_by_sq(&Square::from_umasu(46)),
+            nb.get_su_by_sq(&Square::from_umasu(56)),
+            nb.get_su_by_sq(&Square::from_umasu(66)),
+            nb.get_su_by_sq(&Square::from_umasu(76)),
+            nb.get_su_by_sq(&Square::from_umasu(86)),
+            nb.get_su_by_sq(&Square::from_umasu(96)),
+            nb.get_su_by_sq(&Square::from_umasu(15)),
+            nb.get_su_by_sq(&Square::from_umasu(25)),
+            nb.get_su_by_sq(&Square::from_umasu(35)),
+            nb.get_su_by_sq(&Square::from_umasu(45)),
+            nb.get_su_by_sq(&Square::from_umasu(55)),
+            nb.get_su_by_sq(&Square::from_umasu(65)),
+            nb.get_su_by_sq(&Square::from_umasu(75)),
+            nb.get_su_by_sq(&Square::from_umasu(85)),
+            nb.get_su_by_sq(&Square::from_umasu(95)),
+            nb.get_su_by_sq(&Square::from_umasu(14)),
+            nb.get_su_by_sq(&Square::from_umasu(24)),
+            nb.get_su_by_sq(&Square::from_umasu(34)),
+            nb.get_su_by_sq(&Square::from_umasu(44)),
+            nb.get_su_by_sq(&Square::from_umasu(54)),
+            nb.get_su_by_sq(&Square::from_umasu(64)),
+            nb.get_su_by_sq(&Square::from_umasu(74)),
+            nb.get_su_by_sq(&Square::from_umasu(84)),
+            nb.get_su_by_sq(&Square::from_umasu(94)),
+            nb.get_su_by_sq(&Square::from_umasu(13)),
+            nb.get_su_by_sq(&Square::from_umasu(23)),
+            nb.get_su_by_sq(&Square::from_umasu(33)),
+            nb.get_su_by_sq(&Square::from_umasu(43)),
+            nb.get_su_by_sq(&Square::from_umasu(53)),
+            nb.get_su_by_sq(&Square::from_umasu(63)),
+            nb.get_su_by_sq(&Square::from_umasu(73)),
+            nb.get_su_by_sq(&Square::from_umasu(83)),
+            nb.get_su_by_sq(&Square::from_umasu(93)),
+            nb.get_su_by_sq(&Square::from_umasu(12)),
+            nb.get_su_by_sq(&Square::from_umasu(22)),
+            nb.get_su_by_sq(&Square::from_umasu(32)),
+            nb.get_su_by_sq(&Square::from_umasu(42)),
+            nb.get_su_by_sq(&Square::from_umasu(52)),
+            nb.get_su_by_sq(&Square::from_umasu(62)),
+            nb.get_su_by_sq(&Square::from_umasu(72)),
+            nb.get_su_by_sq(&Square::from_umasu(82)),
+            nb.get_su_by_sq(&Square::from_umasu(92)),
+            nb.get_su_by_sq(&Square::from_umasu(11)),
+            nb.get_su_by_sq(&Square::from_umasu(21)),
+            nb.get_su_by_sq(&Square::from_umasu(31)),
+            nb.get_su_by_sq(&Square::from_umasu(41)),
+            nb.get_su_by_sq(&Square::from_umasu(51)),
+            nb.get_su_by_sq(&Square::from_umasu(61)),
+            nb.get_su_by_sq(&Square::from_umasu(71)),
+            nb.get_su_by_sq(&Square::from_umasu(81)),
+            nb.get_su_by_sq(&Square::from_umasu(91)),
         )
     }
 
@@ -1211,7 +1209,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn do_ss(&mut self, ss: &Sasite) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let teme = self.teme;
-        self.kifu[teme] = *ss;
+        self.kifu[teme] = (*ss).clone();
         let cap = self.ky.do_sasite(&self.get_teban(&Person::Ji), ss);
         self.set_cap(teme, cap.clone());
 
@@ -1227,7 +1225,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             // 棋譜から読取、手目も減る
             self.teme -= 1;
             let sn = self.get_teban(&Person::Ji);
-            let ss = &self.get_sasite();
+            let ss = &self.get_sasite().clone();
             self.ky.undo_sasite(&sn, &ss, &self.cap[self.teme]);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true

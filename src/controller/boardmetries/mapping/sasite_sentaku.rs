@@ -40,12 +40,12 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
  */
 pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Uchu) {
     // 自玉の位置
-    let ms_r = uchu.get_ms_r(&Person::Ji);
-    g_writeln(&format!("info string My raion {}.", ms_r));
+    let sq_r = uchu.get_sq_r(&Person::Ji);
+    g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> =
-        lookup_banjo_catch(uchu, &uchu.get_teban(&Person::Ai), ms_r);
+        lookup_banjo_catch(uchu, &uchu.get_teban(&Person::Ai), sq_r.to_umasu());
     if 0 < komatori_result_hashset.len() {
         // 王手されていれば
 
@@ -68,7 +68,7 @@ pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut 
             for komatori_result_hash in komatori_result_hashset.iter() {
                 let komatori_result = KomatoriResult::from_hash(*komatori_result_hash);
 
-                assert_banjo_ms(ss_potential.dst, "(206)Ｓearch_gohoshu_hash");
+                assert_banjo_sq(&ss_potential.dst, "(206)Ｓearch_gohoshu_hash");
                 match komatori_result.get_result(&ss_potential) {
                     KomatoriResultResult::NoneAttacker
                     | KomatoriResultResult::NoneAigoma
@@ -122,8 +122,8 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         // g_writeln( &s1 );
 
         // 狙われている方の玉の位置
-        let sq_r_new = if ss_potential.src == ms_r {
-            Square::from_umasu(ss_potential.dst) // 狙われていた方の玉が動いた先
+        let sq_r_new = if ss_potential.src.to_umasu() == Square::from_umasu(ms_r).to_umasu() {
+            ss_potential.dst.clone() // 狙われていた方の玉が動いた先
         } else {
             Square::from_umasu(ms_r) // 動いていない、狙われていた方の玉の居場所
         };

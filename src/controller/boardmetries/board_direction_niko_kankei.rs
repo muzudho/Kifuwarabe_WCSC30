@@ -28,16 +28,10 @@ pub fn get_dir8_to_slider_from_target(
         sq_target.to_umasu()
     );
 
-    assert_banjo_ms(
-        sq_slider.to_umasu(),
-        "(205a1)get_dir8_to_slider_from_target",
-    );
-    assert_banjo_ms(
-        sq_target.to_umasu(),
-        "(205a2)get_dir8_to_slider_from_target",
-    );
-    let p_slider = ms_to_p(sq_slider.to_umasu());
-    let p_target = ms_to_p(sq_target.to_umasu());
+    assert_banjo_sq(&sq_slider, "(205a1)get_dir8_to_slider_from_target");
+    assert_banjo_sq(&sq_target, "(205a2)get_dir8_to_slider_from_target");
+    let p_slider = sq_to_p(&sq_slider);
+    let p_target = sq_to_p(&sq_target);
 
     let (sn_slider, kms) = slider_piece_struct.phase_piece_type();
     use super::super::super::model::master::phase::Phase::*;

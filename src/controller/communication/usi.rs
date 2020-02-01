@@ -8,19 +8,18 @@ use super::super::super::model::master::constants::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::place::*;
+use super::super::super::model::master::square::*;
 use std::fmt;
 
-/**
- * 指し手
- * 棋譜にも使うので、取った駒の情報を記憶しておくんだぜ☆（＾～＾）
- * しかし、なんで英語が並んでるんだぜ☆（＾～＾）
- */
-#[derive(Copy, Clone)]
+/// 指し手
+/// 棋譜にも使うので、取った駒の情報を記憶しておくんだぜ☆（＾～＾）
+///
+#[derive(Clone)]
 pub struct Sasite {
     // 移動元升。打った場合は 0。
-    pub src: umasu,
+    pub src: Square,
     // 移動先升。これが 0 なら投了とするぜ☆（＾～＾）
-    pub dst: umasu,
+    pub dst: Square,
     // 移動後に成るなら真
     pub pro: bool,
     // 打の場合、打った駒種類
@@ -29,16 +28,16 @@ pub struct Sasite {
 impl Sasite {
     pub fn new() -> Sasite {
         Sasite {
-            src: 0,
-            dst: 0,
+            src: Square::from_umasu(0),
+            dst: Square::from_umasu(0),
             pro: false,
             drop: PieceType::Kara,
         }
     }
     #[allow(dead_code)]
     pub fn clear(&mut self) {
-        self.src = 0;
-        self.dst = 0;
+        self.src = Square::from_umasu(0);
+        self.dst = Square::from_umasu(0);
         self.pro = false;
         self.drop = PieceType::Kara;
     }
@@ -47,13 +46,13 @@ impl Sasite {
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_kms_to_hash(hash, &self.drop);
         hash = push_bool_to_hash(hash, self.pro);
-        hash = push_ms_to_hash(hash, self.dst);
-        push_ms_to_hash(hash, self.src)
+        hash = push_sq_to_hash(hash, &self.dst);
+        push_sq_to_hash(hash, &self.src)
     }
     pub fn from_hash(hash: u64) -> Sasite {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, src) = pop_ms_from_hash(hash);
-        let (hash, dst) = pop_ms_from_hash(hash);
+        let (hash, src) = pop_sq_from_hash(hash);
+        let (hash, dst) = pop_sq_from_hash(hash);
         let (hash, pro) = pop_bool_from_hash(hash);
         let (_hash, drop) = pop_kms_from_hash(hash);
         Sasite {
@@ -68,7 +67,7 @@ impl Sasite {
      * 考えた結果、指し手が考え付いていれば真。
      */
     pub fn exists(&self) -> bool {
-        self.dst != MASU_0
+        self.dst.to_umasu() != MASU_0
     }
 }
 impl fmt::Display for Sasite {
@@ -80,10 +79,10 @@ impl fmt::Display for Sasite {
         }
 
         // 投了を弾いたあと、診断☆（＾～＾）
-        assert_banjo_ms(self.dst, "Ｓasite Ｄisplay");
-        let (dx, dy) = ms_to_suji_dan(self.dst);
+        assert_banjo_sq(&self.dst, "Ｓasite Ｄisplay");
+        let (dx, dy) = self.dst.to_file_rank();
 
-        if self.src == SS_SRC_DA {
+        if self.src.to_umasu() == SS_SRC_DA {
             use super::super::super::model::master::piece_type::PieceType::*;
             write!(
                 f,
@@ -119,12 +118,12 @@ impl fmt::Display for Sasite {
                 if self.pro { "+" } else { "" }
             )
         } else {
-            let (sx, sy) = if self.src == MASU_0 {
+            let (sx, sy) = if self.src.to_umasu() == MASU_0 {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
-                assert_banjo_ms(self.src, "Ｓasite Ｄisplay＜その２＞");
-                ms_to_suji_dan(self.src)
+                assert_banjo_sq(&self.src, "Ｓasite Ｄisplay＜その２＞");
+                self.src.to_file_rank()
             };
             write!(
                 f,
@@ -143,7 +142,10 @@ impl fmt::Debug for Sasite {
         write!(
             f,
             "Sasite({}{}{}{})",
-            self.src, self.dst, self.pro, self.drop
+            self.src.to_umasu(),
+            self.dst.to_umasu(),
+            self.pro,
+            self.drop
         )
     }
 }
@@ -168,37 +170,37 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uch
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            uchu.set_sasite_src(0);
+            uchu.set_sasite_src(&Square::from_umasu(0));
             uchu.set_sasite_drop(PieceType::K);
         }
         "B" => {
             *starts += 2;
-            uchu.set_sasite_src(0);
+            uchu.set_sasite_src(&Square::from_umasu(0));
             uchu.set_sasite_drop(PieceType::Z);
         }
         "G" => {
             *starts += 2;
-            uchu.set_sasite_src(0);
+            uchu.set_sasite_src(&Square::from_umasu(0));
             uchu.set_sasite_drop(PieceType::I);
         }
         "S" => {
             *starts += 2;
-            uchu.set_sasite_src(0);
+            uchu.set_sasite_src(&Square::from_umasu(0));
             uchu.set_sasite_drop(PieceType::N);
         }
         "N" => {
             *starts += 2;
-            uchu.set_sasite_src(0);
+            uchu.set_sasite_src(&Square::from_umasu(0));
             uchu.set_sasite_drop(PieceType::U);
         }
         "L" => {
             *starts += 2;
-            uchu.set_sasite_src(0);
+            uchu.set_sasite_src(&Square::from_umasu(0));
             uchu.set_sasite_drop(PieceType::S);
         }
         "P" => {
             *starts += 2;
-            uchu.set_sasite_src(0);
+            uchu.set_sasite_src(&Square::from_umasu(0));
             uchu.set_sasite_drop(PieceType::H);
         }
         _ => {
@@ -291,7 +293,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uch
                 }
             }
 
-            uchu.set_sasite_src(suji_dan_to_ms(suji, dan));
+            uchu.set_sasite_src(&Square::from_file_rank(suji, dan));
             uchu.set_sasite_drop(PieceType::Kara);
         }
     }
@@ -387,7 +389,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uch
         }
     }
 
-    uchu.set_sasite_dst(suji_dan_to_ms(suji, dan));
+    uchu.set_sasite_dst(&Square::from_file_rank(suji, dan));
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..(*starts + 1)] == "+" {
         uchu.set_sasite_pro(true);
@@ -871,8 +873,7 @@ pub fn read_position(line: &String, uchu: &mut Uchu) {
         uchu.teme -= 1;
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let teme = uchu.teme;
-        let ss = uchu.kifu[teme];
-        uchu.do_ss(&ss);
+        uchu.do_ss(&uchu.kifu[teme].clone());
 
         // 現局面表示
         //let s1 = &uchu.kaku_ky( &KyNums::Current );

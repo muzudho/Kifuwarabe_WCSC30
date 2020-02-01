@@ -8,6 +8,7 @@
 use super::super::super::controller::common::conv;
 use super::super::super::model::master::place::*;
 
+#[derive(Clone)]
 pub struct Square {
     /// 行番号。いわゆる段。上から 1, 2, 3 ...
     rank: i8,
@@ -16,13 +17,11 @@ pub struct Square {
 }
 impl Square {
     pub fn from_umasu(ms: umasu) -> Self {
-        let (file1, rank1) = conv::ms_to_suji_dan(ms);
         Square {
-            rank: rank1,
-            file: file1,
+            rank: (ms % 10) as i8,
+            file: (ms / 10) as i8,
         }
     }
-
     pub fn from_file_rank(file: i8, rank: i8) -> Self {
         Square::from_umasu(conv::suji_dan_to_ms(file, rank))
     }

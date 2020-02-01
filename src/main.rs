@@ -26,6 +26,7 @@ use controller::status::uchu::*;
 use controller::thinking::think::*;
 use model::master::constants::*;
 use model::master::misc::*;
+use model::master::square::*;
 use rand::Rng;
 use std::collections::HashSet;
 use std::io;
@@ -121,14 +122,15 @@ fn main() {
 
             for ms in 11..19 {
                 for hash in 0..10 {
-                    let next = push_ms_to_hash(hash, ms);
-                    let (hash_orig, ms_orig) = pop_ms_from_hash(next);
-                    g_writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_ms_from_hash(...)=(0b{:4b},0b{:5b})"
+                    let sq = Square::from_umasu(ms);
+                    let next = push_sq_to_hash(hash, &sq);
+                    let (hash_orig, sq_orig) = pop_sq_from_hash(next);
+                    g_writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
                         ,hash
                         ,ms
                         ,next
                         ,hash_orig
-                        ,ms_orig
+                        ,sq_orig.to_umasu()
                     ));
                 }
             }
@@ -173,7 +175,7 @@ fn main() {
                 uchu.teme -= 1;
                 // 入っている指し手の通り指すぜ☆（＾～＾）
                 let teme = uchu.teme;
-                let ss = uchu.kifu[teme];
+                let ss = uchu.kifu[teme].clone();
                 uchu.do_ss(&ss);
             }
         } else if 2 < len && &line[starts..3] == "ky0" {
