@@ -419,31 +419,6 @@ impl PieceStruct {
         }
     }
 
-    /// スライダー（長い利きのある駒）か☆（＾～＾）
-    ///
-    /// 合い駒で、進路を防ぎえる可能性があれば真
-    pub fn is_slider(&self) -> bool {
-        use super::super::super::model::master::piece_type::PieceType::*;
-        match &self.piece_type() {
-            R => false,
-            K => true,
-            Z => true,
-            I => false,
-            N => false,
-            U => false,
-            S => true,
-            H => false,
-            PK => true,
-            PZ => true,
-            PN => false,
-            PU => false,
-            PS => false,
-            PH => false,
-            Kara => false,
-            Owari => false,
-        }
-    }
-
     /// ハッシュ値を作る
     pub fn add_hash(self, hash: u64) -> u64 {
         // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
