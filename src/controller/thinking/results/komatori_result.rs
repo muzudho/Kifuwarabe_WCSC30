@@ -14,6 +14,7 @@ use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
+use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -167,9 +168,14 @@ impl KomatoriResult {
  * return u64 : KomatoriResult のハッシュ
  */
 pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<u64> {
+    let sq_target = Square::from_umasu(ms_target);
     assert_banjo_ms(
-        ms_target,
-        &format!("(119)Ｌookup_banjo_catch sn={} ms_target={}", sn, ms_target),
+        sq_target.to_umasu(),
+        &format!(
+            "(119)Ｌookup_banjo_catch sn={} ms_target={}",
+            sn,
+            sq_target.to_umasu()
+        ),
     );
 
     let mut hash = HashSet::new();
@@ -191,7 +197,7 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
         // 打は除く
 
         ss_hashset.clear();
-        insert_ss_by_ms_km_on_banjo(&uchu, ms_target, &km_dst, &mut ss_hashset);
+        insert_ss_by_ms_km_on_banjo(&uchu, &sq_target, &km_dst, &mut ss_hashset);
 
         // g_writeln( &format!("テスト lookup_banjo_catch insert_ss_by_ms_km_on_banjo kms_dst={}.",kms_dst) );
         // use consoles::visuals::dumps::*;

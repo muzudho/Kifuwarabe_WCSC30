@@ -55,28 +55,23 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
             for x in SUJI_1..SUJI_10 {
                 // 9..0 みたいに降順に書いても動かない？
                 for y in DAN_1..DAN_10 {
-                    let ms_dst = suji_dan_to_ms(x, y);
+                    let sq_dst = Square::from_file_rank(x, y);
 
                     mv_src_hashset.clear();
                     //da_kms_hashset.clear();
-                    insert_narazu_src_by_ms_km(
-                        &Square::from_umasu(ms_dst),
-                        &ps_dst,
-                        &uchu,
-                        &mut mv_src_hashset,
-                    );
-                    insert_narumae_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                    insert_narazu_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                    insert_narumae_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                     // TODO 王手になるところに打ちたい
                     //insert_da_kms_by_ms_km      ( &ms_dst, &km_dst, &uchu, &mut da_kms_hashset );
 
                     // 盤上
                     for ms_src in mv_src_hashset.iter() {
                         // 成り
-                        let pro = &uchu.ky.is_natta(*ms_src, ms_dst);
+                        let pro = &uchu.ky.is_natta(*ms_src, sq_dst.to_umasu());
 
                         let hash_ss = Sasite {
                             src: *ms_src,
-                            dst: ms_dst,
+                            dst: sq_dst.to_umasu(),
                             pro: *pro,
                             drop: PieceType::Kara,
                         }

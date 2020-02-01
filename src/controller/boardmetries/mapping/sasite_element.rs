@@ -340,12 +340,12 @@ pub fn insert_narazu_src_by_ms_km(
  * 成り　の動きでその結果になるような、元の升を返す☆（＾～＾）
  */
 pub fn insert_narumae_src_by_ms_km(
-    ms_dst: umasu,
+    sq_dst: &Square,
     ps_dst: &PieceStruct,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(ms_dst, "Ｉnsert_narumae_src_by_ms_km");
+    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_narumae_src_by_ms_km");
 
     // +--------------------+
     // | 移動後は成り駒か？ |
@@ -376,7 +376,7 @@ pub fn insert_narumae_src_by_ms_km(
      * x,y を使うと混乱するので、s,d を使う
      */
     // 移動先の筋、段、駒種類、駒種類インデックス
-    let (dx, dy) = ms_to_suji_dan(ms_dst);
+    let (dx, dy) = ms_to_suji_dan(sq_dst.to_umasu());
 
     // 例えば移動先の駒種類が「ぱひ」なら、「ぱひ」が動いた可能性の他に、
     // 「ひ」が動いたのかもしれない。

@@ -23,6 +23,10 @@ impl Square {
         }
     }
 
+    pub fn from_file_rank(file: i8, rank: i8) -> Self {
+        Square::from_umasu(conv::suji_dan_to_ms(file, rank))
+    }
+
     pub fn to_umasu(&self) -> umasu {
         conv::suji_dan_to_ms(self.file, self.rank)
     }
