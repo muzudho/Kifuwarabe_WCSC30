@@ -187,7 +187,7 @@ impl Kyokumen {
             // 打で無ければ
             if ss.pro {
                 // 成ったなら、成る前へ
-                km = prokm_to_km(&self.get_km_by_ms(ss.dst));
+                km = PieceStruct::from_piece(&self.get_km_by_ms(ss.dst)).demote();
             } else {
                 km = self.get_km_by_ms(ss.dst);
             }
@@ -212,14 +212,15 @@ impl Kyokumen {
      * 指定の升に駒があれば真
      */
     pub fn exists_km(&self, ms: umasu) -> bool {
-        !match_km(&self.get_km_by_ms(ms), &Piece::Kara)
+        !PieceStruct::from_piece(&self.get_km_by_ms(ms))
+            .equals_piece(&PieceStruct::from_piece(&Piece::Kara))
     }
 
     /**
      * 指定の升に指定の駒があれば真
      */
     pub fn has_ms_km(&self, ms: umasu, km: &Piece) -> bool {
-        match_km(&self.get_km_by_ms(ms), km)
+        PieceStruct::from_piece(&self.get_km_by_ms(ms)).equals_piece(&PieceStruct::from_piece(km))
     }
 
     /**

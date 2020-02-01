@@ -5,7 +5,7 @@
 //!
 
 use super::phase::*;
-use super::piece_struct::PieceStruct;
+// use super::piece_struct::PieceStruct;
 use std::fmt;
 
 /**
@@ -115,14 +115,6 @@ impl fmt::Display for Piece {
             Owari => write!(f, "××"),
         }
     }
-}
-
-/**
- * 駒の一致比較
- */
-pub fn match_km(a: &Piece, b: &Piece) -> bool {
-    PieceStruct::from_piece(a).piece_serial_number()
-        == PieceStruct::from_piece(b).piece_serial_number()
 }
 
 pub const KM_ARRAY_HALF_LN: usize = 14;

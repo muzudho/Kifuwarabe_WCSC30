@@ -290,44 +290,6 @@ pub fn pop_km_from_hash(hash: u64) -> (u64, Piece) {
     (hash >> 5, km_num)
 }
 /**
- * 成駒→駒
- */
-pub fn prokm_to_km(km: &Piece) -> Piece {
-    use super::super::super::model::master::piece::Piece::*;
-    match *km {
-        King1 => King1,
-        Rook1 => Rook1,
-        Bishop1 => Bishop1,
-        Gold1 => Gold1,
-        Silver1 => Silver1,
-        Knight1 => Knight1,
-        Lance1 => Lance1,
-        Pawn1 => Pawn1,
-        PromotedRook1 => Rook1,
-        PromotedBishop1 => Bishop1,
-        PromotedSilver1 => Silver1,
-        PromotedKnight1 => Knight1,
-        PromotedLance1 => Lance1,
-        PromotedPawn1 => Pawn1,
-        King2 => King2,
-        Rook2 => Rook2,
-        Bishop2 => Bishop2,
-        Gold2 => Gold2,
-        Silver2 => Silver2,
-        Knight2 => Knight2,
-        Lance2 => Lance2,
-        Pawn2 => Pawn2,
-        PromotedRook2 => Rook2,
-        PromotedBishop2 => Bishop2,
-        PromotedSilver2 => Silver2,
-        PromotedKnight2 => Knight2,
-        PromotedLance2 => Lance2,
-        PromotedPawn2 => Pawn2,
-        Kara => Kara,
-        Owari => Owari,
-    }
-}
-/**
  * 駒→長い利きの有無
  */
 pub fn km_is_nagaikiki(km: &Piece) -> bool {

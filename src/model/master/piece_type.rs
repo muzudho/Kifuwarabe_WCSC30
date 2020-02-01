@@ -3,6 +3,7 @@
 //!
 
 use super::super::super::controller::common::conv::*;
+// use super::piece_struct::PieceStruct;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
