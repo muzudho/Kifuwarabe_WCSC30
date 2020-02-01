@@ -44,11 +44,10 @@ pub fn read_kikisu(uchu: &mut Uchu) {
 
                 // 駒別
                 uchu.kiki_su_by_km[ps_dst.serial_piece_number()]
-                    .add_su_by_ms(sq_dst.to_umasu(), kikisu as i8);
+                    .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別
-                uchu.kiki_su_by_sn[sn_to_num(ps_dst.phase())]
-                    .add_su_by_ms(sq_dst.to_umasu(), kikisu as i8);
+                uchu.kiki_su_by_sn[sn_to_num(ps_dst.phase())].add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }
     }

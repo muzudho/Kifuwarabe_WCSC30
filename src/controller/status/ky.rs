@@ -446,9 +446,8 @@ impl Kyokumen {
 
         // 盤上の駒
         for i_ms in MASU_0..BAN_SIZE {
-            let km = self
-                .get_piece_struct_by_sq(&Square::from_umasu(i_ms as umasu))
-                .piece();
+            let i_sq = Square::from_umasu(i_ms as umasu);
+            let km = self.get_piece_struct_by_sq(&i_sq).piece();
             let num_km = PieceStruct::from_piece(&km).serial_piece_number();
             hash ^= uchu.ky_hash_seed.km[i_ms][num_km];
         }

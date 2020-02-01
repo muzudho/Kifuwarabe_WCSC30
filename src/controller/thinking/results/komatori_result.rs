@@ -42,9 +42,9 @@ pub struct KomatoriResult {
     // 要因：王手をしてきている駒（１つ）
     km_attacker: Piece,
     // 要因：アタッカーが居る升
-    ms_attacker: umasu,
+    sq_attacker: Square,
     // 要因：狙われている駒が居る升
-    ms_target: umasu,
+    sq_target: Square,
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -52,23 +52,23 @@ impl fmt::Display for KomatoriResult {
         write!(
             f,
             "KmTori:{}{}{}{}",
-            self.ms_attacker,
+            self.sq_attacker.to_umasu(),
             self.km_attacker,
             if ps_attacker.is_slider() { "-->" } else { "->" },
-            self.ms_target
+            self.sq_target.to_umasu()
         )
     }
 }
 impl KomatoriResult {
     #[allow(dead_code)]
-    pub fn get_ms_attacker(&self) -> umasu {
-        self.ms_attacker
+    pub fn get_sq_attacker(&self) -> &Square {
+        &self.sq_attacker
     }
     pub fn to_hash(&self) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_sq_to_hash(hash, &Square::from_umasu(self.ms_target));
-        hash = push_sq_to_hash(hash, &Square::from_umasu(self.ms_attacker));
+        hash = push_sq_to_hash(hash, &self.sq_target);
+        hash = push_sq_to_hash(hash, &self.sq_attacker);
         PieceStruct::from_piece(&self.km_attacker).add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
@@ -78,8 +78,8 @@ impl KomatoriResult {
         let (_hash, sq_tgt) = pop_sq_from_hash(hash);
         KomatoriResult {
             km_attacker: km_atk.piece().clone(),
-            ms_attacker: sq_atk.to_umasu(),
-            ms_target: sq_tgt.to_umasu(),
+            sq_attacker: sq_atk.clone(),
+            sq_target: sq_tgt.clone(),
         }
     }
     ///
@@ -95,7 +95,7 @@ impl KomatoriResult {
     /// ss : 現局面での、駒の動き手の１つ
     pub fn get_result(&self, ss: &Sasite) -> KomatoriResultResult {
         // (1)
-        if self.ms_attacker == ss.dst.to_umasu() {
+        if self.sq_attacker.to_umasu() == ss.dst.to_umasu() {
             return KomatoriResultResult::NoneAttacker;
         }
 
@@ -103,17 +103,17 @@ impl KomatoriResult {
         let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
         if ps_attacker.is_slider() {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
-            assert_banjo_sq(&Square::from_umasu(self.ms_attacker), "(205b3)Ｇet_result");
-            assert_banjo_sq(&Square::from_umasu(self.ms_target), "(205b4)Ｇet_result");
+            assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");
+            assert_banjo_sq(&self.sq_target, "(205b4)Ｇet_result");
 
             let p_dst = sq_to_p(&ss.dst);
-            let p_atk = sq_to_p(&Square::from_umasu(self.ms_attacker));
-            let p_tgt = sq_to_p(&Square::from_umasu(self.ms_target));
+            let p_atk = sq_to_p(&self.sq_attacker);
+            let p_tgt = sq_to_p(&self.sq_target);
 
             // 合い駒判定
             if
             // これから動かす駒は、狙われている駒ではないとする
-            ss.src.to_umasu() != self.ms_target
+            ss.src.to_umasu() != self.sq_target.to_umasu()
                 // あるいは打か
                 || ss.src.to_umasu() == SS_SRC_DA
             {
@@ -147,7 +147,7 @@ impl KomatoriResult {
             }
         } else {
             // (3-2) 狙われている駒を、とりあえず動かす
-            if self.ms_target == ss.src.to_umasu() {
+            if self.sq_target.to_umasu() == ss.src.to_umasu() {
                 return KomatoriResultResult::NoneMoved;
             }
         }
@@ -215,8 +215,8 @@ pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, ms_target: umasu) -> HashSet<
 
             let oute_result = KomatoriResult {
                 km_attacker: km_dst.clone(),
-                ms_attacker: ss.src.to_umasu(), // FIXME 打だと 0 になるのでは
-                ms_target: ms_target,
+                sq_attacker: ss.src.clone(), // FIXME 打だと 0 になるのでは
+                sq_target: sq_target.clone(),
             };
 
             // 重複がいっぱい
