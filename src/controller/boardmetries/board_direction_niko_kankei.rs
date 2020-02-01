@@ -8,7 +8,7 @@ use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
 use super::super::super::model::master::piece_struct::PieceStruct;
-use super::super::super::model::master::square::*;
+use super::super::super::model::master::place::*;
 
 /**
  * 狙われている駒から見た、長い利きの駒の居る方向（８方向）
@@ -17,27 +17,21 @@ use super::super::super::model::master::square::*;
  * 引数には、同じ升を指定しないものとする
  */
 pub fn get_dir8_to_slider_from_target(
-    sq_slider: &Square,
+    ms_slider: umasu,
     slider_piece_struct: &PieceStruct,
-    sq_target: &Square,
+    ms_target: umasu,
 ) -> Dir8 {
     debug_assert!(
-        sq_slider.to_umasu() != sq_target.to_umasu(),
+        ms_slider != ms_target,
         "dosn't ms{}!={}",
-        sq_slider.to_umasu(),
-        sq_target.to_umasu()
+        ms_slider,
+        ms_target
     );
 
-    assert_banjo_ms(
-        sq_slider.to_umasu(),
-        "(205a1)get_dir8_to_slider_from_target",
-    );
-    assert_banjo_ms(
-        sq_target.to_umasu(),
-        "(205a2)get_dir8_to_slider_from_target",
-    );
-    let p_slider = ms_to_p(sq_slider.to_umasu());
-    let p_target = ms_to_p(sq_target.to_umasu());
+    assert_banjo_ms(ms_slider, "(205a1)get_dir8_to_slider_from_target");
+    assert_banjo_ms(ms_target, "(205a2)get_dir8_to_slider_from_target");
+    let p_slider = ms_to_p(ms_slider);
+    let p_target = ms_to_p(ms_target);
 
     let (sn_slider, kms) = slider_piece_struct.phase_piece_type();
     use super::super::super::model::master::phase::Phase::*;

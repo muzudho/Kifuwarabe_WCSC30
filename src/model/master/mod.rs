@@ -14,4 +14,3 @@ pub mod piece_type_set;
 pub mod place;
 pub mod ply;
 pub mod region;
-pub mod square;

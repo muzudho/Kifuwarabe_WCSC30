@@ -13,7 +13,6 @@ use super::super::super::super::model::master::piece_movement::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
-use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 
 /**
@@ -30,12 +29,12 @@ use std::collections::HashSet;
  * TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
  */
 pub fn insert_narazu_src_by_ms_km(
-    sq_dst: &Square,
+    ms_dst: umasu,
     ps_dst: &PieceStruct,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(sq_dst.to_umasu(), "ｉnsert_narazu_src_by_ms_km");
+    assert_banjo_ms(ms_dst, "ｉnsert_narazu_src_by_ms_km");
 
     /*
      * umasu は 将棋盤座標
@@ -48,7 +47,7 @@ pub fn insert_narazu_src_by_ms_km(
      * x,y を使うと混乱するので、s,d を使う
      */
     // 移動先の筋、段、駒種類、駒種類インデックス
-    let (dx, dy) = ms_to_suji_dan(sq_dst.to_umasu());
+    let (dx, dy) = ms_to_suji_dan(ms_dst);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     use super::super::super::super::model::master::piece::Piece::*;
