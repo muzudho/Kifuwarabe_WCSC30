@@ -8,6 +8,7 @@ use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
 use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::place::*;
 
 /**
@@ -33,7 +34,7 @@ pub fn get_dir8_to_slider_from_target(
     let p_slider = ms_to_p(ms_slider);
     let p_target = ms_to_p(ms_target);
 
-    let (sn_slider, kms) = km_to_sn_kms(&km_slider);
+    let (sn_slider, kms) = PieceStruct::from_piece(&km_slider).phase_piece_type();
     use super::super::super::model::master::phase::Phase::*;
     use super::super::super::model::master::piece_type::PieceType::*;
     match kms {

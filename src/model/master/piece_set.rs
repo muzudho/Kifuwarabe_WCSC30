@@ -2,7 +2,6 @@
 //! 駒集合
 //!
 
-use super::super::super::controller::common::conv::*;
 use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
@@ -35,7 +34,7 @@ impl PieceSet {
         let sn0 = uchu.get_teban(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let (sn1, _kms) = km_to_sn_kms(km);
+            let (sn1, _kms) = PieceStruct::from_piece(km).phase_piece_type();
             if match_sn(&sn0, &sn1) {
                 num_syugo1.insert(PieceStruct::from_piece(km).piece_serial_number());
             }

@@ -89,7 +89,7 @@ impl Kyokumen {
         for dan in DAN_1..DAN_10 {
             let ms = suji_dan_to_ms(suji, dan);
             let km = self.get_km_by_ms(ms);
-            let (sn_km, kms) = km_to_sn_kms(&km);
+            let (sn_km, kms) = PieceStruct::from_piece(&km).phase_piece_type();
             if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
                 return true;
             }

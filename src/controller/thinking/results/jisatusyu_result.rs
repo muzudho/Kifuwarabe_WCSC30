@@ -6,13 +6,14 @@
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::status::uchu::*;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい
 pub fn is_jisatusyu(uchu: &Uchu, ss: &Sasite) -> bool {
     // 移動元升、動かした駒の先後、駒種類、
     let km_src = uchu.ky.get_km_by_ms(ss.src);
-    let (sn_teban, _kms) = km_to_sn_kms(&km_src);
+    let (sn_teban, _kms) = PieceStruct::from_piece(&km_src).phase_piece_type();
     // 相手番の先後
     let sn_aite = hanten_sn(&sn_teban);
 

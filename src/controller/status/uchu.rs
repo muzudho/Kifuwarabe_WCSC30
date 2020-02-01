@@ -796,7 +796,7 @@ impl Uchu {
         self.ky0.mg[km as usize] = maisu;
     }
     pub fn get_jiai_by_km(&self, km: &Piece) -> Person {
-        let (sn, _kms) = km_to_sn_kms(km);
+        let (sn, _kms) = PieceStruct::from_piece(km).phase_piece_type();
 
         if match_sn(&sn, &self.get_teban(&Person::Ji)) {
             Person::Ji

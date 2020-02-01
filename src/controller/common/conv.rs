@@ -274,16 +274,18 @@ pub fn num_to_km(km_num: usize) -> Piece {
         _ => Owari,
     }
 }
-/**
- * ハッシュ値を作る
- */
+
+///
+/// ハッシュ値を作る
+///
 pub fn push_km_to_hash(hash: u64, km: &Piece) -> u64 {
     // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
     (hash << 5) + PieceStruct::from_piece(km).piece_serial_number() as u64
 }
-/**
- * ハッシュ値から作る
- */
+
+///
+/// ハッシュ値から作る
+///
 pub fn pop_km_from_hash(hash: u64) -> (u64, Piece) {
     // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
     let km_num = num_to_km((hash & 0b11111) as usize);
@@ -294,46 +296,6 @@ pub fn pop_km_from_hash(hash: u64) -> (u64, Piece) {
  */
 pub fn km_is_nagaikiki(km: &Piece) -> bool {
     kms_is_nagaikiki(&km_to_kms(km))
-}
-/**
- * 先後付き駒→駒種類
- */
-pub fn km_to_sn_kms(km: &Piece) -> (Phase, PieceType) {
-    use super::super::super::model::master::phase::Phase::*;
-    use super::super::super::model::master::piece::Piece::*;
-    use super::super::super::model::master::piece_type::PieceType::*;
-    match *km {
-        King1 => (Sen, R),
-        Rook1 => (Sen, K),
-        Bishop1 => (Sen, Z),
-        Gold1 => (Sen, I),
-        Silver1 => (Sen, N),
-        Knight1 => (Sen, U),
-        Lance1 => (Sen, S),
-        Pawn1 => (Sen, H),
-        PromotedRook1 => (Sen, PK),
-        PromotedBishop1 => (Sen, PZ),
-        PromotedSilver1 => (Sen, PN),
-        PromotedKnight1 => (Sen, PU),
-        PromotedLance1 => (Sen, PS),
-        PromotedPawn1 => (Sen, PH),
-        King2 => (Go, R),
-        Rook2 => (Go, K),
-        Bishop2 => (Go, Z),
-        Gold2 => (Go, I),
-        Silver2 => (Go, N),
-        Knight2 => (Go, U),
-        Lance2 => (Go, S),
-        Pawn2 => (Go, H),
-        PromotedRook2 => (Go, PK),
-        PromotedBishop2 => (Go, PZ),
-        PromotedSilver2 => (Go, PN),
-        PromotedKnight2 => (Go, PU),
-        PromotedLance2 => (Go, PS),
-        PromotedPawn2 => (Go, PH),
-        Piece::Kara => (Phase::Owari, PieceType::Kara),
-        Piece::Owari => (Phase::Owari, PieceType::Owari),
-    }
 }
 /**
  * 先後付き駒　を　先後　へ変換。

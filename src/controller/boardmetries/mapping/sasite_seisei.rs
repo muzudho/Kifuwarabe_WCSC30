@@ -10,6 +10,7 @@ use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::Piece;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
@@ -142,7 +143,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     assert_banjo_ms(ms_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let (sn, _kms_dst) = km_to_sn_kms(&km_dst);
+    let (sn, _kms_dst) = PieceStruct::from_piece(&km_dst).phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(&uchu.ky.get_sn_by_ms(ms_dst), &sn) {
@@ -201,7 +202,7 @@ pub fn insert_ss_by_ms_km_on_da(
     assert_banjo_ms(ms_dst, "Ｉnsert_ss_by_ms_km_on_da");
 
     // 手番の先後、駒種類
-    let (sn, _kms_dst) = km_to_sn_kms(&km_dst);
+    let (sn, _kms_dst) = PieceStruct::from_piece(&km_dst).phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(&uchu.ky.get_sn_by_ms(ms_dst), &sn) {
