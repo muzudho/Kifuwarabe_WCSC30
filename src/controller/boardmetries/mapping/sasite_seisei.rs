@@ -14,6 +14,7 @@ use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
+use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 
 /**
@@ -170,7 +171,12 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    insert_narazu_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+    insert_narazu_src_by_ms_km(
+        &Square::from_umasu(ms_dst),
+        &ps_dst,
+        &uchu,
+        &mut mv_src_hashset,
+    );
     for ms_src in &mv_src_hashset {
         assert_banjo_ms(*ms_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 

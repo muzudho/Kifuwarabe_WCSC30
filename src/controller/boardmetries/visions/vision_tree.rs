@@ -9,6 +9,7 @@ use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::place::*;
+use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 
 /**
@@ -58,7 +59,12 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
 
                     mv_src_hashset.clear();
                     //da_kms_hashset.clear();
-                    insert_narazu_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
+                    insert_narazu_src_by_ms_km(
+                        &Square::from_umasu(ms_dst),
+                        &ps_dst,
+                        &uchu,
+                        &mut mv_src_hashset,
+                    );
                     insert_narumae_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                     // TODO 王手になるところに打ちたい
                     //insert_da_kms_by_ms_km      ( &ms_dst, &km_dst, &uchu, &mut da_kms_hashset );
