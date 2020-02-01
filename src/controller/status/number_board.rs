@@ -1,4 +1,3 @@
-use super::super::super::model::master::place::*;
 use super::super::super::model::master::square::*;
 
 /**

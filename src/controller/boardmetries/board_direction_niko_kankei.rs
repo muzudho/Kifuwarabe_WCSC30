@@ -2,7 +2,6 @@
 //!
 //! 盤上の二項関係☆（＾～＾）
 //!
-use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
@@ -30,8 +29,8 @@ pub fn get_dir8_to_slider_from_target(
 
     assert_banjo_sq(&sq_slider, "(205a1)get_dir8_to_slider_from_target");
     assert_banjo_sq(&sq_target, "(205a2)get_dir8_to_slider_from_target");
-    let p_slider = sq_to_p(&sq_slider);
-    let p_target = sq_to_p(&sq_target);
+    let p_slider = sq_slider.to_point();
+    let p_target = sq_target.to_point();
 
     let (sn_slider, kms) = slider_piece_struct.phase_piece_type();
     use super::super::super::model::master::phase::Phase::*;

@@ -10,19 +10,20 @@ use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::person::*;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type_set::*;
+use super::super::super::super::model::master::square::*;
 
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
 pub fn is_s(uchu: &Uchu) -> bool {
     // 相手玉の位置
     let sq_r = uchu.get_sq_r(&Person::Ai).clone();
 
-    let p_r = sq_to_p(&sq_r);
+    let p_r = sq_r.to_point();
     let p_south_r = p_r.to_south();
     if !p_in_ban(&p_south_r) {
         return true;
     }
 
-    let sq_south_r = p_to_sq(&p_south_r);
+    let sq_south_r = Square::from_point(&p_south_r);
     let ps = uchu.ky.get_piece_struct_by_sq(&sq_south_r);
     let jiai_km = uchu.get_jiai_by_km(&ps);
     if !match_jiai(&jiai_km, &Person::Ji) {
@@ -99,10 +100,10 @@ pub fn is_atamakin(
     // A が移動することで、利きは変わるか？　玉の下３つは変わらない
     // 単に下３つに移動できるか調べられたらいい。８１升別　利きを作るか？
     // 駒、相手の利き
-    let p_k = sq_to_p(&sq_ai_r);
-    if board_metrics::is_ji_km_by_sq(&p_to_sq(&p_k.to_south_west()), &uchu) {}
+    let p_k = sq_ai_r.to_point();
+    if board_metrics::is_ji_km_by_sq(&Square::from_point(&p_k.to_south_west()), &uchu) {}
 
-    if board_metrics::is_ai_kiki_by_sq(&p_to_sq(&p_k.to_south_west()), &uchu) {}
+    if board_metrics::is_ai_kiki_by_sq(&Square::from_point(&p_k.to_south_west()), &uchu) {}
 
     // ms_ai_r （北０） ms_atama
     // if ms_north_of_ms( ms_ai_r, 0, ms_atama ) { }

@@ -13,7 +13,6 @@ use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
-use super::super::super::super::model::master::place::*;
 use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 use std::fmt;
@@ -106,9 +105,9 @@ impl KomatoriResult {
             assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");
             assert_banjo_sq(&self.sq_target, "(205b4)Ｇet_result");
 
-            let p_dst = sq_to_p(&ss.dst);
-            let p_atk = sq_to_p(&self.sq_attacker);
-            let p_tgt = sq_to_p(&self.sq_target);
+            let p_dst = ss.dst.to_point();
+            let p_atk = self.sq_attacker.to_point();
+            let p_tgt = self.sq_target.to_point();
 
             // 合い駒判定
             if
@@ -126,7 +125,7 @@ impl KomatoriResult {
                 // 狙われている駒を動かす場合
 
                 assert_banjo_sq(&ss.src, "(205b1)Ｇet_result");
-                let p_src = sq_to_p(&ss.src);
+                let p_src = ss.src.to_point();
 
                 // スライダー駒との角度
                 let argangle4a = get_argangle4_p_p(&p_atk, &p_tgt);

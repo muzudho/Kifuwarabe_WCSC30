@@ -22,7 +22,6 @@ use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_struct_master::PieceStructMaster;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::place::*;
 use super::super::super::model::master::ply::*;
 use super::super::super::model::master::square::*;
 use super::ky::*;

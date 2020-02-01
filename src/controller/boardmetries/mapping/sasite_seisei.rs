@@ -13,7 +13,6 @@ use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type::*;
-use super::super::super::super::model::master::place::*;
 use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 

@@ -11,7 +11,6 @@ pub mod piece_struct;
 pub mod piece_struct_master;
 pub mod piece_type;
 pub mod piece_type_set;
-pub mod place;
 pub mod ply;
 pub mod region;
 pub mod square;

@@ -8,7 +8,6 @@ use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
-use super::super::super::super::model::master::place::*;
 use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 

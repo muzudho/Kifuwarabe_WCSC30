@@ -2,14 +2,12 @@
 //! 変換
 //!
 #![allow(dead_code)]
-use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::piece_direction::PieceDirection;
 use super::super::super::model::master::piece_type::PieceType;
-use super::super::super::model::master::place::*;
 use super::super::super::model::master::square::*;
 
 /**********
@@ -151,29 +149,8 @@ pub fn hanten_jiai(jiai: &Person) -> Person {
  * 盤、升、筋、段 *
  ******************/
 
-/**
- * Square は 将棋盤座標
- *
- * 91 81 71 ...
- * 92 82 72
- * 93 83 73
- * ...
- */
-pub fn sq_to_p(sq: &Square) -> Point {
-    let ms = sq.to_umasu();
-    assert_banjo_sq(&sq, "(203b)sq_to_p");
-    Point {
-        x: (ms / 10) as i8,
-        y: (ms % 10) as i8,
-    }
-}
 pub fn p_in_ban(p: &Point) -> bool {
     (SUJI_0 < p.x && p.x < SUJI_10) && (DAN_0 < p.y && p.y < DAN_10)
-}
-pub fn p_to_sq(p: &Point) -> Square {
-    debug_assert!(p_in_ban(&p), "(204b)p_to_sq x={},y={}", p.x, p.y);
-
-    Square::from_umasu((p.x * 10 + p.y) as umasu)
 }
 /// ハッシュ値を作る
 pub fn push_sq_to_hash(hash: u64, sq: &Square) -> u64 {

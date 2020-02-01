@@ -15,7 +15,6 @@ use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::place::*;
 use super::super::super::model::master::square::*;
 
 /// 局面

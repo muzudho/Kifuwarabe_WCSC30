@@ -7,7 +7,6 @@ use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::constants::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_type::PieceType;
-use super::super::super::model::master::place::*;
 use super::super::super::model::master::square::*;
 use std::fmt;
 
