@@ -39,7 +39,7 @@ pub fn read_kikisu(uchu: &mut Uchu) {
                 // 移動元の升
                 let mut mv_src_hashset: HashSet<umasu> = HashSet::new();
                 insert_narazu_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
-                insert_narumae_src_by_ms_km(ms_dst, &km_dst, &uchu, &mut mv_src_hashset);
+                insert_narumae_src_by_ms_km(ms_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                 // 打は考えない。盤上の利き数なので
                 let kikisu = mv_src_hashset.len();
 
