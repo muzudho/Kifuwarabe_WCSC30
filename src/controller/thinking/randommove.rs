@@ -4,10 +4,8 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::controller::common::conv::*;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::place::*;
 use super::super::super::model::master::square::*;
 
 /**
@@ -20,11 +18,7 @@ pub fn rnd_bool() -> bool {
 
 /// (筋1～9,段1～9)の範囲で、ランダムに マス座標を返す
 pub fn random_square() -> Square {
-    Square::from_umasu(rnd_ms())
-}
-/// (筋1～9,段1～9)の範囲で、ランダムに マス座標を返す
-pub fn rnd_ms() -> umasu {
-    suji_dan_to_ms(
+    Square::from_file_rank(
         rand::thread_rng().gen_range(1, 10),
         rand::thread_rng().gen_range(1, 10),
     )

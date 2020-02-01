@@ -399,17 +399,17 @@ impl Kyokumen {
     /**
      * 指定の升に駒があれば真
      */
-    pub fn exists_km(&self, ms: umasu) -> bool {
+    pub fn exists_km(&self, sq: &Square) -> bool {
         !self
-            .get_piece_struct_by_sq(&Square::from_umasu(ms))
+            .get_piece_struct_by_sq(&sq)
             .equals_piece(&PieceStruct::from_piece(&Piece::Kara))
     }
 
     /**
      * 指定の升に指定の駒があれば真
      */
-    pub fn has_ms_km(&self, ms: umasu, km: &Piece) -> bool {
-        self.get_piece_struct_by_sq(&Square::from_umasu(ms))
+    pub fn has_sq_km(&self, sq: &Square, km: &Piece) -> bool {
+        self.get_piece_struct_by_sq(&sq)
             .equals_piece(&PieceStruct::from_piece(km))
     }
 

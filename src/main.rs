@@ -115,8 +115,8 @@ fn main() {
             g_writeln("----指し手生成 ここまで----");
         } else if 4 < len && &line[starts..5] == "rndms" {
             // 乱升
-            let ms = controller::thinking::randommove::rnd_ms();
-            g_writeln(&format!("乱升={}", ms));
+            let sq = controller::thinking::randommove::random_square();
+            g_writeln(&format!("乱升={}", sq.to_umasu()));
         } else if 3 < len && &line[starts..4] == "teigi::conv" {
             g_writeln("teigi::convのテスト");
 

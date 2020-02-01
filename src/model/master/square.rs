@@ -5,7 +5,6 @@
 //! 92 82 72
 //! 93 83 73
 //!
-use super::super::super::controller::common::conv;
 use super::super::super::model::master::place::*;
 
 #[derive(Clone)]
@@ -22,12 +21,15 @@ impl Square {
             file: (ms / 10) as i8,
         }
     }
-    pub fn from_file_rank(file: i8, rank: i8) -> Self {
-        Square::from_umasu(conv::suji_dan_to_ms(file, rank))
+    pub fn from_file_rank(file1: i8, rank1: i8) -> Self {
+        Square {
+            rank: rank1,
+            file: file1,
+        }
     }
 
     pub fn to_umasu(&self) -> umasu {
-        conv::suji_dan_to_ms(self.file, self.rank)
+        (self.file * 10 + self.rank) as umasu
     }
 
     pub fn to_file_rank(&self) -> (i8, i8) {
