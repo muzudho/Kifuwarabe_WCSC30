@@ -239,48 +239,13 @@ pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
 /**************
  * 先後付き駒 *
  **************/
-pub fn num_to_km(km_num: usize) -> Piece {
-    use super::super::super::model::master::piece::Piece::*;
-    match km_num {
-        0 => King1,
-        1 => Rook1,
-        2 => Bishop1,
-        3 => Gold1,
-        4 => Silver1,
-        5 => Knight1,
-        6 => Lance1,
-        7 => Pawn1,
-        8 => PromotedRook1,
-        9 => PromotedBishop1,
-        10 => PromotedSilver1,
-        11 => PromotedKnight1,
-        12 => PromotedLance1,
-        13 => PromotedPawn1,
-        14 => King2,
-        15 => Rook2,
-        16 => Bishop2,
-        17 => Gold2,
-        18 => Silver2,
-        19 => Knight2,
-        20 => Lance2,
-        21 => Pawn2,
-        22 => PromotedRook2,
-        23 => PromotedBishop2,
-        24 => PromotedSilver2,
-        25 => PromotedKnight2,
-        26 => PromotedLance2,
-        27 => PromotedPawn2,
-        28 => Kara,
-        _ => Owari,
-    }
-}
 
 ///
 /// ハッシュ値を作る
 ///
 pub fn push_km_to_hash(hash: u64, km: &Piece) -> u64 {
     // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-    (hash << 5) + PieceStruct::from_piece(km).piece_serial_number() as u64
+    (hash << 5) + PieceStruct::from_piece(km).serial_piece_number() as u64
 }
 
 ///
@@ -288,7 +253,7 @@ pub fn push_km_to_hash(hash: u64, km: &Piece) -> u64 {
 ///
 pub fn pop_km_from_hash(hash: u64) -> (u64, Piece) {
     // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-    let km_num = num_to_km((hash & 0b11111) as usize);
+    let km_num = PieceStruct::from_serial_piece_number((hash & 0b11111) as usize).piece();
     (hash >> 5, km_num)
 }
 /**

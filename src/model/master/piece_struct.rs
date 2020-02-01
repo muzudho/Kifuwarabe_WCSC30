@@ -14,7 +14,7 @@ pub struct PieceStruct {
     /// 持ち駒にするので、先後は反転するぜ☆（＾～＾）
     captured: Piece,
     /// 先後付き駒の配列のインデックス
-    piece_serial_number: usize,
+    serial_piece_number: usize,
 }
 impl PieceStruct {
     pub fn from_piece(p: &Piece) -> Self {
@@ -28,7 +28,7 @@ impl PieceStruct {
                 promoted: King1,
                 demoted: King1,
                 captured: Piece::Owari,
-                piece_serial_number: 0,
+                serial_piece_number: 0,
             },
             Rook1 => PieceStruct {
                 piece: Rook1,
@@ -36,7 +36,7 @@ impl PieceStruct {
                 promoted: PromotedRook1,
                 demoted: Rook1,
                 captured: Rook2,
-                piece_serial_number: 1,
+                serial_piece_number: 1,
             },
             Bishop1 => PieceStruct {
                 piece: Bishop1,
@@ -44,7 +44,7 @@ impl PieceStruct {
                 promoted: PromotedBishop1,
                 demoted: Bishop1,
                 captured: Bishop2,
-                piece_serial_number: 2,
+                serial_piece_number: 2,
             },
             Gold1 => PieceStruct {
                 piece: Gold1,
@@ -52,7 +52,7 @@ impl PieceStruct {
                 promoted: Gold1,
                 demoted: Gold1,
                 captured: Gold2,
-                piece_serial_number: 3,
+                serial_piece_number: 3,
             },
             Silver1 => PieceStruct {
                 piece: Silver1,
@@ -60,7 +60,7 @@ impl PieceStruct {
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
-                piece_serial_number: 4,
+                serial_piece_number: 4,
             },
             Knight1 => PieceStruct {
                 piece: Knight1,
@@ -68,7 +68,7 @@ impl PieceStruct {
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
-                piece_serial_number: 5,
+                serial_piece_number: 5,
             },
             Lance1 => PieceStruct {
                 piece: Lance1,
@@ -76,7 +76,7 @@ impl PieceStruct {
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
-                piece_serial_number: 6,
+                serial_piece_number: 6,
             },
             Pawn1 => PieceStruct {
                 piece: Pawn1,
@@ -84,7 +84,7 @@ impl PieceStruct {
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
-                piece_serial_number: 7,
+                serial_piece_number: 7,
             },
             PromotedRook1 => PieceStruct {
                 piece: PromotedRook1,
@@ -92,7 +92,7 @@ impl PieceStruct {
                 promoted: PromotedRook1,
                 demoted: Rook1,
                 captured: Rook2,
-                piece_serial_number: 8,
+                serial_piece_number: 8,
             },
             PromotedBishop1 => PieceStruct {
                 piece: PromotedBishop1,
@@ -100,7 +100,7 @@ impl PieceStruct {
                 promoted: PromotedBishop1,
                 demoted: Bishop1,
                 captured: Bishop2,
-                piece_serial_number: 9,
+                serial_piece_number: 9,
             },
             PromotedSilver1 => PieceStruct {
                 piece: PromotedSilver1,
@@ -108,7 +108,7 @@ impl PieceStruct {
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
-                piece_serial_number: 10,
+                serial_piece_number: 10,
             },
             PromotedKnight1 => PieceStruct {
                 piece: PromotedKnight1,
@@ -116,7 +116,7 @@ impl PieceStruct {
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
-                piece_serial_number: 11,
+                serial_piece_number: 11,
             },
             PromotedLance1 => PieceStruct {
                 piece: PromotedLance1,
@@ -124,7 +124,7 @@ impl PieceStruct {
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
-                piece_serial_number: 12,
+                serial_piece_number: 12,
             },
             PromotedPawn1 => PieceStruct {
                 piece: PromotedPawn1,
@@ -132,7 +132,7 @@ impl PieceStruct {
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
-                piece_serial_number: 13,
+                serial_piece_number: 13,
             },
             King2 => PieceStruct {
                 piece: King2,
@@ -140,7 +140,7 @@ impl PieceStruct {
                 promoted: King2,
                 demoted: King2,
                 captured: Piece::Owari,
-                piece_serial_number: 14,
+                serial_piece_number: 14,
             },
             Rook2 => PieceStruct {
                 piece: Rook2,
@@ -148,7 +148,7 @@ impl PieceStruct {
                 promoted: PromotedRook2,
                 demoted: Rook2,
                 captured: Rook1,
-                piece_serial_number: 15,
+                serial_piece_number: 15,
             },
             Bishop2 => PieceStruct {
                 piece: Bishop2,
@@ -156,7 +156,7 @@ impl PieceStruct {
                 promoted: PromotedBishop2,
                 demoted: Bishop2,
                 captured: Bishop1,
-                piece_serial_number: 16,
+                serial_piece_number: 16,
             },
             Gold2 => PieceStruct {
                 piece: Gold2,
@@ -164,7 +164,7 @@ impl PieceStruct {
                 promoted: Gold2,
                 demoted: Gold2,
                 captured: Gold1,
-                piece_serial_number: 17,
+                serial_piece_number: 17,
             },
             Silver2 => PieceStruct {
                 piece: Silver2,
@@ -172,7 +172,7 @@ impl PieceStruct {
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
-                piece_serial_number: 18,
+                serial_piece_number: 18,
             },
             Knight2 => PieceStruct {
                 piece: Knight2,
@@ -180,7 +180,7 @@ impl PieceStruct {
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
-                piece_serial_number: 19,
+                serial_piece_number: 19,
             },
             Lance2 => PieceStruct {
                 piece: Lance2,
@@ -188,7 +188,7 @@ impl PieceStruct {
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
-                piece_serial_number: 20,
+                serial_piece_number: 20,
             },
             Pawn2 => PieceStruct {
                 piece: Pawn2,
@@ -196,7 +196,7 @@ impl PieceStruct {
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,
-                piece_serial_number: 21,
+                serial_piece_number: 21,
             },
             PromotedRook2 => PieceStruct {
                 piece: PromotedRook2,
@@ -204,7 +204,7 @@ impl PieceStruct {
                 promoted: PromotedRook2,
                 demoted: Rook2,
                 captured: Rook1,
-                piece_serial_number: 22,
+                serial_piece_number: 22,
             },
             PromotedBishop2 => PieceStruct {
                 piece: PromotedBishop2,
@@ -212,7 +212,7 @@ impl PieceStruct {
                 promoted: PromotedBishop2,
                 demoted: Bishop2,
                 captured: Bishop1,
-                piece_serial_number: 23,
+                serial_piece_number: 23,
             },
             PromotedSilver2 => PieceStruct {
                 piece: PromotedSilver2,
@@ -220,7 +220,7 @@ impl PieceStruct {
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
-                piece_serial_number: 24,
+                serial_piece_number: 24,
             },
             PromotedKnight2 => PieceStruct {
                 piece: PromotedKnight2,
@@ -228,7 +228,7 @@ impl PieceStruct {
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
-                piece_serial_number: 25,
+                serial_piece_number: 25,
             },
             PromotedLance2 => PieceStruct {
                 piece: PromotedLance2,
@@ -236,7 +236,7 @@ impl PieceStruct {
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
-                piece_serial_number: 26,
+                serial_piece_number: 26,
             },
             PromotedPawn2 => PieceStruct {
                 piece: PromotedPawn2,
@@ -244,7 +244,7 @@ impl PieceStruct {
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,
-                piece_serial_number: 27,
+                serial_piece_number: 27,
             },
             Piece::Kara => PieceStruct {
                 piece: Piece::Kara,
@@ -252,7 +252,7 @@ impl PieceStruct {
                 promoted: Piece::Kara,
                 demoted: Piece::Kara,
                 captured: Piece::Owari,
-                piece_serial_number: 28,
+                serial_piece_number: 28,
             },
             Piece::Owari => PieceStruct {
                 piece: Piece::Owari,
@@ -260,7 +260,7 @@ impl PieceStruct {
                 promoted: Piece::Owari,
                 demoted: Piece::Owari,
                 captured: Piece::Owari,
-                piece_serial_number: 29,
+                serial_piece_number: 29,
             },
         }
     }
@@ -308,6 +308,41 @@ impl PieceStruct {
         }
     }
 
+    pub fn from_serial_piece_number(km_num: usize) -> Self {
+        use super::super::super::model::master::piece::Piece::*;
+        match km_num {
+            0 => PieceStruct::from_piece(&King1),
+            1 => PieceStruct::from_piece(&Rook1),
+            2 => PieceStruct::from_piece(&Bishop1),
+            3 => PieceStruct::from_piece(&Gold1),
+            4 => PieceStruct::from_piece(&Silver1),
+            5 => PieceStruct::from_piece(&Knight1),
+            6 => PieceStruct::from_piece(&Lance1),
+            7 => PieceStruct::from_piece(&Pawn1),
+            8 => PieceStruct::from_piece(&PromotedRook1),
+            9 => PieceStruct::from_piece(&PromotedBishop1),
+            10 => PieceStruct::from_piece(&PromotedSilver1),
+            11 => PieceStruct::from_piece(&PromotedKnight1),
+            12 => PieceStruct::from_piece(&PromotedLance1),
+            13 => PieceStruct::from_piece(&PromotedPawn1),
+            14 => PieceStruct::from_piece(&King2),
+            15 => PieceStruct::from_piece(&Rook2),
+            16 => PieceStruct::from_piece(&Bishop2),
+            17 => PieceStruct::from_piece(&Gold2),
+            18 => PieceStruct::from_piece(&Silver2),
+            19 => PieceStruct::from_piece(&Knight2),
+            20 => PieceStruct::from_piece(&Lance2),
+            21 => PieceStruct::from_piece(&Pawn2),
+            22 => PieceStruct::from_piece(&PromotedRook2),
+            23 => PieceStruct::from_piece(&PromotedBishop2),
+            24 => PieceStruct::from_piece(&PromotedSilver2),
+            25 => PieceStruct::from_piece(&PromotedKnight2),
+            26 => PieceStruct::from_piece(&PromotedLance2),
+            27 => PieceStruct::from_piece(&PromotedPawn2),
+            28 => PieceStruct::from_piece(&Kara),
+            _ => PieceStruct::from_piece(&Owari),
+        }
+    }
     pub fn piece(self) -> Piece {
         self.piece
     }
@@ -337,14 +372,14 @@ impl PieceStruct {
         self.captured
     }
 
-    pub fn piece_serial_number(&self) -> usize {
-        self.piece_serial_number
+    pub fn serial_piece_number(&self) -> usize {
+        self.serial_piece_number
     }
 
     /**
      * 駒の一致比較
      */
     pub fn equals_piece(self, b: &PieceStruct) -> bool {
-        self.piece_serial_number() == b.piece_serial_number()
+        self.serial_piece_number() == b.serial_piece_number()
     }
 }

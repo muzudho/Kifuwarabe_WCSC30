@@ -19,7 +19,7 @@ use std::collections::HashSet;
 pub fn read_kikisu(uchu: &mut Uchu) {
     // ゼロ・リセット
     for km in KM_ARRAY.iter() {
-        &uchu.kiki_su_by_km[PieceStruct::from_piece(km).piece_serial_number()].clear();
+        &uchu.kiki_su_by_km[PieceStruct::from_piece(km).serial_piece_number()].clear();
     }
 
     for sn in SN_ARRAY.iter() {
@@ -43,7 +43,7 @@ pub fn read_kikisu(uchu: &mut Uchu) {
                 let sn = PieceStruct::from_piece(&km_dst).phase();
 
                 // 駒別
-                uchu.kiki_su_by_km[PieceStruct::from_piece(&km_dst).piece_serial_number()]
+                uchu.kiki_su_by_km[PieceStruct::from_piece(&km_dst).serial_piece_number()]
                     .add_su_by_ms(ms_dst, kikisu as i8);
 
                 // 先後別
