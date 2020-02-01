@@ -7,12 +7,12 @@ use super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::controller::boardmetries::proposition::math_meidai::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::controller::status::uchu::*;
 use super::super::super::controller::thinking::randommove;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::square::*;
+use super::super::super::model::universe::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;
 
@@ -20,7 +20,7 @@ use std::collections::HashSet;
  * test 2
  * といったコマンドに対応☆（＾～＾）
  */
-pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
+pub fn test(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) {
     // いろいろな動作テスト
     g_writeln(&format!("test starts={} len={}", *starts, len));
 

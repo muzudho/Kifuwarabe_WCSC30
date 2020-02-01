@@ -2,12 +2,12 @@
 //! 駒集合
 //!
 
-use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_struct::PieceStruct;
+use super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 pub struct PieceSet {
@@ -31,7 +31,7 @@ impl PieceSet {
     /**
      * 自分相手
      */
-    pub fn new_jiai(&self, jiai: &Person, uchu: &Uchu) -> PieceSet {
+    pub fn new_jiai(&self, jiai: &Person, uchu: &Universe) -> PieceSet {
         let sn0 = uchu.get_teban(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {

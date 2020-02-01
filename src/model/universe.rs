@@ -7,25 +7,25 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::config::*;
-use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
-use super::super::super::controller::thinking::visions::vision_tree::*;
-use super::super::super::model::master::misc::*;
-use super::super::super::model::master::person::Person;
-use super::super::super::model::master::phase::*;
-use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_direction::PieceDirection;
-use super::super::super::model::master::piece_movement::*;
-use super::super::super::model::master::piece_struct::PieceStruct;
-use super::super::super::model::master::piece_struct_master::PieceStructMaster;
-use super::super::super::model::master::piece_type::PieceType;
-use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::ply::*;
-use super::super::super::model::master::square::*;
-use super::ky::*;
-use super::number_board::*;
+use super::super::config::*;
+use super::super::controller::common::conv::*;
+use super::super::controller::communication::usi::*;
+use super::super::controller::status::ky::*;
+use super::super::controller::status::number_board::*;
+use super::super::controller::thinking::visions::vision_tree::*;
+use super::super::model::master::misc::*;
+use super::super::model::master::person::Person;
+use super::super::model::master::phase::*;
+use super::super::model::master::piece::Piece;
+use super::super::model::master::piece::*;
+use super::super::model::master::piece_direction::PieceDirection;
+use super::super::model::master::piece_movement::*;
+use super::super::model::master::piece_struct::PieceStruct;
+use super::super::model::master::piece_struct_master::PieceStructMaster;
+use super::super::model::master::piece_type::PieceType;
+use super::super::model::master::piece_type::*;
+use super::super::model::master::ply::*;
+use super::super::model::master::square::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -101,7 +101,7 @@ pub struct KyHashSeed {
  * グローバル変数の作り方が分からないので、
  * ここに全部入れてあるぜ☆（＾～＾）
  */
-pub struct Uchu {
+pub struct Universe {
     /// 対話モード
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
@@ -132,9 +132,9 @@ pub struct Uchu {
     piece_struct_master: PieceStructMaster,
 }
 
-impl Uchu {
-    pub fn new() -> Uchu {
-        Uchu {
+impl Universe {
+    pub fn new() -> Universe {
+        Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
             // 初期局面
@@ -832,7 +832,7 @@ impl Uchu {
     }
     // 手番
     pub fn get_teban(&self, jiai: &Person) -> Phase {
-        use super::super::super::model::master::person::Person::*;
+        use super::master::person::Person::*;
         match *jiai {
             Ji => {
                 // 手番
@@ -917,9 +917,9 @@ impl Uchu {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
-            super::super::super::model::master::region::SenteJin::to_elm()
+            super::master::region::SenteJin::to_elm()
         } else {
-            super::super::super::model::master::region::GoteJin::to_elm()
+            super::master::region::GoteJin::to_elm()
         }
     }
     /**
@@ -928,9 +928,9 @@ impl Uchu {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.get_teban(&Person::Ji) {
-            super::super::super::model::master::region::GoteJin::to_elm()
+            super::master::region::GoteJin::to_elm()
         } else {
-            super::super::super::model::master::region::SenteJin::to_elm()
+            super::master::region::SenteJin::to_elm()
         }
     }
 
@@ -1263,7 +1263,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         let mut hash = self.ky.create_hash(&self);
 
         // 手番ハッシュ
-        use super::super::super::model::master::phase::Phase::*;
+        use super::master::phase::Phase::*;
         match self.get_teban(&Person::Ji) {
             Sen => hash ^= self.ky_hash_seed.sn[SN_SEN],
             Go => hash ^= self.ky_hash_seed.sn[SN_GO],

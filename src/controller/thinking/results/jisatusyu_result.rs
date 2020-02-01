@@ -5,12 +5,12 @@
 
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
+use super::super::super::super::model::universe::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい
-pub fn is_jisatusyu(uchu: &Uchu, ss: &Sasite) -> bool {
+pub fn is_jisatusyu(uchu: &Universe, ss: &Sasite) -> bool {
     // 移動元升、動かした駒の先後、駒種類、
     let km_src = uchu.ky.get_piece_struct_by_sq(&ss.src).piece();
     let ps_src = PieceStruct::from_piece(&km_src);

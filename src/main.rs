@@ -22,18 +22,18 @@ use controller::communication::usi::*;
 use controller::consoles::unit_test::*;
 use controller::consoles::visuals::dumps::*;
 use controller::consoles::visuals::title::*;
-use controller::status::uchu::*;
 use controller::thinking::think::*;
 use model::master::constants::*;
 use model::master::misc::*;
 use model::master::square::*;
+use model::universe::*;
 use rand::Rng;
 use std::collections::HashSet;
 use std::io;
 
 fn main() {
     // 宇宙
-    let mut uchu: Uchu = Uchu::new();
+    let mut uchu: Universe = Universe::new();
     uchu.big_bang();
 
     // [Ctrl]+[C] で強制終了

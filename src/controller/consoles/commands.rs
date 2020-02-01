@@ -2,16 +2,16 @@
 //! コマンド一覧
 //!
 
-use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
+use super::super::super::model::universe::*;
 
 /**
  * 利き数表示
  */
-pub fn cmd_kikisu(uchu: &Uchu) {
+pub fn cmd_kikisu(uchu: &Universe) {
     for km in KM_ARRAY.iter() {
         g_writeln(&format!("利き数：{}", km));
         let s = uchu.kaku_number_board(&Phase::Owari, &km);

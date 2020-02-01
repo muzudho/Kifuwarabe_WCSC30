@@ -4,7 +4,6 @@
 
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::consoles::asserts::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::Piece;
@@ -13,6 +12,7 @@ use super::super::super::super::model::master::piece_movement::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 /**
@@ -31,7 +31,7 @@ use std::collections::HashSet;
 pub fn insert_narazu_src_by_sq_km(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
-    uchu: &Uchu,
+    uchu: &Universe,
     result: &mut HashSet<Square>,
 ) {
     assert_banjo_sq(&sq_dst, "ｉnsert_narazu_src_by_ms_km");
@@ -342,7 +342,7 @@ pub fn insert_narazu_src_by_sq_km(
 pub fn insert_narumae_src_by_sq_km(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
-    uchu: &Uchu,
+    uchu: &Universe,
     result: &mut HashSet<Square>,
 ) {
     assert_banjo_sq(&sq_dst, "Ｉnsert_narumae_src_by_ms_km");
@@ -649,7 +649,7 @@ pub fn insert_narumae_src_by_sq_km(
 pub fn insert_da_kms_by_sq_km(
     sq_dst: &Square,
     km_dst: &Piece,
-    uchu: &Uchu,
+    uchu: &Universe,
     result_kms: &mut HashSet<usize>,
 ) {
     assert_banjo_sq(&sq_dst, "Ｉnsert_da_kms_by_ms_km");
@@ -756,7 +756,7 @@ pub fn insert_dst_by_sq_km(
     sq_src: &Square,
     km_src: &Piece,
     to_nari: bool,
-    uchu: &Uchu,
+    uchu: &Universe,
     result: &mut HashSet<Square>,
 ) {
     assert_banjo_sq(&sq_src, "Ｉnsert_dst_by_ms_km");
@@ -1209,7 +1209,7 @@ pub fn insert_dst_by_sq_km(
 pub fn insert_narazu_src_by_sn_sq(
     sn: &Phase,
     sq_dst: &Square,
-    uchu: &Uchu,
+    uchu: &Universe,
     result: &mut HashSet<Square>,
 ) {
     assert_banjo_sq(&sq_dst, "Ｉnsert_narazu_src_by_sn_ms");
@@ -1569,7 +1569,7 @@ pub fn insert_narazu_src_by_sn_sq(
 pub fn insert_narumae_src_by_sn_sq(
     sn: &Phase,
     sq_dst: &Square,
-    uchu: &Uchu,
+    uchu: &Universe,
     result: &mut HashSet<Square>,
 ) {
     assert_banjo_sq(&sq_dst, "Ｉnsert_narumae_src_by_sn_ms");

@@ -9,13 +9,13 @@
 //!
 
 use super::super::super::controller::communication::usi::*;
-use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
+use super::super::super::model::universe::*;
 
 /// 局面
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
@@ -450,7 +450,7 @@ impl Kyokumen {
     /**
      * 局面ハッシュを作り直す
      */
-    pub fn create_hash(&self, uchu: &Uchu) -> u64 {
+    pub fn create_hash(&self, uchu: &Universe) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒

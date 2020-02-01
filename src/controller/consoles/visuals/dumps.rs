@@ -4,8 +4,8 @@
 //!
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 /******

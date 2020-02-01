@@ -6,7 +6,6 @@ use super::super::super::super::controller::boardmetries::mapping::sasite_elemen
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::Piece;
@@ -14,6 +13,7 @@ use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 /**
@@ -24,7 +24,7 @@ use std::collections::HashSet;
  *
  * 王手回避漏れや、千日手などのチェックは行っていない
  */
-pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
+pub fn insert_potential_move(uchu: &Universe, ss_hashset: &mut HashSet<u64>) {
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
@@ -143,7 +143,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
  * 盤上の駒の移動の最初の１つ。打を除く
  */
 pub fn insert_ss_by_ms_km_on_banjo(
-    uchu: &Uchu,
+    uchu: &Universe,
     sq_dst: &Square,
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
@@ -203,7 +203,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
  * 2. 移動先駒指定  km_dst
  */
 pub fn insert_ss_by_ms_km_on_da(
-    uchu: &Uchu,
+    uchu: &Universe,
     sq_dst: &Square,
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,

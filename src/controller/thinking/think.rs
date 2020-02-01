@@ -11,13 +11,13 @@ use super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
 use super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::status::mediators::med_kikisu::*;
-use super::super::super::controller::status::uchu::*;
 use super::super::super::controller::thinking::visions::vision_tree::*;
+use super::super::super::model::universe::*;
 
 /**
  * 現局面での最善手を返すぜ☆（*＾～＾*）
  */
-pub fn think(mut uchu: &mut Uchu) -> Sasite {
+pub fn think(mut uchu: &mut Universe) -> Sasite {
     // TODO 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
 
     // +----------------------+

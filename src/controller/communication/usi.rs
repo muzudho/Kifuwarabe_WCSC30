@@ -3,11 +3,11 @@
 //!
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
-use super::super::super::controller::status::uchu::*;
 use super::super::super::model::master::constants::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::square::*;
+use super::super::super::model::universe::*;
 use std::fmt;
 
 /// 指し手
@@ -156,7 +156,7 @@ impl fmt::Debug for Sasite {
  * 読み取った指し手は、棋譜に入れる。
  * 現在の手目のところに入れ、手目のカウントアップも行う。
  */
-pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) -> bool {
+pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) -> bool {
     // 4文字か5文字あるはず。
     if (len - *starts) < 4 {
         // 指し手読取終了時にここを通るぜ☆（＾～＾）
@@ -409,7 +409,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, uchu: &mut Uch
 /**
  * position コマンド 盤上部分のみ 読取
  */
-pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu) {
+pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Universe) {
     // 盤部
     let mut suji = SUJI_9; //９筋から右方向へ読取
     let mut dan = DAN_1;
@@ -649,7 +649,7 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, uchu: &mut Uchu
 /**
  * position コマンド読取
  */
-pub fn read_position(line: &String, uchu: &mut Uchu) {
+pub fn read_position(line: &String, uchu: &mut Universe) {
     let mut starts = 0;
 
     // 全体の長さ

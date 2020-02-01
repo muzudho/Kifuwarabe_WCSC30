@@ -8,12 +8,12 @@ use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -166,7 +166,7 @@ impl KomatoriResult {
  *
  * return u64 : KomatoriResult のハッシュ
  */
-pub fn lookup_banjo_catch(uchu: &Uchu, sn: &Phase, sq_target: &Square) -> HashSet<u64> {
+pub fn lookup_banjo_catch(uchu: &Universe, sn: &Phase, sq_target: &Square) -> HashSet<u64> {
     assert_banjo_sq(
         &sq_target,
         &format!(

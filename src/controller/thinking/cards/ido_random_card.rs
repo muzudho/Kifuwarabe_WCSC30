@@ -7,11 +7,11 @@ use super::super::super::super::controller::boardmetries::mapping::sasite_seisei
 use super::super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::controller::thinking::randommove;
 use super::super::super::super::controller::thinking::results::jisatusyu_result::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::piece::Piece;
+use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 /**
@@ -19,7 +19,7 @@ use std::collections::HashSet;
  *
  * km_dst : 移動した先の駒
  */
-pub fn get_ido_ss_by_km_random(uchu: &Uchu, km_dst: &Piece) -> Sasite {
+pub fn get_ido_ss_by_km_random(uchu: &Universe, km_dst: &Piece) -> Sasite {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -44,7 +44,7 @@ pub fn get_ido_ss_by_km_random(uchu: &Uchu, km_dst: &Piece) -> Sasite {
 /**
  * 指し手１つをランダム選出
  */
-pub fn get_ss_by_random(uchu: &Uchu) -> Sasite {
+pub fn get_ss_by_random(uchu: &Universe) -> Sasite {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ

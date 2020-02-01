@@ -9,11 +9,11 @@ use super::super::super::super::controller::boardmetries::mapping::sasite_elemen
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::controller::thinking::results::komatori_result::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::ply::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
@@ -37,7 +37,7 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
 /**
  * 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
  */
-pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Uchu) {
+pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Universe) {
     // 自玉の位置
     let sq_r = uchu.get_sq_r(&Person::Ji).clone();
     g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
@@ -100,7 +100,7 @@ pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, uchu: &mut 
  * 王手されていれば、王手を解除しろだぜ☆（＾～＾）
  * 千日手には喜んで飛び込めだぜ☆（＾▽＾）ｗｗｗ
  */
-pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Uchu) {
+pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Universe) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
@@ -188,7 +188,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
  *
  * ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
  */
-pub fn filtering_ss_except_sennitite(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Uchu) {
+pub fn filtering_ss_except_sennitite(ss_hashset_input: &mut HashSet<u64>, uchu: &mut Universe) {
     let mut ss_hashset_pickup = HashSet::new();
 
     // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）

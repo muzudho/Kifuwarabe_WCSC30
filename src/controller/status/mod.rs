@@ -6,4 +6,3 @@
 pub mod ky;
 pub mod mediators;
 pub mod number_board;
-pub mod uchu;

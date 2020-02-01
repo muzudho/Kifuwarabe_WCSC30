@@ -4,16 +4,16 @@
 //!
 use super::super::super::super::controller::boardmetries::board_metrics;
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::combine::multiplication::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::person::*;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type_set::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::universe::*;
 
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
-pub fn is_s(uchu: &Uchu) -> bool {
+pub fn is_s(uchu: &Universe) -> bool {
     // 相手玉の位置
     let sq_r = uchu.get_sq_r(&Person::Ai).clone();
 
@@ -87,7 +87,7 @@ pub fn is_atamakin(
     _mskms_s: &SqKms,
     _mskms_a: &SqKms,
     _mskms_b: &SqKms,
-    uchu: &Uchu,
+    uchu: &Universe,
 ) -> bool {
     // 相手らいおんのマス
     let sq_ai_r = uchu.get_sq_r(&Person::Ai).clone();

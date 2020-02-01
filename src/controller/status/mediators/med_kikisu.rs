@@ -4,17 +4,17 @@
 use super::super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::consoles::asserts::*;
-use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn read_kikisu(uchu: &mut Uchu) {
+pub fn read_kikisu(uchu: &mut Universe) {
     // ゼロ・リセット
     for km in KM_ARRAY.iter() {
         &uchu.kiki_su_by_km[PieceStruct::from_piece(km).serial_piece_number()].clear();
