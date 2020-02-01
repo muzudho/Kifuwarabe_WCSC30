@@ -47,16 +47,13 @@ pub struct KomatoriResult {
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
         write!(
             f,
             "KmTori:{}{}{}{}",
             self.ms_attacker,
             self.km_attacker,
-            if km_is_nagaikiki(&self.km_attacker) {
-                "-->"
-            } else {
-                "->"
-            },
+            if ps_attacker.is_slider() { "-->" } else { "->" },
             self.ms_target
         )
     }
@@ -102,7 +99,8 @@ impl KomatoriResult {
         }
 
         // (2-1)
-        if km_is_nagaikiki(&self.km_attacker) {
+        let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
+        if ps_attacker.is_slider() {
             assert_banjo_ms(ss.dst, "(205b2)Ｇet_result");
             assert_banjo_ms(self.ms_attacker, "(205b3)Ｇet_result");
             assert_banjo_ms(self.ms_target, "(205b4)Ｇet_result");

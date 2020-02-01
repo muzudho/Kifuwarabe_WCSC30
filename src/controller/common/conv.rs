@@ -7,9 +7,7 @@ use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::Phase;
-use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_direction::PieceDirection;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::place::*;
 
@@ -236,17 +234,6 @@ pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
     }
 }
 
-/**************
- * 先後付き駒 *
- **************/
-
-/**
- * 駒→長い利きの有無
- */
-pub fn km_is_nagaikiki(km: &Piece) -> bool {
-    kms_is_nagaikiki(&PieceStruct::from_piece(km).piece_type())
-}
-
 /**********
  * 駒種類 *
  **********/
@@ -313,31 +300,6 @@ pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
     let kms_num = num_to_kms((hash & 0b1111) as usize);
     (hash >> 4, kms_num)
-}
-/**
- * 駒種類→｛　長い利きの駒か否か　｝
- * 合い駒で防ぎえる可能性があれば真
- */
-pub fn kms_is_nagaikiki(kms: &PieceType) -> bool {
-    use super::super::super::model::master::piece_type::PieceType::*;
-    match *kms {
-        R => false,
-        K => true,
-        Z => true,
-        I => false,
-        N => false,
-        U => false,
-        S => true,
-        H => false,
-        PK => true,
-        PZ => true,
-        PN => false,
-        PU => false,
-        PS => false,
-        PH => false,
-        Kara => false,
-        Owari => false,
-    }
 }
 /**
  * 成れる駒
