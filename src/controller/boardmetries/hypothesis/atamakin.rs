@@ -8,6 +8,7 @@ use super::super::super::super::controller::status::uchu::*;
 use super::super::super::super::model::combine::multiplication::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::person::*;
+use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type_set::*;
 
@@ -25,21 +26,21 @@ pub fn is_s(uchu: &Uchu) -> bool {
     }
 
     let ms_south_r = p_to_ms(&p_south_r);
-    let ps = uchu.ky.get_piece_struct_by_ms(ms_south_r);
-    let jiai_km = uchu.get_jiai_by_km(&ps);
+    let km = uchu.ky.get_piece_struct_by_ms(ms_south_r).piece();
+    let jiai_km = uchu.get_jiai_by_km(&km);
     if !match_jiai(&jiai_km, &Person::Ji) {
         return true;
     }
 
     g_writeln(&format!(
         "info string south of My raion {} = {}. jiai_km={}.",
-        ms_r,
-        ps.piece(),
-        jiai_km
+        ms_r, km, jiai_km
     ));
 
+    let kms = PieceStruct::from_piece(&km).piece_type();
+
     use super::super::super::super::model::master::piece_type::PieceType::*;
-    match ps.piece_type() {
+    match kms {
         Z | S => {
             return false;
         }

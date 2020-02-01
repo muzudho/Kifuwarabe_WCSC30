@@ -30,7 +30,7 @@ use std::collections::HashSet;
  */
 pub fn insert_narazu_src_by_ms_km(
     ms_dst: umasu,
-    ps_dst: &PieceStruct,
+    km_dst: &Piece,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
@@ -48,10 +48,12 @@ pub fn insert_narazu_src_by_ms_km(
      */
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = ms_to_suji_dan(ms_dst);
+    let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
+    let kms_num = kms_to_num(&kms_dst);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     use super::super::super::super::model::master::piece::Piece::*;
-    match *ps_dst.piece() {
+    match *km_dst {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
             if dy < DAN_3 {
@@ -79,13 +81,11 @@ pub fn insert_narazu_src_by_ms_km(
         _ => {}
     }
 
-    let kms_num = kms_to_num(&ps_dst.piece_type());
-
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &PieceDirection;
-        if match_sn(&Phase::Sen, ps_dst.phase()) {
+        if match_sn(&Phase::Sen, &PieceStruct::from_piece(km_dst).phase()) {
             p_kmdir = &KM_UGOKI.back[kms_num][i_dir]
         } else {
             _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[kms_num][i_dir]);
@@ -102,7 +102,7 @@ pub fn insert_narazu_src_by_ms_km(
                     for i_east in 1..9 {
                         if dx + i_east < SUJI_10 {
                             let ms_src = suji_dan_to_ms(dx + i_east, dy);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
                                 break;
@@ -113,7 +113,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 西東
                     if dx + 1 < SUJI_10 {
                         let ms_src = suji_dan_to_ms(dx + 1, dy);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
@@ -126,7 +126,7 @@ pub fn insert_narazu_src_by_ms_km(
                     for i_ne in 1..9 {
                         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                             let ms_src = suji_dan_to_ms(dx + i_ne, dy + i_ne);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
                                 break;
@@ -137,7 +137,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 北東
                     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                         let ms_src = suji_dan_to_ms(dx + 1, dy + 1);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
@@ -147,7 +147,7 @@ pub fn insert_narazu_src_by_ms_km(
             NNE => {
                 if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                     let ms_src = suji_dan_to_ms(dx + 1, dy + 2);
-                    if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                    if uchu.ky.has_ms_km(ms_src, km_dst) {
                         result.insert(ms_src);
                     }
                 }
@@ -159,7 +159,7 @@ pub fn insert_narazu_src_by_ms_km(
                     for i_south in 1..9 {
                         if dy + i_south < DAN_10 {
                             let ms_src = suji_dan_to_ms(dx, dy + i_south);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
                                 break;
@@ -170,7 +170,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 北
                     if dy + 1 < DAN_10 {
                         let ms_src = suji_dan_to_ms(dx, dy + 1);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
@@ -180,7 +180,7 @@ pub fn insert_narazu_src_by_ms_km(
             NNW => {
                 if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                     let ms_src = suji_dan_to_ms(dx - 1, dy + 2);
-                    if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                    if uchu.ky.has_ms_km(ms_src, km_dst) {
                         result.insert(ms_src);
                     }
                 }
@@ -192,7 +192,7 @@ pub fn insert_narazu_src_by_ms_km(
                     for i_se in 1..9 {
                         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                             let ms_src = suji_dan_to_ms(dx - i_se, dy + i_se);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
                                 break;
@@ -203,7 +203,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 北西
                     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                         let ms_src = suji_dan_to_ms(dx - 1, dy + 1);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
@@ -217,7 +217,7 @@ pub fn insert_narazu_src_by_ms_km(
                         if SUJI_0 < dx - i_east {
                             // 進みたいマスから戻ったマス
                             let ms_src = suji_dan_to_ms(dx - i_east, dy);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 // 指定の駒があれば、その升は移動元。続行
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
@@ -230,7 +230,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 西
                     if SUJI_0 < dx - 1 {
                         let ms_src = suji_dan_to_ms(dx - 1, dy);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
@@ -243,7 +243,7 @@ pub fn insert_narazu_src_by_ms_km(
                     for i_ne in 1..9 {
                         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                             let ms_src = suji_dan_to_ms(dx - i_ne, dy - i_ne);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
                                 break;
@@ -254,7 +254,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 南西
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                         let ms_src = suji_dan_to_ms(dx - 1, dy - 1);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
@@ -264,7 +264,7 @@ pub fn insert_narazu_src_by_ms_km(
             SSW => {
                 if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                     let ms_src = suji_dan_to_ms(dx - 1, dy - 2);
-                    if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                    if uchu.ky.has_ms_km(ms_src, km_dst) {
                         result.insert(ms_src);
                     }
                 }
@@ -276,7 +276,7 @@ pub fn insert_narazu_src_by_ms_km(
                     for i_north in 1..9 {
                         if DAN_0 < dy - i_north {
                             let ms_src = suji_dan_to_ms(dx, dy - i_north);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
                                 break;
@@ -287,7 +287,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 南
                     if DAN_0 < dy - 1 {
                         let ms_src = suji_dan_to_ms(dx, dy - 1);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
@@ -297,7 +297,7 @@ pub fn insert_narazu_src_by_ms_km(
             SSE => {
                 if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                     let ms_src = suji_dan_to_ms(dx + 1, dy - 2);
-                    if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                    if uchu.ky.has_ms_km(ms_src, km_dst) {
                         result.insert(ms_src);
                     }
                 }
@@ -309,7 +309,7 @@ pub fn insert_narazu_src_by_ms_km(
                     for i_nw in 1..9 {
                         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                             let ms_src = suji_dan_to_ms(dx + i_nw, dy - i_nw);
-                            if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                            if uchu.ky.has_ms_km(ms_src, km_dst) {
                                 result.insert(ms_src);
                             } else if uchu.ky.exists_km(ms_src) {
                                 break;
@@ -320,7 +320,7 @@ pub fn insert_narazu_src_by_ms_km(
                     // 南東
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                         let ms_src = suji_dan_to_ms(dx + 1, dy - 1);
-                        if uchu.ky.has_ms_km(ms_src, ps_dst.piece()) {
+                        if uchu.ky.has_ms_km(ms_src, km_dst) {
                             result.insert(ms_src);
                         }
                     }
