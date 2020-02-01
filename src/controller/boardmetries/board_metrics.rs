@@ -8,7 +8,7 @@ use super::super::super::model::master::square::*;
 
 pub fn is_ji_km_by_ms(sq: &Square, uchu: &Uchu) -> bool {
     match_sn(
-        &uchu.ky.get_piece_struct_by_ms(sq.to_umasu()).phase(),
+        &uchu.ky.get_piece_struct_by_sq(&sq).phase(),
         &uchu.get_teban(&Person::Ji),
     )
 }

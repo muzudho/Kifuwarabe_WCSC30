@@ -61,7 +61,7 @@ pub fn insert_rakkansuji(uchu: &mut Uchu) {
                     insert_narazu_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                     insert_narumae_src_by_ms_km(&sq_dst, &ps_dst, &uchu, &mut mv_src_hashset);
                     // TODO 王手になるところに打ちたい
-                    //insert_da_kms_by_ms_km      ( &ms_dst, &km_dst, &uchu, &mut da_kms_hashset );
+                    //insert_da_kms_by_sq_km      ( &ms_dst, &km_dst, &uchu, &mut da_kms_hashset );
 
                     // 盤上
                     for ms_src in mv_src_hashset.iter() {

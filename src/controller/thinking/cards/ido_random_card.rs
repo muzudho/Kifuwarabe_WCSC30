@@ -30,7 +30,7 @@ pub fn get_ido_ss_by_km_random(uchu: &Uchu, km_dst: &Piece) -> Sasite {
 
         ss_hashset.clear();
         insert_ss_by_ms_km_on_banjo(&uchu, &sq_dst, &km_dst, &mut ss_hashset);
-        insert_ss_by_ms_km_on_da(&uchu, sq_dst.to_umasu(), &km_dst, &mut ss_hashset);
+        insert_ss_by_ms_km_on_da(&uchu, &sq_dst, &km_dst, &mut ss_hashset);
         let ss = choice_1ss_by_hashset(&ss_hashset);
 
         if ss.exists() {
@@ -64,7 +64,7 @@ pub fn get_ss_by_random(uchu: &Uchu) -> Sasite {
 
         ss_hashset.clear();
         insert_ss_by_ms_km_on_banjo(&uchu, &sq_dst, &km_dst, &mut ss_hashset);
-        insert_ss_by_ms_km_on_da(&uchu, sq_dst.to_umasu(), &km_dst, &mut ss_hashset);
+        insert_ss_by_ms_km_on_da(&uchu, &sq_dst, &km_dst, &mut ss_hashset);
         let ss = choice_1ss_by_hashset(&ss_hashset);
 
         // 移動後は、玉が利きに飛び込まないか？

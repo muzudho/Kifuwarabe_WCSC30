@@ -646,13 +646,13 @@ pub fn insert_narumae_src_by_ms_km(
  *
  * そこに打てる駒種類を返す。
  */
-pub fn insert_da_kms_by_ms_km(
-    ms_dst: umasu,
+pub fn insert_da_kms_by_sq_km(
+    sq_dst: &Square,
     km_dst: &Piece,
     uchu: &Uchu,
     result_kms: &mut HashSet<usize>,
 ) {
-    assert_banjo_ms(ms_dst, "Ｉnsert_da_kms_by_ms_km");
+    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_da_kms_by_ms_km");
 
     let ps_dst = PieceStruct::from_piece(&km_dst);
     let kms_dst = ps_dst.piece_type();
@@ -663,7 +663,7 @@ pub fn insert_da_kms_by_ms_km(
     // +------------------------+
     // | 打ちたいところは空升か |
     // +------------------------+
-    let km_banjo = uchu.ky.get_piece_struct_by_ms(ms_dst).piece();
+    let km_banjo = uchu.ky.get_piece_struct_by_sq(sq_dst).piece();
     match km_banjo {
         Piece::Kara => {}
         _ => {
@@ -680,7 +680,7 @@ pub fn insert_da_kms_by_ms_km(
     }
 
     // 回転していない将棋盤から見た筋番号
-    let (suji, dy) = ms_to_suji_dan(ms_dst);
+    let (suji, dy) = sq_dst.to_file_rank();
     /*
      * umasu は 将棋盤座標
      *
@@ -691,7 +691,7 @@ pub fn insert_da_kms_by_ms_km(
      * 12 22 32
      * 11 21 31 ...
      */
-    let ms = kaiten180_ms_by_ms_sn(ms_dst, &ps_dst.phase());
+    let ms = kaiten180_ms_by_ms_sn(sq_dst.to_umasu(), &ps_dst.phase());
 
     assert_banjo_ms(ms, "Ｉnsert_da_kms_by_ms_km＜その２＞");
     //let (_x,y) = ms_to_suji_dan(ms);
@@ -795,10 +795,10 @@ pub fn insert_dst_by_ms_km(
                     // 長東
                     for i_east in 1..9 {
                         if dx + i_east < SUJI_10 {
-                            let ms_src = suji_dan_to_ms(dx + i_east, dy);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx + i_east, dy);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -808,10 +808,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 西東
                     if dx + 1 < SUJI_10 {
-                        let ms_src = suji_dan_to_ms(dx + 1, dy);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx + 1, dy);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -822,10 +822,10 @@ pub fn insert_dst_by_ms_km(
                     // 長北東
                     for i_ne in 1..9 {
                         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
-                            let ms_src = suji_dan_to_ms(dx + i_ne, dy + i_ne);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -835,10 +835,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 北東
                     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
-                        let ms_src = suji_dan_to_ms(dx + 1, dy + 1);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx + 1, dy + 1);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -846,10 +846,10 @@ pub fn insert_dst_by_ms_km(
             // 北北東
             NNE => {
                 if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
-                    let ms_src = suji_dan_to_ms(dx + 1, dy + 2);
-                    let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                    let sq_src = Square::from_file_rank(dx + 1, dy + 2);
+                    let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
-                        result.insert(ms_src);
+                        result.insert(sq_src.to_umasu());
                     }
                 }
             }
@@ -859,10 +859,10 @@ pub fn insert_dst_by_ms_km(
                     // 長北
                     for i_south in 1..9 {
                         if dy + i_south < DAN_10 {
-                            let ms_src = suji_dan_to_ms(dx, dy + i_south);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx, dy + i_south);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -872,10 +872,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 北
                     if dy + 1 < DAN_10 {
-                        let ms_src = suji_dan_to_ms(dx, dy + 1);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx, dy + 1);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -883,10 +883,10 @@ pub fn insert_dst_by_ms_km(
             // 北北西
             NNW => {
                 if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
-                    let ms_src = suji_dan_to_ms(dx - 1, dy + 2);
-                    let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                    let sq_src = Square::from_file_rank(dx - 1, dy + 2);
+                    let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
-                        result.insert(ms_src);
+                        result.insert(sq_src.to_umasu());
                     }
                 }
             }
@@ -896,10 +896,10 @@ pub fn insert_dst_by_ms_km(
                     // 長北西
                     for i_se in 1..9 {
                         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
-                            let ms_src = suji_dan_to_ms(dx - i_se, dy + i_se);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -909,10 +909,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 北西
                     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
-                        let ms_src = suji_dan_to_ms(dx - 1, dy + 1);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx - 1, dy + 1);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -923,10 +923,10 @@ pub fn insert_dst_by_ms_km(
                     // 長西
                     for i_east in 1..9 {
                         if SUJI_0 < dx - i_east {
-                            let ms_src = suji_dan_to_ms(dx - i_east, dy);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx - i_east, dy);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -936,10 +936,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 西
                     if SUJI_0 < dx - 1 {
-                        let ms_src = suji_dan_to_ms(dx - 1, dy);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx - 1, dy);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -950,10 +950,10 @@ pub fn insert_dst_by_ms_km(
                     // 長南西
                     for i_ne in 1..9 {
                         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
-                            let ms_src = suji_dan_to_ms(dx - i_ne, dy - i_ne);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -963,10 +963,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 南西
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
-                        let ms_src = suji_dan_to_ms(dx - 1, dy - 1);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx - 1, dy - 1);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -974,10 +974,10 @@ pub fn insert_dst_by_ms_km(
             // 南南西
             SSW => {
                 if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
-                    let ms_src = suji_dan_to_ms(dx - 1, dy - 2);
-                    let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                    let sq_src = Square::from_file_rank(dx - 1, dy - 2);
+                    let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
-                        result.insert(ms_src);
+                        result.insert(sq_src.to_umasu());
                     }
                 }
             }
@@ -987,10 +987,10 @@ pub fn insert_dst_by_ms_km(
                     // 長南
                     for i_north in 1..9 {
                         if DAN_0 < dy - i_north {
-                            let ms_src = suji_dan_to_ms(dx, dy - i_north);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx, dy - i_north);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -1000,10 +1000,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 南
                     if DAN_0 < dy - 1 {
-                        let ms_src = suji_dan_to_ms(dx, dy - 1);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx, dy - 1);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1011,10 +1011,10 @@ pub fn insert_dst_by_ms_km(
             // 南南東
             SSE => {
                 if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
-                    let ms_src = suji_dan_to_ms(dx + 1, dy - 2);
-                    let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                    let sq_src = Square::from_file_rank(dx + 1, dy - 2);
+                    let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
-                        result.insert(ms_src);
+                        result.insert(sq_src.to_umasu());
                     }
                 }
             }
@@ -1024,10 +1024,10 @@ pub fn insert_dst_by_ms_km(
                     // 長南東
                     for i_nw in 1..9 {
                         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
-                            let ms_src = suji_dan_to_ms(dx + i_nw, dy - i_nw);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                            let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                             if !match_sn(&sn_ms, &Phase::Owari) {
                                 break;
@@ -1037,10 +1037,10 @@ pub fn insert_dst_by_ms_km(
                 } else {
                     // 南東
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
-                        let ms_src = suji_dan_to_ms(dx + 1, dy - 1);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
+                        let sq_src = Square::from_file_rank(dx + 1, dy - 1);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1282,11 +1282,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長東
                         for i_east in 1..9 {
                             if dx + i_east < SUJI_10 {
-                                let ms_src = suji_dan_to_ms(dx + i_east, dy);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx + i_east, dy);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1296,11 +1296,11 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 東
                         if dx + 1 < SUJI_10 {
-                            let ms_src = suji_dan_to_ms(dx + 1, dy);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx + 1, dy);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1311,11 +1311,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長北東
                         for i_ne in 1..9 {
                             if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
-                                let ms_src = suji_dan_to_ms(dx + i_ne, dy + i_ne);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1325,11 +1325,11 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 北東
                         if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
-                            let ms_src = suji_dan_to_ms(dx + 1, dy + 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx + 1, dy + 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1337,11 +1337,11 @@ pub fn insert_narazu_src_by_sn_ms(
                 // 北北東
                 NNE => {
                     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
-                        let ms_src = suji_dan_to_ms(dx + 1, dy + 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx + 1, dy + 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1351,11 +1351,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長北
                         for i_south in 1..9 {
                             if dy + i_south < DAN_10 {
-                                let ms_src = suji_dan_to_ms(dx, dy + i_south);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx, dy + i_south);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1365,14 +1365,14 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 北
                         if dy + 1 < DAN_10 {
-                            let ms_src = suji_dan_to_ms(dx, dy + 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx, dy + 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1380,11 +1380,11 @@ pub fn insert_narazu_src_by_sn_ms(
                 // 北北西
                 NNW => {
                     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
-                        let ms_src = suji_dan_to_ms(dx - 1, dy + 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx - 1, dy + 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1394,11 +1394,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長北西
                         for i_se in 1..9 {
                             if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
-                                let ms_src = suji_dan_to_ms(dx - i_se, dy + i_se);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1408,11 +1408,11 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 北西
                         if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
-                            let ms_src = suji_dan_to_ms(dx - 1, dy + 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx - 1, dy + 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1423,11 +1423,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長西
                         for i_east in 1..9 {
                             if SUJI_0 < dx - i_east {
-                                let ms_src = suji_dan_to_ms(dx - i_east, dy);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx - i_east, dy);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1437,11 +1437,11 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 西
                         if SUJI_0 < dx - 1 {
-                            let ms_src = suji_dan_to_ms(dx - 1, dy);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx - 1, dy);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1452,11 +1452,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長南西
                         for i_ne in 1..9 {
                             if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
-                                let ms_src = suji_dan_to_ms(dx - i_ne, dy - i_ne);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1466,11 +1466,11 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 南西
                         if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
-                            let ms_src = suji_dan_to_ms(dx - 1, dy - 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx - 1, dy - 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1478,11 +1478,11 @@ pub fn insert_narazu_src_by_sn_ms(
                 // 南南西
                 SSW => {
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
-                        let ms_src = suji_dan_to_ms(dx - 1, dy - 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx - 1, dy - 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1492,11 +1492,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長南
                         for i_north in 1..9 {
                             if DAN_0 < dy - i_north {
-                                let ms_src = suji_dan_to_ms(dx, dy - i_north);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx, dy - i_north);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1506,14 +1506,14 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 南
                         if DAN_0 < dy - 1 {
-                            let ms_src = suji_dan_to_ms(dx, dy - 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx, dy - 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1521,11 +1521,11 @@ pub fn insert_narazu_src_by_sn_ms(
                 // 南南東
                 SSE => {
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
-                        let ms_src = suji_dan_to_ms(dx + 1, dy - 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx + 1, dy - 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1535,11 +1535,11 @@ pub fn insert_narazu_src_by_sn_ms(
                         // 長南東
                         for i_nw in 1..9 {
                             if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
-                                let ms_src = suji_dan_to_ms(dx + i_nw, dy - i_nw);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1549,11 +1549,11 @@ pub fn insert_narazu_src_by_sn_ms(
                     } else {
                         // 南東
                         if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
-                            let ms_src = suji_dan_to_ms(dx + 1, dy - 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx + 1, dy - 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1631,11 +1631,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長東
                         for i_east in 1..9 {
                             if dx + i_east < SUJI_10 {
-                                let ms_src = suji_dan_to_ms(dx + i_east, dy);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx + i_east, dy);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1645,11 +1645,11 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 東
                         if dx + 1 < SUJI_10 {
-                            let ms_src = suji_dan_to_ms(dx + 1, dy);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx + 1, dy);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1660,11 +1660,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長北東
                         for i_ne in 1..9 {
                             if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
-                                let ms_src = suji_dan_to_ms(dx + i_ne, dy + i_ne);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1674,11 +1674,11 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 北東
                         if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
-                            let ms_src = suji_dan_to_ms(dx + 1, dy + 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx + 1, dy + 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1686,11 +1686,11 @@ pub fn insert_narumae_src_by_sn_ms(
                 // 北北東
                 NNE => {
                     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
-                        let ms_src = suji_dan_to_ms(dx + 1, dy + 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx + 1, dy + 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1700,11 +1700,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長北
                         for i_south in 1..9 {
                             if dy + i_south < DAN_10 {
-                                let ms_src = suji_dan_to_ms(dx, dy + i_south);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx, dy + i_south);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1714,14 +1714,14 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 北
                         if dy + 1 < DAN_10 {
-                            let ms_src = suji_dan_to_ms(dx, dy + 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx, dy + 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1729,11 +1729,11 @@ pub fn insert_narumae_src_by_sn_ms(
                 // 北北西
                 NNW => {
                     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
-                        let ms_src = suji_dan_to_ms(dx - 1, dy + 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx - 1, dy + 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1743,11 +1743,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長北西
                         for i_se in 1..9 {
                             if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
-                                let ms_src = suji_dan_to_ms(dx - i_se, dy + i_se);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1757,11 +1757,11 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 北西
                         if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
-                            let ms_src = suji_dan_to_ms(dx - 1, dy + 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx - 1, dy + 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1772,11 +1772,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長西
                         for i_east in 1..9 {
                             if SUJI_0 < dx - i_east {
-                                let ms_src = suji_dan_to_ms(dx - i_east, dy);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx - i_east, dy);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1786,11 +1786,11 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 西
                         if SUJI_0 < dx - 1 {
-                            let ms_src = suji_dan_to_ms(dx - 1, dy);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx - 1, dy);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1801,11 +1801,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長南西
                         for i_ne in 1..9 {
                             if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
-                                let ms_src = suji_dan_to_ms(dx - i_ne, dy - i_ne);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1815,11 +1815,11 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 南西
                         if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
-                            let ms_src = suji_dan_to_ms(dx - 1, dy - 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx - 1, dy - 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1827,11 +1827,11 @@ pub fn insert_narumae_src_by_sn_ms(
                 // 南南西
                 SSW => {
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
-                        let ms_src = suji_dan_to_ms(dx - 1, dy - 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx - 1, dy - 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1841,11 +1841,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長南
                         for i_north in 1..9 {
                             if DAN_0 < dy - i_north {
-                                let ms_src = suji_dan_to_ms(dx, dy - i_north);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx, dy - i_north);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1855,14 +1855,14 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 南
                         if DAN_0 < dy - 1 {
-                            let ms_src = suji_dan_to_ms(dx, dy - 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx, dy - 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }
@@ -1870,11 +1870,11 @@ pub fn insert_narumae_src_by_sn_ms(
                 // 南南東
                 SSE => {
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
-                        let ms_src = suji_dan_to_ms(dx + 1, dy - 2);
-                        let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                        let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                        let sq_src = Square::from_file_rank(dx + 1, dy - 2);
+                        let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                        let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                            result.insert(ms_src);
+                            result.insert(sq_src.to_umasu());
                         }
                     }
                 }
@@ -1884,11 +1884,11 @@ pub fn insert_narumae_src_by_sn_ms(
                         // 長南東
                         for i_nw in 1..9 {
                             if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
-                                let ms_src = suji_dan_to_ms(dx + i_nw, dy - i_nw);
-                                let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                                let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                                let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
+                                let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                                let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                    result.insert(ms_src);
+                                    result.insert(sq_src.to_umasu());
                                 }
                                 if !match_sn(&sn_ms, &Phase::Owari) {
                                     break;
@@ -1898,11 +1898,11 @@ pub fn insert_narumae_src_by_sn_ms(
                     } else {
                         // 南東
                         if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
-                            let ms_src = suji_dan_to_ms(dx + 1, dy - 1);
-                            let sn_ms = uchu.ky.get_sn_by_ms(ms_src);
-                            let kms_ms = &uchu.ky.get_piece_struct_by_ms(ms_src).piece_type();
+                            let sq_src = Square::from_file_rank(dx + 1, dy - 1);
+                            let sn_ms = uchu.ky.get_sn_by_sq(&sq_src);
+                            let kms_ms = &uchu.ky.get_piece_struct_by_sq(&sq_src).piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
-                                result.insert(ms_src);
+                                result.insert(sq_src.to_umasu());
                             }
                         }
                     }

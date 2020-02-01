@@ -10,6 +10,7 @@ use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::piece_direction::PieceDirection;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::place::*;
+use super::super::super::model::master::square::*;
 
 /**********
  * 論理値 *
@@ -182,6 +183,11 @@ pub fn suji_dan_to_ms(suji: i8, dan: i8) -> umasu {
 }
 pub fn p_in_ban(p: &Point) -> bool {
     (SUJI_0 < p.x && p.x < SUJI_10) && (DAN_0 < p.y && p.y < DAN_10)
+}
+pub fn p_to_sq(p: &Point) -> Square {
+    debug_assert!(p_in_ban(&p), "(204b)p_to_ms x={},y={}", p.x, p.y);
+
+    Square::from_umasu((p.x * 10 + p.y) as umasu)
 }
 pub fn p_to_ms(p: &Point) -> umasu {
     debug_assert!(p_in_ban(&p), "(204b)p_to_ms x={},y={}", p.x, p.y);

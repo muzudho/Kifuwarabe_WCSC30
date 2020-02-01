@@ -32,7 +32,7 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
     for dan_src in 1..10 {
         for suji_src in 1..10 {
             let sq_src = Square::from_file_rank(suji_src, dan_src);
-            let km_src = uchu.ky.get_piece_struct_by_ms(sq_src.to_umasu()).piece();
+            let km_src = uchu.ky.get_piece_struct_by_sq(&sq_src).piece();
 
             if match_sn(
                 &PieceStruct::from_piece(&km_src).phase(),
@@ -93,8 +93,8 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
     // +----+
     for dan_dst in 1..10 {
         for suji_dst in 1..10 {
-            let ms_dst = suji_dan_to_ms(suji_dst, dan_dst);
-            let km_dst = uchu.ky.get_piece_struct_by_ms(ms_dst).piece();
+            let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
+            let km_dst = uchu.ky.get_piece_struct_by_sq(&sq_dst).piece();
             match km_dst {
                 Piece::Kara => {
                     // 駒が無いところに打つ
@@ -110,8 +110,8 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                         let km_motigoma = ps_motigoma.piece();
                         if 0 < uchu.ky.get_mg(&km_motigoma) {
                             // 駒を持っていれば
-                            insert_da_kms_by_ms_km(
-                                ms_dst,
+                            insert_da_kms_by_sq_km(
+                                &sq_dst,
                                 &km_motigoma,
                                 &uchu,
                                 &mut da_kms_hashset,
@@ -122,10 +122,10 @@ pub fn insert_potential_move(uchu: &Uchu, ss_hashset: &mut HashSet<u64>) {
                         let kms = num_to_kms(num_kms_da);
                         ss_hashset.insert(
                             Sasite {
-                                src: SS_SRC_DA, // 駒大
-                                dst: ms_dst,    // どの升へ行きたいか
-                                pro: false,     // 打に成りは無し
-                                drop: kms,      // 打った駒種類
+                                src: SS_SRC_DA,         // 駒大
+                                dst: sq_dst.to_umasu(), // どの升へ行きたいか
+                                pro: false,             // 打に成りは無し
+                                drop: kms,              // 打った駒種類
                             }
                             .to_hash(),
                         );
@@ -156,7 +156,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     let (sn, _kms_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(&uchu.ky.get_sn_by_ms(sq_dst.to_umasu()), &sn) {
+    if match_sn(&uchu.ky.get_sn_by_sq(&sq_dst), &sn) {
         return;
     }
 
@@ -205,25 +205,25 @@ pub fn insert_ss_by_ms_km_on_banjo(
  */
 pub fn insert_ss_by_ms_km_on_da(
     uchu: &Uchu,
-    ms_dst: umasu,
+    sq_dst: &Square,
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
 ) {
-    assert_banjo_ms(ms_dst, "Ｉnsert_ss_by_ms_km_on_da");
+    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_ss_by_ms_km_on_da");
 
     // 手番の先後、駒種類
     let piece_struct_dst = PieceStruct::from_piece(&km_dst);
     let (sn, _kms_dst) = piece_struct_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(&uchu.ky.get_sn_by_ms(ms_dst), &sn) {
+    if match_sn(&uchu.ky.get_sn_by_sq(&sq_dst), &sn) {
         return;
     }
 
     // ハッシュを作るのに使う
     let mut ss_hash_builder = Sasite::new();
 
-    ss_hash_builder.dst = ms_dst;
+    ss_hash_builder.dst = sq_dst.to_umasu();
 
     // 移動元の升
     //let mut mv_src_hashset : HashSet<umasu> = HashSet::new();
@@ -233,14 +233,14 @@ pub fn insert_ss_by_ms_km_on_da(
     // +----+
 
     let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-    insert_da_kms_by_ms_km(ms_dst, &km_dst, &uchu, &mut da_kms_hashset);
+    insert_da_kms_by_sq_km(&sq_dst, &km_dst, &uchu, &mut da_kms_hashset);
     // 打
     for num_kms_da in da_kms_hashset.iter() {
         let kms_da = num_to_kms(*num_kms_da);
 
         let hash_ss = Sasite {
             src: SS_SRC_DA,
-            dst: ms_dst,
+            dst: sq_dst.to_umasu(),
             pro: false,
             drop: kms_da,
         }
