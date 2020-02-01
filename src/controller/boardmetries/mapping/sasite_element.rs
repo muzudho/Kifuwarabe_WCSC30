@@ -349,9 +349,8 @@ pub fn insert_narumae_src_by_ms_km(
     // +--------------------+
     // | 移動後は成り駒か？ |
     // +--------------------+
-    let ps_dst = PieceStruct::from_piece(&km_dst);
-    let kms_dst = ps_dst.piece_type();
-    if !ps_dst.is_promoted() {
+    let kms_dst = PieceStruct::from_piece(&km_dst).piece_type();
+    if !kms_is_pro(&kms_dst) {
         return; // 成り駒でないなら、成りの動きをしていない
     }
 
@@ -1592,8 +1591,8 @@ pub fn insert_narumae_src_by_sn_ms(
         // +--------------------+
         // | 移動前は非成駒か？ |
         // +--------------------+
-        let ps_src = PieceStruct::from_piece(&km_src);
-        if ps_src.is_promoted() {
+        let kms_src = PieceStruct::from_piece(&km_src).piece_type();
+        if kms_is_pro(&kms_src) {
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
 

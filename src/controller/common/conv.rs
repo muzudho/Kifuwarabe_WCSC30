@@ -314,6 +314,28 @@ pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
     let kms_num = num_to_kms((hash & 0b1111) as usize);
     (hash >> 4, kms_num)
 }
+// 駒種類→｛　成駒,（不成駒、それ以外）　｝
+pub fn kms_is_pro(kms: &PieceType) -> bool {
+    use super::super::super::model::master::piece_type::PieceType::*;
+    match *kms {
+        R => false,
+        K => false,
+        Z => false,
+        I => false,
+        N => false,
+        U => false,
+        S => false,
+        H => false,
+        PK => true,
+        PZ => true,
+        PN => true,
+        PU => true,
+        PS => true,
+        PH => true,
+        Kara => false,
+        Owari => false,
+    }
+}
 // 成り駒種類→成る前の駒種類。成り駒でなければ、空に戻る。
 pub fn prokms_to_kms(kms: &PieceType) -> PieceType {
     use super::super::super::model::master::piece_type::PieceType::*;
