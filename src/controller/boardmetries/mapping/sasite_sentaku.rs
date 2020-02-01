@@ -14,6 +14,7 @@ use super::super::super::super::controller::thinking::results::komatori_result::
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::place::*;
 use super::super::super::super::model::master::ply::*;
+use super::super::super::super::model::master::square::*;
 use std::collections::HashSet;
 
 pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
@@ -121,10 +122,10 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         // g_writeln( &s1 );
 
         // 狙われている方の玉の位置
-        let ms_r_new = if ss_potential.src == ms_r {
-            ss_potential.dst // 狙われていた方の玉が動いた先
+        let sq_r_new = if ss_potential.src == ms_r {
+            Square::from_umasu(ss_potential.dst) // 狙われていた方の玉が動いた先
         } else {
-            ms_r // 動いていない、狙われていた方の玉の居場所
+            Square::from_umasu(ms_r) // 動いていない、狙われていた方の玉の居場所
         };
 
         // 利きの再計算
@@ -132,13 +133,13 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
         let mut attackers: HashSet<umasu> = HashSet::new();
         insert_narazu_src_by_sn_ms(
             &uchu.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            ms_r_new,                     // 指定の升
+            &sq_r_new,                    // 指定の升
             &uchu,
             &mut attackers,
         );
         insert_narumae_src_by_sn_ms(
             &uchu.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            ms_r_new,                     // 指定の升
+            &sq_r_new,                    // 指定の升
             &uchu,
             &mut attackers,
         );
@@ -150,7 +151,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, uchu: 
             ss_potential,
             attackers.len(),
             uchu.get_teban(&Person::Ji),
-            ms_r_new
+            sq_r_new.to_umasu()
         ));
         for ms_atk in attackers.iter() {
             g_writeln(&format!("info ms_atk={}.", ms_atk));

@@ -1208,14 +1208,14 @@ pub fn insert_dst_by_ms_km(
  */
 pub fn insert_narazu_src_by_sn_ms(
     sn: &Phase,
-    ms_dst: umasu,
+    sq_dst: &Square,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(ms_dst, "Ｉnsert_narazu_src_by_sn_ms");
+    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_narazu_src_by_sn_ms");
 
     // 移動先の筋、段
-    let (dx, dy) = ms_to_suji_dan(ms_dst);
+    let (dx, dy) = sq_dst.to_file_rank();
 
     // 駒種類
     for kms in KMS_ARRAY.iter() {
@@ -1568,14 +1568,14 @@ pub fn insert_narazu_src_by_sn_ms(
  */
 pub fn insert_narumae_src_by_sn_ms(
     sn: &Phase,
-    ms_dst: umasu,
+    sq_dst: &Square,
     uchu: &Uchu,
     result: &mut HashSet<umasu>,
 ) {
-    assert_banjo_ms(ms_dst, "Ｉnsert_narumae_src_by_sn_ms");
+    assert_banjo_ms(sq_dst.to_umasu(), "Ｉnsert_narumae_src_by_sn_ms");
 
     // 移動先の筋、段
-    let (dx, dy) = ms_to_suji_dan(ms_dst);
+    let (dx, dy) = sq_dst.to_file_rank();
 
     // 駒種類
     for kms in KMS_ARRAY.iter() {
