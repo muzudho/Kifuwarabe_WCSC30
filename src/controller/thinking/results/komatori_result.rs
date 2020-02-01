@@ -71,15 +71,15 @@ impl KomatoriResult {
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_ms_to_hash(hash, self.ms_target);
         hash = push_ms_to_hash(hash, self.ms_attacker);
-        push_km_to_hash(hash, &self.km_attacker)
+        PieceStruct::from_piece(&self.km_attacker).add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, km_atk) = pop_km_from_hash(hash);
+        let (hash, km_atk) = PieceStruct::from_hash(hash);
         let (hash, ms_atk) = pop_ms_from_hash(hash);
         let (_hash, ms_tgt) = pop_ms_from_hash(hash);
         KomatoriResult {
-            km_attacker: km_atk,
+            km_attacker: km_atk.piece(),
             ms_attacker: ms_atk,
             ms_target: ms_tgt,
         }

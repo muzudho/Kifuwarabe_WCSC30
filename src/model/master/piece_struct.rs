@@ -343,6 +343,14 @@ impl PieceStruct {
             _ => PieceStruct::from_piece(&Owari),
         }
     }
+
+    /// ハッシュ値から作る
+    pub fn from_hash(hash: u64) -> (u64, Self) {
+        // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
+        let ps = PieceStruct::from_serial_piece_number((hash & 0b11111) as usize);
+        (hash >> 5, ps)
+    }
+
     pub fn piece(self) -> Piece {
         self.piece
     }
@@ -381,5 +389,11 @@ impl PieceStruct {
      */
     pub fn equals_piece(self, b: &PieceStruct) -> bool {
         self.serial_piece_number() == b.serial_piece_number()
+    }
+
+    /// ハッシュ値を作る
+    pub fn add_hash(self, hash: u64) -> u64 {
+        // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
+        (hash << 5) + self.serial_piece_number() as u64
     }
 }

@@ -240,22 +240,6 @@ pub fn kaiten180_ms_by_ms_sn(ms: umasu, sn: &Phase) -> umasu {
  * 先後付き駒 *
  **************/
 
-///
-/// ハッシュ値を作る
-///
-pub fn push_km_to_hash(hash: u64, km: &Piece) -> u64 {
-    // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-    (hash << 5) + PieceStruct::from_piece(km).serial_piece_number() as u64
-}
-
-///
-/// ハッシュ値から作る
-///
-pub fn pop_km_from_hash(hash: u64) -> (u64, Piece) {
-    // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-    let km_num = PieceStruct::from_serial_piece_number((hash & 0b11111) as usize).piece();
-    (hash >> 5, km_num)
-}
 /**
  * 駒→長い利きの有無
  */
