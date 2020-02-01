@@ -414,45 +414,6 @@ pub fn km_to_kms(km: &Piece) -> PieceType {
         Piece::Owari => PieceType::Owari,
     }
 }
-/**
- * 先後付き駒　を　持ち駒種類　へ変換。
- * 持ち駒にするので、先後は反転するぜ☆（＾～＾）
- */
-pub fn km_to_mg(km_cap: Piece) -> Piece {
-    use super::super::super::model::master::piece::Piece::*;
-    match km_cap {
-        King1 => Owari,
-        Rook1 => Rook2,
-        Bishop1 => Bishop2,
-        Gold1 => Gold2,
-        Silver1 => Silver2,
-        Knight1 => Knight2,
-        Lance1 => Lance2,
-        Pawn1 => Pawn2,
-        PromotedRook1 => Rook2,
-        PromotedBishop1 => Bishop2,
-        PromotedSilver1 => Silver2,
-        PromotedKnight1 => Knight2,
-        PromotedLance1 => Lance2,
-        PromotedPawn1 => Pawn2,
-        King2 => Owari,
-        Rook2 => Rook1,
-        Bishop2 => Bishop1,
-        Gold2 => Gold1,
-        Silver2 => Silver1,
-        Knight2 => Knight1,
-        Lance2 => Lance1,
-        Pawn2 => Pawn1,
-        PromotedRook2 => Rook1,
-        PromotedBishop2 => Bishop1,
-        PromotedSilver2 => Silver1,
-        PromotedKnight2 => Knight1,
-        PromotedLance2 => Lance1,
-        PromotedPawn2 => Pawn1,
-        Kara => Owari,
-        Owari => Owari,
-    }
-}
 
 /**********
  * 駒種類 *

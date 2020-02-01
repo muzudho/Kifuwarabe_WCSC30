@@ -158,7 +158,7 @@ impl Kyokumen {
         } else {
             // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
             cap = self.get_km_by_ms(ss.dst);
-            let mg = km_to_mg(cap);
+            let mg = PieceStruct::from_piece(&cap).capture();
             self.add_mg(mg, 1);
         }
 
@@ -199,7 +199,7 @@ impl Kyokumen {
             Piece::Kara => {}
             _ => {
                 // 自分の持ち駒を減らす
-                let mg = km_to_mg(*cap);
+                let mg = PieceStruct::from_piece(cap).capture();
                 self.add_mg(mg, -1);
             }
         }
