@@ -169,38 +169,52 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            universe.set_sasite_src(&Square::from_umasu(0));
-            universe.set_sasite_drop(PieceType::K);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_umasu(0));
+            universe.get_search_part_mut().set_move_drop(PieceType::K);
         }
         "B" => {
             *starts += 2;
-            universe.set_sasite_src(&Square::from_umasu(0));
-            universe.set_sasite_drop(PieceType::Z);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_umasu(0));
+            universe.get_search_part_mut().set_move_drop(PieceType::Z);
         }
         "G" => {
             *starts += 2;
-            universe.set_sasite_src(&Square::from_umasu(0));
-            universe.set_sasite_drop(PieceType::I);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_umasu(0));
+            universe.get_search_part_mut().set_move_drop(PieceType::I);
         }
         "S" => {
             *starts += 2;
-            universe.set_sasite_src(&Square::from_umasu(0));
-            universe.set_sasite_drop(PieceType::N);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_umasu(0));
+            universe.get_search_part_mut().set_move_drop(PieceType::N);
         }
         "N" => {
             *starts += 2;
-            universe.set_sasite_src(&Square::from_umasu(0));
-            universe.set_sasite_drop(PieceType::U);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_umasu(0));
+            universe.get_search_part_mut().set_move_drop(PieceType::U);
         }
         "L" => {
             *starts += 2;
-            universe.set_sasite_src(&Square::from_umasu(0));
-            universe.set_sasite_drop(PieceType::S);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_umasu(0));
+            universe.get_search_part_mut().set_move_drop(PieceType::S);
         }
         "P" => {
             *starts += 2;
-            universe.set_sasite_src(&Square::from_umasu(0));
-            universe.set_sasite_drop(PieceType::H);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_umasu(0));
+            universe.get_search_part_mut().set_move_drop(PieceType::H);
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
@@ -292,8 +306,12 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
                 }
             }
 
-            universe.set_sasite_src(&Square::from_file_rank(suji, dan));
-            universe.set_sasite_drop(PieceType::Kara);
+            universe
+                .get_search_part_mut()
+                .set_move_src(&Square::from_file_rank(suji, dan));
+            universe
+                .get_search_part_mut()
+                .set_move_drop(PieceType::Kara);
         }
     }
 
@@ -388,13 +406,15 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
         }
     }
 
-    universe.set_sasite_dst(&Square::from_file_rank(suji, dan));
+    universe
+        .get_search_part_mut()
+        .set_move_dst(&Square::from_file_rank(suji, dan));
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..(*starts + 1)] == "+" {
-        universe.set_sasite_pro(true);
+        universe.get_search_part_mut().set_move_pro(true);
         *starts += 1;
     } else {
-        universe.set_sasite_pro(false);
+        universe.get_search_part_mut().set_move_pro(false);
     }
 
     // 続きにスペース「 」が１つあれば読み飛ばす
@@ -879,7 +899,7 @@ pub fn read_position(line: &String, universe: &mut Universe) {
         universe.get_search_part_mut().add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let ply = universe.get_search_part().get_ply();
-        universe.do_ss(&universe.kifu[ply as usize].clone());
+        universe.do_ss(&universe.get_search_part().get_moves_history()[ply as usize].clone());
 
         // 現局面表示
         //let s1 = &universe.kaku_ky( &KyNums::Current );

@@ -178,7 +178,7 @@ fn main() {
                 universe.get_search_part_mut().add_ply(-1);
                 // 入っている指し手の通り指すぜ☆（＾～＾）
                 let ply = universe.get_search_part().get_ply();
-                let ss = universe.kifu[ply as usize].clone();
+                let ss = universe.get_search_part().get_moves_history()[ply as usize].clone();
                 universe.do_ss(&ss);
             }
         } else if 2 < len && &line[starts..3] == "pos0" {

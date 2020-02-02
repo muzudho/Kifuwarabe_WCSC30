@@ -23,7 +23,6 @@ use super::super::model::master::piece_struct::PieceStruct;
 use super::super::model::master::piece_struct_master::PieceStructMaster;
 use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
-use super::super::model::master::ply::*;
 use super::super::model::master::square::*;
 use super::application::application_part::*;
 use super::search::search_part::*;
@@ -94,8 +93,6 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    /// 棋譜
-    pub kifu: [Sasite; TEME_LN],
     /// 利きの数（先後別）
     pub kiki_su_by_sn: [NumberBoard; SN_LN],
     /// 利きの数（先後付き駒別）
@@ -115,266 +112,6 @@ impl Universe {
         Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
-            kifu: [
-                // 1行16要素で並べるぜ☆（＾～＾）
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(),
-                Sasite::new(), //257要素
-            ],
             // 利き数（先後別）
             kiki_su_by_sn: [NumberBoard::new(), NumberBoard::new(), NumberBoard::new()],
             // 利き数（駒別なので３０個ある）
@@ -543,31 +280,6 @@ impl Universe {
         }
     }
 
-    /* ******
-     * 棋譜 *
-     ********/
-
-    /**
-     * 棋譜の作成
-     */
-    pub fn set_sasite_src(&mut self, src: &Square) {
-        self.kifu[self.get_search_part().get_ply() as usize].src = src.clone()
-    }
-    pub fn set_sasite_dst(&mut self, dst: &Square) {
-        self.kifu[self.get_search_part().get_ply() as usize].dst = dst.clone()
-    }
-    pub fn set_sasite_pro(&mut self, pro: bool) {
-        self.kifu[self.get_search_part().get_ply() as usize].pro = pro
-    }
-    pub fn set_sasite_drop(&mut self, kms: PieceType) {
-        self.kifu[self.get_search_part().get_ply() as usize].drop = kms
-    }
-    pub fn set_cap(&mut self, ply1: usize, km: Piece) {
-        self.search_part.captured_piece_history[ply1] = km
-    }
-    pub fn get_sasite(&self) -> &Sasite {
-        &self.kifu[self.get_search_part().get_ply() as usize]
-    }
     /**
      * 使い方
      * let s = universe.kaku_kifu();
@@ -576,7 +288,7 @@ impl Universe {
     pub fn kaku_kifu(&self) -> String {
         let mut s = String::new();
         for ply in 0..self.get_search_part().get_ply() {
-            let ss = &self.kifu[ply as usize];
+            let ss = &self.search_part.moves_history[ply as usize];
             s.push_str(&format!("[{}] {}", ply, ss));
         }
         s
@@ -1059,9 +771,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn do_ss(&mut self, ss: &Sasite) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
-        self.kifu[ply as usize] = (*ss).clone();
+        self.search_part.moves_history[ply as usize] = (*ss).clone();
         let cap = self.search_part.do_move(ss);
-        self.set_cap(ply as usize, cap.clone());
+        self.search_part.set_cap(ply as usize, cap.clone());
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash();
@@ -1076,7 +788,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
             let sn = self.search_part.get_phase(&Person::Ji);
-            let ss = &self.get_sasite().clone();
+            let ss = &self.search_part.get_move().clone();
             self.search_part.undo_move(&sn, ss);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
