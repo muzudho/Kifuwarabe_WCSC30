@@ -8,7 +8,7 @@ use super::super::super::model::universe::*;
 
 pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe) -> bool {
     match_sn(
-        &universe.ky.get_piece_struct_by_sq(&sq).phase(),
+        &universe.get_position1().get_piece_struct_by_sq(&sq).phase(),
         &universe.get_teban(&Person::Ji),
     )
 }

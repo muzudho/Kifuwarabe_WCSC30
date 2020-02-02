@@ -12,7 +12,10 @@ use super::super::super::super::model::universe::*;
 /// TODO 利きを再計算したい
 pub fn is_jisatusyu(universe: &Universe, ss: &Sasite) -> bool {
     // 移動元升、動かした駒の先後、駒種類、
-    let km_src = universe.ky.get_piece_struct_by_sq(&ss.src).piece();
+    let km_src = universe
+        .get_position1()
+        .get_piece_struct_by_sq(&ss.src)
+        .piece();
     let ps_src = PieceStruct::from_piece(&km_src);
     let (sn_teban, _kms) = ps_src.phase_piece_type();
     // 相手番の先後

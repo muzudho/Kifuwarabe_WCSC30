@@ -102,10 +102,10 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_east in 1..9 {
                         if dx + i_east < SUJI_10 {
                             let sq_src = Square::from_file_rank(dx + i_east, dy);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -114,7 +114,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 西東
                     if dx + 1 < SUJI_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -127,9 +127,9 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_ne in 1..9 {
                         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -138,7 +138,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 北東
                     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -148,7 +148,7 @@ pub fn insert_narazu_src_by_sq_km(
             NNE => {
                 if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-                    if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                    if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                         result.insert(sq_src);
                     }
                 }
@@ -160,9 +160,9 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_south in 1..9 {
                         if dy + i_south < DAN_10 {
                             let sq_src = Square::from_file_rank(dx, dy + i_south);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -171,7 +171,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 北
                     if dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx, dy + 1);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -181,7 +181,7 @@ pub fn insert_narazu_src_by_sq_km(
             NNW => {
                 if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-                    if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                    if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                         result.insert(sq_src);
                     }
                 }
@@ -193,9 +193,9 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_se in 1..9 {
                         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -204,7 +204,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 北西
                     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -218,10 +218,10 @@ pub fn insert_narazu_src_by_sq_km(
                         if SUJI_0 < dx - i_east {
                             // 進みたいマスから戻ったマス
                             let sq_src = Square::from_file_rank(dx - i_east, dy);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 // 指定の駒があれば、その升は移動元。続行
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 // なんか他の駒があれば終わり
                                 break;
                             }
@@ -231,7 +231,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 西
                     if SUJI_0 < dx - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -244,9 +244,9 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_ne in 1..9 {
                         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -255,7 +255,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 南西
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -265,7 +265,7 @@ pub fn insert_narazu_src_by_sq_km(
             SSW => {
                 if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-                    if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                    if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                         result.insert(sq_src);
                     }
                 }
@@ -277,9 +277,9 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_north in 1..9 {
                         if DAN_0 < dy - i_north {
                             let sq_src = Square::from_file_rank(dx, dy - i_north);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -288,7 +288,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 南
                     if DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx, dy - 1);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -298,7 +298,7 @@ pub fn insert_narazu_src_by_sq_km(
             SSE => {
                 if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-                    if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                    if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                         result.insert(sq_src);
                     }
                 }
@@ -310,9 +310,9 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_nw in 1..9 {
                         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-                            if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                            if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -321,7 +321,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 南東
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-                        if universe.ky.has_sq_km(&sq_src, ps_dst.piece()) {
+                        if universe.get_position1().has_sq_km(&sq_src, ps_dst.piece()) {
                             result.insert(sq_src);
                         }
                     }
@@ -410,9 +410,9 @@ pub fn insert_narumae_src_by_sq_km(
                     for i_east in 1..9 {
                         if dx + i_east < SUJI_10 {
                             let sq_src = Square::from_file_rank(dx + i_east, dy);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -421,7 +421,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 西東
                     if dx + 1 < SUJI_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -434,9 +434,9 @@ pub fn insert_narumae_src_by_sq_km(
                     for i_ne in 1..9 {
                         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -445,7 +445,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 北東
                     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -455,7 +455,7 @@ pub fn insert_narumae_src_by_sq_km(
             NNE => {
                 if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-                    if universe.ky.has_sq_km(&sq_src, &km_src) {
+                    if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                         result.insert(sq_src);
                     }
                 }
@@ -467,9 +467,9 @@ pub fn insert_narumae_src_by_sq_km(
                     for i_south in 1..9 {
                         if dy + i_south < DAN_10 {
                             let sq_src = Square::from_file_rank(dx, dy + i_south);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -478,7 +478,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 北
                     if dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx, dy + 1);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -488,7 +488,7 @@ pub fn insert_narumae_src_by_sq_km(
             NNW => {
                 if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-                    if universe.ky.has_sq_km(&sq_src, &km_src) {
+                    if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                         result.insert(sq_src);
                     }
                 }
@@ -500,9 +500,9 @@ pub fn insert_narumae_src_by_sq_km(
                     for i_se in 1..9 {
                         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -511,7 +511,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 北西
                     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -525,10 +525,10 @@ pub fn insert_narumae_src_by_sq_km(
                         if SUJI_0 < dx - i_east {
                             // 進みたいマスから戻ったマス
                             let sq_src = Square::from_file_rank(dx - i_east, dy);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 // 指定の駒があれば、その升は移動元。続行
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 // なんか他の駒があれば終わり
                                 break;
                             }
@@ -538,7 +538,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 西
                     if SUJI_0 < dx - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -551,9 +551,9 @@ pub fn insert_narumae_src_by_sq_km(
                     for i_ne in 1..9 {
                         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -562,7 +562,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 南西
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -572,7 +572,7 @@ pub fn insert_narumae_src_by_sq_km(
             SSW => {
                 if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-                    if universe.ky.has_sq_km(&sq_src, &km_src) {
+                    if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                         result.insert(sq_src);
                     }
                 }
@@ -584,9 +584,9 @@ pub fn insert_narumae_src_by_sq_km(
                     for i_north in 1..9 {
                         if DAN_0 < dy - i_north {
                             let sq_src = Square::from_file_rank(dx, dy - i_north);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -595,7 +595,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 南
                     if DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx, dy - 1);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -605,7 +605,7 @@ pub fn insert_narumae_src_by_sq_km(
             SSE => {
                 if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-                    if universe.ky.has_sq_km(&sq_src, &km_src) {
+                    if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                         result.insert(sq_src);
                     }
                 }
@@ -617,9 +617,9 @@ pub fn insert_narumae_src_by_sq_km(
                     for i_nw in 1..9 {
                         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-                            if universe.ky.has_sq_km(&sq_src, &km_src) {
+                            if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                                 result.insert(sq_src);
-                            } else if universe.ky.exists_km(&sq_src) {
+                            } else if universe.get_position1().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -628,7 +628,7 @@ pub fn insert_narumae_src_by_sq_km(
                     // 南東
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-                        if universe.ky.has_sq_km(&sq_src, &km_src) {
+                        if universe.get_position1().has_sq_km(&sq_src, &km_src) {
                             result.insert(sq_src);
                         }
                     }
@@ -663,7 +663,10 @@ pub fn insert_da_kms_by_sq_km(
     // +------------------------+
     // | 打ちたいところは空升か |
     // +------------------------+
-    let km_banjo = universe.ky.get_piece_struct_by_sq(sq_dst).piece();
+    let km_banjo = universe
+        .get_position1()
+        .get_piece_struct_by_sq(sq_dst)
+        .piece();
     match km_banjo {
         Piece::Kara => {}
         _ => {
@@ -675,7 +678,7 @@ pub fn insert_da_kms_by_sq_km(
     // +------------------+
     // | 持っている駒か？ |
     // +------------------+
-    if universe.ky.get_mg(&km_dst) < 1 {
+    if universe.get_position1().get_mg(&km_dst) < 1 {
         return; // 持っていない駒は打てない
     }
 
@@ -713,7 +716,11 @@ pub fn insert_da_kms_by_sq_km(
         }
         Pawn1 => {
             // ▼ひよこ　は２歩できない
-            if dy < DAN_2 || universe.ky.exists_fu_by_sn_suji(&ps_dst.phase(), suji) {
+            if dy < DAN_2
+                || universe
+                    .get_position1()
+                    .exists_fu_by_sn_suji(&ps_dst.phase(), suji)
+            {
                 return;
             }
         }
@@ -731,7 +738,11 @@ pub fn insert_da_kms_by_sq_km(
         }
         Pawn2 => {
             // △ひよこ　は２歩できない
-            if DAN_8 < dy || universe.ky.exists_fu_by_sn_suji(&ps_dst.phase(), suji) {
+            if DAN_8 < dy
+                || universe
+                    .get_position1()
+                    .exists_fu_by_sn_suji(&ps_dst.phase(), suji)
+            {
                 return;
             }
         }
@@ -750,7 +761,7 @@ pub fn insert_da_kms_by_sq_km(
  * km_src   : 移動元の駒
  * ms_src   : 移動元の升
  * to_nari  : 成りの手を生成するなら真
- * ky       : 現局面
+ * universe.get_position1()       : 現局面
  */
 pub fn insert_dst_by_sq_km(
     sq_src: &Square,
@@ -796,7 +807,7 @@ pub fn insert_dst_by_sq_km(
                     for i_east in 1..9 {
                         if dx + i_east < SUJI_10 {
                             let sq_src = Square::from_file_rank(dx + i_east, dy);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -809,7 +820,7 @@ pub fn insert_dst_by_sq_km(
                     // 西東
                     if dx + 1 < SUJI_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -823,7 +834,7 @@ pub fn insert_dst_by_sq_km(
                     for i_ne in 1..9 {
                         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -836,7 +847,7 @@ pub fn insert_dst_by_sq_km(
                     // 北東
                     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -847,7 +858,7 @@ pub fn insert_dst_by_sq_km(
             NNE => {
                 if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-                    let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                    let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -860,7 +871,7 @@ pub fn insert_dst_by_sq_km(
                     for i_south in 1..9 {
                         if dy + i_south < DAN_10 {
                             let sq_src = Square::from_file_rank(dx, dy + i_south);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -873,7 +884,7 @@ pub fn insert_dst_by_sq_km(
                     // 北
                     if dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx, dy + 1);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -884,7 +895,7 @@ pub fn insert_dst_by_sq_km(
             NNW => {
                 if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-                    let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                    let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -897,7 +908,7 @@ pub fn insert_dst_by_sq_km(
                     for i_se in 1..9 {
                         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -910,7 +921,7 @@ pub fn insert_dst_by_sq_km(
                     // 北西
                     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -924,7 +935,7 @@ pub fn insert_dst_by_sq_km(
                     for i_east in 1..9 {
                         if SUJI_0 < dx - i_east {
                             let sq_src = Square::from_file_rank(dx - i_east, dy);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -937,7 +948,7 @@ pub fn insert_dst_by_sq_km(
                     // 西
                     if SUJI_0 < dx - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -951,7 +962,7 @@ pub fn insert_dst_by_sq_km(
                     for i_ne in 1..9 {
                         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -964,7 +975,7 @@ pub fn insert_dst_by_sq_km(
                     // 南西
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -975,7 +986,7 @@ pub fn insert_dst_by_sq_km(
             SSW => {
                 if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-                    let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                    let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -988,7 +999,7 @@ pub fn insert_dst_by_sq_km(
                     for i_north in 1..9 {
                         if DAN_0 < dy - i_north {
                             let sq_src = Square::from_file_rank(dx, dy - i_north);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1001,7 +1012,7 @@ pub fn insert_dst_by_sq_km(
                     // 南
                     if DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx, dy - 1);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1012,7 +1023,7 @@ pub fn insert_dst_by_sq_km(
             SSE => {
                 if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-                    let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                    let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -1025,7 +1036,7 @@ pub fn insert_dst_by_sq_km(
                     for i_nw in 1..9 {
                         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1038,7 +1049,7 @@ pub fn insert_dst_by_sq_km(
                     // 南東
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1283,9 +1294,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_east in 1..9 {
                             if dx + i_east < SUJI_10 {
                                 let sq_src = Square::from_file_rank(dx + i_east, dy);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1298,8 +1311,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 東
                         if dx + 1 < SUJI_10 {
                             let sq_src = Square::from_file_rank(dx + 1, dy);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1313,9 +1329,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_ne in 1..9 {
                             if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                                 let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1328,8 +1346,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 北東
                         if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                             let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1340,8 +1361,11 @@ pub fn insert_narazu_src_by_sn_sq(
                 NNE => {
                     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1354,9 +1378,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_south in 1..9 {
                             if dy + i_south < DAN_10 {
                                 let sq_src = Square::from_file_rank(dx, dy + i_south);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1369,8 +1395,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 北
                         if dy + 1 < DAN_10 {
                             let sq_src = Square::from_file_rank(dx, dy + 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1384,8 +1413,11 @@ pub fn insert_narazu_src_by_sn_sq(
                 NNW => {
                     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1398,9 +1430,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_se in 1..9 {
                             if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                                 let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1413,8 +1447,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 北西
                         if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                             let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1428,9 +1465,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_east in 1..9 {
                             if SUJI_0 < dx - i_east {
                                 let sq_src = Square::from_file_rank(dx - i_east, dy);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1443,8 +1482,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 西
                         if SUJI_0 < dx - 1 {
                             let sq_src = Square::from_file_rank(dx - 1, dy);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1458,9 +1500,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_ne in 1..9 {
                             if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                                 let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1473,8 +1517,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 南西
                         if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                             let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1485,8 +1532,11 @@ pub fn insert_narazu_src_by_sn_sq(
                 SSW => {
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1499,9 +1549,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_north in 1..9 {
                             if DAN_0 < dy - i_north {
                                 let sq_src = Square::from_file_rank(dx, dy - i_north);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1514,8 +1566,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 南
                         if DAN_0 < dy - 1 {
                             let sq_src = Square::from_file_rank(dx, dy - 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1529,8 +1584,11 @@ pub fn insert_narazu_src_by_sn_sq(
                 SSE => {
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1543,9 +1601,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         for i_nw in 1..9 {
                             if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                                 let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1558,8 +1618,11 @@ pub fn insert_narazu_src_by_sn_sq(
                         // 南東
                         if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                             let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1640,9 +1703,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_east in 1..9 {
                             if dx + i_east < SUJI_10 {
                                 let sq_src = Square::from_file_rank(dx + i_east, dy);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1655,8 +1720,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 東
                         if dx + 1 < SUJI_10 {
                             let sq_src = Square::from_file_rank(dx + 1, dy);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1670,9 +1738,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_ne in 1..9 {
                             if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                                 let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1685,8 +1755,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 北東
                         if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                             let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1697,8 +1770,11 @@ pub fn insert_narumae_src_by_sn_sq(
                 NNE => {
                     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1711,9 +1787,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_south in 1..9 {
                             if dy + i_south < DAN_10 {
                                 let sq_src = Square::from_file_rank(dx, dy + i_south);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1726,8 +1804,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 北
                         if dy + 1 < DAN_10 {
                             let sq_src = Square::from_file_rank(dx, dy + 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1741,8 +1822,11 @@ pub fn insert_narumae_src_by_sn_sq(
                 NNW => {
                     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1755,9 +1839,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_se in 1..9 {
                             if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                                 let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1770,8 +1856,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 北西
                         if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                             let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1785,9 +1874,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_east in 1..9 {
                             if SUJI_0 < dx - i_east {
                                 let sq_src = Square::from_file_rank(dx - i_east, dy);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1800,8 +1891,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 西
                         if SUJI_0 < dx - 1 {
                             let sq_src = Square::from_file_rank(dx - 1, dy);
-                            let sn_ms = universe.ky.get_sn_by_sq(&&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1815,9 +1909,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_ne in 1..9 {
                             if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                                 let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1830,8 +1926,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 南西
                         if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                             let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }
@@ -1842,8 +1941,11 @@ pub fn insert_narumae_src_by_sn_sq(
                 SSW => {
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1856,9 +1958,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_north in 1..9 {
                             if DAN_0 < dy - i_north {
                                 let sq_src = Square::from_file_rank(dx, dy - i_north);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1871,8 +1975,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 南
                         if DAN_0 < dy - 1 {
                             let sq_src = Square::from_file_rank(dx, dy - 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1886,8 +1993,11 @@ pub fn insert_narumae_src_by_sn_sq(
                 SSE => {
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-                        let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                        let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                        let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                        let kms_ms = &universe
+                            .get_position1()
+                            .get_piece_struct_by_sq(&sq_src)
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             result.insert(sq_src);
                         }
@@ -1900,9 +2010,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         for i_nw in 1..9 {
                             if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                                 let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-                                let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                                let kms_ms =
-                                    &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                                let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                                let kms_ms = &universe
+                                    .get_position1()
+                                    .get_piece_struct_by_sq(&sq_src)
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     result.insert(sq_src);
                                 }
@@ -1915,8 +2027,11 @@ pub fn insert_narumae_src_by_sn_sq(
                         // 南東
                         if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                             let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-                            let sn_ms = universe.ky.get_sn_by_sq(&sq_src);
-                            let kms_ms = &universe.ky.get_piece_struct_by_sq(&sq_src).piece_type();
+                            let sn_ms = universe.get_position1().get_sn_by_sq(&sq_src);
+                            let kms_ms = &universe
+                                .get_position1()
+                                .get_piece_struct_by_sq(&sq_src)
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 result.insert(sq_src);
                             }

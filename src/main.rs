@@ -181,7 +181,7 @@ fn main() {
                 let ss = universe.kifu[ply as usize].clone();
                 universe.do_ss(&ss);
             }
-        } else if 2 < len && &line[starts..3] == "ky0" {
+        } else if 2 < len && &line[starts..3] == "pos0" {
             // 初期局面表示
             let s = universe.kaku_ky(&KyNums::Start);
             g_writeln(&s);
@@ -195,7 +195,7 @@ fn main() {
             let bestmove = think(&mut universe);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove));
-        } else if 1 < len && &line[starts..2] == "ky" {
+        } else if 1 < len && &line[starts..2] == "pos" {
             // 現局面表示
             let s = &universe.kaku_ky(&KyNums::Current);
             g_writeln(&s);

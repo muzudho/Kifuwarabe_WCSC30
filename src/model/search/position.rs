@@ -19,7 +19,7 @@ use super::super::super::model::universe::*;
 
 /// 局面
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
-pub struct Kyokumen {
+pub struct Position {
     /**
      * 10の位を筋、1の位を段とする。
      * 0筋、0段は未使用
@@ -36,10 +36,10 @@ pub struct Kyokumen {
      */
     sq_r: [Square; SN_LN],
 }
-impl Kyokumen {
-    pub fn new() -> Kyokumen {
+impl Position {
+    pub fn new() -> Self {
         use super::super::super::model::master::piece::Piece::Kara;
-        Kyokumen {
+        Position {
             // 盤上
             board: [
                 PieceStruct::from_piece(&Kara),

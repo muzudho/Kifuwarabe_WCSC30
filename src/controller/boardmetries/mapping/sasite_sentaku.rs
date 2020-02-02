@@ -106,7 +106,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, univer
 
     // 自玉の位置
     let sq_r = universe
-        .ky
+        .get_position1()
         .get_sq_r(sn_to_num(&universe.get_teban(&Person::Ji)))
         .clone();
 

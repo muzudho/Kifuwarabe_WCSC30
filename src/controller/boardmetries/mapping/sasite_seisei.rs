@@ -31,7 +31,10 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
     for dan_src in 1..10 {
         for suji_src in 1..10 {
             let sq_src = Square::from_file_rank(suji_src, dan_src);
-            let km_src = universe.ky.get_piece_struct_by_sq(&sq_src).piece();
+            let km_src = universe
+                .get_position1()
+                .get_piece_struct_by_sq(&sq_src)
+                .piece();
 
             if match_sn(
                 &PieceStruct::from_piece(&km_src).phase(),
@@ -93,7 +96,10 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
     for dan_dst in 1..10 {
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
-            let km_dst = universe.ky.get_piece_struct_by_sq(&sq_dst).piece();
+            let km_dst = universe
+                .get_position1()
+                .get_piece_struct_by_sq(&sq_dst)
+                .piece();
             match km_dst {
                 Piece::Kara => {
                     // 駒が無いところに打つ
@@ -107,7 +113,7 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
                                 kms_motigoma,
                             );
                         let km_motigoma = ps_motigoma.piece();
-                        if 0 < universe.ky.get_mg(&km_motigoma) {
+                        if 0 < universe.get_position1().get_mg(&km_motigoma) {
                             // 駒を持っていれば
                             insert_da_kms_by_sq_km(
                                 &sq_dst,
@@ -155,7 +161,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     let (sn, _kms_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(&universe.ky.get_sn_by_sq(&sq_dst), &sn) {
+    if match_sn(&universe.get_position1().get_sn_by_sq(&sq_dst), &sn) {
         return;
     }
 
@@ -215,7 +221,7 @@ pub fn insert_ss_by_ms_km_on_da(
     let (sn, _kms_dst) = piece_struct_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(&universe.ky.get_sn_by_sq(&sq_dst), &sn) {
+    if match_sn(&universe.get_position1().get_sn_by_sq(&sq_dst), &sn) {
         return;
     }
 
