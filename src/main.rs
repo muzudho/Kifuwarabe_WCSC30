@@ -63,9 +63,9 @@ fn main() {
 
         if len == 0 {
             g_writeln("len==0");
-            if !&universe.dialogue_mode {
+            if !&universe.get_dialogue_part().dialogue_mode {
                 // 空打ち１回目なら、対話モードへ☆（＾～＾）
-                universe.dialogue_mode = true;
+                universe.get_dialogue_part_mut().dialogue_mode = true;
                 // タイトル表示
                 // １画面は２５行だが、最後の２行は開けておかないと、
                 // カーソルが２行分場所を取るんだぜ☆（＾～＾）
