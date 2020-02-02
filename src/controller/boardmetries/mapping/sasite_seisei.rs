@@ -189,7 +189,12 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
+    insert_narazu_src_by_sq_km(
+        &sq_dst,
+        &ps_dst,
+        &universe.get_search_part(),
+        &mut mv_src_hashset,
+    );
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 

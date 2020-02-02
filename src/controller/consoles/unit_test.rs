@@ -47,7 +47,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+        insert_narazu_src_by_sq_km(
+            &sq_dst,
+            &ps,
+            &universe.get_search_part(),
+            &mut mv_src_hashset,
+        );
         insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
         insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
         hyoji_sq_hashset(&mv_src_hashset);
@@ -70,7 +75,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+        insert_narazu_src_by_sq_km(
+            &sq_dst,
+            &ps,
+            &universe.get_search_part(),
+            &mut mv_src_hashset,
+        );
         insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
         //insert_da_kms_by_sq_km      ( ms_dst, &km, &universe, &mut da_kms_hashset );
         for sq_src in mv_src_hashset {
@@ -102,7 +112,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narazu_src_by_sq_km(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                &mut mv_src_hashset,
+            );
             insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
             insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);
@@ -125,7 +140,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narazu_src_by_sq_km(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                &mut mv_src_hashset,
+            );
             insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
             insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);
@@ -148,7 +168,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narazu_src_by_sq_km(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                &mut mv_src_hashset,
+            );
             insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
             insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);
@@ -171,7 +196,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
+            insert_narazu_src_by_sq_km(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                &mut mv_src_hashset,
+            );
             insert_narumae_src_by_sq_km(&sq_dst, &ps, &universe, &mut mv_src_hashset);
             insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
             hyoji_sq_hashset(&mv_src_hashset);

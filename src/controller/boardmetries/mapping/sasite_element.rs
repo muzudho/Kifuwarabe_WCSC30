@@ -12,6 +12,7 @@ use super::super::super::super::model::master::piece_movement::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::search::search_part::*;
 use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
@@ -31,7 +32,7 @@ use std::collections::HashSet;
 pub fn insert_narazu_src_by_sq_km(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
-    universe: &Universe,
+    search_part: &SearchPart,
     result: &mut HashSet<Square>,
 ) {
     assert_banjo_sq(&sq_dst, "ｉnsert_narazu_src_by_ms_km");
@@ -102,18 +103,13 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_east in 1..9 {
                         if dx + i_east < SUJI_10 {
                             let sq_src = Square::from_file_rank(dx + i_east, dy);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -122,8 +118,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 西東
                     if dx + 1 < SUJI_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
@@ -139,17 +134,12 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_ne in 1..9 {
                         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
                             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -158,8 +148,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 北東
                     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
@@ -172,8 +161,7 @@ pub fn insert_narazu_src_by_sq_km(
             NNE => {
                 if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-                    if universe
-                        .get_search_part()
+                    if search_part
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
@@ -188,17 +176,12 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_south in 1..9 {
                         if dy + i_south < DAN_10 {
                             let sq_src = Square::from_file_rank(dx, dy + i_south);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -207,8 +190,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 北
                     if dy + 1 < DAN_10 {
                         let sq_src = Square::from_file_rank(dx, dy + 1);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
@@ -221,8 +203,7 @@ pub fn insert_narazu_src_by_sq_km(
             NNW => {
                 if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
                     let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-                    if universe
-                        .get_search_part()
+                    if search_part
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
@@ -237,17 +218,12 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_se in 1..9 {
                         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
                             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -256,8 +232,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 北西
                     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
@@ -274,18 +249,13 @@ pub fn insert_narazu_src_by_sq_km(
                         if SUJI_0 < dx - i_east {
                             // 進みたいマスから戻ったマス
                             let sq_src = Square::from_file_rank(dx - i_east, dy);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 // 指定の駒があれば、その升は移動元。続行
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 // なんか他の駒があれば終わり
                                 break;
                             }
@@ -295,8 +265,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 西
                     if SUJI_0 < dx - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
@@ -312,17 +281,12 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_ne in 1..9 {
                         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
                             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -331,8 +295,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 南西
                     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
@@ -345,8 +308,7 @@ pub fn insert_narazu_src_by_sq_km(
             SSW => {
                 if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-                    if universe
-                        .get_search_part()
+                    if search_part
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
@@ -361,17 +323,12 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_north in 1..9 {
                         if DAN_0 < dy - i_north {
                             let sq_src = Square::from_file_rank(dx, dy - i_north);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -380,8 +337,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 南
                     if DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx, dy - 1);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
@@ -394,8 +350,7 @@ pub fn insert_narazu_src_by_sq_km(
             SSE => {
                 if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
                     let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-                    if universe
-                        .get_search_part()
+                    if search_part
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
@@ -410,17 +365,12 @@ pub fn insert_narazu_src_by_sq_km(
                     for i_nw in 1..9 {
                         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
                             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-                            if universe
-                                .get_search_part()
+                            if search_part
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 result.insert(sq_src);
-                            } else if universe
-                                .get_search_part()
-                                .get_current_position()
-                                .exists_km(&sq_src)
-                            {
+                            } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
                         }
@@ -429,8 +379,7 @@ pub fn insert_narazu_src_by_sq_km(
                     // 南東
                     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
                         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-                        if universe
-                            .get_search_part()
+                        if search_part
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {

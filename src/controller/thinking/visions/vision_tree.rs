@@ -59,7 +59,12 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
 
                     mv_src_hashset.clear();
                     //da_kms_hashset.clear();
-                    insert_narazu_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
+                    insert_narazu_src_by_sq_km(
+                        &sq_dst,
+                        &ps_dst,
+                        &universe.get_search_part(),
+                        &mut mv_src_hashset,
+                    );
                     insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
                     // TODO 王手になるところに打ちたい
                     //insert_da_kms_by_sq_km      ( &ms_dst, &km_dst, &universe, &mut da_kms_hashset );
