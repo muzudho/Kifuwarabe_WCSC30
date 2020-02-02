@@ -31,7 +31,11 @@ pub fn think(mut universe: &mut Universe) -> Sasite {
 
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
     let mut ss_hashset: HashSet<u64> = HashSet::new();
-    insert_potential_move(&universe, &mut ss_hashset);
+    get_potential_movement(
+        &universe.get_application_part(),
+        &universe.get_search_part(),
+        &mut ss_hashset,
+    );
     // g_writeln("テスト ポテンシャルムーブ.");
     // use consoles::visuals::dumps::*;
     // hyoji_ss_hashset( &ss_hashset );

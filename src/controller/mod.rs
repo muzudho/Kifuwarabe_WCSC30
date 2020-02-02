@@ -8,5 +8,6 @@ pub mod common;
 pub mod communication;
 pub mod consoles;
 pub mod geometries;
+pub mod movement_generation;
 pub mod status;
 pub mod thinking;

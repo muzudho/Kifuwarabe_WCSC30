@@ -2,10 +2,11 @@
 //! 現局面を使った指し手生成
 //!
 
-use super::super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
+use super::super::super::super::controller::movement_generation::mg_sub_part::*;
+use super::super::super::super::model::application::application_part::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::Piece;
@@ -13,6 +14,7 @@ use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::search::search_part::*;
 use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 
@@ -24,22 +26,25 @@ use std::collections::HashSet;
  *
  * 王手回避漏れや、千日手などのチェックは行っていない
  */
-pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>) {
+pub fn get_potential_movement(
+    application_part: &ApplicationPart,
+    search_part: &SearchPart,
+    ss_hashset: &mut HashSet<u64>,
+) {
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
     for dan_src in 1..10 {
         for suji_src in 1..10 {
             let sq_src = Square::from_file_rank(suji_src, dan_src);
-            let km_src = universe
-                .get_search_part()
+            let km_src = search_part
                 .get_current_position()
                 .get_piece_struct_by_sq(&sq_src)
                 .piece();
 
             if match_sn(
                 &PieceStruct::from_piece(&km_src).phase(),
-                &universe.get_search_part().get_phase(&Person::Ji),
+                &search_part.get_phase(&Person::Ji),
             ) {
                 // 手番の駒
 
@@ -48,7 +53,7 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
                     &sq_src,
                     &km_src,
                     false, // 成らず
-                    &universe.get_search_part(),
+                    &search_part,
                     &mut dst_hashset,
                 );
 
@@ -73,7 +78,7 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
                     &sq_src,
                     &km_src,
                     true, // 成り
-                    &universe.get_search_part(),
+                    &search_part,
                     &mut dst_hashset,
                 );
                 for sq_dst in &dst_hashset {
@@ -97,8 +102,7 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
     for dan_dst in 1..10 {
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
-            let km_dst = universe
-                .get_search_part()
+            let km_dst = search_part
                 .get_current_position()
                 .get_piece_struct_by_sq(&sq_dst)
                 .piece();
@@ -108,24 +112,19 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
 
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
-                        let ps_motigoma = universe
-                            .get_application_part()
+                        let ps_motigoma = application_part
                             .get_piece_struct_master()
                             .get_piece_struct_by_phase_and_piece_type(
-                                &universe.get_search_part().get_phase(&Person::Ji),
+                                &search_part.get_phase(&Person::Ji),
                                 kms_motigoma,
                             );
                         let km_motigoma = ps_motigoma.piece();
-                        if 0 < universe
-                            .get_search_part()
-                            .get_current_position()
-                            .get_mg(&km_motigoma)
-                        {
+                        if 0 < search_part.get_current_position().get_mg(&km_motigoma) {
                             // 駒を持っていれば
                             get_drop_kms_by_sq_km(
                                 &sq_dst,
                                 &km_motigoma,
-                                &universe.get_search_part(),
+                                &search_part,
                                 &mut da_kms_hashset,
                             );
                         }

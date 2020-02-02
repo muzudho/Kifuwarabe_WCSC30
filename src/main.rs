@@ -109,7 +109,11 @@ fn main() {
         } else if 5 < len && &line[starts..6] == "sasite" {
             // FIXME 合法手とは限らない
             let mut ss_potential_hashset = HashSet::new();
-            insert_potential_move(&universe, &mut ss_potential_hashset);
+            get_potential_movement(
+                &universe.get_application_part(),
+                &universe.get_search_part(),
+                &mut ss_potential_hashset,
+            );
             g_writeln("----指し手生成 ここから----");
             hyoji_ss_hashset(&ss_potential_hashset);
             g_writeln("----指し手生成 ここまで----");

@@ -5,10 +5,10 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
+use super::super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::super::controller::thinking::results::komatori_result::*;
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::ply::*;
@@ -146,10 +146,11 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, univer
             &universe.get_search_part(),
             &mut attackers,
         );
-        insert_narumae_src_by_sn_sq(
+        get_before_promotion_src_by_sn_sq(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
-            &universe,
+            &universe.get_application_part(),
+            &universe.get_search_part(),
             &mut attackers,
         );
 

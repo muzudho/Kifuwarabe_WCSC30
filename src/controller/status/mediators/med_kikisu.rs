@@ -1,9 +1,9 @@
 //!
 //! 利き数
 //!
-use super::super::super::super::controller::boardmetries::mapping::sasite_element::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::consoles::asserts::*;
+use super::super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
