@@ -18,7 +18,6 @@ use super::super::model::master::piece::*;
 use super::super::model::master::piece_direction::PieceDirection;
 use super::super::model::master::piece_movement::*;
 use super::super::model::master::piece_struct::PieceStruct;
-use super::super::model::master::piece_struct_master::PieceStructMaster;
 use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::square::*;
@@ -91,8 +90,6 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    /// 駒構造体・マスター
-    piece_struct_master: PieceStructMaster,
     /// アプリケーション部
     application_part: ApplicationPart,
     /// 探索部
@@ -104,7 +101,6 @@ impl Universe {
         Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
-            piece_struct_master: PieceStructMaster::new(),
             application_part: ApplicationPart::new(),
             search_part: SearchPart::new(),
         }
@@ -817,10 +813,6 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         }
 
         count
-    }
-
-    pub fn get_piece_struct_master(&self) -> &PieceStructMaster {
-        &self.piece_struct_master
     }
 
     /// 相手の　玉　の位置を覚えます。

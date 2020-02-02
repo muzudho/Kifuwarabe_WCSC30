@@ -472,6 +472,7 @@ pub fn insert_narumae_src_by_sq_km(
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
     let kms_src = PieceStruct::from_piece(ps_dst.demote()).piece_type();
     let km_src = universe
+        .get_application_part()
         .get_piece_struct_master()
         .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), &kms_src)
         .piece()
@@ -1524,6 +1525,7 @@ pub fn insert_narazu_src_by_sn_sq(
     for kms in KMS_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
         let km = universe
+            .get_application_part()
             .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
             .piece()
@@ -2023,6 +2025,7 @@ pub fn insert_narumae_src_by_sn_sq(
     // 駒種類
     for kms in KMS_ARRAY.iter() {
         let km_src = universe
+            .get_application_part()
             .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
             .piece()
