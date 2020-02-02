@@ -93,8 +93,6 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    /// 利きの数（先後別）
-    pub kiki_su_by_sn: [NumberBoard; SN_LN],
     /// 利きの数（先後付き駒別）
     pub kiki_su_by_km: [NumberBoard; KM_LN],
     /// ビジョン・ツリー
@@ -112,8 +110,6 @@ impl Universe {
         Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
-            // 利き数（先後別）
-            kiki_su_by_sn: [NumberBoard::new(), NumberBoard::new(), NumberBoard::new()],
             // 利き数（駒別なので３０個ある）
             kiki_su_by_km: [
                 NumberBoard::new(),
@@ -187,7 +183,7 @@ impl Universe {
      * 初期局面、現局面ともにクリアーします。
      * 手目も 0 に戻します。
      */
-    pub fn clear_ky01(&mut self) {
+    pub fn clear_all_positions(&mut self) {
         self.get_application_part_mut()
             .get_starting_position_mut()
             .clear();
@@ -264,12 +260,12 @@ impl Universe {
             .get_starting_position_mut()
             .set_ps_by_sq(&Square::from_file_rank(suji, dan), &ps);
     }
-    pub fn set_ky0_mg(&mut self, km: Piece, maisu: i8) {
+    pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {
         self.get_application_part_mut()
             .get_starting_position_mut()
             .mg[km as usize] = maisu;
     }
-    pub fn get_jiai_by_km(&self, piece_struct: &PieceStruct) -> Person {
+    pub fn get_person_by_piece_struct(&self, piece_struct: &PieceStruct) -> Person {
         if match_sn(
             &piece_struct.phase(),
             &self.search_part.get_phase(&Person::Ji),
@@ -280,20 +276,8 @@ impl Universe {
         }
     }
 
-    /**
-     * 使い方
-     * let s = universe.kaku_kifu();
-     * g_writeln( &s );
-     */
-    pub fn kaku_kifu(&self) -> String {
-        let mut s = String::new();
-        for ply in 0..self.get_search_part().get_ply() {
-            let ss = &self.search_part.moves_history[ply as usize];
-            s.push_str(&format!("[{}] {}", ply, ss));
-        }
-        s
-    }
-    pub fn kaku_ky_hash(&self) -> String {
+    /// 局面ハッシュ。
+    pub fn get_all_position_hash_text(&self) -> String {
         let mut s = String::new();
         s.push_str(&format!(
             "[ini] {:20}\n",
@@ -640,7 +624,7 @@ impl Universe {
     pub fn kaku_number_board(&self, sn: &Phase, km: &Piece) -> String {
         let nb = match *sn {
             Phase::Owari => &self.kiki_su_by_km[PieceStruct::from_piece(&km).serial_piece_number()],
-            _ => &self.kiki_su_by_sn[sn_to_num(&sn)],
+            _ => &self.search_part.effect_count_by_phase[sn_to_num(&sn)],
         };
 
         // 数盤表示

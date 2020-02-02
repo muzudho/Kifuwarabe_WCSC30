@@ -85,7 +85,7 @@ fn main() {
             universe.hyoji_kmugoki_dir(kms);
             g_writeln(""); //改行
         } else if 9 < len && &line[starts..10] == "usinewgame" {
-            universe.clear_ky01();
+            universe.clear_all_positions();
         } else if line.starts_with("position") {
             // positionコマンドの読取を丸投げ
             controller::communication::usi::read_position(&line, &mut universe);
@@ -136,11 +136,11 @@ fn main() {
             }
         } else if 3 < len && &line[starts..4] == "hash" {
             g_writeln("局面ハッシュ表示");
-            let s = universe.kaku_ky_hash();
+            let s = universe.get_all_position_hash_text();
             g_writeln(&s);
         } else if 3 < len && &line[starts..4] == "kifu" {
             g_writeln("棋譜表示");
-            let s = universe.kaku_kifu();
+            let s = universe.get_search_part().get_moves_history_text();
             g_writeln(&s);
         } else if 3 < len && &line[starts..4] == "quit" {
             // ループを抜けて終了

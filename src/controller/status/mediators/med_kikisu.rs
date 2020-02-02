@@ -21,7 +21,7 @@ pub fn read_kikisu(universe: &mut Universe) {
     }
 
     for sn in SN_ARRAY.iter() {
-        &universe.kiki_su_by_sn[sn_to_num(sn)].clear();
+        &universe.get_search_part_mut().effect_count_by_phase[sn_to_num(sn)].clear();
     }
 
     // カウント
@@ -46,7 +46,7 @@ pub fn read_kikisu(universe: &mut Universe) {
                     .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別
-                universe.kiki_su_by_sn[sn_to_num(ps_dst.phase())]
+                universe.get_search_part_mut().effect_count_by_phase[sn_to_num(ps_dst.phase())]
                     .add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }

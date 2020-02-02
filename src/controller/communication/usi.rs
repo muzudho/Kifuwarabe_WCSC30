@@ -678,7 +678,7 @@ pub fn read_position(line: &String, universe: &mut Universe) {
     let len = line.chars().count();
 
     // 局面をクリアー。手目も 0 に戻します。
-    universe.clear_ky01();
+    universe.clear_all_positions();
 
     if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
         // 'position startpos' を読み飛ばし
@@ -869,7 +869,7 @@ pub fn read_position(line: &String, universe: &mut Universe) {
                         } // 持駒部 正常終了
                     }
 
-                    universe.set_ky0_mg(km, maisu);
+                    universe.set_starting_position_hand_piece(km, maisu);
                 } //if
             } //loop
         } //else

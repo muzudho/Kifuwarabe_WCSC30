@@ -28,7 +28,7 @@ pub fn is_s(universe: &Universe) -> bool {
         .get_search_part()
         .get_current_position()
         .get_piece_struct_by_sq(&sq_south_r);
-    let jiai_km = universe.get_jiai_by_km(&ps);
+    let jiai_km = universe.get_person_by_piece_struct(&ps);
     if !match_jiai(&jiai_km, &Person::Ji) {
         return true;
     }

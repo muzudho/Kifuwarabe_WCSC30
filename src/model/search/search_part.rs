@@ -1,6 +1,7 @@
 //! 探索部
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
+use super::super::super::controller::status::number_board::*;
 use super::super::super::model::master::person::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
@@ -20,6 +21,8 @@ pub struct SearchPart {
     pub captured_piece_history: [Piece; TEME_LN],
     /// 棋譜
     pub moves_history: [Sasite; TEME_LN],
+    /// 利きの数（先後別）
+    pub effect_count_by_phase: [NumberBoard; SN_LN],
 }
 impl SearchPart {
     pub fn new() -> Self {
@@ -560,6 +563,8 @@ impl SearchPart {
                 Sasite::new(),
                 Sasite::new(), //257要素
             ],
+            /// 利き数（先後別）
+            effect_count_by_phase: [NumberBoard::new(), NumberBoard::new(), NumberBoard::new()],
         }
     }
     pub fn add_ply(&mut self, ply1: i16) {
@@ -659,5 +664,15 @@ impl SearchPart {
     }
     pub fn get_move(&self) -> &Sasite {
         &self.moves_history[self.get_ply() as usize]
+    }
+
+    /// 棋譜☆（＾～＾）
+    pub fn get_moves_history_text(&self) -> String {
+        let mut s = String::new();
+        for ply in 0..self.get_ply() {
+            let ss = &self.moves_history[ply as usize];
+            s.push_str(&format!("[{}] {}", ply, ss));
+        }
+        s
     }
 }
