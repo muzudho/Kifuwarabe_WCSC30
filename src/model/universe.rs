@@ -22,6 +22,7 @@ use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::square::*;
 use super::application::application_part::*;
+use super::dialogue::dialogue_part::*;
 use super::search::search_part::*;
 use std::fs::File;
 use std::io::Write;
@@ -86,12 +87,10 @@ pub fn g_writeln(s: &str) {
  * ここに全部入れてあるぜ☆（＾～＾）
  */
 pub struct Universe {
-    /// 対話モード
-    pub dialogue_mode: bool,
-    /// コマンドを溜めておくバッファー
-    pub vec_command: Vec<String>,
     /// アプリケーション部
     application_part: ApplicationPart,
+    /// 対話部
+    dialogue_part: DialoguePart,
     /// 探索部
     search_part: SearchPart,
 }
@@ -99,9 +98,8 @@ pub struct Universe {
 impl Universe {
     pub fn new() -> Universe {
         Universe {
-            dialogue_mode: false,
-            vec_command: Vec::new(),
             application_part: ApplicationPart::new(),
+            dialogue_part: DialoguePart::new(),
             search_part: SearchPart::new(),
         }
     }
@@ -179,24 +177,18 @@ impl Universe {
         &self.application_part
     }
 
+    pub fn get_dialogue_part_mut(&mut self) -> &mut DialoguePart {
+        &mut self.dialogue_part
+    }
+    pub fn get_dialogue_part(&self) -> &DialoguePart {
+        &self.dialogue_part
+    }
+
     pub fn get_search_part_mut(&mut self) -> &mut SearchPart {
         &mut self.search_part
     }
     pub fn get_search_part(&self) -> &SearchPart {
         &self.search_part
-    }
-
-    /* **********************
-     * コマンド・バッファー *
-     ************************/
-    pub fn is_empty_command(&mut self) -> bool {
-        self.vec_command.len() == 0
-    }
-    pub fn push_command(&mut self, line: &String) {
-        self.vec_command.push(format!("{}\n", line));
-    }
-    pub fn pop_command(&mut self) -> String {
-        self.vec_command.pop().unwrap()
     }
 
     /* ******
