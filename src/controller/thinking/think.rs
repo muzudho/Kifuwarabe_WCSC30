@@ -25,22 +25,26 @@ pub fn think(mut universe: &mut Universe) -> Sasite {
     // +----------------------+
 
     // 相手の利き升調べ（自殺手防止のため）
-    read_kikisu(&mut universe);
+    update_effect_count(&mut universe);
 
     g_writeln(&format!("info test is_s={}", atamakin::is_s(&universe)));
 
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
-    let mut ss_hashset: HashSet<u64> = HashSet::new();
+    let mut ss_hashset = HashSet::<u64>::new();
+
+    // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
     get_potential_movement(
         &universe.get_application_part(),
         &universe.get_search_part(),
-        &mut ss_hashset,
+        |movement_hash| {
+            ss_hashset.insert(movement_hash);
+        },
     );
     // g_writeln("テスト ポテンシャルムーブ.");
     // use consoles::visuals::dumps::*;
     // hyoji_ss_hashset( &ss_hashset );
 
-    filtering_movement_except_check(
+    select_movement_except_check(
         &mut ss_hashset,
         &universe.get_application_part(),
         &universe.get_search_part(),
@@ -54,10 +58,10 @@ pub fn think(mut universe: &mut Universe) -> Sasite {
     // 楽観王手の一覧はできているはず。
 
     // FIXME 負けてても、千日手は除くぜ☆（＾～＾）ただし、千日手を取り除くと手がなくなる場合は取り除かないぜ☆（＾～＾）
-    filtering_ss_except_sennitite(&mut ss_hashset, &mut universe);
+    select_movement_except_fourfold_repetition(&mut ss_hashset, &mut universe);
 
     // 自殺手は省くぜ☆（＾～＾）
-    filtering_ss_except_jisatusyu(&mut ss_hashset, universe);
+    select_movement_except_suiceid(&mut ss_hashset, universe);
 
     if ss_hashset.len() == 0 {
         // 投了

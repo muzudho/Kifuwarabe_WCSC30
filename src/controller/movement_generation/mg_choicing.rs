@@ -39,7 +39,7 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
 /**
  * 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
  */
-pub fn filtering_movement_except_check(
+pub fn select_movement_except_check(
     ss_hashset_input: &mut HashSet<u64>,
     application_part: &ApplicationPart,
     search_part: &SearchPart,
@@ -110,7 +110,10 @@ pub fn filtering_movement_except_check(
  * 王手されていれば、王手を解除しろだぜ☆（＾～＾）
  * 千日手には喜んで飛び込めだぜ☆（＾▽＾）ｗｗｗ
  */
-pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, universe: &mut Universe) {
+pub fn select_movement_except_suiceid(
+    ss_hashset_input: &mut HashSet<u64>,
+    universe: &mut Universe,
+) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
@@ -203,9 +206,11 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, univer
  *
  * ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
  */
-pub fn filtering_ss_except_sennitite(ss_hashset_input: &mut HashSet<u64>, universe: &mut Universe) {
+pub fn select_movement_except_fourfold_repetition(
+    ss_hashset_input: &mut HashSet<u64>,
+    universe: &mut Universe,
+) {
     let mut ss_hashset_pickup = HashSet::new();
-
     // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）
     // 'idea:
     for hash_ss_potential in ss_hashset_input.iter() {

@@ -17,19 +17,23 @@ use super::super::super::model::master::square::*;
 use super::super::super::model::search::search_part::*;
 use std::collections::HashSet;
 
-/**
- * 現局面の、任意の移動先升の、
- * - 盤上の駒の移動
- * - 打
- * の指し手を生成。
- *
- * 王手回避漏れや、千日手などのチェックは行っていない
- */
-pub fn get_potential_movement(
+///
+/// 現局面の、任意の移動先升の、
+/// - 盤上の駒の移動
+/// - 打
+/// の指し手を生成。
+///
+/// 王手回避漏れや、千日手などのチェックは行っていない
+///
+/// https://doc.rust-lang.org/std/ops/trait.FnMut.html
+///
+pub fn get_potential_movement<F1>(
     application_part: &ApplicationPart,
     search_part: &SearchPart,
-    ss_hashset: &mut HashSet<u64>,
-) {
+    mut gets_movement_callback: F1,
+) where
+    F1: FnMut(u64),
+{
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
@@ -61,15 +65,14 @@ pub fn get_potential_movement(
                 // hyoji_sq_hashset( &dst_hashset );
 
                 for sq_dst in &dst_hashset {
-                    ss_hashset.insert(
-                        Sasite {
-                            src: sq_src.clone(),
-                            dst: sq_dst.clone(),
-                            pro: false, // 成らず
-                            drop: PieceType::Kara,
-                        }
-                        .to_hash(),
-                    );
+                    let movement_hash = Sasite {
+                        src: sq_src.clone(),
+                        dst: sq_dst.clone(),
+                        pro: false, // 成らず
+                        drop: PieceType::Kara,
+                    }
+                    .to_hash();
+                    gets_movement_callback(movement_hash);
                 }
 
                 dst_hashset.clear();
@@ -81,15 +84,14 @@ pub fn get_potential_movement(
                     &mut dst_hashset,
                 );
                 for sq_dst in &dst_hashset {
-                    ss_hashset.insert(
-                        Sasite {
-                            src: sq_src.clone(),
-                            dst: sq_dst.clone(),
-                            pro: true, // 成り
-                            drop: PieceType::Kara,
-                        }
-                        .to_hash(),
-                    );
+                    let movement_hash = Sasite {
+                        src: sq_src.clone(),
+                        dst: sq_dst.clone(),
+                        pro: true, // 成り
+                        drop: PieceType::Kara,
+                    }
+                    .to_hash();
+                    gets_movement_callback(movement_hash);
                 }
             }
         }
@@ -130,15 +132,14 @@ pub fn get_potential_movement(
                     }
                     for num_kms_da in da_kms_hashset {
                         let kms = num_to_kms(num_kms_da);
-                        ss_hashset.insert(
-                            Sasite {
-                                src: Square::from_umasu(SS_SRC_DA), // 駒大
-                                dst: sq_dst.clone(),                // どの升へ行きたいか
-                                pro: false,                         // 打に成りは無し
-                                drop: kms,                          // 打った駒種類
-                            }
-                            .to_hash(),
-                        );
+                        let movement_hash = Sasite {
+                            src: Square::from_umasu(SS_SRC_DA), // 駒大
+                            dst: sq_dst.clone(),                // どの升へ行きたいか
+                            pro: false,                         // 打に成りは無し
+                            drop: kms,                          // 打った駒種類
+                        }
+                        .to_hash();
+                        gets_movement_callback(movement_hash);
                     }
                 }
                 _ => {}

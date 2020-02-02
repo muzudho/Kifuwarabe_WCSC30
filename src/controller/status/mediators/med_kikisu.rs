@@ -14,7 +14,7 @@ use std::collections::HashSet;
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn read_kikisu(universe: &mut Universe) {
+pub fn update_effect_count(universe: &mut Universe) {
     // ゼロ・リセット
     for km in KM_ARRAY.iter() {
         &universe.get_search_part_mut().effect_count_by_piece
