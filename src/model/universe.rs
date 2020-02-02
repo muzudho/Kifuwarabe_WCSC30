@@ -95,8 +95,6 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    /// 初期局面
-    position0: Position,
     /// 現局面
     position1: Position,
     /// 棋譜
@@ -126,8 +124,6 @@ impl Universe {
         Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
-            // 初期局面
-            position0: Position::new(),
             // 現局面
             position1: Position::new(),
             kifu: [
@@ -737,23 +733,30 @@ impl Universe {
      * 手目も 0 に戻します。
      */
     pub fn clear_ky01(&mut self) {
-        self.position0.clear();
+        self.get_application_part_mut()
+            .get_starting_position_mut()
+            .clear();
         self.position1.clear();
         self.get_search_part_mut().set_ply(0);
     }
-    /**
-     * 初期局面を、現局面にコピーします
-     */
-    pub fn copy_ky0_to_ky1(&mut self) {
-        // 盤上
+    /// 開始局面を、現局面にコピーします
+    pub fn copy_starting_position_to_current_position(&mut self) {
+        // 盤上の駒。
         for i_ms in 0..BAN_SIZE {
             let i_sq = Square::from_umasu(i_ms);
-            self.position1
-                .set_km_by_sq(&i_sq, self.position0.get_piece_struct_by_sq(&i_sq).piece());
+            // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
+            let ps = PieceStruct::from_piece(
+                self.get_application_part()
+                    .get_starting_position()
+                    .get_piece_struct_by_sq(&i_sq)
+                    .piece(),
+            );
+            self.position1.set_ps_by_sq(&i_sq, &ps);
         }
+
         // 持ち駒
         for i_mg in 0..KM_LN {
-            self.position1.mg[i_mg] = self.position0.mg[i_mg];
+            self.position1.mg[i_mg] = self.get_application_part().get_starting_position().mg[i_mg];
         }
     }
 
@@ -799,15 +802,23 @@ impl Universe {
      * 盤上 *
      ********/
 
-    /**
-     * 初期局面の盤上に駒の位置を設定するもの
-     */
-    pub fn set_ky0_ban_km(&mut self, suji: i8, dan: i8, km: &Piece) {
-        self.position0
-            .set_km_by_sq(&Square::from_file_rank(suji, dan), km);
+    /// 初期局面の盤上に駒の位置を設定するもの
+    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: &Piece) {
+        // 取得するフェーズと、変更するフェーズの両方をこの中で行います。
+        // 取得
+        // TODO 取得するとエラーになってしまうので、今んとこ 作成するぜ☆（＾～＾）
+        // let ps = self.get_piece_struct_master().get_piece_structure(piece);
+        let ps = PieceStruct::from_piece(piece);
+
+        // 変更
+        self.get_application_part_mut()
+            .get_starting_position_mut()
+            .set_ps_by_sq(&Square::from_file_rank(suji, dan), &ps);
     }
     pub fn set_ky0_mg(&mut self, km: Piece, maisu: i8) {
-        self.position0.mg[km as usize] = maisu;
+        self.get_application_part_mut()
+            .get_starting_position_mut()
+            .mg[km as usize] = maisu;
     }
     pub fn get_jiai_by_km(&self, piece_struct: &PieceStruct) -> Person {
         if match_sn(&piece_struct.phase(), &self.get_teban(&Person::Ji)) {
@@ -934,7 +945,7 @@ impl Universe {
     pub fn kaku_ky(&self, num: &KyNums) -> String {
         let position1 = match *num {
             KyNums::Current => &self.position1,
-            KyNums::Start => &self.position0,
+            KyNums::Start => &self.get_application_part().get_starting_position(),
         };
 
         // 局面表示
@@ -1405,7 +1416,10 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
      * 初期局面ハッシュを作り直す
      */
     pub fn create_ky0_hash(&self) -> u64 {
-        let mut hash = self.position0.create_hash(&self);
+        let mut hash = self
+            .get_application_part()
+            .get_starting_position()
+            .create_hash(&self);
 
         // 手番ハッシュ（後手固定）
         hash ^= self.get_application_part().position_hash_seed.sn[SN_GO];
@@ -1459,7 +1473,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         count
     }
 
-    pub fn piece_struct_master(&self) -> &PieceStructMaster {
+    pub fn get_piece_struct_master(&self) -> &PieceStructMaster {
         &self.piece_struct_master
     }
 

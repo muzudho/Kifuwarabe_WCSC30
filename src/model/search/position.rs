@@ -297,13 +297,13 @@ impl Position {
     pub fn get_piece_struct_by_sq(&self, sq: &Square) -> &PieceStruct {
         &self.board[sq.to_umasu()]
     }
-    /**
-     * 升で指定して駒を置く
-     */
-    pub fn set_km_by_sq(&mut self, sq: &Square, km: &Piece) {
-        self.board[sq.to_umasu()] = PieceStruct::from_piece(km);
+    /// 升で指定して駒を置く
+    pub fn set_ps_by_sq(&mut self, sq: &Square, ps: &PieceStruct) {
+        self.board[sq.to_umasu()] = (*ps).clone();
+
+        // 玉の位置を覚え直します。
         use super::super::super::model::master::phase::Phase::*;
-        match *km {
+        match ps.piece() {
             Piece::King1 => self.sq_r[Sen as usize] = sq.clone(),
             Piece::King2 => self.sq_r[Go as usize] = sq.clone(),
             _ => {}
@@ -346,7 +346,7 @@ impl Position {
                     self.get_piece_struct_by_sq(&ss.src).piece().clone()
                 };
 
-                self.set_km_by_sq(&ss.src, &Piece::Kara);
+                self.set_ps_by_sq(&ss.src, &PieceStruct::from_piece(&Piece::Kara));
 
                 km1
             };
@@ -361,7 +361,7 @@ impl Position {
             }
 
             // 移動先升に駒を置く
-            self.set_km_by_sq(&ss.dst, &km);
+            self.set_ps_by_sq(&ss.dst, &PieceStruct::from_piece(&km));
         }
 
         cap
@@ -392,7 +392,7 @@ impl Position {
         };
 
         // 移動先の駒を、取った駒（あるいは空）に戻す
-        self.set_km_by_sq(&ss.dst, cap);
+        self.set_ps_by_sq(&ss.dst, &PieceStruct::from_piece(&cap));
         match *cap {
             Piece::Kara => {}
             _ => {
@@ -402,7 +402,7 @@ impl Position {
         }
 
         // 移動元升に、動かした駒を置く
-        self.set_km_by_sq(&ss.src, &km);
+        self.set_ps_by_sq(&ss.src, &PieceStruct::from_piece(&km));
     }
 
     /**

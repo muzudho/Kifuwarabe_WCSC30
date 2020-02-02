@@ -3,6 +3,7 @@
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::square::*;
+use super::super::search::position::*;
 
 /// 局面ハッシュ種
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
@@ -18,6 +19,8 @@ pub struct PositionHashSeed {
 pub struct ApplicationPart {
     /// 局面ハッシュ種☆（＾～＾）
     pub position_hash_seed: PositionHashSeed,
+    /// 初期局面
+    starting_position: Position,
 }
 impl ApplicationPart {
     pub fn new() -> Self {
@@ -30,6 +33,13 @@ impl ApplicationPart {
                 // 先後
                 sn: [0; SN_LN],
             },
+            starting_position: Position::new(),
         }
+    }
+    pub fn get_starting_position(&self) -> &Position {
+        &self.starting_position
+    }
+    pub fn get_starting_position_mut(&mut self) -> &mut Position {
+        &mut self.starting_position
     }
 }

@@ -55,7 +55,7 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
 
         // 手番の、移動した先の駒
         let ps_dst = universe
-            .piece_struct_master()
+            .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(
                 &universe.get_teban(&Person::Ji),
                 randommove::rnd_kms(),

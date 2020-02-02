@@ -5,6 +5,7 @@ use super::piece_type::PieceType;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
+#[derive(Clone)]
 pub struct PieceStruct {
     piece: Piece,
     /// 先後、駒種類。
