@@ -187,7 +187,6 @@ pub fn lookup_banjo_catch(universe: &Universe, sn: &Phase, sq_target: &Square) -
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
         let ps_dst = universe
-            .get_application_part()
             .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(&sn, kms_dst);
         let km_dst = ps_dst.piece();

@@ -23,8 +23,6 @@ pub struct SearchPart {
     pub moves_history: [Sasite; TEME_LN],
     /// 利きの数（先後別）
     pub effect_count_by_phase: [NumberBoard; SN_LN],
-    /// 利きの数（先後付き駒別）
-    pub effect_count_by_piece: [NumberBoard; KM_LN],
 }
 impl SearchPart {
     pub fn new() -> Self {
@@ -567,39 +565,6 @@ impl SearchPart {
             ],
             /// 利き数（先後別）
             effect_count_by_phase: [NumberBoard::new(), NumberBoard::new(), NumberBoard::new()],
-            // 利き数（駒別なので３０個ある）
-            effect_count_by_piece: [
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-            ],
         }
     }
     pub fn add_ply(&mut self, ply1: i16) {

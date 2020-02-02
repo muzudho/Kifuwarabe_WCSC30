@@ -17,9 +17,7 @@ use std::collections::HashSet;
 pub fn read_kikisu(universe: &mut Universe) {
     // ゼロ・リセット
     for km in KM_ARRAY.iter() {
-        &universe.get_search_part_mut().effect_count_by_phase
-            [PieceStruct::from_piece(km).serial_piece_number()]
-        .clear();
+        &universe.kiki_su_by_km[PieceStruct::from_piece(km).serial_piece_number()].clear();
     }
 
     for sn in SN_ARRAY.iter() {
@@ -44,7 +42,7 @@ pub fn read_kikisu(universe: &mut Universe) {
                 let kikisu = mv_src_hashset.len();
 
                 // 駒別
-                universe.get_search_part_mut().effect_count_by_phase[ps_dst.serial_piece_number()]
+                universe.kiki_su_by_km[ps_dst.serial_piece_number()]
                     .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別

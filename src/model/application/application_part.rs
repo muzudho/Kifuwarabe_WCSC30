@@ -2,7 +2,6 @@
 
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_struct_master::PieceStructMaster;
 use super::super::super::model::master::square::*;
 use super::super::search::position::*;
 
@@ -24,8 +23,6 @@ pub struct ApplicationPart {
     starting_position: Position,
     /// 初期局面ハッシュ
     starting_position_hash: u64,
-    /// 駒構造体・マスター
-    piece_struct_master: PieceStructMaster,
 }
 impl ApplicationPart {
     pub fn new() -> Self {
@@ -40,7 +37,6 @@ impl ApplicationPart {
             },
             starting_position: Position::new(),
             starting_position_hash: 0,
-            piece_struct_master: PieceStructMaster::new(),
         }
     }
 
@@ -66,9 +62,5 @@ impl ApplicationPart {
     }
     pub fn set_starting_position_hash(&mut self, val: u64) {
         self.starting_position_hash = val;
-    }
-
-    pub fn get_piece_struct_master(&self) -> &PieceStructMaster {
-        &self.piece_struct_master
     }
 }
