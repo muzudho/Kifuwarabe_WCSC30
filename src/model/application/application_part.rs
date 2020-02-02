@@ -18,9 +18,11 @@ pub struct PositionHashSeed {
 
 pub struct ApplicationPart {
     /// 局面ハッシュ種☆（＾～＾）
-    pub position_hash_seed: PositionHashSeed,
+    position_hash_seed: PositionHashSeed,
     /// 初期局面
     starting_position: Position,
+    /// 初期局面ハッシュ
+    starting_position_hash: u64,
 }
 impl ApplicationPart {
     pub fn new() -> Self {
@@ -34,12 +36,31 @@ impl ApplicationPart {
                 sn: [0; SN_LN],
             },
             starting_position: Position::new(),
+            starting_position_hash: 0,
         }
     }
+
+    pub fn get_position_hash_seed(&self) -> &PositionHashSeed {
+        &self.position_hash_seed
+    }
+    pub fn get_position_hash_seed_mut(&mut self) -> &mut PositionHashSeed {
+        &mut self.position_hash_seed
+    }
+
     pub fn get_starting_position(&self) -> &Position {
         &self.starting_position
     }
     pub fn get_starting_position_mut(&mut self) -> &mut Position {
         &mut self.starting_position
+    }
+
+    pub fn get_starting_position_hash(&self) -> &u64 {
+        &self.starting_position_hash
+    }
+    pub fn get_starting_position_hash_mut(&mut self) -> &mut u64 {
+        &mut self.starting_position_hash
+    }
+    pub fn set_starting_position_hash(&mut self, val: u64) {
+        self.starting_position_hash = val;
     }
 }

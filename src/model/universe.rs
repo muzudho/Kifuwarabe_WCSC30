@@ -99,8 +99,6 @@ pub struct Universe {
     position1: Position,
     /// 棋譜
     pub kifu: [Sasite; TEME_LN],
-    /// 初期局面ハッシュ
-    pub ky0_hash: u64,
     /// 現局面ハッシュ
     pub ky_hash: [u64; TEME_LN],
     /// 取った駒
@@ -386,7 +384,6 @@ impl Universe {
                 Sasite::new(),
                 Sasite::new(), //257要素
             ],
-            ky0_hash: 0,
             ky_hash: [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -711,21 +708,24 @@ impl Universe {
         for i_ms in MASU_0..BAN_SIZE {
             for i_km in 0..KM_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.get_application_part_mut().position_hash_seed.km[i_ms][i_km] =
-                    rand::thread_rng().gen_range(0, 18446744073709551615);
+                self.get_application_part_mut()
+                    .get_position_hash_seed_mut()
+                    .km[i_ms][i_km] = rand::thread_rng().gen_range(0, 18446744073709551615);
             }
         }
         // 持ち駒
         for i_km in 0..KM_LN {
             for i_mg in 0..MG_MAX {
-                self.get_application_part_mut().position_hash_seed.mg[i_km][i_mg] =
-                    rand::thread_rng().gen_range(0, 18446744073709551615);
+                self.get_application_part_mut()
+                    .get_position_hash_seed_mut()
+                    .mg[i_km][i_mg] = rand::thread_rng().gen_range(0, 18446744073709551615);
             }
         }
         // 先後
         for i_sn in 0..SN_LN {
-            self.get_application_part_mut().position_hash_seed.sn[i_sn] =
-                rand::thread_rng().gen_range(0, 18446744073709551615);
+            self.get_application_part_mut()
+                .get_position_hash_seed_mut()
+                .sn[i_sn] = rand::thread_rng().gen_range(0, 18446744073709551615);
         }
     }
     /**
@@ -871,9 +871,6 @@ impl Universe {
     pub fn set_sasite_drop(&mut self, kms: PieceType) {
         self.kifu[self.get_search_part().get_ply() as usize].drop = kms
     }
-    pub fn set_ky0_hash(&mut self, hash: u64) {
-        self.ky0_hash = hash
-    }
     pub fn set_ky1_hash(&mut self, hash: u64) {
         self.ky_hash[self.get_search_part().get_ply() as usize] = hash
     }
@@ -903,7 +900,10 @@ impl Universe {
     }
     pub fn kaku_ky_hash(&self) -> String {
         let mut s = String::new();
-        s.push_str(&format!("[ini] {:20}\n", &self.ky0_hash));
+        s.push_str(&format!(
+            "[ini] {:20}\n",
+            &self.get_application_part().get_starting_position_hash()
+        ));
 
         for ply in 0..self.get_search_part().get_ply() {
             let hash = &self.ky_hash[ply as usize];
@@ -1422,7 +1422,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             .create_hash(&self);
 
         // 手番ハッシュ（後手固定）
-        hash ^= self.get_application_part().position_hash_seed.sn[SN_GO];
+        hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO];
 
         hash
     }
@@ -1436,8 +1436,8 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         // 手番ハッシュ
         use super::master::phase::Phase::*;
         match self.get_teban(&Person::Ji) {
-            Sen => hash ^= self.get_application_part().position_hash_seed.sn[SN_SEN],
-            Go => hash ^= self.get_application_part().position_hash_seed.sn[SN_GO],
+            Sen => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_SEN],
+            Go => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO],
             _ => {}
         }
 
@@ -1466,7 +1466,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         }
 
         // 初期局面のハッシュ
-        if self.ky0_hash == self.ky_hash[last_ply as usize] {
+        if *self.get_application_part().get_starting_position_hash()
+            == self.ky_hash[last_ply as usize]
+        {
             count += 1;
         }
 

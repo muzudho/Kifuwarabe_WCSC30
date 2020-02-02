@@ -643,7 +643,9 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, universe: &mut 
 
     // 初期局面ハッシュを作り直す
     let ky_hash = universe.create_ky0_hash();
-    universe.set_ky0_hash(ky_hash);
+    universe
+        .get_application_part_mut()
+        .set_starting_position_hash(ky_hash);
 }
 
 /**

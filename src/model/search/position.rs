@@ -458,7 +458,7 @@ impl Position {
             let i_sq = Square::from_umasu(i_ms as umasu);
             let km = self.get_piece_struct_by_sq(&i_sq).piece();
             let num_km = PieceStruct::from_piece(&km).serial_piece_number();
-            hash ^= universe.get_application_part().position_hash_seed.km[i_ms][num_km];
+            hash ^= universe.get_application_part().get_position_hash_seed().km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
@@ -475,7 +475,8 @@ impl Position {
                 MG_MAX
             );
 
-            hash ^= universe.get_application_part().position_hash_seed.mg[num_km][maisu as usize];
+            hash ^=
+                universe.get_application_part().get_position_hash_seed().mg[num_km][maisu as usize];
         }
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）
