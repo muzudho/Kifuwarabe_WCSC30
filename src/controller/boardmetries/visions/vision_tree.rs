@@ -44,9 +44,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
         let ai_sn = hanten_sn(sn);
 
         // 相手の　らいおん　の位置を覚える
-        universe
-            .get_search_part_mut()
-            .memory_opponent_king(sn, &ai_sn);
+        universe.memory_opponent_king(sn, &ai_sn);
         // 盤上に相手の　らいおん１枚　しかないと想定して、アタックする手
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
@@ -78,7 +76,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                             drop: PieceType::Kara,
                         }
                         .to_hash();
-                        &universe.get_search_part_mut().vision_tree_by_phase[sn_to_num(sn)]
+                        &universe.vision_tree_by_sn[sn_to_num(sn)]
                             .ss_tume_hashset
                             .insert(hash_ss);
                     }

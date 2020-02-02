@@ -10,6 +10,7 @@ use rand::Rng;
 use super::super::config::*;
 use super::super::controller::common::conv::*;
 use super::super::controller::communication::usi::*;
+use super::super::controller::thinking::visions::vision_tree::*;
 use super::super::model::master::misc::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
@@ -90,6 +91,8 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
+    /// ビジョン・ツリー
+    pub vision_tree_by_sn: [VisionTree; SN_LN],
     /// アプリケーション部
     application_part: ApplicationPart,
     /// 探索部
@@ -101,6 +104,7 @@ impl Universe {
         Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
+            vision_tree_by_sn: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
             application_part: ApplicationPart::new(),
             search_part: SearchPart::new(),
         }
@@ -743,7 +747,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn remake_visions(&mut self) {
         for sn in SN_ARRAY.iter() {
             // 全部忘れる☆（＾～＾）
-            self.search_part.vision_tree_by_phase[sn_to_num(sn)].clear();
+            self.vision_tree_by_sn[sn_to_num(sn)].clear();
         }
     }
 
@@ -813,5 +817,15 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         }
 
         count
+    }
+
+    /// 相手の　玉　の位置を覚えます。
+    pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
+        self.vision_tree_by_sn[sn_to_num(phase)].set_ai_r(
+            &self
+                .search_part
+                .get_current_position()
+                .get_sq_r(sn_to_num(opponent_phase)),
+        );
     }
 }
