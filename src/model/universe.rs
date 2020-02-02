@@ -10,8 +10,6 @@ use rand::Rng;
 use super::super::config::*;
 use super::super::controller::common::conv::*;
 use super::super::controller::communication::usi::*;
-use super::super::controller::status::number_board::*;
-use super::super::controller::thinking::visions::vision_tree::*;
 use super::super::model::master::misc::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
@@ -93,10 +91,6 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    /// 利きの数（先後付き駒別）
-    pub kiki_su_by_km: [NumberBoard; KM_LN],
-    /// ビジョン・ツリー
-    pub vision_tree_by_sn: [VisionTree; SN_LN],
     /// 駒構造体・マスター
     piece_struct_master: PieceStructMaster,
     /// アプリケーション部
@@ -110,40 +104,6 @@ impl Universe {
         Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
-            // 利き数（駒別なので３０個ある）
-            kiki_su_by_km: [
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-                NumberBoard::new(),
-            ],
-            vision_tree_by_sn: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
             piece_struct_master: PieceStructMaster::new(),
             application_part: ApplicationPart::new(),
             search_part: SearchPart::new(),
@@ -623,7 +583,10 @@ impl Universe {
      */
     pub fn kaku_number_board(&self, sn: &Phase, km: &Piece) -> String {
         let nb = match *sn {
-            Phase::Owari => &self.kiki_su_by_km[PieceStruct::from_piece(&km).serial_piece_number()],
+            Phase::Owari => {
+                &self.search_part.effect_count_by_piece
+                    [PieceStruct::from_piece(&km).serial_piece_number()]
+            }
             _ => &self.search_part.effect_count_by_phase[sn_to_num(&sn)],
         };
 
@@ -784,7 +747,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn remake_visions(&mut self) {
         for sn in SN_ARRAY.iter() {
             // 全部忘れる☆（＾～＾）
-            self.vision_tree_by_sn[sn_to_num(sn)].clear();
+            self.search_part.vision_tree_by_phase[sn_to_num(sn)].clear();
         }
     }
 
@@ -862,11 +825,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
     /// 相手の　玉　の位置を覚えます。
     pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
-        self.vision_tree_by_sn[sn_to_num(phase)].set_ai_r(
-            &self
-                .search_part
-                .get_current_position()
-                .get_sq_r(sn_to_num(opponent_phase)),
-        );
+        self.search_part
+            .memory_opponent_king(&phase, &opponent_phase);
     }
 }

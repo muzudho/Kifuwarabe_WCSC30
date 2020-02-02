@@ -2,6 +2,7 @@
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::status::number_board::*;
+use super::super::super::controller::thinking::visions::vision_tree::*;
 use super::super::super::model::master::person::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
@@ -23,6 +24,10 @@ pub struct SearchPart {
     pub moves_history: [Sasite; TEME_LN],
     /// 利きの数（先後別）
     pub effect_count_by_phase: [NumberBoard; SN_LN],
+    /// 利きの数（先後付き駒別）
+    pub effect_count_by_piece: [NumberBoard; KM_LN],
+    /// ビジョン・ツリー
+    pub vision_tree_by_phase: [VisionTree; SN_LN],
 }
 impl SearchPart {
     pub fn new() -> Self {
@@ -565,6 +570,40 @@ impl SearchPart {
             ],
             /// 利き数（先後別）
             effect_count_by_phase: [NumberBoard::new(), NumberBoard::new(), NumberBoard::new()],
+            // 利き数（駒別なので３０個ある）
+            effect_count_by_piece: [
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+                NumberBoard::new(),
+            ],
+            vision_tree_by_phase: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
         }
     }
     pub fn add_ply(&mut self, ply1: i16) {
@@ -674,5 +713,11 @@ impl SearchPart {
             s.push_str(&format!("[{}] {}", ply, ss));
         }
         s
+    }
+
+    /// 相手の　玉　の位置を覚えます。
+    pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
+        self.vision_tree_by_phase[sn_to_num(phase)]
+            .set_ai_r(&self.current_position.get_sq_r(sn_to_num(opponent_phase)));
     }
 }
