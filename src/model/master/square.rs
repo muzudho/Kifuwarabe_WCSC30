@@ -99,18 +99,25 @@ impl Square {
             file: file1,
         }
     }
+    pub fn from_point(p: &Point) -> Self {
+        debug_assert!(p_in_ban(&p), "(204b)from_point x={},y={}", p.x, p.y);
+
+        Square::from_umasu((p.x * 10 + p.y) as umasu)
+    }
+
+    pub fn get_file(&self) -> i8 {
+        self.file
+    }
+    pub fn get_rank(&self) -> i8 {
+        self.rank
+    }
+
     pub fn to_umasu(&self) -> umasu {
         (self.file * 10 + self.rank) as umasu
     }
 
     pub fn to_file_rank(&self) -> (i8, i8) {
         (self.file, self.rank)
-    }
-
-    pub fn from_point(p: &Point) -> Self {
-        debug_assert!(p_in_ban(&p), "(204b)from_point x={},y={}", p.x, p.y);
-
-        Square::from_umasu((p.x * 10 + p.y) as umasu)
     }
 
     /// x, y に名称変更したもの☆（＾～＾）

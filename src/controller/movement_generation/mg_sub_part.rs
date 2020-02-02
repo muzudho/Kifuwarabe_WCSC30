@@ -898,6 +898,7 @@ pub fn get_dst_by_sq_km(
     to_nari: bool,
     search_part: &SearchPart,
     // result, result2 で入れ直しがあるのでむずかしい☆（＾～＾）
+    // 成れない動きをあとで除外する☆（＾～＾）
     result: &mut HashSet<Square>,
 ) {
     assert_banjo_sq(&sq_src, "Ｉnsert_dst_by_ms_km");
@@ -1201,9 +1202,7 @@ pub fn get_dst_by_sq_km(
                 // 移動元または移動先が　１～３段目なら成れる
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_sx2, sy2) = sq_src.to_file_rank();
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if sy2 < DAN_4 && dy2 < DAN_4 {
+                    if sq_src.get_rank() < DAN_4 && sq_dst.get_rank() < DAN_4 {
                         result2.insert(sq_dst.clone());
                     }
                 }
@@ -1218,8 +1217,7 @@ pub fn get_dst_by_sq_km(
                 // 移動先が　１～３段目なら成れる
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if dy2 < DAN_4 {
+                    if sq_dst.get_rank() < DAN_4 {
                         result2.insert(sq_dst.clone());
                     }
                 }
@@ -1234,9 +1232,7 @@ pub fn get_dst_by_sq_km(
                 // 移動元または移動先が　７～９段目なら成れる
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_sx2, sy2) = sq_src.to_file_rank();
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if DAN_6 < sy2 && DAN_6 < dy2 {
+                    if DAN_6 < sq_src.get_rank() && DAN_6 < sq_dst.get_rank() {
                         result2.insert(sq_dst.clone());
                     }
                 }
@@ -1251,8 +1247,7 @@ pub fn get_dst_by_sq_km(
                 // 移動先が　７～９段目なら成れる
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if DAN_6 < dy2 {
+                    if DAN_6 < sq_dst.get_rank() {
                         result2.insert(sq_dst.clone());
                     }
                 }
@@ -1274,8 +1269,7 @@ pub fn get_dst_by_sq_km(
                 // ▼うさぎ　は１、２段目には進めない
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if dy2 < DAN_3 {
+                    if sq_dst.get_rank() < DAN_3 {
                     } else {
                         result2.insert(sq_dst.clone());
                     }
@@ -1290,8 +1284,7 @@ pub fn get_dst_by_sq_km(
                 // ▼しし、▼ひよこ　は１段目には進めない
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if dy2 < DAN_2 {
+                    if sq_dst.get_rank() < DAN_2 {
                     } else {
                         result2.insert(sq_dst.clone());
                     }
@@ -1306,8 +1299,7 @@ pub fn get_dst_by_sq_km(
                 // △うさぎ　は８、９段目には進めない
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if DAN_7 < dy2 {
+                    if DAN_7 < sq_dst.get_rank() {
                     } else {
                         result2.insert(sq_dst.clone());
                     }
@@ -1322,8 +1314,7 @@ pub fn get_dst_by_sq_km(
                 // △しし、△ひよこ　は９段目には進めない
                 let mut result2: HashSet<Square> = HashSet::<Square>::new();
                 for sq_dst in result.iter() {
-                    let (_dx2, dy2) = sq_dst.to_file_rank();
-                    if DAN_8 < dy2 {
+                    if DAN_8 < sq_dst.get_rank() {
                     } else {
                         result2.insert(sq_dst.clone());
                     }
