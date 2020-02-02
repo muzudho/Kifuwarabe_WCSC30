@@ -2,6 +2,10 @@
 
 Rust言語だぜ☆（＾～＾）　今回は　他のコンピューター将棋ソフトの流行り合わせていくぜ☆（＾～＾）
 
+## TODO
+
+* [ ] 今は257手制限が入っているので、321手に拡張したいぜ☆（＾～＾）
+
 ## Compile
 
 Visual Studio Code `[Terminal] - [New Terminal]`.  

@@ -99,8 +99,6 @@ pub struct Universe {
     position1: Position,
     /// 棋譜
     pub kifu: [Sasite; TEME_LN],
-    /// 現局面ハッシュ
-    pub ky_hash: [u64; TEME_LN],
     /// 取った駒
     pub cap: [Piece; TEME_LN],
     /// 利きの数（先後別）
@@ -383,18 +381,6 @@ impl Universe {
                 Sasite::new(),
                 Sasite::new(),
                 Sasite::new(), //257要素
-            ],
-            ky_hash: [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, //257要素
             ],
             /// 取った駒
             cap: [
@@ -871,19 +857,12 @@ impl Universe {
     pub fn set_sasite_drop(&mut self, kms: PieceType) {
         self.kifu[self.get_search_part().get_ply() as usize].drop = kms
     }
-    pub fn set_ky1_hash(&mut self, hash: u64) {
-        self.ky_hash[self.get_search_part().get_ply() as usize] = hash
-    }
     #[allow(dead_code)]
     pub fn set_cap(&mut self, ply1: usize, km: Piece) {
         self.cap[ply1] = km
     }
     pub fn get_sasite(&self) -> &Sasite {
         &self.kifu[self.get_search_part().get_ply() as usize]
-    }
-    #[allow(dead_code)]
-    pub fn get_ky_hash(&mut self) -> u64 {
-        self.ky_hash[self.get_search_part().get_ply() as usize]
     }
     /**
      * 使い方
@@ -906,7 +885,7 @@ impl Universe {
         ));
 
         for ply in 0..self.get_search_part().get_ply() {
-            let hash = &self.ky_hash[ply as usize];
+            let hash = &self.get_search_part().get_position_hash_history()[ply as usize];
             // 64bitは10進数20桁。改行する
             s.push_str(&format!("[{:3}] {:20}\n", ply, hash));
         }
@@ -1382,7 +1361,8 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash();
-        self.set_ky1_hash(ky_hash);
+        self.get_search_part_mut()
+            .set_current_position_hash(ky_hash);
 
         self.get_search_part_mut().add_ply(1);
     }
@@ -1415,7 +1395,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     /**
      * 初期局面ハッシュを作り直す
      */
-    pub fn create_ky0_hash(&self) -> u64 {
+    pub fn create_starting_position_hash(&self) -> u64 {
         let mut hash = self
             .get_application_part()
             .get_starting_position()
@@ -1460,14 +1440,16 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         for i_ply in 0..new_ply {
             let t = last_ply - i_ply;
             // g_writeln( &format!( "i_ply={} t={}", i_ply, t ) );
-            if self.ky_hash[t as usize] == self.ky_hash[last_ply as usize] {
+            if self.get_search_part().get_position_hash_history()[t as usize]
+                == self.get_search_part().get_position_hash_history()[last_ply as usize]
+            {
                 count += 1;
             }
         }
 
         // 初期局面のハッシュ
         if *self.get_application_part().get_starting_position_hash()
-            == self.ky_hash[last_ply as usize]
+            == self.get_search_part().get_position_hash_history()[last_ply as usize]
         {
             count += 1;
         }
