@@ -109,6 +109,7 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
                         let ps_motigoma = universe
+                            .get_application_part()
                             .get_piece_struct_master()
                             .get_piece_struct_by_phase_and_piece_type(
                                 &universe.get_search_part().get_phase(&Person::Ji),

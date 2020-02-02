@@ -31,6 +31,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
         let ps = universe
+            .get_application_part()
             .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
@@ -56,6 +57,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         // 移動後の駒
         let kms = randommove::rnd_kms();
         let ps = universe
+            .get_application_part()
             .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
@@ -87,6 +89,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
+                .get_application_part()
                 .get_piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
             let km = ps.piece(); // △ph
@@ -109,6 +112,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
+                .get_application_part()
                 .get_piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
             let km = ps.piece(); // △ph
@@ -131,6 +135,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
+                .get_application_part()
                 .get_piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
             let km = ps.piece(); // △ph
@@ -153,6 +158,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
             let ps = universe
+                .get_application_part()
                 .get_piece_struct_master()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Sen, &kms);
             let km = ps.piece(); // ▼ら
