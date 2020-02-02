@@ -65,14 +65,15 @@ pub fn get_potential_movement<F1>(
                 // hyoji_sq_hashset( &dst_hashset );
 
                 for sq_dst in &dst_hashset {
-                    let movement_hash = Sasite {
-                        src: sq_src.clone(),
-                        dst: sq_dst.clone(),
-                        pro: false, // 成らず
-                        drop: PieceType::Kara,
-                    }
-                    .to_hash();
-                    gets_movement_callback(movement_hash);
+                    gets_movement_callback(
+                        Sasite {
+                            src: sq_src.clone(),
+                            dst: sq_dst.clone(),
+                            pro: false, // 成らず
+                            drop: PieceType::Kara,
+                        }
+                        .to_hash(),
+                    );
                 }
 
                 dst_hashset.clear();
@@ -84,14 +85,15 @@ pub fn get_potential_movement<F1>(
                     &mut dst_hashset,
                 );
                 for sq_dst in &dst_hashset {
-                    let movement_hash = Sasite {
-                        src: sq_src.clone(),
-                        dst: sq_dst.clone(),
-                        pro: true, // 成り
-                        drop: PieceType::Kara,
-                    }
-                    .to_hash();
-                    gets_movement_callback(movement_hash);
+                    gets_movement_callback(
+                        Sasite {
+                            src: sq_src.clone(),
+                            dst: sq_dst.clone(),
+                            pro: true, // 成り
+                            drop: PieceType::Kara,
+                        }
+                        .to_hash(),
+                    );
                 }
             }
         }
@@ -126,20 +128,23 @@ pub fn get_potential_movement<F1>(
                                 &sq_dst,
                                 &km_motigoma,
                                 &search_part,
-                                &mut da_kms_hashset,
+                                |piece_type_hash| {
+                                    da_kms_hashset.insert(piece_type_hash);
+                                },
                             );
                         }
                     }
                     for num_kms_da in da_kms_hashset {
                         let kms = num_to_kms(num_kms_da);
-                        let movement_hash = Sasite {
-                            src: Square::from_umasu(SS_SRC_DA), // 駒大
-                            dst: sq_dst.clone(),                // どの升へ行きたいか
-                            pro: false,                         // 打に成りは無し
-                            drop: kms,                          // 打った駒種類
-                        }
-                        .to_hash();
-                        gets_movement_callback(movement_hash);
+                        gets_movement_callback(
+                            Sasite {
+                                src: Square::from_umasu(SS_SRC_DA), // 駒大
+                                dst: sq_dst.clone(),                // どの升へ行きたいか
+                                pro: false,                         // 打に成りは無し
+                                drop: kms,                          // 打った駒種類
+                            }
+                            .to_hash(),
+                        );
                     }
                 }
                 _ => {}
@@ -154,13 +159,15 @@ pub fn get_potential_movement<F1>(
  *
  * 盤上の駒の移動の最初の１つ。打を除く
  */
-pub fn get_movement_by_square_and_piece_on_board(
+pub fn get_movement_by_square_and_piece_on_board<F1>(
     application_part: &ApplicationPart,
     search_part: &SearchPart,
     sq_dst: &Square,
     km_dst: &Piece,
-    ss_hashset: &mut HashSet<u64>,
-) {
+    mut gets_movement: F1,
+) where
+    F1: FnMut(u64),
+{
     assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
@@ -186,7 +193,9 @@ pub fn get_movement_by_square_and_piece_on_board(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    get_no_promotion_src_by_sq_km(&sq_dst, &ps_dst, &search_part, &mut mv_src_hashset);
+    get_no_promotion_src_by_sq_km(&sq_dst, &ps_dst, &search_part, |square| {
+        mv_src_hashset.insert(square);
+    });
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 
@@ -194,7 +203,7 @@ pub fn get_movement_by_square_and_piece_on_board(
         // 成らず
         ss_hash_builder.pro = false;
         ss_hash_builder.drop = PieceType::Kara;
-        ss_hashset.insert(ss_hash_builder.to_hash());
+        gets_movement(ss_hash_builder.to_hash());
     }
 
     // +--------------+
@@ -215,7 +224,7 @@ pub fn get_movement_by_square_and_piece_on_board(
         // 成り
         ss_hash_builder.pro = true;
         ss_hash_builder.drop = PieceType::Kara;
-        ss_hashset.insert(ss_hash_builder.to_hash());
+        gets_movement(ss_hash_builder.to_hash());
     }
 }
 /**
@@ -224,12 +233,14 @@ pub fn get_movement_by_square_and_piece_on_board(
  * 1. 移動先升指定  ms_dst
  * 2. 移動先駒指定  km_dst
  */
-pub fn get_movement_by_square_and_piece_on_drop(
+pub fn get_movement_by_square_and_piece_on_drop<F1>(
     search_part: &SearchPart,
     sq_dst: &Square,
     km_dst: &Piece,
-    ss_hashset: &mut HashSet<u64>,
-) {
+    mut gets_movement: F1,
+) where
+    F1: FnMut(u64),
+{
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
@@ -257,18 +268,21 @@ pub fn get_movement_by_square_and_piece_on_drop(
     // +----+
 
     let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-    get_drop_kms_by_sq_km(&sq_dst, &km_dst, &search_part, &mut da_kms_hashset);
+    get_drop_kms_by_sq_km(&sq_dst, &km_dst, &search_part, |piece_type_hash| {
+        da_kms_hashset.insert(piece_type_hash);
+    });
     // 打
     for num_kms_da in da_kms_hashset.iter() {
         let kms_da = num_to_kms(*num_kms_da);
 
-        let hash_ss = Sasite {
+        let movement_hash = Sasite {
             src: Square::from_umasu(SS_SRC_DA),
             dst: (*sq_dst).clone(),
             pro: false,
             drop: kms_da,
         }
         .to_hash();
-        ss_hashset.insert(hash_ss);
+
+        gets_movement(movement_hash);
     }
 }

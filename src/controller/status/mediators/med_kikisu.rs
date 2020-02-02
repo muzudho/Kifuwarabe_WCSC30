@@ -42,7 +42,9 @@ pub fn update_effect_count(universe: &mut Universe) {
                     &sq_dst,
                     &ps_dst,
                     &universe.get_search_part(),
-                    &mut mv_src_hashset,
+                    |square| {
+                        mv_src_hashset.insert(square);
+                    },
                 );
                 get_before_promotion_src_by_sq_km(
                     &sq_dst,

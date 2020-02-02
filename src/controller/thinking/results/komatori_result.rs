@@ -207,7 +207,9 @@ pub fn lookup_catching_king_on_board(
             &search_part,
             &sq_target,
             &km_dst,
-            &mut ss_hashset,
+            |movement_hash| {
+                ss_hashset.insert(movement_hash);
+            },
         );
 
         // g_writeln( &format!("テスト lookup_catching_king_on_board get_movement_by_square_and_piece_on_board kms_dst={}.",kms_dst) );

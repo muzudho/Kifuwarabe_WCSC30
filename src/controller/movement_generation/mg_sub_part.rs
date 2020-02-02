@@ -29,12 +29,14 @@ use std::collections::HashSet;
  *
  * TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
  */
-pub fn get_no_promotion_src_by_sq_km(
+pub fn get_no_promotion_src_by_sq_km<F1>(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
     search_part: &SearchPart,
-    result: &mut HashSet<Square>,
-) {
+    mut gets_square: F1,
+) where
+    F1: FnMut(Square),
+{
     assert_banjo_sq(&sq_dst, "get_no_promotion_src_by_sq_km");
 
     /*
@@ -108,7 +110,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
@@ -122,7 +124,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -138,7 +140,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
@@ -152,7 +154,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -165,7 +167,7 @@ pub fn get_no_promotion_src_by_sq_km(
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
-                        result.insert(sq_src);
+                        gets_square(sq_src);
                     }
                 }
             }
@@ -180,7 +182,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
@@ -194,7 +196,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -207,7 +209,7 @@ pub fn get_no_promotion_src_by_sq_km(
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
-                        result.insert(sq_src);
+                        gets_square(sq_src);
                     }
                 }
             }
@@ -222,7 +224,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
@@ -236,7 +238,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -254,7 +256,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
                                 // 指定の駒があれば、その升は移動元。続行
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 // なんか他の駒があれば終わり
                                 break;
@@ -269,7 +271,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -285,7 +287,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
@@ -299,7 +301,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -312,7 +314,7 @@ pub fn get_no_promotion_src_by_sq_km(
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
-                        result.insert(sq_src);
+                        gets_square(sq_src);
                     }
                 }
             }
@@ -327,7 +329,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
@@ -341,7 +343,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -354,7 +356,7 @@ pub fn get_no_promotion_src_by_sq_km(
                         .get_current_position()
                         .has_sq_km(&sq_src, ps_dst.piece())
                     {
-                        result.insert(sq_src);
+                        gets_square(sq_src);
                     }
                 }
             }
@@ -369,7 +371,7 @@ pub fn get_no_promotion_src_by_sq_km(
                                 .get_current_position()
                                 .has_sq_km(&sq_src, ps_dst.piece())
                             {
-                                result.insert(sq_src);
+                                gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
                                 break;
                             }
@@ -383,7 +385,7 @@ pub fn get_no_promotion_src_by_sq_km(
                             .get_current_position()
                             .has_sq_km(&sq_src, ps_dst.piece())
                         {
-                            result.insert(sq_src);
+                            gets_square(sq_src);
                         }
                     }
                 }
@@ -768,12 +770,14 @@ pub fn get_before_promotion_src_by_sq_km(
  *
  * そこに打てる駒種類を返す。
  */
-pub fn get_drop_kms_by_sq_km(
+pub fn get_drop_kms_by_sq_km<F1>(
     sq_dst: &Square,
     km_dst: &Piece,
     search_part: &SearchPart,
-    result_kms: &mut HashSet<usize>,
-) {
+    mut gets_piece_type_hash: F1,
+) where
+    F1: FnMut(usize),
+{
     assert_banjo_sq(&sq_dst, "Ｉnsert_da_kms_by_ms_km");
 
     let ps_dst = PieceStruct::from_piece(&km_dst);
@@ -870,7 +874,8 @@ pub fn get_drop_kms_by_sq_km(
         }
         _ => {}
     }
-    result_kms.insert(kms_to_num(&kms_dst));
+
+    gets_piece_type_hash(kms_to_num(&kms_dst));
 }
 /**
  * 移動先升生成

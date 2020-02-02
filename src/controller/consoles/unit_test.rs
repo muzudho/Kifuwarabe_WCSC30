@@ -47,12 +47,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-        get_no_promotion_src_by_sq_km(
-            &sq_dst,
-            &ps,
-            &universe.get_search_part(),
-            &mut mv_src_hashset,
-        );
+        get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
+            mv_src_hashset.insert(square);
+        });
         get_before_promotion_src_by_sq_km(
             &sq_dst,
             &ps,
@@ -64,7 +61,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &sq_dst,
             &km,
             &universe.get_search_part(),
-            &mut da_kms_hashset,
+            |piece_type_hash| {
+                da_kms_hashset.insert(piece_type_hash);
+            },
         );
         hyoji_sq_hashset(&mv_src_hashset);
         hyoji_kms_hashset(&da_kms_hashset);
@@ -86,12 +85,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
-        get_no_promotion_src_by_sq_km(
-            &sq_dst,
-            &ps,
-            &universe.get_search_part(),
-            &mut mv_src_hashset,
-        );
+        get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
+            mv_src_hashset.insert(square);
+        });
         get_before_promotion_src_by_sq_km(
             &sq_dst,
             &ps,
@@ -129,12 +125,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(
-                &sq_dst,
-                &ps,
-                &universe.get_search_part(),
-                &mut mv_src_hashset,
-            );
+            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
+                mv_src_hashset.insert(square);
+            });
             get_before_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
@@ -146,7 +139,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &km,
                 &universe.get_search_part(),
-                &mut da_kms_hashset,
+                |piece_type_hash| {
+                    da_kms_hashset.insert(piece_type_hash);
+                },
             );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
@@ -168,12 +163,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(
-                &sq_dst,
-                &ps,
-                &universe.get_search_part(),
-                &mut mv_src_hashset,
-            );
+            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
+                mv_src_hashset.insert(square);
+            });
             get_before_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
@@ -185,7 +177,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &km,
                 &universe.get_search_part(),
-                &mut da_kms_hashset,
+                |piece_type_hash| {
+                    da_kms_hashset.insert(piece_type_hash);
+                },
             );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
@@ -207,12 +201,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(
-                &sq_dst,
-                &ps,
-                &universe.get_search_part(),
-                &mut mv_src_hashset,
-            );
+            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
+                mv_src_hashset.insert(square);
+            });
             get_before_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
@@ -224,7 +215,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &km,
                 &universe.get_search_part(),
-                &mut da_kms_hashset,
+                |piece_type_hash| {
+                    da_kms_hashset.insert(piece_type_hash);
+                },
             );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
@@ -246,12 +239,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(
-                &sq_dst,
-                &ps,
-                &universe.get_search_part(),
-                &mut mv_src_hashset,
-            );
+            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
+                mv_src_hashset.insert(square);
+            });
             get_before_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
@@ -263,7 +253,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &km,
                 &universe.get_search_part(),
-                &mut da_kms_hashset,
+                |piece_type_hash| {
+                    da_kms_hashset.insert(piece_type_hash);
+                },
             );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);

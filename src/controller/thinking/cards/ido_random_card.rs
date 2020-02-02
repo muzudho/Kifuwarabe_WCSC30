@@ -34,13 +34,17 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, km_dst: &Piece) -> Sasite {
             &universe.get_search_part(),
             &sq_dst,
             &km_dst,
-            &mut ss_hashset,
+            |movement_hash| {
+                ss_hashset.insert(movement_hash);
+            },
         );
         get_movement_by_square_and_piece_on_drop(
             &universe.get_search_part(),
             &sq_dst,
             &km_dst,
-            &mut ss_hashset,
+            |movement_hash| {
+                ss_hashset.insert(movement_hash);
+            },
         );
         let ss = choice_1ss_by_hashset(&ss_hashset);
 
@@ -80,13 +84,17 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
             &universe.get_search_part(),
             &sq_dst,
             &km_dst,
-            &mut ss_hashset,
+            |movement_hash| {
+                ss_hashset.insert(movement_hash);
+            },
         );
         get_movement_by_square_and_piece_on_drop(
             &universe.get_search_part(),
             &sq_dst,
             &km_dst,
-            &mut ss_hashset,
+            |movement_hash| {
+                ss_hashset.insert(movement_hash);
+            },
         );
         let ss = choice_1ss_by_hashset(&ss_hashset);
 
