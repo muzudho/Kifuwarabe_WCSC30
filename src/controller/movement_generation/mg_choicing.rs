@@ -5,15 +5,17 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::controller::consoles::asserts::*;
-use super::super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::super::controller::thinking::results::komatori_result::*;
-use super::super::super::super::model::master::person::Person;
-use super::super::super::super::model::master::ply::*;
-use super::super::super::super::model::master::square::*;
-use super::super::super::super::model::universe::*;
+use super::super::super::controller::common::conv::*;
+use super::super::super::controller::communication::usi::*;
+use super::super::super::controller::consoles::asserts::*;
+use super::super::super::controller::movement_generation::mg_sub_part::*;
+use super::super::super::controller::thinking::results::komatori_result::*;
+use super::super::super::model::application::application_part::*;
+use super::super::super::model::master::person::Person;
+use super::super::super::model::master::ply::*;
+use super::super::super::model::master::square::*;
+use super::super::super::model::search::search_part::*;
+use super::super::super::model::universe::*;
 use std::collections::HashSet;
 
 pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
@@ -37,15 +39,20 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
 /**
  * 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
  */
-pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, universe: &mut Universe) {
+pub fn filtering_movement_except_check(
+    ss_hashset_input: &mut HashSet<u64>,
+    application_part: &ApplicationPart,
+    search_part: &SearchPart,
+) {
     // 自玉の位置
-    let sq_r = universe.get_search_part().get_king_sq(&Person::Ji).clone();
+    let sq_r = search_part.get_king_sq(&Person::Ji).clone();
     g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
-    let komatori_result_hashset: HashSet<u64> = lookup_banjo_catch(
-        universe,
-        &universe.get_search_part().get_phase(&Person::Ai),
+    let komatori_result_hashset: HashSet<u64> = lookup_catching_king_on_board(
+        &application_part,
+        &search_part,
+        &search_part.get_phase(&Person::Ai),
         &sq_r,
     );
     if 0 < komatori_result_hashset.len() {

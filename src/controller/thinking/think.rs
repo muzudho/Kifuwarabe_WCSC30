@@ -7,9 +7,9 @@ use rand::Rng;
 use std::collections::HashSet;
 
 use super::super::super::controller::boardmetries::hypothesis::atamakin;
-use super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
-use super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
 use super::super::super::controller::communication::usi::*;
+use super::super::super::controller::movement_generation::mg_choicing::*;
+use super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::controller::status::mediators::med_kikisu::*;
 use super::super::super::controller::thinking::visions::vision_tree::*;
 use super::super::super::model::universe::*;
@@ -40,7 +40,11 @@ pub fn think(mut universe: &mut Universe) -> Sasite {
     // use consoles::visuals::dumps::*;
     // hyoji_ss_hashset( &ss_hashset );
 
-    filtering_ss_except_oute(&mut ss_hashset, &mut universe);
+    filtering_movement_except_check(
+        &mut ss_hashset,
+        &universe.get_application_part(),
+        &universe.get_search_part(),
+    );
 
     // 現局面を見て、ビジョンを作り直せだぜ☆（＾～＾）
     &universe.remake_visions();

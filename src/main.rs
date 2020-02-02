@@ -16,12 +16,12 @@ pub mod controller;
 pub mod model;
 
 use config::*;
-use controller::boardmetries::mapping::sasite_seisei::*;
 use controller::common::conv::*;
 use controller::communication::usi::*;
 use controller::consoles::unit_test::*;
 use controller::consoles::visuals::dumps::*;
 use controller::consoles::visuals::title::*;
+use controller::movement_generation::mg_main::*;
 use controller::thinking::think::*;
 use model::master::constants::*;
 use model::master::misc::*;

@@ -3,10 +3,10 @@
 //! ランダム移動カード
 //!
 
-use super::super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
-use super::super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
+use super::super::super::super::controller::movement_generation::mg_choicing::*;
+use super::super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::super::controller::thinking::randommove;
 use super::super::super::super::controller::thinking::results::jisatusyu_result::*;
 use super::super::super::super::model::master::person::Person;
@@ -29,8 +29,19 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, km_dst: &Piece) -> Sasite {
         assert_banjo_sq(&sq_dst, "get_ido_ss_by_km_random");
 
         ss_hashset.clear();
-        insert_ss_by_ms_km_on_banjo(&universe, &sq_dst, &km_dst, &mut ss_hashset);
-        insert_ss_by_ms_km_on_da(&universe, &sq_dst, &km_dst, &mut ss_hashset);
+        get_movement_by_square_and_piece_on_board(
+            &universe.get_application_part(),
+            &universe.get_search_part(),
+            &sq_dst,
+            &km_dst,
+            &mut ss_hashset,
+        );
+        get_movement_by_square_and_piece_on_drop(
+            &universe.get_search_part(),
+            &sq_dst,
+            &km_dst,
+            &mut ss_hashset,
+        );
         let ss = choice_1ss_by_hashset(&ss_hashset);
 
         if ss.exists() {
@@ -64,8 +75,19 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
         let km_dst = ps_dst.piece();
 
         ss_hashset.clear();
-        insert_ss_by_ms_km_on_banjo(&universe, &sq_dst, &km_dst, &mut ss_hashset);
-        insert_ss_by_ms_km_on_da(&universe, &sq_dst, &km_dst, &mut ss_hashset);
+        get_movement_by_square_and_piece_on_board(
+            &universe.get_application_part(),
+            &universe.get_search_part(),
+            &sq_dst,
+            &km_dst,
+            &mut ss_hashset,
+        );
+        get_movement_by_square_and_piece_on_drop(
+            &universe.get_search_part(),
+            &sq_dst,
+            &km_dst,
+            &mut ss_hashset,
+        );
         let ss = choice_1ss_by_hashset(&ss_hashset);
 
         // 移動後は、玉が利きに飛び込まないか？

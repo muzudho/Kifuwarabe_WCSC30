@@ -2,20 +2,19 @@
 //! 現局面を使った指し手生成
 //!
 
-use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::controller::consoles::asserts::*;
-use super::super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::super::model::application::application_part::*;
-use super::super::super::super::model::master::person::Person;
-use super::super::super::super::model::master::phase::*;
-use super::super::super::super::model::master::piece::Piece;
-use super::super::super::super::model::master::piece_struct::PieceStruct;
-use super::super::super::super::model::master::piece_type::PieceType;
-use super::super::super::super::model::master::piece_type::*;
-use super::super::super::super::model::master::square::*;
-use super::super::super::super::model::search::search_part::*;
-use super::super::super::super::model::universe::*;
+use super::super::super::controller::common::conv::*;
+use super::super::super::controller::communication::usi::*;
+use super::super::super::controller::consoles::asserts::*;
+use super::super::super::controller::movement_generation::mg_sub_part::*;
+use super::super::super::model::application::application_part::*;
+use super::super::super::model::master::person::Person;
+use super::super::super::model::master::phase::*;
+use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece_struct::PieceStruct;
+use super::super::super::model::master::piece_type::PieceType;
+use super::super::super::model::master::piece_type::*;
+use super::super::super::model::master::square::*;
+use super::super::super::model::search::search_part::*;
 use std::collections::HashSet;
 
 /**
@@ -154,8 +153,9 @@ pub fn get_potential_movement(
  *
  * 盤上の駒の移動の最初の１つ。打を除く
  */
-pub fn insert_ss_by_ms_km_on_banjo(
-    universe: &Universe,
+pub fn get_movement_by_square_and_piece_on_board(
+    application_part: &ApplicationPart,
+    search_part: &SearchPart,
     sq_dst: &Square,
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
@@ -168,10 +168,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
-        &universe
-            .get_search_part()
-            .get_current_position()
-            .get_sn_by_sq(&sq_dst),
+        &search_part.get_current_position().get_sn_by_sq(&sq_dst),
         &sn,
     ) {
         return;
@@ -188,12 +185,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    get_no_promotion_src_by_sq_km(
-        &sq_dst,
-        &ps_dst,
-        &universe.get_search_part(),
-        &mut mv_src_hashset,
-    );
+    get_no_promotion_src_by_sq_km(&sq_dst, &ps_dst, &search_part, &mut mv_src_hashset);
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
 
@@ -211,8 +203,8 @@ pub fn insert_ss_by_ms_km_on_banjo(
     get_before_promotion_src_by_sq_km(
         sq_dst,
         &ps_dst,
-        &universe.get_application_part(),
-        &universe.get_search_part(),
+        &application_part,
+        &search_part,
         &mut mv_src_hashset,
     );
     for sq_src in &mv_src_hashset {
@@ -231,13 +223,13 @@ pub fn insert_ss_by_ms_km_on_banjo(
  * 1. 移動先升指定  ms_dst
  * 2. 移動先駒指定  km_dst
  */
-pub fn insert_ss_by_ms_km_on_da(
-    universe: &Universe,
+pub fn get_movement_by_square_and_piece_on_drop(
+    search_part: &SearchPart,
     sq_dst: &Square,
     km_dst: &Piece,
     ss_hashset: &mut HashSet<u64>,
 ) {
-    assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_da");
+    assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
     let piece_struct_dst = PieceStruct::from_piece(&km_dst);
@@ -245,10 +237,7 @@ pub fn insert_ss_by_ms_km_on_da(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
-        &universe
-            .get_search_part()
-            .get_current_position()
-            .get_sn_by_sq(&sq_dst),
+        &search_part.get_current_position().get_sn_by_sq(&sq_dst),
         &sn,
     ) {
         return;
@@ -267,12 +256,7 @@ pub fn insert_ss_by_ms_km_on_da(
     // +----+
 
     let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-    get_drop_kms_by_sq_km(
-        &sq_dst,
-        &km_dst,
-        &universe.get_search_part(),
-        &mut da_kms_hashset,
-    );
+    get_drop_kms_by_sq_km(&sq_dst, &km_dst, &search_part, &mut da_kms_hashset);
     // 打
     for num_kms_da in da_kms_hashset.iter() {
         let kms_da = num_to_kms(*num_kms_da);

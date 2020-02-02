@@ -1,18 +1,20 @@
 //!
 //! 結果：駒を取られる手
 //!
-use super::super::super::super::controller::boardmetries::mapping::sasite_seisei::*;
-use super::super::super::super::controller::boardmetries::mapping::sasite_sentaku::*;
 use super::super::super::super::controller::boardmetries::proposition::math_meidai::*;
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
+use super::super::super::super::controller::movement_generation::mg_choicing::*;
+use super::super::super::super::controller::movement_generation::mg_main::*;
+use super::super::super::super::model::application::application_part::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::search::search_part::*;
 use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 use std::fmt;
@@ -166,7 +168,12 @@ impl KomatoriResult {
  *
  * return u64 : KomatoriResult のハッシュ
  */
-pub fn lookup_banjo_catch(universe: &Universe, sn: &Phase, sq_target: &Square) -> HashSet<u64> {
+pub fn lookup_catching_king_on_board(
+    application_part: &ApplicationPart,
+    search_part: &SearchPart,
+    sn: &Phase,
+    sq_target: &Square,
+) -> HashSet<u64> {
     assert_banjo_sq(
         &sq_target,
         &format!(
@@ -186,8 +193,7 @@ pub fn lookup_banjo_catch(universe: &Universe, sn: &Phase, sq_target: &Square) -
 
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
-        let ps_dst = universe
-            .get_application_part()
+        let ps_dst = application_part
             .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(&sn, kms_dst);
         let km_dst = ps_dst.piece();
@@ -196,9 +202,15 @@ pub fn lookup_banjo_catch(universe: &Universe, sn: &Phase, sq_target: &Square) -
         // 打は除く
 
         ss_hashset.clear();
-        insert_ss_by_ms_km_on_banjo(&universe, &sq_target, &km_dst, &mut ss_hashset);
+        get_movement_by_square_and_piece_on_board(
+            &application_part,
+            &search_part,
+            &sq_target,
+            &km_dst,
+            &mut ss_hashset,
+        );
 
-        // g_writeln( &format!("テスト lookup_banjo_catch insert_ss_by_ms_km_on_banjo kms_dst={}.",kms_dst) );
+        // g_writeln( &format!("テスト lookup_catching_king_on_board get_movement_by_square_and_piece_on_board kms_dst={}.",kms_dst) );
         // use consoles::visuals::dumps::*;
         // hyoji_ss_hashset( &ss_hashset );
 
