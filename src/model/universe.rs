@@ -87,8 +87,6 @@ pub fn g_writeln(s: &str) {
  * ここに全部入れてあるぜ☆（＾～＾）
  */
 pub struct Universe {
-    /// コマンドを溜めておくバッファー
-    pub vec_command: Vec<String>,
     /// アプリケーション部
     application_part: ApplicationPart,
     /// 対話部
@@ -100,7 +98,6 @@ pub struct Universe {
 impl Universe {
     pub fn new() -> Universe {
         Universe {
-            vec_command: Vec::new(),
             application_part: ApplicationPart::new(),
             dialogue_part: DialoguePart::new(),
             search_part: SearchPart::new(),
@@ -198,13 +195,13 @@ impl Universe {
      * コマンド・バッファー *
      ************************/
     pub fn is_empty_command(&mut self) -> bool {
-        self.vec_command.len() == 0
+        self.dialogue_part.vec_command.len() == 0
     }
     pub fn push_command(&mut self, line: &String) {
-        self.vec_command.push(format!("{}\n", line));
+        self.dialogue_part.vec_command.push(format!("{}\n", line));
     }
     pub fn pop_command(&mut self) -> String {
-        self.vec_command.pop().unwrap()
+        self.dialogue_part.vec_command.pop().unwrap()
     }
 
     /* ******
