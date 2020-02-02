@@ -60,7 +60,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
 
                     mv_src_hashset.clear();
                     //da_kms_hashset.clear();
-                    insert_narazu_src_by_sq_km(
+                    get_no_promotion_src_by_sq_km(
                         &sq_dst,
                         &ps_dst,
                         &universe.get_search_part(),

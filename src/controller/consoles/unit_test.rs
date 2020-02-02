@@ -47,7 +47,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_sq_km(
+        get_no_promotion_src_by_sq_km(
             &sq_dst,
             &ps,
             &universe.get_search_part(),
@@ -75,7 +75,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
-        insert_narazu_src_by_sq_km(
+        get_no_promotion_src_by_sq_km(
             &sq_dst,
             &ps,
             &universe.get_search_part(),
@@ -112,7 +112,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(
+            get_no_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
@@ -140,7 +140,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(
+            get_no_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
@@ -168,7 +168,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(
+            get_no_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
@@ -196,7 +196,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            insert_narazu_src_by_sq_km(
+            get_no_promotion_src_by_sq_km(
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),

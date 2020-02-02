@@ -189,7 +189,7 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    insert_narazu_src_by_sq_km(
+    get_no_promotion_src_by_sq_km(
         &sq_dst,
         &ps_dst,
         &universe.get_search_part(),

@@ -29,13 +29,13 @@ use std::collections::HashSet;
  *
  * TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
  */
-pub fn insert_narazu_src_by_sq_km(
+pub fn get_no_promotion_src_by_sq_km(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
     search_part: &SearchPart,
     result: &mut HashSet<Square>,
 ) {
-    assert_banjo_sq(&sq_dst, "ｉnsert_narazu_src_by_ms_km");
+    assert_banjo_sq(&sq_dst, "get_no_promotion_src_by_sq_km");
 
     /*
      * Square は 将棋盤座標
