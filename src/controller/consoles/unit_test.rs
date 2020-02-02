@@ -32,7 +32,10 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         let kms = randommove::rnd_kms();
         let ps = universe
             .get_piece_struct_master()
-            .get_piece_struct_by_phase_and_piece_type(&universe.get_teban(&Person::Ji), kms);
+            .get_piece_struct_by_phase_and_piece_type(
+                &universe.get_search_part().get_phase(&Person::Ji),
+                kms,
+            );
         let km = ps.piece();
         let sq_dst = randommove::random_square();
         g_writeln(&format!(
@@ -54,7 +57,10 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         let kms = randommove::rnd_kms();
         let ps = universe
             .get_piece_struct_master()
-            .get_piece_struct_by_phase_and_piece_type(&universe.get_teban(&Person::Ji), &kms);
+            .get_piece_struct_by_phase_and_piece_type(
+                &universe.get_search_part().get_phase(&Person::Ji),
+                &kms,
+            );
         // 移動先の升、および　不成駒／成駒
         let sq_dst = randommove::random_square();
         let pro_dst = randommove::rnd_bool();

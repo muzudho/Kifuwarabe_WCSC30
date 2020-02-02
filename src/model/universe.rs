@@ -26,7 +26,6 @@ use super::super::model::master::piece_type::*;
 use super::super::model::master::ply::*;
 use super::super::model::master::square::*;
 use super::application::application_part::*;
-use super::search::position::*;
 use super::search::search_part::*;
 use std::fs::File;
 use std::io::Write;
@@ -95,8 +94,6 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    /// 現局面
-    position1: Position,
     /// 棋譜
     pub kifu: [Sasite; TEME_LN],
     /// 取った駒
@@ -120,8 +117,6 @@ impl Universe {
         Universe {
             dialogue_mode: false,
             vec_command: Vec::new(),
-            // 現局面
-            position1: Position::new(),
             kifu: [
                 // 1行16要素で並べるぜ☆（＾～＾）
                 Sasite::new(),
@@ -722,7 +717,9 @@ impl Universe {
         self.get_application_part_mut()
             .get_starting_position_mut()
             .clear();
-        self.position1.clear();
+        self.get_search_part_mut()
+            .get_current_position_mut()
+            .clear();
         self.get_search_part_mut().set_ply(0);
     }
     /// 開始局面を、現局面にコピーします
@@ -737,12 +734,15 @@ impl Universe {
                     .get_piece_struct_by_sq(&i_sq)
                     .piece(),
             );
-            self.position1.set_ps_by_sq(&i_sq, &ps);
+            self.get_search_part_mut()
+                .get_current_position_mut()
+                .set_ps_by_sq(&i_sq, &ps);
         }
 
         // 持ち駒
         for i_mg in 0..KM_LN {
-            self.position1.mg[i_mg] = self.get_application_part().get_starting_position().mg[i_mg];
+            self.get_search_part_mut().get_current_position_mut().mg[i_mg] =
+                self.get_application_part().get_starting_position().mg[i_mg];
         }
     }
 
@@ -758,17 +758,6 @@ impl Universe {
     }
     pub fn get_search_part(&self) -> &SearchPart {
         &self.search_part
-    }
-
-    pub fn get_position1(&self) -> &Position {
-        &self.position1
-    }
-    pub fn get_position1_mut(&mut self) -> &mut Position {
-        &mut self.position1
-    }
-    /// らいおんの位置
-    pub fn get_sq_r(&self, jiai: &Person) -> &Square {
-        &self.position1.get_sq_r(sn_to_num(&self.get_teban(jiai)))
     }
 
     /* **********************
@@ -807,7 +796,10 @@ impl Universe {
             .mg[km as usize] = maisu;
     }
     pub fn get_jiai_by_km(&self, piece_struct: &PieceStruct) -> Person {
-        if match_sn(&piece_struct.phase(), &self.get_teban(&Person::Ji)) {
+        if match_sn(
+            &piece_struct.phase(),
+            &self.search_part.get_phase(&Person::Ji),
+        ) {
             Person::Ji
         } else {
             Person::Ai
@@ -817,30 +809,6 @@ impl Universe {
     /* ******
      * 棋譜 *
      ********/
-
-    // 手番
-    pub fn get_teban(&self, jiai: &Person) -> Phase {
-        use super::master::person::Person::*;
-        match *jiai {
-            Ji => {
-                // 手番
-                if self.get_search_part().get_ply() % 2 == 0 {
-                    Phase::Sen
-                } else {
-                    Phase::Go
-                }
-            }
-            Ai => {
-                // 相手番
-                if self.get_search_part().get_ply() % 2 == 0 {
-                    Phase::Go
-                } else {
-                    Phase::Sen
-                }
-            }
-            _ => Phase::Owari,
-        }
-    }
 
     /**
      * 棋譜の作成
@@ -897,7 +865,7 @@ impl Universe {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
-        if let Phase::Sen = self.get_teban(&Person::Ji) {
+        if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
             super::master::region::SenteJin::to_elm()
         } else {
             super::master::region::GoteJin::to_elm()
@@ -908,7 +876,7 @@ impl Universe {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
-        if let Phase::Sen = self.get_teban(&Person::Ji) {
+        if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
             super::master::region::GoteJin::to_elm()
         } else {
             super::master::region::SenteJin::to_elm()
@@ -922,9 +890,9 @@ impl Universe {
      * デカルト座標の第一象限と x,y 方向が一致するメリットがあるぜ☆（＾～＾）
      */
     pub fn kaku_ky(&self, num: &KyNums) -> String {
-        let position1 = match *num {
-            KyNums::Current => &self.position1,
-            KyNums::Start => &self.get_application_part().get_starting_position(),
+        let cur_pos = match *num {
+            KyNums::Current => self.search_part.get_current_position(),
+            KyNums::Start => self.application_part.get_starting_position(),
         };
 
         // 局面表示
@@ -953,267 +921,267 @@ impl Universe {
            +----+----+----+----+----+----+----+----+----+
               1    2    3    4    5    6    7    8    9\
 ",
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(19))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(29))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(39))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(49))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(59))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(69))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(79))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(89))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(99))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(18))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(28))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(38))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(48))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(58))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(68))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(78))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(88))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(98))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(17))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(27))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(37))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(47))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(57))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(67))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(77))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(87))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(97))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(16))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(26))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(36))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(46))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(56))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(66))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(76))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(86))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(96))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(15))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(25))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(35))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(45))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(55))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(65))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(75))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(85))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(95))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(14))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(24))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(34))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(44))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(54))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(64))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(74))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(84))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(94))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(13))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(23))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(33))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(43))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(53))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(63))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(73))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(83))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(93))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(12))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(22))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(32))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(42))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(52))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(62))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(72))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(82))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(92))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(11))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(21))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(31))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(41))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(51))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(61))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(71))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(81))
                 .piece(),
-            position1
+            cur_pos
                 .get_piece_struct_by_sq(&Square::from_umasu(91))
                 .piece(),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            position1.mg[Piece::Rook1 as usize],
-            position1.mg[Piece::Bishop1 as usize],
-            position1.mg[Piece::Gold1 as usize],
-            position1.mg[Piece::Silver1 as usize],
-            position1.mg[Piece::Knight1 as usize],
-            position1.mg[Piece::Lance1 as usize],
-            position1.mg[Piece::Pawn1 as usize],
+            cur_pos.mg[Piece::Rook1 as usize],
+            cur_pos.mg[Piece::Bishop1 as usize],
+            cur_pos.mg[Piece::Gold1 as usize],
+            cur_pos.mg[Piece::Silver1 as usize],
+            cur_pos.mg[Piece::Knight1 as usize],
+            cur_pos.mg[Piece::Lance1 as usize],
+            cur_pos.mg[Piece::Pawn1 as usize],
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            position1.mg[Piece::Rook2 as usize],
-            position1.mg[Piece::Bishop2 as usize],
-            position1.mg[Piece::Gold2 as usize],
-            position1.mg[Piece::Silver2 as usize],
-            position1.mg[Piece::Knight2 as usize],
-            position1.mg[Piece::Lance2 as usize],
-            position1.mg[Piece::Pawn2 as usize],
+            cur_pos.mg[Piece::Rook2 as usize],
+            cur_pos.mg[Piece::Bishop2 as usize],
+            cur_pos.mg[Piece::Gold2 as usize],
+            cur_pos.mg[Piece::Silver2 as usize],
+            cur_pos.mg[Piece::Knight2 as usize],
+            cur_pos.mg[Piece::Lance2 as usize],
+            cur_pos.mg[Piece::Pawn2 as usize],
             self.get_search_part().get_ply(),
-            self.get_teban(&Person::Ji),
+            self.search_part.get_phase(&Person::Ji),
             self.count_same_ky()
         )
     }
@@ -1356,7 +1324,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
         self.kifu[ply as usize] = (*ss).clone();
-        let cap = self.position1.do_sasite(&self.get_teban(&Person::Ji), ss);
+        let cap = self.search_part.do_move(ss);
         self.set_cap(ply as usize, cap.clone());
 
         // 局面ハッシュを作り直す
@@ -1371,13 +1339,10 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
-            let sn = self.get_teban(&Person::Ji);
+            let sn = self.search_part.get_phase(&Person::Ji);
             let ss = &self.get_sasite().clone();
-            self.position1.undo_sasite(
-                &sn,
-                &ss,
-                &self.cap[self.get_search_part().get_ply() as usize],
-            );
+            let cap = &self.cap[self.search_part.get_ply() as usize];
+            self.search_part.undo_move(&sn, ss, cap);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -1411,11 +1376,14 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
      * 局面ハッシュを作り直す
      */
     pub fn create_ky1_hash(&self) -> u64 {
-        let mut hash = self.position1.create_hash(&self);
+        let mut hash = self
+            .get_search_part()
+            .get_current_position()
+            .create_hash(&self);
 
         // 手番ハッシュ
         use super::master::phase::Phase::*;
-        match self.get_teban(&Person::Ji) {
+        match self.search_part.get_phase(&Person::Ji) {
             Sen => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_SEN],
             Go => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO],
             _ => {}
@@ -1463,7 +1431,11 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
     /// 相手の　玉　の位置を覚えます。
     pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
-        self.vision_tree_by_sn[sn_to_num(phase)]
-            .set_ai_r(&self.position1.get_sq_r(sn_to_num(opponent_phase)));
+        self.vision_tree_by_sn[sn_to_num(phase)].set_ai_r(
+            &self
+                .search_part
+                .get_current_position()
+                .get_sq_r(sn_to_num(opponent_phase)),
+        );
     }
 }

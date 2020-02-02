@@ -57,7 +57,7 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
         let ps_dst = universe
             .get_piece_struct_master()
             .get_piece_struct_by_phase_and_piece_type(
-                &universe.get_teban(&Person::Ji),
+                &universe.get_search_part().get_phase(&Person::Ji),
                 randommove::rnd_kms(),
             );
         let km_dst = ps_dst.piece();

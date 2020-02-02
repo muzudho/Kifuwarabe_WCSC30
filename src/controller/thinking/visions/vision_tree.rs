@@ -65,7 +65,10 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                     // 盤上
                     for sq_src in mv_src_hashset.iter() {
                         // 成り
-                        let pro = &universe.get_position1().is_natta(&sq_src, &sq_dst);
+                        let pro = &universe
+                            .get_search_part()
+                            .get_current_position()
+                            .is_natta(&sq_src, &sq_dst);
 
                         let hash_ss = Sasite {
                             src: sq_src.clone(),

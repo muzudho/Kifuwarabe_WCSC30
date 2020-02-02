@@ -39,12 +39,15 @@ pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
  */
 pub fn filtering_ss_except_oute(ss_hashset_input: &mut HashSet<u64>, universe: &mut Universe) {
     // 自玉の位置
-    let sq_r = universe.get_sq_r(&Person::Ji).clone();
+    let sq_r = universe.get_search_part().get_king_sq(&Person::Ji).clone();
     g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
-    let komatori_result_hashset: HashSet<u64> =
-        lookup_banjo_catch(universe, &universe.get_teban(&Person::Ai), &sq_r);
+    let komatori_result_hashset: HashSet<u64> = lookup_banjo_catch(
+        universe,
+        &universe.get_search_part().get_phase(&Person::Ai),
+        &sq_r,
+    );
     if 0 < komatori_result_hashset.len() {
         // 王手されていれば
 
@@ -106,8 +109,11 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, univer
 
     // 自玉の位置
     let sq_r = universe
-        .get_position1()
-        .get_sq_r(sn_to_num(&universe.get_teban(&Person::Ji)))
+        .get_search_part()
+        .get_current_position()
+        .get_sq_r(sn_to_num(
+            &universe.get_search_part().get_phase(&Person::Ji),
+        ))
         .clone();
 
     // 王手回避カードを発行する
@@ -134,14 +140,14 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, univer
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
         insert_narazu_src_by_sn_sq(
-            &universe.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                        // 指定の升
+            &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                          // 指定の升
             &universe,
             &mut attackers,
         );
         insert_narumae_src_by_sn_sq(
-            &universe.get_teban(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                        // 指定の升
+            &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                          // 指定の升
             &universe,
             &mut attackers,
         );
@@ -152,7 +158,7 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, univer
             "info {} evaluated => {} attackers. offence={}->{}",
             ss_potential,
             attackers.len(),
-            universe.get_teban(&Person::Ji),
+            universe.get_search_part().get_phase(&Person::Ji),
             sq_r_new.to_umasu()
         ));
         for sq_atk in attackers.iter() {

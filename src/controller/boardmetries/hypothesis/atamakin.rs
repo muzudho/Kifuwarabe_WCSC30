@@ -15,7 +15,7 @@ use super::super::super::super::model::universe::*;
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
 pub fn is_s(universe: &Universe) -> bool {
     // 相手玉の位置
-    let sq_r = universe.get_sq_r(&Person::Ai).clone();
+    let sq_r = universe.get_search_part().get_king_sq(&Person::Ai).clone();
 
     let p_r = sq_r.to_point();
     let p_south_r = p_r.to_south();
@@ -24,7 +24,10 @@ pub fn is_s(universe: &Universe) -> bool {
     }
 
     let sq_south_r = Square::from_point(&p_south_r);
-    let ps = universe.get_position1().get_piece_struct_by_sq(&sq_south_r);
+    let ps = universe
+        .get_search_part()
+        .get_current_position()
+        .get_piece_struct_by_sq(&sq_south_r);
     let jiai_km = universe.get_jiai_by_km(&ps);
     if !match_jiai(&jiai_km, &Person::Ji) {
         return true;
@@ -90,7 +93,7 @@ pub fn is_atamakin(
     universe: &Universe,
 ) -> bool {
     // 相手らいおんのマス
-    let sq_ai_r = universe.get_sq_r(&Person::Ai).clone();
+    let sq_ai_r = universe.get_search_part().get_king_sq(&Person::Ai).clone();
 
     // らいおん以外の相手の駒種類
     let mut kms_set_ai_c_r = PieceTypeSet::new_all();
