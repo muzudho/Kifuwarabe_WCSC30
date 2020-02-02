@@ -209,7 +209,13 @@ pub fn insert_ss_by_ms_km_on_banjo(
     // | 盤上（成り） |
     // +--------------+
     mv_src_hashset.clear();
-    insert_narumae_src_by_sq_km(sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
+    get_before_promotion_src_by_sq_km(
+        sq_dst,
+        &ps_dst,
+        &universe.get_application_part(),
+        &universe.get_search_part(),
+        &mut mv_src_hashset,
+    );
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 

@@ -44,7 +44,13 @@ pub fn read_kikisu(universe: &mut Universe) {
                     &universe.get_search_part(),
                     &mut mv_src_hashset,
                 );
-                insert_narumae_src_by_sq_km(&sq_dst, &ps_dst, &universe, &mut mv_src_hashset);
+                get_before_promotion_src_by_sq_km(
+                    &sq_dst,
+                    &ps_dst,
+                    &universe.get_application_part(),
+                    &universe.get_search_part(),
+                    &mut mv_src_hashset,
+                );
                 // 打は考えない。盤上の利き数なので
                 let kikisu = mv_src_hashset.len();
 
