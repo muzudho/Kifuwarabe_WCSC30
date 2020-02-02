@@ -210,13 +210,9 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     // | 盤上（成り） |
     // +--------------+
     mv_src_hashset.clear();
-    get_before_promotion_src_by_sq_km(
-        sq_dst,
-        &ps_dst,
-        &application_part,
-        &search_part,
-        &mut mv_src_hashset,
-    );
+    get_before_promotion_src_by_sq_km(sq_dst, &ps_dst, &application_part, &search_part, |square| {
+        mv_src_hashset.insert(square);
+    });
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 

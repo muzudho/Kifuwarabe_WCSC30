@@ -55,7 +55,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &ps,
             &universe.get_application_part(),
             &universe.get_search_part(),
-            &mut mv_src_hashset,
+            |square| {
+                mv_src_hashset.insert(square);
+            },
         );
         get_drop_kms_by_sq_km(
             &sq_dst,
@@ -93,7 +95,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &ps,
             &universe.get_application_part(),
             &universe.get_search_part(),
-            &mut mv_src_hashset,
+            |square| {
+                mv_src_hashset.insert(square);
+            },
         );
         //insert_da_kms_by_sq_km      ( ms_dst, &km, &universe, &mut da_kms_hashset );
         for sq_src in mv_src_hashset {
@@ -133,7 +137,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &ps,
                 &universe.get_application_part(),
                 &universe.get_search_part(),
-                &mut mv_src_hashset,
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
             );
             get_drop_kms_by_sq_km(
                 &sq_dst,
@@ -171,7 +177,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &ps,
                 &universe.get_application_part(),
                 &universe.get_search_part(),
-                &mut mv_src_hashset,
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
             );
             get_drop_kms_by_sq_km(
                 &sq_dst,
@@ -209,7 +217,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &ps,
                 &universe.get_application_part(),
                 &universe.get_search_part(),
-                &mut mv_src_hashset,
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
             );
             get_drop_kms_by_sq_km(
                 &sq_dst,
@@ -247,7 +257,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &ps,
                 &universe.get_application_part(),
                 &universe.get_search_part(),
-                &mut mv_src_hashset,
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
             );
             get_drop_kms_by_sq_km(
                 &sq_dst,

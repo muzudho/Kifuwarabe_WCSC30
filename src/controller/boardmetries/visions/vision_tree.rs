@@ -73,7 +73,9 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                         &ps_dst,
                         &universe.get_application_part(),
                         &universe.get_search_part(),
-                        &mut mv_src_hashset,
+                        |square| {
+                            mv_src_hashset.insert(square);
+                        },
                     );
                     // TODO 王手になるところに打ちたい
                     //insert_da_kms_by_sq_km      ( &ms_dst, &km_dst, &universe, &mut da_kms_hashset );

@@ -51,7 +51,9 @@ pub fn update_effect_count(universe: &mut Universe) {
                     &ps_dst,
                     &universe.get_application_part(),
                     &universe.get_search_part(),
-                    &mut mv_src_hashset,
+                    |square| {
+                        mv_src_hashset.insert(square);
+                    },
                 );
                 // 打は考えない。盤上の利き数なので
                 let kikisu = mv_src_hashset.len();

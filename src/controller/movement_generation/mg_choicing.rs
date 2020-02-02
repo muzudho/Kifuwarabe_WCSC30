@@ -154,14 +154,18 @@ pub fn select_movement_except_suiceid(
             &sq_r_new,                                          // 指定の升
             &universe.get_application_part(),
             &universe.get_search_part(),
-            &mut attackers,
+            |square| {
+                attackers.insert(square);
+            },
         );
         get_before_promotion_src_by_sn_sq(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
             &universe.get_application_part(),
             &universe.get_search_part(),
-            &mut attackers,
+            |square| {
+                attackers.insert(square);
+            },
         );
 
         // 玉が利きに飛び込んでいるか？
