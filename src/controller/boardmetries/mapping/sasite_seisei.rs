@@ -44,11 +44,11 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
                 // 手番の駒
 
                 let mut dst_hashset: HashSet<Square> = HashSet::<Square>::new();
-                insert_dst_by_sq_km(
+                get_dst_by_sq_km(
                     &sq_src,
                     &km_src,
                     false, // 成らず
-                    &universe,
+                    &universe.get_search_part(),
                     &mut dst_hashset,
                 );
 
@@ -69,11 +69,11 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
                 }
 
                 dst_hashset.clear();
-                insert_dst_by_sq_km(
+                get_dst_by_sq_km(
                     &sq_src,
                     &km_src,
                     true, // 成り
-                    &universe,
+                    &universe.get_search_part(),
                     &mut dst_hashset,
                 );
                 for sq_dst in &dst_hashset {
@@ -122,10 +122,10 @@ pub fn insert_potential_move(universe: &Universe, ss_hashset: &mut HashSet<u64>)
                             .get_mg(&km_motigoma)
                         {
                             // 駒を持っていれば
-                            insert_da_kms_by_sq_km(
+                            get_drop_kms_by_sq_km(
                                 &sq_dst,
                                 &km_motigoma,
-                                &universe,
+                                &universe.get_search_part(),
                                 &mut da_kms_hashset,
                             );
                         }
@@ -268,7 +268,12 @@ pub fn insert_ss_by_ms_km_on_da(
     // +----+
 
     let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-    insert_da_kms_by_sq_km(&sq_dst, &km_dst, &universe, &mut da_kms_hashset);
+    get_drop_kms_by_sq_km(
+        &sq_dst,
+        &km_dst,
+        &universe.get_search_part(),
+        &mut da_kms_hashset,
+    );
     // 打
     for num_kms_da in da_kms_hashset.iter() {
         let kms_da = num_to_kms(*num_kms_da);

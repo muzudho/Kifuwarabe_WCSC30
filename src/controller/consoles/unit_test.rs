@@ -60,7 +60,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &universe.get_search_part(),
             &mut mv_src_hashset,
         );
-        insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
+        get_drop_kms_by_sq_km(
+            &sq_dst,
+            &km,
+            &universe.get_search_part(),
+            &mut da_kms_hashset,
+        );
         hyoji_sq_hashset(&mv_src_hashset);
         hyoji_kms_hashset(&da_kms_hashset);
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
@@ -137,7 +142,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &universe.get_search_part(),
                 &mut mv_src_hashset,
             );
-            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
+            get_drop_kms_by_sq_km(
+                &sq_dst,
+                &km,
+                &universe.get_search_part(),
+                &mut da_kms_hashset,
+            );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }
@@ -171,7 +181,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &universe.get_search_part(),
                 &mut mv_src_hashset,
             );
-            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
+            get_drop_kms_by_sq_km(
+                &sq_dst,
+                &km,
+                &universe.get_search_part(),
+                &mut da_kms_hashset,
+            );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }
@@ -205,7 +220,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &universe.get_search_part(),
                 &mut mv_src_hashset,
             );
-            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
+            get_drop_kms_by_sq_km(
+                &sq_dst,
+                &km,
+                &universe.get_search_part(),
+                &mut da_kms_hashset,
+            );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }
@@ -239,7 +259,12 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &universe.get_search_part(),
                 &mut mv_src_hashset,
             );
-            insert_da_kms_by_sq_km(&sq_dst, &km, &universe, &mut da_kms_hashset);
+            get_drop_kms_by_sq_km(
+                &sq_dst,
+                &km,
+                &universe.get_search_part(),
+                &mut da_kms_hashset,
+            );
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_kms_hashset(&da_kms_hashset);
         }

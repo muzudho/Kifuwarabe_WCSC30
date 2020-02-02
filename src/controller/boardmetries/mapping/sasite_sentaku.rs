@@ -139,10 +139,11 @@ pub fn filtering_ss_except_jisatusyu(ss_hashset_input: &mut HashSet<u64>, univer
         // 利きの再計算
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
-        insert_narazu_src_by_sn_sq(
+        get_no_promotion_src_by_sn_sq(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
-            &universe,
+            &universe.get_application_part(),
+            &universe.get_search_part(),
             &mut attackers,
         );
         insert_narumae_src_by_sn_sq(
