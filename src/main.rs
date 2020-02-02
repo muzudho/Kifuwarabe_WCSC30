@@ -39,11 +39,11 @@ fn main() {
     // [Ctrl]+[C] で強制終了
     loop {
         let mut line: String;
-        if universe.get_dialogue_part_mut().is_empty_command() {
+        if universe.is_empty_command() {
             line = String::new();
         } else {
             // バッファーに溜まっていれば☆（＾～＾）
-            line = universe.get_dialogue_part_mut().pop_command();
+            line = universe.pop_command();
             //g_writeln( &line );
         }
 
@@ -63,9 +63,9 @@ fn main() {
 
         if len == 0 {
             g_writeln("len==0");
-            if !&universe.get_dialogue_part().dialogue_mode {
+            if !&universe.dialogue_mode {
                 // 空打ち１回目なら、対話モードへ☆（＾～＾）
-                universe.get_dialogue_part_mut().dialogue_mode = true;
+                universe.dialogue_mode = true;
                 // タイトル表示
                 // １画面は２５行だが、最後の２行は開けておかないと、
                 // カーソルが２行分場所を取るんだぜ☆（＾～＾）
