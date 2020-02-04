@@ -4,7 +4,6 @@
 
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
-use super::super::super::model::application::application_part::*;
 use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
@@ -410,7 +409,6 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
 pub fn make_before_promotion_source_by_square_piece<F1>(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
-    application_part: &ApplicationPart,
     search_part: &SearchPart,
     mut gets_square: F1,
 ) where
@@ -1351,7 +1349,6 @@ pub fn make_destination_by_square_piece(
 pub fn make_no_promotion_source_by_phase_square<F1>(
     sn: &Phase,
     sq_dst: &Square,
-    application_part: &ApplicationPart,
     search_part: &SearchPart,
     mut gets_square: F1,
 ) where
@@ -1740,7 +1737,6 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
 pub fn make_before_promotion_source_by_phase_square<F1>(
     sn: &Phase,
     sq_dst: &Square,
-    application_part: &ApplicationPart,
     search_part: &SearchPart,
     mut gets_square: F1,
 ) where

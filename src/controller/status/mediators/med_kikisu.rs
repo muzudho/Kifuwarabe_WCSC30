@@ -49,7 +49,6 @@ pub fn update_effect_count(universe: &mut Universe) {
                 make_before_promotion_source_by_square_piece(
                     &sq_dst,
                     &ps_dst,
-                    &universe.get_application_part(),
                     &universe.get_search_part(),
                     |square| {
                         mv_src_hashset.insert(square);

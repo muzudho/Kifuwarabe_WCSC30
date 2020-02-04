@@ -8,7 +8,6 @@ use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
-use super::super::super::super::model::application::application_part::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
@@ -163,7 +162,6 @@ impl KomatoriResult {
 ///
 /// return u64 : KomatoriResult のハッシュ
 pub fn lookup_catching_king_on_board(
-    application_part: &ApplicationPart,
     search_part: &SearchPart,
     sn: &Phase,
     sq_target: &Square,
@@ -195,7 +193,6 @@ pub fn lookup_catching_king_on_board(
 
         multiple_movements_hashset.clear();
         get_movement_by_square_and_piece_on_board(
-            &application_part,
             &search_part,
             &sq_target,
             km_dst.clone(),

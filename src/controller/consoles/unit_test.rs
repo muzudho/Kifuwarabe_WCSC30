@@ -57,7 +57,6 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &universe.get_application_part(),
             &universe.get_search_part(),
             |square| {
                 mv_src_hashset.insert(square);
@@ -101,7 +100,6 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &universe.get_application_part(),
             &universe.get_search_part(),
             |square| {
                 mv_src_hashset.insert(square);
@@ -147,7 +145,6 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_application_part(),
                 &universe.get_search_part(),
                 |square| {
                     mv_src_hashset.insert(square);
@@ -191,7 +188,6 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_application_part(),
                 &universe.get_search_part(),
                 |square| {
                     mv_src_hashset.insert(square);
@@ -235,7 +231,6 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_application_part(),
                 &universe.get_search_part(),
                 |square| {
                     mv_src_hashset.insert(square);
@@ -279,7 +274,6 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_application_part(),
                 &universe.get_search_part(),
                 |square| {
                     mv_src_hashset.insert(square);

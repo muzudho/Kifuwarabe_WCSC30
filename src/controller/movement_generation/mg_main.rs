@@ -6,7 +6,6 @@ use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::model::application::application_part::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
@@ -27,11 +26,8 @@ use std::collections::HashSet;
 ///
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
-pub fn get_potential_movement<F1>(
-    application_part: &ApplicationPart,
-    search_part: &SearchPart,
-    mut gets_movement_callback: F1,
-) where
+pub fn get_potential_movement<F1>(search_part: &SearchPart, mut gets_movement_callback: F1)
+where
     F1: FnMut(u64),
 {
     // +----------------+
@@ -45,7 +41,7 @@ pub fn get_potential_movement<F1>(
                 .get_piece_by_square(&sq_src);
 
             if match_sn(
-                &PieceStruct::from_piece(piece_src.clone()).phase(),
+                &search_part.get_piece_struct(&piece_src).phase(),
                 &search_part.get_phase(&Person::Ji),
             ) {
                 // 手番の駒
@@ -157,7 +153,6 @@ pub fn get_potential_movement<F1>(
 ///
 /// 盤上の駒の移動の最初の１つ。打を除く
 pub fn get_movement_by_square_and_piece_on_board<F1>(
-    application_part: &ApplicationPart,
     search_part: &SearchPart,
     sq_dst: &Square,
     piece_dst: Piece,
@@ -168,7 +163,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let ps_dst = PieceStruct::from_piece(piece_dst);
+    let ps_dst = search_part.get_piece_struct(&piece_dst);
     let (sn, _kms_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
@@ -210,15 +205,9 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     // | 盤上（成り） |
     // +--------------+
     mv_src_hashset.clear();
-    make_before_promotion_source_by_square_piece(
-        sq_dst,
-        &ps_dst,
-        &application_part,
-        &search_part,
-        |square| {
-            mv_src_hashset.insert(square);
-        },
-    );
+    make_before_promotion_source_by_square_piece(sq_dst, &ps_dst, &search_part, |square| {
+        mv_src_hashset.insert(square);
+    });
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 

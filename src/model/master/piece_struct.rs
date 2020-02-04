@@ -21,6 +21,7 @@ pub struct PieceStruct {
     serial_piece_number: usize,
 }
 impl PieceStruct {
+    /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
         use super::phase::Phase::*;
         use super::piece::Piece::*;

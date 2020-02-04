@@ -33,22 +33,14 @@ pub fn think(mut universe: &mut Universe) -> Sasite {
     let mut ss_hashset = HashSet::<u64>::new();
 
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_potential_movement(
-        &universe.get_application_part(),
-        &universe.get_search_part(),
-        |movement_hash| {
-            ss_hashset.insert(movement_hash);
-        },
-    );
+    get_potential_movement(&universe.get_search_part(), |movement_hash| {
+        ss_hashset.insert(movement_hash);
+    });
     // g_writeln("テスト ポテンシャルムーブ.");
     // use consoles::visuals::dumps::*;
     // hyoji_ss_hashset( &ss_hashset );
 
-    select_movement_except_check(
-        &mut ss_hashset,
-        &universe.get_application_part(),
-        &universe.get_search_part(),
-    );
+    select_movement_except_check(&mut ss_hashset, &universe.get_search_part());
 
     // 現局面を見て、ビジョンを作り直せだぜ☆（＾～＾）
     &universe.remake_visions();

@@ -30,7 +30,6 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: Piece) -> Sasite 
 
         ss_hashset.clear();
         get_movement_by_square_and_piece_on_board(
-            &universe.get_application_part(),
             &universe.get_search_part(),
             &sq_dst,
             piece_dst.clone(),
@@ -79,7 +78,6 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
 
         ss_hashset.clear();
         get_movement_by_square_and_piece_on_board(
-            &universe.get_application_part(),
             &universe.get_search_part(),
             &sq_dst,
             piece_dst.clone(),

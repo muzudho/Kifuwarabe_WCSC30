@@ -11,7 +11,7 @@ pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe) -> bool {
         &universe
             .get_search_part()
             .get_piece_struct(
-                universe
+                &universe
                     .get_search_part()
                     .get_current_position()
                     .get_piece_by_square(&sq),

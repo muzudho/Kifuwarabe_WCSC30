@@ -739,10 +739,10 @@ impl SearchPart {
     pub fn get_piece_struct_by_square(&self, square: &Square) -> &PieceStruct {
         &self
             .piece_struct_master
-            .get_piece_struct(self.current_position.get_piece_by_square(square))
+            .get_piece_struct(&self.current_position.get_piece_by_square(square))
     }
 
-    pub fn get_piece_struct(&self, piece: Piece) -> &PieceStruct {
+    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
         &self.piece_struct_master.get_piece_struct(piece)
     }
 
