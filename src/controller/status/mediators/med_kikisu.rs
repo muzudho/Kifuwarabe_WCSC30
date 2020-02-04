@@ -16,9 +16,9 @@ use std::collections::HashSet;
 /// 用途：自殺手防止他
 pub fn update_effect_count(universe: &mut Universe) {
     // ゼロ・リセット
-    for km in KM_ARRAY.iter() {
+    for pc in KM_ARRAY.iter() {
         &universe.get_search_part_mut().effect_count_by_piece
-            [PieceStruct::from_piece(km).serial_piece_number()]
+            [PieceStruct::from_piece((*pc).clone()).serial_piece_number()]
         .clear();
     }
 
@@ -28,7 +28,7 @@ pub fn update_effect_count(universe: &mut Universe) {
 
     // カウント
     for km_dst in KM_ARRAY.iter() {
-        let ps_dst = PieceStruct::from_piece(&km_dst);
+        let ps_dst = PieceStruct::from_piece((*km_dst).clone());
 
         for x in SUJI_1..SUJI_10 {
             // 9..0 みたいに降順に書いても動かない？
@@ -38,7 +38,7 @@ pub fn update_effect_count(universe: &mut Universe) {
 
                 // 移動元の升
                 let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-                get_no_promotion_src_by_sq_km(
+                make_no_promotion_source_by_square_and_piece(
                     &sq_dst,
                     &ps_dst,
                     &universe.get_search_part(),
@@ -46,7 +46,7 @@ pub fn update_effect_count(universe: &mut Universe) {
                         mv_src_hashset.insert(square);
                     },
                 );
-                get_before_promotion_src_by_sq_km(
+                make_before_promotion_source_by_square_piece(
                     &sq_dst,
                     &ps_dst,
                     &universe.get_application_part(),
@@ -63,7 +63,7 @@ pub fn update_effect_count(universe: &mut Universe) {
                     .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別
-                universe.get_search_part_mut().effect_count_by_phase[sn_to_num(ps_dst.phase())]
+                universe.get_search_part_mut().effect_count_by_phase[sn_to_num(&ps_dst.phase())]
                     .add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }

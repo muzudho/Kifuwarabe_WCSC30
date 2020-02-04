@@ -18,15 +18,16 @@ use super::super::super::model::search::search_part::*;
 use super::super::super::model::universe::*;
 use std::collections::HashSet;
 
-pub fn choice_1ss_by_hashset(ss_hashset: &HashSet<u64>) -> Sasite {
-    let index = if ss_hashset.len() == 0 {
+/// ハッシュセットから、指し手を１つ選ぶぜ☆（＾～＾）
+pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> Sasite {
+    let index = if movement_hashset.len() == 0 {
         0
     } else {
-        rand::thread_rng().gen_range(0, ss_hashset.len())
+        rand::thread_rng().gen_range(0, movement_hashset.len())
     };
     let mut i = 0;
     let mut ss_choice_hash = 0;
-    for ss_hash in ss_hashset.iter() {
+    for ss_hash in movement_hashset.iter() {
         if i == index {
             ss_choice_hash = *ss_hash;
             break;
@@ -149,7 +150,7 @@ pub fn select_movement_except_suiceid(
         // 利きの再計算
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
-        get_no_promotion_src_by_sn_sq(
+        make_no_promotion_source_by_phase_square(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
             &universe.get_application_part(),
@@ -158,7 +159,7 @@ pub fn select_movement_except_suiceid(
                 attackers.insert(square);
             },
         );
-        get_before_promotion_src_by_sn_sq(
+        make_before_promotion_source_by_phase_square(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
             &universe.get_application_part(),
@@ -205,11 +206,9 @@ pub fn select_movement_except_suiceid(
     }
 }
 
-/**
- * 千日手の指し手を取り除いた集合を作るぜ☆（＾～＾）
- *
- * ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
- */
+/// 千日手の指し手を取り除いた集合を作るぜ☆（＾～＾）
+///
+/// ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
 pub fn select_movement_except_fourfold_repetition(
     ss_hashset_input: &mut HashSet<u64>,
     universe: &mut Universe,

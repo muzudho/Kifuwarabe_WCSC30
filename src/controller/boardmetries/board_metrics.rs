@@ -10,8 +10,12 @@ pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe) -> bool {
     match_sn(
         &universe
             .get_search_part()
-            .get_current_position()
-            .get_piece_struct_by_sq(&sq)
+            .get_piece_struct(
+                universe
+                    .get_search_part()
+                    .get_current_position()
+                    .get_piece_by_square(&sq),
+            )
             .phase(),
         &universe.get_search_part().get_phase(&Person::Ji),
     )

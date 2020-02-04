@@ -40,21 +40,20 @@ pub fn get_potential_movement<F1>(
     for dan_src in 1..10 {
         for suji_src in 1..10 {
             let sq_src = Square::from_file_rank(suji_src, dan_src);
-            let km_src = search_part
+            let piece_src = search_part
                 .get_current_position()
-                .get_piece_struct_by_sq(&sq_src)
-                .piece();
+                .get_piece_by_square(&sq_src);
 
             if match_sn(
-                &PieceStruct::from_piece(&km_src).phase(),
+                &PieceStruct::from_piece(piece_src.clone()).phase(),
                 &search_part.get_phase(&Person::Ji),
             ) {
                 // 手番の駒
 
                 let mut dst_hashset: HashSet<Square> = HashSet::<Square>::new();
-                get_dst_by_sq_km(
+                make_destination_by_square_piece(
                     &sq_src,
-                    &km_src,
+                    piece_src.clone(),
                     false, // 成らず
                     &search_part,
                     &mut dst_hashset,
@@ -77,9 +76,9 @@ pub fn get_potential_movement<F1>(
                 }
 
                 dst_hashset.clear();
-                get_dst_by_sq_km(
+                make_destination_by_square_piece(
                     &sq_src,
-                    &km_src,
+                    piece_src,
                     true, // 成り
                     &search_part,
                     &mut dst_hashset,
@@ -105,28 +104,28 @@ pub fn get_potential_movement<F1>(
     for dan_dst in 1..10 {
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
-            let km_dst = search_part
+            let piece_dst = search_part
                 .get_current_position()
-                .get_piece_struct_by_sq(&sq_dst)
-                .piece();
-            match km_dst {
+                .get_piece_by_square(&sq_dst);
+            match piece_dst {
                 Piece::Kara => {
                     // 駒が無いところに打つ
 
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
-                        let ps_motigoma = application_part
-                            .get_piece_struct_master()
-                            .get_piece_struct_by_phase_and_piece_type(
-                                &search_part.get_phase(&Person::Ji),
-                                kms_motigoma,
-                            );
-                        let km_motigoma = ps_motigoma.piece();
-                        if 0 < search_part.get_current_position().get_mg(&km_motigoma) {
+                        let ps_motigoma = search_part.get_piece_struct_by_phase_and_piece_type(
+                            &search_part.get_phase(&Person::Ji),
+                            kms_motigoma,
+                        );
+                        let pc_motigoma = ps_motigoma.piece();
+                        if 0 < search_part
+                            .get_current_position()
+                            .get_mg(pc_motigoma.clone())
+                        {
                             // 駒を持っていれば
-                            get_drop_kms_by_sq_km(
+                            make_drop_piece_type_by_square_piece(
                                 &sq_dst,
-                                &km_motigoma,
+                                pc_motigoma,
                                 &search_part,
                                 |piece_type_hash| {
                                     da_kms_hashset.insert(piece_type_hash);
@@ -153,17 +152,15 @@ pub fn get_potential_movement<F1>(
     } //dan
 }
 
-/**
- * 1. 移動先升指定  ms_dst
- * 2. 移動先駒指定  km_dst
- *
- * 盤上の駒の移動の最初の１つ。打を除く
- */
+/// 1. 移動先升指定  ms_dst
+/// 2. 移動先駒指定  piece_dst
+///
+/// 盤上の駒の移動の最初の１つ。打を除く
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     application_part: &ApplicationPart,
     search_part: &SearchPart,
     sq_dst: &Square,
-    km_dst: &Piece,
+    piece_dst: Piece,
     mut gets_movement: F1,
 ) where
     F1: FnMut(u64),
@@ -171,7 +168,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let ps_dst = PieceStruct::from_piece(&km_dst);
+    let ps_dst = PieceStruct::from_piece(piece_dst);
     let (sn, _kms_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
@@ -193,11 +190,14 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    get_no_promotion_src_by_sq_km(&sq_dst, &ps_dst, &search_part, |square| {
+    make_no_promotion_source_by_square_and_piece(&sq_dst, &ps_dst, &search_part, |square| {
         mv_src_hashset.insert(square);
     });
     for sq_src in &mv_src_hashset {
-        assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成らず)");
+        assert_banjo_sq(
+            &sq_src,
+            "make_no_promotion_source_by_square_and_piece(成らず)",
+        );
 
         ss_hash_builder.src = sq_src.clone();
         // 成らず
@@ -210,9 +210,15 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     // | 盤上（成り） |
     // +--------------+
     mv_src_hashset.clear();
-    get_before_promotion_src_by_sq_km(sq_dst, &ps_dst, &application_part, &search_part, |square| {
-        mv_src_hashset.insert(square);
-    });
+    make_before_promotion_source_by_square_piece(
+        sq_dst,
+        &ps_dst,
+        &application_part,
+        &search_part,
+        |square| {
+            mv_src_hashset.insert(square);
+        },
+    );
     for sq_src in &mv_src_hashset {
         assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 
@@ -223,16 +229,15 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         gets_movement(ss_hash_builder.to_hash());
     }
 }
-/**
- * 打
-*
- * 1. 移動先升指定  ms_dst
- * 2. 移動先駒指定  km_dst
- */
+
+/// 打
+///
+/// 1. 移動先升指定  ms_dst
+/// 2. 移動先駒指定  piece_dst
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     search_part: &SearchPart,
     sq_dst: &Square,
-    km_dst: &Piece,
+    piece_dst: Piece,
     mut gets_movement: F1,
 ) where
     F1: FnMut(u64),
@@ -240,7 +245,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
-    let piece_struct_dst = PieceStruct::from_piece(&km_dst);
+    let piece_struct_dst = PieceStruct::from_piece(piece_dst.clone());
     let (sn, _kms_dst) = piece_struct_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
@@ -264,7 +269,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     // +----+
 
     let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-    get_drop_kms_by_sq_km(&sq_dst, &km_dst, &search_part, |piece_type_hash| {
+    make_drop_piece_type_by_square_piece(&sq_dst, piece_dst, &search_part, |piece_type_hash| {
         da_kms_hashset.insert(piece_type_hash);
     });
     // 打

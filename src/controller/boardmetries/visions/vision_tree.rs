@@ -60,7 +60,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
 
                     mv_src_hashset.clear();
                     //da_kms_hashset.clear();
-                    get_no_promotion_src_by_sq_km(
+                    make_no_promotion_source_by_square_and_piece(
                         &sq_dst,
                         &ps_dst,
                         &universe.get_search_part(),
@@ -68,7 +68,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                             mv_src_hashset.insert(square);
                         },
                     );
-                    get_before_promotion_src_by_sq_km(
+                    make_before_promotion_source_by_square_piece(
                         &sq_dst,
                         &ps_dst,
                         &universe.get_application_part(),

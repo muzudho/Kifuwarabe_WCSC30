@@ -20,7 +20,7 @@ impl PieceSet {
     pub fn new_all() -> PieceSet {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = PieceStruct::from_piece(km);
+            let ps = PieceStruct::from_piece((*km).clone());
             num_syugo1.insert(ps.serial_piece_number());
         }
         let km_syugo = PieceSet {
@@ -35,7 +35,7 @@ impl PieceSet {
         let sn0 = universe.get_search_part().get_phase(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = PieceStruct::from_piece(km);
+            let ps = PieceStruct::from_piece((*km).clone());
             let (sn1, _kms) = ps.phase_piece_type();
             if match_sn(&sn0, &sn1) {
                 num_syugo1.insert(ps.serial_piece_number());
@@ -46,8 +46,8 @@ impl PieceSet {
         };
         km_syugo
     }
-    pub fn remove(&mut self, km: &Piece) {
+    pub fn remove(&mut self, piece: Piece) {
         self.num_syugo
-            .remove(&PieceStruct::from_piece(km).serial_piece_number());
+            .remove(&PieceStruct::from_piece(piece).serial_piece_number());
     }
 }

@@ -21,11 +21,11 @@ pub struct PieceStruct {
     serial_piece_number: usize,
 }
 impl PieceStruct {
-    pub fn from_piece(p: &Piece) -> Self {
+    pub fn from_piece(p: Piece) -> Self {
         use super::phase::Phase::*;
         use super::piece::Piece::*;
         use super::piece_type::PieceType::*;
-        match *p {
+        match p {
             King1 => PieceStruct {
                 piece: King1,
                 phase_piece_type: (Sen, R),
@@ -276,76 +276,76 @@ impl PieceStruct {
         use super::super::super::model::master::piece_type::PieceType::*;
         match *sn {
             Phase::Sen => match *kms {
-                R => PieceStruct::from_piece(&King1),
-                K => PieceStruct::from_piece(&Rook1),
-                Z => PieceStruct::from_piece(&Bishop1),
-                I => PieceStruct::from_piece(&Gold1),
-                N => PieceStruct::from_piece(&Silver1),
-                U => PieceStruct::from_piece(&Knight1),
-                S => PieceStruct::from_piece(&Lance1),
-                H => PieceStruct::from_piece(&Pawn1),
-                PK => PieceStruct::from_piece(&PromotedRook1),
-                PZ => PieceStruct::from_piece(&PromotedBishop1),
-                PN => PieceStruct::from_piece(&PromotedSilver1),
-                PU => PieceStruct::from_piece(&PromotedKnight1),
-                PS => PieceStruct::from_piece(&PromotedLance1),
-                PH => PieceStruct::from_piece(&PromotedPawn1),
-                _ => PieceStruct::from_piece(&Piece::Owari),
+                R => PieceStruct::from_piece(King1),
+                K => PieceStruct::from_piece(Rook1),
+                Z => PieceStruct::from_piece(Bishop1),
+                I => PieceStruct::from_piece(Gold1),
+                N => PieceStruct::from_piece(Silver1),
+                U => PieceStruct::from_piece(Knight1),
+                S => PieceStruct::from_piece(Lance1),
+                H => PieceStruct::from_piece(Pawn1),
+                PK => PieceStruct::from_piece(PromotedRook1),
+                PZ => PieceStruct::from_piece(PromotedBishop1),
+                PN => PieceStruct::from_piece(PromotedSilver1),
+                PU => PieceStruct::from_piece(PromotedKnight1),
+                PS => PieceStruct::from_piece(PromotedLance1),
+                PH => PieceStruct::from_piece(PromotedPawn1),
+                _ => PieceStruct::from_piece(Piece::Owari),
             },
             Phase::Go => match *kms {
-                R => PieceStruct::from_piece(&King2),
-                K => PieceStruct::from_piece(&Rook2),
-                Z => PieceStruct::from_piece(&Bishop2),
-                I => PieceStruct::from_piece(&Gold2),
-                N => PieceStruct::from_piece(&Silver2),
-                U => PieceStruct::from_piece(&Knight2),
-                S => PieceStruct::from_piece(&Lance2),
-                H => PieceStruct::from_piece(&Pawn2),
-                PK => PieceStruct::from_piece(&PromotedRook2),
-                PZ => PieceStruct::from_piece(&PromotedBishop2),
-                PN => PieceStruct::from_piece(&PromotedSilver2),
-                PU => PieceStruct::from_piece(&PromotedKnight2),
-                PS => PieceStruct::from_piece(&PromotedLance2),
-                PH => PieceStruct::from_piece(&PromotedPawn2),
-                _ => PieceStruct::from_piece(&Piece::Owari),
+                R => PieceStruct::from_piece(King2),
+                K => PieceStruct::from_piece(Rook2),
+                Z => PieceStruct::from_piece(Bishop2),
+                I => PieceStruct::from_piece(Gold2),
+                N => PieceStruct::from_piece(Silver2),
+                U => PieceStruct::from_piece(Knight2),
+                S => PieceStruct::from_piece(Lance2),
+                H => PieceStruct::from_piece(Pawn2),
+                PK => PieceStruct::from_piece(PromotedRook2),
+                PZ => PieceStruct::from_piece(PromotedBishop2),
+                PN => PieceStruct::from_piece(PromotedSilver2),
+                PU => PieceStruct::from_piece(PromotedKnight2),
+                PS => PieceStruct::from_piece(PromotedLance2),
+                PH => PieceStruct::from_piece(PromotedPawn2),
+                _ => PieceStruct::from_piece(Piece::Owari),
             },
-            Phase::Owari => PieceStruct::from_piece(&Piece::Owari),
+            Phase::Owari => PieceStruct::from_piece(Piece::Owari),
         }
     }
 
     pub fn from_serial_piece_number(km_num: usize) -> Self {
         use super::super::super::model::master::piece::Piece::*;
         match km_num {
-            0 => PieceStruct::from_piece(&King1),
-            1 => PieceStruct::from_piece(&Rook1),
-            2 => PieceStruct::from_piece(&Bishop1),
-            3 => PieceStruct::from_piece(&Gold1),
-            4 => PieceStruct::from_piece(&Silver1),
-            5 => PieceStruct::from_piece(&Knight1),
-            6 => PieceStruct::from_piece(&Lance1),
-            7 => PieceStruct::from_piece(&Pawn1),
-            8 => PieceStruct::from_piece(&PromotedRook1),
-            9 => PieceStruct::from_piece(&PromotedBishop1),
-            10 => PieceStruct::from_piece(&PromotedSilver1),
-            11 => PieceStruct::from_piece(&PromotedKnight1),
-            12 => PieceStruct::from_piece(&PromotedLance1),
-            13 => PieceStruct::from_piece(&PromotedPawn1),
-            14 => PieceStruct::from_piece(&King2),
-            15 => PieceStruct::from_piece(&Rook2),
-            16 => PieceStruct::from_piece(&Bishop2),
-            17 => PieceStruct::from_piece(&Gold2),
-            18 => PieceStruct::from_piece(&Silver2),
-            19 => PieceStruct::from_piece(&Knight2),
-            20 => PieceStruct::from_piece(&Lance2),
-            21 => PieceStruct::from_piece(&Pawn2),
-            22 => PieceStruct::from_piece(&PromotedRook2),
-            23 => PieceStruct::from_piece(&PromotedBishop2),
-            24 => PieceStruct::from_piece(&PromotedSilver2),
-            25 => PieceStruct::from_piece(&PromotedKnight2),
-            26 => PieceStruct::from_piece(&PromotedLance2),
-            27 => PieceStruct::from_piece(&PromotedPawn2),
-            28 => PieceStruct::from_piece(&Kara),
-            _ => PieceStruct::from_piece(&Owari),
+            0 => PieceStruct::from_piece(King1),
+            1 => PieceStruct::from_piece(Rook1),
+            2 => PieceStruct::from_piece(Bishop1),
+            3 => PieceStruct::from_piece(Gold1),
+            4 => PieceStruct::from_piece(Silver1),
+            5 => PieceStruct::from_piece(Knight1),
+            6 => PieceStruct::from_piece(Lance1),
+            7 => PieceStruct::from_piece(Pawn1),
+            8 => PieceStruct::from_piece(PromotedRook1),
+            9 => PieceStruct::from_piece(PromotedBishop1),
+            10 => PieceStruct::from_piece(PromotedSilver1),
+            11 => PieceStruct::from_piece(PromotedKnight1),
+            12 => PieceStruct::from_piece(PromotedLance1),
+            13 => PieceStruct::from_piece(PromotedPawn1),
+            14 => PieceStruct::from_piece(King2),
+            15 => PieceStruct::from_piece(Rook2),
+            16 => PieceStruct::from_piece(Bishop2),
+            17 => PieceStruct::from_piece(Gold2),
+            18 => PieceStruct::from_piece(Silver2),
+            19 => PieceStruct::from_piece(Knight2),
+            20 => PieceStruct::from_piece(Lance2),
+            21 => PieceStruct::from_piece(Pawn2),
+            22 => PieceStruct::from_piece(PromotedRook2),
+            23 => PieceStruct::from_piece(PromotedBishop2),
+            24 => PieceStruct::from_piece(PromotedSilver2),
+            25 => PieceStruct::from_piece(PromotedKnight2),
+            26 => PieceStruct::from_piece(PromotedLance2),
+            27 => PieceStruct::from_piece(PromotedPawn2),
+            28 => PieceStruct::from_piece(Kara),
+            _ => PieceStruct::from_piece(Owari),
         }
     }
 
@@ -356,28 +356,28 @@ impl PieceStruct {
         (hash >> 5, ps)
     }
 
-    pub fn piece(&self) -> &Piece {
-        &self.piece
+    pub fn piece(&self) -> Piece {
+        self.piece.clone()
     }
 
     pub fn phase_piece_type(&self) -> (&Phase, &PieceType) {
         (&self.phase_piece_type.0, &self.phase_piece_type.1)
     }
 
-    pub fn phase(&self) -> &Phase {
-        &self.phase_piece_type.0
+    pub fn phase(&self) -> Phase {
+        self.phase_piece_type.0.clone()
     }
 
     pub fn piece_type(&self) -> PieceType {
         self.phase_piece_type.1
     }
 
-    pub fn promote(&self) -> &Piece {
-        &self.promoted
+    pub fn promote(&self) -> Piece {
+        self.promoted.clone()
     }
 
-    pub fn demote(&self) -> &Piece {
-        &self.demoted
+    pub fn demote(&self) -> Piece {
+        self.demoted.clone()
     }
 
     // 降格できるか。
@@ -387,8 +387,8 @@ impl PieceStruct {
     }
 
     /// 持ち駒にするぜ☆（＾～＾）相手の持ち物になるぜ☆（＾～＾）
-    pub fn capture(&self) -> &Piece {
-        &self.captured
+    pub fn capture(&self) -> Piece {
+        self.captured.clone()
     }
 
     pub fn serial_piece_number(&self) -> usize {

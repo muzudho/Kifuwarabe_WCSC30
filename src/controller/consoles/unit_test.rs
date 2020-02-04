@@ -31,26 +31,30 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
         let ps = universe
-            .get_application_part()
-            .get_piece_struct_master()
+            .get_search_part()
             .get_piece_struct_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 kms,
             );
-        let km = ps.piece();
+        let pc = ps.piece();
         let sq_dst = randommove::random_square();
         g_writeln(&format!(
-            "kms={} km={} ms_dst={}",
+            "kms={} pc={} ms_dst={}",
             kms,
-            km,
+            pc,
             sq_dst.to_umasu()
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-        get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
-            mv_src_hashset.insert(square);
-        });
-        get_before_promotion_src_by_sq_km(
+        make_no_promotion_source_by_square_and_piece(
+            &sq_dst,
+            &ps,
+            &universe.get_search_part(),
+            |square| {
+                mv_src_hashset.insert(square);
+            },
+        );
+        make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
             &universe.get_application_part(),
@@ -59,9 +63,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 mv_src_hashset.insert(square);
             },
         );
-        get_drop_kms_by_sq_km(
+        make_drop_piece_type_by_square_piece(
             &sq_dst,
-            &km,
+            pc,
             &universe.get_search_part(),
             |piece_type_hash| {
                 da_kms_hashset.insert(piece_type_hash);
@@ -74,8 +78,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         // 移動後の駒
         let kms = randommove::rnd_kms();
         let ps = universe
-            .get_application_part()
-            .get_piece_struct_master()
+            .get_search_part()
             .get_piece_struct_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 &kms,
@@ -87,10 +90,15 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
-        get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
-            mv_src_hashset.insert(square);
-        });
-        get_before_promotion_src_by_sq_km(
+        make_no_promotion_source_by_square_and_piece(
+            &sq_dst,
+            &ps,
+            &universe.get_search_part(),
+            |square| {
+                mv_src_hashset.insert(square);
+            },
+        );
+        make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
             &universe.get_application_part(),
@@ -99,7 +107,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 mv_src_hashset.insert(square);
             },
         );
-        //insert_da_kms_by_sq_km      ( ms_dst, &km, &universe, &mut da_kms_hashset );
+        //insert_da_kms_by_sq_km      ( ms_dst, pc, &universe, &mut da_kms_hashset );
         for sq_src in mv_src_hashset {
             ss.src = sq_src.clone();
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
@@ -116,23 +124,27 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
-                .get_application_part()
-                .get_piece_struct_master()
+                .get_search_part()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
-            let km = ps.piece(); // △ph
+            let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(79);
             g_writeln(&format!(
-                "kms={} km={} ms_dst={}",
+                "kms={} pc={} ms_dst={}",
                 kms,
-                km,
+                pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
-                mv_src_hashset.insert(square);
-            });
-            get_before_promotion_src_by_sq_km(
+            make_no_promotion_source_by_square_and_piece(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
+            );
+            make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &universe.get_application_part(),
@@ -141,9 +153,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                     mv_src_hashset.insert(square);
                 },
             );
-            get_drop_kms_by_sq_km(
+            make_drop_piece_type_by_square_piece(
                 &sq_dst,
-                &km,
+                pc,
                 &universe.get_search_part(),
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
@@ -156,23 +168,27 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
-                .get_application_part()
-                .get_piece_struct_master()
+                .get_search_part()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
-            let km = ps.piece(); // △ph
+            let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(68);
             g_writeln(&format!(
-                "kms={} km={} ms_dst={}",
+                "kms={} pc={} ms_dst={}",
                 kms,
-                km,
+                pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
-                mv_src_hashset.insert(square);
-            });
-            get_before_promotion_src_by_sq_km(
+            make_no_promotion_source_by_square_and_piece(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
+            );
+            make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &universe.get_application_part(),
@@ -181,9 +197,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                     mv_src_hashset.insert(square);
                 },
             );
-            get_drop_kms_by_sq_km(
+            make_drop_piece_type_by_square_piece(
                 &sq_dst,
-                &km,
+                pc,
                 &universe.get_search_part(),
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
@@ -196,23 +212,27 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
-                .get_application_part()
-                .get_piece_struct_master()
+                .get_search_part()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
-            let km = ps.piece(); // △ph
+            let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(77);
             g_writeln(&format!(
-                "kms={} km={} ms_dst={}",
+                "kms={} pc={} ms_dst={}",
                 kms,
-                km,
+                pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
-                mv_src_hashset.insert(square);
-            });
-            get_before_promotion_src_by_sq_km(
+            make_no_promotion_source_by_square_and_piece(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
+            );
+            make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &universe.get_application_part(),
@@ -221,9 +241,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                     mv_src_hashset.insert(square);
                 },
             );
-            get_drop_kms_by_sq_km(
+            make_drop_piece_type_by_square_piece(
                 &sq_dst,
-                &km,
+                pc,
                 &universe.get_search_part(),
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
@@ -236,23 +256,27 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
             let ps = universe
-                .get_application_part()
-                .get_piece_struct_master()
+                .get_search_part()
                 .get_piece_struct_by_phase_and_piece_type(&Phase::Sen, &kms);
-            let km = ps.piece(); // ▼ら
+            let pc = ps.piece(); // ▼ら
             let sq_dst = Square::from_umasu(58);
             g_writeln(&format!(
-                "kms={} km={} ms_dst={}",
+                "kms={} pc={} ms_dst={}",
                 kms,
-                km,
+                pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_kms_hashset: HashSet<usize> = HashSet::new();
-            get_no_promotion_src_by_sq_km(&sq_dst, &ps, &universe.get_search_part(), |square| {
-                mv_src_hashset.insert(square);
-            });
-            get_before_promotion_src_by_sq_km(
+            make_no_promotion_source_by_square_and_piece(
+                &sq_dst,
+                &ps,
+                &universe.get_search_part(),
+                |square| {
+                    mv_src_hashset.insert(square);
+                },
+            );
+            make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &universe.get_application_part(),
@@ -261,9 +285,9 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                     mv_src_hashset.insert(square);
                 },
             );
-            get_drop_kms_by_sq_km(
+            make_drop_piece_type_by_square_piece(
                 &sq_dst,
-                &km,
+                pc,
                 &universe.get_search_part(),
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);

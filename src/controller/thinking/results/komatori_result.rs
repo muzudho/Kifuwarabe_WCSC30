@@ -19,9 +19,7 @@ use super::super::super::super::model::universe::*;
 use std::collections::HashSet;
 use std::fmt;
 
-/********************
- * 駒取り結果の結果 *
- ********************/
+/// 駒取り結果の結果
 pub enum KomatoriResultResult {
     // 駒は取られる
     Done,
@@ -36,9 +34,7 @@ pub enum KomatoriResultResult {
     Owari,
 }
 
-/**
- * 結果：駒取り
- */
+/// 結果：駒取り
 pub struct KomatoriResult {
     // 要因：王手をしてきている駒（１つ）
     km_attacker: Piece,
@@ -49,7 +45,7 @@ pub struct KomatoriResult {
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
+        let ps_attacker = PieceStruct::from_piece(self.km_attacker.clone());
         write!(
             f,
             "KmTori:{}{}{}{}",
@@ -70,7 +66,7 @@ impl KomatoriResult {
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_sq_to_hash(hash, &self.sq_target);
         hash = push_sq_to_hash(hash, &self.sq_attacker);
-        PieceStruct::from_piece(&self.km_attacker).add_hash(hash)
+        PieceStruct::from_piece(self.km_attacker.clone()).add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
@@ -101,7 +97,7 @@ impl KomatoriResult {
         }
 
         // (2-1)
-        let ps_attacker = PieceStruct::from_piece(&self.km_attacker);
+        let ps_attacker = PieceStruct::from_piece(self.km_attacker.clone());
         if ps_attacker.is_slider() {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
             assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");
@@ -160,14 +156,12 @@ impl KomatoriResult {
     }
 }
 
-/**
- * 王手という原因を作っている関係を、（確率的洗いざらい）調べるぜ☆（＾～＾）
- *
- * sn        : 駒を「動かす」方はどっちだぜ☆（＾～＾）
- * ms_target : 取りたい駒がいる升
- *
- * return u64 : KomatoriResult のハッシュ
- */
+/// 王手という原因を作っている関係を、（確率的洗いざらい）調べるぜ☆（＾～＾）
+///
+/// sn        : 駒を「動かす」方はどっちだぜ☆（＾～＾）
+/// ms_target : 取りたい駒がいる升
+///
+/// return u64 : KomatoriResult のハッシュ
 pub fn lookup_catching_king_on_board(
     application_part: &ApplicationPart,
     search_part: &SearchPart,
@@ -189,41 +183,39 @@ pub fn lookup_catching_king_on_board(
         return hash;
     }
 
-    let mut ss_hashset = HashSet::new();
+    let mut multiple_movements_hashset = HashSet::new();
 
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
-        let ps_dst = application_part
-            .get_piece_struct_master()
-            .get_piece_struct_by_phase_and_piece_type(&sn, kms_dst);
+        let ps_dst = search_part.get_piece_struct_by_phase_and_piece_type(&sn, kms_dst);
         let km_dst = ps_dst.piece();
         //let km_dst = sn_kms_to_km( &sn, rnd_kms() );
         // 指定マスに移動できるか
         // 打は除く
 
-        ss_hashset.clear();
+        multiple_movements_hashset.clear();
         get_movement_by_square_and_piece_on_board(
             &application_part,
             &search_part,
             &sq_target,
-            &km_dst,
+            km_dst.clone(),
             |movement_hash| {
-                ss_hashset.insert(movement_hash);
+                multiple_movements_hashset.insert(movement_hash);
             },
         );
 
         // g_writeln( &format!("テスト lookup_catching_king_on_board get_movement_by_square_and_piece_on_board kms_dst={}.",kms_dst) );
         // use consoles::visuals::dumps::*;
-        // hyoji_ss_hashset( &ss_hashset );
+        // hyoji_ss_hashset( &multiple_movements_hashset );
 
-        let ss = choice_1ss_by_hashset(&ss_hashset);
+        let ss = choice_1movement_from_hashset(&multiple_movements_hashset);
         if ss.exists() {
             assert_banjo_sq(
                 &ss.src,
                 &format!(
                     "(123)Ｌookup_banjo_catch ss.src /  sq_target={} km_dst={} ss={}",
                     sq_target.to_umasu(),
-                    km_dst,
+                    km_dst.clone(),
                     ss
                 ),
             );
