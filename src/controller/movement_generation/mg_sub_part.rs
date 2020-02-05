@@ -427,7 +427,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     // | 移動前は成る前の駒 |
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
-    let kms_src = PieceStruct::from_piece(ps_dst.demote().clone()).piece_type();
+    let kms_src = search_part.get_piece_struct(ps_dst.demote()).piece_type();
     let km_src = search_part
         .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), &kms_src)
         .piece();
@@ -454,8 +454,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
         return;
     }
 
-    let kms_narumae_num =
-        kms_to_num(&PieceStruct::from_piece(ps_dst.demote().clone()).piece_type());
+    let kms_narumae_num = kms_to_num(&search_part.get_piece_struct(ps_dst.demote()).piece_type());
 
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向
@@ -787,7 +786,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 {
     assert_banjo_sq(&sq_dst, "make_drop_piece_type_by_square_piece");
 
-    let ps_dst = PieceStruct::from_piece(piece_dst.clone());
+    let ps_dst = search_part.get_piece_struct(piece_dst);
     let kms_dst = ps_dst.piece_type();
     if !kms_can_da(&kms_dst) {
         return; // 打って出てくることがない駒なら終了
@@ -911,7 +910,7 @@ pub fn make_destination_by_square_piece(
 
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = sq_src.to_file_rank();
-    let ps_src = PieceStruct::from_piece(km_src.clone());
+    let ps_src = search_part.get_piece_struct(km_src);
     let kms_src = ps_src.piece_type();
 
     // +--------------+
@@ -1752,13 +1751,12 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
     for kms in KMS_ARRAY.iter() {
         let km_src = search_part
             .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
-            .piece()
-            .clone();
+            .piece();
 
         // +--------------------+
         // | 移動前は非成駒か？ |
         // +--------------------+
-        let ps_src = PieceStruct::from_piece(km_src);
+        let ps_src = search_part.get_piece_struct(km_src);
         if ps_src.is_promoted() {
             continue; // 成る前に成駒なら、成りの動きをしていない
         }

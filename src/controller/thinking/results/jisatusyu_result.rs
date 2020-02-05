@@ -5,7 +5,6 @@
 
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::universe::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
@@ -16,7 +15,7 @@ pub fn is_jisatusyu(universe: &Universe, ss: &Sasite) -> bool {
         .get_search_part()
         .get_current_position()
         .get_piece_by_square(&ss.src);
-    let ps_src = PieceStruct::from_piece(km_src.clone());
+    let ps_src = universe.get_search_part().get_piece_struct(km_src);
     let (sn_teban, _kms) = ps_src.phase_piece_type();
     // 相手番の先後
     let sn_aite = hanten_sn(&sn_teban);
