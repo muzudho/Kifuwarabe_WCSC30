@@ -35,7 +35,7 @@ impl PieceSet {
         let sn0 = universe.get_search_part().get_phase(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = PieceStruct::from_piece((*km).clone());
+            let ps = universe.get_search_part().get_piece_struct(km);
             let (sn1, _kms) = ps.phase_piece_type();
             if match_sn(&sn0, &sn1) {
                 num_syugo1.insert(ps.serial_piece_number());

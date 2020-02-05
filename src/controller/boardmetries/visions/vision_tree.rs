@@ -86,10 +86,11 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                         let hash_ss = Sasite {
                             src: sq_src.clone(),
                             dst: sq_dst.clone(),
-                            pro: *&universe
-                                .get_search_part()
-                                .get_current_position()
-                                .is_natta(sq_src, &sq_dst),
+                            pro: *&universe.get_search_part().get_current_position().is_natta(
+                                sq_src,
+                                &sq_dst,
+                                universe.get_search_part(),
+                            ),
                             drop: PieceType::Kara,
                         }
                         .to_hash();

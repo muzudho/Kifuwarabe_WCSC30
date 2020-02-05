@@ -115,7 +115,7 @@ where
                         let pc_motigoma = ps_motigoma.piece();
                         if 0 < search_part
                             .get_current_position()
-                            .get_mg(pc_motigoma.clone())
+                            .get_hand(pc_motigoma, search_part)
                         {
                             // 駒を持っていれば
                             make_drop_piece_type_by_square_piece(
@@ -167,7 +167,9 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
-        &search_part.get_current_position().get_sn_by_sq(&sq_dst),
+        &search_part
+            .get_current_position()
+            .get_sn_by_sq(&sq_dst, search_part),
         &sn,
     ) {
         return;
@@ -238,7 +240,9 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
-        &search_part.get_current_position().get_sn_by_sq(&sq_dst),
+        &search_part
+            .get_current_position()
+            .get_sn_by_sq(&sq_dst, search_part),
         &sn,
     ) {
         return;
