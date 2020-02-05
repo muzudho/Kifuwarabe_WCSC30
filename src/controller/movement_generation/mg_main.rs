@@ -9,7 +9,6 @@ use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
@@ -49,7 +48,7 @@ where
                 let mut dst_hashset: HashSet<Square> = HashSet::<Square>::new();
                 make_destination_by_square_piece(
                     &sq_src,
-                    piece_src.clone(),
+                    piece_src,
                     false, // 成らず
                     &search_part,
                     &mut dst_hashset,
@@ -226,7 +225,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     search_part: &SearchPart,
     sq_dst: &Square,
-    piece_dst: Piece,
+    piece_dst: &Piece,
     mut gets_movement: F1,
 ) where
     F1: FnMut(u64),
@@ -234,7 +233,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
-    let piece_struct_dst = PieceStruct::from_piece(piece_dst.clone());
+    let piece_struct_dst = search_part.get_piece_struct(piece_dst);
     let (sn, _kms_dst) = piece_struct_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。

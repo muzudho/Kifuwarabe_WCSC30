@@ -427,7 +427,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     // | 移動前は成る前の駒 |
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
-    let kms_src = PieceStruct::from_piece(ps_dst.demote()).piece_type();
+    let kms_src = PieceStruct::from_piece(ps_dst.demote().clone()).piece_type();
     let km_src = search_part
         .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), &kms_src)
         .piece();
@@ -454,7 +454,8 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
         return;
     }
 
-    let kms_narumae_num = kms_to_num(&PieceStruct::from_piece(ps_dst.demote()).piece_type());
+    let kms_narumae_num =
+        kms_to_num(&PieceStruct::from_piece(ps_dst.demote().clone()).piece_type());
 
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向
@@ -479,7 +480,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx + i_east, dy);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
@@ -493,7 +494,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx + 1, dy);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -509,7 +510,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
@@ -523,7 +524,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -536,7 +537,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx + 1, dy + 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src.clone())
+                        .has_sq_km(&sq_src, km_src)
                     {
                         gets_square(sq_src);
                     }
@@ -551,7 +552,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx, dy + i_south);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
@@ -565,7 +566,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx, dy + 1);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -578,7 +579,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx - 1, dy + 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src.clone())
+                        .has_sq_km(&sq_src, km_src)
                     {
                         gets_square(sq_src);
                     }
@@ -593,7 +594,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
@@ -607,7 +608,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -624,7 +625,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx - i_east, dy);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 // 指定の駒があれば、その升は移動元。続行
                                 gets_square(sq_src);
@@ -640,7 +641,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx - 1, dy);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -656,7 +657,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
@@ -670,7 +671,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -683,7 +684,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx - 1, dy - 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src.clone())
+                        .has_sq_km(&sq_src, km_src)
                     {
                         gets_square(sq_src);
                     }
@@ -698,7 +699,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx, dy - i_north);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
@@ -712,7 +713,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx, dy - 1);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -725,7 +726,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx + 1, dy - 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src.clone())
+                        .has_sq_km(&sq_src, km_src)
                     {
                         gets_square(sq_src);
                     }
@@ -740,7 +741,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
                             if search_part
                                 .get_current_position()
-                                .has_sq_km(&sq_src, km_src.clone())
+                                .has_sq_km(&sq_src, km_src)
                             {
                                 gets_square(sq_src);
                             } else if search_part.get_current_position().exists_km(&sq_src) {
@@ -754,7 +755,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
                         if search_part
                             .get_current_position()
-                            .has_sq_km(&sq_src, km_src.clone())
+                            .has_sq_km(&sq_src, km_src)
                         {
                             gets_square(sq_src);
                         }
@@ -778,7 +779,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
 /// そこに打てる駒種類を返す。
 pub fn make_drop_piece_type_by_square_piece<F1>(
     sq_dst: &Square,
-    piece_dst: Piece,
+    piece_dst: &Piece,
     search_part: &SearchPart,
     mut gets_piece_type_hash: F1,
 ) where
@@ -899,7 +900,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 /// search_part       : 探索部
 pub fn make_destination_by_square_piece(
     sq_src: &Square,
-    km_src: Piece,
+    km_src: &Piece,
     to_nari: bool,
     search_part: &SearchPart,
     // result, result2 で入れ直しがあるのでむずかしい☆（＾～＾）

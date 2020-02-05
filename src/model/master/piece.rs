@@ -5,7 +5,7 @@
 //!
 
 use super::phase::*;
-// use super::piece_struct::PieceStruct;
+use super::piece_type::*;
 use std::fmt;
 
 ///
@@ -115,6 +115,51 @@ impl fmt::Display for Piece {
             PromotedPawn2 => write!(f, "△ph"),
             Kara => write!(f, "　　"),
             Owari => write!(f, "××"),
+        }
+    }
+}
+impl Piece {
+    /// TODO これを宇宙に移動したいぜ☆（＾～＾）
+    /// 先後＆駒種類→先後付き駒
+    pub fn from_phase_piece_type(phase: &Phase, piece_type: &PieceType) -> Self {
+        use super::super::super::model::master::piece::Piece::*;
+        use super::super::super::model::master::piece_type::PieceType::*;
+        match *phase {
+            Phase::Sen => match *piece_type {
+                R => King1,
+                K => Rook1,
+                Z => Bishop1,
+                I => Gold1,
+                N => Silver1,
+                U => Knight1,
+                S => Lance1,
+                H => Pawn1,
+                PK => PromotedRook1,
+                PZ => PromotedBishop1,
+                PN => PromotedSilver1,
+                PU => PromotedKnight1,
+                PS => PromotedLance1,
+                PH => PromotedPawn1,
+                _ => Piece::Owari,
+            },
+            Phase::Go => match *piece_type {
+                R => King2,
+                K => Rook2,
+                Z => Bishop2,
+                I => Gold2,
+                N => Silver2,
+                U => Knight2,
+                S => Lance2,
+                H => Pawn2,
+                PK => PromotedRook2,
+                PZ => PromotedBishop2,
+                PN => PromotedSilver2,
+                PU => PromotedKnight2,
+                PS => PromotedLance2,
+                PH => PromotedPawn2,
+                _ => Piece::Owari,
+            },
+            Phase::Owari => Piece::Owari,
         }
     }
 }

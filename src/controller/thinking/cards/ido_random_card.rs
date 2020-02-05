@@ -19,7 +19,7 @@ use std::collections::HashSet;
  *
  * piece_dst : 移動した先の駒
  */
-pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: Piece) -> Sasite {
+pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: &Piece) -> Sasite {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -40,7 +40,7 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: Piece) -> Sasite 
         get_movement_by_square_and_piece_on_drop(
             &universe.get_search_part(),
             &sq_dst,
-            piece_dst.clone(),
+            piece_dst,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
@@ -88,7 +88,7 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
         get_movement_by_square_and_piece_on_drop(
             &universe.get_search_part(),
             &sq_dst,
-            piece_dst.clone(),
+            piece_dst,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },

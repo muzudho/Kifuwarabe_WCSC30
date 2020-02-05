@@ -152,14 +152,13 @@ impl Universe {
         for i_ms in 0..BAN_SIZE {
             let i_sq = Square::from_umasu(i_ms);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-            let ps = PieceStruct::from_piece(
-                self.get_application_part()
-                    .get_starting_position()
-                    .get_piece_by_square(&i_sq),
-            );
-            self.get_search_part_mut()
+            let piece = self
+                .application_part
+                .get_starting_position()
+                .get_piece_by_square(&i_sq);
+            self.search_part
                 .get_current_position_mut()
-                .set_ps_by_sq(&i_sq, &ps);
+                .set_piece_by_square(&i_sq, piece);
         }
 
         // 持ち駒
@@ -209,16 +208,9 @@ impl Universe {
 
     /// 初期局面の盤上に駒の位置を設定するもの
     pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: Piece) {
-        // 取得するフェーズと、変更するフェーズの両方をこの中で行います。
-        // 取得
-        // TODO 取得するとエラーになってしまうので、今んとこ 作成するぜ☆（＾～＾）
-        // let ps = self.get_piece_struct_master().get_piece_struct(piece);
-        let ps = PieceStruct::from_piece(piece);
-
-        // 変更
         self.get_application_part_mut()
             .get_starting_position_mut()
-            .set_ps_by_sq(&Square::from_file_rank(suji, dan), &ps);
+            .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
     pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {
         self.get_application_part_mut()
@@ -553,12 +545,15 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     }
 
     // 入れた指し手の通り指すぜ☆（＾～＾）
-    pub fn do_ss(&mut self, ss: &Sasite) {
+    pub fn do_ss(&mut self, move3: &Sasite) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
-        self.search_part.moves_history[ply as usize] = (*ss).clone();
-        let cap = self.search_part.do_move(ss);
-        self.search_part.set_cap(ply as usize, cap.clone());
+        self.search_part.moves_history[ply as usize] = (*move3).clone();
+        let cap;
+        {
+            cap = self.search_part.do_move(move3).clone();
+        }
+        self.search_part.set_cap(ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash();

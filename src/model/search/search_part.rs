@@ -666,9 +666,50 @@ impl SearchPart {
         self.position_hash_history[self.ply as usize] = hash;
     }
 
-    pub fn undo_move(&mut self, phase: &Phase, move1: &Sasite) {
+    /**
+     * 指し手の　進む戻る　を逆さにして、盤上の駒配置を動かすぜ☆（＾～＾）
+     * 手目のカウントが増えたりはしないぜ☆（＾～＾）
+     */
+    pub fn undo_move(&mut self, phase: &Phase, move2: &Sasite) {
         let cap = self.captured_piece_history[self.get_ply() as usize].clone();
-        self.current_position.undo_sasite(phase, move1, cap);
+
+        // 移動先の駒
+        let piece186 = if move2.src.to_umasu() == SS_SRC_DA {
+            // 打なら
+            let piece679 = Piece::from_phase_piece_type(phase, &move2.drop);
+            // 自分の持ち駒を増やす
+            //let mg = km_to_mg(km);
+            //self.add_hand(mg,1);
+            self.current_position.add_hand(&piece679, 1);
+            piece679
+        } else {
+            // 打で無ければ
+            if move2.pro {
+                // 成ったなら、成る前へ
+                self.get_piece_struct(self.current_position.get_piece_by_square(&move2.dst))
+                    .demote()
+                    .clone()
+            } else {
+                self.current_position
+                    .get_piece_by_square(&move2.dst)
+                    .clone()
+            }
+        };
+
+        // 移動先の駒を、取った駒（あるいは空）に戻す
+        self.current_position.set_piece_by_square(&move2.dst, &cap);
+        match cap {
+            Piece::Kara => {}
+            _ => {
+                // 自分の持ち駒を減らす
+                self.current_position
+                    .add_hand(PieceStruct::from_piece(cap).capture(), -1);
+            }
+        }
+
+        // 移動元升に、動かした駒を置く
+        self.current_position
+            .set_piece_by_square(&move2.src, &piece186);
     }
 
     /// らいおんの位置
@@ -678,10 +719,72 @@ impl SearchPart {
             .get_sq_r(sn_to_num(&self.get_phase(jiai)))
     }
 
-    /// TODO 返り値がコピーになってる☆（＾～＾）？
+    /// 指し手の通りに、盤上の駒配置を動かすぜ☆（＾～＾）
+    /// 手目のカウントが増えたりはしないぜ☆（＾～＾）
+    ///
+    /// return : 取った駒
     pub fn do_move(&mut self, move1: &Sasite) -> Piece {
-        self.current_position
-            .do_sasite(&self.get_phase(&Person::Ji), move1)
+        let phase = self.get_phase(&Person::Ji);
+
+        // 取った駒
+        let cap;
+
+        {
+            // 動かす駒
+            let piece144 = if move1.src.to_umasu() == SS_SRC_DA {
+                // 打なら
+                // 自分の持ち駒を減らす
+                let piece734 = Piece::from_phase_piece_type(&phase, &move1.drop);
+                self.current_position.add_hand(&piece734, -1);
+                piece734
+            } else {
+                // 打で無ければ、元の升の駒を消す。
+                let piece152 = if move1.pro {
+                    // 成りなら
+                    self.get_piece_struct(self.current_position.get_piece_by_square(&move1.src))
+                        .promote()
+                        .clone()
+                } else {
+                    self.current_position
+                        .get_piece_by_square(&move1.src)
+                        .clone()
+                };
+
+                self.current_position
+                    .set_piece_by_square(&move1.src, &Piece::Kara);
+
+                piece152.clone()
+            };
+
+            // 移動先升に駒があるかどうか
+            cap = if let Piece::Kara = self.current_position.get_piece_by_square(&move1.dst) {
+                Piece::Kara
+            } else {
+                // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
+                let cap764;
+                {
+                    cap764 = self
+                        .current_position
+                        .get_piece_by_square(&move1.dst)
+                        .clone();
+                }
+
+                {
+                    let cap773;
+                    {
+                        cap773 = self.get_piece_struct(&cap764).capture().clone();
+                    }
+                    self.current_position.add_hand(&cap773, 1);
+                }
+                cap764.clone()
+            };
+
+            // 移動先升に駒を置く
+            self.current_position
+                .set_piece_by_square(&move1.dst, &piece144);
+        }
+
+        cap.clone()
     }
 
     pub fn get_moves_history(&self) -> &[Sasite; TEME_LN] {

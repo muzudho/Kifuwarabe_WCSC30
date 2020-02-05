@@ -5,6 +5,7 @@ use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::super::model::master::phase::*;
+use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
@@ -52,7 +53,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
 
         for kms_dst in KMS_ARRAY.iter() {
-            let ps_dst = PieceStruct::from_phase_piece_type(&sn, &kms_dst);
+            let ps_dst = PieceStruct::from_piece(Piece::from_phase_piece_type(&sn, &kms_dst));
             for x in SUJI_1..SUJI_10 {
                 // 9..0 みたいに降順に書いても動かない？
                 for y in DAN_1..DAN_10 {

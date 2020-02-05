@@ -8,7 +8,6 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::super::controller::communication::usi::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
@@ -96,9 +95,9 @@ impl Position {
     pub fn exists_fu_by_sn_suji(&self, sn: &Phase, suji: i8) -> bool {
         for dan in DAN_1..DAN_10 {
             let sq = Square::from_file_rank(suji, dan);
-            let km = self.get_piece_by_square(&sq);
-            let piece = PieceStruct::from_piece(km);
-            let (sn_km, kms) = piece.phase_piece_type();
+            let piece99 = self.get_piece_by_square(&sq);
+            let ps100 = PieceStruct::from_piece(piece99.clone());
+            let (sn_km, kms) = ps100.phase_piece_type();
             if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
                 return true;
             }
@@ -106,16 +105,16 @@ impl Position {
         false
     }
     /// 升で指定して駒を取得
-    pub fn get_piece_by_square(&self, sq: &Square) -> Piece {
-        self.board[sq.to_umasu()].clone()
+    pub fn get_piece_by_square(&self, sq: &Square) -> &Piece {
+        &self.board[sq.to_umasu()]
     }
     /// 升で指定して駒を置く
-    pub fn set_ps_by_sq(&mut self, sq: &Square, ps: &PieceStruct) {
-        self.board[sq.to_umasu()] = (*ps).piece();
+    pub fn set_piece_by_square(&mut self, sq: &Square, piece: &Piece) {
+        self.board[sq.to_umasu()] = piece.clone();
 
         // 玉の位置を覚え直します。
         use super::super::super::model::master::phase::Phase::*;
-        match ps.piece() {
+        match *piece {
             Piece::King1 => self.sq_r[Sen as usize] = sq.clone(),
             Piece::King2 => self.sq_r[Go as usize] = sq.clone(),
             _ => {}
@@ -124,124 +123,40 @@ impl Position {
     /**
      * 持ち駒の枚数を加算
      */
-    pub fn add_mg(&mut self, mg: Piece, maisu: i8) {
-        self.mg[PieceStruct::from_piece(mg).serial_piece_number()] += maisu;
+    pub fn add_hand(&mut self, hand: &Piece, maisu: i8) {
+        self.mg[PieceStruct::from_piece(hand.clone()).serial_piece_number()] += maisu;
     }
     pub fn get_mg(&self, mg: Piece) -> i8 {
         self.mg[PieceStruct::from_piece(mg).serial_piece_number()]
-    }
-
-    /// 指し手の通りに、盤上の駒配置を動かすぜ☆（＾～＾）
-    /// 手目のカウントが増えたりはしないぜ☆（＾～＾）
-    ///
-    /// return : 取った駒
-    pub fn do_sasite(&mut self, sn: &Phase, ss: &Sasite) -> Piece {
-        // 取った駒
-        let cap;
-
-        {
-            // 動かす駒
-            let km = if ss.src.to_umasu() == SS_SRC_DA {
-                // 打なら
-                // 自分の持ち駒を減らす
-                let ps = PieceStruct::from_phase_piece_type(&sn, &ss.drop);
-                self.add_mg(ps.piece().clone(), -1);
-                ps.piece()
-            } else {
-                // 打で無ければ、元の升の駒を消す。
-                let piece152 = if ss.pro {
-                    // 成りなら
-                    PieceStruct::from_piece(self.get_piece_by_square(&ss.src)).promote()
-                } else {
-                    self.get_piece_by_square(&ss.src)
-                };
-
-                self.set_ps_by_sq(&ss.src, &PieceStruct::from_piece(Piece::Kara));
-
-                piece152
-            };
-
-            // 移動先升に駒があるかどうか
-            if let Piece::Kara = self.get_piece_by_square(&ss.dst) {
-                cap = Piece::Kara;
-            } else {
-                // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                cap = self.get_piece_by_square(&ss.dst).clone();
-                self.add_mg(PieceStruct::from_piece(cap.clone()).capture().clone(), 1);
-            }
-
-            // 移動先升に駒を置く
-            self.set_ps_by_sq(&ss.dst, &PieceStruct::from_piece(km));
-        }
-
-        cap
-    }
-
-    /**
-     * 指し手の　進む戻る　を逆さにして、盤上の駒配置を動かすぜ☆（＾～＾）
-     * 手目のカウントが増えたりはしないぜ☆（＾～＾）
-     */
-    pub fn undo_sasite(&mut self, sn: &Phase, ss: &Sasite, cap: Piece) {
-        // 移動先の駒
-        let km = if ss.src.to_umasu() == SS_SRC_DA {
-            // 打なら
-            let ps = PieceStruct::from_phase_piece_type(sn, &ss.drop);
-            // 自分の持ち駒を増やす
-            //let mg = km_to_mg(km);
-            //self.add_mg(mg,1);
-            self.add_mg(ps.piece().clone(), 1);
-            ps.piece().clone()
-        } else {
-            // 打で無ければ
-            if ss.pro {
-                // 成ったなら、成る前へ
-                PieceStruct::from_piece(self.get_piece_by_square(&ss.dst)).demote()
-            } else {
-                self.get_piece_by_square(&ss.dst)
-            }
-        };
-
-        // 移動先の駒を、取った駒（あるいは空）に戻す
-        self.set_ps_by_sq(&ss.dst, &PieceStruct::from_piece(cap.clone()));
-        match cap.clone() {
-            Piece::Kara => {}
-            _ => {
-                // 自分の持ち駒を減らす
-                self.add_mg(PieceStruct::from_piece(cap).capture().clone(), -1);
-            }
-        }
-
-        // 移動元升に、動かした駒を置く
-        self.set_ps_by_sq(&ss.src, &PieceStruct::from_piece(km));
     }
 
     /**
      * 指定の升に駒があれば真
      */
     pub fn exists_km(&self, sq: &Square) -> bool {
-        !PieceStruct::from_piece(self.get_piece_by_square(&sq))
+        !PieceStruct::from_piece(self.get_piece_by_square(&sq).clone())
             .equals_piece(&PieceStruct::from_piece(Piece::Kara))
     }
 
     /// 指定の升に指定の駒があれば真
-    pub fn has_sq_km(&self, sq: &Square, piece: Piece) -> bool {
-        PieceStruct::from_piece(self.get_piece_by_square(&sq))
-            .equals_piece(&PieceStruct::from_piece(piece))
+    pub fn has_sq_km(&self, sq: &Square, piece: &Piece) -> bool {
+        PieceStruct::from_piece(self.get_piece_by_square(&sq).clone())
+            .equals_piece(&PieceStruct::from_piece(piece.clone()))
     }
 
     /// 指定の升にある駒の先後、または空升
     pub fn get_sn_by_sq(&self, sq: &Square) -> Phase {
-        PieceStruct::from_piece(self.get_piece_by_square(sq)).phase()
+        PieceStruct::from_piece(self.get_piece_by_square(sq).clone()).phase()
     }
 
     /// 移動先と移動元を比較し、違う駒があれば、成ったと判定するぜ☆（＾～＾）
     pub fn is_natta(&self, sq_src: &Square, sq_dst: &Square) -> bool {
         let km_src = self.get_piece_by_square(&sq_src);
 
-        let ps_src = PieceStruct::from_piece(km_src);
+        let ps_src = PieceStruct::from_piece(km_src.clone());
         let km_dst = self.get_piece_by_square(&sq_dst);
 
-        let ps_dst = PieceStruct::from_piece(km_dst);
+        let ps_dst = PieceStruct::from_piece(km_dst.clone());
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = ps_dst.is_promoted();
         let pro_src = ps_src.is_promoted();
@@ -258,7 +173,7 @@ impl Position {
         for i_ms in MASU_0..BAN_SIZE {
             let i_sq = Square::from_umasu(i_ms as umasu);
             let km = self.get_piece_by_square(&i_sq);
-            let num_km = PieceStruct::from_piece(km).serial_piece_number();
+            let num_km = PieceStruct::from_piece(km.clone()).serial_piece_number();
             hash ^= universe.get_application_part().get_position_hash_seed().km[i_ms][num_km];
         }
 
