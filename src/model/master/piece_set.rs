@@ -7,7 +7,7 @@ use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_struct::PieceStruct;
-use super::super::super::model::universe::*;
+use super::super::super::model::search::search_part::*;
 use std::collections::HashSet;
 
 pub struct PieceSet {
@@ -31,11 +31,11 @@ impl PieceSet {
     /**
      * 自分相手
      */
-    pub fn new_jiai(&self, jiai: &Person, universe: &Universe) -> PieceSet {
-        let sn0 = universe.get_search_part().get_phase(&jiai);
+    pub fn new_jiai(&self, jiai: &Person, search_part: &SearchPart) -> PieceSet {
+        let sn0 = search_part.get_phase(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = universe.get_search_part().get_piece_struct(km);
+            let ps = search_part.get_piece_struct(km);
             let (sn1, _kms) = ps.phase_piece_type();
             if match_sn(&sn0, &sn1) {
                 num_syugo1.insert(ps.serial_piece_number());

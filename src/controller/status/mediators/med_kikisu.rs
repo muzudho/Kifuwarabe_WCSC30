@@ -8,22 +8,22 @@ use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::square::*;
-use super::super::super::super::model::universe::*;
+use super::super::super::super::model::search::search_part::*;
 use std::collections::HashSet;
 
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn update_effect_count(universe: &mut Universe) {
+pub fn update_effect_count(search_part: &mut SearchPart) {
     // ゼロ・リセット
     for pc in KM_ARRAY.iter() {
-        &universe.get_search_part_mut().effect_count_by_piece
+        &search_part.effect_count_by_piece
             [PieceStruct::from_piece((*pc).clone()).serial_piece_number()]
         .clear();
     }
 
     for sn in SN_ARRAY.iter() {
-        &universe.get_search_part_mut().effect_count_by_phase[sn_to_num(sn)].clear();
+        &search_part.effect_count_by_phase[sn_to_num(sn)].clear();
     }
 
     // カウント
@@ -41,7 +41,7 @@ pub fn update_effect_count(universe: &mut Universe) {
                 make_no_promotion_source_by_square_and_piece(
                     &sq_dst,
                     &ps_dst,
-                    &universe.get_search_part(),
+                    &search_part,
                     |square| {
                         mv_src_hashset.insert(square);
                     },
@@ -49,7 +49,7 @@ pub fn update_effect_count(universe: &mut Universe) {
                 make_before_promotion_source_by_square_piece(
                     &sq_dst,
                     &ps_dst,
-                    &universe.get_search_part(),
+                    &search_part,
                     |square| {
                         mv_src_hashset.insert(square);
                     },
@@ -58,11 +58,11 @@ pub fn update_effect_count(universe: &mut Universe) {
                 let kikisu = mv_src_hashset.len();
 
                 // 駒別
-                universe.get_search_part_mut().effect_count_by_piece[ps_dst.serial_piece_number()]
+                search_part.effect_count_by_piece[ps_dst.serial_piece_number()]
                     .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別
-                universe.get_search_part_mut().effect_count_by_phase[sn_to_num(&ps_dst.phase())]
+                search_part.effect_count_by_phase[sn_to_num(&ps_dst.phase())]
                     .add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }

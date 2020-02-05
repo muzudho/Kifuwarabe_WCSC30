@@ -22,7 +22,7 @@ use controller::consoles::unit_test::*;
 use controller::consoles::visuals::dumps::*;
 use controller::consoles::visuals::title::*;
 use controller::movement_generation::mg_main::*;
-use controller::thinking::think::*;
+use controller::piece_movetrics::pm_main::*;
 use model::master::constants::*;
 use model::master::misc::*;
 use model::master::square::*;

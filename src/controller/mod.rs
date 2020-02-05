@@ -9,5 +9,6 @@ pub mod communication;
 pub mod consoles;
 pub mod geometries;
 pub mod movement_generation;
+pub mod piece_movetrics;
 pub mod status;
 pub mod thinking;

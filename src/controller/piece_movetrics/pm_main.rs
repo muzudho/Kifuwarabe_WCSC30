@@ -1,5 +1,5 @@
 //!
-//! 深い考えだぜ☆（＾～＾）
+//! 駒たちが躍動するぜ☆（＾～＾）
 //!
 
 extern crate rand;
@@ -14,9 +14,7 @@ use super::super::super::controller::status::mediators::med_kikisu::*;
 use super::super::super::controller::thinking::visions::vision_tree::*;
 use super::super::super::model::universe::*;
 
-/**
- * 現局面での最善手を返すぜ☆（*＾～＾*）
- */
+/// 現局面での最善手を返すぜ☆（*＾～＾*）
 pub fn think(mut universe: &mut Universe) -> Sasite {
     // TODO 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
 
@@ -25,7 +23,7 @@ pub fn think(mut universe: &mut Universe) -> Sasite {
     // +----------------------+
 
     // 相手の利き升調べ（自殺手防止のため）
-    update_effect_count(&mut universe);
+    update_effect_count(universe.get_search_part_mut());
 
     g_writeln(&format!("info test is_s={}", atamakin::is_s(&universe)));
 
