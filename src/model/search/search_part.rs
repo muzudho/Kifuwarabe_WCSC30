@@ -3,11 +3,11 @@ use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::status::number_board::*;
 use super::super::super::controller::thinking::visions::vision_tree::*;
+use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::person::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_struct::*;
-use super::super::super::model::master::piece_struct_master::PieceStructMaster;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::ply::*;
 use super::super::super::model::master::square::*;
@@ -30,8 +30,6 @@ pub struct SearchPart {
     pub effect_count_by_piece: [NumberBoard; KM_LN],
     /// ビジョン・ツリー
     pub vision_tree_by_phase: [VisionTree; SN_LN],
-    /// 駒構造体・マスター
-    piece_struct_master: PieceStructMaster,
 }
 impl SearchPart {
     pub fn new() -> Self {
@@ -608,7 +606,6 @@ impl SearchPart {
                 NumberBoard::new(),
             ],
             vision_tree_by_phase: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
-            piece_struct_master: PieceStructMaster::new(),
         }
     }
     pub fn add_ply(&mut self, ply1: i16) {
@@ -670,7 +667,7 @@ impl SearchPart {
      * 指し手の　進む戻る　を逆さにして、盤上の駒配置を動かすぜ☆（＾～＾）
      * 手目のカウントが増えたりはしないぜ☆（＾～＾）
      */
-    pub fn undo_move(&mut self, phase: &Phase, move2: &Sasite) {
+    pub fn undo_move(&mut self, phase: &Phase, move2: &Sasite, speed_of_light: &SpeedOfLight) {
         let cap = self.captured_piece_history[self.get_ply() as usize].clone();
 
         // 移動先の駒
@@ -686,7 +683,9 @@ impl SearchPart {
             // 打で無ければ
             if move2.pro {
                 // 成ったなら、成る前へ
-                self.get_piece_struct(self.current_position.get_piece_by_square(&move2.dst))
+                speed_of_light
+                    .piece_struct_master
+                    .get_piece_struct(self.current_position.get_piece_by_square(&move2.dst))
                     .demote()
                     .clone()
             } else {
@@ -723,7 +722,7 @@ impl SearchPart {
     /// 手目のカウントが増えたりはしないぜ☆（＾～＾）
     ///
     /// return : 取った駒
-    pub fn do_move(&mut self, move1: &Sasite) -> Piece {
+    pub fn do_move(&mut self, move1: &Sasite, speed_of_light: &SpeedOfLight) -> Piece {
         let phase = self.get_phase(&Person::Ji);
 
         // 取った駒
@@ -741,7 +740,9 @@ impl SearchPart {
                 // 打で無ければ、元の升の駒を消す。
                 let piece152 = if move1.pro {
                     // 成りなら
-                    self.get_piece_struct(self.current_position.get_piece_by_square(&move1.src))
+                    speed_of_light
+                        .piece_struct_master
+                        .get_piece_struct(self.current_position.get_piece_by_square(&move1.src))
                         .promote()
                         .clone()
                 } else {
@@ -772,7 +773,11 @@ impl SearchPart {
                 {
                     let cap773;
                     {
-                        cap773 = self.get_piece_struct(&cap764).capture().clone();
+                        cap773 = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(&cap764)
+                            .capture()
+                            .clone();
                     }
                     self.current_position.add_hand(&cap773, 1);
                 }
@@ -827,33 +832,5 @@ impl SearchPart {
     pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
         self.vision_tree_by_phase[sn_to_num(phase)]
             .set_ai_r(&self.current_position.get_sq_r(sn_to_num(opponent_phase)));
-    }
-
-    /// 先後＆駒種類→先後付き駒
-    pub fn get_piece_struct_by_phase_and_piece_type(
-        &self,
-        sn: &Phase,
-        kms: &PieceType,
-    ) -> &PieceStruct {
-        &self
-            .piece_struct_master
-            .get_piece_struct_by_phase_and_piece_type(sn, kms)
-    }
-    pub fn get_piece_struct_by_square(&self, square: &Square) -> &PieceStruct {
-        &self
-            .piece_struct_master
-            .get_piece_struct(&self.current_position.get_piece_by_square(square))
-    }
-
-    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
-        &self.piece_struct_master.get_piece_struct(piece)
-    }
-
-    pub fn get_piece_struct_master(&self) -> &PieceStructMaster {
-        &self.piece_struct_master
-    }
-
-    pub fn get_piece_struct_master_mut(&mut self) -> &mut PieceStructMaster {
-        &mut self.piece_struct_master
     }
 }

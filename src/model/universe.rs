@@ -10,6 +10,7 @@ use rand::Rng;
 use super::super::config::*;
 use super::super::controller::common::conv::*;
 use super::super::controller::communication::usi::*;
+use super::super::model::definition::speed_of_light::*;
 use super::super::model::master::misc::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
@@ -87,6 +88,8 @@ pub fn g_writeln(s: &str) {
  * ここに全部入れてあるぜ☆（＾～＾）
  */
 pub struct Universe {
+    /// 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
+    pub speed_of_light: SpeedOfLight,
     /// アプリケーション部
     application_part: ApplicationPart,
     /// 対話部
@@ -98,6 +101,7 @@ pub struct Universe {
 impl Universe {
     pub fn new() -> Universe {
         Universe {
+            speed_of_light: SpeedOfLight::new(),
             application_part: ApplicationPart::new(),
             dialogue_part: DialoguePart::new(),
             search_part: SearchPart::new(),
@@ -551,7 +555,10 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         self.search_part.moves_history[ply as usize] = (*move3).clone();
         let cap;
         {
-            cap = self.search_part.do_move(move3).clone();
+            cap = self
+                .search_part
+                .do_move(move3, &self.speed_of_light)
+                .clone();
         }
         self.search_part.set_cap(ply as usize, cap);
 
@@ -569,7 +576,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             self.get_search_part_mut().add_ply(-1);
             let sn = self.search_part.get_phase(&Person::Ji);
             let ss = &self.search_part.get_move().clone();
-            self.search_part.undo_move(&sn, ss);
+            self.search_part.undo_move(&sn, ss, &self.speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {

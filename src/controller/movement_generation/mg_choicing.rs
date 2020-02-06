@@ -10,6 +10,7 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::results::komatori_result::*;
+use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::ply::*;
 use super::super::super::model::master::square::*;
@@ -39,14 +40,22 @@ pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> Sasite 
 /**
  * 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
  */
-pub fn select_movement_except_check(ss_hashset_input: &mut HashSet<u64>, search_part: &SearchPart) {
+pub fn select_movement_except_check(
+    ss_hashset_input: &mut HashSet<u64>,
+    search_part: &SearchPart,
+    speed_of_light: &SpeedOfLight,
+) {
     // 自玉の位置
     let sq_r = search_part.get_king_sq(&Person::Ji).clone();
     g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
-    let komatori_result_hashset: HashSet<u64> =
-        lookup_catching_king_on_board(&search_part, &search_part.get_phase(&Person::Ai), &sq_r);
+    let komatori_result_hashset: HashSet<u64> = lookup_catching_king_on_board(
+        &search_part.get_phase(&Person::Ai),
+        &sq_r,
+        &search_part,
+        &speed_of_light,
+    );
     if 0 < komatori_result_hashset.len() {
         // 王手されていれば
 
@@ -145,6 +154,7 @@ pub fn select_movement_except_suiceid(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
             &universe.get_search_part(),
+            &universe.speed_of_light,
             |square| {
                 attackers.insert(square);
             },
@@ -153,6 +163,7 @@ pub fn select_movement_except_suiceid(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
             &universe.get_search_part(),
+            &universe.speed_of_light,
             |square| {
                 attackers.insert(square);
             },

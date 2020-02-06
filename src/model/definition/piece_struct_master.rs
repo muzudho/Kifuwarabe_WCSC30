@@ -1,8 +1,10 @@
-use super::phase::Phase;
-use super::piece::Piece;
-use super::piece::Piece::*;
-use super::piece_struct::PieceStruct;
-use super::piece_type::PieceType;
+//! 駒の実体はここだぜ☆（＾～＾）
+//! マスター・テーブルみたいなもん☆（＾～＾）
+use super::super::master::phase::Phase;
+use super::super::master::piece::Piece;
+use super::super::master::piece::Piece::*;
+use super::super::master::piece_struct::PieceStruct;
+use super::super::master::piece_type::PieceType;
 
 pub struct PieceStructMaster {
     king1: PieceStruct,
@@ -116,13 +118,13 @@ impl PieceStructMaster {
     /// 先後＆駒種類→先後付き駒
     pub fn get_piece_struct_by_phase_and_piece_type(
         &self,
-        sn: &Phase,
-        kms: &PieceType,
+        phase: &Phase,
+        piece_type: &PieceType,
     ) -> &PieceStruct {
         use super::super::super::model::master::piece::Piece::*;
         use super::super::super::model::master::piece_type::PieceType::*;
-        match *sn {
-            Phase::Sen => match *kms {
+        match *phase {
+            Phase::Sen => match *piece_type {
                 R => self.get_piece_struct(&King1),
                 K => self.get_piece_struct(&Rook1),
                 Z => self.get_piece_struct(&Bishop1),
@@ -139,7 +141,7 @@ impl PieceStructMaster {
                 PH => self.get_piece_struct(&PromotedPawn1),
                 _ => self.get_piece_struct(&Piece::Owari),
             },
-            Phase::Go => match *kms {
+            Phase::Go => match *piece_type {
                 R => self.get_piece_struct(&King2),
                 K => self.get_piece_struct(&Rook2),
                 Z => self.get_piece_struct(&Bishop2),

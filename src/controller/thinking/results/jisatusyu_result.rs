@@ -15,7 +15,10 @@ pub fn is_jisatusyu(universe: &Universe, ss: &Sasite) -> bool {
         .get_search_part()
         .get_current_position()
         .get_piece_by_square(&ss.src);
-    let ps_src = universe.get_search_part().get_piece_struct(km_src);
+    let ps_src = universe
+        .speed_of_light
+        .piece_struct_master
+        .get_piece_struct(km_src);
     let (sn_teban, _kms) = ps_src.phase_piece_type();
     // 相手番の先後
     let sn_aite = hanten_sn(&sn_teban);

@@ -2,6 +2,7 @@
 //! 駒集合
 //!
 
+use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
@@ -31,11 +32,16 @@ impl PieceSet {
     /**
      * 自分相手
      */
-    pub fn new_jiai(&self, jiai: &Person, search_part: &SearchPart) -> PieceSet {
+    pub fn new_jiai(
+        &self,
+        jiai: &Person,
+        search_part: &SearchPart,
+        speed_of_light: &SpeedOfLight,
+    ) -> PieceSet {
         let sn0 = search_part.get_phase(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = search_part.get_piece_struct(km);
+            let ps = speed_of_light.piece_struct_master.get_piece_struct(km);
             let (sn1, _kms) = ps.phase_piece_type();
             if match_sn(&sn0, &sn1) {
                 num_syugo1.insert(ps.serial_piece_number());

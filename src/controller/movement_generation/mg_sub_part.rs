@@ -4,6 +4,7 @@
 
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
+use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
@@ -34,6 +35,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
     search_part: &SearchPart,
+    speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where
     F1: FnMut(Square),
@@ -109,13 +111,13 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -128,7 +130,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -145,12 +147,12 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -163,7 +165,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -177,7 +179,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     if search_part.get_current_position().has_sq_km(
                         &sq_src,
                         ps_dst.piece(),
-                        search_part,
+                        speed_of_light,
                     ) {
                         gets_square(sq_src);
                     }
@@ -193,12 +195,12 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -211,7 +213,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -225,7 +227,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     if search_part.get_current_position().has_sq_km(
                         &sq_src,
                         ps_dst.piece(),
-                        search_part,
+                        speed_of_light,
                     ) {
                         gets_square(sq_src);
                     }
@@ -241,12 +243,12 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -259,7 +261,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -277,13 +279,13 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 // 指定の駒があれば、その升は移動元。続行
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 // なんか他の駒があれば終わり
                                 break;
@@ -297,7 +299,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -314,12 +316,12 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -332,7 +334,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -346,7 +348,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     if search_part.get_current_position().has_sq_km(
                         &sq_src,
                         ps_dst.piece(),
-                        search_part,
+                        speed_of_light,
                     ) {
                         gets_square(sq_src);
                     }
@@ -362,12 +364,12 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -380,7 +382,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -394,7 +396,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     if search_part.get_current_position().has_sq_km(
                         &sq_src,
                         ps_dst.piece(),
-                        search_part,
+                        speed_of_light,
                     ) {
                         gets_square(sq_src);
                     }
@@ -410,12 +412,12 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 ps_dst.piece(),
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -428,7 +430,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             ps_dst.piece(),
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -454,6 +456,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     sq_dst: &Square,
     ps_dst: &PieceStruct,
     search_part: &SearchPart,
+    speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where
     F1: FnMut(Square),
@@ -471,8 +474,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     // | 移動前は成る前の駒 |
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
-    let kms_src = search_part.get_piece_struct(ps_dst.demote()).piece_type();
-    let km_src = search_part
+    let kms_src = speed_of_light
+        .piece_struct_master
+        .get_piece_struct(ps_dst.demote())
+        .piece_type();
+    let km_src = speed_of_light
+        .piece_struct_master
         .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), &kms_src)
         .piece();
 
@@ -498,7 +505,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
         return;
     }
 
-    let kms_narumae_num = kms_to_num(&search_part.get_piece_struct(ps_dst.demote()).piece_type());
+    let kms_narumae_num = kms_to_num(
+        &speed_of_light
+            .piece_struct_master
+            .get_piece_struct(ps_dst.demote())
+            .piece_type(),
+    );
 
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向
@@ -524,12 +536,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -542,7 +554,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -559,12 +571,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -577,7 +589,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -590,7 +602,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx + 1, dy + 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src, search_part)
+                        .has_sq_km(&sq_src, km_src, speed_of_light)
                     {
                         gets_square(sq_src);
                     }
@@ -606,12 +618,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -624,7 +636,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -637,7 +649,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx - 1, dy + 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src, search_part)
+                        .has_sq_km(&sq_src, km_src, speed_of_light)
                     {
                         gets_square(sq_src);
                     }
@@ -653,12 +665,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -671,7 +683,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -689,13 +701,13 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 // 指定の駒があれば、その升は移動元。続行
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 // なんか他の駒があれば終わり
                                 break;
@@ -709,7 +721,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -726,12 +738,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -744,7 +756,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -757,7 +769,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx - 1, dy - 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src, search_part)
+                        .has_sq_km(&sq_src, km_src, speed_of_light)
                     {
                         gets_square(sq_src);
                     }
@@ -773,12 +785,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -791,7 +803,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -804,7 +816,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     let sq_src = Square::from_file_rank(dx + 1, dy - 2);
                     if search_part
                         .get_current_position()
-                        .has_sq_km(&sq_src, km_src, search_part)
+                        .has_sq_km(&sq_src, km_src, speed_of_light)
                     {
                         gets_square(sq_src);
                     }
@@ -820,12 +832,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                             if search_part.get_current_position().has_sq_km(
                                 &sq_src,
                                 km_src,
-                                search_part,
+                                speed_of_light,
                             ) {
                                 gets_square(sq_src);
                             } else if search_part
                                 .get_current_position()
-                                .exists_km(&sq_src, search_part)
+                                .exists_km(&sq_src, speed_of_light)
                             {
                                 break;
                             }
@@ -838,7 +850,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         if search_part.get_current_position().has_sq_km(
                             &sq_src,
                             km_src,
-                            search_part,
+                            speed_of_light,
                         ) {
                             gets_square(sq_src);
                         }
@@ -864,13 +876,16 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     sq_dst: &Square,
     piece_dst: &Piece,
     search_part: &SearchPart,
+    speed_of_light: &SpeedOfLight,
     mut gets_piece_type_hash: F1,
 ) where
     F1: FnMut(usize),
 {
     assert_banjo_sq(&sq_dst, "make_drop_piece_type_by_square_piece");
 
-    let ps_dst = search_part.get_piece_struct(piece_dst);
+    let ps_dst = speed_of_light
+        .piece_struct_master
+        .get_piece_struct(piece_dst);
     let kms_dst = ps_dst.piece_type();
     if !kms_can_da(&kms_dst) {
         return; // 打って出てくることがない駒なら終了
@@ -895,7 +910,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     // +------------------+
     if search_part
         .get_current_position()
-        .get_hand(piece_dst, search_part)
+        .get_hand(piece_dst, speed_of_light)
         < 1
     {
         return; // 持っていない駒は打てない
@@ -939,7 +954,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
                 || search_part.get_current_position().exists_fu_by_sn_suji(
                     &ps_dst.phase(),
                     suji,
-                    search_part,
+                    speed_of_light,
                 )
             {
                 return;
@@ -963,7 +978,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
                 || search_part.get_current_position().exists_fu_by_sn_suji(
                     &ps_dst.phase(),
                     suji,
-                    search_part,
+                    speed_of_light,
                 )
             {
                 return;
@@ -994,6 +1009,7 @@ pub fn make_destination_by_square_piece(
     km_src: &Piece,
     to_nari: bool,
     search_part: &SearchPart,
+    speed_of_light: &SpeedOfLight,
     // result, result2 で入れ直しがあるのでむずかしい☆（＾～＾）
     // 成れない動きをあとで除外する☆（＾～＾）
     result: &mut HashSet<Square>,
@@ -1002,7 +1018,7 @@ pub fn make_destination_by_square_piece(
 
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = sq_src.to_file_rank();
-    let ps_src = search_part.get_piece_struct(km_src);
+    let ps_src = speed_of_light.piece_struct_master.get_piece_struct(km_src);
     let kms_src = ps_src.piece_type();
 
     // +--------------+
@@ -1037,7 +1053,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx + i_east, dy);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1052,7 +1068,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx + 1, dy);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1068,7 +1084,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1083,7 +1099,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1096,7 +1112,7 @@ pub fn make_destination_by_square_piece(
                     let sq_src = Square::from_file_rank(dx + 1, dy + 2);
                     let sn_ms = search_part
                         .get_current_position()
-                        .get_sn_by_sq(&sq_src, search_part);
+                        .get_sn_by_sq(&sq_src, speed_of_light);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -1111,7 +1127,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx, dy + i_south);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1126,7 +1142,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx, dy + 1);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1139,7 +1155,7 @@ pub fn make_destination_by_square_piece(
                     let sq_src = Square::from_file_rank(dx - 1, dy + 2);
                     let sn_ms = search_part
                         .get_current_position()
-                        .get_sn_by_sq(&sq_src, search_part);
+                        .get_sn_by_sq(&sq_src, speed_of_light);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -1154,7 +1170,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1169,7 +1185,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1185,7 +1201,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx - i_east, dy);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1200,7 +1216,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx - 1, dy);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1216,7 +1232,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1231,7 +1247,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1244,7 +1260,7 @@ pub fn make_destination_by_square_piece(
                     let sq_src = Square::from_file_rank(dx - 1, dy - 2);
                     let sn_ms = search_part
                         .get_current_position()
-                        .get_sn_by_sq(&sq_src, search_part);
+                        .get_sn_by_sq(&sq_src, speed_of_light);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -1259,7 +1275,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx, dy - i_north);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1274,7 +1290,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx, dy - 1);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1287,7 +1303,7 @@ pub fn make_destination_by_square_piece(
                     let sq_src = Square::from_file_rank(dx + 1, dy - 2);
                     let sn_ms = search_part
                         .get_current_position()
-                        .get_sn_by_sq(&sq_src, search_part);
+                        .get_sn_by_sq(&sq_src, speed_of_light);
                     if !match_sn(&sn_ms, &ps_src.phase()) {
                         result.insert(sq_src);
                     }
@@ -1302,7 +1318,7 @@ pub fn make_destination_by_square_piece(
                             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
+                                .get_sn_by_sq(&sq_src, speed_of_light);
                             if !match_sn(&sn_ms, &ps_src.phase()) {
                                 result.insert(sq_src);
                             }
@@ -1317,7 +1333,7 @@ pub fn make_destination_by_square_piece(
                         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
+                            .get_sn_by_sq(&sq_src, speed_of_light);
                         if !match_sn(&sn_ms, &ps_src.phase()) {
                             result.insert(sq_src);
                         }
@@ -1482,6 +1498,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
     sn: &Phase,
     sq_dst: &Square,
     search_part: &SearchPart,
+    speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where
     F1: FnMut(Square),
@@ -1494,7 +1511,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
     // 駒種類
     for kms in KMS_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-        let km = search_part
+        let km = speed_of_light
+            .piece_struct_master
             .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
             .piece()
             .clone();
@@ -1558,9 +1576,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx + i_east, dy);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1575,9 +1599,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx + 1, dy);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -1593,9 +1623,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1610,9 +1646,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx + 1, dy + 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -1625,8 +1667,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -1641,9 +1690,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx, dy + i_south);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1658,9 +1713,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx, dy + 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1676,8 +1737,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -1692,9 +1760,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1709,9 +1783,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx - 1, dy + 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -1727,9 +1807,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx - i_east, dy);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1744,9 +1830,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx - 1, dy);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -1762,9 +1854,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1779,9 +1877,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx - 1, dy - 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -1794,8 +1898,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -1810,9 +1921,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx, dy - i_north);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1827,9 +1944,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx, dy - 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -1845,8 +1968,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -1861,9 +1991,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1878,9 +2014,15 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx + 1, dy - 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -1902,6 +2044,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
     sn: &Phase,
     sq_dst: &Square,
     search_part: &SearchPart,
+    speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where
     F1: FnMut(Square),
@@ -1913,14 +2056,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
 
     // 駒種類
     for kms in KMS_ARRAY.iter() {
-        let km_src = search_part
+        let km_src = speed_of_light
+            .piece_struct_master
             .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
             .piece();
 
         // +--------------------+
         // | 移動前は非成駒か？ |
         // +--------------------+
-        let ps_src = search_part.get_piece_struct(km_src);
+        let ps_src = speed_of_light.piece_struct_master.get_piece_struct(km_src);
         if ps_src.is_promoted() {
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
@@ -1966,9 +2110,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx + i_east, dy);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -1983,9 +2133,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx + 1, dy);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -2001,9 +2157,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -2018,9 +2180,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx + 1, dy + 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -2033,8 +2201,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -2049,9 +2224,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx, dy + i_south);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -2066,9 +2247,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx, dy + 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 北 ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -2084,8 +2271,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -2100,9 +2294,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -2117,9 +2317,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx - 1, dy + 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -2135,9 +2341,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx - i_east, dy);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -2152,9 +2364,14 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx - 1, dy);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms = &search_part
-                                .get_piece_struct_by_square(&&sq_src)
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
                                 .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
@@ -2171,9 +2388,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -2188,9 +2411,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx - 1, dy - 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }
@@ -2203,8 +2432,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -2219,9 +2455,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx, dy - i_north);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -2236,9 +2478,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx, dy - 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             // g_writeln(&format!("get_src_by_sn_ms 南 kms={} kms_num={} ms_src={} sn_ms=>{} kms_ms={} match_sn={} match_kms={}",
                             //     kms, kms_num, ms_src, sn_ms, kms_ms, match_sn( &sn_ms, &sn ), match_kms( &kms_ms, &kms )
                             // ));
@@ -2254,8 +2502,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
                         let sn_ms = search_part
                             .get_current_position()
-                            .get_sn_by_sq(&sq_src, search_part);
-                        let kms_ms = &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                            .get_sn_by_sq(&sq_src, speed_of_light);
+                        let kms_ms = speed_of_light
+                            .piece_struct_master
+                            .get_piece_struct(
+                                search_part
+                                    .get_current_position()
+                                    .get_piece_by_square(&sq_src),
+                            )
+                            .piece_type();
                         if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                             gets_square(sq_src);
                         }
@@ -2270,9 +2525,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
                                 let sn_ms = search_part
                                     .get_current_position()
-                                    .get_sn_by_sq(&sq_src, search_part);
-                                let kms_ms =
-                                    &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                    .get_sn_by_sq(&sq_src, speed_of_light);
+                                let kms_ms = speed_of_light
+                                    .piece_struct_master
+                                    .get_piece_struct(
+                                        search_part
+                                            .get_current_position()
+                                            .get_piece_by_square(&sq_src),
+                                    )
+                                    .piece_type();
                                 if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                     gets_square(sq_src);
                                 }
@@ -2287,9 +2548,15 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             let sq_src = Square::from_file_rank(dx + 1, dy - 1);
                             let sn_ms = search_part
                                 .get_current_position()
-                                .get_sn_by_sq(&sq_src, search_part);
-                            let kms_ms =
-                                &search_part.get_piece_struct_by_square(&sq_src).piece_type();
+                                .get_sn_by_sq(&sq_src, speed_of_light);
+                            let kms_ms = speed_of_light
+                                .piece_struct_master
+                                .get_piece_struct(
+                                    search_part
+                                        .get_current_position()
+                                        .get_piece_by_square(&sq_src),
+                                )
+                                .piece_type();
                             if match_sn(&sn_ms, &sn) && match_kms(&kms_ms, &kms) {
                                 gets_square(sq_src);
                             }

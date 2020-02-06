@@ -30,17 +30,19 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: &Piece) -> Sasite
 
         ss_hashset.clear();
         get_movement_by_square_and_piece_on_board(
-            &universe.get_search_part(),
             &sq_dst,
             piece_dst.clone(),
+            &universe.get_search_part(),
+            &universe.speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
         );
         get_movement_by_square_and_piece_on_drop(
-            &universe.get_search_part(),
             &sq_dst,
             piece_dst,
+            &universe.get_search_part(),
+            &universe.speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
@@ -69,7 +71,8 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
 
         // 手番の、移動した先の駒
         let ps_dst = universe
-            .get_search_part()
+            .speed_of_light
+            .piece_struct_master
             .get_piece_struct_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 randommove::rnd_kms(),
@@ -78,17 +81,19 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
 
         ss_hashset.clear();
         get_movement_by_square_and_piece_on_board(
-            &universe.get_search_part(),
             &sq_dst,
             piece_dst.clone(),
+            &universe.get_search_part(),
+            &universe.speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
         );
         get_movement_by_square_and_piece_on_drop(
-            &universe.get_search_part(),
             &sq_dst,
             piece_dst,
+            &universe.get_search_part(),
+            &universe.speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },

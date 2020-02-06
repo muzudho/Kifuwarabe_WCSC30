@@ -9,7 +9,8 @@ use super::super::super::model::universe::*;
 pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe) -> bool {
     match_sn(
         &universe
-            .get_search_part()
+            .speed_of_light
+            .piece_struct_master
             .get_piece_struct(
                 &universe
                     .get_search_part()

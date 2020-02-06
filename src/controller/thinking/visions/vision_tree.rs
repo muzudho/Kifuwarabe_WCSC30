@@ -64,6 +64,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                         &sq_dst,
                         &ps_dst,
                         &universe.get_search_part(),
+                        &universe.speed_of_light,
                         |square| {
                             mv_src_hashset.insert(square);
                         },
@@ -72,6 +73,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                         &sq_dst,
                         &ps_dst,
                         &universe.get_search_part(),
+                        &universe.speed_of_light,
                         |square| {
                             mv_src_hashset.insert(square);
                         },
@@ -85,7 +87,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
                         let pro = &universe.get_search_part().get_current_position().is_natta(
                             &sq_src,
                             &sq_dst,
-                            universe.get_search_part(),
+                            &universe.speed_of_light,
                         );
 
                         let hash_ss = Sasite {

@@ -25,8 +25,14 @@ pub fn is_s(universe: &Universe) -> bool {
 
     let sq_south_r = Square::from_point(&p_south_r);
     let ps = universe
-        .get_search_part()
-        .get_piece_struct_by_square(&sq_south_r);
+        .speed_of_light
+        .piece_struct_master
+        .get_piece_struct(
+            universe
+                .get_search_part()
+                .get_current_position()
+                .get_piece_by_square(&sq_south_r),
+        );
     let jiai_km = universe.get_person_by_piece_struct(&ps);
     if !match_jiai(&jiai_km, &Person::Ji) {
         return true;

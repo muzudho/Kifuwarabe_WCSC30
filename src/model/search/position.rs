@@ -8,13 +8,13 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
+use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
-use super::super::super::model::search::search_part::*;
 use super::super::super::model::universe::*;
 
 /// 局面
@@ -93,11 +93,16 @@ impl Position {
     /**
      * 歩が置いてあるか確認
      */
-    pub fn exists_fu_by_sn_suji(&self, sn: &Phase, suji: i8, search_part: &SearchPart) -> bool {
+    pub fn exists_fu_by_sn_suji(
+        &self,
+        sn: &Phase,
+        suji: i8,
+        speed_of_light: &SpeedOfLight,
+    ) -> bool {
         for dan in DAN_1..DAN_10 {
             let sq = Square::from_file_rank(suji, dan);
             let piece99 = self.get_piece_by_square(&sq);
-            let ps100 = search_part.get_piece_struct(piece99);
+            let ps100 = speed_of_light.piece_struct_master.get_piece_struct(piece99);
             let (sn_km, kms) = ps100.phase_piece_type();
             if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
                 return true;
@@ -127,41 +132,56 @@ impl Position {
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8) {
         self.mg[PieceStruct::from_piece(hand.clone()).serial_piece_number()] += maisu;
     }
-    pub fn get_hand(&self, hand: &Piece, search_part: &SearchPart) -> i8 {
-        self.mg[search_part.get_piece_struct(hand).serial_piece_number()]
+    pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
+        self.mg[speed_of_light
+            .piece_struct_master
+            .get_piece_struct(hand)
+            .serial_piece_number()]
     }
 
     /**
      * 指定の升に駒があれば真
      */
-    pub fn exists_km(&self, sq: &Square, search_part: &SearchPart) -> bool {
-        !search_part
+    pub fn exists_km(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> bool {
+        !speed_of_light
+            .piece_struct_master
             .get_piece_struct(self.get_piece_by_square(&sq))
-            .equals_piece(&search_part.get_piece_struct(&Piece::Kara))
+            .equals_piece(
+                &speed_of_light
+                    .piece_struct_master
+                    .get_piece_struct(&Piece::Kara),
+            )
     }
 
     /// 指定の升に指定の駒があれば真
-    pub fn has_sq_km(&self, sq: &Square, piece: &Piece, search_part: &SearchPart) -> bool {
-        search_part
+    pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &SpeedOfLight) -> bool {
+        speed_of_light
+            .piece_struct_master
             .get_piece_struct(self.get_piece_by_square(&sq))
-            .equals_piece(&search_part.get_piece_struct(piece))
+            .equals_piece(&speed_of_light.piece_struct_master.get_piece_struct(piece))
     }
 
     /// 指定の升にある駒の先後、または空升
-    pub fn get_sn_by_sq(&self, sq: &Square, search_part: &SearchPart) -> Phase {
-        search_part
+    pub fn get_sn_by_sq(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> Phase {
+        speed_of_light
+            .piece_struct_master
             .get_piece_struct(self.get_piece_by_square(sq))
             .phase()
     }
 
     /// 移動先と移動元を比較し、違う駒があれば、成ったと判定するぜ☆（＾～＾）
-    pub fn is_natta(&self, sq_src: &Square, sq_dst: &Square, search_part: &SearchPart) -> bool {
+    pub fn is_natta(
+        &self,
+        sq_src: &Square,
+        sq_dst: &Square,
+        speed_of_light: &SpeedOfLight,
+    ) -> bool {
         let km_src = self.get_piece_by_square(&sq_src);
 
-        let ps_src = search_part.get_piece_struct(km_src);
+        let ps_src = speed_of_light.piece_struct_master.get_piece_struct(km_src);
         let km_dst = self.get_piece_by_square(&sq_dst);
 
-        let ps_dst = search_part.get_piece_struct(km_dst);
+        let ps_dst = speed_of_light.piece_struct_master.get_piece_struct(km_dst);
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = ps_dst.is_promoted();
         let pro_src = ps_src.is_promoted();
@@ -179,7 +199,8 @@ impl Position {
             let i_sq = Square::from_umasu(i_ms as umasu);
             let km = self.get_piece_by_square(&i_sq);
             let num_km = universe
-                .get_search_part()
+                .speed_of_light
+                .piece_struct_master
                 .get_piece_struct(km)
                 .serial_piece_number();
             hash ^= universe.get_application_part().get_position_hash_seed().km[i_ms][num_km];
@@ -189,11 +210,12 @@ impl Position {
         for i_km in 0..KM_ARRAY_LN {
             let km = &KM_ARRAY[i_km];
             let num_km = universe
-                .get_search_part()
+                .speed_of_light
+                .piece_struct_master
                 .get_piece_struct(km)
                 .serial_piece_number();
 
-            let maisu = self.get_hand(km, universe.get_search_part());
+            let maisu = self.get_hand(km, &universe.speed_of_light);
             debug_assert!(
                 -1 < maisu && maisu <= MG_MAX as i8,
                 "持ち駒 {} の枚数 {} <= {}",
