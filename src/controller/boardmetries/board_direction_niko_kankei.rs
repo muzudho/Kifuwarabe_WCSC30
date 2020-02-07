@@ -6,7 +6,7 @@ use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::vo::other_part::op_direction_vo::*;
-use super::super::super::model::vo::other_part::op_piece_vo::PieceVo;
+use super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 
 /**
@@ -17,7 +17,7 @@ use super::super::super::model::vo::other_part::op_square_vo::*;
  */
 pub fn get_dir8_to_slider_from_target(
     sq_slider: &Square,
-    slider_piece_vo: &PieceVo,
+    slider_piece_vo: &PieceStructVo,
     sq_target: &Square,
 ) -> Dir8 {
     debug_assert!(

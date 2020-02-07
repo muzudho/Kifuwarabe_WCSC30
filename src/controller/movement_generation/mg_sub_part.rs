@@ -10,10 +10,10 @@ use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
 use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
+use super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::other_part::op_piece_type_vo::*;
-use super::super::super::model::vo::other_part::op_piece_vo::PieceVo;
+use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::model::vo::other_part::piece::Piece;
 use std::collections::HashSet;
 
 /// 成る前を含めない、移動元升生成
@@ -33,7 +33,7 @@ use std::collections::HashSet;
 /// TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
 pub fn make_no_promotion_source_by_square_and_piece<F1>(
     sq_dst: &Square,
-    ps_dst: &PieceVo,
+    ps_dst: &PieceStructVo,
     search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
@@ -56,7 +56,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
     let (dx, dy) = sq_dst.to_file_rank();
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use super::super::super::model::vo::other_part::piece::Piece::*;
+    use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
     match ps_dst.piece() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
@@ -454,7 +454,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
 /// 成り　の動きでその結果になるような、元の升を返す☆（＾～＾）
 pub fn make_before_promotion_source_by_square_piece<F1>(
     sq_dst: &Square,
-    ps_dst: &PieceVo,
+    ps_dst: &PieceStructVo,
     search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
@@ -874,7 +874,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
 /// そこに打てる駒種類を返す。
 pub fn make_drop_piece_type_by_square_piece<F1>(
     sq_dst: &Square,
-    piece_dst: &Piece,
+    piece_dst: &OPPieceVo,
     search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_piece_type_hash: F1,
@@ -896,7 +896,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
         .get_current_position()
         .get_piece_by_square(sq_dst);
     match km_banjo {
-        Piece::Kara => {}
+        OPPieceVo::Kara => {}
         _ => {
             return;
         } // 駒があるところに打つ手は終了
@@ -932,7 +932,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use super::super::super::model::vo::other_part::piece::Piece::*;
+    use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
     match piece_dst.clone() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
@@ -1004,7 +1004,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 /// search_part       : 探索部
 pub fn make_destination_by_square_piece(
     sq_src: &Square,
-    km_src: &Piece,
+    km_src: &OPPieceVo,
     to_nari: bool,
     search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
@@ -1346,7 +1346,7 @@ pub fn make_destination_by_square_piece(
         // +------------------------------+
         // | 成れる動き以外での成りの禁止 |
         // +------------------------------+
-        use super::super::super::model::vo::other_part::piece::Piece::*;
+        use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
         match km_src.clone() {
             Rook1 | Bishop1 | Silver1 => {
                 // ▼きりん、▼ぞう、▼ねこ　は
@@ -1414,7 +1414,7 @@ pub fn make_destination_by_square_piece(
         // +----------------------------------------+
         // | 行先の無いところに駒を進めることの禁止 |
         // +----------------------------------------+
-        use super::super::super::model::vo::other_part::piece::Piece::*;
+        use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
         match km_src {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
@@ -1514,7 +1514,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
             .get_piece_vo_by_phase_and_piece_type(&sn, &kms)
             .piece()
             .clone();
-        use super::super::super::model::vo::other_part::piece::Piece::*;
+        use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
         match km {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
@@ -2069,7 +2069,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
 
         let prokm_src = ps_src.promote();
         match prokm_src {
-            Piece::Kara => {
+            OPPieceVo::Kara => {
                 continue;
             } // 成れない駒は、成る動きを考えなくていいぜ☆（＾～＾）
             _ => {} // 成れる駒は、成る前の駒の動きも調べる

@@ -12,8 +12,8 @@ use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::model::vo::other_part::op_piece_type_vo::*;
+use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::model::vo::other_part::piece::Piece;
 use std::collections::HashSet;
 
 ///
@@ -112,7 +112,7 @@ pub fn get_potential_movement<F1>(
                 .get_current_position()
                 .get_piece_by_square(&sq_dst);
             match piece_dst {
-                Piece::Kara => {
+                OPPieceVo::Kara => {
                     // 駒が無いところに打つ
 
                     let mut da_kms_hashset = HashSet::new();
@@ -165,7 +165,7 @@ pub fn get_potential_movement<F1>(
 /// 盤上の駒の移動の最初の１つ。打を除く
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
-    piece_dst: Piece,
+    piece_dst: OPPieceVo,
     search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_movement: F1,
@@ -251,7 +251,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 /// 2. 移動先駒指定  piece_dst
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
-    piece_dst: &Piece,
+    piece_dst: &OPPieceVo,
     search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_movement: F1,

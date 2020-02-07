@@ -4,13 +4,13 @@
 //!
 
 use super::super::super::vo::other_part::op_piece_type_vo::PieceType;
+use super::super::super::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::vo::other_part::op_square_vo::*;
-use super::super::super::vo::other_part::piece::Piece;
 
 /// 升 × 駒
 pub struct SqKm {
     sq: Square,
-    km: Piece,
+    km: OPPieceVo,
 }
 
 /// 升 × 駒種類

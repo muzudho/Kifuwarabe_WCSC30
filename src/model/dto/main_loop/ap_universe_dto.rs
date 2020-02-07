@@ -16,12 +16,12 @@ use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
+use super::super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
-use super::super::super::super::model::vo::other_part::op_piece_vo::PieceVo;
+use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
+use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::super::model::vo::other_part::piece::Piece;
-use super::super::super::super::model::vo::other_part::piece::*;
 use super::super::super::dto::dialogue_part::dp_main_dto::*;
 use super::super::super::dto::main_loop::ap_main_dto::*;
 use super::super::super::dto::search_part::sp_main_dto::*;
@@ -208,17 +208,17 @@ impl Universe {
      ********/
 
     /// 初期局面の盤上に駒の位置を設定するもの
-    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: Piece) {
+    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: OPPieceVo) {
         self.get_application_part_mut()
             .get_starting_position_mut()
             .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
-    pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {
+    pub fn set_starting_position_hand_piece(&mut self, km: OPPieceVo, maisu: i8) {
         self.get_application_part_mut()
             .get_starting_position_mut()
             .mg[km as usize] = maisu;
     }
-    pub fn get_person_by_piece_vo(&self, piece_vo: &PieceVo) -> Person {
+    pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStructVo) -> Person {
         if match_sn(&piece_vo.phase(), &self.search_part.get_phase(&Person::Ji)) {
             Person::Ji
         } else {
@@ -385,21 +385,21 @@ impl Universe {
             cur_pos.get_piece_by_square(&Square::from_umasu(81)),
             cur_pos.get_piece_by_square(&Square::from_umasu(91)),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            cur_pos.mg[Piece::Rook1 as usize],
-            cur_pos.mg[Piece::Bishop1 as usize],
-            cur_pos.mg[Piece::Gold1 as usize],
-            cur_pos.mg[Piece::Silver1 as usize],
-            cur_pos.mg[Piece::Knight1 as usize],
-            cur_pos.mg[Piece::Lance1 as usize],
-            cur_pos.mg[Piece::Pawn1 as usize],
+            cur_pos.mg[OPPieceVo::Rook1 as usize],
+            cur_pos.mg[OPPieceVo::Bishop1 as usize],
+            cur_pos.mg[OPPieceVo::Gold1 as usize],
+            cur_pos.mg[OPPieceVo::Silver1 as usize],
+            cur_pos.mg[OPPieceVo::Knight1 as usize],
+            cur_pos.mg[OPPieceVo::Lance1 as usize],
+            cur_pos.mg[OPPieceVo::Pawn1 as usize],
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            cur_pos.mg[Piece::Rook2 as usize],
-            cur_pos.mg[Piece::Bishop2 as usize],
-            cur_pos.mg[Piece::Gold2 as usize],
-            cur_pos.mg[Piece::Silver2 as usize],
-            cur_pos.mg[Piece::Knight2 as usize],
-            cur_pos.mg[Piece::Lance2 as usize],
-            cur_pos.mg[Piece::Pawn2 as usize],
+            cur_pos.mg[OPPieceVo::Rook2 as usize],
+            cur_pos.mg[OPPieceVo::Bishop2 as usize],
+            cur_pos.mg[OPPieceVo::Gold2 as usize],
+            cur_pos.mg[OPPieceVo::Silver2 as usize],
+            cur_pos.mg[OPPieceVo::Knight2 as usize],
+            cur_pos.mg[OPPieceVo::Lance2 as usize],
+            cur_pos.mg[OPPieceVo::Pawn2 as usize],
             self.get_search_part().get_ply(),
             self.search_part.get_phase(&Person::Ji),
             self.count_same_ky()
@@ -412,7 +412,7 @@ impl Universe {
     pub fn kaku_number_board(
         &self,
         sn: &Phase,
-        pc: &Piece,
+        pc: &OPPieceVo,
         speed_of_light: &SpeedOfLight,
     ) -> String {
         let nb = match *sn {

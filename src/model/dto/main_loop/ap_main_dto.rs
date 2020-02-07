@@ -2,8 +2,8 @@
 
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::super::model::vo::other_part::piece::*;
 
 /// 局面ハッシュ種
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）

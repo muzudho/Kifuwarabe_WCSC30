@@ -12,10 +12,10 @@ use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
 use super::super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::Phase;
+use super::super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
-use super::super::super::super::model::vo::other_part::op_piece_vo::PieceVo;
+use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::super::model::vo::other_part::piece::Piece;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -37,7 +37,7 @@ pub enum KomatoriResultResult {
 /// 結果：駒取り
 pub struct KomatoriResult {
     // 要因：王手をしてきている駒（１つ）
-    km_attacker: Piece,
+    km_attacker: OPPieceVo,
     // 要因：アタッカーが居る升
     sq_attacker: Square,
     // 要因：狙われている駒が居る升
@@ -45,7 +45,7 @@ pub struct KomatoriResult {
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // let ps_attacker = PieceVo::from_piece(self.km_attacker.clone());
+        // let ps_attacker = PieceStructVo::from_piece(self.km_attacker.clone());
         write!(
             f,
             "KmTori:{}{}->{}",
@@ -73,7 +73,7 @@ impl KomatoriResult {
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, km_atk) = PieceVo::from_hash(hash);
+        let (hash, km_atk) = PieceStructVo::from_hash(hash);
         let (hash, sq_atk) = pop_sq_from_hash(hash);
         let (_hash, sq_tgt) = pop_sq_from_hash(hash);
         KomatoriResult {

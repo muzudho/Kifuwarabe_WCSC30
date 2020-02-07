@@ -12,7 +12,7 @@ use super::super::super::super::controller::thinking::results::jisatusyu_result:
 use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::super::model::vo::other_part::piece::Piece;
+use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use std::collections::HashSet;
 
 /**
@@ -22,7 +22,7 @@ use std::collections::HashSet;
  */
 pub fn get_ido_ss_by_km_random(
     universe: &Universe,
-    piece_dst: &Piece,
+    piece_dst: &OPPieceVo,
     speed_of_light: &SpeedOfLight,
 ) -> Sasite {
     let mut ss_hashset = HashSet::new();

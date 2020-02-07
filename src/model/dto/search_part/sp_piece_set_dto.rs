@@ -6,8 +6,8 @@ use super::super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
-use super::super::super::super::model::vo::other_part::piece::Piece;
-use super::super::super::super::model::vo::other_part::piece::*;
+use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
+use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use std::collections::HashSet;
 
 pub struct SPPieceSetDto {
@@ -51,7 +51,7 @@ impl SPPieceSetDto {
         };
         km_syugo
     }
-    pub fn remove(&mut self, piece: &Piece, speed_of_light: &SpeedOfLight) {
+    pub fn remove(&mut self, piece: &OPPieceVo, speed_of_light: &SpeedOfLight) {
         self.num_syugo.remove(
             &speed_of_light
                 .piece_vo_master

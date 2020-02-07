@@ -12,16 +12,16 @@ use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
+use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
+use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::super::model::vo::other_part::piece::Piece;
-use super::super::super::super::model::vo::other_part::piece::*;
 
 /// 局面
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
 pub struct SPPositionDto {
     /// 10の位を筋、1の位を段とする。
     /// 0筋、0段は未使用
-    board: [Piece; BAN_SIZE],
+    board: [OPPieceVo; BAN_SIZE],
     /**
      * 持ち駒数。持ち駒に使える、成らずの駒の部分だけ使用。
      * 増減させたいので、u8 ではなく i8。
@@ -35,7 +35,7 @@ pub struct SPPositionDto {
 }
 impl SPPositionDto {
     pub fn new() -> Self {
-        use super::super::super::super::model::vo::other_part::piece::Piece::Kara;
+        use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::Kara;
         SPPositionDto {
             // 盤上
             board: [
@@ -64,7 +64,7 @@ impl SPPositionDto {
         }
     }
     pub fn clear(&mut self) {
-        use super::super::super::super::model::vo::other_part::piece::Piece::Kara;
+        use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::Kara;
         self.board = [
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
@@ -110,31 +110,31 @@ impl SPPositionDto {
         false
     }
     /// 升で指定して駒を取得
-    pub fn get_piece_by_square(&self, sq: &Square) -> &Piece {
+    pub fn get_piece_by_square(&self, sq: &Square) -> &OPPieceVo {
         &self.board[sq.to_umasu()]
     }
     /// 升で指定して駒を置く
-    pub fn set_piece_by_square(&mut self, sq: &Square, piece: &Piece) {
+    pub fn set_piece_by_square(&mut self, sq: &Square, piece: &OPPieceVo) {
         self.board[sq.to_umasu()] = piece.clone();
 
         // 玉の位置を覚え直します。
         use super::super::super::super::model::vo::other_part::op_phase_vo::Phase::*;
         match *piece {
-            Piece::King1 => self.sq_r[Sen as usize] = sq.clone(),
-            Piece::King2 => self.sq_r[Go as usize] = sq.clone(),
+            OPPieceVo::King1 => self.sq_r[Sen as usize] = sq.clone(),
+            OPPieceVo::King2 => self.sq_r[Go as usize] = sq.clone(),
             _ => {}
         }
     }
     /**
      * 持ち駒の枚数を加算
      */
-    pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
+    pub fn add_hand(&mut self, hand: &OPPieceVo, maisu: i8, speed_of_light: &SpeedOfLight) {
         self.mg[speed_of_light
             .piece_vo_master
             .get_piece_vo(hand)
             .serial_piece_number()] += maisu;
     }
-    pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
+    pub fn get_hand(&self, hand: &OPPieceVo, speed_of_light: &SpeedOfLight) -> i8 {
         self.mg[speed_of_light
             .piece_vo_master
             .get_piece_vo(hand)
@@ -148,11 +148,15 @@ impl SPPositionDto {
         !speed_of_light
             .piece_vo_master
             .get_piece_vo(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.piece_vo_master.get_piece_vo(&Piece::Kara))
+            .equals_piece(
+                &speed_of_light
+                    .piece_vo_master
+                    .get_piece_vo(&OPPieceVo::Kara),
+            )
     }
 
     /// 指定の升に指定の駒があれば真
-    pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &SpeedOfLight) -> bool {
+    pub fn has_sq_km(&self, sq: &Square, piece: &OPPieceVo, speed_of_light: &SpeedOfLight) -> bool {
         speed_of_light
             .piece_vo_master
             .get_piece_vo(self.get_piece_by_square(&sq))
