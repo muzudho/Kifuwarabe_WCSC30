@@ -5,7 +5,4 @@
 //! 公開するモジュールを記述
 //!
 
-pub mod asserts;
 pub mod commands;
-pub mod unit_test;
-pub mod visuals;

@@ -16,13 +16,13 @@ pub mod controller;
 pub mod model;
 
 use config::*;
-use controller::common::conv::*;
-use controller::consoles::unit_test::*;
-use controller::consoles::visuals::dumps::*;
-use controller::consoles::visuals::title::*;
+use controller::common_part::cp_conv_controller::*;
+use controller::main_loop::ml_main_controller::*;
 use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_main::*;
 use controller::piece_movetrics::pm_main::*;
+use controller::title_screen::ts_controller::*;
+use controller::unit_test::ut_controller::*;
 use model::dto::main_loop::ml_universe_dto::*;
 use model::vo::main_loop::ml_speed_of_light_vo::*;
 use model::vo::other_part::op_constants_vo::*;

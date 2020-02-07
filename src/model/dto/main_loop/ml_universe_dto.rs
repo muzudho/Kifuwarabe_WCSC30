@@ -8,7 +8,7 @@ extern crate rand;
 use rand::Rng;
 
 use super::super::super::super::config::*;
-use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::common_part::cp_conv_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;

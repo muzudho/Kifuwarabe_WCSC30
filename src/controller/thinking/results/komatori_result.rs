@@ -2,8 +2,8 @@
 //! 結果：駒を取られる手
 //!
 use super::super::super::super::controller::boardmetries::proposition::math_meidai::*;
-use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::consoles::asserts::*;
+use super::super::super::super::controller::common_part::cp_asserts_controller::*;
+use super::super::super::super::controller::common_part::cp_conv_controller::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;

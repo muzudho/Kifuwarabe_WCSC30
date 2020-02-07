@@ -2,7 +2,7 @@
 //! 先後
 //!
 
-use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::common_part::cp_conv_controller::*;
 use std::fmt;
 
 pub const SN_LN: usize = 3;

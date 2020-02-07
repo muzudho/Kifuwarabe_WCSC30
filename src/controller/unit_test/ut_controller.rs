@@ -4,6 +4,7 @@
 //! test コマンドで実行しろだぜ☆（＾～＾）
 //!
 use super::super::super::controller::boardmetries::proposition::math_meidai::*;
+use super::super::super::controller::common_part::cp_conv_controller::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::randommove;
@@ -14,13 +15,42 @@ use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::model::vo::other_part::op_square_vo::*;
-use super::visuals::dumps::*;
 use std::collections::HashSet;
 
-/**
- * test 2
- * といったコマンドに対応☆（＾～＾）
- */
+/// 升を表示
+pub fn hyoji_sq_hashset(sq_hashset: &HashSet<Square>) {
+    g_writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
+    for sq in sq_hashset {
+        let ms = (*sq).to_umasu();
+        match ms {
+            MASU_0 => break,
+            _ => g_writeln(&format!("ms({})", ms)),
+        }
+    }
+}
+
+/// 升を表示
+pub fn hyoji_sq_vec(sq_vec: &Vec<Square>) {
+    g_writeln(&format!("sq_vec.len()={}", sq_vec.len()));
+    for sq in sq_vec {
+        let ms = sq.to_umasu();
+        match ms {
+            MASU_0 => break,
+            _ => g_writeln(&format!("ms({})", ms)),
+        }
+    }
+}
+
+/// 駒種類
+pub fn hyoji_kms_hashset(num_kms_hashset: &HashSet<usize>) {
+    g_writeln(&format!("num_kms_hashset.len()={}", num_kms_hashset.len()));
+    for num_kms in num_kms_hashset {
+        g_writeln(&format!("kms({})", num_to_kms(*num_kms)));
+    }
+}
+
+/// test 2
+/// といったコマンドに対応☆（＾～＾）
 pub fn test(
     line: &String,
     starts: &mut usize,

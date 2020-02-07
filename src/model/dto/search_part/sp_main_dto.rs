@@ -1,5 +1,5 @@
 //! 探索部
-use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::common_part::cp_conv_controller::*;
 use super::super::super::super::controller::status::number_board::*;
 use super::super::super::super::controller::thinking::visions::vision_tree::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;

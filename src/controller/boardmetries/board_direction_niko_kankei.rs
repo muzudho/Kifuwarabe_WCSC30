@@ -2,7 +2,7 @@
 //!
 //! 盤上の二項関係☆（＾～＾）
 //!
-use super::super::super::controller::consoles::asserts::*;
+use super::super::super::controller::common_part::cp_asserts_controller::*;
 use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::vo::other_part::op_direction_vo::*;

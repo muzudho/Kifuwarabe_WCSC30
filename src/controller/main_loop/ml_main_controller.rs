@@ -2,57 +2,11 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
-use super::super::super::super::model::vo::other_part::op_square_vo::*;
+use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use std::collections::HashSet;
 
-/******
- * 升 *
- ******/
-
-/**
- * 升を表示
- */
-pub fn hyoji_sq_hashset(sq_hashset: &HashSet<Square>) {
-    g_writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
-    for sq in sq_hashset {
-        let ms = (*sq).to_umasu();
-        match ms {
-            MASU_0 => break,
-            _ => g_writeln(&format!("ms({})", ms)),
-        }
-    }
-}
-
-/**
- * 升を表示
- */
-pub fn hyoji_sq_vec(sq_vec: &Vec<Square>) {
-    g_writeln(&format!("sq_vec.len()={}", sq_vec.len()));
-    for sq in sq_vec {
-        let ms = sq.to_umasu();
-        match ms {
-            MASU_0 => break,
-            _ => g_writeln(&format!("ms({})", ms)),
-        }
-    }
-}
-
-/**********
- * 駒種類 *
- **********/
-pub fn hyoji_kms_hashset(num_kms_hashset: &HashSet<usize>) {
-    g_writeln(&format!("num_kms_hashset.len()={}", num_kms_hashset.len()));
-    for num_kms in num_kms_hashset {
-        g_writeln(&format!("kms({})", num_to_kms(*num_kms)));
-    }
-}
-
-/**********
- * 指し手 *
- **********/
+/// 指し手
 pub fn hyoji_ss_hashset(ss_hashset: &HashSet<u64>) {
     g_writeln(&format!("ss_hashset.len()={}", ss_hashset.len()));
     // 辞書順ソート

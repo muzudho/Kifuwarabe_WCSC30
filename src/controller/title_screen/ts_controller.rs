@@ -1,4 +1,4 @@
-use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 
 // 対話モードのタイトル画面
 pub fn hyoji_title() {
