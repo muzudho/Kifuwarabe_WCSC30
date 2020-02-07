@@ -111,7 +111,7 @@ fn main() {
             );
         } else if 5 < len && &line[starts..6] == "kikisu" {
             // 利き数表示
-            controller::consoles::commands::cmd_kikisu(&universe, &speed_of_light);
+            controller::main_loop::ml_main_controller::cmd_kikisu(&universe, &speed_of_light);
         } else if 5 < len && &line[starts..6] == "rndkms" {
             g_writeln("5<len rndkms");
             // 乱駒種類

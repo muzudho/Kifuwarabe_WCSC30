@@ -4,6 +4,11 @@
 //!
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::model::vo::other_part::op_phase_vo::Phase;
+use super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
+use super::super::super::model::vo::other_part::op_piece_vo::*;
 use std::collections::HashSet;
 
 /// 指し手
@@ -51,5 +56,20 @@ pub fn hyoji_ss_hashset(ss_hashset: &HashSet<u64>) {
     for ss_str in vec_ss_str {
         g_writeln(&format!("[{}] {}", i, ss_str));
         i += 1;
+    }
+}
+
+/// 利き数表示
+pub fn cmd_kikisu(universe: &Universe, speed_of_light: &MLSpeedOfLightVo) {
+    for pc in KM_ARRAY.iter() {
+        g_writeln(&format!("利き数：{}", pc));
+        let s = universe.kaku_number_board(&Phase::Owari, pc, speed_of_light);
+        g_writeln(&s);
+    }
+
+    for sn in SN_ARRAY.iter() {
+        g_writeln(&format!("利き数：{}", sn));
+        let s = universe.kaku_number_board(&sn, &OPPieceVo::Owari, speed_of_light);
+        g_writeln(&s);
     }
 }

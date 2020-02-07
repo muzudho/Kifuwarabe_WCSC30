@@ -5,7 +5,6 @@
 //!
 pub mod boardmetries;
 pub mod common_part;
-pub mod consoles;
 pub mod geometries;
 pub mod main_loop;
 pub mod movement_generation;

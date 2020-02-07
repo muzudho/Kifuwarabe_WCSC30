@@ -582,12 +582,14 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         }
     }
 
+    /*
     pub fn remake_visions(&mut self) {
         for sn in SN_ARRAY.iter() {
             // 全部忘れる☆（＾～＾）
             self.search_part.vision_tree_by_phase[sn_to_num(sn)].clear();
         }
     }
+    */
 
     /**
      * 初期局面ハッシュを作り直す
@@ -657,9 +659,11 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         count
     }
 
-    /// 相手の　玉　の位置を覚えます。
+    /*
+    // 相手の　玉　の位置を覚えます。
     pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
         self.search_part
             .memory_opponent_king(&phase, &opponent_phase);
     }
+    */
 }

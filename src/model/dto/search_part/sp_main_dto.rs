@@ -1,7 +1,6 @@
 //! 探索部
 use super::super::super::super::controller::common_part::cp_conv_controller::*;
 use super::super::super::super::controller::status::number_board::*;
-use super::super::super::super::controller::thinking::visions::vision_tree::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -27,8 +26,8 @@ pub struct SPMainDto {
     pub effect_count_by_phase: [NumberBoard; SN_LN],
     /// 利きの数（先後付き駒別）
     pub effect_count_by_piece: [NumberBoard; KM_LN],
-    /// ビジョン・ツリー
-    pub vision_tree_by_phase: [VisionTree; SN_LN],
+    // ビジョン・ツリー
+    // pub vision_tree_by_phase: [VisionTree; SN_LN],
 }
 impl SPMainDto {
     pub fn new() -> Self {
@@ -604,7 +603,7 @@ impl SPMainDto {
                 NumberBoard::new(),
                 NumberBoard::new(),
             ],
-            vision_tree_by_phase: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
+            // vision_tree_by_phase: [VisionTree::new(), VisionTree::new(), VisionTree::new()],
         }
     }
     pub fn add_ply(&mut self, ply1: i16) {
@@ -843,9 +842,11 @@ impl SPMainDto {
         s
     }
 
+    /*
     /// 相手の　玉　の位置を覚えます。
     pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
         self.vision_tree_by_phase[sn_to_num(phase)]
             .set_ai_r(&self.current_position.get_sq_r(sn_to_num(opponent_phase)));
     }
+    */
 }

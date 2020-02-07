@@ -48,7 +48,7 @@ pub fn think(universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) -> MLMo
     );
 
     // 現局面を見て、ビジョンを作り直せだぜ☆（＾～＾）
-    &universe.remake_visions();
+    // &universe.remake_visions();
     // insert_rakkansuji(universe);
     // TODO 楽観筋はまだ使ってない☆（＾～＾）
 
