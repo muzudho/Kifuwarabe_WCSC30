@@ -1,6 +1,6 @@
 //! 探索部
 use super::super::super::super::controller::common_use::cu_conv_controller::*;
-use super::super::super::super::controller::go_command::gc_number_board_controller::*;
+use super::super::super::super::controller::search_part::sp_number_board_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -11,7 +11,7 @@ use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_ply_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 
-pub struct SPMainDto {
+pub struct SPDto {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
     ply: i16,
     /// 現局面
@@ -29,9 +29,9 @@ pub struct SPMainDto {
     // ビジョン・ツリー
     // pub vision_tree_by_phase: [VisionTree; SN_LN],
 }
-impl SPMainDto {
+impl SPDto {
     pub fn new() -> Self {
-        SPMainDto {
+        SPDto {
             ply: 0,
             // 現局面
             current_position: SPPositionDto::new(),

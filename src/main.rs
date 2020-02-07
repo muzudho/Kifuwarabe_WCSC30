@@ -17,10 +17,10 @@ pub mod model;
 
 use config::*;
 use controller::common_use::cu_conv_controller::*;
-use controller::go_command::gc_think_controller::*;
 use controller::main_loop::ml_main_controller::*;
 use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_main_controller::*;
+use controller::search_part::sp_controller::*;
 use controller::title_screen::ts_controller::*;
 use controller::unit_test::ut_controller::*;
 use model::dto::main_loop::ml_dto::*;
@@ -209,7 +209,7 @@ fn main() {
         } else if 1 < len && &line[starts..2] == "go" {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = think(&mut ml_dto, &speed_of_light);
+            let bestmove = search17(&mut ml_dto, &speed_of_light);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove));
         } else if 1 < len && &line[starts..2] == "pos" {

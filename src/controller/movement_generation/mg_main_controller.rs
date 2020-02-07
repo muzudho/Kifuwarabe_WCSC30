@@ -6,7 +6,7 @@ use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::search_part::sp_main_dto::*;
+use super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::*;
@@ -27,7 +27,7 @@ use std::collections::HashSet;
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
 pub fn get_potential_movement<F1>(
-    search_part: &SPMainDto,
+    sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement_callback: F1,
 ) where
@@ -39,16 +39,14 @@ pub fn get_potential_movement<F1>(
     for dan_src in 1..10 {
         for suji_src in 1..10 {
             let sq_src = Square::from_file_rank(suji_src, dan_src);
-            let piece_src = search_part
-                .get_current_position()
-                .get_piece_by_square(&sq_src);
+            let piece_src = sp_dto.get_current_position().get_piece_by_square(&sq_src);
 
             if match_sn(
                 &speed_of_light
                     .ml_piece_struct_master_vo
                     .get_piece_vo(&piece_src)
                     .phase(),
-                &search_part.get_phase(&Person::Ji),
+                &sp_dto.get_phase(&Person::Ji),
             ) {
                 // 手番の駒
 
@@ -57,7 +55,7 @@ pub fn get_potential_movement<F1>(
                     &sq_src,
                     piece_src,
                     false, // 成らず
-                    &search_part,
+                    &sp_dto,
                     &speed_of_light,
                     &mut dst_hashset,
                 );
@@ -83,7 +81,7 @@ pub fn get_potential_movement<F1>(
                     &sq_src,
                     piece_src,
                     true, // 成り
-                    &search_part,
+                    &sp_dto,
                     &speed_of_light,
                     &mut dst_hashset,
                 );
@@ -108,9 +106,7 @@ pub fn get_potential_movement<F1>(
     for dan_dst in 1..10 {
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
-            let piece_dst = search_part
-                .get_current_position()
-                .get_piece_by_square(&sq_dst);
+            let piece_dst = sp_dto.get_current_position().get_piece_by_square(&sq_dst);
             match piece_dst {
                 OPPieceVo::Kara => {
                     // 駒が無いところに打つ
@@ -120,11 +116,11 @@ pub fn get_potential_movement<F1>(
                         let ps_motigoma = speed_of_light
                             .ml_piece_struct_master_vo
                             .get_piece_vo_by_phase_and_piece_type(
-                                &search_part.get_phase(&Person::Ji),
+                                &sp_dto.get_phase(&Person::Ji),
                                 kms_motigoma,
                             );
                         let pc_motigoma = ps_motigoma.piece();
-                        if 0 < search_part
+                        if 0 < sp_dto
                             .get_current_position()
                             .get_hand(pc_motigoma, speed_of_light)
                         {
@@ -132,7 +128,7 @@ pub fn get_potential_movement<F1>(
                             make_drop_piece_type_by_square_piece(
                                 &sq_dst,
                                 pc_motigoma,
-                                &search_part,
+                                &sp_dto,
                                 &speed_of_light,
                                 |piece_type_hash| {
                                     da_kms_hashset.insert(piece_type_hash);
@@ -166,7 +162,7 @@ pub fn get_potential_movement<F1>(
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
     piece_dst: OPPieceVo,
-    search_part: &SPMainDto,
+    sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
@@ -182,7 +178,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
-        &search_part
+        &sp_dto
             .get_current_position()
             .get_sn_by_sq(&sq_dst, speed_of_light),
         &sn,
@@ -204,7 +200,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     make_no_promotion_source_by_square_and_piece(
         &sq_dst,
         &ps_dst,
-        &search_part,
+        &sp_dto,
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -230,7 +226,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     make_before_promotion_source_by_square_piece(
         sq_dst,
         &ps_dst,
-        &search_part,
+        &sp_dto,
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -254,7 +250,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
     piece_dst: &OPPieceVo,
-    search_part: &SPMainDto,
+    sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
@@ -270,7 +266,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
-        &search_part
+        &sp_dto
             .get_current_position()
             .get_sn_by_sq(&sq_dst, speed_of_light),
         &sn,
@@ -294,7 +290,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     make_drop_piece_type_by_square_piece(
         &sq_dst,
         piece_dst,
-        &search_part,
+        &sp_dto,
         &speed_of_light,
         |piece_type_hash| {
             da_kms_hashset.insert(piece_type_hash);

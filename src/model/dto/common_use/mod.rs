@@ -1,1 +1,1 @@
-pub mod cu_main_dto;
+pub mod cu_dto;

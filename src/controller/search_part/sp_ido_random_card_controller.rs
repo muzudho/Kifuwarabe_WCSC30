@@ -5,9 +5,9 @@
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::common_use::cu_random_move_controller;
-use super::super::super::controller::go_command::gc_jisatusyu_result_controller::*;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_main_controller::*;
+use super::super::super::controller::search_part::sp_jisatusyu_result_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;

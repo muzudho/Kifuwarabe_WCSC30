@@ -9,7 +9,7 @@ use super::super::super::controller::movement_generation::mg_choicing_controller
 use super::super::super::controller::movement_generation::mg_main_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::search_part::sp_main_dto::*;
+use super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
@@ -174,7 +174,7 @@ impl KomatoriResult {
 pub fn lookup_catching_king_on_board(
     sn: &Phase,
     sq_target: &Square,
-    search_part: &SPMainDto,
+    sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> HashSet<u64> {
     assert_banjo_sq(
@@ -208,7 +208,7 @@ pub fn lookup_catching_king_on_board(
         get_movement_by_square_and_piece_on_board(
             &sq_target,
             km_dst.clone(),
-            &search_part,
+            &sp_dto,
             &speed_of_light,
             |movement_hash| {
                 multiple_movements_hashset.insert(movement_hash);

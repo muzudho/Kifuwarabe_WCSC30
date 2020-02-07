@@ -11,7 +11,7 @@ use super::super::super::controller::movement_generation::mg_komatori_result_con
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::search_part::sp_main_dto::*;
+use super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_ply_vo::*;
@@ -42,7 +42,7 @@ pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> MLMovem
  */
 pub fn select_movement_except_check(
     ss_hashset_input: &mut HashSet<u64>,
-    search_part: &SPMainDto,
+    search_part: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 自玉の位置

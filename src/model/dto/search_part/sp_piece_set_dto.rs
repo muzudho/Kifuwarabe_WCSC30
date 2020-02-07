@@ -2,7 +2,7 @@
 //! 駒集合
 //!
 
-use super::super::super::super::model::dto::search_part::sp_main_dto::*;
+use super::super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
@@ -34,10 +34,10 @@ impl SPPieceSetDto {
     pub fn new_jiai(
         &self,
         jiai: &Person,
-        search_part: &SPMainDto,
+        sp_dto: &SPDto,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> SPPieceSetDto {
-        let sn0 = search_part.get_phase(&jiai);
+        let sn0 = sp_dto.get_phase(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
             let ps = speed_of_light.ml_piece_struct_master_vo.get_piece_vo(km);

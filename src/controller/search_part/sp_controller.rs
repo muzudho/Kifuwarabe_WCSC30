@@ -6,15 +6,15 @@ extern crate rand;
 use rand::Rng;
 use std::collections::HashSet;
 
-use super::super::super::controller::go_command::gc_kikisu_controller::*;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_main_controller::*;
+use super::super::super::controller::search_part::sp_kikisu_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 現局面での最善手を返すぜ☆（*＾～＾*）
-pub fn think(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) -> MLMovementDto {
+pub fn search17(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) -> MLMovementDto {
     // TODO 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
 
     // +----------------------+
