@@ -215,7 +215,7 @@ impl SPPositionDto {
                 .ml_piece_struct_master_vo
                 .get_piece_vo(km)
                 .serial_piece_number();
-            hash ^= ml_dto.get_application_part().get_position_hash_seed().km[i_ms][num_km];
+            hash ^= ml_dto.get_position_hash_seed().km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
@@ -235,8 +235,7 @@ impl SPPositionDto {
                 MG_MAX
             );
 
-            hash ^=
-                ml_dto.get_application_part().get_position_hash_seed().mg[num_km][maisu as usize];
+            hash ^= ml_dto.get_position_hash_seed().mg[num_km][maisu as usize];
         }
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）

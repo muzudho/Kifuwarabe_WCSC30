@@ -550,9 +550,7 @@ pub fn read_banjo(
 
     // 初期局面ハッシュを作り直す
     let ky_hash = ml_dto.create_starting_position_hash(speed_of_light);
-    ml_dto
-        .get_application_part_mut()
-        .set_starting_position_hash(ky_hash);
+    ml_dto.set_starting_position_hash(ky_hash);
 }
 
 /**

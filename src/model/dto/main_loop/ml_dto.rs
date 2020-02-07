@@ -8,6 +8,7 @@ use rand::Rng;
 use super::super::super::super::config::*;
 use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
@@ -20,7 +21,6 @@ use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::dto::main_loop::ml_main_dto::*;
 use super::super::super::dto::search_part::sp_main_dto::*;
 use std::fs::File;
 use std::io::Write;
@@ -80,13 +80,25 @@ pub fn g_writeln(s: &str) {
     }
 }
 
-/**
- * グローバル変数の作り方が分からないので、
- * ここに全部入れてあるぜ☆（＾～＾）
- */
+/// 局面ハッシュ種
+/// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
+pub struct PositionHashSeed {
+    // 盤上の駒
+    pub km: [[u64; KM_LN]; BAN_SIZE],
+    // 持ち駒
+    pub mg: [[u64; MG_MAX]; KM_LN],
+    // 先後
+    pub sn: [u64; SN_LN],
+}
+
+/// アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）
 pub struct MLDto {
-    /// アプリケーション部
-    application_part: MLMainDto,
+    /// 局面ハッシュ種☆（＾～＾）
+    position_hash_seed: PositionHashSeed,
+    /// 初期局面
+    starting_position: SPPositionDto,
+    /// 初期局面ハッシュ
+    starting_position_hash: u64,
     /// 対話モード
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
@@ -98,7 +110,16 @@ pub struct MLDto {
 impl MLDto {
     pub fn new() -> MLDto {
         MLDto {
-            application_part: MLMainDto::new(),
+            position_hash_seed: PositionHashSeed {
+                // 盤上の駒
+                km: [[0; KM_LN]; BAN_SIZE],
+                // 持ち駒
+                mg: [[0; MG_MAX]; KM_LN],
+                // 先後
+                sn: [0; SN_LN],
+            },
+            starting_position: SPPositionDto::new(),
+            starting_position_hash: 0,
             dialogue_mode: false,
             vec_command: Vec::new(),
             search_part: SPMainDto::new(),
@@ -114,24 +135,21 @@ impl MLDto {
         for i_ms in MASU_0..BAN_SIZE {
             for i_km in 0..KM_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.get_application_part_mut()
-                    .get_position_hash_seed_mut()
-                    .km[i_ms][i_km] = rand::thread_rng().gen_range(0, 18446744073709551615);
+                self.get_position_hash_seed_mut().km[i_ms][i_km] =
+                    rand::thread_rng().gen_range(0, 18446744073709551615);
             }
         }
         // 持ち駒
         for i_km in 0..KM_LN {
             for i_mg in 0..MG_MAX {
-                self.get_application_part_mut()
-                    .get_position_hash_seed_mut()
-                    .mg[i_km][i_mg] = rand::thread_rng().gen_range(0, 18446744073709551615);
+                self.get_position_hash_seed_mut().mg[i_km][i_mg] =
+                    rand::thread_rng().gen_range(0, 18446744073709551615);
             }
         }
         // 先後
         for i_sn in 0..SN_LN {
-            self.get_application_part_mut()
-                .get_position_hash_seed_mut()
-                .sn[i_sn] = rand::thread_rng().gen_range(0, 18446744073709551615);
+            self.get_position_hash_seed_mut().sn[i_sn] =
+                rand::thread_rng().gen_range(0, 18446744073709551615);
         }
     }
     /**
@@ -139,9 +157,7 @@ impl MLDto {
      * 手目も 0 に戻します。
      */
     pub fn clear_all_positions(&mut self) {
-        self.get_application_part_mut()
-            .get_starting_position_mut()
-            .clear();
+        self.get_starting_position_mut().clear();
         self.get_search_part_mut()
             .get_current_position_mut()
             .clear();
@@ -153,10 +169,7 @@ impl MLDto {
         for i_ms in 0..BAN_SIZE {
             let i_sq = Square::from_umasu(i_ms);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-            let piece = self
-                .application_part
-                .get_starting_position()
-                .get_piece_by_square(&i_sq);
+            let piece = self.starting_position.get_piece_by_square(&i_sq);
             self.search_part
                 .get_current_position_mut()
                 .set_piece_by_square(&i_sq, piece);
@@ -165,15 +178,32 @@ impl MLDto {
         // 持ち駒
         for i_mg in 0..KM_LN {
             self.get_search_part_mut().get_current_position_mut().mg[i_mg] =
-                self.get_application_part().get_starting_position().mg[i_mg];
+                self.get_starting_position().mg[i_mg];
         }
     }
 
-    pub fn get_application_part_mut(&mut self) -> &mut MLMainDto {
-        &mut self.application_part
+    pub fn get_position_hash_seed(&self) -> &PositionHashSeed {
+        &self.position_hash_seed
     }
-    pub fn get_application_part(&self) -> &MLMainDto {
-        &self.application_part
+    pub fn get_position_hash_seed_mut(&mut self) -> &mut PositionHashSeed {
+        &mut self.position_hash_seed
+    }
+
+    pub fn get_starting_position(&self) -> &SPPositionDto {
+        &self.starting_position
+    }
+    pub fn get_starting_position_mut(&mut self) -> &mut SPPositionDto {
+        &mut self.starting_position
+    }
+
+    pub fn get_starting_position_hash(&self) -> &u64 {
+        &self.starting_position_hash
+    }
+    pub fn get_starting_position_hash_mut(&mut self) -> &mut u64 {
+        &mut self.starting_position_hash
+    }
+    pub fn set_starting_position_hash(&mut self, val: u64) {
+        self.starting_position_hash = val;
     }
 
     pub fn get_search_part_mut(&mut self) -> &mut SPMainDto {
@@ -202,14 +232,11 @@ impl MLDto {
 
     /// 初期局面の盤上に駒の位置を設定するもの
     pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: OPPieceVo) {
-        self.get_application_part_mut()
-            .get_starting_position_mut()
+        self.get_starting_position_mut()
             .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
     pub fn set_starting_position_hand_piece(&mut self, km: OPPieceVo, maisu: i8) {
-        self.get_application_part_mut()
-            .get_starting_position_mut()
-            .mg[km as usize] = maisu;
+        self.get_starting_position_mut().mg[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStructVo) -> Person {
         if match_sn(&piece_vo.phase(), &self.search_part.get_phase(&Person::Ji)) {
@@ -224,7 +251,7 @@ impl MLDto {
         let mut s = String::new();
         s.push_str(&format!(
             "[ini] {:20}\n",
-            &self.get_application_part().get_starting_position_hash()
+            &self.get_starting_position_hash()
         ));
 
         for ply in 0..self.get_search_part().get_ply() {
@@ -267,7 +294,7 @@ impl MLDto {
     pub fn kaku_ky(&self, num: &KyNums) -> String {
         let cur_pos = match *num {
             KyNums::Current => self.search_part.get_current_position(),
-            KyNums::Start => self.application_part.get_starting_position(),
+            KyNums::Start => self.get_starting_position(),
         };
 
         // 局面表示
@@ -589,12 +616,11 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
      */
     pub fn create_starting_position_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = self
-            .get_application_part()
             .get_starting_position()
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ（後手固定）
-        hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO];
+        hash ^= self.get_position_hash_seed().sn[SN_GO];
 
         hash
     }
@@ -611,8 +637,8 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         // 手番ハッシュ
         use super::super::super::vo::other_part::op_phase_vo::Phase::*;
         match self.search_part.get_phase(&Person::Ji) {
-            Sen => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_SEN],
-            Go => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO],
+            Sen => hash ^= self.get_position_hash_seed().sn[SN_SEN],
+            Go => hash ^= self.get_position_hash_seed().sn[SN_GO],
             _ => {}
         }
 
@@ -643,7 +669,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         }
 
         // 初期局面のハッシュ
-        if *self.get_application_part().get_starting_position_hash()
+        if *self.get_starting_position_hash()
             == self.get_search_part().get_position_hash_history()[last_ply as usize]
         {
             count += 1;
