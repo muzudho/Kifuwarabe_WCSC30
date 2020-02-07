@@ -20,7 +20,7 @@ use controller::common_part::cp_conv_controller::*;
 use controller::go_command::gc_think_controller::*;
 use controller::main_loop::ml_main_controller::*;
 use controller::main_loop::ml_usi_controller::*;
-use controller::movement_generation::mg_main::*;
+use controller::movement_generation::mg_main_controller::*;
 use controller::title_screen::ts_controller::*;
 use controller::unit_test::ut_controller::*;
 use model::dto::main_loop::ml_universe_dto::*;
@@ -83,7 +83,7 @@ fn main() {
             //}else if 9<len && &line[0..10] == "kmugokidir" {
             g_writeln("9<len kmugokidir");
             // 駒の動きの移動元として有りえる方角
-            let kms = controller::thinking::randommove::rnd_kms();
+            let kms = controller::common_part::cp_random_move_controller::rnd_kms();
             g_writeln(&format!("{}のムーブ元", &kms));
             universe.hyoji_kmugoki_dir(kms);
             g_writeln(""); //改行
@@ -115,7 +115,7 @@ fn main() {
         } else if 5 < len && &line[starts..6] == "rndkms" {
             g_writeln("5<len rndkms");
             // 乱駒種類
-            let kms = controller::thinking::randommove::rnd_kms();
+            let kms = controller::common_part::cp_random_move_controller::rnd_kms();
             g_writeln(&format!("乱駒種類={}", &kms));
         } else if 5 < len && &line[starts..6] == "sasite" {
             // FIXME 合法手とは限らない
@@ -132,7 +132,7 @@ fn main() {
             g_writeln("----指し手生成 ここまで----");
         } else if 4 < len && &line[starts..5] == "rndms" {
             // 乱升
-            let sq = controller::thinking::randommove::random_square();
+            let sq = controller::common_part::cp_random_move_controller::random_square();
             g_writeln(&format!("乱升={}", sq.to_umasu()));
         } else if 3 < len && &line[starts..4] == "teigi::conv" {
             g_writeln("teigi::convのテスト");

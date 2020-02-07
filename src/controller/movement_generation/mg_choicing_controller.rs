@@ -7,8 +7,8 @@ use rand::Rng;
 
 use super::super::super::controller::common_part::cp_asserts_controller::*;
 use super::super::super::controller::common_part::cp_conv_controller::*;
-use super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::controller::thinking::results::komatori_result::*;
+use super::super::super::controller::movement_generation::mg_komatori_result_controller::*;
+use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_main_dto::*;

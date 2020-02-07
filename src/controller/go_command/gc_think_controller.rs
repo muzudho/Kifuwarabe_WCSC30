@@ -6,9 +6,9 @@ extern crate rand;
 use rand::Rng;
 use std::collections::HashSet;
 
-use super::super::super::controller::movement_generation::mg_choicing::*;
-use super::super::super::controller::movement_generation::mg_main::*;
-use super::super::super::controller::status::mediators::med_kikisu::*;
+use super::super::super::controller::go_command::gc_kikisu_controller::*;
+use super::super::super::controller::movement_generation::mg_choicing_controller::*;
+use super::super::super::controller::movement_generation::mg_main_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;

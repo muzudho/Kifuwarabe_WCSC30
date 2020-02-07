@@ -3,10 +3,10 @@
 //! 結果：自殺手。移動先が敵の利き
 //!
 
-use super::super::super::super::controller::common_part::cp_conv_controller::*;
-use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい

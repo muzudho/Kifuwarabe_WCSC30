@@ -1,6 +1,6 @@
 //! 探索部
 use super::super::super::super::controller::common_part::cp_conv_controller::*;
-use super::super::super::super::controller::status::number_board::*;
+use super::super::super::super::controller::go_command::gc_number_board_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;

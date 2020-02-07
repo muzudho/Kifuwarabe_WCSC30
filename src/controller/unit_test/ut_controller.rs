@@ -6,8 +6,8 @@
 use super::super::super::controller::common_part::cp_conv_controller::*;
 use super::super::super::controller::common_part::cp_geo_teigi_controller::*;
 use super::super::super::controller::common_part::cp_math_controller::*;
-use super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::controller::thinking::randommove;
+use super::super::super::controller::common_part::cp_random_move_controller;
+use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -66,7 +66,7 @@ pub fn test(
         g_writeln("4<len mvsrc");
         // 駒の移動元升
         g_writeln("駒の移動元升");
-        let kms = randommove::rnd_kms();
+        let kms = cp_random_move_controller::rnd_kms();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
@@ -74,7 +74,7 @@ pub fn test(
                 kms,
             );
         let pc = ps.piece();
-        let sq_dst = randommove::random_square();
+        let sq_dst = cp_random_move_controller::random_square();
         g_writeln(&format!(
             "kms={} pc={} ms_dst={}",
             kms,
@@ -115,7 +115,7 @@ pub fn test(
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
         *starts += 4;
         // 移動後の駒
-        let kms = randommove::rnd_kms();
+        let kms = cp_random_move_controller::rnd_kms();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
@@ -123,8 +123,8 @@ pub fn test(
                 &kms,
             );
         // 移動先の升、および　不成駒／成駒
-        let sq_dst = randommove::random_square();
-        let pro_dst = randommove::rnd_bool();
+        let sq_dst = cp_random_move_controller::random_square();
+        let pro_dst = cp_random_move_controller::rnd_bool();
         let mut ss = MLMovementDto::new();
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();

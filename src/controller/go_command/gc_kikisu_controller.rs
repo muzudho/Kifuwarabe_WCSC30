@@ -1,15 +1,15 @@
 //!
 //! 利き数
 //!
-use super::super::super::super::controller::common_part::cp_asserts_controller::*;
-use super::super::super::super::controller::common_part::cp_conv_controller::*;
-use super::super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::super::model::vo::other_part::op_phase_vo::*;
-use super::super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
-use super::super::super::super::model::vo::other_part::op_piece_vo::*;
-use super::super::super::super::model::vo::other_part::op_square_vo::*;
+use super::super::super::controller::common_part::cp_asserts_controller::*;
+use super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
+use super::super::super::model::vo::other_part::op_piece_vo::*;
+use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
 /// 盤上の利き升調べ
