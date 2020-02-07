@@ -5,12 +5,12 @@ use super::piece_vo_master::PieceVoMaster;
 
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
-    pub piece_struct_master: PieceVoMaster,
+    pub piece_vo_master: PieceVoMaster,
 }
 impl SpeedOfLight {
     pub fn new() -> Self {
         SpeedOfLight {
-            piece_struct_master: PieceVoMaster::new(),
+            piece_vo_master: PieceVoMaster::new(),
         }
     }
 }

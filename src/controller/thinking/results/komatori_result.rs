@@ -61,12 +61,15 @@ impl KomatoriResult {
     pub fn get_sq_attacker(&self) -> &Square {
         &self.sq_attacker
     }
-    pub fn to_hash(&self) -> u64 {
+    pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_sq_to_hash(hash, &self.sq_target);
         hash = push_sq_to_hash(hash, &self.sq_attacker);
-        PieceVo::from_piece(self.km_attacker.clone()).add_hash(hash)
+        speed_of_light
+            .piece_vo_master
+            .get_piece_vo(&self.km_attacker)
+            .add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
@@ -90,14 +93,16 @@ impl KomatoriResult {
     ///         (2-2-1) 狙われている駒を、動かせば解決
     ///
     /// ss : 現局面での、駒の動き手の１つ
-    pub fn get_result(&self, ss: &Sasite) -> KomatoriResultResult {
+    pub fn get_result(&self, ss: &Sasite, speed_of_light: &SpeedOfLight) -> KomatoriResultResult {
         // (1)
         if self.sq_attacker.to_umasu() == ss.dst.to_umasu() {
             return KomatoriResultResult::NoneAttacker;
         }
 
         // (2-1)
-        let ps_attacker = PieceVo::from_piece(self.km_attacker.clone());
+        let ps_attacker = speed_of_light
+            .piece_vo_master
+            .get_piece_vo(&self.km_attacker);
         if ps_attacker.is_slider() {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
             assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");
@@ -188,8 +193,8 @@ pub fn lookup_catching_king_on_board(
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
         let ps_dst = speed_of_light
-            .piece_struct_master
-            .get_piece_struct_by_phase_and_piece_type(&sn, kms_dst);
+            .piece_vo_master
+            .get_piece_vo_by_phase_and_piece_type(&sn, kms_dst);
         let km_dst = ps_dst.piece();
         //let km_dst = sn_kms_to_km( &sn, rnd_kms() );
         // 指定マスに移動できるか
@@ -229,7 +234,7 @@ pub fn lookup_catching_king_on_board(
             };
 
             // 重複がいっぱい
-            hash.insert(oute_result.to_hash());
+            hash.insert(oute_result.to_hash(speed_of_light));
         }
     }
     hash

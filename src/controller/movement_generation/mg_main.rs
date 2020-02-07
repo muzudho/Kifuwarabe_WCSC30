@@ -45,8 +45,8 @@ pub fn get_potential_movement<F1>(
 
             if match_sn(
                 &speed_of_light
-                    .piece_struct_master
-                    .get_piece_struct(&piece_src)
+                    .piece_vo_master
+                    .get_piece_vo(&piece_src)
                     .phase(),
                 &search_part.get_phase(&Person::Ji),
             ) {
@@ -118,8 +118,8 @@ pub fn get_potential_movement<F1>(
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
                         let ps_motigoma = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct_by_phase_and_piece_type(
+                            .piece_vo_master
+                            .get_piece_vo_by_phase_and_piece_type(
                                 &search_part.get_phase(&Person::Ji),
                                 kms_motigoma,
                             );
@@ -175,9 +175,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let ps_dst = speed_of_light
-        .piece_struct_master
-        .get_piece_struct(&piece_dst);
+    let ps_dst = speed_of_light.piece_vo_master.get_piece_vo(&piece_dst);
     let (sn, _kms_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
@@ -263,10 +261,8 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
-    let piece_struct_dst = speed_of_light
-        .piece_struct_master
-        .get_piece_struct(piece_dst);
-    let (sn, _kms_dst) = piece_struct_dst.phase_piece_type();
+    let piece_vo_dst = speed_of_light.piece_vo_master.get_piece_vo(piece_dst);
+    let (sn, _kms_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(

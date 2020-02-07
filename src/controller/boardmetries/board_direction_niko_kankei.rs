@@ -17,7 +17,7 @@ use super::super::super::model::vo::piece_vo::PieceVo;
  */
 pub fn get_dir8_to_slider_from_target(
     sq_slider: &Square,
-    slider_piece_struct: &PieceVo,
+    slider_piece_vo: &PieceVo,
     sq_target: &Square,
 ) -> Dir8 {
     debug_assert!(
@@ -32,7 +32,7 @@ pub fn get_dir8_to_slider_from_target(
     let p_slider = sq_slider.to_point();
     let p_target = sq_target.to_point();
 
-    let (sn_slider, kms) = slider_piece_struct.phase_piece_type();
+    let (sn_slider, kms) = slider_piece_vo.phase_piece_type();
     use super::super::super::model::master::phase::Phase::*;
     use super::super::super::model::master::piece_type::PieceType::*;
     match kms {

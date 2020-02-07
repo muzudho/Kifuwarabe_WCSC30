@@ -6,37 +6,38 @@ use super::super::master::piece::Piece::*;
 use super::super::master::piece_type::PieceType;
 use super::super::vo::piece_vo::PieceVo;
 
+/// イミュータブルなのだから、直接参照してもいい☆（＾～＾）
 pub struct PieceVoMaster {
-    king1: PieceVo,
-    rook1: PieceVo,
-    bishop1: PieceVo,
-    gold1: PieceVo,
-    silver1: PieceVo,
-    knight1: PieceVo,
-    lance1: PieceVo,
-    pawn1: PieceVo,
-    promoted_rook1: PieceVo,
-    promoted_bishop1: PieceVo,
-    promoted_silver1: PieceVo,
-    promoted_knight1: PieceVo,
-    promoted_lance1: PieceVo,
-    promoted_pawn1: PieceVo,
-    king2: PieceVo,
-    rook2: PieceVo,
-    bishop2: PieceVo,
-    gold2: PieceVo,
-    silver2: PieceVo,
-    knight2: PieceVo,
-    lance2: PieceVo,
-    pawn2: PieceVo,
-    promoted_rook2: PieceVo,
-    promoted_bishop2: PieceVo,
-    promoted_silver2: PieceVo,
-    promoted_knight2: PieceVo,
-    promoted_lance2: PieceVo,
-    promoted_pawn2: PieceVo,
-    kara: PieceVo,
-    owari: PieceVo,
+    pub king1: PieceVo,
+    pub rook1: PieceVo,
+    pub bishop1: PieceVo,
+    pub gold1: PieceVo,
+    pub silver1: PieceVo,
+    pub knight1: PieceVo,
+    pub lance1: PieceVo,
+    pub pawn1: PieceVo,
+    pub promoted_rook1: PieceVo,
+    pub promoted_bishop1: PieceVo,
+    pub promoted_silver1: PieceVo,
+    pub promoted_knight1: PieceVo,
+    pub promoted_lance1: PieceVo,
+    pub promoted_pawn1: PieceVo,
+    pub king2: PieceVo,
+    pub rook2: PieceVo,
+    pub bishop2: PieceVo,
+    pub gold2: PieceVo,
+    pub silver2: PieceVo,
+    pub knight2: PieceVo,
+    pub lance2: PieceVo,
+    pub pawn2: PieceVo,
+    pub promoted_rook2: PieceVo,
+    pub promoted_bishop2: PieceVo,
+    pub promoted_silver2: PieceVo,
+    pub promoted_knight2: PieceVo,
+    pub promoted_lance2: PieceVo,
+    pub promoted_pawn2: PieceVo,
+    pub kara: PieceVo,
+    pub owari: PieceVo,
 }
 impl PieceVoMaster {
     pub fn new() -> Self {
@@ -75,10 +76,10 @@ impl PieceVoMaster {
     }
 
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceVo {
+    pub fn get_piece_vo(&self, piece: &Piece) -> &PieceVo {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
-        // &self.piece_structs[(*piece).clone() as usize]
+        // &self.piece_vos[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
         match *piece {
@@ -116,7 +117,7 @@ impl PieceVoMaster {
     }
 
     /// 先後＆駒種類→先後付き駒
-    pub fn get_piece_struct_by_phase_and_piece_type(
+    pub fn get_piece_vo_by_phase_and_piece_type(
         &self,
         phase: &Phase,
         piece_type: &PieceType,
@@ -125,40 +126,40 @@ impl PieceVoMaster {
         use super::super::super::model::master::piece_type::PieceType::*;
         match *phase {
             Phase::Sen => match *piece_type {
-                R => self.get_piece_struct(&King1),
-                K => self.get_piece_struct(&Rook1),
-                Z => self.get_piece_struct(&Bishop1),
-                I => self.get_piece_struct(&Gold1),
-                N => self.get_piece_struct(&Silver1),
-                U => self.get_piece_struct(&Knight1),
-                S => self.get_piece_struct(&Lance1),
-                H => self.get_piece_struct(&Pawn1),
-                PK => self.get_piece_struct(&PromotedRook1),
-                PZ => self.get_piece_struct(&PromotedBishop1),
-                PN => self.get_piece_struct(&PromotedSilver1),
-                PU => self.get_piece_struct(&PromotedKnight1),
-                PS => self.get_piece_struct(&PromotedLance1),
-                PH => self.get_piece_struct(&PromotedPawn1),
-                _ => self.get_piece_struct(&Piece::Owari),
+                R => self.get_piece_vo(&King1),
+                K => self.get_piece_vo(&Rook1),
+                Z => self.get_piece_vo(&Bishop1),
+                I => self.get_piece_vo(&Gold1),
+                N => self.get_piece_vo(&Silver1),
+                U => self.get_piece_vo(&Knight1),
+                S => self.get_piece_vo(&Lance1),
+                H => self.get_piece_vo(&Pawn1),
+                PK => self.get_piece_vo(&PromotedRook1),
+                PZ => self.get_piece_vo(&PromotedBishop1),
+                PN => self.get_piece_vo(&PromotedSilver1),
+                PU => self.get_piece_vo(&PromotedKnight1),
+                PS => self.get_piece_vo(&PromotedLance1),
+                PH => self.get_piece_vo(&PromotedPawn1),
+                _ => self.get_piece_vo(&Piece::Owari),
             },
             Phase::Go => match *piece_type {
-                R => self.get_piece_struct(&King2),
-                K => self.get_piece_struct(&Rook2),
-                Z => self.get_piece_struct(&Bishop2),
-                I => self.get_piece_struct(&Gold2),
-                N => self.get_piece_struct(&Silver2),
-                U => self.get_piece_struct(&Knight2),
-                S => self.get_piece_struct(&Lance2),
-                H => self.get_piece_struct(&Pawn2),
-                PK => self.get_piece_struct(&PromotedRook2),
-                PZ => self.get_piece_struct(&PromotedBishop2),
-                PN => self.get_piece_struct(&PromotedSilver2),
-                PU => self.get_piece_struct(&PromotedKnight2),
-                PS => self.get_piece_struct(&PromotedLance2),
-                PH => self.get_piece_struct(&PromotedPawn2),
-                _ => self.get_piece_struct(&Piece::Owari),
+                R => self.get_piece_vo(&King2),
+                K => self.get_piece_vo(&Rook2),
+                Z => self.get_piece_vo(&Bishop2),
+                I => self.get_piece_vo(&Gold2),
+                N => self.get_piece_vo(&Silver2),
+                U => self.get_piece_vo(&Knight2),
+                S => self.get_piece_vo(&Lance2),
+                H => self.get_piece_vo(&Pawn2),
+                PK => self.get_piece_vo(&PromotedRook2),
+                PZ => self.get_piece_vo(&PromotedBishop2),
+                PN => self.get_piece_vo(&PromotedSilver2),
+                PU => self.get_piece_vo(&PromotedKnight2),
+                PS => self.get_piece_vo(&PromotedLance2),
+                PH => self.get_piece_vo(&PromotedPawn2),
+                _ => self.get_piece_vo(&Piece::Owari),
             },
-            Phase::Owari => self.get_piece_struct(&Piece::Owari),
+            Phase::Owari => self.get_piece_vo(&Piece::Owari),
         }
     }
 }

@@ -684,8 +684,8 @@ impl SearchPart {
             if move2.pro {
                 // 成ったなら、成る前へ
                 speed_of_light
-                    .piece_struct_master
-                    .get_piece_struct(self.current_position.get_piece_by_square(&move2.dst))
+                    .piece_vo_master
+                    .get_piece_vo(self.current_position.get_piece_by_square(&move2.dst))
                     .demote()
                     .clone()
             } else {
@@ -741,8 +741,8 @@ impl SearchPart {
                 let piece152 = if move1.pro {
                     // 成りなら
                     speed_of_light
-                        .piece_struct_master
-                        .get_piece_struct(self.current_position.get_piece_by_square(&move1.src))
+                        .piece_vo_master
+                        .get_piece_vo(self.current_position.get_piece_by_square(&move1.src))
                         .promote()
                         .clone()
                 } else {
@@ -774,8 +774,8 @@ impl SearchPart {
                     let cap773;
                     {
                         cap773 = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(&cap764)
+                            .piece_vo_master
+                            .get_piece_vo(&cap764)
                             .capture()
                             .clone();
                     }

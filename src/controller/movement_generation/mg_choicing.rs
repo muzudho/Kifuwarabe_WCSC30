@@ -79,7 +79,7 @@ pub fn select_movement_except_check(
                 let komatori_result = KomatoriResult::from_hash(*komatori_result_hash);
 
                 assert_banjo_sq(&ss_potential.dst, "(206)Ｓearch_gohoshu_hash");
-                match komatori_result.get_result(&ss_potential) {
+                match komatori_result.get_result(&ss_potential, speed_of_light) {
                     KomatoriResultResult::NoneAttacker
                     | KomatoriResultResult::NoneAigoma
                     | KomatoriResultResult::NoneMoved => {

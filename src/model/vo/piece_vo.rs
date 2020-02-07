@@ -405,7 +405,7 @@ impl PieceVo {
     }
 
     /// ハッシュ値を作る
-    pub fn add_hash(self, hash: u64) -> u64 {
+    pub fn add_hash(&self, hash: u64) -> u64 {
         // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
         (hash << 5) + self.serial_piece_number() as u64
     }

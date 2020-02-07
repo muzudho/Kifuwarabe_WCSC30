@@ -10,8 +10,8 @@ pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe) -> bool {
     match_sn(
         &universe
             .speed_of_light
-            .piece_struct_master
-            .get_piece_struct(
+            .piece_vo_master
+            .get_piece_vo(
                 &universe
                     .get_search_part()
                     .get_current_position()

@@ -221,11 +221,8 @@ impl Universe {
             .get_starting_position_mut()
             .mg[km as usize] = maisu;
     }
-    pub fn get_person_by_piece_struct(&self, piece_struct: &PieceVo) -> Person {
-        if match_sn(
-            &piece_struct.phase(),
-            &self.search_part.get_phase(&Person::Ji),
-        ) {
+    pub fn get_person_by_piece_vo(&self, piece_vo: &PieceVo) -> Person {
+        if match_sn(&piece_vo.phase(), &self.search_part.get_phase(&Person::Ji)) {
             Person::Ji
         } else {
             Person::Ai

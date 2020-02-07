@@ -32,8 +32,8 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         let kms = randommove::rnd_kms();
         let ps = universe
             .speed_of_light
-            .piece_struct_master
-            .get_piece_struct_by_phase_and_piece_type(
+            .piece_vo_master
+            .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 kms,
             );
@@ -82,8 +82,8 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         let kms = randommove::rnd_kms();
         let ps = universe
             .speed_of_light
-            .piece_struct_master
-            .get_piece_struct_by_phase_and_piece_type(
+            .piece_vo_master
+            .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 &kms,
             );
@@ -130,8 +130,8 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
                 .speed_of_light
-                .piece_struct_master
-                .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
+                .piece_vo_master
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(79);
             g_writeln(&format!(
@@ -177,8 +177,8 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
                 .speed_of_light
-                .piece_struct_master
-                .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
+                .piece_vo_master
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(68);
             g_writeln(&format!(
@@ -224,8 +224,8 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = universe
                 .speed_of_light
-                .piece_struct_master
-                .get_piece_struct_by_phase_and_piece_type(&Phase::Go, &kms);
+                .piece_vo_master
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(77);
             g_writeln(&format!(
@@ -271,8 +271,8 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             let kms = PieceType::R; // らいおん
             let ps = universe
                 .speed_of_light
-                .piece_struct_master
-                .get_piece_struct_by_phase_and_piece_type(&Phase::Sen, &kms);
+                .piece_vo_master
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Sen, &kms);
             let pc = ps.piece(); // ▼ら
             let sq_dst = Square::from_umasu(58);
             g_writeln(&format!(

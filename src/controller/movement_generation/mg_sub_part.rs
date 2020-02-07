@@ -475,12 +475,12 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
     let kms_src = speed_of_light
-        .piece_struct_master
-        .get_piece_struct(ps_dst.demote())
+        .piece_vo_master
+        .get_piece_vo(ps_dst.demote())
         .piece_type();
     let km_src = speed_of_light
-        .piece_struct_master
-        .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), &kms_src)
+        .piece_vo_master
+        .get_piece_vo_by_phase_and_piece_type(&ps_dst.phase(), &kms_src)
         .piece();
 
     /*
@@ -507,8 +507,8 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
 
     let kms_narumae_num = kms_to_num(
         &speed_of_light
-            .piece_struct_master
-            .get_piece_struct(ps_dst.demote())
+            .piece_vo_master
+            .get_piece_vo(ps_dst.demote())
             .piece_type(),
     );
 
@@ -883,9 +883,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 {
     assert_banjo_sq(&sq_dst, "make_drop_piece_type_by_square_piece");
 
-    let ps_dst = speed_of_light
-        .piece_struct_master
-        .get_piece_struct(piece_dst);
+    let ps_dst = speed_of_light.piece_vo_master.get_piece_vo(piece_dst);
     let kms_dst = ps_dst.piece_type();
     if !kms_can_da(&kms_dst) {
         return; // 打って出てくることがない駒なら終了
@@ -1018,7 +1016,7 @@ pub fn make_destination_by_square_piece(
 
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = sq_src.to_file_rank();
-    let ps_src = speed_of_light.piece_struct_master.get_piece_struct(km_src);
+    let ps_src = speed_of_light.piece_vo_master.get_piece_vo(km_src);
     let kms_src = ps_src.piece_type();
 
     // +--------------+
@@ -1512,8 +1510,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
     for kms in KMS_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
         let km = speed_of_light
-            .piece_struct_master
-            .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
+            .piece_vo_master
+            .get_piece_vo_by_phase_and_piece_type(&sn, &kms)
             .piece()
             .clone();
         use super::super::super::model::master::piece::Piece::*;
@@ -1578,8 +1576,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -1601,8 +1599,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -1625,8 +1623,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -1648,8 +1646,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -1669,8 +1667,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -1692,8 +1690,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -1715,8 +1713,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -1739,8 +1737,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -1762,8 +1760,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -1785,8 +1783,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -1809,8 +1807,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -1832,8 +1830,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -1856,8 +1854,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -1879,8 +1877,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -1900,8 +1898,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -1923,8 +1921,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -1946,8 +1944,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -1970,8 +1968,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -1993,8 +1991,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2016,8 +2014,8 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2057,14 +2055,14 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
     // 駒種類
     for kms in KMS_ARRAY.iter() {
         let km_src = speed_of_light
-            .piece_struct_master
-            .get_piece_struct_by_phase_and_piece_type(&sn, &kms)
+            .piece_vo_master
+            .get_piece_vo_by_phase_and_piece_type(&sn, &kms)
             .piece();
 
         // +--------------------+
         // | 移動前は非成駒か？ |
         // +--------------------+
-        let ps_src = speed_of_light.piece_struct_master.get_piece_struct(km_src);
+        let ps_src = speed_of_light.piece_vo_master.get_piece_vo(km_src);
         if ps_src.is_promoted() {
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
@@ -2112,8 +2110,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2135,8 +2133,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2159,8 +2157,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2182,8 +2180,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2203,8 +2201,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -2226,8 +2224,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2249,8 +2247,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2273,8 +2271,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -2296,8 +2294,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2319,8 +2317,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2343,8 +2341,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2366,8 +2364,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2390,8 +2388,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2413,8 +2411,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2434,8 +2432,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -2457,8 +2455,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2480,8 +2478,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),
@@ -2504,8 +2502,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                             .get_current_position()
                             .get_sn_by_sq(&sq_src, speed_of_light);
                         let kms_ms = speed_of_light
-                            .piece_struct_master
-                            .get_piece_struct(
+                            .piece_vo_master
+                            .get_piece_vo(
                                 search_part
                                     .get_current_position()
                                     .get_piece_by_square(&sq_src),
@@ -2527,8 +2525,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                     .get_current_position()
                                     .get_sn_by_sq(&sq_src, speed_of_light);
                                 let kms_ms = speed_of_light
-                                    .piece_struct_master
-                                    .get_piece_struct(
+                                    .piece_vo_master
+                                    .get_piece_vo(
                                         search_part
                                             .get_current_position()
                                             .get_piece_by_square(&sq_src),
@@ -2550,8 +2548,8 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                                 .get_current_position()
                                 .get_sn_by_sq(&sq_src, speed_of_light);
                             let kms_ms = speed_of_light
-                                .piece_struct_master
-                                .get_piece_struct(
+                                .piece_vo_master
+                                .get_piece_vo(
                                     search_part
                                         .get_current_position()
                                         .get_piece_by_square(&sq_src),

@@ -102,7 +102,7 @@ impl Position {
         for dan in DAN_1..DAN_10 {
             let sq = Square::from_file_rank(suji, dan);
             let piece99 = self.get_piece_by_square(&sq);
-            let ps100 = speed_of_light.piece_struct_master.get_piece_struct(piece99);
+            let ps100 = speed_of_light.piece_vo_master.get_piece_vo(piece99);
             let (sn_km, kms) = ps100.phase_piece_type();
             if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
                 return true;
@@ -134,8 +134,8 @@ impl Position {
     }
     pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
         self.mg[speed_of_light
-            .piece_struct_master
-            .get_piece_struct(hand)
+            .piece_vo_master
+            .get_piece_vo(hand)
             .serial_piece_number()]
     }
 
@@ -144,28 +144,24 @@ impl Position {
      */
     pub fn exists_km(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> bool {
         !speed_of_light
-            .piece_struct_master
-            .get_piece_struct(self.get_piece_by_square(&sq))
-            .equals_piece(
-                &speed_of_light
-                    .piece_struct_master
-                    .get_piece_struct(&Piece::Kara),
-            )
+            .piece_vo_master
+            .get_piece_vo(self.get_piece_by_square(&sq))
+            .equals_piece(&speed_of_light.piece_vo_master.get_piece_vo(&Piece::Kara))
     }
 
     /// 指定の升に指定の駒があれば真
     pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &SpeedOfLight) -> bool {
         speed_of_light
-            .piece_struct_master
-            .get_piece_struct(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.piece_struct_master.get_piece_struct(piece))
+            .piece_vo_master
+            .get_piece_vo(self.get_piece_by_square(&sq))
+            .equals_piece(&speed_of_light.piece_vo_master.get_piece_vo(piece))
     }
 
     /// 指定の升にある駒の先後、または空升
     pub fn get_sn_by_sq(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> Phase {
         speed_of_light
-            .piece_struct_master
-            .get_piece_struct(self.get_piece_by_square(sq))
+            .piece_vo_master
+            .get_piece_vo(self.get_piece_by_square(sq))
             .phase()
     }
 
@@ -178,10 +174,10 @@ impl Position {
     ) -> bool {
         let km_src = self.get_piece_by_square(&sq_src);
 
-        let ps_src = speed_of_light.piece_struct_master.get_piece_struct(km_src);
+        let ps_src = speed_of_light.piece_vo_master.get_piece_vo(km_src);
         let km_dst = self.get_piece_by_square(&sq_dst);
 
-        let ps_dst = speed_of_light.piece_struct_master.get_piece_struct(km_dst);
+        let ps_dst = speed_of_light.piece_vo_master.get_piece_vo(km_dst);
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = ps_dst.is_promoted();
         let pro_src = ps_src.is_promoted();
@@ -200,8 +196,8 @@ impl Position {
             let km = self.get_piece_by_square(&i_sq);
             let num_km = universe
                 .speed_of_light
-                .piece_struct_master
-                .get_piece_struct(km)
+                .piece_vo_master
+                .get_piece_vo(km)
                 .serial_piece_number();
             hash ^= universe.get_application_part().get_position_hash_seed().km[i_ms][num_km];
         }
@@ -211,8 +207,8 @@ impl Position {
             let km = &KM_ARRAY[i_km];
             let num_km = universe
                 .speed_of_light
-                .piece_struct_master
-                .get_piece_struct(km)
+                .piece_vo_master
+                .get_piece_vo(km)
                 .serial_piece_number();
 
             let maisu = self.get_hand(km, &universe.speed_of_light);
