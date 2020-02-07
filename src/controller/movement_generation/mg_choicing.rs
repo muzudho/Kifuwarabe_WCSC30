@@ -114,6 +114,7 @@ pub fn select_movement_except_check(
 pub fn select_movement_except_suiceid(
     ss_hashset_input: &mut HashSet<u64>,
     universe: &mut Universe,
+    speed_of_light: &SpeedOfLight,
 ) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
@@ -135,7 +136,7 @@ pub fn select_movement_except_suiceid(
         let ss_potential = Sasite::from_hash(*hash_ss_potential);
 
         // その手を指してみる
-        universe.do_ss(&ss_potential);
+        universe.do_ss(&ss_potential, speed_of_light);
         // // 現局面表示
         // let s1 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
@@ -154,7 +155,7 @@ pub fn select_movement_except_suiceid(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |square| {
                 attackers.insert(square);
             },
@@ -163,7 +164,7 @@ pub fn select_movement_except_suiceid(
             &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                          // 指定の升
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |square| {
                 attackers.insert(square);
             },
@@ -183,7 +184,7 @@ pub fn select_movement_except_suiceid(
         }
 
         // 手を戻す
-        universe.undo_ss();
+        universe.undo_ss(speed_of_light);
         // // 現局面表示
         // let s2 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );
@@ -212,6 +213,7 @@ pub fn select_movement_except_suiceid(
 pub fn select_movement_except_fourfold_repetition(
     ss_hashset_input: &mut HashSet<u64>,
     universe: &mut Universe,
+    speed_of_light: &SpeedOfLight,
 ) {
     let mut ss_hashset_pickup = HashSet::new();
     // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）
@@ -221,7 +223,7 @@ pub fn select_movement_except_fourfold_repetition(
         //ss_hashset.insert( *hash_ss_potential );
 
         // その手を指してみる
-        universe.do_ss(&ss);
+        universe.do_ss(&ss, speed_of_light);
         // 現局面表示
         // let s1 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
@@ -234,7 +236,7 @@ pub fn select_movement_except_fourfold_repetition(
         }
 
         // 手を戻す FIXME: 打った象が戻ってない？
-        universe.undo_ss();
+        universe.undo_ss(speed_of_light);
         // 現局面表示
         // let s2 = &universe.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );

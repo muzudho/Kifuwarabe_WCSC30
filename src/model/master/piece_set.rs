@@ -7,7 +7,6 @@ use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::search::search_part::*;
-use super::super::super::model::vo::piece_vo::PieceVo;
 use super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 
@@ -18,10 +17,10 @@ impl PieceSet {
     /**
      * 全ての元を含む
      */
-    pub fn new_all() -> PieceSet {
+    pub fn new_all(speed_of_light: &SpeedOfLight) -> PieceSet {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
-        for km in KM_ARRAY.iter() {
-            let ps = PieceVo::from_piece((*km).clone());
+        for piece in KM_ARRAY.iter() {
+            let ps = speed_of_light.piece_vo_master.get_piece_vo(piece);
             num_syugo1.insert(ps.serial_piece_number());
         }
         let km_syugo = PieceSet {
@@ -52,8 +51,12 @@ impl PieceSet {
         };
         km_syugo
     }
-    pub fn remove(&mut self, piece: Piece) {
-        self.num_syugo
-            .remove(&PieceVo::from_piece(piece).serial_piece_number());
+    pub fn remove(&mut self, piece: &Piece, speed_of_light: &SpeedOfLight) {
+        self.num_syugo.remove(
+            &speed_of_light
+                .piece_vo_master
+                .get_piece_vo(piece)
+                .serial_piece_number(),
+        );
     }
 }

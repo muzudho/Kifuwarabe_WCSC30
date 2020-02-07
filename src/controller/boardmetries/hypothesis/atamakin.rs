@@ -11,9 +11,10 @@ use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type_set::*;
 use super::super::super::super::model::master::square::*;
 use super::super::super::super::model::universe::*;
+use super::super::super::super::model::vo::speed_of_light::*;
 
 /// 後手視点で、相手らいおんの南側１升に、頭が丸い自駒がない？
-pub fn is_s(universe: &Universe) -> bool {
+pub fn is_s(universe: &Universe, speed_of_light: &SpeedOfLight) -> bool {
     // 相手玉の位置
     let sq_r = universe.get_search_part().get_king_sq(&Person::Ai).clone();
 
@@ -24,7 +25,7 @@ pub fn is_s(universe: &Universe) -> bool {
     }
 
     let sq_south_r = Square::from_point(&p_south_r);
-    let ps = universe.speed_of_light.piece_vo_master.get_piece_vo(
+    let ps = speed_of_light.piece_vo_master.get_piece_vo(
         universe
             .get_search_part()
             .get_current_position()
@@ -93,6 +94,7 @@ pub fn is_atamakin(
     _mskms_a: &SqKms,
     _mskms_b: &SqKms,
     universe: &Universe,
+    speed_of_light: &SpeedOfLight,
 ) -> bool {
     // 相手らいおんのマス
     let sq_ai_r = universe.get_search_part().get_king_sq(&Person::Ai).clone();
@@ -106,7 +108,11 @@ pub fn is_atamakin(
     // 単に下３つに移動できるか調べられたらいい。８１升別　利きを作るか？
     // 駒、相手の利き
     let p_k = sq_ai_r.to_point();
-    if board_metrics::is_ji_km_by_sq(&Square::from_point(&p_k.to_south_west()), &universe) {}
+    if board_metrics::is_ji_km_by_sq(
+        &Square::from_point(&p_k.to_south_west()),
+        &universe,
+        speed_of_light,
+    ) {}
 
     if board_metrics::is_ai_kiki_by_sq(&Square::from_point(&p_k.to_south_west()), &universe) {}
 

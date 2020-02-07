@@ -10,7 +10,6 @@ use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::ply::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::search::position::*;
-use super::super::super::model::vo::piece_vo::*;
 use super::super::super::model::vo::speed_of_light::*;
 
 pub struct SearchPart {
@@ -677,7 +676,7 @@ impl SearchPart {
             // 自分の持ち駒を増やす
             //let mg = km_to_mg(km);
             //self.add_hand(mg,1);
-            self.current_position.add_hand(&piece679, 1);
+            self.current_position.add_hand(&piece679, 1, speed_of_light);
             piece679
         } else {
             // 打で無ければ
@@ -701,8 +700,11 @@ impl SearchPart {
             Piece::Kara => {}
             _ => {
                 // 自分の持ち駒を減らす
-                self.current_position
-                    .add_hand(PieceVo::from_piece(cap).capture(), -1);
+                self.current_position.add_hand(
+                    speed_of_light.piece_vo_master.get_piece_vo(&cap).capture(),
+                    -1,
+                    speed_of_light,
+                );
             }
         }
 
@@ -734,7 +736,8 @@ impl SearchPart {
                 // 打なら
                 // 自分の持ち駒を減らす
                 let piece734 = Piece::from_phase_piece_type(&phase, &move1.drop);
-                self.current_position.add_hand(&piece734, -1);
+                self.current_position
+                    .add_hand(&piece734, -1, speed_of_light);
                 piece734
             } else {
                 // 打で無ければ、元の升の駒を消す。
@@ -779,7 +782,7 @@ impl SearchPart {
                             .capture()
                             .clone();
                     }
-                    self.current_position.add_hand(&cap773, 1);
+                    self.current_position.add_hand(&cap773, 1, speed_of_light);
                 }
                 cap764.clone()
             };

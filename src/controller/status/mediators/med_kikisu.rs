@@ -9,12 +9,13 @@ use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::square::*;
 use super::super::super::super::model::universe::*;
 use super::super::super::super::model::vo::piece_vo::PieceVo;
+use super::super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn update_effect_count(universe: &mut Universe) {
+pub fn update_effect_count(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
     // ゼロ・リセット
     for pc in KM_ARRAY.iter() {
         &universe.get_search_part_mut().effect_count_by_piece
@@ -42,7 +43,7 @@ pub fn update_effect_count(universe: &mut Universe) {
                     &sq_dst,
                     &ps_dst,
                     &universe.get_search_part(),
-                    &universe.speed_of_light,
+                    &speed_of_light,
                     |square| {
                         mv_src_hashset.insert(square);
                     },
@@ -51,7 +52,7 @@ pub fn update_effect_count(universe: &mut Universe) {
                     &sq_dst,
                     &ps_dst,
                     &universe.get_search_part(),
-                    &universe.speed_of_light,
+                    &speed_of_light,
                     |square| {
                         mv_src_hashset.insert(square);
                     },

@@ -13,6 +13,7 @@ use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::square::*;
 use super::super::super::model::universe::*;
+use super::super::super::model::vo::speed_of_light::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;
 
@@ -20,7 +21,13 @@ use std::collections::HashSet;
  * test 2
  * といったコマンドに対応☆（＾～＾）
  */
-pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Universe) {
+pub fn test(
+    line: &String,
+    starts: &mut usize,
+    len: usize,
+    universe: &mut Universe,
+    speed_of_light: &SpeedOfLight,
+) {
     // いろいろな動作テスト
     g_writeln(&format!("test starts={} len={}", *starts, len));
 
@@ -30,8 +37,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         // 駒の移動元升
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
-        let ps = universe
-            .speed_of_light
+        let ps = speed_of_light
             .piece_vo_master
             .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
@@ -51,7 +57,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &sq_dst,
             &ps,
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
             },
@@ -60,7 +66,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &sq_dst,
             &ps,
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
             },
@@ -69,7 +75,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &sq_dst,
             pc,
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |piece_type_hash| {
                 da_kms_hashset.insert(piece_type_hash);
             },
@@ -80,8 +86,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         *starts += 4;
         // 移動後の駒
         let kms = randommove::rnd_kms();
-        let ps = universe
-            .speed_of_light
+        let ps = speed_of_light
             .piece_vo_master
             .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
@@ -98,7 +103,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &sq_dst,
             &ps,
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
             },
@@ -107,7 +112,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
             &sq_dst,
             &ps,
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
             },
@@ -128,8 +133,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         {
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let ps = universe
-                .speed_of_light
+            let ps = speed_of_light
                 .piece_vo_master
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
@@ -146,7 +150,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -155,7 +159,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -164,7 +168,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 pc,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
                 },
@@ -175,8 +179,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         {
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let ps = universe
-                .speed_of_light
+            let ps = speed_of_light
                 .piece_vo_master
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
@@ -193,7 +196,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -202,7 +205,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -211,7 +214,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 pc,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
                 },
@@ -222,8 +225,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         {
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
-            let ps = universe
-                .speed_of_light
+            let ps = speed_of_light
                 .piece_vo_master
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
@@ -240,7 +242,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -249,7 +251,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -258,7 +260,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 pc,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
                 },
@@ -269,8 +271,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
         {
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
-            let ps = universe
-                .speed_of_light
+            let ps = speed_of_light
                 .piece_vo_master
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Sen, &kms);
             let pc = ps.piece(); // ▼ら
@@ -287,7 +288,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -296,7 +297,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 &ps,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
                 },
@@ -305,7 +306,7 @@ pub fn test(line: &String, starts: &mut usize, len: usize, universe: &mut Univer
                 &sq_dst,
                 pc,
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
                 },

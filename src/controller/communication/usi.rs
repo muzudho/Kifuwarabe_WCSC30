@@ -8,6 +8,7 @@ use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::square::*;
 use super::super::super::model::universe::*;
+use super::super::super::model::vo::speed_of_light::*;
 use std::fmt;
 
 /// 指し手
@@ -429,7 +430,13 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
 /**
  * position コマンド 盤上部分のみ 読取
  */
-pub fn read_banjo(line: &String, starts: &mut usize, len: usize, universe: &mut Universe) {
+pub fn read_banjo(
+    line: &String,
+    starts: &mut usize,
+    len: usize,
+    universe: &mut Universe,
+    speed_of_light: &SpeedOfLight,
+) {
     // 盤部
     let mut suji = SUJI_9; //９筋から右方向へ読取
     let mut dan = DAN_1;
@@ -662,7 +669,7 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, universe: &mut 
     }
 
     // 初期局面ハッシュを作り直す
-    let ky_hash = universe.create_starting_position_hash();
+    let ky_hash = universe.create_starting_position_hash(speed_of_light);
     universe
         .get_application_part_mut()
         .set_starting_position_hash(ky_hash);
@@ -671,7 +678,7 @@ pub fn read_banjo(line: &String, starts: &mut usize, len: usize, universe: &mut 
 /**
  * position コマンド読取
  */
-pub fn read_position(line: &String, universe: &mut Universe) {
+pub fn read_position(line: &String, universe: &mut Universe, speed_of_light: &SpeedOfLight) {
     let mut starts = 0;
 
     // 全体の長さ
@@ -690,6 +697,7 @@ pub fn read_position(line: &String, universe: &mut Universe) {
             &mut local_starts,
             STARTPOS_LN,
             universe,
+            speed_of_light,
         );
 
         if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
@@ -698,7 +706,7 @@ pub fn read_position(line: &String, universe: &mut Universe) {
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_banjo(line, &mut starts, len, universe);
+        read_banjo(line, &mut starts, len, universe, speed_of_light);
 
         if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
             starts += 1;
@@ -899,7 +907,10 @@ pub fn read_position(line: &String, universe: &mut Universe) {
         universe.get_search_part_mut().add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let ply = universe.get_search_part().get_ply();
-        universe.do_ss(&universe.get_search_part().get_moves_history()[ply as usize].clone());
+        universe.do_ss(
+            &universe.get_search_part().get_moves_history()[ply as usize].clone(),
+            speed_of_light,
+        );
 
         // 現局面表示
         //let s1 = &universe.kaku_ky( &KyNums::Current );

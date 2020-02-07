@@ -1,15 +1,20 @@
 //!
 //! 思考部だぜ☆（＾～＾）
 //!
+
+/*
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_type::*;
+*/
 use super::super::super::super::model::master::square::*;
+/*
 use super::super::super::super::model::universe::*;
 use super::super::super::super::model::vo::piece_vo::PieceVo;
+*/
 use std::collections::HashSet;
 
 /**
@@ -37,9 +42,10 @@ impl VisionTree {
     }
 }
 
-/**
+/*
  * 楽観筋
  */
+/* 使ってない？
 pub fn insert_rakkansuji(universe: &mut Universe) {
     for sn in SN_ARRAY.iter() {
         let ai_sn = hanten_sn(sn);
@@ -120,3 +126,4 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
         }
     } //sn
 }
+*/

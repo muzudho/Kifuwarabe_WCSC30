@@ -12,6 +12,7 @@ use super::super::super::super::controller::thinking::results::jisatusyu_result:
 use super::super::super::super::model::master::person::Person;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::universe::*;
+use super::super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 
 /**
@@ -19,7 +20,11 @@ use std::collections::HashSet;
  *
  * piece_dst : 移動した先の駒
  */
-pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: &Piece) -> Sasite {
+pub fn get_ido_ss_by_km_random(
+    universe: &Universe,
+    piece_dst: &Piece,
+    speed_of_light: &SpeedOfLight,
+) -> Sasite {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -33,7 +38,7 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: &Piece) -> Sasite
             &sq_dst,
             piece_dst.clone(),
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
@@ -42,7 +47,7 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: &Piece) -> Sasite
             &sq_dst,
             piece_dst,
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
@@ -60,7 +65,7 @@ pub fn get_ido_ss_by_km_random(universe: &Universe, piece_dst: &Piece) -> Sasite
 /**
  * 指し手１つをランダム選出
  */
-pub fn get_ss_by_random(universe: &Universe) -> Sasite {
+pub fn get_ss_by_random(universe: &Universe, speed_of_light: &SpeedOfLight) -> Sasite {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -70,8 +75,7 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
         assert_banjo_sq(&sq_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
-        let ps_dst = universe
-            .speed_of_light
+        let ps_dst = speed_of_light
             .piece_vo_master
             .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
@@ -84,7 +88,7 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
             &sq_dst,
             piece_dst.clone(),
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
@@ -93,7 +97,7 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
             &sq_dst,
             piece_dst,
             &universe.get_search_part(),
-            &universe.speed_of_light,
+            &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
             },
@@ -101,7 +105,7 @@ pub fn get_ss_by_random(universe: &Universe) -> Sasite {
         let ss = choice_1movement_from_hashset(&ss_hashset);
 
         // 移動後は、玉が利きに飛び込まないか？
-        if is_jisatusyu(&universe, &ss) {
+        if is_jisatusyu(&universe, &ss, speed_of_light) {
             continue 'random;
         }
 

@@ -27,11 +27,14 @@ use model::master::constants::*;
 use model::master::misc::*;
 use model::master::square::*;
 use model::universe::*;
+use model::vo::speed_of_light::*;
 use rand::Rng;
 use std::collections::HashSet;
 use std::io;
 
 fn main() {
+    // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
+    let speed_of_light: SpeedOfLight = SpeedOfLight::new();
     // 宇宙
     let mut universe: Universe = Universe::new();
     universe.big_bang();
@@ -88,7 +91,7 @@ fn main() {
             universe.clear_all_positions();
         } else if line.starts_with("position") {
             // positionコマンドの読取を丸投げ
-            controller::communication::usi::read_position(&line, &mut universe);
+            controller::communication::usi::read_position(&line, &mut universe, &speed_of_light);
         } else if 6 < len && &line[starts..7] == "isready" {
             g_writeln("readyok");
         } else if 6 < len && &line[starts..7] == "kmugoki" {
@@ -97,10 +100,14 @@ fn main() {
             universe.hyoji_kmugoki();
         } else if 5 < len && &line[starts..6] == "hirate" {
             // 平手初期局面
-            controller::communication::usi::read_position(&KY1.to_string(), &mut universe);
+            controller::communication::usi::read_position(
+                &KY1.to_string(),
+                &mut universe,
+                &speed_of_light,
+            );
         } else if 5 < len && &line[starts..6] == "kikisu" {
             // 利き数表示
-            controller::consoles::commands::cmd_kikisu(&universe);
+            controller::consoles::commands::cmd_kikisu(&universe, &speed_of_light);
         } else if 5 < len && &line[starts..6] == "rndkms" {
             g_writeln("5<len rndkms");
             // 乱駒種類
@@ -111,7 +118,7 @@ fn main() {
             let mut ss_potential_hashset = HashSet::<u64>::new();
             get_potential_movement(
                 &universe.get_search_part(),
-                &universe.speed_of_light,
+                &speed_of_light,
                 |movement_hash| {
                     ss_potential_hashset.insert(movement_hash);
                 },
@@ -167,10 +174,10 @@ fn main() {
             }
             // いろいろな動作テスト
             g_writeln(&format!("test starts={} len={}", starts, len));
-            test(&line, &mut starts, len, &mut universe);
+            test(&line, &mut starts, len, &mut universe, &speed_of_light);
         //g_writeln( &universe.pop_command() );
         } else if 3 < len && &line[starts..4] == "undo" {
-            if !universe.undo_ss() {
+            if !universe.undo_ss(&speed_of_light) {
                 g_writeln(&format!(
                     "ply={} を、これより戻せません",
                     universe.get_search_part().get_ply()
@@ -185,7 +192,7 @@ fn main() {
                 // 入っている指し手の通り指すぜ☆（＾～＾）
                 let ply = universe.get_search_part().get_ply();
                 let ss = universe.get_search_part().get_moves_history()[ply as usize].clone();
-                universe.do_ss(&ss);
+                universe.do_ss(&ss, &speed_of_light);
             }
         } else if 2 < len && &line[starts..3] == "pos0" {
             // 初期局面表示
@@ -198,7 +205,7 @@ fn main() {
         } else if 1 < len && &line[starts..2] == "go" {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = think(&mut universe);
+            let bestmove = think(&mut universe, &speed_of_light);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove));
         } else if 1 < len && &line[starts..2] == "pos" {

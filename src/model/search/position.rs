@@ -14,7 +14,6 @@ use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::universe::*;
-use super::super::super::model::vo::piece_vo::PieceVo;
 use super::super::super::model::vo::speed_of_light::*;
 
 /// 局面
@@ -129,8 +128,11 @@ impl Position {
     /**
      * 持ち駒の枚数を加算
      */
-    pub fn add_hand(&mut self, hand: &Piece, maisu: i8) {
-        self.mg[PieceVo::from_piece(hand.clone()).serial_piece_number()] += maisu;
+    pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
+        self.mg[speed_of_light
+            .piece_vo_master
+            .get_piece_vo(hand)
+            .serial_piece_number()] += maisu;
     }
     pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
         self.mg[speed_of_light
@@ -187,15 +189,14 @@ impl Position {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_hash(&self, universe: &Universe) -> u64 {
+    pub fn create_hash(&self, universe: &Universe, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒
         for i_ms in MASU_0..BAN_SIZE {
             let i_sq = Square::from_umasu(i_ms as umasu);
             let km = self.get_piece_by_square(&i_sq);
-            let num_km = universe
-                .speed_of_light
+            let num_km = speed_of_light
                 .piece_vo_master
                 .get_piece_vo(km)
                 .serial_piece_number();
@@ -205,13 +206,12 @@ impl Position {
         // 持ち駒ハッシュ
         for i_km in 0..KM_ARRAY_LN {
             let km = &KM_ARRAY[i_km];
-            let num_km = universe
-                .speed_of_light
+            let num_km = speed_of_light
                 .piece_vo_master
                 .get_piece_vo(km)
                 .serial_piece_number();
 
-            let maisu = self.get_hand(km, &universe.speed_of_light);
+            let maisu = self.get_hand(km, &speed_of_light);
             debug_assert!(
                 -1 < maisu && maisu <= MG_MAX as i8,
                 "持ち駒 {} の枚数 {} <= {}",

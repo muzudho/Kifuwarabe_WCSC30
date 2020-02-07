@@ -88,8 +88,6 @@ pub fn g_writeln(s: &str) {
  * ここに全部入れてあるぜ☆（＾～＾）
  */
 pub struct Universe {
-    /// 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
-    pub speed_of_light: SpeedOfLight,
     /// アプリケーション部
     application_part: ApplicationPart,
     /// 対話部
@@ -101,7 +99,6 @@ pub struct Universe {
 impl Universe {
     pub fn new() -> Universe {
         Universe {
-            speed_of_light: SpeedOfLight::new(),
             application_part: ApplicationPart::new(),
             dialogue_part: DialoguePart::new(),
             search_part: SearchPart::new(),
@@ -412,11 +409,18 @@ impl Universe {
     /**
      * 表示
      */
-    pub fn kaku_number_board(&self, sn: &Phase, pc: Piece) -> String {
+    pub fn kaku_number_board(
+        &self,
+        sn: &Phase,
+        pc: &Piece,
+        speed_of_light: &SpeedOfLight,
+    ) -> String {
         let nb = match *sn {
             Phase::Owari => {
-                &self.search_part.effect_count_by_piece
-                    [PieceVo::from_piece(pc).serial_piece_number()]
+                &self.search_part.effect_count_by_piece[speed_of_light
+                    .piece_vo_master
+                    .get_piece_vo(pc)
+                    .serial_piece_number()]
             }
             _ => &self.search_part.effect_count_by_phase[sn_to_num(&sn)],
         };
@@ -546,34 +550,31 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     }
 
     // 入れた指し手の通り指すぜ☆（＾～＾）
-    pub fn do_ss(&mut self, move3: &Sasite) {
+    pub fn do_ss(&mut self, move3: &Sasite, speed_of_light: &SpeedOfLight) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
         self.search_part.moves_history[ply as usize] = (*move3).clone();
         let cap;
         {
-            cap = self
-                .search_part
-                .do_move(move3, &self.speed_of_light)
-                .clone();
+            cap = self.search_part.do_move(move3, speed_of_light).clone();
         }
         self.search_part.set_cap(ply as usize, cap);
 
         // 局面ハッシュを作り直す
-        let ky_hash = self.create_ky1_hash();
+        let ky_hash = self.create_ky1_hash(speed_of_light);
         self.get_search_part_mut()
             .set_current_position_hash(ky_hash);
 
         self.get_search_part_mut().add_ply(1);
     }
 
-    pub fn undo_ss(&mut self) -> bool {
+    pub fn undo_ss(&mut self, speed_of_light: &SpeedOfLight) -> bool {
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
             let sn = self.search_part.get_phase(&Person::Ji);
             let ss = &self.search_part.get_move().clone();
-            self.search_part.undo_move(&sn, ss, &self.speed_of_light);
+            self.search_part.undo_move(&sn, ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -591,11 +592,11 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     /**
      * 初期局面ハッシュを作り直す
      */
-    pub fn create_starting_position_hash(&self) -> u64 {
+    pub fn create_starting_position_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = self
             .get_application_part()
             .get_starting_position()
-            .create_hash(&self);
+            .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ（後手固定）
         hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO];
@@ -606,11 +607,11 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     /**
      * 局面ハッシュを作り直す
      */
-    pub fn create_ky1_hash(&self) -> u64 {
+    pub fn create_ky1_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = self
             .get_search_part()
             .get_current_position()
-            .create_hash(&self);
+            .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
         use super::master::phase::Phase::*;
