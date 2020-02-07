@@ -1,22 +1,22 @@
 //! 探索部
-use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
-use super::super::super::controller::status::number_board::*;
-use super::super::super::controller::thinking::visions::vision_tree::*;
-use super::super::super::model::search::position::*;
-use super::super::super::model::vo::person::*;
-use super::super::super::model::vo::phase::*;
-use super::super::super::model::vo::piece::*;
-use super::super::super::model::vo::piece_type::*;
-use super::super::super::model::vo::ply::*;
-use super::super::super::model::vo::speed_of_light::*;
-use super::super::super::model::vo::square::*;
+use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::controller::status::number_board::*;
+use super::super::super::super::controller::thinking::visions::vision_tree::*;
+use super::super::super::super::model::dto::search_part::sp_position_dto::*;
+use super::super::super::super::model::vo::person::*;
+use super::super::super::super::model::vo::phase::*;
+use super::super::super::super::model::vo::piece::*;
+use super::super::super::super::model::vo::piece_type::*;
+use super::super::super::super::model::vo::ply::*;
+use super::super::super::super::model::vo::speed_of_light::*;
+use super::super::super::super::model::vo::square::*;
 
-pub struct SearchPart {
+pub struct SPMainDto {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
     ply: i16,
     /// 現局面
-    current_position: Position,
+    current_position: SPPositionDto,
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hash_history: [u64; TEME_LN],
     /// 取った駒
@@ -30,12 +30,12 @@ pub struct SearchPart {
     /// ビジョン・ツリー
     pub vision_tree_by_phase: [VisionTree; SN_LN],
 }
-impl SearchPart {
+impl SPMainDto {
     pub fn new() -> Self {
-        SearchPart {
+        SPMainDto {
             ply: 0,
             // 現局面
-            current_position: Position::new(),
+            current_position: SPPositionDto::new(),
             position_hash_history: [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -619,7 +619,7 @@ impl SearchPart {
 
     /// 手番
     pub fn get_phase(&self, jiai: &Person) -> Phase {
-        use super::super::super::model::vo::person::Person::*;
+        use super::super::super::super::model::vo::person::Person::*;
         match *jiai {
             Ji => {
                 // 手番
@@ -641,10 +641,10 @@ impl SearchPart {
         }
     }
 
-    pub fn get_current_position(&self) -> &Position {
+    pub fn get_current_position(&self) -> &SPPositionDto {
         &self.current_position
     }
-    pub fn get_current_position_mut(&mut self) -> &mut Position {
+    pub fn get_current_position_mut(&mut self) -> &mut SPPositionDto {
         &mut self.current_position
     }
 

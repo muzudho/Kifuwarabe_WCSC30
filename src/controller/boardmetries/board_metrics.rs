@@ -1,7 +1,7 @@
 //!
 //! 盤上いろいろ☆（＾～＾）
 //!
-use super::super::super::model::dto::universe::*;
+use super::super::super::model::dto::application_part::ap_universe_dto::*;
 use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::speed_of_light::*;

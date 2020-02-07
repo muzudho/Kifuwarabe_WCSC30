@@ -7,24 +7,24 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::config::*;
-use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
-use super::super::super::model::vo::misc::*;
-use super::super::super::model::vo::person::Person;
-use super::super::super::model::vo::phase::*;
-use super::super::super::model::vo::piece::Piece;
-use super::super::super::model::vo::piece::*;
-use super::super::super::model::vo::piece_direction::PieceDirection;
-use super::super::super::model::vo::piece_movement::*;
-use super::super::super::model::vo::piece_type::PieceType;
-use super::super::super::model::vo::piece_type::*;
-use super::super::super::model::vo::piece_vo::PieceVo;
-use super::super::super::model::vo::speed_of_light::*;
-use super::super::super::model::vo::square::*;
-use super::super::application::application_part::*;
-use super::super::dialogue::dialogue_part::*;
-use super::super::search::search_part::*;
+use super::super::super::super::config::*;
+use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::model::vo::misc::*;
+use super::super::super::super::model::vo::person::Person;
+use super::super::super::super::model::vo::phase::*;
+use super::super::super::super::model::vo::piece::Piece;
+use super::super::super::super::model::vo::piece::*;
+use super::super::super::super::model::vo::piece_direction::PieceDirection;
+use super::super::super::super::model::vo::piece_movement::*;
+use super::super::super::super::model::vo::piece_type::PieceType;
+use super::super::super::super::model::vo::piece_type::*;
+use super::super::super::super::model::vo::piece_vo::PieceVo;
+use super::super::super::super::model::vo::speed_of_light::*;
+use super::super::super::super::model::vo::square::*;
+use super::super::super::dto::application_part::ap_main_dto::*;
+use super::super::super::dto::dialogue_part::dp_main_dto::*;
+use super::super::super::dto::search_part::sp_main_dto::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -89,19 +89,19 @@ pub fn g_writeln(s: &str) {
  */
 pub struct Universe {
     /// アプリケーション部
-    application_part: ApplicationPart,
+    application_part: ApMainDto,
     /// 対話部
-    dialogue_part: DialoguePart,
+    dialogue_part: DPMainDto,
     /// 探索部
-    search_part: SearchPart,
+    search_part: SPMainDto,
 }
 
 impl Universe {
     pub fn new() -> Universe {
         Universe {
-            application_part: ApplicationPart::new(),
-            dialogue_part: DialoguePart::new(),
-            search_part: SearchPart::new(),
+            application_part: ApMainDto::new(),
+            dialogue_part: DPMainDto::new(),
+            search_part: SPMainDto::new(),
         }
     }
     /**
@@ -169,24 +169,24 @@ impl Universe {
         }
     }
 
-    pub fn get_application_part_mut(&mut self) -> &mut ApplicationPart {
+    pub fn get_application_part_mut(&mut self) -> &mut ApMainDto {
         &mut self.application_part
     }
-    pub fn get_application_part(&self) -> &ApplicationPart {
+    pub fn get_application_part(&self) -> &ApMainDto {
         &self.application_part
     }
 
-    pub fn get_dialogue_part_mut(&mut self) -> &mut DialoguePart {
+    pub fn get_dialogue_part_mut(&mut self) -> &mut DPMainDto {
         &mut self.dialogue_part
     }
-    pub fn get_dialogue_part(&self) -> &DialoguePart {
+    pub fn get_dialogue_part(&self) -> &DPMainDto {
         &self.dialogue_part
     }
 
-    pub fn get_search_part_mut(&mut self) -> &mut SearchPart {
+    pub fn get_search_part_mut(&mut self) -> &mut SPMainDto {
         &mut self.search_part
     }
-    pub fn get_search_part(&self) -> &SearchPart {
+    pub fn get_search_part(&self) -> &SPMainDto {
         &self.search_part
     }
 
@@ -248,9 +248,9 @@ impl Universe {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
-            super::super::vo::region::SenteJin::to_elm()
+            super::super::super::vo::region::SenteJin::to_elm()
         } else {
-            super::super::vo::region::GoteJin::to_elm()
+            super::super::super::vo::region::GoteJin::to_elm()
         }
     }
     /**
@@ -259,9 +259,9 @@ impl Universe {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
-            super::super::vo::region::GoteJin::to_elm()
+            super::super::super::vo::region::GoteJin::to_elm()
         } else {
-            super::super::vo::region::SenteJin::to_elm()
+            super::super::super::vo::region::SenteJin::to_elm()
         }
     }
 
@@ -614,7 +614,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use super::super::vo::phase::Phase::*;
+        use super::super::super::vo::phase::Phase::*;
         match self.search_part.get_phase(&Person::Ji) {
             Sen => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_SEN],
             Go => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO],

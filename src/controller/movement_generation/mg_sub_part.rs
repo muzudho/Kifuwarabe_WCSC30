@@ -4,7 +4,7 @@
 
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
-use super::super::super::model::search::search_part::*;
+use super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::model::vo::phase::Phase;
 use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::piece::Piece;
@@ -34,7 +34,7 @@ use std::collections::HashSet;
 pub fn make_no_promotion_source_by_square_and_piece<F1>(
     sq_dst: &Square,
     ps_dst: &PieceVo,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where
@@ -455,7 +455,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
 pub fn make_before_promotion_source_by_square_piece<F1>(
     sq_dst: &Square,
     ps_dst: &PieceVo,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where
@@ -875,7 +875,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
 pub fn make_drop_piece_type_by_square_piece<F1>(
     sq_dst: &Square,
     piece_dst: &Piece,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_piece_type_hash: F1,
 ) where
@@ -1006,7 +1006,7 @@ pub fn make_destination_by_square_piece(
     sq_src: &Square,
     km_src: &Piece,
     to_nari: bool,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     // result, result2 で入れ直しがあるのでむずかしい☆（＾～＾）
     // 成れない動きをあとで除外する☆（＾～＾）
@@ -1495,7 +1495,7 @@ pub fn make_destination_by_square_piece(
 pub fn make_no_promotion_source_by_phase_square<F1>(
     sn: &Phase,
     sq_dst: &Square,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where
@@ -2041,7 +2041,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
 pub fn make_before_promotion_source_by_phase_square<F1>(
     sn: &Phase,
     sq_dst: &Square,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
 ) where

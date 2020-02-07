@@ -8,7 +8,7 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::randommove;
-use super::super::super::model::dto::universe::*;
+use super::super::super::model::dto::application_part::ap_universe_dto::*;
 use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::phase::Phase;
 use super::super::super::model::vo::piece_type::PieceType;

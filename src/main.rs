@@ -23,7 +23,7 @@ use controller::consoles::visuals::dumps::*;
 use controller::consoles::visuals::title::*;
 use controller::movement_generation::mg_main::*;
 use controller::piece_movetrics::pm_main::*;
-use model::dto::universe::*;
+use model::dto::application_part::ap_universe_dto::*;
 use model::vo::constants::*;
 use model::vo::misc::*;
 use model::vo::speed_of_light::*;

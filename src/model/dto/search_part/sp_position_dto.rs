@@ -8,17 +8,17 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::super::model::dto::universe::*;
-use super::super::super::model::vo::phase::*;
-use super::super::super::model::vo::piece::Piece;
-use super::super::super::model::vo::piece::*;
-use super::super::super::model::vo::piece_type::*;
-use super::super::super::model::vo::speed_of_light::*;
-use super::super::super::model::vo::square::*;
+use super::super::super::super::model::dto::application_part::ap_universe_dto::*;
+use super::super::super::super::model::vo::phase::*;
+use super::super::super::super::model::vo::piece::Piece;
+use super::super::super::super::model::vo::piece::*;
+use super::super::super::super::model::vo::piece_type::*;
+use super::super::super::super::model::vo::speed_of_light::*;
+use super::super::super::super::model::vo::square::*;
 
 /// 局面
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
-pub struct Position {
+pub struct SPPositionDto {
     /// 10の位を筋、1の位を段とする。
     /// 0筋、0段は未使用
     board: [Piece; BAN_SIZE],
@@ -33,10 +33,10 @@ pub struct Position {
      */
     sq_r: [Square; SN_LN],
 }
-impl Position {
+impl SPPositionDto {
     pub fn new() -> Self {
-        use super::super::super::model::vo::piece::Piece::Kara;
-        Position {
+        use super::super::super::super::model::vo::piece::Piece::Kara;
+        SPPositionDto {
             // 盤上
             board: [
                 Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
@@ -64,7 +64,7 @@ impl Position {
         }
     }
     pub fn clear(&mut self) {
-        use super::super::super::model::vo::piece::Piece::Kara;
+        use super::super::super::super::model::vo::piece::Piece::Kara;
         self.board = [
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
@@ -118,7 +118,7 @@ impl Position {
         self.board[sq.to_umasu()] = piece.clone();
 
         // 玉の位置を覚え直します。
-        use super::super::super::model::vo::phase::Phase::*;
+        use super::super::super::super::model::vo::phase::Phase::*;
         match *piece {
             Piece::King1 => self.sq_r[Sen as usize] = sq.clone(),
             Piece::King2 => self.sq_r[Go as usize] = sq.clone(),

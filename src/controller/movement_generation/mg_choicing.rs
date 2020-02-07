@@ -10,8 +10,8 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::results::komatori_result::*;
-use super::super::super::model::dto::universe::*;
-use super::super::super::model::search::search_part::*;
+use super::super::super::model::dto::application_part::ap_universe_dto::*;
+use super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::ply::*;
 use super::super::super::model::vo::speed_of_light::*;
@@ -42,7 +42,7 @@ pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> Sasite 
  */
 pub fn select_movement_except_check(
     ss_hashset_input: &mut HashSet<u64>,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
 ) {
     // 自玉の位置

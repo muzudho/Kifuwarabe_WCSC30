@@ -1,5 +1,6 @@
 //! Data transfer object.
 //! You can read, And You can write.
-pub mod piece_set;
-pub mod piece_type_set;
-pub mod universe;
+pub mod application_part;
+pub mod common_part;
+pub mod dialogue_part;
+pub mod search_part;

@@ -5,7 +5,7 @@
 
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::model::dto::universe::*;
+use super::super::super::super::model::dto::application_part::ap_universe_dto::*;
 use super::super::super::super::model::vo::speed_of_light::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手

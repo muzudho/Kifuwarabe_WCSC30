@@ -10,7 +10,7 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::controller::status::mediators::med_kikisu::*;
-use super::super::super::model::dto::universe::*;
+use super::super::super::model::dto::application_part::ap_universe_dto::*;
 use super::super::super::model::vo::speed_of_light::*;
 
 /// 現局面での最善手を返すぜ☆（*＾～＾*）

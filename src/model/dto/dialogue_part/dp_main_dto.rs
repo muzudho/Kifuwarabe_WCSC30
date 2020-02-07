@@ -1,12 +1,12 @@
-pub struct DialoguePart {
+pub struct DPMainDto {
     /// 対話モード
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
 }
-impl DialoguePart {
+impl DPMainDto {
     pub fn new() -> Self {
-        DialoguePart {
+        DPMainDto {
             dialogue_mode: false,
             vec_command: Vec::new(),
         }

@@ -6,7 +6,7 @@ use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::model::search::search_part::*;
+use super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::piece::Piece;
@@ -27,7 +27,7 @@ use std::collections::HashSet;
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
 pub fn get_potential_movement<F1>(
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_movement_callback: F1,
 ) where
@@ -166,7 +166,7 @@ pub fn get_potential_movement<F1>(
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
     piece_dst: Piece,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_movement: F1,
 ) where
@@ -252,7 +252,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
     piece_dst: &Piece,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
     mut gets_movement: F1,
 ) where

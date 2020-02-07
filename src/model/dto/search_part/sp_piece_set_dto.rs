@@ -2,28 +2,28 @@
 //! 駒集合
 //!
 
-use super::super::super::model::search::search_part::*;
-use super::super::super::model::vo::person::Person;
-use super::super::super::model::vo::phase::*;
-use super::super::super::model::vo::piece::Piece;
-use super::super::super::model::vo::piece::*;
-use super::super::super::model::vo::speed_of_light::*;
+use super::super::super::super::model::dto::search_part::sp_main_dto::*;
+use super::super::super::super::model::vo::person::Person;
+use super::super::super::super::model::vo::phase::*;
+use super::super::super::super::model::vo::piece::Piece;
+use super::super::super::super::model::vo::piece::*;
+use super::super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 
-pub struct PieceSet {
+pub struct SPPieceSetDto {
     num_syugo: HashSet<usize>,
 }
-impl PieceSet {
+impl SPPieceSetDto {
     /**
      * 全ての元を含む
      */
-    pub fn new_all(speed_of_light: &SpeedOfLight) -> PieceSet {
+    pub fn new_all(speed_of_light: &SpeedOfLight) -> SPPieceSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for piece in KM_ARRAY.iter() {
             let ps = speed_of_light.piece_vo_master.get_piece_vo(piece);
             num_syugo1.insert(ps.serial_piece_number());
         }
-        let km_syugo = PieceSet {
+        let km_syugo = SPPieceSetDto {
             num_syugo: num_syugo1,
         };
         km_syugo
@@ -34,9 +34,9 @@ impl PieceSet {
     pub fn new_jiai(
         &self,
         jiai: &Person,
-        search_part: &SearchPart,
+        search_part: &SPMainDto,
         speed_of_light: &SpeedOfLight,
-    ) -> PieceSet {
+    ) -> SPPieceSetDto {
         let sn0 = search_part.get_phase(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
@@ -46,7 +46,7 @@ impl PieceSet {
                 num_syugo1.insert(ps.serial_piece_number());
             }
         }
-        let km_syugo = PieceSet {
+        let km_syugo = SPPieceSetDto {
             num_syugo: num_syugo1,
         };
         km_syugo

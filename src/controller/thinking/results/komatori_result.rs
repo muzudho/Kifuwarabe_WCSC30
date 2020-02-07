@@ -8,8 +8,8 @@ use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
-use super::super::super::super::model::dto::universe::*;
-use super::super::super::super::model::search::search_part::*;
+use super::super::super::super::model::dto::application_part::ap_universe_dto::*;
+use super::super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::super::model::vo::phase::Phase;
 use super::super::super::super::model::vo::piece::Piece;
 use super::super::super::super::model::vo::piece_type::*;
@@ -170,7 +170,7 @@ impl KomatoriResult {
 pub fn lookup_catching_king_on_board(
     sn: &Phase,
     sq_target: &Square,
-    search_part: &SearchPart,
+    search_part: &SPMainDto,
     speed_of_light: &SpeedOfLight,
 ) -> HashSet<u64> {
     assert_banjo_sq(

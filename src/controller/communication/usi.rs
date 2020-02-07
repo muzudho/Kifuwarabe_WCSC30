@@ -3,7 +3,7 @@
 //!
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
-use super::super::super::model::dto::universe::*;
+use super::super::super::model::dto::application_part::ap_universe_dto::*;
 use super::super::super::model::vo::constants::*;
 use super::super::super::model::vo::piece::Piece;
 use super::super::super::model::vo::piece_type::PieceType;
