@@ -1,7 +1,7 @@
 //!
 //! 命題
 //!
-use super::super::super::controller::geometries::geo_teigi::*;
+use super::super::super::controller::common_part::cp_geo_teigi_controller::*;
 
 /// 升Pは、点ABで作る平面上にあるか？
 pub fn intersect_point_on_plane(p: &Point, a: &Point, b: &Point) -> bool {

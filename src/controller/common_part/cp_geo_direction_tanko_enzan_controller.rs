@@ -3,7 +3,7 @@
 //! 単項演算☆（＾～＾）
 //!
 
-use super::geo_teigi::Point;
+use super::cp_geo_teigi_controller::Point;
 
 impl Point {
     /**

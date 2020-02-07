@@ -4,8 +4,8 @@
 //! test コマンドで実行しろだぜ☆（＾～＾）
 //!
 use super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::controller::common_part::cp_geo_teigi_controller::*;
 use super::super::super::controller::common_part::cp_math_controller::*;
-use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::randommove;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;

@@ -2,7 +2,7 @@
 //! 変換
 //!
 #![allow(dead_code)]
-use super::super::super::controller::geometries::geo_teigi::*;
+use super::super::super::controller::common_part::cp_geo_teigi_controller::*;
 use super::super::super::model::vo::other_part::op_direction_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
