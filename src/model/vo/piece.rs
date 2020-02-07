@@ -83,7 +83,7 @@ pub const KM_LN: usize = 30;
 impl fmt::Display for Piece {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
-        use super::super::super::model::master::piece::Piece::*;
+        use super::super::super::model::vo::piece::Piece::*;
         match *self {
             King1 => write!(f, "▼ら"),
             Rook1 => write!(f, "▼き"),
@@ -122,8 +122,8 @@ impl Piece {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
     pub fn from_phase_piece_type(phase: &Phase, piece_type: &PieceType) -> Self {
-        use super::super::super::model::master::piece::Piece::*;
-        use super::super::super::model::master::piece_type::PieceType::*;
+        use super::super::super::model::vo::piece::Piece::*;
+        use super::super::super::model::vo::piece_type::PieceType::*;
         match *phase {
             Phase::Sen => match *piece_type {
                 R => King1,

@@ -1,7 +1,7 @@
 //!
 //! 値チェック
 //!
-use super::super::super::model::master::square::Square;
+use super::super::super::model::vo::square::Square;
 
 ///
 /// 打はテストできない

@@ -3,12 +3,12 @@
 //!
 #![allow(dead_code)]
 use super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::model::master::piece_type::PieceType;
-use super::super::super::model::master::square::*;
 use super::super::super::model::vo::direction::*;
 use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::phase::Phase;
 use super::super::super::model::vo::piece_direction::PieceDirection;
+use super::super::super::model::vo::piece_type::PieceType;
+use super::super::super::model::vo::square::*;
 
 /**********
  * 論理値 *
@@ -202,7 +202,7 @@ pub fn kaiten180_sq_by_sq_sn(sq: &Square, sn: &Phase) -> Square {
  * 駒種類の数値化
  */
 pub fn kms_to_num(kms: &PieceType) -> usize {
-    use super::super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::vo::piece_type::PieceType::*;
     match *kms {
         R => 0,
         K => 1,
@@ -226,7 +226,7 @@ pub fn kms_to_num(kms: &PieceType) -> usize {
  * 数値の駒種類化
  */
 pub fn num_to_kms(n: usize) -> PieceType {
-    use super::super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::vo::piece_type::PieceType::*;
     match n {
         0 => R,
         1 => K,
@@ -265,7 +265,7 @@ pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
  * 成れる駒
  */
 pub fn kms_can_pro(kms: &PieceType) -> bool {
-    use super::super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::vo::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,
@@ -289,7 +289,7 @@ pub fn kms_can_pro(kms: &PieceType) -> bool {
  * 打てる駒
  */
 pub fn kms_can_da(kms: &PieceType) -> bool {
-    use super::super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::vo::piece_type::PieceType::*;
     match *kms {
         R => false,
         K => true,

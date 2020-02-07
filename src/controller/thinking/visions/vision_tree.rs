@@ -11,7 +11,7 @@ use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_type::PieceType;
 use super::super::super::super::model::master::piece_type::*;
 */
-use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::vo::square::*;
 /*
 use super::super::super::super::model::universe::*;
 use super::super::super::super::model::vo::piece_vo::PieceVo;

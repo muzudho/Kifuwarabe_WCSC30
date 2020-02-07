@@ -2,10 +2,10 @@
 //! 盤上いろいろ☆（＾～＾）
 //!
 use super::super::super::model::dto::universe::*;
-use super::super::super::model::master::square::*;
 use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::speed_of_light::*;
+use super::super::super::model::vo::square::*;
 
 pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe, speed_of_light: &SpeedOfLight) -> bool {
     match_sn(

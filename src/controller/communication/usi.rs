@@ -4,11 +4,11 @@
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::model::dto::universe::*;
-use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece_type::PieceType;
-use super::super::super::model::master::square::*;
 use super::super::super::model::vo::constants::*;
+use super::super::super::model::vo::piece::Piece;
+use super::super::super::model::vo::piece_type::PieceType;
 use super::super::super::model::vo::speed_of_light::*;
+use super::super::super::model::vo::square::*;
 use std::fmt;
 
 /// 指し手
@@ -83,7 +83,7 @@ impl fmt::Display for Sasite {
         let (dx, dy) = self.dst.to_file_rank();
 
         if self.src.to_umasu() == SS_SRC_DA {
-            use super::super::super::model::master::piece_type::PieceType::*;
+            use super::super::super::model::vo::piece_type::PieceType::*;
             write!(
                 f,
                 "{}*{}{}{}",
@@ -813,7 +813,7 @@ pub fn read_position(line: &String, universe: &mut Universe, speed_of_light: &Sp
                         _ => {} // 駒の名前か、エラーなら次へ
                     }
 
-                    use super::super::super::model::master::piece::Piece::*;
+                    use super::super::super::model::vo::piece::Piece::*;
                     let km: Piece;
                     match &line[starts..(starts + 1)] {
                         "R" => {

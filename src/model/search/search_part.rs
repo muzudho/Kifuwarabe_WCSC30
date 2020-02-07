@@ -3,14 +3,14 @@ use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::status::number_board::*;
 use super::super::super::controller::thinking::visions::vision_tree::*;
-use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::ply::*;
-use super::super::super::model::master::square::*;
 use super::super::super::model::search::position::*;
 use super::super::super::model::vo::person::*;
 use super::super::super::model::vo::phase::*;
+use super::super::super::model::vo::piece::*;
+use super::super::super::model::vo::piece_type::*;
+use super::super::super::model::vo::ply::*;
 use super::super::super::model::vo::speed_of_light::*;
+use super::super::super::model::vo::square::*;
 
 pub struct SearchPart {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）

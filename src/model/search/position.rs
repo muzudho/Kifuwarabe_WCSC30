@@ -9,12 +9,12 @@
 //!
 
 use super::super::super::model::dto::universe::*;
-use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::square::*;
 use super::super::super::model::vo::phase::*;
+use super::super::super::model::vo::piece::Piece;
+use super::super::super::model::vo::piece::*;
+use super::super::super::model::vo::piece_type::*;
 use super::super::super::model::vo::speed_of_light::*;
+use super::super::super::model::vo::square::*;
 
 /// 局面
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
@@ -35,7 +35,7 @@ pub struct Position {
 }
 impl Position {
     pub fn new() -> Self {
-        use super::super::super::model::master::piece::Piece::Kara;
+        use super::super::super::model::vo::piece::Piece::Kara;
         Position {
             // 盤上
             board: [
@@ -64,7 +64,7 @@ impl Position {
         }
     }
     pub fn clear(&mut self) {
-        use super::super::super::model::master::piece::Piece::Kara;
+        use super::super::super::model::vo::piece::Piece::Kara;
         self.board = [
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
             Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,

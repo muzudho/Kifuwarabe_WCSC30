@@ -9,13 +9,13 @@ use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::super::model::dto::universe::*;
-use super::super::super::super::model::master::piece::Piece;
-use super::super::super::super::model::master::piece_type::*;
-use super::super::super::super::model::master::square::*;
 use super::super::super::super::model::search::search_part::*;
 use super::super::super::super::model::vo::phase::Phase;
+use super::super::super::super::model::vo::piece::Piece;
+use super::super::super::super::model::vo::piece_type::*;
 use super::super::super::super::model::vo::piece_vo::PieceVo;
 use super::super::super::super::model::vo::speed_of_light::*;
+use super::super::super::super::model::vo::square::*;
 use std::collections::HashSet;
 use std::fmt;
 

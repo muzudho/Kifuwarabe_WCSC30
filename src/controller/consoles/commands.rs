@@ -3,10 +3,10 @@
 //!
 
 use super::super::super::model::dto::universe::*;
-use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece::*;
 use super::super::super::model::vo::phase::Phase;
 use super::super::super::model::vo::phase::*;
+use super::super::super::model::vo::piece::Piece;
+use super::super::super::model::vo::piece::*;
 use super::super::super::model::vo::speed_of_light::*;
 
 /**

@@ -5,7 +5,7 @@
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::model::dto::universe::*;
-use super::super::super::super::model::master::square::*;
+use super::super::super::super::model::vo::square::*;
 use std::collections::HashSet;
 
 /******

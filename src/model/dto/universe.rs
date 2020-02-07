@@ -10,18 +10,18 @@ use rand::Rng;
 use super::super::super::config::*;
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
-use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_movement::*;
-use super::super::super::model::master::piece_type::PieceType;
-use super::super::super::model::master::piece_type::*;
-use super::super::super::model::master::square::*;
 use super::super::super::model::vo::misc::*;
 use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::phase::*;
+use super::super::super::model::vo::piece::Piece;
+use super::super::super::model::vo::piece::*;
 use super::super::super::model::vo::piece_direction::PieceDirection;
+use super::super::super::model::vo::piece_movement::*;
+use super::super::super::model::vo::piece_type::PieceType;
+use super::super::super::model::vo::piece_type::*;
 use super::super::super::model::vo::piece_vo::PieceVo;
 use super::super::super::model::vo::speed_of_light::*;
+use super::super::super::model::vo::square::*;
 use super::super::application::application_part::*;
 use super::super::dialogue::dialogue_part::*;
 use super::super::search::search_part::*;
@@ -248,9 +248,9 @@ impl Universe {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
-            super::super::master::region::SenteJin::to_elm()
+            super::super::vo::region::SenteJin::to_elm()
         } else {
-            super::super::master::region::GoteJin::to_elm()
+            super::super::vo::region::GoteJin::to_elm()
         }
     }
     /**
@@ -259,9 +259,9 @@ impl Universe {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
-            super::super::master::region::GoteJin::to_elm()
+            super::super::vo::region::GoteJin::to_elm()
         } else {
-            super::super::master::region::SenteJin::to_elm()
+            super::super::vo::region::SenteJin::to_elm()
         }
     }
 
