@@ -6,13 +6,11 @@ extern crate rand;
 use rand::Rng;
 use std::collections::HashSet;
 
-use super::super::super::controller::boardmetries::hypothesis::atamakin;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::controller::status::mediators::med_kikisu::*;
-// use super::super::super::controller::thinking::visions::vision_tree::*;
-use super::super::super::model::universe::*;
+use super::super::super::model::dto::universe::*;
 use super::super::super::model::vo::speed_of_light::*;
 
 /// 現局面での最善手を返すぜ☆（*＾～＾*）
@@ -27,11 +25,6 @@ pub fn think(universe: &mut Universe, speed_of_light: &SpeedOfLight) -> Sasite {
     {
         update_effect_count(universe, speed_of_light);
     }
-
-    g_writeln(&format!(
-        "info test is_s={}",
-        atamakin::is_s(&universe, speed_of_light)
-    ));
 
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
     let mut ss_hashset = HashSet::<u64>::new();

@@ -1,8 +1,8 @@
 //! アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）
 
-use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::square::*;
+use super::super::super::model::vo::phase::*;
 use super::super::search::position::*;
 
 /// 局面ハッシュ種

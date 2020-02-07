@@ -1,4 +1,10 @@
 //! Value object.
+pub mod constants;
+pub mod direction;
+pub mod misc;
+pub mod person;
+pub mod phase;
+pub mod piece_direction;
 pub mod piece_vo;
 pub mod piece_vo_master;
 pub mod speed_of_light;

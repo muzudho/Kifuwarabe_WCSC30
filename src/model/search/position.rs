@@ -8,12 +8,12 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::super::model::master::phase::*;
+use super::super::super::model::dto::universe::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
-use super::super::super::model::universe::*;
+use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::speed_of_light::*;
 
 /// 局面
@@ -118,7 +118,7 @@ impl Position {
         self.board[sq.to_umasu()] = piece.clone();
 
         // 玉の位置を覚え直します。
-        use super::super::super::model::master::phase::Phase::*;
+        use super::super::super::model::vo::phase::Phase::*;
         match *piece {
             Piece::King1 => self.sq_r[Sen as usize] = sq.clone(),
             Piece::King2 => self.sq_r[Go as usize] = sq.clone(),

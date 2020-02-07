@@ -10,11 +10,11 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::results::komatori_result::*;
-use super::super::super::model::master::person::Person;
+use super::super::super::model::dto::universe::*;
 use super::super::super::model::master::ply::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::search::search_part::*;
-use super::super::super::model::universe::*;
+use super::super::super::model::vo::person::Person;
 use super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 

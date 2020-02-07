@@ -5,8 +5,8 @@
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::model::master::direction::*;
 use super::super::super::model::master::square::*;
+use super::super::super::model::vo::direction::*;
 use super::super::super::model::vo::piece_vo::PieceVo;
 
 /**
@@ -33,8 +33,8 @@ pub fn get_dir8_to_slider_from_target(
     let p_target = sq_target.to_point();
 
     let (sn_slider, kms) = slider_piece_vo.phase_piece_type();
-    use super::super::super::model::master::phase::Phase::*;
     use super::super::super::model::master::piece_type::PieceType::*;
+    use super::super::super::model::vo::phase::Phase::*;
     match kms {
         K => {
             // 筋か、段かのどちらかが同じ

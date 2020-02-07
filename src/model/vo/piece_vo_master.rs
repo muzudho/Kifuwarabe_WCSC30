@@ -1,9 +1,9 @@
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use super::super::master::phase::Phase;
 use super::super::master::piece::Piece;
 use super::super::master::piece::Piece::*;
 use super::super::master::piece_type::PieceType;
+use super::super::vo::phase::Phase;
 use super::super::vo::piece_vo::PieceVo;
 
 /// イミュータブルなのだから、直接参照してもいい☆（＾～＾）

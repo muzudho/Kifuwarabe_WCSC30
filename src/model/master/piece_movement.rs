@@ -2,7 +2,7 @@
 //! 駒の動き
 //!
 
-use super::piece_direction::*;
+use super::super::vo::piece_direction::*;
 use super::piece_type::*;
 
 // 駒が戻る動き

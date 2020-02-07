@@ -2,11 +2,11 @@
 //! コマンド一覧
 //!
 
-use super::super::super::model::master::phase::Phase;
-use super::super::super::model::master::phase::*;
+use super::super::super::model::dto::universe::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
-use super::super::super::model::universe::*;
+use super::super::super::model::vo::phase::Phase;
+use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::speed_of_light::*;
 
 /**

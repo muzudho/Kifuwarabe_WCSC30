@@ -4,10 +4,10 @@
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::super::model::master::phase::*;
+use super::super::super::super::model::dto::universe::*;
 use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::square::*;
-use super::super::super::super::model::universe::*;
+use super::super::super::super::model::vo::phase::*;
 use super::super::super::super::model::vo::piece_vo::PieceVo;
 use super::super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;

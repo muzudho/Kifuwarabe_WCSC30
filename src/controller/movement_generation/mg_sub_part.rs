@@ -4,14 +4,14 @@
 
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
-use super::super::super::model::master::phase::Phase;
-use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
-use super::super::super::model::master::piece_direction::*;
 use super::super::super::model::master::piece_movement::*;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::search::search_part::*;
+use super::super::super::model::vo::phase::Phase;
+use super::super::super::model::vo::phase::*;
+use super::super::super::model::vo::piece_direction::*;
 use super::super::super::model::vo::piece_vo::PieceVo;
 use super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
@@ -99,7 +99,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
         };
 
         // 移動先を開始地点にして、駒の位置を終了地点にする
-        use super::super::super::model::master::piece_direction::PieceDirection::*;
+        use super::super::super::model::vo::piece_direction::PieceDirection::*;
         match *p_kmdir {
             // 東
             E(b) => {
@@ -524,7 +524,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
         };
 
         // 移動先を開始地点にして、駒の位置を終了地点にする
-        use super::super::super::model::master::piece_direction::PieceDirection::*;
+        use super::super::super::model::vo::piece_direction::PieceDirection::*;
         match *p_kmdir {
             // 東
             E(b) => {
@@ -1040,7 +1040,7 @@ pub fn make_destination_by_square_piece(
         };
 
         // 駒の位置を開始地点に、離れていくように調べていく
-        use super::super::super::model::master::piece_direction::PieceDirection::*;
+        use super::super::super::model::vo::piece_direction::PieceDirection::*;
         match *p_kmdir {
             // 東
             E(b) => {
@@ -1563,7 +1563,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
 
             // 指定升を開始地点に、離れていくように調べていく
             // 指定先後の駒があれば追加
-            use super::super::super::model::master::piece_direction::PieceDirection::*;
+            use super::super::super::model::vo::piece_direction::PieceDirection::*;
             match *p_kmdir {
                 // 東
                 E(b) => {
@@ -2097,7 +2097,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
 
             // 指定升を開始地点に、離れていくように調べていく
             // 指定先後の駒があれば追加
-            use super::super::super::model::master::piece_direction::PieceDirection::*;
+            use super::super::super::model::vo::piece_direction::PieceDirection::*;
             match *p_kmdir {
                 // 東
                 E(b) => {

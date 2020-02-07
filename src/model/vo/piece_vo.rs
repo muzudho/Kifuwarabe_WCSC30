@@ -1,10 +1,9 @@
-use super::super::master::phase::Phase;
 use super::super::master::piece::Piece;
 use super::super::master::piece_type::PieceType;
+use super::super::vo::phase::Phase;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
-#[derive(Clone)]
 pub struct PieceVo {
     piece: Piece,
     /// 先後、駒種類。
@@ -22,9 +21,9 @@ pub struct PieceVo {
 impl PieceVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
-        use super::super::master::phase::Phase::*;
         use super::super::master::piece::Piece::*;
         use super::super::master::piece_type::PieceType::*;
+        use super::super::vo::phase::Phase::*;
         match p {
             King1 => PieceVo {
                 piece: King1,

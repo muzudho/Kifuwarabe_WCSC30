@@ -3,12 +3,12 @@
 //!
 #![allow(dead_code)]
 use super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::model::master::direction::*;
-use super::super::super::model::master::person::Person;
-use super::super::super::model::master::phase::Phase;
-use super::super::super::model::master::piece_direction::PieceDirection;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::square::*;
+use super::super::super::model::vo::direction::*;
+use super::super::super::model::vo::person::Person;
+use super::super::super::model::vo::phase::Phase;
+use super::super::super::model::vo::piece_direction::PieceDirection;
 
 /**********
  * 論理値 *
@@ -59,7 +59,7 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
  *********/
 #[allow(dead_code)]
 pub fn dir8_to_num(dir: &Dir8) -> usize {
-    use super::super::super::model::master::direction::Dir8::*;
+    use super::super::super::model::vo::direction::Dir8::*;
     match *dir {
         E => 0,
         NE => 1,
@@ -74,7 +74,7 @@ pub fn dir8_to_num(dir: &Dir8) -> usize {
 }
 #[allow(dead_code)]
 pub fn num_to_dir8(n: usize) -> Dir8 {
-    use super::super::super::model::master::direction::Dir8::*;
+    use super::super::super::model::vo::direction::Dir8::*;
     match n {
         0 => E,
         1 => NE,
@@ -109,7 +109,7 @@ pub fn pop_dir8_from_hash(hash: u64) -> (u64, Dir8) {
  * 先後 *
  ********/
 pub fn sn_to_num(sn: &Phase) -> usize {
-    use super::super::super::model::master::phase::Phase::*;
+    use super::super::super::model::vo::phase::Phase::*;
     match *sn {
         Sen => 0,
         Go => 1,
@@ -117,7 +117,7 @@ pub fn sn_to_num(sn: &Phase) -> usize {
     }
 }
 pub fn hanten_sn(sn: &Phase) -> Phase {
-    use super::super::super::model::master::phase::Phase::*;
+    use super::super::super::model::vo::phase::Phase::*;
     match *sn {
         Sen => Go,
         Go => Sen,
@@ -129,7 +129,7 @@ pub fn hanten_sn(sn: &Phase) -> Phase {
  * 自分相手 *
  ************/
 pub fn jiai_to_num(jiai: &Person) -> usize {
-    use super::super::super::model::master::person::Person::*;
+    use super::super::super::model::vo::person::Person::*;
     match *jiai {
         Ji => 0,
         Ai => 1,
@@ -137,7 +137,7 @@ pub fn jiai_to_num(jiai: &Person) -> usize {
     }
 }
 pub fn hanten_jiai(jiai: &Person) -> Person {
-    use super::super::super::model::master::person::Person::*;
+    use super::super::super::model::vo::person::Person::*;
     match *jiai {
         Ji => Ai,
         Ai => Ji,
@@ -187,7 +187,7 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
 pub fn kaiten180_sq_by_sq_sn(sq: &Square, sn: &Phase) -> Square {
-    use super::super::super::model::master::phase::Phase::*;
+    use super::super::super::model::vo::phase::Phase::*;
     match *sn {
         Sen => Square::from_umasu(BAN_MAX - sq.to_umasu() + BAN_MIN),
         _ => (*sq).clone(),
@@ -318,7 +318,7 @@ pub fn kms_can_da(kms: &PieceType) -> bool {
  * 上下反転
  */
 pub fn hanten_kmdir_joge(kmdir: &PieceDirection) -> PieceDirection {
-    use super::super::super::model::master::piece_direction::PieceDirection::*;
+    use super::super::super::model::vo::piece_direction::PieceDirection::*;
     match *kmdir {
         // 東
         E(b) => E(b),

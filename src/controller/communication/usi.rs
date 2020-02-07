@@ -3,11 +3,11 @@
 //!
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
-use super::super::super::model::master::constants::*;
+use super::super::super::model::dto::universe::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::square::*;
-use super::super::super::model::universe::*;
+use super::super::super::model::vo::constants::*;
 use super::super::super::model::vo::speed_of_light::*;
 use std::fmt;
 

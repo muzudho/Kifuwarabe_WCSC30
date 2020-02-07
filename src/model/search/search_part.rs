@@ -3,13 +3,13 @@ use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::status::number_board::*;
 use super::super::super::controller::thinking::visions::vision_tree::*;
-use super::super::super::model::master::person::*;
-use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::ply::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::search::position::*;
+use super::super::super::model::vo::person::*;
+use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::speed_of_light::*;
 
 pub struct SearchPart {
@@ -619,7 +619,7 @@ impl SearchPart {
 
     /// 手番
     pub fn get_phase(&self, jiai: &Person) -> Phase {
-        use super::super::super::model::master::person::Person::*;
+        use super::super::super::model::vo::person::Person::*;
         match *jiai {
             Ji => {
                 // 手番

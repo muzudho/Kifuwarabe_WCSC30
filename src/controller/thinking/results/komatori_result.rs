@@ -8,12 +8,12 @@ use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
-use super::super::super::super::model::master::phase::Phase;
+use super::super::super::super::model::dto::universe::*;
 use super::super::super::super::model::master::piece::Piece;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
 use super::super::super::super::model::search::search_part::*;
-use super::super::super::super::model::universe::*;
+use super::super::super::super::model::vo::phase::Phase;
 use super::super::super::super::model::vo::piece_vo::PieceVo;
 use super::super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
@@ -45,13 +45,13 @@ pub struct KomatoriResult {
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let ps_attacker = PieceVo::from_piece(self.km_attacker.clone());
+        // let ps_attacker = PieceVo::from_piece(self.km_attacker.clone());
         write!(
             f,
-            "KmTori:{}{}{}{}",
+            "KmTori:{}{}->{}",
             self.sq_attacker.to_umasu(),
             self.km_attacker,
-            if ps_attacker.is_slider() { "-->" } else { "->" },
+            // if ps_attacker.is_slider() { "-->" } else { "->" },
             self.sq_target.to_umasu()
         )
     }

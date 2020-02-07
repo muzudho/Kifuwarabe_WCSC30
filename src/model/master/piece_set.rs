@@ -2,11 +2,11 @@
 //! 駒集合
 //!
 
-use super::super::super::model::master::person::Person;
-use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
 use super::super::super::model::search::search_part::*;
+use super::super::super::model::vo::person::Person;
+use super::super::super::model::vo::phase::*;
 use super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 

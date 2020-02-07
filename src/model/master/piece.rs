@@ -4,7 +4,7 @@
 //! 先後付き駒
 //!
 
-use super::phase::*;
+use super::super::vo::phase::*;
 use super::piece_type::*;
 use std::fmt;
 

@@ -7,24 +7,24 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::config::*;
-use super::super::controller::common::conv::*;
-use super::super::controller::communication::usi::*;
-use super::super::model::master::misc::*;
-use super::super::model::master::person::Person;
-use super::super::model::master::phase::*;
-use super::super::model::master::piece::Piece;
-use super::super::model::master::piece::*;
-use super::super::model::master::piece_direction::PieceDirection;
-use super::super::model::master::piece_movement::*;
-use super::super::model::master::piece_type::PieceType;
-use super::super::model::master::piece_type::*;
-use super::super::model::master::square::*;
-use super::super::model::vo::piece_vo::PieceVo;
-use super::super::model::vo::speed_of_light::*;
-use super::application::application_part::*;
-use super::dialogue::dialogue_part::*;
-use super::search::search_part::*;
+use super::super::super::config::*;
+use super::super::super::controller::common::conv::*;
+use super::super::super::controller::communication::usi::*;
+use super::super::super::model::master::piece::Piece;
+use super::super::super::model::master::piece::*;
+use super::super::super::model::master::piece_movement::*;
+use super::super::super::model::master::piece_type::PieceType;
+use super::super::super::model::master::piece_type::*;
+use super::super::super::model::master::square::*;
+use super::super::super::model::vo::misc::*;
+use super::super::super::model::vo::person::Person;
+use super::super::super::model::vo::phase::*;
+use super::super::super::model::vo::piece_direction::PieceDirection;
+use super::super::super::model::vo::piece_vo::PieceVo;
+use super::super::super::model::vo::speed_of_light::*;
+use super::super::application::application_part::*;
+use super::super::dialogue::dialogue_part::*;
+use super::super::search::search_part::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -248,9 +248,9 @@ impl Universe {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
-            super::master::region::SenteJin::to_elm()
+            super::super::master::region::SenteJin::to_elm()
         } else {
-            super::master::region::GoteJin::to_elm()
+            super::super::master::region::GoteJin::to_elm()
         }
     }
     /**
@@ -259,9 +259,9 @@ impl Universe {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::Sen = self.search_part.get_phase(&Person::Ji) {
-            super::master::region::GoteJin::to_elm()
+            super::super::master::region::GoteJin::to_elm()
         } else {
-            super::master::region::SenteJin::to_elm()
+            super::super::master::region::SenteJin::to_elm()
         }
     }
 
@@ -614,7 +614,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use super::master::phase::Phase::*;
+        use super::super::vo::phase::Phase::*;
         match self.search_part.get_phase(&Person::Ji) {
             Sen => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_SEN],
             Go => hash ^= self.get_application_part().get_position_hash_seed().sn[SN_GO],
