@@ -3,15 +3,15 @@ use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::status::number_board::*;
 use super::super::super::controller::thinking::visions::vision_tree::*;
-use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::person::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_struct::*;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::ply::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::search::position::*;
+use super::super::super::model::vo::piece_vo::*;
+use super::super::super::model::vo::speed_of_light::*;
 
 pub struct SearchPart {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
@@ -702,7 +702,7 @@ impl SearchPart {
             _ => {
                 // 自分の持ち駒を減らす
                 self.current_position
-                    .add_hand(PieceStruct::from_piece(cap).capture(), -1);
+                    .add_hand(PieceVo::from_piece(cap).capture(), -1);
             }
         }
 

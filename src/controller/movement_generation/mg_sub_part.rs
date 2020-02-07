@@ -4,16 +4,16 @@
 
 use super::super::super::controller::common::conv::*;
 use super::super::super::controller::consoles::asserts::*;
-use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::phase::Phase;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece_direction::*;
 use super::super::super::model::master::piece_movement::*;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::search::search_part::*;
+use super::super::super::model::vo::piece_vo::PieceVo;
+use super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 
 /// 成る前を含めない、移動元升生成
@@ -33,7 +33,7 @@ use std::collections::HashSet;
 /// TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
 pub fn make_no_promotion_source_by_square_and_piece<F1>(
     sq_dst: &Square,
-    ps_dst: &PieceStruct,
+    ps_dst: &PieceVo,
     search_part: &SearchPart,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,
@@ -454,7 +454,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
 /// 成り　の動きでその結果になるような、元の升を返す☆（＾～＾）
 pub fn make_before_promotion_source_by_square_piece<F1>(
     sq_dst: &Square,
-    ps_dst: &PieceStruct,
+    ps_dst: &PieceVo,
     search_part: &SearchPart,
     speed_of_light: &SpeedOfLight,
     mut gets_square: F1,

@@ -2,13 +2,13 @@
 //! 駒集合
 //!
 
-use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::search::search_part::*;
+use super::super::super::model::vo::piece_vo::PieceVo;
+use super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 
 pub struct PieceSet {
@@ -21,7 +21,7 @@ impl PieceSet {
     pub fn new_all() -> PieceSet {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = PieceStruct::from_piece((*km).clone());
+            let ps = PieceVo::from_piece((*km).clone());
             num_syugo1.insert(ps.serial_piece_number());
         }
         let km_syugo = PieceSet {
@@ -54,6 +54,6 @@ impl PieceSet {
     }
     pub fn remove(&mut self, piece: Piece) {
         self.num_syugo
-            .remove(&PieceStruct::from_piece(piece).serial_piece_number());
+            .remove(&PieceVo::from_piece(piece).serial_piece_number());
     }
 }

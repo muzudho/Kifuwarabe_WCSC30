@@ -6,7 +6,6 @@ use super::super::super::controller::common::conv::*;
 use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::person::Person;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
@@ -14,6 +13,7 @@ use super::super::super::model::master::piece_type::PieceType;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::search::search_part::*;
+use super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 
 ///

@@ -7,7 +7,6 @@ pub mod piece;
 pub mod piece_direction;
 pub mod piece_movement;
 pub mod piece_set;
-pub mod piece_struct;
 pub mod piece_type;
 pub mod piece_type_set;
 pub mod ply;

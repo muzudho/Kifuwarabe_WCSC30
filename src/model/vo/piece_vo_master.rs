@@ -3,79 +3,79 @@
 use super::super::master::phase::Phase;
 use super::super::master::piece::Piece;
 use super::super::master::piece::Piece::*;
-use super::super::master::piece_struct::PieceStruct;
 use super::super::master::piece_type::PieceType;
+use super::super::vo::piece_vo::PieceVo;
 
-pub struct PieceStructMaster {
-    king1: PieceStruct,
-    rook1: PieceStruct,
-    bishop1: PieceStruct,
-    gold1: PieceStruct,
-    silver1: PieceStruct,
-    knight1: PieceStruct,
-    lance1: PieceStruct,
-    pawn1: PieceStruct,
-    promoted_rook1: PieceStruct,
-    promoted_bishop1: PieceStruct,
-    promoted_silver1: PieceStruct,
-    promoted_knight1: PieceStruct,
-    promoted_lance1: PieceStruct,
-    promoted_pawn1: PieceStruct,
-    king2: PieceStruct,
-    rook2: PieceStruct,
-    bishop2: PieceStruct,
-    gold2: PieceStruct,
-    silver2: PieceStruct,
-    knight2: PieceStruct,
-    lance2: PieceStruct,
-    pawn2: PieceStruct,
-    promoted_rook2: PieceStruct,
-    promoted_bishop2: PieceStruct,
-    promoted_silver2: PieceStruct,
-    promoted_knight2: PieceStruct,
-    promoted_lance2: PieceStruct,
-    promoted_pawn2: PieceStruct,
-    kara: PieceStruct,
-    owari: PieceStruct,
+pub struct PieceVoMaster {
+    king1: PieceVo,
+    rook1: PieceVo,
+    bishop1: PieceVo,
+    gold1: PieceVo,
+    silver1: PieceVo,
+    knight1: PieceVo,
+    lance1: PieceVo,
+    pawn1: PieceVo,
+    promoted_rook1: PieceVo,
+    promoted_bishop1: PieceVo,
+    promoted_silver1: PieceVo,
+    promoted_knight1: PieceVo,
+    promoted_lance1: PieceVo,
+    promoted_pawn1: PieceVo,
+    king2: PieceVo,
+    rook2: PieceVo,
+    bishop2: PieceVo,
+    gold2: PieceVo,
+    silver2: PieceVo,
+    knight2: PieceVo,
+    lance2: PieceVo,
+    pawn2: PieceVo,
+    promoted_rook2: PieceVo,
+    promoted_bishop2: PieceVo,
+    promoted_silver2: PieceVo,
+    promoted_knight2: PieceVo,
+    promoted_lance2: PieceVo,
+    promoted_pawn2: PieceVo,
+    kara: PieceVo,
+    owari: PieceVo,
 }
-impl PieceStructMaster {
+impl PieceVoMaster {
     pub fn new() -> Self {
-        PieceStructMaster {
-            king1: PieceStruct::from_piece(King1),
-            rook1: PieceStruct::from_piece(Rook1),
-            bishop1: PieceStruct::from_piece(Bishop1),
-            gold1: PieceStruct::from_piece(Gold1),
-            silver1: PieceStruct::from_piece(Silver1),
-            knight1: PieceStruct::from_piece(Knight1),
-            lance1: PieceStruct::from_piece(Lance1),
-            pawn1: PieceStruct::from_piece(Pawn1),
-            promoted_rook1: PieceStruct::from_piece(PromotedRook1),
-            promoted_bishop1: PieceStruct::from_piece(PromotedBishop1),
-            promoted_silver1: PieceStruct::from_piece(PromotedSilver1),
-            promoted_knight1: PieceStruct::from_piece(PromotedKnight1),
-            promoted_lance1: PieceStruct::from_piece(PromotedLance1),
-            promoted_pawn1: PieceStruct::from_piece(PromotedPawn1),
-            king2: PieceStruct::from_piece(King2),
-            rook2: PieceStruct::from_piece(Rook2),
-            bishop2: PieceStruct::from_piece(Bishop2),
-            gold2: PieceStruct::from_piece(Gold2),
-            silver2: PieceStruct::from_piece(Silver2),
-            knight2: PieceStruct::from_piece(Knight2),
-            lance2: PieceStruct::from_piece(Lance2),
-            pawn2: PieceStruct::from_piece(Pawn2),
-            promoted_rook2: PieceStruct::from_piece(PromotedRook2),
-            promoted_bishop2: PieceStruct::from_piece(PromotedBishop2),
-            promoted_silver2: PieceStruct::from_piece(PromotedSilver2),
-            promoted_knight2: PieceStruct::from_piece(PromotedKnight2),
-            promoted_lance2: PieceStruct::from_piece(PromotedLance2),
-            promoted_pawn2: PieceStruct::from_piece(PromotedPawn2),
-            kara: PieceStruct::from_piece(Kara),
-            owari: PieceStruct::from_piece(Owari),
+        PieceVoMaster {
+            king1: PieceVo::from_piece(King1),
+            rook1: PieceVo::from_piece(Rook1),
+            bishop1: PieceVo::from_piece(Bishop1),
+            gold1: PieceVo::from_piece(Gold1),
+            silver1: PieceVo::from_piece(Silver1),
+            knight1: PieceVo::from_piece(Knight1),
+            lance1: PieceVo::from_piece(Lance1),
+            pawn1: PieceVo::from_piece(Pawn1),
+            promoted_rook1: PieceVo::from_piece(PromotedRook1),
+            promoted_bishop1: PieceVo::from_piece(PromotedBishop1),
+            promoted_silver1: PieceVo::from_piece(PromotedSilver1),
+            promoted_knight1: PieceVo::from_piece(PromotedKnight1),
+            promoted_lance1: PieceVo::from_piece(PromotedLance1),
+            promoted_pawn1: PieceVo::from_piece(PromotedPawn1),
+            king2: PieceVo::from_piece(King2),
+            rook2: PieceVo::from_piece(Rook2),
+            bishop2: PieceVo::from_piece(Bishop2),
+            gold2: PieceVo::from_piece(Gold2),
+            silver2: PieceVo::from_piece(Silver2),
+            knight2: PieceVo::from_piece(Knight2),
+            lance2: PieceVo::from_piece(Lance2),
+            pawn2: PieceVo::from_piece(Pawn2),
+            promoted_rook2: PieceVo::from_piece(PromotedRook2),
+            promoted_bishop2: PieceVo::from_piece(PromotedBishop2),
+            promoted_silver2: PieceVo::from_piece(PromotedSilver2),
+            promoted_knight2: PieceVo::from_piece(PromotedKnight2),
+            promoted_lance2: PieceVo::from_piece(PromotedLance2),
+            promoted_pawn2: PieceVo::from_piece(PromotedPawn2),
+            kara: PieceVo::from_piece(Kara),
+            owari: PieceVo::from_piece(Owari),
         }
     }
 
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
+    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceVo {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.piece_structs[(*piece).clone() as usize]
@@ -120,7 +120,7 @@ impl PieceStructMaster {
         &self,
         phase: &Phase,
         piece_type: &PieceType,
-    ) -> &PieceStruct {
+    ) -> &PieceVo {
         use super::super::super::model::master::piece::Piece::*;
         use super::super::super::model::master::piece_type::PieceType::*;
         match *phase {

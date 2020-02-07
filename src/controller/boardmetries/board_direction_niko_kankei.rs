@@ -6,8 +6,8 @@ use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::model::master::direction::*;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::square::*;
+use super::super::super::model::vo::piece_vo::PieceVo;
 
 /**
  * 狙われている駒から見た、長い利きの駒の居る方向（８方向）
@@ -17,7 +17,7 @@ use super::super::super::model::master::square::*;
  */
 pub fn get_dir8_to_slider_from_target(
     sq_slider: &Square,
-    slider_piece_struct: &PieceStruct,
+    slider_piece_struct: &PieceVo,
     sq_target: &Square,
 ) -> Dir8 {
     debug_assert!(

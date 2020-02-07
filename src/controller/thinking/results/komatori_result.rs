@@ -8,14 +8,14 @@ use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
-use super::super::super::super::model::definition::speed_of_light::*;
 use super::super::super::super::model::master::phase::Phase;
 use super::super::super::super::model::master::piece::Piece;
-use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::piece_type::*;
 use super::super::super::super::model::master::square::*;
 use super::super::super::super::model::search::search_part::*;
 use super::super::super::super::model::universe::*;
+use super::super::super::super::model::vo::piece_vo::PieceVo;
+use super::super::super::super::model::vo::speed_of_light::*;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -45,7 +45,7 @@ pub struct KomatoriResult {
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let ps_attacker = PieceStruct::from_piece(self.km_attacker.clone());
+        let ps_attacker = PieceVo::from_piece(self.km_attacker.clone());
         write!(
             f,
             "KmTori:{}{}{}{}",
@@ -66,11 +66,11 @@ impl KomatoriResult {
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_sq_to_hash(hash, &self.sq_target);
         hash = push_sq_to_hash(hash, &self.sq_attacker);
-        PieceStruct::from_piece(self.km_attacker.clone()).add_hash(hash)
+        PieceVo::from_piece(self.km_attacker.clone()).add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, km_atk) = PieceStruct::from_hash(hash);
+        let (hash, km_atk) = PieceVo::from_hash(hash);
         let (hash, sq_atk) = pop_sq_from_hash(hash);
         let (_hash, sq_tgt) = pop_sq_from_hash(hash);
         KomatoriResult {
@@ -97,7 +97,7 @@ impl KomatoriResult {
         }
 
         // (2-1)
-        let ps_attacker = PieceStruct::from_piece(self.km_attacker.clone());
+        let ps_attacker = PieceVo::from_piece(self.km_attacker.clone());
         if ps_attacker.is_slider() {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
             assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");

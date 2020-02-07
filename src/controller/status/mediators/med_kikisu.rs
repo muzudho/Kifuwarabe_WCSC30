@@ -6,9 +6,9 @@ use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
-use super::super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::super::model::master::square::*;
 use super::super::super::super::model::universe::*;
+use super::super::super::super::model::vo::piece_vo::PieceVo;
 use std::collections::HashSet;
 
 /// 盤上の利き升調べ
@@ -18,7 +18,7 @@ pub fn update_effect_count(universe: &mut Universe) {
     // ゼロ・リセット
     for pc in KM_ARRAY.iter() {
         &universe.get_search_part_mut().effect_count_by_piece
-            [PieceStruct::from_piece((*pc).clone()).serial_piece_number()]
+            [PieceVo::from_piece((*pc).clone()).serial_piece_number()]
         .clear();
     }
 
@@ -28,7 +28,7 @@ pub fn update_effect_count(universe: &mut Universe) {
 
     // カウント
     for km_dst in KM_ARRAY.iter() {
-        let ps_dst = PieceStruct::from_piece((*km_dst).clone());
+        let ps_dst = PieceVo::from_piece((*km_dst).clone());
 
         for x in SUJI_1..SUJI_10 {
             // 9..0 みたいに降順に書いても動かない？

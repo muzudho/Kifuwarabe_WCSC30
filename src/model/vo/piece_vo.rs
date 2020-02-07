@@ -1,12 +1,11 @@
-// use super::super::super::controller::common::conv;
-use super::phase::Phase;
-use super::piece::Piece;
-use super::piece_type::PieceType;
+use super::super::master::phase::Phase;
+use super::super::master::piece::Piece;
+use super::super::master::piece_type::PieceType;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
 #[derive(Clone)]
-pub struct PieceStruct {
+pub struct PieceVo {
     piece: Piece,
     /// 先後、駒種類。
     phase_piece_type: (Phase, PieceType),
@@ -20,14 +19,14 @@ pub struct PieceStruct {
     /// 先後付き駒の配列のインデックス
     serial_piece_number: usize,
 }
-impl PieceStruct {
+impl PieceVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
-        use super::phase::Phase::*;
-        use super::piece::Piece::*;
-        use super::piece_type::PieceType::*;
+        use super::super::master::phase::Phase::*;
+        use super::super::master::piece::Piece::*;
+        use super::super::master::piece_type::PieceType::*;
         match p {
-            King1 => PieceStruct {
+            King1 => PieceVo {
                 piece: King1,
                 phase_piece_type: (Sen, R),
                 promoted: King1,
@@ -35,7 +34,7 @@ impl PieceStruct {
                 captured: Piece::Owari,
                 serial_piece_number: 0,
             },
-            Rook1 => PieceStruct {
+            Rook1 => PieceVo {
                 piece: Rook1,
                 phase_piece_type: (Sen, K),
                 promoted: PromotedRook1,
@@ -43,7 +42,7 @@ impl PieceStruct {
                 captured: Rook2,
                 serial_piece_number: 1,
             },
-            Bishop1 => PieceStruct {
+            Bishop1 => PieceVo {
                 piece: Bishop1,
                 phase_piece_type: (Sen, Z),
                 promoted: PromotedBishop1,
@@ -51,7 +50,7 @@ impl PieceStruct {
                 captured: Bishop2,
                 serial_piece_number: 2,
             },
-            Gold1 => PieceStruct {
+            Gold1 => PieceVo {
                 piece: Gold1,
                 phase_piece_type: (Sen, I),
                 promoted: Gold1,
@@ -59,7 +58,7 @@ impl PieceStruct {
                 captured: Gold2,
                 serial_piece_number: 3,
             },
-            Silver1 => PieceStruct {
+            Silver1 => PieceVo {
                 piece: Silver1,
                 phase_piece_type: (Sen, N),
                 promoted: PromotedSilver1,
@@ -67,7 +66,7 @@ impl PieceStruct {
                 captured: Silver2,
                 serial_piece_number: 4,
             },
-            Knight1 => PieceStruct {
+            Knight1 => PieceVo {
                 piece: Knight1,
                 phase_piece_type: (Sen, U),
                 promoted: PromotedKnight1,
@@ -75,7 +74,7 @@ impl PieceStruct {
                 captured: Knight2,
                 serial_piece_number: 5,
             },
-            Lance1 => PieceStruct {
+            Lance1 => PieceVo {
                 piece: Lance1,
                 phase_piece_type: (Sen, S),
                 promoted: PromotedLance1,
@@ -83,7 +82,7 @@ impl PieceStruct {
                 captured: Lance2,
                 serial_piece_number: 6,
             },
-            Pawn1 => PieceStruct {
+            Pawn1 => PieceVo {
                 piece: Pawn1,
                 phase_piece_type: (Sen, H),
                 promoted: PromotedPawn1,
@@ -91,7 +90,7 @@ impl PieceStruct {
                 captured: Pawn2,
                 serial_piece_number: 7,
             },
-            PromotedRook1 => PieceStruct {
+            PromotedRook1 => PieceVo {
                 piece: PromotedRook1,
                 phase_piece_type: (Sen, PK),
                 promoted: PromotedRook1,
@@ -99,7 +98,7 @@ impl PieceStruct {
                 captured: Rook2,
                 serial_piece_number: 8,
             },
-            PromotedBishop1 => PieceStruct {
+            PromotedBishop1 => PieceVo {
                 piece: PromotedBishop1,
                 phase_piece_type: (Sen, PZ),
                 promoted: PromotedBishop1,
@@ -107,7 +106,7 @@ impl PieceStruct {
                 captured: Bishop2,
                 serial_piece_number: 9,
             },
-            PromotedSilver1 => PieceStruct {
+            PromotedSilver1 => PieceVo {
                 piece: PromotedSilver1,
                 phase_piece_type: (Sen, PN),
                 promoted: PromotedSilver1,
@@ -115,7 +114,7 @@ impl PieceStruct {
                 captured: Silver2,
                 serial_piece_number: 10,
             },
-            PromotedKnight1 => PieceStruct {
+            PromotedKnight1 => PieceVo {
                 piece: PromotedKnight1,
                 phase_piece_type: (Sen, PU),
                 promoted: PromotedKnight1,
@@ -123,7 +122,7 @@ impl PieceStruct {
                 captured: Knight2,
                 serial_piece_number: 11,
             },
-            PromotedLance1 => PieceStruct {
+            PromotedLance1 => PieceVo {
                 piece: PromotedLance1,
                 phase_piece_type: (Sen, PS),
                 promoted: PromotedLance1,
@@ -131,7 +130,7 @@ impl PieceStruct {
                 captured: Lance2,
                 serial_piece_number: 12,
             },
-            PromotedPawn1 => PieceStruct {
+            PromotedPawn1 => PieceVo {
                 piece: PromotedPawn1,
                 phase_piece_type: (Sen, PH),
                 promoted: PromotedPawn1,
@@ -139,7 +138,7 @@ impl PieceStruct {
                 captured: Pawn2,
                 serial_piece_number: 13,
             },
-            King2 => PieceStruct {
+            King2 => PieceVo {
                 piece: King2,
                 phase_piece_type: (Go, R),
                 promoted: King2,
@@ -147,7 +146,7 @@ impl PieceStruct {
                 captured: Piece::Owari,
                 serial_piece_number: 14,
             },
-            Rook2 => PieceStruct {
+            Rook2 => PieceVo {
                 piece: Rook2,
                 phase_piece_type: (Go, K),
                 promoted: PromotedRook2,
@@ -155,7 +154,7 @@ impl PieceStruct {
                 captured: Rook1,
                 serial_piece_number: 15,
             },
-            Bishop2 => PieceStruct {
+            Bishop2 => PieceVo {
                 piece: Bishop2,
                 phase_piece_type: (Go, Z),
                 promoted: PromotedBishop2,
@@ -163,7 +162,7 @@ impl PieceStruct {
                 captured: Bishop1,
                 serial_piece_number: 16,
             },
-            Gold2 => PieceStruct {
+            Gold2 => PieceVo {
                 piece: Gold2,
                 phase_piece_type: (Go, I),
                 promoted: Gold2,
@@ -171,7 +170,7 @@ impl PieceStruct {
                 captured: Gold1,
                 serial_piece_number: 17,
             },
-            Silver2 => PieceStruct {
+            Silver2 => PieceVo {
                 piece: Silver2,
                 phase_piece_type: (Go, N),
                 promoted: PromotedSilver2,
@@ -179,7 +178,7 @@ impl PieceStruct {
                 captured: Silver1,
                 serial_piece_number: 18,
             },
-            Knight2 => PieceStruct {
+            Knight2 => PieceVo {
                 piece: Knight2,
                 phase_piece_type: (Go, U),
                 promoted: PromotedKnight2,
@@ -187,7 +186,7 @@ impl PieceStruct {
                 captured: Knight1,
                 serial_piece_number: 19,
             },
-            Lance2 => PieceStruct {
+            Lance2 => PieceVo {
                 piece: Lance2,
                 phase_piece_type: (Go, S),
                 promoted: PromotedLance2,
@@ -195,7 +194,7 @@ impl PieceStruct {
                 captured: Lance1,
                 serial_piece_number: 20,
             },
-            Pawn2 => PieceStruct {
+            Pawn2 => PieceVo {
                 piece: Pawn2,
                 phase_piece_type: (Go, H),
                 promoted: PromotedPawn2,
@@ -203,7 +202,7 @@ impl PieceStruct {
                 captured: Pawn1,
                 serial_piece_number: 21,
             },
-            PromotedRook2 => PieceStruct {
+            PromotedRook2 => PieceVo {
                 piece: PromotedRook2,
                 phase_piece_type: (Go, PK),
                 promoted: PromotedRook2,
@@ -211,7 +210,7 @@ impl PieceStruct {
                 captured: Rook1,
                 serial_piece_number: 22,
             },
-            PromotedBishop2 => PieceStruct {
+            PromotedBishop2 => PieceVo {
                 piece: PromotedBishop2,
                 phase_piece_type: (Go, PZ),
                 promoted: PromotedBishop2,
@@ -219,7 +218,7 @@ impl PieceStruct {
                 captured: Bishop1,
                 serial_piece_number: 23,
             },
-            PromotedSilver2 => PieceStruct {
+            PromotedSilver2 => PieceVo {
                 piece: PromotedSilver2,
                 phase_piece_type: (Go, PN),
                 promoted: PromotedSilver2,
@@ -227,7 +226,7 @@ impl PieceStruct {
                 captured: Silver1,
                 serial_piece_number: 24,
             },
-            PromotedKnight2 => PieceStruct {
+            PromotedKnight2 => PieceVo {
                 piece: PromotedKnight2,
                 phase_piece_type: (Go, PU),
                 promoted: PromotedKnight2,
@@ -235,7 +234,7 @@ impl PieceStruct {
                 captured: Knight1,
                 serial_piece_number: 25,
             },
-            PromotedLance2 => PieceStruct {
+            PromotedLance2 => PieceVo {
                 piece: PromotedLance2,
                 phase_piece_type: (Go, PS),
                 promoted: PromotedLance2,
@@ -243,7 +242,7 @@ impl PieceStruct {
                 captured: Lance1,
                 serial_piece_number: 26,
             },
-            PromotedPawn2 => PieceStruct {
+            PromotedPawn2 => PieceVo {
                 piece: PromotedPawn2,
                 phase_piece_type: (Go, PH),
                 promoted: PromotedPawn2,
@@ -251,7 +250,7 @@ impl PieceStruct {
                 captured: Pawn1,
                 serial_piece_number: 27,
             },
-            Piece::Kara => PieceStruct {
+            Piece::Kara => PieceVo {
                 piece: Piece::Kara,
                 phase_piece_type: (Phase::Owari, PieceType::Kara),
                 promoted: Piece::Kara,
@@ -259,7 +258,7 @@ impl PieceStruct {
                 captured: Piece::Owari,
                 serial_piece_number: 28,
             },
-            Piece::Owari => PieceStruct {
+            Piece::Owari => PieceVo {
                 piece: Piece::Owari,
                 phase_piece_type: (Phase::Owari, PieceType::Owari),
                 promoted: Piece::Owari,
@@ -273,43 +272,43 @@ impl PieceStruct {
     pub fn from_serial_piece_number(km_num: usize) -> Self {
         use super::super::super::model::master::piece::Piece::*;
         match km_num {
-            0 => PieceStruct::from_piece(King1),
-            1 => PieceStruct::from_piece(Rook1),
-            2 => PieceStruct::from_piece(Bishop1),
-            3 => PieceStruct::from_piece(Gold1),
-            4 => PieceStruct::from_piece(Silver1),
-            5 => PieceStruct::from_piece(Knight1),
-            6 => PieceStruct::from_piece(Lance1),
-            7 => PieceStruct::from_piece(Pawn1),
-            8 => PieceStruct::from_piece(PromotedRook1),
-            9 => PieceStruct::from_piece(PromotedBishop1),
-            10 => PieceStruct::from_piece(PromotedSilver1),
-            11 => PieceStruct::from_piece(PromotedKnight1),
-            12 => PieceStruct::from_piece(PromotedLance1),
-            13 => PieceStruct::from_piece(PromotedPawn1),
-            14 => PieceStruct::from_piece(King2),
-            15 => PieceStruct::from_piece(Rook2),
-            16 => PieceStruct::from_piece(Bishop2),
-            17 => PieceStruct::from_piece(Gold2),
-            18 => PieceStruct::from_piece(Silver2),
-            19 => PieceStruct::from_piece(Knight2),
-            20 => PieceStruct::from_piece(Lance2),
-            21 => PieceStruct::from_piece(Pawn2),
-            22 => PieceStruct::from_piece(PromotedRook2),
-            23 => PieceStruct::from_piece(PromotedBishop2),
-            24 => PieceStruct::from_piece(PromotedSilver2),
-            25 => PieceStruct::from_piece(PromotedKnight2),
-            26 => PieceStruct::from_piece(PromotedLance2),
-            27 => PieceStruct::from_piece(PromotedPawn2),
-            28 => PieceStruct::from_piece(Kara),
-            _ => PieceStruct::from_piece(Owari),
+            0 => PieceVo::from_piece(King1),
+            1 => PieceVo::from_piece(Rook1),
+            2 => PieceVo::from_piece(Bishop1),
+            3 => PieceVo::from_piece(Gold1),
+            4 => PieceVo::from_piece(Silver1),
+            5 => PieceVo::from_piece(Knight1),
+            6 => PieceVo::from_piece(Lance1),
+            7 => PieceVo::from_piece(Pawn1),
+            8 => PieceVo::from_piece(PromotedRook1),
+            9 => PieceVo::from_piece(PromotedBishop1),
+            10 => PieceVo::from_piece(PromotedSilver1),
+            11 => PieceVo::from_piece(PromotedKnight1),
+            12 => PieceVo::from_piece(PromotedLance1),
+            13 => PieceVo::from_piece(PromotedPawn1),
+            14 => PieceVo::from_piece(King2),
+            15 => PieceVo::from_piece(Rook2),
+            16 => PieceVo::from_piece(Bishop2),
+            17 => PieceVo::from_piece(Gold2),
+            18 => PieceVo::from_piece(Silver2),
+            19 => PieceVo::from_piece(Knight2),
+            20 => PieceVo::from_piece(Lance2),
+            21 => PieceVo::from_piece(Pawn2),
+            22 => PieceVo::from_piece(PromotedRook2),
+            23 => PieceVo::from_piece(PromotedBishop2),
+            24 => PieceVo::from_piece(PromotedSilver2),
+            25 => PieceVo::from_piece(PromotedKnight2),
+            26 => PieceVo::from_piece(PromotedLance2),
+            27 => PieceVo::from_piece(PromotedPawn2),
+            28 => PieceVo::from_piece(Kara),
+            _ => PieceVo::from_piece(Owari),
         }
     }
 
     /// ハッシュ値から作る
     pub fn from_hash(hash: u64) -> (u64, Self) {
         // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-        let ps = PieceStruct::from_serial_piece_number((hash & 0b11111) as usize);
+        let ps = PieceVo::from_serial_piece_number((hash & 0b11111) as usize);
         (hash >> 5, ps)
     }
 
@@ -353,7 +352,7 @@ impl PieceStruct {
     }
 
     /// 駒の一致比較
-    pub fn equals_piece(&self, b: &PieceStruct) -> bool {
+    pub fn equals_piece(&self, b: &PieceVo) -> bool {
         self.serial_piece_number() == b.serial_piece_number()
     }
 

@@ -10,7 +10,6 @@ use rand::Rng;
 use super::super::config::*;
 use super::super::controller::common::conv::*;
 use super::super::controller::communication::usi::*;
-use super::super::model::definition::speed_of_light::*;
 use super::super::model::master::misc::*;
 use super::super::model::master::person::Person;
 use super::super::model::master::phase::*;
@@ -18,10 +17,11 @@ use super::super::model::master::piece::Piece;
 use super::super::model::master::piece::*;
 use super::super::model::master::piece_direction::PieceDirection;
 use super::super::model::master::piece_movement::*;
-use super::super::model::master::piece_struct::PieceStruct;
 use super::super::model::master::piece_type::PieceType;
 use super::super::model::master::piece_type::*;
 use super::super::model::master::square::*;
+use super::super::model::vo::piece_vo::PieceVo;
+use super::super::model::vo::speed_of_light::*;
 use super::application::application_part::*;
 use super::dialogue::dialogue_part::*;
 use super::search::search_part::*;
@@ -221,7 +221,7 @@ impl Universe {
             .get_starting_position_mut()
             .mg[km as usize] = maisu;
     }
-    pub fn get_person_by_piece_struct(&self, piece_struct: &PieceStruct) -> Person {
+    pub fn get_person_by_piece_struct(&self, piece_struct: &PieceVo) -> Person {
         if match_sn(
             &piece_struct.phase(),
             &self.search_part.get_phase(&Person::Ji),
@@ -419,7 +419,7 @@ impl Universe {
         let nb = match *sn {
             Phase::Owari => {
                 &self.search_part.effect_count_by_piece
-                    [PieceStruct::from_piece(pc).serial_piece_number()]
+                    [PieceVo::from_piece(pc).serial_piece_number()]
             }
             _ => &self.search_part.effect_count_by_phase[sn_to_num(&sn)],
         };

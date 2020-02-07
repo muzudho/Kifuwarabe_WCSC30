@@ -8,14 +8,14 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::super::model::definition::speed_of_light::*;
 use super::super::super::model::master::phase::*;
 use super::super::super::model::master::piece::Piece;
 use super::super::super::model::master::piece::*;
-use super::super::super::model::master::piece_struct::PieceStruct;
 use super::super::super::model::master::piece_type::*;
 use super::super::super::model::master::square::*;
 use super::super::super::model::universe::*;
+use super::super::super::model::vo::piece_vo::PieceVo;
+use super::super::super::model::vo::speed_of_light::*;
 
 /// 局面
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
@@ -130,7 +130,7 @@ impl Position {
      * 持ち駒の枚数を加算
      */
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8) {
-        self.mg[PieceStruct::from_piece(hand.clone()).serial_piece_number()] += maisu;
+        self.mg[PieceVo::from_piece(hand.clone()).serial_piece_number()] += maisu;
     }
     pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
         self.mg[speed_of_light
