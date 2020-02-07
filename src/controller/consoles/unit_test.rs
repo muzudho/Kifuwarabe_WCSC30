@@ -8,12 +8,12 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::randommove;
-use super::super::super::model::dto::application_part::ap_universe_dto::*;
-use super::super::super::model::vo::person::Person;
-use super::super::super::model::vo::phase::Phase;
-use super::super::super::model::vo::piece_type::PieceType;
-use super::super::super::model::vo::speed_of_light::*;
-use super::super::super::model::vo::square::*;
+use super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::model::vo::other_part::op_person_vo::Person;
+use super::super::super::model::vo::other_part::op_phase_vo::Phase;
+use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
+use super::super::super::model::vo::other_part::op_square_vo::*;
 use super::visuals::dumps::*;
 use std::collections::HashSet;
 

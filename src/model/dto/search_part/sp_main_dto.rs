@@ -4,13 +4,13 @@ use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::status::number_board::*;
 use super::super::super::super::controller::thinking::visions::vision_tree::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
-use super::super::super::super::model::vo::person::*;
-use super::super::super::super::model::vo::phase::*;
-use super::super::super::super::model::vo::piece::*;
-use super::super::super::super::model::vo::piece_type::*;
-use super::super::super::super::model::vo::ply::*;
-use super::super::super::super::model::vo::speed_of_light::*;
-use super::super::super::super::model::vo::square::*;
+use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::super::model::vo::other_part::op_person_vo::*;
+use super::super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
+use super::super::super::super::model::vo::other_part::op_ply_vo::*;
+use super::super::super::super::model::vo::other_part::op_square_vo::*;
+use super::super::super::super::model::vo::other_part::piece::*;
 
 pub struct SPMainDto {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
@@ -619,7 +619,7 @@ impl SPMainDto {
 
     /// 手番
     pub fn get_phase(&self, jiai: &Person) -> Phase {
-        use super::super::super::super::model::vo::person::Person::*;
+        use super::super::super::super::model::vo::other_part::op_person_vo::Person::*;
         match *jiai {
             Ji => {
                 // 手番

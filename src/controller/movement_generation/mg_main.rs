@@ -7,13 +7,13 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::model::dto::search_part::sp_main_dto::*;
-use super::super::super::model::vo::person::Person;
-use super::super::super::model::vo::phase::*;
-use super::super::super::model::vo::piece::Piece;
-use super::super::super::model::vo::piece_type::PieceType;
-use super::super::super::model::vo::piece_type::*;
-use super::super::super::model::vo::speed_of_light::*;
-use super::super::super::model::vo::square::*;
+use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::model::vo::other_part::op_person_vo::Person;
+use super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
+use super::super::super::model::vo::other_part::op_piece_type_vo::*;
+use super::super::super::model::vo::other_part::op_square_vo::*;
+use super::super::super::model::vo::other_part::piece::Piece;
 use std::collections::HashSet;
 
 ///

@@ -4,12 +4,12 @@
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::super::model::dto::application_part::ap_universe_dto::*;
-use super::super::super::super::model::vo::phase::*;
-use super::super::super::super::model::vo::piece::*;
-use super::super::super::super::model::vo::piece_vo::PieceVo;
-use super::super::super::super::model::vo::speed_of_light::*;
-use super::super::super::super::model::vo::square::*;
+use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::super::model::vo::other_part::op_piece_vo::PieceVo;
+use super::super::super::super::model::vo::other_part::op_square_vo::*;
+use super::super::super::super::model::vo::other_part::piece::*;
 use std::collections::HashSet;
 
 /// 盤上の利き升調べ

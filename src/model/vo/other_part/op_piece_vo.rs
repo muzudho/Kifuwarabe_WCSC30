@@ -1,6 +1,6 @@
-use super::super::vo::phase::Phase;
-use super::super::vo::piece::Piece;
-use super::super::vo::piece_type::PieceType;
+use super::op_phase_vo::Phase;
+use super::op_piece_type_vo::PieceType;
+use super::piece::Piece;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
@@ -21,9 +21,9 @@ pub struct PieceVo {
 impl PieceVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
-        use super::super::vo::phase::Phase::*;
-        use super::super::vo::piece::Piece::*;
-        use super::super::vo::piece_type::PieceType::*;
+        use super::op_phase_vo::Phase::*;
+        use super::op_piece_type_vo::PieceType::*;
+        use super::piece::Piece::*;
         match p {
             King1 => PieceVo {
                 piece: King1,
@@ -269,7 +269,7 @@ impl PieceVo {
     }
 
     pub fn from_serial_piece_number(km_num: usize) -> Self {
-        use super::super::super::model::vo::piece::Piece::*;
+        use super::piece::Piece::*;
         match km_num {
             0 => PieceVo::from_piece(King1),
             1 => PieceVo::from_piece(Rook1),
@@ -357,7 +357,7 @@ impl PieceVo {
 
     /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
     pub fn is_promoted(&self) -> bool {
-        use super::super::super::model::vo::piece_type::PieceType::*;
+        use super::op_piece_type_vo::PieceType::*;
         match self.piece_type() {
             R => false,
             K => false,
@@ -382,7 +382,7 @@ impl PieceVo {
     ///
     /// 合い駒で、進路を防ぎえる可能性があれば真
     pub fn is_slider(&self) -> bool {
-        use super::super::super::model::vo::piece_type::PieceType::*;
+        use super::op_piece_type_vo::PieceType::*;
         match &self.piece_type() {
             R => false,
             K => true,

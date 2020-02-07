@@ -1,4 +1,4 @@
-use super::super::super::model::vo::square::*;
+use super::super::super::model::vo::other_part::op_square_vo::*;
 
 /**
  * 升に数が書いている将棋盤

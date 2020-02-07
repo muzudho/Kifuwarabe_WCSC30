@@ -10,8 +10,8 @@ use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::controller::status::mediators::med_kikisu::*;
-use super::super::super::model::dto::application_part::ap_universe_dto::*;
-use super::super::super::model::vo::speed_of_light::*;
+use super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 現局面での最善手を返すぜ☆（*＾～＾*）
 pub fn think(universe: &mut Universe, speed_of_light: &SpeedOfLight) -> Sasite {

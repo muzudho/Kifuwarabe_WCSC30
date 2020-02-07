@@ -9,10 +9,10 @@ use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::super::controller::thinking::randommove;
 use super::super::super::super::controller::thinking::results::jisatusyu_result::*;
-use super::super::super::super::model::dto::application_part::ap_universe_dto::*;
-use super::super::super::super::model::vo::person::Person;
-use super::super::super::super::model::vo::piece::Piece;
-use super::super::super::super::model::vo::speed_of_light::*;
+use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::super::model::vo::other_part::op_person_vo::Person;
+use super::super::super::super::model::vo::other_part::piece::Piece;
 use std::collections::HashSet;
 
 /**

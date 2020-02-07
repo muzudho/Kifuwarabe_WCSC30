@@ -4,8 +4,8 @@
 //!
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::model::dto::application_part::ap_universe_dto::*;
-use super::super::super::super::model::vo::square::*;
+use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
 /******

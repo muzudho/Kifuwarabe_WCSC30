@@ -1,10 +1,10 @@
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use super::super::vo::phase::Phase;
-use super::super::vo::piece::Piece;
-use super::super::vo::piece::Piece::*;
-use super::super::vo::piece_type::PieceType;
-use super::super::vo::piece_vo::PieceVo;
+use super::op_phase_vo::Phase;
+use super::op_piece_type_vo::PieceType;
+use super::op_piece_vo::PieceVo;
+use super::piece::Piece;
+use super::piece::Piece::*;
 
 /// イミュータブルなのだから、直接参照してもいい☆（＾～＾）
 pub struct PieceVoMaster {
@@ -122,8 +122,8 @@ impl PieceVoMaster {
         phase: &Phase,
         piece_type: &PieceType,
     ) -> &PieceVo {
-        use super::super::super::model::vo::piece::Piece::*;
-        use super::super::super::model::vo::piece_type::PieceType::*;
+        use super::op_piece_type_vo::PieceType::*;
+        use super::piece::Piece::*;
         match *phase {
             Phase::Sen => match *piece_type {
                 R => self.get_piece_vo(&King1),

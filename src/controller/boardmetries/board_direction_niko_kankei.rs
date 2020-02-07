@@ -5,9 +5,9 @@
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::geometries::geo_direction_niko_kankei::*;
 use super::super::super::controller::geometries::geo_teigi::*;
-use super::super::super::model::vo::direction::*;
-use super::super::super::model::vo::piece_vo::PieceVo;
-use super::super::super::model::vo::square::*;
+use super::super::super::model::vo::other_part::op_direction_vo::*;
+use super::super::super::model::vo::other_part::op_piece_vo::PieceVo;
+use super::super::super::model::vo::other_part::op_square_vo::*;
 
 /**
  * 狙われている駒から見た、長い利きの駒の居る方向（８方向）
@@ -33,8 +33,8 @@ pub fn get_dir8_to_slider_from_target(
     let p_target = sq_target.to_point();
 
     let (sn_slider, kms) = slider_piece_vo.phase_piece_type();
-    use super::super::super::model::vo::phase::Phase::*;
-    use super::super::super::model::vo::piece_type::PieceType::*;
+    use super::super::super::model::vo::other_part::op_phase_vo::Phase::*;
+    use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType::*;
     match kms {
         K => {
             // 筋か、段かのどちらかが同じ

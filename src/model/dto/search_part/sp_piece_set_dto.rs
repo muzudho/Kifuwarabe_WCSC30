@@ -3,11 +3,11 @@
 //!
 
 use super::super::super::super::model::dto::search_part::sp_main_dto::*;
-use super::super::super::super::model::vo::person::Person;
-use super::super::super::super::model::vo::phase::*;
-use super::super::super::super::model::vo::piece::Piece;
-use super::super::super::super::model::vo::piece::*;
-use super::super::super::super::model::vo::speed_of_light::*;
+use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::super::model::vo::other_part::op_person_vo::Person;
+use super::super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::super::model::vo::other_part::piece::Piece;
+use super::super::super::super::model::vo::other_part::piece::*;
 use std::collections::HashSet;
 
 pub struct SPPieceSetDto {

@@ -4,7 +4,7 @@
 //! 先後なしの駒と空白
 //!
 
-use super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::common::conv::*;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;

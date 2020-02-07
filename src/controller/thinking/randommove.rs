@@ -4,9 +4,9 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::model::vo::piece_type::PieceType;
-use super::super::super::model::vo::piece_type::*;
-use super::super::super::model::vo::square::*;
+use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
+use super::super::super::model::vo::other_part::op_piece_type_vo::*;
+use super::super::super::model::vo::other_part::op_square_vo::*;
 
 /**
  * ランダムに真偽を返す。

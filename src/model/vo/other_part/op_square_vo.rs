@@ -24,9 +24,9 @@
 //! 11  21  31  41  51  61  71  81  91
 //!
 //! 第一象限と同じになるからオススメ☆（＾～＾）
-use super::super::super::controller::common::conv::*;
-use super::super::super::controller::consoles::asserts::*;
-use super::super::super::controller::geometries::geo_teigi::*;
+use super::super::super::super::controller::common::conv::*;
+use super::super::super::super::controller::consoles::asserts::*;
+use super::super::super::super::controller::geometries::geo_teigi::*;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
 use std::hash::Hash;

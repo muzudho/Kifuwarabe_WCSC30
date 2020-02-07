@@ -1,11 +1,11 @@
 //!
 //! 盤上いろいろ☆（＾～＾）
 //!
-use super::super::super::model::dto::application_part::ap_universe_dto::*;
-use super::super::super::model::vo::person::Person;
-use super::super::super::model::vo::phase::*;
-use super::super::super::model::vo::speed_of_light::*;
-use super::super::super::model::vo::square::*;
+use super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use super::super::super::model::vo::other_part::op_person_vo::Person;
+use super::super::super::model::vo::other_part::op_phase_vo::*;
+use super::super::super::model::vo::other_part::op_square_vo::*;
 
 pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe, speed_of_light: &SpeedOfLight) -> bool {
     match_sn(

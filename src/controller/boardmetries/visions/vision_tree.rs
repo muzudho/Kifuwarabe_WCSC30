@@ -10,7 +10,7 @@ use super::super::super::super::model::master::phase::*;
 use super::super::super::super::model::master::piece::*;
 use super::super::super::super::model::master::piece_type::*;
 */
-use super::super::super::super::model::vo::square::*;
+use super::super::super::super::model::vo::other_part::op_square_vo::*;
 /*
 use super::super::super::super::model::universe::*;
 use super::super::super::super::model::vo::piece_vo::PieceVo;

@@ -1,7 +1,7 @@
 //!
 //! 値チェック
 //!
-use super::super::super::model::vo::square::Square;
+use super::super::super::model::vo::other_part::op_square_vo::Square;
 
 ///
 /// 打はテストできない

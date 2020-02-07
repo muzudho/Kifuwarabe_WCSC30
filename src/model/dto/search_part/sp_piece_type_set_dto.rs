@@ -3,8 +3,8 @@
 //!
 
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::model::vo::piece_type::PieceType;
-use super::super::super::super::model::vo::piece_type::*;
+use super::super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
+use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use std::collections::HashSet;
 
 pub struct SPPieceTypeSetDto {
