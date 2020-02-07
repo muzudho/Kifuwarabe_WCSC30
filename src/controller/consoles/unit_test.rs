@@ -4,11 +4,11 @@
 //! test コマンドで実行しろだぜ☆（＾～＾）
 //!
 use super::super::super::controller::boardmetries::proposition::math_meidai::*;
-use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::randommove;
-use super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
@@ -26,7 +26,7 @@ pub fn test(
     starts: &mut usize,
     len: usize,
     universe: &mut Universe,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
 ) {
     // いろいろな動作テスト
     g_writeln(&format!("test starts={} len={}", *starts, len));
@@ -38,7 +38,7 @@ pub fn test(
         g_writeln("駒の移動元升");
         let kms = randommove::rnd_kms();
         let ps = speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 kms,
@@ -87,7 +87,7 @@ pub fn test(
         // 移動後の駒
         let kms = randommove::rnd_kms();
         let ps = speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 &kms,
@@ -95,7 +95,7 @@ pub fn test(
         // 移動先の升、および　不成駒／成駒
         let sq_dst = randommove::random_square();
         let pro_dst = randommove::rnd_bool();
-        let mut ss = Sasite::new();
+        let mut ss = MLMovementDto::new();
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
@@ -134,7 +134,7 @@ pub fn test(
             g_writeln("利きテスト1");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
-                .piece_vo_master
+                .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(79);
@@ -180,7 +180,7 @@ pub fn test(
             g_writeln("利きテスト2");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
-                .piece_vo_master
+                .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(68);
@@ -226,7 +226,7 @@ pub fn test(
             g_writeln("利きテスト3");
             let kms = PieceType::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
-                .piece_vo_master
+                .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(77);
@@ -272,7 +272,7 @@ pub fn test(
             g_writeln("利きテスト2");
             let kms = PieceType::R; // らいおん
             let ps = speed_of_light
-                .piece_vo_master
+                .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Sen, &kms);
             let pc = ps.piece(); // ▼ら
             let sq_dst = Square::from_umasu(58);

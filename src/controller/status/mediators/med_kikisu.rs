@@ -4,7 +4,7 @@
 use super::super::super::super::controller::common::conv::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::movement_generation::mg_sub_part::*;
-use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
@@ -15,7 +15,7 @@ use std::collections::HashSet;
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn update_effect_count(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
+pub fn update_effect_count(universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) {
     // ゼロ・リセット
     for pc in KM_ARRAY.iter() {
         &universe.get_search_part_mut().effect_count_by_piece

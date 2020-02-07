@@ -9,7 +9,7 @@ use rand::Rng;
 
 use super::super::super::super::config::*;
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::communication::usi::*;
+use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
@@ -23,7 +23,7 @@ use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use super::super::super::dto::dialogue_part::dp_main_dto::*;
-use super::super::super::dto::main_loop::ap_main_dto::*;
+use super::super::super::dto::main_loop::ml_main_dto::*;
 use super::super::super::dto::search_part::sp_main_dto::*;
 use std::fs::File;
 use std::io::Write;
@@ -89,7 +89,7 @@ pub fn g_writeln(s: &str) {
  */
 pub struct Universe {
     /// アプリケーション部
-    application_part: ApMainDto,
+    application_part: MLMainDto,
     /// 対話部
     dialogue_part: DPMainDto,
     /// 探索部
@@ -99,7 +99,7 @@ pub struct Universe {
 impl Universe {
     pub fn new() -> Universe {
         Universe {
-            application_part: ApMainDto::new(),
+            application_part: MLMainDto::new(),
             dialogue_part: DPMainDto::new(),
             search_part: SPMainDto::new(),
         }
@@ -169,10 +169,10 @@ impl Universe {
         }
     }
 
-    pub fn get_application_part_mut(&mut self) -> &mut ApMainDto {
+    pub fn get_application_part_mut(&mut self) -> &mut MLMainDto {
         &mut self.application_part
     }
-    pub fn get_application_part(&self) -> &ApMainDto {
+    pub fn get_application_part(&self) -> &MLMainDto {
         &self.application_part
     }
 
@@ -413,12 +413,12 @@ impl Universe {
         &self,
         sn: &Phase,
         pc: &OPPieceVo,
-        speed_of_light: &SpeedOfLight,
+        speed_of_light: &MLSpeedOfLightVo,
     ) -> String {
         let nb = match *sn {
             Phase::Owari => {
                 &self.search_part.effect_count_by_piece[speed_of_light
-                    .piece_vo_master
+                    .ml_piece_struct_master_vo
                     .get_piece_vo(pc)
                     .serial_piece_number()]
             }
@@ -550,7 +550,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     }
 
     // 入れた指し手の通り指すぜ☆（＾～＾）
-    pub fn do_ss(&mut self, move3: &Sasite, speed_of_light: &SpeedOfLight) {
+    pub fn do_ss(&mut self, move3: &MLMovementDto, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
         self.search_part.moves_history[ply as usize] = (*move3).clone();
@@ -568,7 +568,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         self.get_search_part_mut().add_ply(1);
     }
 
-    pub fn undo_ss(&mut self, speed_of_light: &SpeedOfLight) -> bool {
+    pub fn undo_ss(&mut self, speed_of_light: &MLSpeedOfLightVo) -> bool {
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
@@ -592,7 +592,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     /**
      * 初期局面ハッシュを作り直す
      */
-    pub fn create_starting_position_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
+    pub fn create_starting_position_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = self
             .get_application_part()
             .get_starting_position()
@@ -607,7 +607,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     /**
      * 局面ハッシュを作り直す
      */
-    pub fn create_ky1_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
+    pub fn create_ky1_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = self
             .get_search_part()
             .get_current_position()

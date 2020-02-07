@@ -4,19 +4,25 @@
 //!
 
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい
-pub fn is_jisatusyu(universe: &Universe, ss: &Sasite, speed_of_light: &SpeedOfLight) -> bool {
+pub fn is_jisatusyu(
+    universe: &Universe,
+    ss: &MLMovementDto,
+    speed_of_light: &MLSpeedOfLightVo,
+) -> bool {
     // 移動元升、動かした駒の先後、駒種類、
     let km_src = universe
         .get_search_part()
         .get_current_position()
         .get_piece_by_square(&ss.src);
-    let ps_src = speed_of_light.piece_vo_master.get_piece_vo(km_src);
+    let ps_src = speed_of_light
+        .ml_piece_struct_master_vo
+        .get_piece_vo(km_src);
     let (sn_teban, _kms) = ps_src.phase_piece_type();
     // 相手番の先後
     let sn_aite = hanten_sn(&sn_teban);

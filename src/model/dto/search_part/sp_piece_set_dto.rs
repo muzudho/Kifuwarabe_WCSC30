@@ -17,10 +17,10 @@ impl SPPieceSetDto {
     /**
      * 全ての元を含む
      */
-    pub fn new_all(speed_of_light: &SpeedOfLight) -> SPPieceSetDto {
+    pub fn new_all(speed_of_light: &MLSpeedOfLightVo) -> SPPieceSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for piece in KM_ARRAY.iter() {
-            let ps = speed_of_light.piece_vo_master.get_piece_vo(piece);
+            let ps = speed_of_light.ml_piece_struct_master_vo.get_piece_vo(piece);
             num_syugo1.insert(ps.serial_piece_number());
         }
         let km_syugo = SPPieceSetDto {
@@ -35,12 +35,12 @@ impl SPPieceSetDto {
         &self,
         jiai: &Person,
         search_part: &SPMainDto,
-        speed_of_light: &SpeedOfLight,
+        speed_of_light: &MLSpeedOfLightVo,
     ) -> SPPieceSetDto {
         let sn0 = search_part.get_phase(&jiai);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
-            let ps = speed_of_light.piece_vo_master.get_piece_vo(km);
+            let ps = speed_of_light.ml_piece_struct_master_vo.get_piece_vo(km);
             let (sn1, _kms) = ps.phase_piece_type();
             if match_sn(&sn0, &sn1) {
                 num_syugo1.insert(ps.serial_piece_number());
@@ -51,10 +51,10 @@ impl SPPieceSetDto {
         };
         km_syugo
     }
-    pub fn remove(&mut self, piece: &OPPieceVo, speed_of_light: &SpeedOfLight) {
+    pub fn remove(&mut self, piece: &OPPieceVo, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo.remove(
             &speed_of_light
-                .piece_vo_master
+                .ml_piece_struct_master_vo
                 .get_piece_vo(piece)
                 .serial_piece_number(),
         );

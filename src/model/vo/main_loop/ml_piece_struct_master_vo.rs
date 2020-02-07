@@ -1,13 +1,13 @@
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use super::op_phase_vo::Phase;
-use super::op_piece_struct_vo::PieceStructVo;
-use super::op_piece_type_vo::PieceType;
-use super::op_piece_vo::OPPieceVo;
-use super::op_piece_vo::OPPieceVo::*;
+use super::super::other_part::op_phase_vo::Phase;
+use super::super::other_part::op_piece_struct_vo::PieceStructVo;
+use super::super::other_part::op_piece_type_vo::PieceType;
+use super::super::other_part::op_piece_vo::OPPieceVo;
+use super::super::other_part::op_piece_vo::OPPieceVo::*;
 
 /// イミュータブルなのだから、直接参照してもいい☆（＾～＾）
-pub struct PieceVoMaster {
+pub struct MLPieceStructMasterVo {
     pub king1: PieceStructVo,
     pub rook1: PieceStructVo,
     pub bishop1: PieceStructVo,
@@ -39,9 +39,9 @@ pub struct PieceVoMaster {
     pub kara: PieceStructVo,
     pub owari: PieceStructVo,
 }
-impl PieceVoMaster {
+impl MLPieceStructMasterVo {
     pub fn new() -> Self {
-        PieceVoMaster {
+        MLPieceStructMasterVo {
             king1: PieceStructVo::from_piece(King1),
             rook1: PieceStructVo::from_piece(Rook1),
             bishop1: PieceStructVo::from_piece(Bishop1),
@@ -122,8 +122,8 @@ impl PieceVoMaster {
         phase: &Phase,
         piece_type: &PieceType,
     ) -> &PieceStructVo {
-        use super::op_piece_type_vo::PieceType::*;
-        use super::op_piece_vo::OPPieceVo::*;
+        use super::super::other_part::op_piece_type_vo::PieceType::*;
+        use super::super::other_part::op_piece_vo::OPPieceVo::*;
         match *phase {
             Phase::Sen => match *piece_type {
                 R => self.get_piece_vo(&King1),

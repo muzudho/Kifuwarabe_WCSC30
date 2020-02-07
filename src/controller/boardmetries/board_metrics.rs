@@ -1,16 +1,16 @@
 //!
 //! 盤上いろいろ☆（＾～＾）
 //!
-use super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 
-pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe, speed_of_light: &SpeedOfLight) -> bool {
+pub fn is_ji_km_by_sq(sq: &Square, universe: &Universe, speed_of_light: &MLSpeedOfLightVo) -> bool {
     match_sn(
         &speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(
                 &universe
                     .get_search_part()

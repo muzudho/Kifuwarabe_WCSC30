@@ -3,13 +3,13 @@
 //! ランダム移動カード
 //!
 
-use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::super::controller::thinking::randommove;
 use super::super::super::super::controller::thinking::results::jisatusyu_result::*;
-use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
@@ -23,8 +23,8 @@ use std::collections::HashSet;
 pub fn get_ido_ss_by_km_random(
     universe: &Universe,
     piece_dst: &OPPieceVo,
-    speed_of_light: &SpeedOfLight,
-) -> Sasite {
+    speed_of_light: &MLSpeedOfLightVo,
+) -> MLMovementDto {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -59,13 +59,13 @@ pub fn get_ido_ss_by_km_random(
         }
     }
     // 投了
-    Sasite::new()
+    MLMovementDto::new()
 }
 
 /**
  * 指し手１つをランダム選出
  */
-pub fn get_ss_by_random(universe: &Universe, speed_of_light: &SpeedOfLight) -> Sasite {
+pub fn get_ss_by_random(universe: &Universe, speed_of_light: &MLSpeedOfLightVo) -> MLMovementDto {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -76,7 +76,7 @@ pub fn get_ss_by_random(universe: &Universe, speed_of_light: &SpeedOfLight) -> S
 
         // 手番の、移動した先の駒
         let ps_dst = speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
                 &universe.get_search_part().get_phase(&Person::Ji),
                 randommove::rnd_kms(),
@@ -114,5 +114,5 @@ pub fn get_ss_by_random(universe: &Universe, speed_of_light: &SpeedOfLight) -> S
         }
     }
     // 投了
-    Sasite::new()
+    MLMovementDto::new()
 }

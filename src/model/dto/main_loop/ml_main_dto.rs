@@ -16,7 +16,7 @@ pub struct PositionHashSeed {
     pub sn: [u64; SN_LN],
 }
 
-pub struct ApMainDto {
+pub struct MLMainDto {
     /// 局面ハッシュ種☆（＾～＾）
     position_hash_seed: PositionHashSeed,
     /// 初期局面
@@ -24,9 +24,9 @@ pub struct ApMainDto {
     /// 初期局面ハッシュ
     starting_position_hash: u64,
 }
-impl ApMainDto {
+impl MLMainDto {
     pub fn new() -> Self {
-        ApMainDto {
+        MLMainDto {
             position_hash_seed: PositionHashSeed {
                 // 盤上の駒
                 km: [[0; KM_LN]; BAN_SIZE],

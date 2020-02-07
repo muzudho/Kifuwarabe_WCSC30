@@ -6,15 +6,15 @@ extern crate rand;
 use rand::Rng;
 use std::collections::HashSet;
 
-use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::controller::movement_generation::mg_main::*;
 use super::super::super::controller::status::mediators::med_kikisu::*;
-use super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 現局面での最善手を返すぜ☆（*＾～＾*）
-pub fn think(universe: &mut Universe, speed_of_light: &SpeedOfLight) -> Sasite {
+pub fn think(universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) -> MLMovementDto {
     // TODO 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
 
     // +----------------------+
@@ -62,14 +62,14 @@ pub fn think(universe: &mut Universe, speed_of_light: &SpeedOfLight) -> Sasite {
 
     if ss_hashset.len() == 0 {
         // 投了
-        return Sasite::new();
+        return MLMovementDto::new();
     } else {
         let index = rand::thread_rng().gen_range(0, ss_hashset.len());
         let mut i = 0;
         for ss_hash in ss_hashset {
             if i == index {
-                //let result : Sasite = ss.clone();
-                let ss = Sasite::from_hash(ss_hash);
+                //let result : MLMovementDto = ss.clone();
+                let ss = MLMovementDto::from_hash(ss_hash);
                 g_writeln(&format!("info solution:{}.", ss));
                 return ss;
             }
@@ -77,6 +77,6 @@ pub fn think(universe: &mut Universe, speed_of_light: &SpeedOfLight) -> Sasite {
         }
 
         // 投了
-        return Sasite::new();
+        return MLMovementDto::new();
     }
 }

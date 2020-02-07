@@ -17,13 +17,13 @@ pub mod model;
 
 use config::*;
 use controller::common::conv::*;
-use controller::communication::usi::*;
 use controller::consoles::unit_test::*;
 use controller::consoles::visuals::dumps::*;
 use controller::consoles::visuals::title::*;
+use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_main::*;
 use controller::piece_movetrics::pm_main::*;
-use model::dto::main_loop::ap_universe_dto::*;
+use model::dto::main_loop::ml_universe_dto::*;
 use model::vo::main_loop::ml_speed_of_light_vo::*;
 use model::vo::other_part::op_constants_vo::*;
 use model::vo::other_part::op_misc_vo::*;
@@ -34,7 +34,7 @@ use std::io;
 
 fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
-    let speed_of_light: SpeedOfLight = SpeedOfLight::new();
+    let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::new();
     // 宇宙
     let mut universe: Universe = Universe::new();
     universe.big_bang();
@@ -91,7 +91,11 @@ fn main() {
             universe.clear_all_positions();
         } else if line.starts_with("position") {
             // positionコマンドの読取を丸投げ
-            controller::communication::usi::read_position(&line, &mut universe, &speed_of_light);
+            controller::main_loop::ml_usi_controller::read_position(
+                &line,
+                &mut universe,
+                &speed_of_light,
+            );
         } else if 6 < len && &line[starts..7] == "isready" {
             g_writeln("readyok");
         } else if 6 < len && &line[starts..7] == "kmugoki" {
@@ -100,7 +104,7 @@ fn main() {
             universe.hyoji_kmugoki();
         } else if 5 < len && &line[starts..6] == "hirate" {
             // 平手初期局面
-            controller::communication::usi::read_position(
+            controller::main_loop::ml_usi_controller::read_position(
                 &KY1.to_string(),
                 &mut universe,
                 &speed_of_light,

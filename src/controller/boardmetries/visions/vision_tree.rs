@@ -59,7 +59,7 @@ pub fn insert_rakkansuji(universe: &mut Universe) {
         //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
 
         for kms_dst in KMS_ARRAY.iter() {
-            // TODO universe.speed_of_light.piece_vo_master.get_piece_vo
+            // TODO universe.speed_of_light.ml_piece_struct_master_vo.get_piece_vo
             let ps_dst = PieceVo::from_piece(Piece::from_phase_piece_type(&sn, &kms_dst));
             for x in SUJI_1..SUJI_10 {
                 // 9..0 みたいに降順に書いても動かない？

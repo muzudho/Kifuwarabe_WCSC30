@@ -3,9 +3,9 @@
 //!
 
 use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
+use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
@@ -28,7 +28,7 @@ use std::collections::HashSet;
 ///
 pub fn get_potential_movement<F1>(
     search_part: &SPMainDto,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement_callback: F1,
 ) where
     F1: FnMut(u64),
@@ -45,7 +45,7 @@ pub fn get_potential_movement<F1>(
 
             if match_sn(
                 &speed_of_light
-                    .piece_vo_master
+                    .ml_piece_struct_master_vo
                     .get_piece_vo(&piece_src)
                     .phase(),
                 &search_part.get_phase(&Person::Ji),
@@ -68,7 +68,7 @@ pub fn get_potential_movement<F1>(
 
                 for sq_dst in &dst_hashset {
                     gets_movement_callback(
-                        Sasite {
+                        MLMovementDto {
                             src: sq_src.clone(),
                             dst: sq_dst.clone(),
                             pro: false, // 成らず
@@ -89,7 +89,7 @@ pub fn get_potential_movement<F1>(
                 );
                 for sq_dst in &dst_hashset {
                     gets_movement_callback(
-                        Sasite {
+                        MLMovementDto {
                             src: sq_src.clone(),
                             dst: sq_dst.clone(),
                             pro: true, // 成り
@@ -118,7 +118,7 @@ pub fn get_potential_movement<F1>(
                     let mut da_kms_hashset = HashSet::new();
                     for kms_motigoma in MGS_ARRAY.iter() {
                         let ps_motigoma = speed_of_light
-                            .piece_vo_master
+                            .ml_piece_struct_master_vo
                             .get_piece_vo_by_phase_and_piece_type(
                                 &search_part.get_phase(&Person::Ji),
                                 kms_motigoma,
@@ -143,7 +143,7 @@ pub fn get_potential_movement<F1>(
                     for num_kms_da in da_kms_hashset {
                         let kms = num_to_kms(num_kms_da);
                         gets_movement_callback(
-                            Sasite {
+                            MLMovementDto {
                                 src: Square::from_umasu(SS_SRC_DA), // 駒大
                                 dst: sq_dst.clone(),                // どの升へ行きたいか
                                 pro: false,                         // 打に成りは無し
@@ -167,7 +167,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
     piece_dst: OPPieceVo,
     search_part: &SPMainDto,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
     F1: FnMut(u64),
@@ -175,7 +175,9 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let ps_dst = speed_of_light.piece_vo_master.get_piece_vo(&piece_dst);
+    let ps_dst = speed_of_light
+        .ml_piece_struct_master_vo
+        .get_piece_vo(&piece_dst);
     let (sn, _kms_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
@@ -189,7 +191,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     }
 
     // ハッシュを作るのに使う
-    let mut ss_hash_builder = Sasite::new();
+    let mut ss_hash_builder = MLMovementDto::new();
 
     ss_hash_builder.dst = (*sq_dst).clone();
 
@@ -253,7 +255,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
     piece_dst: &OPPieceVo,
     search_part: &SPMainDto,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
     F1: FnMut(u64),
@@ -261,7 +263,9 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
-    let piece_vo_dst = speed_of_light.piece_vo_master.get_piece_vo(piece_dst);
+    let piece_vo_dst = speed_of_light
+        .ml_piece_struct_master_vo
+        .get_piece_vo(piece_dst);
     let (sn, _kms_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
@@ -275,7 +279,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     }
 
     // ハッシュを作るのに使う
-    let mut ss_hash_builder = Sasite::new();
+    let mut ss_hash_builder = MLMovementDto::new();
 
     ss_hash_builder.dst = (*sq_dst).clone();
 
@@ -300,7 +304,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     for num_kms_da in da_kms_hashset.iter() {
         let kms_da = num_to_kms(*num_kms_da);
 
-        let movement_hash = Sasite {
+        let movement_hash = MLMovementDto {
             src: Square::from_umasu(SS_SRC_DA),
             dst: (*sq_dst).clone(),
             pro: false,

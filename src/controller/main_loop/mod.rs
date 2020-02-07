@@ -4,4 +4,4 @@
 //! 公開するモジュールを記述
 //!
 
-pub mod usi;
+pub mod ml_usi_controller;

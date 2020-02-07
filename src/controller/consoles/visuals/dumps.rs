@@ -3,8 +3,8 @@
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::communication::usi::*;
-use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
@@ -58,7 +58,7 @@ pub fn hyoji_ss_hashset(ss_hashset: &HashSet<u64>) {
     // 辞書順ソート
     let mut vec_ss_str = Vec::new();
     for ss_hash in ss_hashset {
-        let ss = Sasite::from_hash(*ss_hash);
+        let ss = MLMovementDto::from_hash(*ss_hash);
         let ss_str = format!("{}", ss);
         vec_ss_str.push(ss_str);
     }

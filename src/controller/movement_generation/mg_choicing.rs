@@ -6,11 +6,11 @@ extern crate rand;
 use rand::Rng;
 
 use super::super::super::controller::common::conv::*;
-use super::super::super::controller::communication::usi::*;
 use super::super::super::controller::consoles::asserts::*;
 use super::super::super::controller::movement_generation::mg_sub_part::*;
 use super::super::super::controller::thinking::results::komatori_result::*;
-use super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
@@ -19,7 +19,7 @@ use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
 /// ハッシュセットから、指し手を１つ選ぶぜ☆（＾～＾）
-pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> Sasite {
+pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> MLMovementDto {
     let index = if movement_hashset.len() == 0 {
         0
     } else {
@@ -34,7 +34,7 @@ pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> Sasite 
         }
         i += 1;
     }
-    Sasite::from_hash(ss_choice_hash)
+    MLMovementDto::from_hash(ss_choice_hash)
 }
 
 /**
@@ -43,7 +43,7 @@ pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> Sasite 
 pub fn select_movement_except_check(
     ss_hashset_input: &mut HashSet<u64>,
     search_part: &SPMainDto,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 自玉の位置
     let sq_r = search_part.get_king_sq(&Person::Ji).clone();
@@ -74,7 +74,7 @@ pub fn select_movement_except_check(
 
         // 指せる手から、王手が消えている手だけ、選び抜くぜ☆（＾～＾）
         'idea: for hash_ss_potential in ss_hashset_input.iter() {
-            let ss_potential = Sasite::from_hash(*hash_ss_potential);
+            let ss_potential = MLMovementDto::from_hash(*hash_ss_potential);
             for komatori_result_hash in komatori_result_hashset.iter() {
                 let komatori_result = KomatoriResult::from_hash(*komatori_result_hash);
 
@@ -114,7 +114,7 @@ pub fn select_movement_except_check(
 pub fn select_movement_except_suiceid(
     ss_hashset_input: &mut HashSet<u64>,
     universe: &mut Universe,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
@@ -133,7 +133,7 @@ pub fn select_movement_except_suiceid(
 
     // 指せる手から、王手が消えている手だけ、選び抜くぜ☆（＾～＾）
     'idea: for hash_ss_potential in ss_hashset_input.iter() {
-        let ss_potential = Sasite::from_hash(*hash_ss_potential);
+        let ss_potential = MLMovementDto::from_hash(*hash_ss_potential);
 
         // その手を指してみる
         universe.do_ss(&ss_potential, speed_of_light);
@@ -213,13 +213,13 @@ pub fn select_movement_except_suiceid(
 pub fn select_movement_except_fourfold_repetition(
     ss_hashset_input: &mut HashSet<u64>,
     universe: &mut Universe,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
 ) {
     let mut ss_hashset_pickup = HashSet::new();
     // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）
     // 'idea:
     for hash_ss_potential in ss_hashset_input.iter() {
-        let ss = Sasite::from_hash(*hash_ss_potential);
+        let ss = MLMovementDto::from_hash(*hash_ss_potential);
         //ss_hashset.insert( *hash_ss_potential );
 
         // その手を指してみる

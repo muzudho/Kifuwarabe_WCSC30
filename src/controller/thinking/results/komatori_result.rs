@@ -3,12 +3,12 @@
 //!
 use super::super::super::super::controller::boardmetries::proposition::math_meidai::*;
 use super::super::super::super::controller::common::conv::*;
-use super::super::super::super::controller::communication::usi::*;
 use super::super::super::super::controller::consoles::asserts::*;
 use super::super::super::super::controller::geometries::geo_teigi::*;
 use super::super::super::super::controller::movement_generation::mg_choicing::*;
 use super::super::super::super::controller::movement_generation::mg_main::*;
-use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::Phase;
@@ -61,13 +61,13 @@ impl KomatoriResult {
     pub fn get_sq_attacker(&self) -> &Square {
         &self.sq_attacker
     }
-    pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
+    pub fn to_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_sq_to_hash(hash, &self.sq_target);
         hash = push_sq_to_hash(hash, &self.sq_attacker);
         speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(&self.km_attacker)
             .add_hash(hash)
     }
@@ -93,7 +93,11 @@ impl KomatoriResult {
     ///         (2-2-1) 狙われている駒を、動かせば解決
     ///
     /// ss : 現局面での、駒の動き手の１つ
-    pub fn get_result(&self, ss: &Sasite, speed_of_light: &SpeedOfLight) -> KomatoriResultResult {
+    pub fn get_result(
+        &self,
+        ss: &MLMovementDto,
+        speed_of_light: &MLSpeedOfLightVo,
+    ) -> KomatoriResultResult {
         // (1)
         if self.sq_attacker.to_umasu() == ss.dst.to_umasu() {
             return KomatoriResultResult::NoneAttacker;
@@ -101,7 +105,7 @@ impl KomatoriResult {
 
         // (2-1)
         let ps_attacker = speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(&self.km_attacker);
         if ps_attacker.is_slider() {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
@@ -171,7 +175,7 @@ pub fn lookup_catching_king_on_board(
     sn: &Phase,
     sq_target: &Square,
     search_part: &SPMainDto,
-    speed_of_light: &SpeedOfLight,
+    speed_of_light: &MLSpeedOfLightVo,
 ) -> HashSet<u64> {
     assert_banjo_sq(
         &sq_target,
@@ -193,7 +197,7 @@ pub fn lookup_catching_king_on_board(
     for kms_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
         let ps_dst = speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(&sn, kms_dst);
         let km_dst = ps_dst.piece();
         //let km_dst = sn_kms_to_km( &sn, rnd_kms() );

@@ -8,7 +8,7 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::super::super::model::dto::main_loop::ap_universe_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
@@ -96,12 +96,14 @@ impl SPPositionDto {
         &self,
         sn: &Phase,
         suji: i8,
-        speed_of_light: &SpeedOfLight,
+        speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
         for dan in DAN_1..DAN_10 {
             let sq = Square::from_file_rank(suji, dan);
             let piece99 = self.get_piece_by_square(&sq);
-            let ps100 = speed_of_light.piece_vo_master.get_piece_vo(piece99);
+            let ps100 = speed_of_light
+                .ml_piece_struct_master_vo
+                .get_piece_vo(piece99);
             let (sn_km, kms) = ps100.phase_piece_type();
             if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
                 return true;
@@ -128,15 +130,15 @@ impl SPPositionDto {
     /**
      * 持ち駒の枚数を加算
      */
-    pub fn add_hand(&mut self, hand: &OPPieceVo, maisu: i8, speed_of_light: &SpeedOfLight) {
+    pub fn add_hand(&mut self, hand: &OPPieceVo, maisu: i8, speed_of_light: &MLSpeedOfLightVo) {
         self.mg[speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(hand)
             .serial_piece_number()] += maisu;
     }
-    pub fn get_hand(&self, hand: &OPPieceVo, speed_of_light: &SpeedOfLight) -> i8 {
+    pub fn get_hand(&self, hand: &OPPieceVo, speed_of_light: &MLSpeedOfLightVo) -> i8 {
         self.mg[speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(hand)
             .serial_piece_number()]
     }
@@ -144,29 +146,34 @@ impl SPPositionDto {
     /**
      * 指定の升に駒があれば真
      */
-    pub fn exists_km(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> bool {
+    pub fn exists_km(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> bool {
         !speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(self.get_piece_by_square(&sq))
             .equals_piece(
                 &speed_of_light
-                    .piece_vo_master
+                    .ml_piece_struct_master_vo
                     .get_piece_vo(&OPPieceVo::Kara),
             )
     }
 
     /// 指定の升に指定の駒があれば真
-    pub fn has_sq_km(&self, sq: &Square, piece: &OPPieceVo, speed_of_light: &SpeedOfLight) -> bool {
+    pub fn has_sq_km(
+        &self,
+        sq: &Square,
+        piece: &OPPieceVo,
+        speed_of_light: &MLSpeedOfLightVo,
+    ) -> bool {
         speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.piece_vo_master.get_piece_vo(piece))
+            .equals_piece(&speed_of_light.ml_piece_struct_master_vo.get_piece_vo(piece))
     }
 
     /// 指定の升にある駒の先後、または空升
-    pub fn get_sn_by_sq(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> Phase {
+    pub fn get_sn_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Phase {
         speed_of_light
-            .piece_vo_master
+            .ml_piece_struct_master_vo
             .get_piece_vo(self.get_piece_by_square(sq))
             .phase()
     }
@@ -176,14 +183,18 @@ impl SPPositionDto {
         &self,
         sq_src: &Square,
         sq_dst: &Square,
-        speed_of_light: &SpeedOfLight,
+        speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
         let km_src = self.get_piece_by_square(&sq_src);
 
-        let ps_src = speed_of_light.piece_vo_master.get_piece_vo(km_src);
+        let ps_src = speed_of_light
+            .ml_piece_struct_master_vo
+            .get_piece_vo(km_src);
         let km_dst = self.get_piece_by_square(&sq_dst);
 
-        let ps_dst = speed_of_light.piece_vo_master.get_piece_vo(km_dst);
+        let ps_dst = speed_of_light
+            .ml_piece_struct_master_vo
+            .get_piece_vo(km_dst);
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = ps_dst.is_promoted();
         let pro_src = ps_src.is_promoted();
@@ -193,7 +204,7 @@ impl SPPositionDto {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_hash(&self, universe: &Universe, speed_of_light: &SpeedOfLight) -> u64 {
+    pub fn create_hash(&self, universe: &Universe, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒
@@ -201,7 +212,7 @@ impl SPPositionDto {
             let i_sq = Square::from_umasu(i_ms as umasu);
             let km = self.get_piece_by_square(&i_sq);
             let num_km = speed_of_light
-                .piece_vo_master
+                .ml_piece_struct_master_vo
                 .get_piece_vo(km)
                 .serial_piece_number();
             hash ^= universe.get_application_part().get_position_hash_seed().km[i_ms][num_km];
@@ -211,7 +222,7 @@ impl SPPositionDto {
         for i_km in 0..KM_ARRAY_LN {
             let km = &KM_ARRAY[i_km];
             let num_km = speed_of_light
-                .piece_vo_master
+                .ml_piece_struct_master_vo
                 .get_piece_vo(km)
                 .serial_piece_number();
 
