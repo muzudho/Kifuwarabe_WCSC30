@@ -1,7 +1,7 @@
 //!
 //! USIプロトコル
 //!
-use super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_constants_vo::*;
 use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
@@ -15,7 +15,7 @@ use super::super::super::model::vo::other_part::op_square_vo::*;
  * 読み取った指し手は、棋譜に入れる。
  * 現在の手目のところに入れ、手目のカウントアップも行う。
  */
-pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut Universe) -> bool {
+pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut MLDto) -> bool {
     // 4文字か5文字あるはず。
     if (len - *starts) < 4 {
         // 指し手読取終了時にここを通るぜ☆（＾～＾）
@@ -28,52 +28,52 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            universe.get_search_part_mut().set_move_drop(PieceType::K);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::K);
         }
         "B" => {
             *starts += 2;
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            universe.get_search_part_mut().set_move_drop(PieceType::Z);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::Z);
         }
         "G" => {
             *starts += 2;
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            universe.get_search_part_mut().set_move_drop(PieceType::I);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::I);
         }
         "S" => {
             *starts += 2;
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            universe.get_search_part_mut().set_move_drop(PieceType::N);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::N);
         }
         "N" => {
             *starts += 2;
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            universe.get_search_part_mut().set_move_drop(PieceType::U);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::U);
         }
         "L" => {
             *starts += 2;
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            universe.get_search_part_mut().set_move_drop(PieceType::S);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::S);
         }
         "P" => {
             *starts += 2;
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            universe.get_search_part_mut().set_move_drop(PieceType::H);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::H);
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
@@ -165,12 +165,10 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
                 }
             }
 
-            universe
+            ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_file_rank(suji, dan));
-            universe
-                .get_search_part_mut()
-                .set_move_drop(PieceType::Kara);
+            ml_dto.get_search_part_mut().set_move_drop(PieceType::Kara);
         }
     }
 
@@ -265,15 +263,15 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
         }
     }
 
-    universe
+    ml_dto
         .get_search_part_mut()
         .set_move_dst(&Square::from_file_rank(suji, dan));
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..(*starts + 1)] == "+" {
-        universe.get_search_part_mut().set_move_pro(true);
+        ml_dto.get_search_part_mut().set_move_pro(true);
         *starts += 1;
     } else {
-        universe.get_search_part_mut().set_move_pro(false);
+        ml_dto.get_search_part_mut().set_move_pro(false);
     }
 
     // 続きにスペース「 」が１つあれば読み飛ばす
@@ -281,7 +279,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, universe: &mut
         *starts += 1;
     }
 
-    universe.get_search_part_mut().add_ply(1);
+    ml_dto.get_search_part_mut().add_ply(1);
     true
 }
 
@@ -292,7 +290,7 @@ pub fn read_banjo(
     line: &String,
     starts: &mut usize,
     len: usize,
-    universe: &mut Universe,
+    ml_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 盤部
@@ -307,145 +305,145 @@ pub fn read_banjo(
             }
             "1" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                 suji -= 1;
             }
             "2" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                 suji -= 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                 suji -= 1;
             }
             "3" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                 suji -= 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                 suji -= 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                 suji -= 1;
             }
             "4" => {
                 *starts += 1;
                 for _i_kara in 0..4 {
-                    universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                     suji -= 1;
                 }
             }
             "5" => {
                 *starts += 1;
                 for _i_kara in 0..5 {
-                    universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                     suji -= 1;
                 }
             }
             "6" => {
                 *starts += 1;
                 for _i_kara in 0..6 {
-                    universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                     suji -= 1;
                 }
             }
             "7" => {
                 *starts += 1;
                 for _i_kara in 0..7 {
-                    universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                     suji -= 1;
                 }
             }
             "8" => {
                 *starts += 1;
                 for _i_kara in 0..8 {
-                    universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                     suji -= 1;
                 }
             }
             "9" => {
                 *starts += 1;
                 for _i_kara in 0..9 {
-                    universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Kara);
                     suji -= 1;
                 }
             }
             "K" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::King1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::King1);
                 suji -= 1;
             }
             "R" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Rook1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Rook1);
                 suji -= 1;
             }
             "B" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Bishop1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Bishop1);
                 suji -= 1;
             }
             "G" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Gold1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Gold1);
                 suji -= 1;
             }
             "S" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Silver1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Silver1);
                 suji -= 1;
             }
             "N" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Knight1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Knight1);
                 suji -= 1;
             }
             "L" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Lance1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Lance1);
                 suji -= 1;
             }
             "P" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Pawn1);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Pawn1);
                 suji -= 1;
             }
             "k" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::King2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::King2);
                 suji -= 1;
             }
             "r" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Rook2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Rook2);
                 suji -= 1;
             }
             "b" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Bishop2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Bishop2);
                 suji -= 1;
             }
             "g" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Gold2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Gold2);
                 suji -= 1;
             }
             "s" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Silver2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Silver2);
                 suji -= 1;
             }
             "n" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Knight2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Knight2);
                 suji -= 1;
             }
             "l" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Lance2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Lance2);
                 suji -= 1;
             }
             "p" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, OPPieceVo::Pawn2);
+                ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::Pawn2);
                 suji -= 1;
             }
             "+" => {
@@ -453,16 +451,12 @@ pub fn read_banjo(
                 match &line[*starts..(*starts + 1)] {
                     "R" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
-                            suji,
-                            dan,
-                            OPPieceVo::PromotedRook1,
-                        );
+                        ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::PromotedRook1);
                         suji -= 1;
                     }
                     "B" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        ml_dto.set_piece_to_starting_position(
                             suji,
                             dan,
                             OPPieceVo::PromotedBishop1,
@@ -471,7 +465,7 @@ pub fn read_banjo(
                     }
                     "S" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        ml_dto.set_piece_to_starting_position(
                             suji,
                             dan,
                             OPPieceVo::PromotedSilver1,
@@ -480,7 +474,7 @@ pub fn read_banjo(
                     }
                     "N" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        ml_dto.set_piece_to_starting_position(
                             suji,
                             dan,
                             OPPieceVo::PromotedKnight1,
@@ -489,34 +483,22 @@ pub fn read_banjo(
                     }
                     "L" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
-                            suji,
-                            dan,
-                            OPPieceVo::PromotedLance1,
-                        );
+                        ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::PromotedLance1);
                         suji -= 1;
                     }
                     "P" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
-                            suji,
-                            dan,
-                            OPPieceVo::PromotedPawn1,
-                        );
+                        ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::PromotedPawn1);
                         suji -= 1;
                     }
                     "r" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
-                            suji,
-                            dan,
-                            OPPieceVo::PromotedRook2,
-                        );
+                        ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::PromotedRook2);
                         suji -= 1;
                     }
                     "b" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        ml_dto.set_piece_to_starting_position(
                             suji,
                             dan,
                             OPPieceVo::PromotedBishop2,
@@ -525,7 +507,7 @@ pub fn read_banjo(
                     }
                     "s" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        ml_dto.set_piece_to_starting_position(
                             suji,
                             dan,
                             OPPieceVo::PromotedSilver2,
@@ -534,7 +516,7 @@ pub fn read_banjo(
                     }
                     "n" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        ml_dto.set_piece_to_starting_position(
                             suji,
                             dan,
                             OPPieceVo::PromotedKnight2,
@@ -543,20 +525,12 @@ pub fn read_banjo(
                     }
                     "l" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
-                            suji,
-                            dan,
-                            OPPieceVo::PromotedLance2,
-                        );
+                        ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::PromotedLance2);
                         suji -= 1;
                     }
                     "p" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
-                            suji,
-                            dan,
-                            OPPieceVo::PromotedPawn2,
-                        );
+                        ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::PromotedPawn2);
                         suji -= 1;
                     }
                     _ => {
@@ -575,8 +549,8 @@ pub fn read_banjo(
     }
 
     // 初期局面ハッシュを作り直す
-    let ky_hash = universe.create_starting_position_hash(speed_of_light);
-    universe
+    let ky_hash = ml_dto.create_starting_position_hash(speed_of_light);
+    ml_dto
         .get_application_part_mut()
         .set_starting_position_hash(ky_hash);
 }
@@ -584,14 +558,14 @@ pub fn read_banjo(
 /**
  * position コマンド読取
  */
-pub fn read_position(line: &String, universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) {
+pub fn read_position(line: &String, ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
     let mut starts = 0;
 
     // 全体の長さ
     let len = line.chars().count();
 
     // 局面をクリアー。手目も 0 に戻します。
-    universe.clear_all_positions();
+    ml_dto.clear_all_positions();
 
     if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
         // 'position startpos' を読み飛ばし
@@ -602,7 +576,7 @@ pub fn read_position(line: &String, universe: &mut Universe, speed_of_light: &ML
             &STARTPOS.to_string(),
             &mut local_starts,
             STARTPOS_LN,
-            universe,
+            ml_dto,
             speed_of_light,
         );
 
@@ -612,7 +586,7 @@ pub fn read_position(line: &String, universe: &mut Universe, speed_of_light: &ML
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_banjo(line, &mut starts, len, universe, speed_of_light);
+        read_banjo(line, &mut starts, len, ml_dto, speed_of_light);
 
         if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
             starts += 1;
@@ -783,7 +757,7 @@ pub fn read_position(line: &String, universe: &mut Universe, speed_of_light: &ML
                         } // 持駒部 正常終了
                     }
 
-                    universe.set_starting_position_hand_piece(km, maisu);
+                    ml_dto.set_starting_position_hand_piece(km, maisu);
                 } //if
             } //loop
         } //else
@@ -805,21 +779,21 @@ pub fn read_position(line: &String, universe: &mut Universe, speed_of_light: &ML
     }
 
     // 初期局面を、現局面にコピーします
-    universe.copy_starting_position_to_current_position();
+    ml_dto.copy_starting_position_to_current_position();
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
-    while read_sasite(line, &mut starts, len, universe) {
+    while read_sasite(line, &mut starts, len, ml_dto) {
         // 手目を戻す
-        universe.get_search_part_mut().add_ply(-1);
+        ml_dto.get_search_part_mut().add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = universe.get_search_part().get_ply();
-        universe.do_ss(
-            &universe.get_search_part().get_moves_history()[ply as usize].clone(),
+        let ply = ml_dto.get_search_part().get_ply();
+        ml_dto.do_ss(
+            &ml_dto.get_search_part().get_moves_history()[ply as usize].clone(),
             speed_of_light,
         );
 
         // 現局面表示
-        //let s1 = &universe.kaku_ky( &KyNums::Current );
+        //let s1 = &ml_dto.kaku_ky( &KyNums::Current );
         //g_writeln( &s1 );
     }
 }

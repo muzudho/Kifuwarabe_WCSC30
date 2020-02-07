@@ -1,14 +1,14 @@
 //!
 //! 結果：駒を取られる手
 //!
-use super::super::super::controller::common_part::cp_asserts_controller::*;
-use super::super::super::controller::common_part::cp_conv_controller::*;
-use super::super::super::controller::common_part::cp_geo_teigi_controller::*;
-use super::super::super::controller::common_part::cp_math_controller::*;
+use super::super::super::controller::common_use::cu_asserts_controller::*;
+use super::super::super::controller::common_use::cu_conv_controller::*;
+use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
+use super::super::super::controller::common_use::cu_math_controller::*;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_main_controller::*;
+use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;

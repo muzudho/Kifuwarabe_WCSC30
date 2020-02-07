@@ -2,7 +2,7 @@
 //! 駒種類集合
 //!
 
-use super::super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use std::collections::HashSet;

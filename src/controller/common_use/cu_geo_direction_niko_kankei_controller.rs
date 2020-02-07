@@ -2,7 +2,7 @@
 //! 幾何学の二項関係☆（＾～＾）
 //! 要するに　将棋盤の上で　北側の升はどこかとか調べるやつだぜ☆（＾～＾）
 //!
-use super::cp_geo_teigi_controller::*;
+use super::cu_geo_teigi_controller::*;
 
 /**
  * 升0は、升1の西にあるか

@@ -5,12 +5,12 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::controller::common_part::cp_asserts_controller::*;
-use super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::controller::common_use::cu_asserts_controller::*;
+use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_komatori_result_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
+use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_main_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
@@ -113,19 +113,17 @@ pub fn select_movement_except_check(
  */
 pub fn select_movement_except_suiceid(
     ss_hashset_input: &mut HashSet<u64>,
-    universe: &mut Universe,
+    ml_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
     // 自玉の位置
-    let sq_r = universe
+    let sq_r = ml_dto
         .get_search_part()
         .get_current_position()
-        .get_sq_r(sn_to_num(
-            &universe.get_search_part().get_phase(&Person::Ji),
-        ))
+        .get_sq_r(sn_to_num(&ml_dto.get_search_part().get_phase(&Person::Ji)))
         .clone();
 
     // 王手回避カードを発行する
@@ -136,9 +134,9 @@ pub fn select_movement_except_suiceid(
         let ss_potential = MLMovementDto::from_hash(*hash_ss_potential);
 
         // その手を指してみる
-        universe.do_ss(&ss_potential, speed_of_light);
+        ml_dto.do_ss(&ss_potential, speed_of_light);
         // // 現局面表示
-        // let s1 = &universe.kaku_ky( &KyNums::Current );
+        // let s1 = &ml_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
 
         // 狙われている方の玉の位置
@@ -152,18 +150,18 @@ pub fn select_movement_except_suiceid(
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
         make_no_promotion_source_by_phase_square(
-            &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                          // 指定の升
-            &universe.get_search_part(),
+            &ml_dto.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                        // 指定の升
+            &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 attackers.insert(square);
             },
         );
         make_before_promotion_source_by_phase_square(
-            &universe.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                          // 指定の升
-            &universe.get_search_part(),
+            &ml_dto.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                        // 指定の升
+            &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 attackers.insert(square);
@@ -176,7 +174,7 @@ pub fn select_movement_except_suiceid(
             "info {} evaluated => {} attackers. offence={}->{}",
             ss_potential,
             attackers.len(),
-            universe.get_search_part().get_phase(&Person::Ji),
+            ml_dto.get_search_part().get_phase(&Person::Ji),
             sq_r_new.to_umasu()
         ));
         for sq_atk in attackers.iter() {
@@ -184,9 +182,9 @@ pub fn select_movement_except_suiceid(
         }
 
         // 手を戻す
-        universe.undo_ss(speed_of_light);
+        ml_dto.undo_ss(speed_of_light);
         // // 現局面表示
-        // let s2 = &universe.kaku_ky( &KyNums::Current );
+        // let s2 = &ml_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );
 
         if jisatusyu {
@@ -212,7 +210,7 @@ pub fn select_movement_except_suiceid(
 /// ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
 pub fn select_movement_except_fourfold_repetition(
     ss_hashset_input: &mut HashSet<u64>,
-    universe: &mut Universe,
+    ml_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     let mut ss_hashset_pickup = HashSet::new();
@@ -223,22 +221,22 @@ pub fn select_movement_except_fourfold_repetition(
         //ss_hashset.insert( *hash_ss_potential );
 
         // その手を指してみる
-        universe.do_ss(&ss, speed_of_light);
+        ml_dto.do_ss(&ss, speed_of_light);
         // 現局面表示
-        // let s1 = &universe.kaku_ky( &KyNums::Current );
+        // let s1 = &ml_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
 
         // 千日手かどうかを判定する☆（＾～＾）
-        if universe.count_same_ky() < SENNTITE_NUM {
+        if ml_dto.count_same_ky() < SENNTITE_NUM {
             ss_hashset_pickup.insert(*hash_ss_potential);
         } else {
             // 千日手
         }
 
         // 手を戻す FIXME: 打った象が戻ってない？
-        universe.undo_ss(speed_of_light);
+        ml_dto.undo_ss(speed_of_light);
         // 現局面表示
-        // let s2 = &universe.kaku_ky( &KyNums::Current );
+        // let s2 = &ml_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );
     }
 

@@ -3,7 +3,7 @@
 //!
 //! 公開するモジュールを記述
 //!
-pub mod common_part;
+pub mod common_use;
 pub mod go_command;
 pub mod main_loop;
 pub mod movement_generation;

@@ -2,8 +2,8 @@
 //! 現局面を使った指し手生成
 //!
 
-use super::super::super::controller::common_part::cp_asserts_controller::*;
-use super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::controller::common_use::cu_asserts_controller::*;
+use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_main_dto::*;

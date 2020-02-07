@@ -3,13 +3,13 @@
 //!
 //! test コマンドで実行しろだぜ☆（＾～＾）
 //!
-use super::super::super::controller::common_part::cp_conv_controller::*;
-use super::super::super::controller::common_part::cp_geo_teigi_controller::*;
-use super::super::super::controller::common_part::cp_math_controller::*;
-use super::super::super::controller::common_part::cp_random_move_controller;
+use super::super::super::controller::common_use::cu_conv_controller::*;
+use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
+use super::super::super::controller::common_use::cu_math_controller::*;
+use super::super::super::controller::common_use::cu_random_move_controller;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
+use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
@@ -55,7 +55,7 @@ pub fn test(
     line: &String,
     starts: &mut usize,
     len: usize,
-    universe: &mut Universe,
+    ml_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // いろいろな動作テスト
@@ -66,15 +66,15 @@ pub fn test(
         g_writeln("4<len mvsrc");
         // 駒の移動元升
         g_writeln("駒の移動元升");
-        let kms = cp_random_move_controller::rnd_kms();
+        let kms = cu_random_move_controller::rnd_kms();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
-                &universe.get_search_part().get_phase(&Person::Ji),
+                &ml_dto.get_search_part().get_phase(&Person::Ji),
                 kms,
             );
         let pc = ps.piece();
-        let sq_dst = cp_random_move_controller::random_square();
+        let sq_dst = cu_random_move_controller::random_square();
         g_writeln(&format!(
             "kms={} pc={} ms_dst={}",
             kms,
@@ -86,7 +86,7 @@ pub fn test(
         make_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
-            &universe.get_search_part(),
+            &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -95,7 +95,7 @@ pub fn test(
         make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &universe.get_search_part(),
+            &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -104,7 +104,7 @@ pub fn test(
         make_drop_piece_type_by_square_piece(
             &sq_dst,
             pc,
-            &universe.get_search_part(),
+            &ml_dto.get_search_part(),
             &speed_of_light,
             |piece_type_hash| {
                 da_kms_hashset.insert(piece_type_hash);
@@ -115,16 +115,16 @@ pub fn test(
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
         *starts += 4;
         // 移動後の駒
-        let kms = cp_random_move_controller::rnd_kms();
+        let kms = cu_random_move_controller::rnd_kms();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
-                &universe.get_search_part().get_phase(&Person::Ji),
+                &ml_dto.get_search_part().get_phase(&Person::Ji),
                 &kms,
             );
         // 移動先の升、および　不成駒／成駒
-        let sq_dst = cp_random_move_controller::random_square();
-        let pro_dst = cp_random_move_controller::rnd_bool();
+        let sq_dst = cu_random_move_controller::random_square();
+        let pro_dst = cu_random_move_controller::rnd_bool();
         let mut ss = MLMovementDto::new();
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
@@ -132,7 +132,7 @@ pub fn test(
         make_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
-            &universe.get_search_part(),
+            &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -141,13 +141,13 @@ pub fn test(
         make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &universe.get_search_part(),
+            &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
             },
         );
-        //insert_da_kms_by_sq_km      ( ms_dst, pc, &universe, &mut da_kms_hashset );
+        //insert_da_kms_by_sq_km      ( ms_dst, pc, &ml_dto, &mut da_kms_hashset );
         for sq_src in mv_src_hashset {
             ss.src = sq_src.clone();
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
@@ -179,7 +179,7 @@ pub fn test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -188,7 +188,7 @@ pub fn test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -197,7 +197,7 @@ pub fn test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
@@ -225,7 +225,7 @@ pub fn test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -234,7 +234,7 @@ pub fn test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -243,7 +243,7 @@ pub fn test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
@@ -271,7 +271,7 @@ pub fn test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -280,7 +280,7 @@ pub fn test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -289,7 +289,7 @@ pub fn test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
@@ -317,7 +317,7 @@ pub fn test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -326,7 +326,7 @@ pub fn test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -335,7 +335,7 @@ pub fn test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &universe.get_search_part(),
+                &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_kms_hashset.insert(piece_type_hash);
@@ -757,12 +757,12 @@ pub fn test(
         ));
     } else {
         //g_writeln( &format!( "未定義のテスト「{}」", &line[*starts..len-1] ) );
-        universe.push_command( &"position startpos moves 6i5h 8c8d 9i9h 8d8e 3g3f 8e8f 5h4h 8f8g+ 1i1h 8g9h 2g2f 9h8h 9g9f 8h7i 2i3g 8b8i+ 2f2e 7i7h".to_string() );
-        universe.push_command(&"position1".to_string());
-        //g_writeln( &universe.pop_command() );
+        ml_dto.push_command( &"position startpos moves 6i5h 8c8d 9i9h 8d8e 3g3f 8e8f 5h4h 8f8g+ 1i1h 8g9h 2g2f 9h8h 9g9f 8h7i 2i3g 8b8i+ 2f2e 7i7h".to_string() );
+        ml_dto.push_command(&"position1".to_string());
+        //g_writeln( &ml_dto.pop_command() );
     }
 
     // positionコマンドの読取を丸投げ
-    // tusin::usi::read_position(&KY593.to_string(), &mut universe);
-    // tusin::usi::read_position(&KY2.to_string(), &mut universe);
+    // tusin::usi::read_position(&KY593.to_string(), &mut ml_dto);
+    // tusin::usi::read_position(&KY2.to_string(), &mut ml_dto);
 }

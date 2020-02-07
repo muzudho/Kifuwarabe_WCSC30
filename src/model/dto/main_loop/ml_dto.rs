@@ -1,14 +1,12 @@
 //!
-//! 宇宙
-//!
-//! グローバル変数の作り方が分からないので仕方なく多くの変数を詰め込んでいるぜ☆（＾～＾）
-//! 引数で渡しまくれだぜ☆（＾～＾）
+//! Data transfer object.
+//! Main loop.
 //!
 extern crate rand;
 use rand::Rng;
 
 use super::super::super::super::config::*;
-use super::super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;
@@ -22,7 +20,6 @@ use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::dto::dialogue_part::dp_main_dto::*;
 use super::super::super::dto::main_loop::ml_main_dto::*;
 use super::super::super::dto::search_part::sp_main_dto::*;
 use std::fs::File;
@@ -87,20 +84,23 @@ pub fn g_writeln(s: &str) {
  * グローバル変数の作り方が分からないので、
  * ここに全部入れてあるぜ☆（＾～＾）
  */
-pub struct Universe {
+pub struct MLDto {
     /// アプリケーション部
     application_part: MLMainDto,
-    /// 対話部
-    dialogue_part: DPMainDto,
+    /// 対話モード
+    pub dialogue_mode: bool,
+    /// コマンドを溜めておくバッファー
+    pub vec_command: Vec<String>,
     /// 探索部
     search_part: SPMainDto,
 }
 
-impl Universe {
-    pub fn new() -> Universe {
-        Universe {
+impl MLDto {
+    pub fn new() -> MLDto {
+        MLDto {
             application_part: MLMainDto::new(),
-            dialogue_part: DPMainDto::new(),
+            dialogue_mode: false,
+            vec_command: Vec::new(),
             search_part: SPMainDto::new(),
         }
     }
@@ -176,13 +176,6 @@ impl Universe {
         &self.application_part
     }
 
-    pub fn get_dialogue_part_mut(&mut self) -> &mut DPMainDto {
-        &mut self.dialogue_part
-    }
-    pub fn get_dialogue_part(&self) -> &DPMainDto {
-        &self.dialogue_part
-    }
-
     pub fn get_search_part_mut(&mut self) -> &mut SPMainDto {
         &mut self.search_part
     }
@@ -194,13 +187,13 @@ impl Universe {
      * コマンド・バッファー *
      ************************/
     pub fn is_empty_command(&mut self) -> bool {
-        self.dialogue_part.vec_command.len() == 0
+        self.vec_command.len() == 0
     }
     pub fn push_command(&mut self, line: &String) {
-        self.dialogue_part.vec_command.push(format!("{}\n", line));
+        self.vec_command.push(format!("{}\n", line));
     }
     pub fn pop_command(&mut self) -> String {
-        self.dialogue_part.vec_command.pop().unwrap()
+        self.vec_command.pop().unwrap()
     }
 
     /* ******

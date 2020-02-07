@@ -8,7 +8,7 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
@@ -204,7 +204,7 @@ impl SPPositionDto {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_hash(&self, universe: &Universe, speed_of_light: &MLSpeedOfLightVo) -> u64 {
+    pub fn create_hash(&self, ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒
@@ -215,7 +215,7 @@ impl SPPositionDto {
                 .ml_piece_struct_master_vo
                 .get_piece_vo(km)
                 .serial_piece_number();
-            hash ^= universe.get_application_part().get_position_hash_seed().km[i_ms][num_km];
+            hash ^= ml_dto.get_application_part().get_position_hash_seed().km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
@@ -236,7 +236,7 @@ impl SPPositionDto {
             );
 
             hash ^=
-                universe.get_application_part().get_position_hash_seed().mg[num_km][maisu as usize];
+                ml_dto.get_application_part().get_position_hash_seed().mg[num_km][maisu as usize];
         }
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）

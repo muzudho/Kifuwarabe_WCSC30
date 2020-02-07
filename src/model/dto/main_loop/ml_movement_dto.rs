@@ -1,8 +1,8 @@
 //!
 //! USIプロトコル
 //!
-use super::super::super::super::controller::common_part::cp_asserts_controller::*;
-use super::super::super::super::controller::common_part::cp_conv_controller::*;
+use super::super::super::super::controller::common_use::cu_asserts_controller::*;
+use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use std::fmt;
