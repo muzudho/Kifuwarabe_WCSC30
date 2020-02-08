@@ -162,7 +162,7 @@ pub fn push_sq_to_hash(hash: u64, sq: &Square) -> u64 {
 pub fn pop_sq_from_hash(hash: u64) -> (u64, Square) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let sq_num = Square::from_umasu((hash & 0b1111111) as umasu);
+    let sq_num = Square::from_umasu((hash & 0b111_1111) as umasu);
     (hash >> 7, sq_num)
 }
 

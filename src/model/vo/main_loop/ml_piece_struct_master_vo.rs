@@ -39,8 +39,8 @@ pub struct MLPieceStructMasterVo {
     pub kara: PieceStructVo,
     pub owari: PieceStructVo,
 }
-impl MLPieceStructMasterVo {
-    pub fn new() -> Self {
+impl Default for MLPieceStructMasterVo {
+    fn default() -> Self {
         MLPieceStructMasterVo {
             king1: PieceStructVo::from_piece(King1),
             rook1: PieceStructVo::from_piece(Rook1),
@@ -74,7 +74,8 @@ impl MLPieceStructMasterVo {
             owari: PieceStructVo::from_piece(Owari),
         }
     }
-
+}
+impl MLPieceStructMasterVo {
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_vo(&self, piece: &OPPieceVo) -> &PieceStructVo {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）

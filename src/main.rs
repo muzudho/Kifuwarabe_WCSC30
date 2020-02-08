@@ -34,9 +34,9 @@ use std::io;
 
 fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
-    let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::new();
+    let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::default();
     // 宇宙
-    let mut ml_dto: MLDto = MLDto::new();
+    let mut ml_dto: MLDto = MLDto::default();
     ml_dto.big_bang();
 
     // [Ctrl]+[C] で強制終了

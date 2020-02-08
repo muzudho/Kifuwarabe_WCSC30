@@ -58,10 +58,9 @@ pub fn g_write(s: &str) {
     println!("{}", s);
     if LOG_ENABLE {
         // write_allメソッドを使うには use std::io::Write; が必要
-        match LOGFILE.lock().unwrap().write_all(s.as_bytes()) {
+        if let Err(_why) = LOGFILE.lock().unwrap().write_all(s.as_bytes()) {
             // 大会向けに、ログ書き込み失敗は出力しないことにする
-            Err(_why) => {} //panic!("couldn't write log. : {}",Error::description(&why)),
-            Ok(_) => {}
+            //panic!("couldn't write log. : {}",Error::description(&why)),
         }
     }
 }
@@ -69,14 +68,11 @@ pub fn g_write(s: &str) {
 pub fn g_writeln(s: &str) {
     println!("{}", s);
     if LOG_ENABLE {
-        match LOGFILE
+        if let Err(_why) = LOGFILE
             .lock()
             .unwrap()
             .write_all(format!("{}\n", s).as_bytes())
-        {
-            Err(_why) => {}
-            Ok(_) => {}
-        }
+        {}
     }
 }
 
@@ -107,8 +103,8 @@ pub struct MLDto {
     sp_dto: SPDto,
 }
 
-impl MLDto {
-    pub fn new() -> MLDto {
+impl Default for MLDto {
+    fn default() -> Self {
         MLDto {
             position_hash_seed: PositionHashSeed {
                 // 盤上の駒
@@ -125,6 +121,8 @@ impl MLDto {
             sp_dto: SPDto::new(),
         }
     }
+}
+impl MLDto {
     /**
      * 宇宙誕生
      */
@@ -136,20 +134,20 @@ impl MLDto {
             for i_km in 0..KM_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
                 self.get_position_hash_seed_mut().km[i_ms][i_km] =
-                    rand::thread_rng().gen_range(0, 18446744073709551615);
+                    rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 持ち駒
         for i_km in 0..KM_LN {
             for i_mg in 0..MG_MAX {
                 self.get_position_hash_seed_mut().mg[i_km][i_mg] =
-                    rand::thread_rng().gen_range(0, 18446744073709551615);
+                    rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 先後
         for i_sn in 0..SN_LN {
             self.get_position_hash_seed_mut().sn[i_sn] =
-                rand::thread_rng().gen_range(0, 18446744073709551615);
+                rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }
     }
     /**

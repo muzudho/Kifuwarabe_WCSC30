@@ -148,6 +148,14 @@ pub fn test(
             },
         );
         //insert_da_kms_by_sq_km      ( ms_dst, pc, &ml_dto, &mut da_kms_hashset );
+        if let Some(sq_src) = mv_src_hashset.iter().next() {
+            ss.src = (*sq_src).clone();
+            g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
+            ss.dst = sq_dst;
+            ss.pro = pro_dst;
+            ss.drop = PieceType::Kara;
+        }
+        /*
         for sq_src in mv_src_hashset {
             ss.src = sq_src.clone();
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
@@ -156,6 +164,7 @@ pub fn test(
             ss.drop = PieceType::Kara;
             break;
         }
+        */
         g_writeln(&format!("指し手にすると={}", ss));
     } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "1" {
         *starts += 1;

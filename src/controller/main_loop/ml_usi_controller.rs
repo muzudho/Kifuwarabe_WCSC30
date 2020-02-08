@@ -590,9 +590,9 @@ pub fn read_position(line: &String, ml_dto: &mut MLDto, speed_of_light: &MLSpeed
             starts += 1;
         }
 
-        if 0 < (len - starts) && &line[starts..(starts + 1)] == "w" {
-            starts += 1;
-        } else if 0 < (len - starts) && &line[starts..(starts + 1)] == "b" {
+        if 0 < (len - starts) && &line[starts..(starts + 1)] == "w"
+            || 0 < (len - starts) && &line[starts..(starts + 1)] == "b"
+        {
             starts += 1;
         }
 

@@ -7,10 +7,10 @@ pub struct MLSpeedOfLightVo {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
     pub ml_piece_struct_master_vo: MLPieceStructMasterVo,
 }
-impl MLSpeedOfLightVo {
-    pub fn new() -> Self {
+impl Default for MLSpeedOfLightVo {
+    fn default() -> Self {
         MLSpeedOfLightVo {
-            ml_piece_struct_master_vo: MLPieceStructMasterVo::new(),
+            ml_piece_struct_master_vo: MLPieceStructMasterVo::default(),
         }
     }
 }
