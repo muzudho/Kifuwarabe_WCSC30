@@ -7,11 +7,11 @@ use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::*;
-use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
-use super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
@@ -70,7 +70,7 @@ pub fn get_potential_movement<F1>(
                             src: sq_src.clone(),
                             dst: sq_dst.clone(),
                             pro: false, // 成らず
-                            drop: PieceType::Kara,
+                            drop: GPPieceTypeVo::Kara,
                         }
                         .to_hash(),
                     );
@@ -91,7 +91,7 @@ pub fn get_potential_movement<F1>(
                             src: sq_src.clone(),
                             dst: sq_dst.clone(),
                             pro: true, // 成り
-                            drop: PieceType::Kara,
+                            drop: GPPieceTypeVo::Kara,
                         }
                         .to_hash(),
                     );
@@ -111,13 +111,13 @@ pub fn get_potential_movement<F1>(
                 OPPieceVo::Kara => {
                     // 駒が無いところに打つ
 
-                    let mut da_kms_hashset = HashSet::new();
-                    for kms_motigoma in MGS_ARRAY.iter() {
+                    let mut da_piece_type_hashset = HashSet::new();
+                    for piece_type_motigoma in MGS_ARRAY.iter() {
                         let ps_motigoma = speed_of_light
                             .ml_piece_struct_master_vo
                             .get_piece_vo_by_phase_and_piece_type(
                                 &sp_dto.get_phase(&Person::Ji),
-                                kms_motigoma,
+                                *piece_type_motigoma,
                             );
                         let pc_motigoma = ps_motigoma.piece();
                         if 0 < sp_dto
@@ -131,19 +131,19 @@ pub fn get_potential_movement<F1>(
                                 &sp_dto,
                                 &speed_of_light,
                                 |piece_type_hash| {
-                                    da_kms_hashset.insert(piece_type_hash);
+                                    da_piece_type_hashset.insert(piece_type_hash);
                                 },
                             );
                         }
                     }
-                    for num_kms_da in da_kms_hashset {
-                        let kms = num_to_kms(num_kms_da);
+                    for num_piece_type_da in da_piece_type_hashset {
+                        let piece_type = num_to_piece_type(num_piece_type_da);
                         gets_movement_callback(
                             MLMovementDto {
                                 src: Square::from_umasu(SS_SRC_DA), // 駒大
                                 dst: sq_dst.clone(),                // どの升へ行きたいか
                                 pro: false,                         // 打に成りは無し
-                                drop: kms,                          // 打った駒種類
+                                drop: piece_type,                   // 打った駒種類
                             }
                             .to_hash(),
                         );
@@ -174,7 +174,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     let ps_dst = speed_of_light
         .ml_piece_struct_master_vo
         .get_piece_vo(&piece_dst);
-    let (sn, _kms_dst) = ps_dst.phase_piece_type();
+    let (sn, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
@@ -215,7 +215,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成らず
         ss_hash_builder.pro = false;
-        ss_hash_builder.drop = PieceType::Kara;
+        ss_hash_builder.drop = GPPieceTypeVo::Kara;
         gets_movement(ss_hash_builder.to_hash());
     }
 
@@ -238,7 +238,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成り
         ss_hash_builder.pro = true;
-        ss_hash_builder.drop = PieceType::Kara;
+        ss_hash_builder.drop = GPPieceTypeVo::Kara;
         gets_movement(ss_hash_builder.to_hash());
     }
 }
@@ -262,7 +262,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let piece_vo_dst = speed_of_light
         .ml_piece_struct_master_vo
         .get_piece_vo(piece_dst);
-    let (sn, _kms_dst) = piece_vo_dst.phase_piece_type();
+    let (sn, _piece_type_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if match_sn(
@@ -286,25 +286,25 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     // | 打 |
     // +----+
 
-    let mut da_kms_hashset: HashSet<usize> = HashSet::new();
+    let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
     make_drop_piece_type_by_square_piece(
         &sq_dst,
         piece_dst,
         &sp_dto,
         &speed_of_light,
         |piece_type_hash| {
-            da_kms_hashset.insert(piece_type_hash);
+            da_piece_type_hashset.insert(piece_type_hash);
         },
     );
     // 打
-    for num_kms_da in da_kms_hashset.iter() {
-        let kms_da = num_to_kms(*num_kms_da);
+    for num_piece_type_da in da_piece_type_hashset.iter() {
+        let piece_type_da = num_to_piece_type(*num_piece_type_da);
 
         let movement_hash = MLMovementDto {
             src: Square::from_umasu(SS_SRC_DA),
             dst: (*sq_dst).clone(),
             pro: false,
-            drop: kms_da,
+            drop: piece_type_da,
         }
         .to_hash();
 

@@ -4,8 +4,8 @@
 //! 先後付き駒
 //!
 
+use super::super::game_part::gp_piece_type_vo::*;
 use super::op_phase_vo::*;
-use super::op_piece_type_vo::*;
 use std::fmt;
 
 ///
@@ -121,11 +121,11 @@ impl fmt::Display for OPPieceVo {
 impl OPPieceVo {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
-    pub fn from_phase_piece_type(phase: &Phase, piece_type: &PieceType) -> Self {
-        use super::op_piece_type_vo::PieceType::*;
+    pub fn from_phase_piece_type(phase: &Phase, piece_type: GPPieceTypeVo) -> Self {
+        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         use super::op_piece_vo::OPPieceVo::*;
         match *phase {
-            Phase::Sen => match *piece_type {
+            Phase::Sen => match piece_type {
                 R => King1,
                 K => Rook1,
                 Z => Bishop1,
@@ -142,7 +142,7 @@ impl OPPieceVo {
                 PH => PromotedPawn1,
                 _ => OPPieceVo::Owari,
             },
-            Phase::Go => match *piece_type {
+            Phase::Go => match piece_type {
                 R => King2,
                 K => Rook2,
                 Z => Bishop2,

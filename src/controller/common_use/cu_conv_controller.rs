@@ -3,11 +3,11 @@
 //!
 #![allow(dead_code)]
 use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::other_part::op_direction_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
-use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 
 /**********
@@ -198,12 +198,10 @@ pub fn kaiten180_sq_by_sq_sn(sq: &Square, sn: &Phase) -> Square {
  * 駒種類 *
  **********/
 
-/**
- * 駒種類の数値化
- */
-pub fn kms_to_num(kms: &PieceType) -> usize {
-    use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType::*;
-    match *kms {
+/// 駒種類の数値化
+pub fn piece_type_to_num(piece_type: GPPieceTypeVo) -> usize {
+    use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    match piece_type {
         R => 0,
         K => 1,
         Z => 2,
@@ -225,8 +223,8 @@ pub fn kms_to_num(kms: &PieceType) -> usize {
 /**
  * 数値の駒種類化
  */
-pub fn num_to_kms(n: usize) -> PieceType {
-    use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType::*;
+pub fn num_to_piece_type(n: usize) -> GPPieceTypeVo {
+    use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
     match n {
         0 => R,
         1 => K,
@@ -249,24 +247,22 @@ pub fn num_to_kms(n: usize) -> PieceType {
 /**
  * ハッシュ値を作る
  */
-pub fn push_kms_to_hash(hash: u64, kms: &PieceType) -> u64 {
+pub fn push_piece_type_to_hash(hash: u64, piece_type: GPPieceTypeVo) -> u64 {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
-    (hash << 4) + kms_to_num(kms) as u64
+    (hash << 4) + piece_type_to_num(piece_type) as u64
 }
 /**
  * ハッシュ値から作る
  */
-pub fn pop_kms_from_hash(hash: u64) -> (u64, PieceType) {
+pub fn pop_piece_type_from_hash(hash: u64) -> (u64, GPPieceTypeVo) {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
-    let kms_num = num_to_kms((hash & 0b1111) as usize);
-    (hash >> 4, kms_num)
+    let piece_type_num = num_to_piece_type((hash & 0b1111) as usize);
+    (hash >> 4, piece_type_num)
 }
-/**
- * 成れる駒
- */
-pub fn kms_can_pro(kms: &PieceType) -> bool {
-    use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType::*;
-    match *kms {
+/// 成れる駒
+pub fn piece_type_can_pro(piece_type: GPPieceTypeVo) -> bool {
+    use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    match piece_type {
         R => false,
         K => true,
         Z => true,
@@ -285,12 +281,10 @@ pub fn kms_can_pro(kms: &PieceType) -> bool {
         Owari => false,
     }
 }
-/**
- * 打てる駒
- */
-pub fn kms_can_da(kms: &PieceType) -> bool {
-    use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType::*;
-    match *kms {
+/// 打てる駒
+pub fn piece_type_can_da(piece_type: GPPieceTypeVo) -> bool {
+    use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    match piece_type {
         R => false,
         K => true,
         Z => true,

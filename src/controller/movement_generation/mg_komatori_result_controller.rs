@@ -10,10 +10,10 @@ use super::super::super::controller::movement_generation::mg_main_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
-use super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
@@ -194,13 +194,13 @@ pub fn lookup_catching_king_on_board(
 
     let mut multiple_movements_hashset = HashSet::new();
 
-    for kms_dst in KMS_ARRAY.iter() {
+    for piece_type_dst in KMS_ARRAY.iter() {
         // 移動した後の相手の駒
         let ps_dst = speed_of_light
             .ml_piece_struct_master_vo
-            .get_piece_vo_by_phase_and_piece_type(&sn, kms_dst);
+            .get_piece_vo_by_phase_and_piece_type(&sn, *piece_type_dst);
         let km_dst = ps_dst.piece();
-        //let km_dst = sn_kms_to_km( &sn, rnd_kms() );
+        //let km_dst = sn_piece_type_to_km( &sn, rnd_piece_type() );
         // 指定マスに移動できるか
         // 打は除く
 
@@ -215,7 +215,7 @@ pub fn lookup_catching_king_on_board(
             },
         );
 
-        // g_writeln( &format!("テスト lookup_catching_king_on_board get_movement_by_square_and_piece_on_board kms_dst={}.",kms_dst) );
+        // g_writeln( &format!("テスト lookup_catching_king_on_board get_movement_by_square_and_piece_on_board piece_type_dst={}.",piece_type_dst) );
         // use consoles::visuals::dumps::*;
         // hyoji_ss_hashset( &multiple_movements_hashset );
 

@@ -19,7 +19,7 @@ pub fn is_jisatusyu(ml_dto: &MLDto, ss: &MLMovementDto, speed_of_light: &MLSpeed
     let ps_src = speed_of_light
         .ml_piece_struct_master_vo
         .get_piece_vo(km_src);
-    let (sn_teban, _kms) = ps_src.phase_piece_type();
+    let (sn_teban, _piece_type) = ps_src.phase_piece_type();
     // 相手番の先後
     let sn_aite = hanten_sn(&sn_teban);
 
@@ -28,8 +28,8 @@ pub fn is_jisatusyu(ml_dto: &MLDto, ss: &MLMovementDto, speed_of_light: &MLSpeed
         ml_dto.get_search_part().effect_count_by_phase[sn_to_num(&sn_aite)].get_su_by_sq(&ss.dst);
     let result = 0 < kikisu;
     // g_writeln(&format!(
-    //     "info is_jisatusyu={} km_src={} sn_teban={} kms={} sn_aite={} ss.dst={} kikisu={}"
-    //     ,result ,km_src ,sn_teban ,kms ,sn_aite ,ss.dst ,kikisu
+    //     "info is_jisatusyu={} km_src={} sn_teban={} piece_type={} sn_aite={} ss.dst={} kikisu={}"
+    //     ,result ,km_src ,sn_teban ,piece_type ,sn_aite ,ss.dst ,kikisu
     // ));
 
     result

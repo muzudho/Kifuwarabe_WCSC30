@@ -2,9 +2,9 @@
 //! USIプロトコル
 //!
 use super::super::super::model::dto::main_loop::ml_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_constants_vo::*;
-use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 
@@ -31,49 +31,49 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::K);
+            ml_dto.get_search_part_mut().set_move_drop(GPPieceTypeVo::K);
         }
         "B" => {
             *starts += 2;
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::Z);
+            ml_dto.get_search_part_mut().set_move_drop(GPPieceTypeVo::Z);
         }
         "G" => {
             *starts += 2;
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::I);
+            ml_dto.get_search_part_mut().set_move_drop(GPPieceTypeVo::I);
         }
         "S" => {
             *starts += 2;
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::N);
+            ml_dto.get_search_part_mut().set_move_drop(GPPieceTypeVo::N);
         }
         "N" => {
             *starts += 2;
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::U);
+            ml_dto.get_search_part_mut().set_move_drop(GPPieceTypeVo::U);
         }
         "L" => {
             *starts += 2;
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::S);
+            ml_dto.get_search_part_mut().set_move_drop(GPPieceTypeVo::S);
         }
         "P" => {
             *starts += 2;
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_umasu(0));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::H);
+            ml_dto.get_search_part_mut().set_move_drop(GPPieceTypeVo::H);
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
@@ -168,7 +168,9 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
             ml_dto
                 .get_search_part_mut()
                 .set_move_src(&Square::from_file_rank(suji, dan));
-            ml_dto.get_search_part_mut().set_move_drop(PieceType::Kara);
+            ml_dto
+                .get_search_part_mut()
+                .set_move_drop(GPPieceTypeVo::Kara);
         }
     }
 

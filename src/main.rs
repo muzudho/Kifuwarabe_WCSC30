@@ -83,9 +83,9 @@ fn main() {
             //}else if 9<len && &line[0..10] == "kmugokidir" {
             g_writeln("9<len kmugokidir");
             // 駒の動きの移動元として有りえる方角
-            let kms = controller::common_use::cu_random_move_controller::rnd_kms();
-            g_writeln(&format!("{}のムーブ元", &kms));
-            ml_dto.hyoji_kmugoki_dir(kms);
+            let piece_type = controller::common_use::cu_random_move_controller::rnd_piece_type();
+            g_writeln(&format!("{}のムーブ元", &piece_type));
+            ml_dto.hyoji_kmugoki_dir(*piece_type);
             g_writeln(""); //改行
         } else if 9 < len && &line[starts..10] == "usinewgame" {
             ml_dto.clear_all_positions();
@@ -112,11 +112,11 @@ fn main() {
         } else if 5 < len && &line[starts..6] == "kikisu" {
             // 利き数表示
             controller::main_loop::ml_main_controller::cmd_kikisu(&ml_dto, &speed_of_light);
-        } else if 5 < len && &line[starts..6] == "rndkms" {
-            g_writeln("5<len rndkms");
+        } else if 5 < len && &line[starts..6] == "rndpiece_type" {
+            g_writeln("5<len rndpiece_type");
             // 乱駒種類
-            let kms = controller::common_use::cu_random_move_controller::rnd_kms();
-            g_writeln(&format!("乱駒種類={}", &kms));
+            let piece_type = controller::common_use::cu_random_move_controller::rnd_piece_type();
+            g_writeln(&format!("乱駒種類={}", &piece_type));
         } else if 5 < len && &line[starts..6] == "sasite" {
             // FIXME 合法手とは限らない
             let mut ss_potential_hashset = HashSet::<u64>::new();

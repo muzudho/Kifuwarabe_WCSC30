@@ -4,8 +4,8 @@
 extern crate rand;
 use rand::Rng;
 
-use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
-use super::super::super::model::vo::other_part::op_piece_type_vo::*;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 
 /**
@@ -27,6 +27,6 @@ pub fn random_square() -> Square {
 /**
  * ランダムに 駒の種類を返す
  */
-pub fn rnd_kms() -> &'static PieceType {
+pub fn rnd_piece_type() -> &'static GPPieceTypeVo {
     &KMS_ARRAY[rand::thread_rng().gen_range(0, KMS_ARRAY_LN)]
 }

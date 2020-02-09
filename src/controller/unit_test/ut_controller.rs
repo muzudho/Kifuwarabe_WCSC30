@@ -10,10 +10,10 @@ use super::super::super::controller::common_use::cu_random_move_controller;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
-use super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
@@ -42,10 +42,16 @@ pub fn hyoji_sq_vec(sq_vec: &Vec<Square>) {
 }
 
 /// 駒種類
-pub fn hyoji_kms_hashset(num_kms_hashset: &HashSet<usize>) {
-    g_writeln(&format!("num_kms_hashset.len()={}", num_kms_hashset.len()));
-    for num_kms in num_kms_hashset {
-        g_writeln(&format!("kms({})", num_to_kms(*num_kms)));
+pub fn hyoji_piece_type_hashset(num_piece_type_hashset: &HashSet<usize>) {
+    g_writeln(&format!(
+        "num_piece_type_hashset.len()={}",
+        num_piece_type_hashset.len()
+    ));
+    for num_piece_type in num_piece_type_hashset {
+        g_writeln(&format!(
+            "piece_type({})",
+            num_to_piece_type(*num_piece_type)
+        ));
     }
 }
 
@@ -66,23 +72,23 @@ pub fn test(
         g_writeln("4<len mvsrc");
         // 駒の移動元升
         g_writeln("駒の移動元升");
-        let kms = cu_random_move_controller::rnd_kms();
+        let piece_type = cu_random_move_controller::rnd_piece_type();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
                 &ml_dto.get_search_part().get_phase(&Person::Ji),
-                kms,
+                *piece_type,
             );
         let pc = ps.piece();
         let sq_dst = cu_random_move_controller::random_square();
         g_writeln(&format!(
-            "kms={} pc={} ms_dst={}",
-            kms,
+            "piece_type={} pc={} ms_dst={}",
+            piece_type,
             pc,
             sq_dst.to_umasu()
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-        let mut da_kms_hashset: HashSet<usize> = HashSet::new();
+        let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
         make_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
@@ -107,20 +113,20 @@ pub fn test(
             &ml_dto.get_search_part(),
             &speed_of_light,
             |piece_type_hash| {
-                da_kms_hashset.insert(piece_type_hash);
+                da_piece_type_hashset.insert(piece_type_hash);
             },
         );
         hyoji_sq_hashset(&mv_src_hashset);
-        hyoji_kms_hashset(&da_kms_hashset);
+        hyoji_piece_type_hashset(&da_piece_type_hashset);
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
         *starts += 4;
         // 移動後の駒
-        let kms = cu_random_move_controller::rnd_kms();
+        let piece_type = cu_random_move_controller::rnd_piece_type();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
                 &ml_dto.get_search_part().get_phase(&Person::Ji),
-                &kms,
+                *piece_type,
             );
         // 移動先の升、および　不成駒／成駒
         let sq_dst = cu_random_move_controller::random_square();
@@ -128,7 +134,7 @@ pub fn test(
         let mut ss = MLMovementDto::new();
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-        //let mut da_kms_hashset : HashSet<usize> = HashSet::new();
+        //let mut da_piece_type_hashset : HashSet<usize> = HashSet::new();
         make_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
@@ -147,13 +153,13 @@ pub fn test(
                 mv_src_hashset.insert(square);
             },
         );
-        //insert_da_kms_by_sq_km      ( ms_dst, pc, &ml_dto, &mut da_kms_hashset );
+        //insert_da_piece_type_by_sq_km      ( ms_dst, pc, &ml_dto, &mut da_piece_type_hashset );
         if let Some(sq_src) = mv_src_hashset.iter().next() {
             ss.src = (*sq_src).clone();
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = PieceType::Kara;
+            ss.drop = GPPieceTypeVo::Kara;
         }
         /*
         for sq_src in mv_src_hashset {
@@ -161,7 +167,7 @@ pub fn test(
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = PieceType::Kara;
+            ss.drop = GPPieceTypeVo::Kara;
             break;
         }
         */
@@ -171,20 +177,20 @@ pub fn test(
         // 駒の移動元升
         {
             g_writeln("利きテスト1");
-            let kms = PieceType::PH; // ぱわーあっぷひよこ
+            let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(79);
             g_writeln(&format!(
-                "kms={} pc={} ms_dst={}",
-                kms,
+                "piece_type={} pc={} ms_dst={}",
+                piece_type,
                 pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_kms_hashset: HashSet<usize> = HashSet::new();
+            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -209,28 +215,28 @@ pub fn test(
                 &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
-                    da_kms_hashset.insert(piece_type_hash);
+                    da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
             hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_kms_hashset(&da_kms_hashset);
+            hyoji_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             g_writeln("利きテスト2");
-            let kms = PieceType::PH; // ぱわーあっぷひよこ
+            let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(68);
             g_writeln(&format!(
-                "kms={} pc={} ms_dst={}",
-                kms,
+                "piece_type={} pc={} ms_dst={}",
+                piece_type,
                 pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_kms_hashset: HashSet<usize> = HashSet::new();
+            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -255,28 +261,28 @@ pub fn test(
                 &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
-                    da_kms_hashset.insert(piece_type_hash);
+                    da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
             hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_kms_hashset(&da_kms_hashset);
+            hyoji_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             g_writeln("利きテスト3");
-            let kms = PieceType::PH; // ぱわーあっぷひよこ
+            let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, &kms);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(77);
             g_writeln(&format!(
-                "kms={} pc={} ms_dst={}",
-                kms,
+                "piece_type={} pc={} ms_dst={}",
+                piece_type,
                 pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_kms_hashset: HashSet<usize> = HashSet::new();
+            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -301,28 +307,28 @@ pub fn test(
                 &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
-                    da_kms_hashset.insert(piece_type_hash);
+                    da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
             hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_kms_hashset(&da_kms_hashset);
+            hyoji_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             g_writeln("利きテスト2");
-            let kms = PieceType::R; // らいおん
+            let piece_type = GPPieceTypeVo::R; // らいおん
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Sen, &kms);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Sen, piece_type);
             let pc = ps.piece(); // ▼ら
             let sq_dst = Square::from_umasu(58);
             g_writeln(&format!(
-                "kms={} pc={} ms_dst={}",
-                kms,
+                "piece_type={} pc={} ms_dst={}",
+                piece_type,
                 pc,
                 sq_dst.to_umasu()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_kms_hashset: HashSet<usize> = HashSet::new();
+            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -347,11 +353,11 @@ pub fn test(
                 &ml_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
-                    da_kms_hashset.insert(piece_type_hash);
+                    da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
             hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_kms_hashset(&da_kms_hashset);
+            hyoji_piece_type_hashset(&da_piece_type_hashset);
         }
     } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "2" {
         *starts += 1;

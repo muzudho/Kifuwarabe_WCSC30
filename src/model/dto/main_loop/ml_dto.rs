@@ -9,6 +9,8 @@ use super::super::super::super::config::*;
 use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
+use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
+use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
@@ -16,8 +18,6 @@ use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
-use super::super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
-use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
@@ -552,14 +552,14 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
     // 駒の動きを出力
     pub fn hyoji_kmugoki(&self) {
-        for kms in KMS_ARRAY.iter() {
-            g_write(&format!("{} ", kms));
-            self.hyoji_kmugoki_dir(&kms);
+        for piece_type in KMS_ARRAY.iter() {
+            g_write(&format!("{} ", piece_type));
+            self.hyoji_kmugoki_dir(*piece_type);
             g_writeln(""); //改行
         }
     }
-    pub fn hyoji_kmugoki_dir(&self, kms: &PieceType) {
-        for kmdir in KM_UGOKI.back[kms_to_num(kms)].iter() {
+    pub fn hyoji_kmugoki_dir(&self, piece_type: GPPieceTypeVo) {
+        for kmdir in KM_UGOKI.back[piece_type_to_num(piece_type)].iter() {
             match *kmdir {
                 PieceDirection::Owari => break,
                 _ => g_write(&format!("{},", kmdir)),

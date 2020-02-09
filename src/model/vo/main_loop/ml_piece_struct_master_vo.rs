@@ -1,8 +1,8 @@
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
+use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::other_part::op_phase_vo::Phase;
 use super::super::other_part::op_piece_struct_vo::PieceStructVo;
-use super::super::other_part::op_piece_type_vo::PieceType;
 use super::super::other_part::op_piece_vo::OPPieceVo;
 use super::super::other_part::op_piece_vo::OPPieceVo::*;
 
@@ -121,12 +121,12 @@ impl MLPieceStructMasterVo {
     pub fn get_piece_vo_by_phase_and_piece_type(
         &self,
         phase: &Phase,
-        piece_type: &PieceType,
+        piece_type: GPPieceTypeVo,
     ) -> &PieceStructVo {
-        use super::super::other_part::op_piece_type_vo::PieceType::*;
+        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         use super::super::other_part::op_piece_vo::OPPieceVo::*;
         match *phase {
-            Phase::Sen => match *piece_type {
+            Phase::Sen => match piece_type {
                 R => self.get_piece_vo(&King1),
                 K => self.get_piece_vo(&Rook1),
                 Z => self.get_piece_vo(&Bishop1),
@@ -143,7 +143,7 @@ impl MLPieceStructMasterVo {
                 PH => self.get_piece_vo(&PromotedPawn1),
                 _ => self.get_piece_vo(&OPPieceVo::Owari),
             },
-            Phase::Go => match *piece_type {
+            Phase::Go => match piece_type {
                 R => self.get_piece_vo(&King2),
                 K => self.get_piece_vo(&Rook2),
                 Z => self.get_piece_vo(&Bishop2),

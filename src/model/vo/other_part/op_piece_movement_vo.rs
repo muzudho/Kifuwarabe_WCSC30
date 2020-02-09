@@ -2,8 +2,8 @@
 //! 駒の動き
 //!
 
+use super::super::game_part::gp_piece_type_vo::*;
 use super::op_piece_direction_vo::*;
-use super::op_piece_type_vo::*;
 
 // 駒が戻る動き
 #[allow(dead_code)]

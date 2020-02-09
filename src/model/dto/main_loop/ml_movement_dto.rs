@@ -3,7 +3,7 @@
 //!
 use super::super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::super::controller::common_use::cu_conv_controller::*;
-use super::super::super::super::model::vo::other_part::op_piece_type_vo::PieceType;
+use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use std::fmt;
 
@@ -19,7 +19,7 @@ pub struct MLMovementDto {
     // 移動後に成るなら真
     pub pro: bool,
     // 打の場合、打った駒種類
-    pub drop: PieceType,
+    pub drop: GPPieceTypeVo,
 }
 impl MLMovementDto {
     pub fn new() -> MLMovementDto {
@@ -27,7 +27,7 @@ impl MLMovementDto {
             src: Square::from_umasu(0),
             dst: Square::from_umasu(0),
             pro: false,
-            drop: PieceType::Kara,
+            drop: GPPieceTypeVo::Kara,
         }
     }
     #[allow(dead_code)]
@@ -35,12 +35,12 @@ impl MLMovementDto {
         self.src = Square::from_umasu(0);
         self.dst = Square::from_umasu(0);
         self.pro = false;
-        self.drop = PieceType::Kara;
+        self.drop = GPPieceTypeVo::Kara;
     }
     pub fn to_hash(&self) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_kms_to_hash(hash, &self.drop);
+        hash = push_piece_type_to_hash(hash, self.drop);
         hash = push_bool_to_hash(hash, self.pro);
         hash = push_sq_to_hash(hash, &self.dst);
         push_sq_to_hash(hash, &self.src)
@@ -50,7 +50,7 @@ impl MLMovementDto {
         let (hash, src) = pop_sq_from_hash(hash);
         let (hash, dst) = pop_sq_from_hash(hash);
         let (hash, pro) = pop_bool_from_hash(hash);
-        let (_hash, drop) = pop_kms_from_hash(hash);
+        let (_hash, drop) = pop_piece_type_from_hash(hash);
         MLMovementDto {
             src: src,
             dst: dst,
@@ -79,7 +79,7 @@ impl fmt::Display for MLMovementDto {
         let (dx, dy) = self.dst.to_file_rank();
 
         if self.src.to_umasu() == SS_SRC_DA {
-            use super::super::super::super::model::vo::other_part::op_piece_type_vo::PieceType::*;
+            use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
             write!(
                 f,
                 "{}*{}{}{}",

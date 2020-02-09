@@ -3,10 +3,10 @@ use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::controller::search_part::sp_number_board_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
+use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
-use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_ply_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
@@ -676,7 +676,7 @@ impl SPDto {
         // 移動先の駒
         let piece186 = if move2.src.to_umasu() == SS_SRC_DA {
             // 打なら
-            let piece679 = OPPieceVo::from_phase_piece_type(phase, &move2.drop);
+            let piece679 = OPPieceVo::from_phase_piece_type(phase, move2.drop);
             // 自分の持ち駒を増やす
             //let mg = km_to_mg(km);
             //self.add_hand(mg,1);
@@ -746,7 +746,7 @@ impl SPDto {
             let piece144 = if move1.src.to_umasu() == SS_SRC_DA {
                 // 打なら
                 // 自分の持ち駒を減らす
-                let piece734 = OPPieceVo::from_phase_piece_type(&phase, &move1.drop);
+                let piece734 = OPPieceVo::from_phase_piece_type(&phase, move1.drop);
                 self.current_position
                     .add_hand(&piece734, -1, speed_of_light);
                 piece734
@@ -822,8 +822,8 @@ impl SPDto {
     pub fn set_move_pro(&mut self, pro: bool) {
         self.moves_history[self.get_ply() as usize].pro = pro
     }
-    pub fn set_move_drop(&mut self, kms: PieceType) {
-        self.moves_history[self.get_ply() as usize].drop = kms
+    pub fn set_move_drop(&mut self, piece_type: GPPieceTypeVo) {
+        self.moves_history[self.get_ply() as usize].drop = piece_type
     }
     pub fn set_cap(&mut self, ply1: usize, km: OPPieceVo) {
         self.captured_piece_history[ply1] = km

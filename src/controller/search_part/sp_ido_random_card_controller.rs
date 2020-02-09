@@ -79,7 +79,7 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
                 &ml_dto.get_search_part().get_phase(&Person::Ji),
-                cu_random_move_controller::rnd_kms(),
+                *cu_random_move_controller::rnd_piece_type(),
             );
         let piece_dst = ps_dst.piece();
 

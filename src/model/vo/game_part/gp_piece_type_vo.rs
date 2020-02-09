@@ -10,7 +10,7 @@ use std::fmt;
 pub const KMS_LN: usize = 16;
 /// USIでCopyするので、Copyが要る。
 #[derive(Copy, Clone)]
-pub enum PieceType {
+pub enum GPPieceTypeVo {
     // らいおん
     R,
     // きりん
@@ -44,10 +44,10 @@ pub enum PieceType {
     // 要素数より1小さい数。エラー値用に使っても可
     Owari,
 }
-impl fmt::Display for PieceType {
+impl fmt::Display for GPPieceTypeVo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
-        use self::PieceType::*;
+        use self::GPPieceTypeVo::*;
         match *self {
             R => write!(f, "ら"),
             K => write!(f, "き"),
@@ -74,65 +74,65 @@ pub const KM_UGOKI_LN: usize = 9;
 /**
  * 駒種類の一致比較
  */
-pub fn match_kms(a: &PieceType, b: &PieceType) -> bool {
-    kms_to_num(a) == kms_to_num(b)
+pub fn match_piece_type(a: GPPieceTypeVo, b: GPPieceTypeVo) -> bool {
+    piece_type_to_num(a) == piece_type_to_num(b)
 }
 
 // 駒種類数
 pub const KMS_ARRAY_LN: usize = 14;
 // 駒種類
-pub const KMS_ARRAY: [PieceType; KMS_ARRAY_LN] = [
-    PieceType::R,  // らいおん
-    PieceType::K,  // きりん
-    PieceType::Z,  // ぞう
-    PieceType::I,  // いぬ
-    PieceType::N,  // ねこ
-    PieceType::U,  // うさぎ
-    PieceType::S,  // いのしし
-    PieceType::H,  // ひよこ
-    PieceType::PK, // ぱわーあっぷきりん
-    PieceType::PZ, // ぱわーあっぷぞう
-    PieceType::PN, // ぱわーあっぷねこ
-    PieceType::PU, // ぱわーあっぷうさぎ
-    PieceType::PS, // ぱわーあっぷいのしし
-    PieceType::PH, // ぱわーあっぷひよこ
+pub const KMS_ARRAY: [GPPieceTypeVo; KMS_ARRAY_LN] = [
+    GPPieceTypeVo::R,  // らいおん
+    GPPieceTypeVo::K,  // きりん
+    GPPieceTypeVo::Z,  // ぞう
+    GPPieceTypeVo::I,  // いぬ
+    GPPieceTypeVo::N,  // ねこ
+    GPPieceTypeVo::U,  // うさぎ
+    GPPieceTypeVo::S,  // いのしし
+    GPPieceTypeVo::H,  // ひよこ
+    GPPieceTypeVo::PK, // ぱわーあっぷきりん
+    GPPieceTypeVo::PZ, // ぱわーあっぷぞう
+    GPPieceTypeVo::PN, // ぱわーあっぷねこ
+    GPPieceTypeVo::PU, // ぱわーあっぷうさぎ
+    GPPieceTypeVo::PS, // ぱわーあっぷいのしし
+    GPPieceTypeVo::PH, // ぱわーあっぷひよこ
 ];
 
 // 非成 駒種類数
 pub const KMS_NPRO_ARRAY_LN: usize = 8;
 // 非成 駒種類
-pub const KMS_NPRO_ARRAY: [PieceType; KMS_NPRO_ARRAY_LN] = [
-    PieceType::R, // らいおん
-    PieceType::K, // きりん
-    PieceType::Z, // ぞう
-    PieceType::I, // いぬ
-    PieceType::N, // ねこ
-    PieceType::U, // うさぎ
-    PieceType::S, // いのしし
-    PieceType::H, // ひよこ
+pub const KMS_NPRO_ARRAY: [GPPieceTypeVo; KMS_NPRO_ARRAY_LN] = [
+    GPPieceTypeVo::R, // らいおん
+    GPPieceTypeVo::K, // きりん
+    GPPieceTypeVo::Z, // ぞう
+    GPPieceTypeVo::I, // いぬ
+    GPPieceTypeVo::N, // ねこ
+    GPPieceTypeVo::U, // うさぎ
+    GPPieceTypeVo::S, // いのしし
+    GPPieceTypeVo::H, // ひよこ
 ];
 
 // 成 駒種類数
 pub const KMS_PRO_ARRAY_LN: usize = 6;
 // 成 駒種類
-pub const KMS_PRO_ARRAY: [PieceType; KMS_PRO_ARRAY_LN] = [
-    PieceType::PK, // ぱわーあっぷきりん
-    PieceType::PZ, // ぱわーあっぷぞう
-    PieceType::PN, // ぱわーあっぷねこ
-    PieceType::PU, // ぱわーあっぷうさぎ
-    PieceType::PS, // ぱわーあっぷいのしし
-    PieceType::PH, // ぱわーあっぷひよこ
+pub const KMS_PRO_ARRAY: [GPPieceTypeVo; KMS_PRO_ARRAY_LN] = [
+    GPPieceTypeVo::PK, // ぱわーあっぷきりん
+    GPPieceTypeVo::PZ, // ぱわーあっぷぞう
+    GPPieceTypeVo::PN, // ぱわーあっぷねこ
+    GPPieceTypeVo::PU, // ぱわーあっぷうさぎ
+    GPPieceTypeVo::PS, // ぱわーあっぷいのしし
+    GPPieceTypeVo::PH, // ぱわーあっぷひよこ
 ];
 
 // 持駒種類数
 pub const MGS_ARRAY_LN: usize = 7;
 // 持駒種類
-pub const MGS_ARRAY: [PieceType; MGS_ARRAY_LN] = [
-    PieceType::K,
-    PieceType::Z,
-    PieceType::I,
-    PieceType::N,
-    PieceType::U,
-    PieceType::S,
-    PieceType::H,
+pub const MGS_ARRAY: [GPPieceTypeVo; MGS_ARRAY_LN] = [
+    GPPieceTypeVo::K,
+    GPPieceTypeVo::Z,
+    GPPieceTypeVo::I,
+    GPPieceTypeVo::N,
+    GPPieceTypeVo::U,
+    GPPieceTypeVo::S,
+    GPPieceTypeVo::H,
 ];

@@ -1,5 +1,5 @@
+use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::op_phase_vo::Phase;
-use super::op_piece_type_vo::PieceType;
 use super::op_piece_vo::OPPieceVo;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
@@ -7,7 +7,7 @@ use super::op_piece_vo::OPPieceVo;
 pub struct PieceStructVo {
     piece: OPPieceVo,
     /// 先後、駒種類。
-    phase_piece_type: (Phase, PieceType),
+    phase_piece_type: (Phase, GPPieceTypeVo),
     /// 駒→成駒　（成れない駒は、そのまま）
     promoted: OPPieceVo,
     /// 成駒→駒　（成っていない駒は、そのまま）
@@ -21,8 +21,8 @@ pub struct PieceStructVo {
 impl PieceStructVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: OPPieceVo) -> Self {
+        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         use super::op_phase_vo::Phase::*;
-        use super::op_piece_type_vo::PieceType::*;
         use super::op_piece_vo::OPPieceVo::*;
         match p {
             King1 => PieceStructVo {
@@ -251,7 +251,7 @@ impl PieceStructVo {
             },
             OPPieceVo::Kara => PieceStructVo {
                 piece: OPPieceVo::Kara,
-                phase_piece_type: (Phase::Owari, PieceType::Kara),
+                phase_piece_type: (Phase::Owari, GPPieceTypeVo::Kara),
                 promoted: OPPieceVo::Kara,
                 demoted: OPPieceVo::Kara,
                 captured: OPPieceVo::Owari,
@@ -259,7 +259,7 @@ impl PieceStructVo {
             },
             OPPieceVo::Owari => PieceStructVo {
                 piece: OPPieceVo::Owari,
-                phase_piece_type: (Phase::Owari, PieceType::Owari),
+                phase_piece_type: (Phase::Owari, GPPieceTypeVo::Owari),
                 promoted: OPPieceVo::Owari,
                 demoted: OPPieceVo::Owari,
                 captured: OPPieceVo::Owari,
@@ -315,15 +315,15 @@ impl PieceStructVo {
         &self.piece
     }
 
-    pub fn phase_piece_type(&self) -> (&Phase, &PieceType) {
-        (&self.phase_piece_type.0, &self.phase_piece_type.1)
+    pub fn phase_piece_type(&self) -> (&Phase, GPPieceTypeVo) {
+        (&self.phase_piece_type.0, self.phase_piece_type.1)
     }
 
     pub fn phase(&self) -> Phase {
         self.phase_piece_type.0.clone()
     }
 
-    pub fn piece_type(&self) -> PieceType {
+    pub fn piece_type(&self) -> GPPieceTypeVo {
         self.phase_piece_type.1
     }
 
@@ -357,7 +357,7 @@ impl PieceStructVo {
 
     /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
     pub fn is_promoted(&self) -> bool {
-        use super::op_piece_type_vo::PieceType::*;
+        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         match self.piece_type() {
             R => false,
             K => false,
@@ -382,7 +382,7 @@ impl PieceStructVo {
     ///
     /// 合い駒で、進路を防ぎえる可能性があれば真
     pub fn is_slider(&self) -> bool {
-        use super::op_piece_type_vo::PieceType::*;
+        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         match &self.piece_type() {
             R => false,
             K => true,

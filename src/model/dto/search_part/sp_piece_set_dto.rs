@@ -41,7 +41,7 @@ impl SPPieceSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
             let ps = speed_of_light.ml_piece_struct_master_vo.get_piece_vo(km);
-            let (sn1, _kms) = ps.phase_piece_type();
+            let (sn1, _piece_type) = ps.phase_piece_type();
             if match_sn(&sn0, &sn1) {
                 num_syugo1.insert(ps.serial_piece_number());
             }

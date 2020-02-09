@@ -9,9 +9,9 @@
 //!
 
 use super::super::super::super::model::dto::main_loop::ml_dto::*;
+use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
-use super::super::super::super::model::vo::other_part::op_piece_type_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
@@ -104,8 +104,8 @@ impl SPPositionDto {
             let ps100 = speed_of_light
                 .ml_piece_struct_master_vo
                 .get_piece_vo(piece99);
-            let (sn_km, kms) = ps100.phase_piece_type();
-            if match_sn(&sn_km, sn) && match_kms(&kms, &PieceType::H) {
+            let (sn_km, piece_type) = ps100.phase_piece_type();
+            if match_sn(&sn_km, sn) && match_piece_type(piece_type, GPPieceTypeVo::H) {
                 return true;
             }
         }
