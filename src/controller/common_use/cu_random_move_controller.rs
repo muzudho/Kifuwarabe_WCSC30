@@ -12,7 +12,7 @@ use super::super::super::model::vo::other_part::op_square_vo::*;
  * ランダムに真偽を返す。
  */
 #[allow(dead_code)]
-pub fn rnd_bool() -> bool {
+pub fn random_bool() -> bool {
     rand::thread_rng().gen_range(0, 2) == 0
 }
 
@@ -27,6 +27,6 @@ pub fn random_square() -> Square {
 /**
  * ランダムに 駒の種類を返す
  */
-pub fn rnd_piece_type() -> &'static GPPieceTypeVo {
+pub fn random_piece_type() -> &'static GPPieceTypeVo {
     &KMS_ARRAY[rand::thread_rng().gen_range(0, KMS_ARRAY_LN)]
 }

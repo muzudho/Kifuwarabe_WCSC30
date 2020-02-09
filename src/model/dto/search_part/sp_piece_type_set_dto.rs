@@ -19,10 +19,9 @@ impl SPPieceTypeSetDto {
         for piece_type in KMS_ARRAY.iter() {
             num_syugo1.insert(piece_type_to_num(*piece_type));
         }
-        let piece_type_syugo = SPPieceTypeSetDto {
+        SPPieceTypeSetDto {
             num_syugo: num_syugo1,
-        };
-        piece_type_syugo
+        }
     }
     pub fn remove(&mut self, piece_type: GPPieceTypeVo) {
         self.num_syugo.remove(&piece_type_to_num(piece_type));

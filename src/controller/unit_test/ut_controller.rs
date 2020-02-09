@@ -58,7 +58,7 @@ pub fn hyoji_piece_type_hashset(num_piece_type_hashset: &HashSet<usize>) {
 /// test 2
 /// といったコマンドに対応☆（＾～＾）
 pub fn test(
-    line: &String,
+    line: &str,
     starts: &mut usize,
     len: usize,
     ml_dto: &mut MLDto,
@@ -72,7 +72,7 @@ pub fn test(
         g_writeln("4<len mvsrc");
         // 駒の移動元升
         g_writeln("駒の移動元升");
-        let piece_type = cu_random_move_controller::rnd_piece_type();
+        let piece_type = cu_random_move_controller::random_piece_type();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
@@ -121,7 +121,7 @@ pub fn test(
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
         *starts += 4;
         // 移動後の駒
-        let piece_type = cu_random_move_controller::rnd_piece_type();
+        let piece_type = cu_random_move_controller::random_piece_type();
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
@@ -130,8 +130,8 @@ pub fn test(
             );
         // 移動先の升、および　不成駒／成駒
         let sq_dst = cu_random_move_controller::random_square();
-        let pro_dst = cu_random_move_controller::rnd_bool();
-        let mut ss = MLMovementDto::new();
+        let pro_dst = cu_random_move_controller::random_bool();
+        let mut ss = MLMovementDto::default();
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_piece_type_hashset : HashSet<usize> = HashSet::new();
@@ -172,7 +172,7 @@ pub fn test(
         }
         */
         g_writeln(&format!("指し手にすると={}", ss));
-    } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "1" {
+    } else if 0 < (len - *starts) && &line[*starts..=*starts] == "1" {
         *starts += 1;
         // 駒の移動元升
         {
@@ -359,7 +359,7 @@ pub fn test(
             hyoji_sq_hashset(&mv_src_hashset);
             hyoji_piece_type_hashset(&da_piece_type_hashset);
         }
-    } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "2" {
+    } else if 0 < (len - *starts) && &line[*starts..=*starts] == "2" {
         *starts += 1;
         g_writeln("順番テスト");
         g_writeln(&format!("0・0・0 = {}", reflexive_ordered3_i8(0, 0, 0)));
@@ -391,7 +391,7 @@ pub fn test(
         g_writeln(&format!("2・2・0 = {}", reflexive_ordered3_i8(2, 2, 0)));
         g_writeln(&format!("2・2・1 = {}", reflexive_ordered3_i8(2, 2, 1)));
         g_writeln(&format!("2・2・2 = {}", reflexive_ordered3_i8(2, 2, 2)));
-    } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "3" {
+    } else if 0 < (len - *starts) && &line[*starts..=*starts] == "3" {
         *starts += 1;
         g_writeln("升Pは、点ABで作る平面上にあるか？");
         g_writeln("P・A・B");
@@ -510,7 +510,7 @@ pub fn test(
             "c・c・c = {}",
             intersect_point_on_plane(&c, &c, &c)
         ));
-    } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "4" {
+    } else if 0 < (len - *starts) && &line[*starts..=*starts] == "4" {
         *starts += 1;
         g_writeln("点ABは、同じ段にあるか？");
         g_writeln("A・B");
@@ -538,7 +538,7 @@ pub fn test(
         g_writeln(&format!("d・b = {}", match_argangle0_p_p(&d, &b)));
         g_writeln(&format!("d・c = {}", match_argangle0_p_p(&d, &c)));
         g_writeln(&format!("d・d = {}", match_argangle0_p_p(&d, &d)));
-    } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "5" {
+    } else if 0 < (len - *starts) && &line[*starts..=*starts] == "5" {
         *starts += 1;
         g_writeln("点ABは、４つの角度の直線上にあるか？");
         g_writeln("A・B");
@@ -566,7 +566,7 @@ pub fn test(
         g_writeln(&format!("d・b = {}", get_argangle4_p_p(&d, &b)));
         g_writeln(&format!("d・c = {}", get_argangle4_p_p(&d, &c)));
         g_writeln(&format!("d・d = {}", get_argangle4_p_p(&d, &d)));
-    } else if 0 < (len - *starts) && &line[*starts..*starts + 1] == "6" {
+    } else if 0 < (len - *starts) && &line[*starts..=*starts] == "6" {
         *starts += 1;
         g_writeln("升Pは、線分AB上にあるか？");
         g_writeln("P・A・B");

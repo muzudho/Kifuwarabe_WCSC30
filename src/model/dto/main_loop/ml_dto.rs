@@ -114,11 +114,11 @@ impl Default for MLDto {
                 // 先後
                 sn: [0; SN_LN],
             },
-            starting_position: SPPositionDto::new(),
+            starting_position: SPPositionDto::default(),
             starting_position_hash: 0,
             dialogue_mode: false,
             vec_command: Vec::new(),
-            sp_dto: SPDto::new(),
+            sp_dto: SPDto::default(),
         }
     }
 }
@@ -215,9 +215,9 @@ impl MLDto {
      * コマンド・バッファー *
      ************************/
     pub fn is_empty_command(&mut self) -> bool {
-        self.vec_command.len() == 0
+        self.vec_command.is_empty()
     }
-    pub fn push_command(&mut self, line: &String) {
+    pub fn push_command(&mut self, line: &str) {
         self.vec_command.push(format!("{}\n", line));
     }
     pub fn pop_command(&mut self) -> String {
@@ -574,7 +574,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         self.sp_dto.moves_history[ply as usize] = (*move3).clone();
         let cap;
         {
-            cap = self.sp_dto.do_move(move3, speed_of_light).clone();
+            cap = self.sp_dto.do_move(move3, speed_of_light);
         }
         self.sp_dto.set_cap(ply as usize, cap);
 

@@ -10,8 +10,8 @@ pub struct NumberBoard {
      */
     ban: [i8; BAN_SIZE],
 }
-impl NumberBoard {
-    pub fn new() -> NumberBoard {
+impl Default for NumberBoard {
+    fn default() -> NumberBoard {
         NumberBoard {
             // 盤上
             ban: [
@@ -22,6 +22,8 @@ impl NumberBoard {
             ],
         }
     }
+}
+impl NumberBoard {
     pub fn clear(&mut self) {
         self.ban = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

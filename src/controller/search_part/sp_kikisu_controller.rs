@@ -18,13 +18,13 @@ use std::collections::HashSet;
 pub fn update_effect_count(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
     // ゼロ・リセット
     for pc in KM_ARRAY.iter() {
-        &ml_dto.get_search_part_mut().effect_count_by_piece
+        ml_dto.get_search_part_mut().effect_count_by_piece
             [PieceStructVo::from_piece((*pc).clone()).serial_piece_number()]
         .clear();
     }
 
     for sn in SN_ARRAY.iter() {
-        &ml_dto.get_search_part_mut().effect_count_by_phase[sn_to_num(sn)].clear();
+        ml_dto.get_search_part_mut().effect_count_by_phase[sn_to_num(sn)].clear();
     }
 
     // カウント

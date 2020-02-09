@@ -21,8 +21,8 @@ pub struct MLMovementDto {
     // 打の場合、打った駒種類
     pub drop: GPPieceTypeVo,
 }
-impl MLMovementDto {
-    pub fn new() -> MLMovementDto {
+impl Default for MLMovementDto {
+    fn default() -> MLMovementDto {
         MLMovementDto {
             src: Square::from_umasu(0),
             dst: Square::from_umasu(0),
@@ -30,6 +30,8 @@ impl MLMovementDto {
             drop: GPPieceTypeVo::Kara,
         }
     }
+}
+impl MLMovementDto {
     #[allow(dead_code)]
     pub fn clear(&mut self) {
         self.src = Square::from_umasu(0);
@@ -47,15 +49,15 @@ impl MLMovementDto {
     }
     pub fn from_hash(hash: u64) -> MLMovementDto {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, src) = pop_sq_from_hash(hash);
-        let (hash, dst) = pop_sq_from_hash(hash);
-        let (hash, pro) = pop_bool_from_hash(hash);
-        let (_hash, drop) = pop_piece_type_from_hash(hash);
+        let (hash, src52) = pop_sq_from_hash(hash);
+        let (hash, dst53) = pop_sq_from_hash(hash);
+        let (hash, pro54) = pop_bool_from_hash(hash);
+        let (_hash, drop55) = pop_piece_type_from_hash(hash);
         MLMovementDto {
-            src: src,
-            dst: dst,
-            pro: pro,
-            drop: drop,
+            src: src52,
+            dst: dst53,
+            pro: pro54,
+            drop: drop55,
         }
     }
 

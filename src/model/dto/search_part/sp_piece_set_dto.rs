@@ -23,10 +23,9 @@ impl SPPieceSetDto {
             let ps = speed_of_light.ml_piece_struct_master_vo.get_piece_vo(piece);
             num_syugo1.insert(ps.serial_piece_number());
         }
-        let km_syugo = SPPieceSetDto {
+        SPPieceSetDto {
             num_syugo: num_syugo1,
-        };
-        km_syugo
+        }
     }
     /**
      * 自分相手
@@ -46,10 +45,9 @@ impl SPPieceSetDto {
                 num_syugo1.insert(ps.serial_piece_number());
             }
         }
-        let km_syugo = SPPieceSetDto {
+        SPPieceSetDto {
             num_syugo: num_syugo1,
-        };
-        km_syugo
+        }
     }
     pub fn remove(&mut self, piece: &OPPieceVo, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo.remove(

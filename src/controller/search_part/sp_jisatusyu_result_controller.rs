@@ -26,11 +26,9 @@ pub fn is_jisatusyu(ml_dto: &MLDto, ss: &MLMovementDto, speed_of_light: &MLSpeed
     // 升の利き数だが、指した後で再計算が要るはず
     let kikisu =
         ml_dto.get_search_part().effect_count_by_phase[sn_to_num(&sn_aite)].get_su_by_sq(&ss.dst);
-    let result = 0 < kikisu;
+    0 < kikisu
     // g_writeln(&format!(
     //     "info is_jisatusyu={} km_src={} sn_teban={} piece_type={} sn_aite={} ss.dst={} kikisu={}"
     //     ,result ,km_src ,sn_teban ,piece_type ,sn_aite ,ss.dst ,kikisu
     // ));
-
-    result
 }

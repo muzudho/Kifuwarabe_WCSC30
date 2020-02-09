@@ -15,7 +15,7 @@ use super::super::super::model::vo::other_part::op_square_vo::*;
  * 読み取った指し手は、棋譜に入れる。
  * 現在の手目のところに入れ、手目のカウントアップも行う。
  */
-pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut MLDto) -> bool {
+pub fn read_sasite(line: &str, starts: &mut usize, len: usize, ml_dto: &mut MLDto) -> bool {
     // 4文字か5文字あるはず。
     if (len - *starts) < 4 {
         // 指し手読取終了時にここを通るぜ☆（＾～＾）
@@ -24,7 +24,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
     }
 
     // 1文字目と2文字目
-    match &line[*starts..(*starts + 1)] {
+    match &line[*starts..=*starts] {
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
@@ -79,7 +79,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
             // 残りは「筋の数字」、「段のアルファベット」のはず。
             let suji;
             let dan;
-            match &line[*starts..(*starts + 1)] {
+            match &line[*starts..=*starts] {
                 "1" => {
                     suji = 1;
                     *starts += 1;
@@ -117,12 +117,12 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
                     *starts += 1;
                 }
                 _ => {
-                    g_writeln(&format!("(1) '{}' だった。", &line[*starts..(*starts + 1)]));
+                    g_writeln(&format!("(1) '{}' だった。", &line[*starts..=*starts]));
                     return false;
                 }
             }
 
-            match &line[*starts..(*starts + 1)] {
+            match &line[*starts..=*starts] {
                 "a" => {
                     dan = 1;
                     *starts += 1;
@@ -160,7 +160,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
                     *starts += 1;
                 }
                 _ => {
-                    g_writeln(&format!("(2) '{}' だった。", &line[*starts..(*starts + 1)]));
+                    g_writeln(&format!("(2) '{}' だった。", &line[*starts..=*starts]));
                     return false;
                 }
             }
@@ -179,7 +179,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
     let dan;
 
     // 3文字目
-    match &line[*starts..(*starts + 1)] {
+    match &line[*starts..=*starts] {
         "1" => {
             suji = 1;
             *starts += 1;
@@ -217,12 +217,12 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
             *starts += 1;
         }
         _ => {
-            g_writeln(&format!("(3) '{}' だった。", &line[*starts..(*starts + 1)]));
+            g_writeln(&format!("(3) '{}' だった。", &line[*starts..=*starts]));
             return false;
         }
     }
     // 4文字目
-    match &line[*starts..(*starts + 1)] {
+    match &line[*starts..=*starts] {
         "a" => {
             dan = 1;
             *starts += 1;
@@ -260,7 +260,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
             *starts += 1;
         }
         _ => {
-            g_writeln(&format!("(4) '{}' だった。", &line[*starts..(*starts + 1)]));
+            g_writeln(&format!("(4) '{}' だった。", &line[*starts..=*starts]));
             return false;
         }
     }
@@ -269,7 +269,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
         .get_search_part_mut()
         .set_move_dst(&Square::from_file_rank(suji, dan));
     // 5文字に「+」があれば成り。
-    if 0 < (len - *starts) && &line[*starts..(*starts + 1)] == "+" {
+    if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
         ml_dto.get_search_part_mut().set_move_pro(true);
         *starts += 1;
     } else {
@@ -277,7 +277,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
     }
 
     // 続きにスペース「 」が１つあれば読み飛ばす
-    if 0 < (len - *starts) && &line[*starts..(*starts + 1)] == " " {
+    if 0 < (len - *starts) && &line[*starts..=*starts] == " " {
         *starts += 1;
     }
 
@@ -289,7 +289,7 @@ pub fn read_sasite(line: &String, starts: &mut usize, len: usize, ml_dto: &mut M
  * position コマンド 盤上部分のみ 読取
  */
 pub fn read_banjo(
-    line: &String,
+    line: &str,
     starts: &mut usize,
     len: usize,
     ml_dto: &mut MLDto,
@@ -299,7 +299,7 @@ pub fn read_banjo(
     let mut suji = SUJI_9; //９筋から右方向へ読取
     let mut dan = DAN_1;
     'ban: while 0 < (len - *starts) {
-        match &line[*starts..(*starts + 1)] {
+        match &line[*starts..=*starts] {
             "/" => {
                 *starts += 1;
                 suji = SUJI_9;
@@ -450,7 +450,7 @@ pub fn read_banjo(
             }
             "+" => {
                 *starts += 1;
-                match &line[*starts..(*starts + 1)] {
+                match &line[*starts..=*starts] {
                     "R" => {
                         *starts += 1;
                         ml_dto.set_piece_to_starting_position(suji, dan, OPPieceVo::PromotedRook1);
@@ -536,10 +536,7 @@ pub fn read_banjo(
                         suji -= 1;
                     }
                     _ => {
-                        g_writeln(&format!(
-                            "盤部(0) '{}' だった。",
-                            &line[*starts..(*starts + 1)]
-                        ));
+                        g_writeln(&format!("盤部(0) '{}' だった。", &line[*starts..=*starts]));
                         break 'ban;
                     }
                 }
@@ -558,7 +555,7 @@ pub fn read_banjo(
 /**
  * position コマンド読取
  */
-pub fn read_position(line: &String, ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
+pub fn read_position(line: &str, ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
     let mut starts = 0;
 
     // 全体の長さ
@@ -580,7 +577,7 @@ pub fn read_position(line: &String, ml_dto: &mut MLDto, speed_of_light: &MLSpeed
             speed_of_light,
         );
 
-        if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
+        if 0 < (len - starts) && &line[starts..=starts] == " " {
             // ' ' を読み飛ばした。
             starts += 1;
         }
@@ -588,31 +585,29 @@ pub fn read_position(line: &String, ml_dto: &mut MLDto, speed_of_light: &MLSpeed
         starts += 14; // 'position sfen ' を読み飛ばし
         read_banjo(line, &mut starts, len, ml_dto, speed_of_light);
 
-        if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
+        if 0 < (len - starts) && &line[starts..=starts] == " " {
             starts += 1;
         }
 
-        if 0 < (len - starts) && &line[starts..(starts + 1)] == "w"
-            || 0 < (len - starts) && &line[starts..(starts + 1)] == "b"
-        {
+        if 0 < (len - starts) && (&line[starts..=starts] == "w" || &line[starts..=starts] == "b") {
             starts += 1;
         }
 
-        if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
+        if 0 < (len - starts) && &line[starts..=starts] == " " {
             starts += 1;
         }
 
         // 持ち駒の読取
-        if 0 < (len - starts) && &line[starts..(starts + 1)] == "-" {
+        if 0 < (len - starts) && &line[starts..=starts] == "-" {
             starts += 1;
         } else {
             'mg: loop {
                 if 0 < (len - starts) {
                     let mut maisu = 1;
-                    match &line[starts..(starts + 1)] {
+                    match &line[starts..=starts] {
                         "1" => {
                             // 1枚のときは数字は付かないので、10～18 と確定☆
-                            match &line[starts..(starts + 1)] {
+                            match &line[starts..=starts] {
                                 "0" => {
                                     maisu = 10;
                                     starts += 2;
@@ -695,7 +690,7 @@ pub fn read_position(line: &String, ml_dto: &mut MLDto, speed_of_light: &MLSpeed
 
                     use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
                     let km: OPPieceVo;
-                    match &line[starts..(starts + 1)] {
+                    match &line[starts..=starts] {
                         "R" => {
                             km = Rook1;
                             starts += 1;
@@ -774,7 +769,7 @@ pub fn read_position(line: &String, ml_dto: &mut MLDto, speed_of_light: &MLSpeed
         starts += 5;
     }
 
-    if 0 < (len - starts) && &line[starts..(starts + 1)] == " " {
+    if 0 < (len - starts) && &line[starts..=starts] == " " {
         starts += 1;
     }
 

@@ -22,40 +22,28 @@ pub fn hyoji_ss_hashset(ss_hashset: &HashSet<u64>) {
         vec_ss_str.push(ss_str);
     }
     //vec_ss_str.sort();
-    vec_ss_str.sort_by(|a_str, b_str| {
-        let a_arr: Vec<_> = a_str.chars().collect();
-        let b_arr: Vec<_> = b_str.chars().collect();
+    vec_ss_str.sort_by(|y_str, x_str| {
+        let y_arr: Vec<_> = y_str.chars().collect();
+        let x_arr: Vec<_> = x_str.chars().collect();
         use std::cmp::min;
-        let len = min(a_arr.len(), b_arr.len());
+        let len = min(y_arr.len(), x_arr.len());
 
         use std::cmp::Ordering;
         for i in 0..len {
-            if a_arr[i] < b_arr[i] {
-                //g_writeln(&format!( "[{}] a_arr {} < b_arr {}", i, a_arr[i], b_arr[i] ));
-                return Ordering::Greater;
-            } else if b_arr[i] < a_arr[i] {
-                //g_writeln(&format!( "[{}] a_arr {} > b_arr {}", i, a_arr[i], b_arr[i] ));
-                return Ordering::Less;
+            match x_arr[i].cmp(&y_arr[i]) {
+                Ordering::Greater => return Ordering::Greater,
+                Ordering::Less => return Ordering::Less,
+                Ordering::Equal => {}
             }
         }
 
-        if a_arr.len() < b_arr.len() {
-            //g_writeln(&format!( "len a_arr {} < b_arr {}", a_arr.len(), b_arr.len() ));
-            Ordering::Greater
-        } else if b_arr.len() < a_arr.len() {
-            //g_writeln(&format!( "len a_arr {} > b_arr {}", a_arr.len(), b_arr.len() ));
-            Ordering::Less
-        } else {
-            //g_writeln(&format!( "len a_arr {} = b_arr {}", a_arr.len(), b_arr.len() ));
-            Ordering::Equal
-        }
+        // Returns Ordering::Greater, Ordering::Less, Ordering::Equal.
+        x_arr.len().cmp(&y_arr.len())
     });
     vec_ss_str.reverse();
 
-    let mut i = 0;
-    for ss_str in vec_ss_str {
+    for (i, ss_str) in vec_ss_str.into_iter().enumerate() {
         g_writeln(&format!("[{}] {}", i, ss_str));
-        i += 1;
     }
 }
 

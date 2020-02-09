@@ -83,7 +83,7 @@ fn main() {
             //}else if 9<len && &line[0..10] == "kmugokidir" {
             g_writeln("9<len kmugokidir");
             // 駒の動きの移動元として有りえる方角
-            let piece_type = controller::common_use::cu_random_move_controller::rnd_piece_type();
+            let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
             g_writeln(&format!("{}のムーブ元", &piece_type));
             ml_dto.hyoji_kmugoki_dir(*piece_type);
             g_writeln(""); //改行
@@ -112,10 +112,10 @@ fn main() {
         } else if 5 < len && &line[starts..6] == "kikisu" {
             // 利き数表示
             controller::main_loop::ml_main_controller::cmd_kikisu(&ml_dto, &speed_of_light);
-        } else if 5 < len && &line[starts..6] == "rndpiece_type" {
-            g_writeln("5<len rndpiece_type");
+        } else if 5 < len && &line[starts..6] == "random_piece_type" {
+            g_writeln("5<len random_piece_type");
             // 乱駒種類
-            let piece_type = controller::common_use::cu_random_move_controller::rnd_piece_type();
+            let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
             g_writeln(&format!("乱駒種類={}", &piece_type));
         } else if 5 < len && &line[starts..6] == "sasite" {
             // FIXME 合法手とは限らない
@@ -130,7 +130,7 @@ fn main() {
             g_writeln("----指し手生成 ここから----");
             hyoji_ss_hashset(&ss_potential_hashset);
             g_writeln("----指し手生成 ここまで----");
-        } else if 4 < len && &line[starts..5] == "rndms" {
+        } else if 4 < len && &line[starts..5] == "random_ms" {
             // 乱升
             let sq = controller::common_use::cu_random_move_controller::random_square();
             g_writeln(&format!("乱升={}", sq.to_umasu()));

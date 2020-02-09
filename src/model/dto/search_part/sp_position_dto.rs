@@ -33,8 +33,8 @@ pub struct SPPositionDto {
      */
     sq_r: [Square; SN_LN],
 }
-impl SPPositionDto {
-    pub fn new() -> Self {
+impl Default for SPPositionDto {
+    fn default() -> Self {
         use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::Kara;
         SPPositionDto {
             // 盤上
@@ -63,6 +63,8 @@ impl SPPositionDto {
             ],
         }
     }
+}
+impl SPPositionDto {
     pub fn clear(&mut self) {
         use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::Kara;
         self.board = [

@@ -28,7 +28,7 @@ pub fn get_ido_ss_by_km_random(
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
-    for _i_retry in 0..1000000 {
+    for _i_retry in 0..1_000_000 {
         // 移動したい先の升
         let sq_dst = cu_random_move_controller::random_square();
         assert_banjo_sq(&sq_dst, "get_ido_ss_by_km_random");
@@ -59,7 +59,7 @@ pub fn get_ido_ss_by_km_random(
         }
     }
     // 投了
-    MLMovementDto::new()
+    MLMovementDto::default()
 }
 
 /**
@@ -69,7 +69,7 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
-    'random: for _i_retry in 0..1000000 {
+    'random: for _i_retry in 0..1_000_000 {
         // 移動したい先の升
         let sq_dst = cu_random_move_controller::random_square();
         assert_banjo_sq(&sq_dst, "Ｇet_ss_by_random");
@@ -79,7 +79,7 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
                 &ml_dto.get_search_part().get_phase(&Person::Ji),
-                *cu_random_move_controller::rnd_piece_type(),
+                *cu_random_move_controller::random_piece_type(),
             );
         let piece_dst = ps_dst.piece();
 
@@ -114,5 +114,5 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
         }
     }
     // 投了
-    MLMovementDto::new()
+    MLMovementDto::default()
 }

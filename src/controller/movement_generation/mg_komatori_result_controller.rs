@@ -78,8 +78,8 @@ impl KomatoriResult {
         let (_hash, sq_tgt) = pop_sq_from_hash(hash);
         KomatoriResult {
             km_attacker: km_atk.piece().clone(),
-            sq_attacker: sq_atk.clone(),
-            sq_target: sq_tgt.clone(),
+            sq_attacker: sq_atk,
+            sq_target: sq_tgt,
         }
     }
     ///
@@ -200,7 +200,7 @@ pub fn lookup_catching_king_on_board(
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(&sn, *piece_type_dst);
         let km_dst = ps_dst.piece();
-        //let km_dst = sn_piece_type_to_km( &sn, rnd_piece_type() );
+        //let km_dst = sn_piece_type_to_km( &sn, random_piece_type() );
         // 指定マスに移動できるか
         // 打は除く
 

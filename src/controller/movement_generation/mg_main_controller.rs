@@ -107,49 +107,45 @@ pub fn get_potential_movement<F1>(
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
             let piece_dst = sp_dto.get_current_position().get_piece_by_square(&sq_dst);
-            match piece_dst {
-                OPPieceVo::Kara => {
-                    // 駒が無いところに打つ
-
-                    let mut da_piece_type_hashset = HashSet::new();
-                    for piece_type_motigoma in MGS_ARRAY.iter() {
-                        let ps_motigoma = speed_of_light
-                            .ml_piece_struct_master_vo
-                            .get_piece_vo_by_phase_and_piece_type(
-                                &sp_dto.get_phase(&Person::Ji),
-                                *piece_type_motigoma,
-                            );
-                        let pc_motigoma = ps_motigoma.piece();
-                        if 0 < sp_dto
-                            .get_current_position()
-                            .get_hand(pc_motigoma, speed_of_light)
-                        {
-                            // 駒を持っていれば
-                            make_drop_piece_type_by_square_piece(
-                                &sq_dst,
-                                pc_motigoma,
-                                &sp_dto,
-                                &speed_of_light,
-                                |piece_type_hash| {
-                                    da_piece_type_hashset.insert(piece_type_hash);
-                                },
-                            );
-                        }
-                    }
-                    for num_piece_type_da in da_piece_type_hashset {
-                        let piece_type = num_to_piece_type(num_piece_type_da);
-                        gets_movement_callback(
-                            MLMovementDto {
-                                src: Square::from_umasu(SS_SRC_DA), // 駒大
-                                dst: sq_dst.clone(),                // どの升へ行きたいか
-                                pro: false,                         // 打に成りは無し
-                                drop: piece_type,                   // 打った駒種類
-                            }
-                            .to_hash(),
+            if let OPPieceVo::Kara = piece_dst {
+                // 駒が無いところに打つ
+                let mut da_piece_type_hashset = HashSet::new();
+                for piece_type_motigoma in MGS_ARRAY.iter() {
+                    let ps_motigoma = speed_of_light
+                        .ml_piece_struct_master_vo
+                        .get_piece_vo_by_phase_and_piece_type(
+                            &sp_dto.get_phase(&Person::Ji),
+                            *piece_type_motigoma,
+                        );
+                    let pc_motigoma = ps_motigoma.piece();
+                    if 0 < sp_dto
+                        .get_current_position()
+                        .get_hand(pc_motigoma, speed_of_light)
+                    {
+                        // 駒を持っていれば
+                        make_drop_piece_type_by_square_piece(
+                            &sq_dst,
+                            pc_motigoma,
+                            &sp_dto,
+                            &speed_of_light,
+                            |piece_type_hash| {
+                                da_piece_type_hashset.insert(piece_type_hash);
+                            },
                         );
                     }
                 }
-                _ => {}
+                for num_piece_type_da in da_piece_type_hashset {
+                    let piece_type = num_to_piece_type(num_piece_type_da);
+                    gets_movement_callback(
+                        MLMovementDto {
+                            src: Square::from_umasu(SS_SRC_DA), // 駒大
+                            dst: sq_dst.clone(),                // どの升へ行きたいか
+                            pro: false,                         // 打に成りは無し
+                            drop: piece_type,                   // 打った駒種類
+                        }
+                        .to_hash(),
+                    );
+                }
             }
         } //suji
     } //dan
@@ -187,7 +183,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     }
 
     // ハッシュを作るのに使う
-    let mut ss_hash_builder = MLMovementDto::new();
+    let mut ss_hash_builder = MLMovementDto::default();
 
     ss_hash_builder.dst = (*sq_dst).clone();
 
@@ -275,7 +271,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     }
 
     // ハッシュを作るのに使う
-    let mut ss_hash_builder = MLMovementDto::new();
+    let mut ss_hash_builder = MLMovementDto::default();
 
     ss_hash_builder.dst = (*sq_dst).clone();
 

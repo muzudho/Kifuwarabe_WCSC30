@@ -20,19 +20,17 @@ use std::collections::HashSet;
 
 /// ハッシュセットから、指し手を１つ選ぶぜ☆（＾～＾）
 pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> MLMovementDto {
-    let index = if movement_hashset.len() == 0 {
+    let index = if movement_hashset.is_empty() {
         0
     } else {
         rand::thread_rng().gen_range(0, movement_hashset.len())
     };
-    let mut i = 0;
     let mut ss_choice_hash = 0;
-    for ss_hash in movement_hashset.iter() {
+    for (i, ss_hash) in movement_hashset.iter().enumerate() {
         if i == index {
             ss_choice_hash = *ss_hash;
             break;
         }
-        i += 1;
     }
     MLMovementDto::from_hash(ss_choice_hash)
 }
@@ -56,7 +54,7 @@ pub fn select_movement_except_check(
         &search_part,
         &speed_of_light,
     );
-    if 0 < komatori_result_hashset.len() {
+    if !komatori_result_hashset.is_empty() {
         // 王手されていれば
 
         // 表示
@@ -103,7 +101,7 @@ pub fn select_movement_except_check(
         }
     } else {
         // 王手されていなければ
-        g_writeln(&format!("info string My raion is not outed."));
+        g_writeln(&"info string My raion is not outed.".to_string());
     }
 }
 
@@ -169,7 +167,7 @@ pub fn select_movement_except_suiceid(
         );
 
         // 玉が利きに飛び込んでいるか？
-        let jisatusyu = 0 < attackers.len();
+        let jisatusyu = !attackers.is_empty();
         g_writeln(&format!(
             "info {} evaluated => {} attackers. offence={}->{}",
             ss_potential,
@@ -241,7 +239,7 @@ pub fn select_movement_except_fourfold_repetition(
     }
 
     // ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
-    if 0 == ss_hashset_pickup.len() {
+    if ss_hashset_pickup.is_empty() {
         return;
     }
 
