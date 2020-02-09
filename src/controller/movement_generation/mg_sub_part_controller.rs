@@ -42,6 +42,11 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
 {
     assert_banjo_sq(&sq_dst, "make_no_promotion_source_by_square_and_piece");
 
+    // 行先の無いところに駒を進めることの禁止☆（＾～＾）
+    if !this_piece_has_a_destination(sq_dst, ps_dst) {
+        return;
+    }
+
     /*
      * Square は 将棋盤座標
      *
@@ -54,36 +59,6 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
      */
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = sq_dst.to_file_rank();
-
-    // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
-    match ps_dst.piece() {
-        Knight1 => {
-            // ▼うさぎ　は１、２段目には進めない
-            if dy < DAN_3 {
-                return;
-            }
-        }
-        Lance1 | Pawn1 => {
-            // ▼しし、▼ひよこ　は１段目には進めない
-            if dy < DAN_2 {
-                return;
-            }
-        }
-        Knight2 => {
-            // △うさぎ　は８、９段目には進めない
-            if DAN_7 < dy {
-                return;
-            }
-        }
-        Lance2 | Pawn2 => {
-            // △しし、△ひよこ　は９段目には進めない
-            if DAN_8 < dy {
-                return;
-            }
-        }
-        _ => {}
-    }
 
     let piece_type_num = piece_type_to_num(ps_dst.piece_type());
 
@@ -105,339 +80,775 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
             E(b) => {
                 if b {
                     // 長東
-                    for i_east in 1..9 {
-                        if dx + i_east < SUJI_10 {
-                            let sq_src = Square::from_file_rank(dx + i_east, dy);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_east(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 西東
-                    if dx + 1 < SUJI_10 {
-                        let sq_src = Square::from_file_rank(dx + 1, dy);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_west_east(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
             // 北東
             NE(b) => {
                 if b {
                     // 長北東
-                    for i_ne in 1..9 {
-                        if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
-                            let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_north_east(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 北東
-                    if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
-                        let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_north_east(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
-            // 北北東
             NNE => {
-                if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
-                    let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-                    if sp_dto.get_current_position().has_sq_km(
-                        &sq_src,
-                        ps_dst.piece(),
-                        speed_of_light,
-                    ) {
-                        gets_square(sq_src);
-                    }
-                }
+                // 北北東
+                make_no_promotion_source_to_north_north_east(
+                    dx,
+                    dy,
+                    ps_dst,
+                    sp_dto,
+                    speed_of_light,
+                    &mut gets_square,
+                );
             }
             // 北
             N(b) => {
                 if b {
                     // 長北
-                    for i_south in 1..9 {
-                        if dy + i_south < DAN_10 {
-                            let sq_src = Square::from_file_rank(dx, dy + i_south);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_north(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 北
-                    if dy + 1 < DAN_10 {
-                        let sq_src = Square::from_file_rank(dx, dy + 1);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_north(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
-            // 北北西
             NNW => {
-                if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
-                    let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-                    if sp_dto.get_current_position().has_sq_km(
-                        &sq_src,
-                        ps_dst.piece(),
-                        speed_of_light,
-                    ) {
-                        gets_square(sq_src);
-                    }
-                }
+                // 北北西
+                make_no_promotion_source_to_north_north_west(
+                    dx,
+                    dy,
+                    ps_dst,
+                    sp_dto,
+                    speed_of_light,
+                    &mut gets_square,
+                );
             }
             // 北西
             NW(b) => {
                 if b {
                     // 長北西
-                    for i_se in 1..9 {
-                        if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
-                            let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_north_west(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 北西
-                    if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
-                        let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_north_west(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
             // 西
             W(b) => {
                 if b {
                     // 長西
-                    for i_east in 1..9 {
-                        if SUJI_0 < dx - i_east {
-                            // 進みたいマスから戻ったマス
-                            let sq_src = Square::from_file_rank(dx - i_east, dy);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                // 指定の駒があれば、その升は移動元。続行
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                // なんか他の駒があれば終わり
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_west(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 西
-                    if SUJI_0 < dx - 1 {
-                        let sq_src = Square::from_file_rank(dx - 1, dy);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_west(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
             // 南西
             SW(b) => {
                 if b {
                     // 長南西
-                    for i_ne in 1..9 {
-                        if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
-                            let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_south_west(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 南西
-                    if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
-                        let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_south_west(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
-            // 南南西
             SSW => {
-                if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
-                    let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-                    if sp_dto.get_current_position().has_sq_km(
-                        &sq_src,
-                        ps_dst.piece(),
-                        speed_of_light,
-                    ) {
-                        gets_square(sq_src);
-                    }
-                }
+                // 南南西
+                make_no_promotion_source_to_south_south_west(
+                    dx,
+                    dy,
+                    ps_dst,
+                    sp_dto,
+                    speed_of_light,
+                    &mut gets_square,
+                );
             }
             // 南
             S(b) => {
                 if b {
                     // 長南
-                    for i_north in 1..9 {
-                        if DAN_0 < dy - i_north {
-                            let sq_src = Square::from_file_rank(dx, dy - i_north);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_south(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 南
-                    if DAN_0 < dy - 1 {
-                        let sq_src = Square::from_file_rank(dx, dy - 1);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_south(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
-            // 南南東
             SSE => {
-                if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
-                    let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-                    if sp_dto.get_current_position().has_sq_km(
-                        &sq_src,
-                        ps_dst.piece(),
-                        speed_of_light,
-                    ) {
-                        gets_square(sq_src);
-                    }
-                }
+                // 南南東
+                make_no_promotion_source_to_south_south_east(
+                    dx,
+                    dy,
+                    ps_dst,
+                    sp_dto,
+                    speed_of_light,
+                    &mut gets_square,
+                );
             }
             // 南東
             SE(b) => {
                 if b {
                     // 長南東
-                    for i_nw in 1..9 {
-                        if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
-                            let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-                            if sp_dto.get_current_position().has_sq_km(
-                                &sq_src,
-                                ps_dst.piece(),
-                                speed_of_light,
-                            ) {
-                                gets_square(sq_src);
-                            } else if sp_dto
-                                .get_current_position()
-                                .exists_km(&sq_src, speed_of_light)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    make_no_promotion_source_sliding_to_south_east(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 } else {
                     // 南東
-                    if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
-                        let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-                        if sp_dto.get_current_position().has_sq_km(
-                            &sq_src,
-                            ps_dst.piece(),
-                            speed_of_light,
-                        ) {
-                            gets_square(sq_src);
-                        }
-                    }
+                    make_no_promotion_source_to_south_east(
+                        dx,
+                        dy,
+                        ps_dst,
+                        sp_dto,
+                        speed_of_light,
+                        &mut gets_square,
+                    );
                 }
             }
             Owari => break,
+        }
+    }
+}
+
+/// この駒には行き先があります。
+fn this_piece_has_a_destination(sq_dst: &Square, ps_dst: &PieceStructVo) -> bool {
+    let (_dx, dy) = sq_dst.to_file_rank();
+
+    use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
+    match ps_dst.piece() {
+        Knight1 => {
+            // ▼うさぎ　は１、２段目には進めない
+            if dy < DAN_3 {
+                return false;
+            }
+        }
+        Lance1 | Pawn1 => {
+            // ▼しし、▼ひよこ　は１段目には進めない
+            if dy < DAN_2 {
+                return false;
+            }
+        }
+        Knight2 => {
+            // △うさぎ　は８、９段目には進めない
+            if DAN_7 < dy {
+                return false;
+            }
+        }
+        Lance2 | Pawn2 => {
+            // △しし、△ひよこ　は９段目には進めない
+            if DAN_8 < dy {
+                return false;
+            }
+        }
+        _ => {}
+    }
+
+    true
+}
+
+// 成る前を含めない、長い西
+fn make_no_promotion_source_sliding_to_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_east in 1..9 {
+        if dx + i_east < SUJI_10 {
+            let sq_src = Square::from_file_rank(dx + i_east, dy);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、西東
+fn make_no_promotion_source_to_west_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if dx + 1 < SUJI_10 {
+        let sq_src = Square::from_file_rank(dx + 1, dy);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、長い北東
+fn make_no_promotion_source_sliding_to_north_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_ne in 1..9 {
+        if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
+            let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、北東
+fn make_no_promotion_source_to_north_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
+        let sq_src = Square::from_file_rank(dx + 1, dy + 1);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、北北東
+fn make_no_promotion_source_to_north_north_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
+        let sq_src = Square::from_file_rank(dx + 1, dy + 2);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、長い北
+fn make_no_promotion_source_sliding_to_north<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_south in 1..9 {
+        if dy + i_south < DAN_10 {
+            let sq_src = Square::from_file_rank(dx, dy + i_south);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、北
+fn make_no_promotion_source_to_north<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if dy + 1 < DAN_10 {
+        let sq_src = Square::from_file_rank(dx, dy + 1);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、北北西
+fn make_no_promotion_source_to_north_north_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
+        let sq_src = Square::from_file_rank(dx - 1, dy + 2);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、長い北西
+fn make_no_promotion_source_sliding_to_north_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_se in 1..9 {
+        if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
+            let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、北西
+fn make_no_promotion_source_to_north_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
+        let sq_src = Square::from_file_rank(dx - 1, dy + 1);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、長い西
+fn make_no_promotion_source_sliding_to_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_east in 1..9 {
+        if SUJI_0 < dx - i_east {
+            // 進みたいマスから戻ったマス
+            let sq_src = Square::from_file_rank(dx - i_east, dy);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                // 指定の駒があれば、その升は移動元。続行
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                // なんか他の駒があれば終わり
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、西
+fn make_no_promotion_source_to_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if SUJI_0 < dx - 1 {
+        let sq_src = Square::from_file_rank(dx - 1, dy);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、長い南西
+fn make_no_promotion_source_sliding_to_south_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_ne in 1..9 {
+        if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
+            let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、南西
+fn make_no_promotion_source_to_south_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
+        let sq_src = Square::from_file_rank(dx - 1, dy - 1);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、南南西
+fn make_no_promotion_source_to_south_south_west<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
+        let sq_src = Square::from_file_rank(dx - 1, dy - 2);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、長い南
+fn make_no_promotion_source_sliding_to_south<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_north in 1..9 {
+        if DAN_0 < dy - i_north {
+            let sq_src = Square::from_file_rank(dx, dy - i_north);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、南
+fn make_no_promotion_source_to_south<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if DAN_0 < dy - 1 {
+        let sq_src = Square::from_file_rank(dx, dy - 1);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、南南東
+fn make_no_promotion_source_to_south_south_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
+        let sq_src = Square::from_file_rank(dx + 1, dy - 2);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
+        }
+    }
+}
+
+/// 成る前を含めない、長南東
+fn make_no_promotion_source_sliding_to_south_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    for i_nw in 1..9 {
+        if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
+            let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
+            if sp_dto
+                .get_current_position()
+                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+            {
+                gets_square(sq_src);
+            } else if sp_dto
+                .get_current_position()
+                .exists_km(&sq_src, speed_of_light)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/// 成る前を含めない、南東
+fn make_no_promotion_source_to_south_east<F1>(
+    dx: i8,
+    dy: i8,
+    ps_dst: &PieceStructVo,
+    sp_dto: &SPDto,
+    speed_of_light: &MLSpeedOfLightVo,
+    gets_square: &mut F1,
+) where
+    F1: FnMut(Square),
+{
+    if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
+        let sq_src = Square::from_file_rank(dx + 1, dy - 1);
+        if sp_dto
+            .get_current_position()
+            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
+        {
+            gets_square(sq_src);
         }
     }
 }
