@@ -1,7 +1,7 @@
 //!
 //! ユニットテストだぜ☆（＾～＾）
 //!
-//! test コマンドで実行しろだぜ☆（＾～＾）
+//! unit-test コマンドで実行しろだぜ☆（＾～＾）
 //!
 use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
@@ -56,9 +56,9 @@ pub fn hyoji_piece_type_hashset<S: BuildHasher>(num_piece_type_hashset: &HashSet
     }
 }
 
-/// test 2
+/// unit-test 2
 /// といったコマンドに対応☆（＾～＾）
-pub fn test(
+pub fn unit_test(
     line: &str,
     starts: &mut usize,
     len: usize,
@@ -66,7 +66,7 @@ pub fn test(
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // いろいろな動作テスト
-    g_writeln(&format!("test starts={} len={}", *starts, len));
+    g_writeln(&format!("unit-test starts={} len={}", *starts, len));
 
     if 4 < (len - *starts) && &line[*starts..*starts + 5] == "mvsrc" {
         *starts += 5;
@@ -77,7 +77,7 @@ pub fn test(
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
-                &ml_dto.get_search_part().get_phase(&Person::Ji),
+                &ml_dto.get_search_part().get_phase(&Person::Friend),
                 *piece_type,
             );
         let pc = ps.piece();
@@ -126,7 +126,7 @@ pub fn test(
         let ps = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(
-                &ml_dto.get_search_part().get_phase(&Person::Ji),
+                &ml_dto.get_search_part().get_phase(&Person::Friend),
                 *piece_type,
             );
         // 移動先の升、および　不成駒／成駒

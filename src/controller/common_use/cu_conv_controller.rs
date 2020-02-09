@@ -5,7 +5,6 @@
 use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::other_part::op_direction_vo::*;
-use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::model::vo::other_part::op_square_vo::*;
@@ -121,26 +120,6 @@ pub fn hanten_sn(sn: &Phase) -> Phase {
     match *sn {
         Sen => Go,
         Go => Sen,
-        Owari => Owari,
-    }
-}
-
-/************
- * 自分相手 *
- ************/
-pub fn jiai_to_num(jiai: &Person) -> usize {
-    use super::super::super::model::vo::other_part::op_person_vo::Person::*;
-    match *jiai {
-        Ji => 0,
-        Ai => 1,
-        Owari => 2,
-    }
-}
-pub fn hanten_jiai(jiai: &Person) -> Person {
-    use super::super::super::model::vo::other_part::op_person_vo::Person::*;
-    match *jiai {
-        Ji => Ai,
-        Ai => Ji,
         Owari => Owari,
     }
 }

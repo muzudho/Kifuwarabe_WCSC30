@@ -623,10 +623,11 @@ impl SPDto {
     }
 
     /// 手番
-    pub fn get_phase(&self, jiai: &Person) -> Phase {
+    pub fn get_phase(&self, person: &Person) -> Phase {
         use super::super::super::super::model::vo::other_part::op_person_vo::Person::*;
-        match *jiai {
-            Ji => {
+        match *person {
+            None => Phase::Owari,
+            Friend => {
                 // 手番
                 if self.ply % 2 == 0 {
                     Phase::Sen
@@ -634,7 +635,7 @@ impl SPDto {
                     Phase::Go
                 }
             }
-            Ai => {
+            Opponent => {
                 // 相手番
                 if self.ply % 2 == 0 {
                     Phase::Go
@@ -642,7 +643,6 @@ impl SPDto {
                     Phase::Sen
                 }
             }
-            _ => Phase::Owari,
         }
     }
 
@@ -727,10 +727,10 @@ impl SPDto {
     }
 
     /// らいおんの位置
-    pub fn get_king_sq(&self, jiai: &Person) -> &Square {
+    pub fn get_king_sq(&self, person: &Person) -> &Square {
         &self
             .current_position
-            .get_sq_r(sn_to_num(&self.get_phase(jiai)))
+            .get_sq_r(sn_to_num(&self.get_phase(person)))
     }
 
     /// 指し手の通りに、盤上の駒配置を動かすぜ☆（＾～＾）
@@ -742,7 +742,7 @@ impl SPDto {
         move1: &MLMovementDto,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> OPPieceVo {
-        let phase = self.get_phase(&Person::Ji);
+        let phase = self.get_phase(&Person::Friend);
 
         // 取った駒
         let cap;

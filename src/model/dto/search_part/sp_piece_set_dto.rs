@@ -30,13 +30,13 @@ impl SPPieceSetDto {
     /**
      * 自分相手
      */
-    pub fn new_jiai(
+    pub fn new_person(
         &self,
-        jiai: &Person,
+        person: &Person,
         sp_dto: &SPDto,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> SPPieceSetDto {
-        let sn0 = sp_dto.get_phase(&jiai);
+        let sn0 = sp_dto.get_phase(&person);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
             let ps = speed_of_light.ml_piece_struct_master_vo.get_piece_vo(km);

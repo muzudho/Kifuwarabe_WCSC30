@@ -46,7 +46,7 @@ pub fn get_potential_movement<F1>(
                     .ml_piece_struct_master_vo
                     .get_piece_vo(&piece_src)
                     .phase(),
-                &sp_dto.get_phase(&Person::Ji),
+                &sp_dto.get_phase(&Person::Friend),
             ) {
                 // 手番の駒
 
@@ -114,7 +114,7 @@ pub fn get_potential_movement<F1>(
                     let ps_motigoma = speed_of_light
                         .ml_piece_struct_master_vo
                         .get_piece_vo_by_phase_and_piece_type(
-                            &sp_dto.get_phase(&Person::Ji),
+                            &sp_dto.get_phase(&Person::Friend),
                             *piece_type_motigoma,
                         );
                     let pc_motigoma = ps_motigoma.piece();

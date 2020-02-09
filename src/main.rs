@@ -197,16 +197,6 @@ fn parse_extend_command(
     } else if 3 < len && &line[starts..4] == "same" {
         let count = ml_dto.count_same_ky();
         g_writeln(&format!("同一局面調べ count={}", count));
-    } else if 3 < len && &line[starts..4] == "test" {
-        starts += 4;
-        // 続きにスペース「 」が１つあれば読み飛ばす
-        if 0 < (len - starts) && &line[starts..=starts] == " " {
-            starts += 1;
-        }
-        // いろいろな動作テスト
-        g_writeln(&format!("test starts={} len={}", starts, len));
-        test(&line, &mut starts, len, ml_dto, &speed_of_light);
-    //g_writeln( &ml_dto.pop_command() );
     } else if 3 < len && &line[starts..4] == "undo" {
         if !ml_dto.undo_ss(&speed_of_light) {
             g_writeln(&format!(
@@ -214,6 +204,16 @@ fn parse_extend_command(
                 ml_dto.get_search_part().get_ply()
             ));
         }
+    } else if 8 < len && &line[starts..9] == "unit-test" {
+        starts += 4;
+        // 続きにスペース「 」が１つあれば読み飛ばす
+        if 0 < (len - starts) && &line[starts..=starts] == " " {
+            starts += 1;
+        }
+        // いろいろな動作テスト
+        g_writeln(&format!("unit-test starts={} len={}", starts, len));
+        unit_test(&line, &mut starts, len, ml_dto, &speed_of_light);
+    //g_writeln( &ml_dto.pop_command() );
     } else if 2 < len && &line[starts..3] == "do " {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える

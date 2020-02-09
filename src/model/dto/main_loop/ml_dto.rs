@@ -241,10 +241,10 @@ impl MLDto {
         self.get_starting_position_mut().mg[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStructVo) -> Person {
-        if match_sn(&piece_vo.phase(), &self.sp_dto.get_phase(&Person::Ji)) {
-            Person::Ji
+        if match_sn(&piece_vo.phase(), &self.sp_dto.get_phase(&Person::Friend)) {
+            Person::Friend
         } else {
-            Person::Ai
+            Person::Opponent
         }
     }
 
@@ -269,7 +269,7 @@ impl MLDto {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
-        if let Phase::Sen = self.sp_dto.get_phase(&Person::Ji) {
+        if let Phase::Sen = self.sp_dto.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
@@ -280,7 +280,7 @@ impl MLDto {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
-        if let Phase::Sen = self.sp_dto.get_phase(&Person::Ji) {
+        if let Phase::Sen = self.sp_dto.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
@@ -423,7 +423,7 @@ impl MLDto {
             cur_pos.mg[OPPieceVo::Lance2 as usize],
             cur_pos.mg[OPPieceVo::Pawn2 as usize],
             self.get_search_part().get_ply(),
-            self.sp_dto.get_phase(&Person::Ji),
+            self.sp_dto.get_phase(&Person::Friend),
             self.count_same_ky()
         )
     }
@@ -594,7 +594,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
-            let sn = self.sp_dto.get_phase(&Person::Ji);
+            let sn = self.sp_dto.get_phase(&Person::Friend);
             let ss = &self.sp_dto.get_move().clone();
             self.sp_dto.undo_move(&sn, ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
@@ -638,7 +638,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
         // 手番ハッシュ
         use super::super::super::vo::other_part::op_phase_vo::Phase::*;
-        match self.sp_dto.get_phase(&Person::Ji) {
+        match self.sp_dto.get_phase(&Person::Friend) {
             Sen => hash ^= self.get_position_hash_seed().sn[SN_SEN],
             Go => hash ^= self.get_position_hash_seed().sn[SN_GO],
             _ => {}

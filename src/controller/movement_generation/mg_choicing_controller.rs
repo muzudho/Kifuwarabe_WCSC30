@@ -47,12 +47,12 @@ pub fn select_movement_except_check<S: BuildHasher>(
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 自玉の位置
-    let sq_r = search_part.get_king_sq(&Person::Ji).clone();
+    let sq_r = search_part.get_king_sq(&Person::Friend).clone();
     g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> = lookup_catching_king_on_board(
-        &search_part.get_phase(&Person::Ai),
+        &search_part.get_phase(&Person::Opponent),
         &sq_r,
         &search_part,
         &speed_of_light,
@@ -124,7 +124,9 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
     let sq_r = ml_dto
         .get_search_part()
         .get_current_position()
-        .get_sq_r(sn_to_num(&ml_dto.get_search_part().get_phase(&Person::Ji)))
+        .get_sq_r(sn_to_num(
+            &ml_dto.get_search_part().get_phase(&Person::Friend),
+        ))
         .clone();
 
     // 王手回避カードを発行する
@@ -151,8 +153,8 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
         make_no_promotion_source_by_phase_square(
-            &ml_dto.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                        // 指定の升
+            &ml_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                            // 指定の升
             &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
@@ -160,8 +162,8 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             },
         );
         make_before_promotion_source_by_phase_square(
-            &ml_dto.get_search_part().get_phase(&Person::Ji), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                        // 指定の升
+            &ml_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                            // 指定の升
             &ml_dto.get_search_part(),
             &speed_of_light,
             |square| {
@@ -175,7 +177,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             "info {} evaluated => {} attackers. offence={}->{}",
             ss_potential,
             attackers.len(),
-            ml_dto.get_search_part().get_phase(&Person::Ji),
+            ml_dto.get_search_part().get_phase(&Person::Friend),
             sq_r_new.to_umasu()
         ));
         for sq_atk in attackers.iter() {
