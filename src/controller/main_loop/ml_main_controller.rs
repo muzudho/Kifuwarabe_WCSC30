@@ -10,9 +10,10 @@ use super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_piece_vo::*;
 use std::collections::HashSet;
+use std::hash::BuildHasher;
 
 /// 指し手
-pub fn hyoji_ss_hashset(ss_hashset: &HashSet<u64>) {
+pub fn hyoji_ss_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
     g_writeln(&format!("ss_hashset.len()={}", ss_hashset.len()));
     // 辞書順ソート
     let mut vec_ss_str = Vec::new();

@@ -17,9 +17,12 @@ use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_ply_vo::*;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
+use std::hash::BuildHasher;
 
 /// ハッシュセットから、指し手を１つ選ぶぜ☆（＾～＾）
-pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> MLMovementDto {
+pub fn choice_1movement_from_hashset<S: BuildHasher>(
+    movement_hashset: &HashSet<u64, S>,
+) -> MLMovementDto {
     let index = if movement_hashset.is_empty() {
         0
     } else {
@@ -38,8 +41,8 @@ pub fn choice_1movement_from_hashset(movement_hashset: &HashSet<u64>) -> MLMovem
 /**
  * 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
  */
-pub fn select_movement_except_check(
-    ss_hashset_input: &mut HashSet<u64>,
+pub fn select_movement_except_check<S: BuildHasher>(
+    ss_hashset_input: &mut HashSet<u64, S>,
     search_part: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
@@ -109,8 +112,8 @@ pub fn select_movement_except_check(
  * 王手されていれば、王手を解除しろだぜ☆（＾～＾）
  * 千日手には喜んで飛び込めだぜ☆（＾▽＾）ｗｗｗ
  */
-pub fn select_movement_except_suiceid(
-    ss_hashset_input: &mut HashSet<u64>,
+pub fn select_movement_except_suiceid<S: BuildHasher>(
+    ss_hashset_input: &mut HashSet<u64, S>,
     ml_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
@@ -206,8 +209,8 @@ pub fn select_movement_except_suiceid(
 /// 千日手の指し手を取り除いた集合を作るぜ☆（＾～＾）
 ///
 /// ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
-pub fn select_movement_except_fourfold_repetition(
-    ss_hashset_input: &mut HashSet<u64>,
+pub fn select_movement_except_fourfold_repetition<S: BuildHasher>(
+    ss_hashset_input: &mut HashSet<u64, S>,
     ml_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {

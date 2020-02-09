@@ -16,9 +16,10 @@ use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
+use std::hash::BuildHasher;
 
 /// 升を表示
-pub fn hyoji_sq_hashset(sq_hashset: &HashSet<Square>) {
+pub fn hyoji_sq_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
     g_writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
     for sq in sq_hashset {
         let ms = (*sq).to_umasu();
@@ -30,7 +31,7 @@ pub fn hyoji_sq_hashset(sq_hashset: &HashSet<Square>) {
 }
 
 /// 升を表示
-pub fn hyoji_sq_vec(sq_vec: &Vec<Square>) {
+pub fn hyoji_sq_vec(sq_vec: &[Square]) {
     g_writeln(&format!("sq_vec.len()={}", sq_vec.len()));
     for sq in sq_vec {
         let ms = sq.to_umasu();
@@ -42,7 +43,7 @@ pub fn hyoji_sq_vec(sq_vec: &Vec<Square>) {
 }
 
 /// 駒種類
-pub fn hyoji_piece_type_hashset(num_piece_type_hashset: &HashSet<usize>) {
+pub fn hyoji_piece_type_hashset<S: BuildHasher>(num_piece_type_hashset: &HashSet<usize, S>) {
     g_writeln(&format!(
         "num_piece_type_hashset.len()={}",
         num_piece_type_hashset.len()
