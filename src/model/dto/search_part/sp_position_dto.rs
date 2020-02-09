@@ -221,8 +221,7 @@ impl SPPositionDto {
         }
 
         // 持ち駒ハッシュ
-        for i_km in 0..KM_ARRAY_LN {
-            let km = &KM_ARRAY[i_km];
+        for km in &KM_ARRAY {
             let num_km = speed_of_light
                 .ml_piece_struct_master_vo
                 .get_piece_vo(km)

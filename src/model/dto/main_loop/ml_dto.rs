@@ -174,10 +174,14 @@ impl MLDto {
         }
 
         // 持ち駒
+        self.sp_dto.get_current_position_mut().mg[..KM_LN]
+            .clone_from_slice(&self.starting_position.mg[..KM_LN]);
+        /*
         for i_mg in 0..KM_LN {
             self.get_search_part_mut().get_current_position_mut().mg[i_mg] =
                 self.get_starting_position().mg[i_mg];
         }
+        */
     }
 
     pub fn get_position_hash_seed(&self) -> &PositionHashSeed {
