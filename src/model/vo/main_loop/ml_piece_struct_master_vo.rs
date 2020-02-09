@@ -126,7 +126,7 @@ impl MLPieceStructMasterVo {
         use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         use super::super::other_part::op_piece_vo::OPPieceVo::*;
         match *phase {
-            Phase::Sen => match piece_type {
+            Phase::First => match piece_type {
                 R => self.get_piece_vo(&King1),
                 K => self.get_piece_vo(&Rook1),
                 Z => self.get_piece_vo(&Bishop1),
@@ -143,7 +143,7 @@ impl MLPieceStructMasterVo {
                 PH => self.get_piece_vo(&PromotedPawn1),
                 _ => self.get_piece_vo(&OPPieceVo::Owari),
             },
-            Phase::Go => match piece_type {
+            Phase::Second => match piece_type {
                 R => self.get_piece_vo(&King2),
                 K => self.get_piece_vo(&Rook2),
                 Z => self.get_piece_vo(&Bishop2),

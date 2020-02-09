@@ -104,26 +104,6 @@ pub fn pop_dir8_from_hash(hash: u64) -> (u64, Dir8) {
     (hash >> 5, dir)
 }
 
-/********
- * 先後 *
- ********/
-pub fn sn_to_num(sn: &Phase) -> usize {
-    use super::super::super::model::vo::other_part::op_phase_vo::Phase::*;
-    match *sn {
-        Sen => 0,
-        Go => 1,
-        Owari => 2,
-    }
-}
-pub fn hanten_sn(sn: &Phase) -> Phase {
-    use super::super::super::model::vo::other_part::op_phase_vo::Phase::*;
-    match *sn {
-        Sen => Go,
-        Go => Sen,
-        Owari => Owari,
-    }
-}
-
 /******************
  * 盤、升、筋、段 *
  ******************/
@@ -165,10 +145,10 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
 /****************************************************
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
-pub fn kaiten180_sq_by_sq_sn(sq: &Square, sn: &Phase) -> Square {
+pub fn kaiten180_sq_by_sq_phase(sq: &Square, phase: &Phase) -> Square {
     use super::super::super::model::vo::other_part::op_phase_vo::Phase::*;
-    match *sn {
-        Sen => Square::from_umasu(BAN_MAX - sq.to_umasu() + BAN_MIN),
+    match *phase {
+        First => Square::from_umasu(BAN_MAX - sq.to_umasu() + BAN_MIN),
         _ => (*sq).clone(),
     }
 }

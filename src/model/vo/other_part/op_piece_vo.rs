@@ -125,7 +125,7 @@ impl OPPieceVo {
         use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         use super::op_piece_vo::OPPieceVo::*;
         match *phase {
-            Phase::Sen => match piece_type {
+            Phase::First => match piece_type {
                 R => King1,
                 K => Rook1,
                 Z => Bishop1,
@@ -142,7 +142,7 @@ impl OPPieceVo {
                 PH => PromotedPawn1,
                 _ => OPPieceVo::Owari,
             },
-            Phase::Go => match piece_type {
+            Phase::Second => match piece_type {
                 R => King2,
                 K => Rook2,
                 Z => Bishop2,
@@ -196,7 +196,7 @@ pub const KM_ARRAY: [OPPieceVo; KM_ARRAY_LN] = [
     OPPieceVo::PromotedLance2,  // ぱわーあっぷいのしし
     OPPieceVo::PromotedPawn2,   // ぱわーあっぷひよこ
 ];
-pub const SN_KM_ARRAY: [[OPPieceVo; KM_ARRAY_HALF_LN]; SN_LN] = [
+pub const PHASE_KM_ARRAY: [[OPPieceVo; KM_ARRAY_HALF_LN]; PHASE_LN] = [
     [
         OPPieceVo::King1,           // らいおん
         OPPieceVo::Rook1,           // きりん

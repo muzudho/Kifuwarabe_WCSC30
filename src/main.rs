@@ -135,7 +135,7 @@ fn parse_extend_command(
     } else if 5 < len && &line[starts..6] == "hirate" {
         // 平手初期局面
         controller::main_loop::ml_usi_controller::read_position(
-            &KY1.to_string(),
+            &POS_1.to_string(),
             ml_dto,
             &speed_of_light,
         );

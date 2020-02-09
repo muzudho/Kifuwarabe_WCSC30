@@ -5,7 +5,6 @@
 use super::super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use std::collections::HashSet;
@@ -36,12 +35,12 @@ impl SPPieceSetDto {
         sp_dto: &SPDto,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> SPPieceSetDto {
-        let sn0 = sp_dto.get_phase(&person);
+        let phase0 = sp_dto.get_phase(&person);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         for km in KM_ARRAY.iter() {
             let ps = speed_of_light.ml_piece_struct_master_vo.get_piece_vo(km);
-            let (sn1, _piece_type) = ps.phase_piece_type();
-            if match_sn(&sn0, &sn1) {
+            let (phase1, _piece_type) = ps.phase_piece_type();
+            if phase0 == *phase1 {
                 num_syugo1.insert(ps.serial_piece_number());
             }
         }

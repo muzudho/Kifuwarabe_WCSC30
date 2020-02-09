@@ -3,10 +3,10 @@
 //!
 
 extern crate rand;
+use crate::model::vo::other_part::op_phase_vo::phase_to_num;
 use rand::Rng;
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_komatori_result_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
@@ -124,7 +124,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
     let sq_r = ml_dto
         .get_search_part()
         .get_current_position()
-        .get_sq_r(sn_to_num(
+        .get_sq_r(phase_to_num(
             &ml_dto.get_search_part().get_phase(&Person::Friend),
         ))
         .clone();

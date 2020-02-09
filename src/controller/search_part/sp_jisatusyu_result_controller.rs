@@ -3,10 +3,11 @@
 //! 結果：自殺手。移動先が敵の利き
 //!
 
-use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::vo::other_part::op_phase_vo::phase_to_num;
+use crate::model::vo::other_part::op_phase_vo::turn_phase;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい
@@ -19,16 +20,16 @@ pub fn is_jisatusyu(ml_dto: &MLDto, ss: &MLMovementDto, speed_of_light: &MLSpeed
     let ps_src = speed_of_light
         .ml_piece_struct_master_vo
         .get_piece_vo(km_src);
-    let (sn_teban, _piece_type) = ps_src.phase_piece_type();
+    let (phase_teban, _piece_type) = ps_src.phase_piece_type();
     // 相手番の先後
-    let sn_aite = hanten_sn(&sn_teban);
+    let phase_aite = turn_phase(&phase_teban);
 
     // 升の利き数だが、指した後で再計算が要るはず
-    let kikisu =
-        ml_dto.get_search_part().effect_count_by_phase[sn_to_num(&sn_aite)].get_su_by_sq(&ss.dst);
+    let kikisu = ml_dto.get_search_part().effect_count_by_phase[phase_to_num(&phase_aite)]
+        .get_su_by_sq(&ss.dst);
     0 < kikisu
     // g_writeln(&format!(
-    //     "info is_jisatusyu={} km_src={} sn_teban={} piece_type={} sn_aite={} ss.dst={} kikisu={}"
-    //     ,result ,km_src ,sn_teban ,piece_type ,sn_aite ,ss.dst ,kikisu
+    //     "info is_jisatusyu={} km_src={} phase_teban={} piece_type={} phase_aite={} ss.dst={} kikisu={}"
+    //     ,result ,km_src ,phase_teban ,piece_type ,phase_aite ,ss.dst ,kikisu
     // ));
 }

@@ -31,7 +31,7 @@ pub struct SPPositionDto {
      * らいおんの位置
      * [先後]
      */
-    sq_r: [Square; SN_LN],
+    sq_r: [Square; PHASE_LN],
 }
 impl Default for SPPositionDto {
     fn default() -> Self {
@@ -94,9 +94,9 @@ impl SPPositionDto {
     /**
      * 歩が置いてあるか確認
      */
-    pub fn exists_fu_by_sn_suji(
+    pub fn exists_fu_by_phase_suji(
         &self,
-        sn: &Phase,
+        phase: &Phase,
         suji: i8,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
@@ -106,8 +106,8 @@ impl SPPositionDto {
             let ps100 = speed_of_light
                 .ml_piece_struct_master_vo
                 .get_piece_vo(piece99);
-            let (sn_km, piece_type) = ps100.phase_piece_type();
-            if match_sn(&sn_km, sn) && match_piece_type(piece_type, GPPieceTypeVo::H) {
+            let (phase_piece, piece_type) = ps100.phase_piece_type();
+            if phase_piece == phase && match_piece_type(piece_type, GPPieceTypeVo::H) {
                 return true;
             }
         }
@@ -124,8 +124,8 @@ impl SPPositionDto {
         // 玉の位置を覚え直します。
         use super::super::super::super::model::vo::other_part::op_phase_vo::Phase::*;
         match *piece {
-            OPPieceVo::King1 => self.sq_r[Sen as usize] = sq.clone(),
-            OPPieceVo::King2 => self.sq_r[Go as usize] = sq.clone(),
+            OPPieceVo::King1 => self.sq_r[First as usize] = sq.clone(),
+            OPPieceVo::King2 => self.sq_r[Second as usize] = sq.clone(),
             _ => {}
         }
     }
@@ -173,7 +173,7 @@ impl SPPositionDto {
     }
 
     /// 指定の升にある駒の先後、または空升
-    pub fn get_sn_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Phase {
+    pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Phase {
         speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo(self.get_piece_by_square(sq))

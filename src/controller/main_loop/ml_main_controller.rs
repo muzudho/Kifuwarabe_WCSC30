@@ -56,9 +56,9 @@ pub fn cmd_kikisu(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) {
         g_writeln(&s);
     }
 
-    for sn in SN_ARRAY.iter() {
-        g_writeln(&format!("利き数：{}", sn));
-        let s = ml_dto.kaku_number_board(&sn, &OPPieceVo::Owari, speed_of_light);
+    for phase in PHASE_ARRAY.iter() {
+        g_writeln(&format!("利き数：{}", phase));
+        let s = ml_dto.kaku_number_board(&phase, &OPPieceVo::Owari, speed_of_light);
         g_writeln(&s);
     }
 }

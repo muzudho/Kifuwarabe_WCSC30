@@ -84,7 +84,7 @@ pub struct PositionHashSeed {
     // 持ち駒
     pub mg: [[u64; MG_MAX]; KM_LN],
     // 先後
-    pub sn: [u64; SN_LN],
+    pub phase: [u64; PHASE_LN],
 }
 
 /// アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）
@@ -112,7 +112,7 @@ impl Default for MLDto {
                 // 持ち駒
                 mg: [[0; MG_MAX]; KM_LN],
                 // 先後
-                sn: [0; SN_LN],
+                phase: [0; PHASE_LN],
             },
             starting_position: SPPositionDto::default(),
             starting_position_hash: 0,
@@ -145,8 +145,8 @@ impl MLDto {
             }
         }
         // 先後
-        for i_sn in 0..SN_LN {
-            self.get_position_hash_seed_mut().sn[i_sn] =
+        for i_phase in 0..PHASE_LN {
+            self.get_position_hash_seed_mut().phase[i_phase] =
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }
     }
@@ -241,7 +241,7 @@ impl MLDto {
         self.get_starting_position_mut().mg[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStructVo) -> Person {
-        if match_sn(&piece_vo.phase(), &self.sp_dto.get_phase(&Person::Friend)) {
+        if &piece_vo.phase() == &self.sp_dto.get_phase(&Person::Friend) {
             Person::Friend
         } else {
             Person::Opponent
@@ -269,7 +269,7 @@ impl MLDto {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
-        if let Phase::Sen = self.sp_dto.get_phase(&Person::Friend) {
+        if let Phase::First = self.sp_dto.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
@@ -280,7 +280,7 @@ impl MLDto {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
-        if let Phase::Sen = self.sp_dto.get_phase(&Person::Friend) {
+        if let Phase::First = self.sp_dto.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
@@ -433,18 +433,18 @@ impl MLDto {
      */
     pub fn kaku_number_board(
         &self,
-        sn: &Phase,
+        phase: &Phase,
         pc: &OPPieceVo,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> String {
-        let nb = match *sn {
+        let nb = match *phase {
             Phase::Owari => {
                 &self.sp_dto.effect_count_by_piece[speed_of_light
                     .ml_piece_struct_master_vo
                     .get_piece_vo(pc)
                     .serial_piece_number()]
             }
-            _ => &self.sp_dto.effect_count_by_phase[sn_to_num(&sn)],
+            _ => &self.sp_dto.effect_count_by_phase[phase_to_num(&phase)],
         };
 
         // 数盤表示
@@ -594,9 +594,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
-            let sn = self.sp_dto.get_phase(&Person::Friend);
+            let phase = self.sp_dto.get_phase(&Person::Friend);
             let ss = &self.sp_dto.get_move().clone();
-            self.sp_dto.undo_move(&sn, ss, speed_of_light);
+            self.sp_dto.undo_move(&phase, ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -606,9 +606,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
     /*
     pub fn remake_visions(&mut self) {
-        for sn in SN_ARRAY.iter() {
+        for phase in PHASE_ARRAY.iter() {
             // 全部忘れる☆（＾～＾）
-            self.sp_dto.vision_tree_by_phase[sn_to_num(sn)].clear();
+            self.sp_dto.vision_tree_by_phase[phase_to_num(phase)].clear();
         }
     }
     */
@@ -622,7 +622,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ（後手固定）
-        hash ^= self.get_position_hash_seed().sn[SN_GO];
+        hash ^= self.get_position_hash_seed().phase[PHASE_SECOND];
 
         hash
     }
@@ -639,8 +639,8 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         // 手番ハッシュ
         use super::super::super::vo::other_part::op_phase_vo::Phase::*;
         match self.sp_dto.get_phase(&Person::Friend) {
-            Sen => hash ^= self.get_position_hash_seed().sn[SN_SEN],
-            Go => hash ^= self.get_position_hash_seed().sn[SN_GO],
+            First => hash ^= self.get_position_hash_seed().phase[PHASE_FIRST],
+            Second => hash ^= self.get_position_hash_seed().phase[PHASE_SECOND],
             _ => {}
         }
 

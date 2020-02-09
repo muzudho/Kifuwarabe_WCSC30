@@ -2,7 +2,6 @@
 //! 利き数
 //!
 use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -23,8 +22,8 @@ pub fn update_effect_count(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo
         .clear();
     }
 
-    for sn in SN_ARRAY.iter() {
-        ml_dto.get_search_part_mut().effect_count_by_phase[sn_to_num(sn)].clear();
+    for phase in PHASE_ARRAY.iter() {
+        ml_dto.get_search_part_mut().effect_count_by_phase[phase_to_num(phase)].clear();
     }
 
     // カウント
@@ -65,7 +64,7 @@ pub fn update_effect_count(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo
                     .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別
-                ml_dto.get_search_part_mut().effect_count_by_phase[sn_to_num(&ps_dst.phase())]
+                ml_dto.get_search_part_mut().effect_count_by_phase[phase_to_num(&ps_dst.phase())]
                     .add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }

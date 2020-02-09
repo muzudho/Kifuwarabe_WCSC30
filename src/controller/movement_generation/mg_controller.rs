@@ -11,7 +11,6 @@ use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
@@ -41,13 +40,12 @@ pub fn get_potential_movement<F1>(
             let sq_src = Square::from_file_rank(suji_src, dan_src);
             let piece_src = sp_dto.get_current_position().get_piece_by_square(&sq_src);
 
-            if match_sn(
-                &speed_of_light
-                    .ml_piece_struct_master_vo
-                    .get_piece_vo(&piece_src)
-                    .phase(),
-                &sp_dto.get_phase(&Person::Friend),
-            ) {
+            if &speed_of_light
+                .ml_piece_struct_master_vo
+                .get_piece_vo(&piece_src)
+                .phase()
+                == &sp_dto.get_phase(&Person::Friend)
+            {
                 // 手番の駒
 
                 let mut dst_hashset: HashSet<Square> = HashSet::<Square>::new();
@@ -170,15 +168,14 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     let ps_dst = speed_of_light
         .ml_piece_struct_master_vo
         .get_piece_vo(&piece_dst);
-    let (sn, _piece_type_dst) = ps_dst.phase_piece_type();
+    let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(
-        &sp_dto
-            .get_current_position()
-            .get_sn_by_sq(&sq_dst, speed_of_light),
-        &sn,
-    ) {
+    if sp_dto
+        .get_current_position()
+        .get_phase_by_sq(&sq_dst, speed_of_light)
+        == *phase
+    {
         return;
     }
 
@@ -258,15 +255,14 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let piece_vo_dst = speed_of_light
         .ml_piece_struct_master_vo
         .get_piece_vo(piece_dst);
-    let (sn, _piece_type_dst) = piece_vo_dst.phase_piece_type();
+    let (phase, _piece_type_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if match_sn(
-        &sp_dto
-            .get_current_position()
-            .get_sn_by_sq(&sq_dst, speed_of_light),
-        &sn,
-    ) {
+    if sp_dto
+        .get_current_position()
+        .get_phase_by_sq(&sq_dst, speed_of_light)
+        == *phase
+    {
         return;
     }
 

@@ -1,5 +1,4 @@
 //! 探索部
-use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::controller::search_part::sp_number_board_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
@@ -23,11 +22,11 @@ pub struct SPDto {
     /// 棋譜
     pub moves_history: [MLMovementDto; TEME_LN],
     /// 利きの数（先後別）
-    pub effect_count_by_phase: [NumberBoard; SN_LN],
+    pub effect_count_by_phase: [NumberBoard; PHASE_LN],
     /// 利きの数（先後付き駒別）
     pub effect_count_by_piece: [NumberBoard; KM_LN],
     // ビジョン・ツリー
-    // pub vision_tree_by_phase: [VisionTree; SN_LN],
+    // pub vision_tree_by_phase: [VisionTree; PHASE_LN],
 }
 impl Default for SPDto {
     fn default() -> Self {
@@ -630,17 +629,17 @@ impl SPDto {
             Friend => {
                 // 手番
                 if self.ply % 2 == 0 {
-                    Phase::Sen
+                    Phase::First
                 } else {
-                    Phase::Go
+                    Phase::Second
                 }
             }
             Opponent => {
                 // 相手番
                 if self.ply % 2 == 0 {
-                    Phase::Go
+                    Phase::Second
                 } else {
-                    Phase::Sen
+                    Phase::First
                 }
             }
         }
@@ -730,7 +729,7 @@ impl SPDto {
     pub fn get_king_sq(&self, person: &Person) -> &Square {
         &self
             .current_position
-            .get_sq_r(sn_to_num(&self.get_phase(person)))
+            .get_sq_r(phase_to_num(&self.get_phase(person)))
     }
 
     /// 指し手の通りに、盤上の駒配置を動かすぜ☆（＾～＾）
@@ -851,8 +850,8 @@ impl SPDto {
     /*
     /// 相手の　玉　の位置を覚えます。
     pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
-        self.vision_tree_by_phase[sn_to_num(phase)]
-            .set_ai_r(&self.current_position.get_sq_r(sn_to_num(opponent_phase)));
+        self.vision_tree_by_phase[phase_to_num(phase)]
+            .set_ai_r(&self.current_position.get_sq_r(phase_to_num(opponent_phase)));
     }
     */
 }

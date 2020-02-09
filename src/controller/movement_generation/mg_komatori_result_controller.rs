@@ -167,12 +167,12 @@ impl KomatoriResult {
 
 /// 王手という原因を作っている関係を、（確率的洗いざらい）調べるぜ☆（＾～＾）
 ///
-/// sn        : 駒を「動かす」方はどっちだぜ☆（＾～＾）
+/// phase        : 駒を「動かす」方はどっちだぜ☆（＾～＾）
 /// ms_target : 取りたい駒がいる升
 ///
 /// return u64 : KomatoriResult のハッシュ
 pub fn lookup_catching_king_on_board(
-    sn: &Phase,
+    phase: &Phase,
     sq_target: &Square,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
@@ -180,8 +180,8 @@ pub fn lookup_catching_king_on_board(
     assert_banjo_sq(
         &sq_target,
         &format!(
-            "(119)Ｌookup_banjo_catch sn={} sq_target={}",
-            sn,
+            "(119)Ｌookup_banjo_catch phase={} sq_target={}",
+            phase,
             sq_target.to_umasu()
         ),
     );
@@ -198,9 +198,9 @@ pub fn lookup_catching_king_on_board(
         // 移動した後の相手の駒
         let ps_dst = speed_of_light
             .ml_piece_struct_master_vo
-            .get_piece_vo_by_phase_and_piece_type(&sn, *piece_type_dst);
+            .get_piece_vo_by_phase_and_piece_type(&phase, *piece_type_dst);
         let km_dst = ps_dst.piece();
-        //let km_dst = sn_piece_type_to_km( &sn, random_piece_type() );
+        //let km_dst = phase_piece_type_to_km( &phase, random_piece_type() );
         // 指定マスに移動できるか
         // 打は除く
 

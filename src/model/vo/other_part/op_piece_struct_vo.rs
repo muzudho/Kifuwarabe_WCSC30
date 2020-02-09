@@ -27,7 +27,7 @@ impl PieceStructVo {
         match p {
             King1 => PieceStructVo {
                 piece: King1,
-                phase_piece_type: (Sen, R),
+                phase_piece_type: (First, R),
                 promoted: King1,
                 demoted: King1,
                 captured: OPPieceVo::Owari,
@@ -35,7 +35,7 @@ impl PieceStructVo {
             },
             Rook1 => PieceStructVo {
                 piece: Rook1,
-                phase_piece_type: (Sen, K),
+                phase_piece_type: (First, K),
                 promoted: PromotedRook1,
                 demoted: Rook1,
                 captured: Rook2,
@@ -43,7 +43,7 @@ impl PieceStructVo {
             },
             Bishop1 => PieceStructVo {
                 piece: Bishop1,
-                phase_piece_type: (Sen, Z),
+                phase_piece_type: (First, Z),
                 promoted: PromotedBishop1,
                 demoted: Bishop1,
                 captured: Bishop2,
@@ -51,7 +51,7 @@ impl PieceStructVo {
             },
             Gold1 => PieceStructVo {
                 piece: Gold1,
-                phase_piece_type: (Sen, I),
+                phase_piece_type: (First, I),
                 promoted: Gold1,
                 demoted: Gold1,
                 captured: Gold2,
@@ -59,7 +59,7 @@ impl PieceStructVo {
             },
             Silver1 => PieceStructVo {
                 piece: Silver1,
-                phase_piece_type: (Sen, N),
+                phase_piece_type: (First, N),
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
@@ -67,7 +67,7 @@ impl PieceStructVo {
             },
             Knight1 => PieceStructVo {
                 piece: Knight1,
-                phase_piece_type: (Sen, U),
+                phase_piece_type: (First, U),
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
@@ -75,7 +75,7 @@ impl PieceStructVo {
             },
             Lance1 => PieceStructVo {
                 piece: Lance1,
-                phase_piece_type: (Sen, S),
+                phase_piece_type: (First, S),
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
@@ -83,7 +83,7 @@ impl PieceStructVo {
             },
             Pawn1 => PieceStructVo {
                 piece: Pawn1,
-                phase_piece_type: (Sen, H),
+                phase_piece_type: (First, H),
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
@@ -91,7 +91,7 @@ impl PieceStructVo {
             },
             PromotedRook1 => PieceStructVo {
                 piece: PromotedRook1,
-                phase_piece_type: (Sen, PK),
+                phase_piece_type: (First, PK),
                 promoted: PromotedRook1,
                 demoted: Rook1,
                 captured: Rook2,
@@ -99,7 +99,7 @@ impl PieceStructVo {
             },
             PromotedBishop1 => PieceStructVo {
                 piece: PromotedBishop1,
-                phase_piece_type: (Sen, PZ),
+                phase_piece_type: (First, PZ),
                 promoted: PromotedBishop1,
                 demoted: Bishop1,
                 captured: Bishop2,
@@ -107,7 +107,7 @@ impl PieceStructVo {
             },
             PromotedSilver1 => PieceStructVo {
                 piece: PromotedSilver1,
-                phase_piece_type: (Sen, PN),
+                phase_piece_type: (First, PN),
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
@@ -115,7 +115,7 @@ impl PieceStructVo {
             },
             PromotedKnight1 => PieceStructVo {
                 piece: PromotedKnight1,
-                phase_piece_type: (Sen, PU),
+                phase_piece_type: (First, PU),
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
@@ -123,7 +123,7 @@ impl PieceStructVo {
             },
             PromotedLance1 => PieceStructVo {
                 piece: PromotedLance1,
-                phase_piece_type: (Sen, PS),
+                phase_piece_type: (First, PS),
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
@@ -131,7 +131,7 @@ impl PieceStructVo {
             },
             PromotedPawn1 => PieceStructVo {
                 piece: PromotedPawn1,
-                phase_piece_type: (Sen, PH),
+                phase_piece_type: (First, PH),
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
@@ -139,7 +139,7 @@ impl PieceStructVo {
             },
             King2 => PieceStructVo {
                 piece: King2,
-                phase_piece_type: (Go, R),
+                phase_piece_type: (Second, R),
                 promoted: King2,
                 demoted: King2,
                 captured: OPPieceVo::Owari,
@@ -147,7 +147,7 @@ impl PieceStructVo {
             },
             Rook2 => PieceStructVo {
                 piece: Rook2,
-                phase_piece_type: (Go, K),
+                phase_piece_type: (Second, K),
                 promoted: PromotedRook2,
                 demoted: Rook2,
                 captured: Rook1,
@@ -155,7 +155,7 @@ impl PieceStructVo {
             },
             Bishop2 => PieceStructVo {
                 piece: Bishop2,
-                phase_piece_type: (Go, Z),
+                phase_piece_type: (Second, Z),
                 promoted: PromotedBishop2,
                 demoted: Bishop2,
                 captured: Bishop1,
@@ -163,7 +163,7 @@ impl PieceStructVo {
             },
             Gold2 => PieceStructVo {
                 piece: Gold2,
-                phase_piece_type: (Go, I),
+                phase_piece_type: (Second, I),
                 promoted: Gold2,
                 demoted: Gold2,
                 captured: Gold1,
@@ -171,7 +171,7 @@ impl PieceStructVo {
             },
             Silver2 => PieceStructVo {
                 piece: Silver2,
-                phase_piece_type: (Go, N),
+                phase_piece_type: (Second, N),
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
@@ -179,7 +179,7 @@ impl PieceStructVo {
             },
             Knight2 => PieceStructVo {
                 piece: Knight2,
-                phase_piece_type: (Go, U),
+                phase_piece_type: (Second, U),
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
@@ -187,7 +187,7 @@ impl PieceStructVo {
             },
             Lance2 => PieceStructVo {
                 piece: Lance2,
-                phase_piece_type: (Go, S),
+                phase_piece_type: (Second, S),
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
@@ -195,7 +195,7 @@ impl PieceStructVo {
             },
             Pawn2 => PieceStructVo {
                 piece: Pawn2,
-                phase_piece_type: (Go, H),
+                phase_piece_type: (Second, H),
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,
@@ -203,7 +203,7 @@ impl PieceStructVo {
             },
             PromotedRook2 => PieceStructVo {
                 piece: PromotedRook2,
-                phase_piece_type: (Go, PK),
+                phase_piece_type: (Second, PK),
                 promoted: PromotedRook2,
                 demoted: Rook2,
                 captured: Rook1,
@@ -211,7 +211,7 @@ impl PieceStructVo {
             },
             PromotedBishop2 => PieceStructVo {
                 piece: PromotedBishop2,
-                phase_piece_type: (Go, PZ),
+                phase_piece_type: (Second, PZ),
                 promoted: PromotedBishop2,
                 demoted: Bishop2,
                 captured: Bishop1,
@@ -219,7 +219,7 @@ impl PieceStructVo {
             },
             PromotedSilver2 => PieceStructVo {
                 piece: PromotedSilver2,
-                phase_piece_type: (Go, PN),
+                phase_piece_type: (Second, PN),
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
@@ -227,7 +227,7 @@ impl PieceStructVo {
             },
             PromotedKnight2 => PieceStructVo {
                 piece: PromotedKnight2,
-                phase_piece_type: (Go, PU),
+                phase_piece_type: (Second, PU),
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
@@ -235,7 +235,7 @@ impl PieceStructVo {
             },
             PromotedLance2 => PieceStructVo {
                 piece: PromotedLance2,
-                phase_piece_type: (Go, PS),
+                phase_piece_type: (Second, PS),
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
@@ -243,7 +243,7 @@ impl PieceStructVo {
             },
             PromotedPawn2 => PieceStructVo {
                 piece: PromotedPawn2,
-                phase_piece_type: (Go, PH),
+                phase_piece_type: (Second, PH),
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,

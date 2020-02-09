@@ -181,7 +181,7 @@ pub fn unit_test(
             let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, piece_type);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(79);
             g_writeln(&format!(
@@ -227,7 +227,7 @@ pub fn unit_test(
             let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, piece_type);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(68);
             g_writeln(&format!(
@@ -273,7 +273,7 @@ pub fn unit_test(
             let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Go, piece_type);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_umasu(77);
             g_writeln(&format!(
@@ -319,7 +319,7 @@ pub fn unit_test(
             let piece_type = GPPieceTypeVo::R; // らいおん
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
-                .get_piece_vo_by_phase_and_piece_type(&Phase::Sen, piece_type);
+                .get_piece_vo_by_phase_and_piece_type(&Phase::First, piece_type);
             let pc = ps.piece(); // ▼ら
             let sq_dst = Square::from_umasu(58);
             g_writeln(&format!(
@@ -779,6 +779,6 @@ pub fn unit_test(
     }
 
     // positionコマンドの読取を丸投げ
-    // tusin::usi::read_position(&KY593.to_string(), &mut ml_dto);
-    // tusin::usi::read_position(&KY2.to_string(), &mut ml_dto);
+    // tusin::usi::read_position(&POS_593.to_string(), &mut ml_dto);
+    // tusin::usi::read_position(&POS_2.to_string(), &mut ml_dto);
 }
