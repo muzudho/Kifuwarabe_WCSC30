@@ -4,13 +4,13 @@
 //!
 
 use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::vo::other_part::op_piece_vo::OPPieceVo;
+use super::super::super::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::vo::other_part::op_square_vo::*;
 
 /// 升 × 駒
 pub struct CUSquarePieceDto {
     square: Square,
-    piece: OPPieceVo,
+    piece: GPPieceVo,
 }
 
 /// 升 × 駒種類

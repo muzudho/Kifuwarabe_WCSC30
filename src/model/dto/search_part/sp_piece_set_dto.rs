@@ -3,10 +3,10 @@
 //!
 
 use super::super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
-use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use std::collections::HashSet;
 
 pub struct SPPieceSetDto {
@@ -48,7 +48,7 @@ impl SPPieceSetDto {
             num_syugo: num_syugo1,
         }
     }
-    pub fn remove(&mut self, piece: &OPPieceVo, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn remove(&mut self, piece: &GPPieceVo, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo.remove(
             &speed_of_light
                 .ml_piece_struct_master_vo

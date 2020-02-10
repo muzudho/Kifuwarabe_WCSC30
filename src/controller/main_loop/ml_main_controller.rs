@@ -4,11 +4,11 @@
 //!
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_phase_vo::*;
-use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
-use super::super::super::model::vo::other_part::op_piece_vo::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
@@ -58,7 +58,7 @@ pub fn cmd_kikisu(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) {
 
     for phase in PHASE_ARRAY.iter() {
         g_writeln(&format!("利き数：{}", phase));
-        let s = ml_dto.kaku_number_board(&phase, &OPPieceVo::Owari, speed_of_light);
+        let s = ml_dto.kaku_number_board(&phase, &GPPieceVo::Owari, speed_of_light);
         g_writeln(&s);
     }
 }

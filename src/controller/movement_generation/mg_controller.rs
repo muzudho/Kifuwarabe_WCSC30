@@ -3,15 +3,14 @@
 //!
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
+use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
@@ -105,7 +104,7 @@ pub fn get_potential_movement<F1>(
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
             let piece_dst = sp_dto.get_current_position().get_piece_by_square(&sq_dst);
-            if let OPPieceVo::Kara = piece_dst {
+            if let GPPieceVo::Kara = piece_dst {
                 // 駒が無いところに打つ
                 let mut da_piece_type_hashset = HashSet::new();
                 for piece_type_motigoma in MGS_ARRAY.iter() {
@@ -155,7 +154,7 @@ pub fn get_potential_movement<F1>(
 /// 盤上の駒の移動の最初の１つ。打を除く
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
-    piece_dst: OPPieceVo,
+    piece_dst: GPPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
@@ -242,7 +241,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 /// 2. 移動先駒指定  piece_dst
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
-    piece_dst: &OPPieceVo,
+    piece_dst: &GPPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,

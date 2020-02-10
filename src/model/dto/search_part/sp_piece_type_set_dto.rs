@@ -2,7 +2,6 @@
 //! 駒種類集合
 //!
 
-use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use std::collections::HashSet;

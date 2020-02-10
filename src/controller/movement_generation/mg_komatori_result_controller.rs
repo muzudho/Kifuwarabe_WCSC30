@@ -10,11 +10,11 @@ use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
+use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
-use super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
-use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 use std::fmt;
@@ -37,7 +37,7 @@ pub enum KomatoriResultResult {
 /// 結果：駒取り
 pub struct KomatoriResult {
     // 要因：王手をしてきている駒（１つ）
-    km_attacker: OPPieceVo,
+    km_attacker: GPPieceVo,
     // 要因：アタッカーが居る升
     sq_attacker: Square,
     // 要因：狙われている駒が居る升

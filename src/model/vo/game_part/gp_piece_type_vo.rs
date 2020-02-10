@@ -4,7 +4,6 @@
 //! 先後なしの駒と空白
 //!
 
-use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
@@ -136,3 +135,110 @@ pub const MGS_ARRAY: [GPPieceTypeVo; MGS_ARRAY_LN] = [
     GPPieceTypeVo::Lance,
     GPPieceTypeVo::Pawn,
 ];
+
+/// 駒種類の数値化
+pub fn piece_type_to_num(piece_type: GPPieceTypeVo) -> usize {
+    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    match piece_type {
+        King => 0,
+        Rook => 1,
+        Bishop => 2,
+        Gold => 3,
+        Silver => 4,
+        Knight => 5,
+        Lance => 6,
+        Pawn => 7,
+        Dragon => 8,
+        Horse => 9,
+        PromotedSilver => 10,
+        PromotedKnight => 11,
+        PromotedLance => 12,
+        PromotedPawn => 13,
+        Kara => 14,
+        Owari => 15,
+    }
+}
+
+/// 数値の駒種類化
+pub fn num_to_piece_type(n: usize) -> GPPieceTypeVo {
+    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    match n {
+        0 => King,
+        1 => Rook,
+        2 => Bishop,
+        3 => Gold,
+        4 => Silver,
+        5 => Knight,
+        6 => Lance,
+        7 => Pawn,
+        8 => Dragon,
+        9 => Horse,
+        10 => PromotedSilver,
+        11 => PromotedKnight,
+        12 => PromotedLance,
+        13 => PromotedPawn,
+        14 => Kara,
+        _ => Owari,
+    }
+}
+
+/// ハッシュ値を作る
+pub fn push_piece_type_to_hash(hash: u64, piece_type: GPPieceTypeVo) -> u64 {
+    // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
+    (hash << 4) + piece_type_to_num(piece_type) as u64
+}
+
+/// ハッシュ値から作る
+pub fn pop_piece_type_from_hash(hash: u64) -> (u64, GPPieceTypeVo) {
+    // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
+    let piece_type_num = num_to_piece_type((hash & 0b1111) as usize);
+    (hash >> 4, piece_type_num)
+}
+
+/// 成れる駒
+pub fn piece_type_can_pro(piece_type: GPPieceTypeVo) -> bool {
+    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    match piece_type {
+        King => false,
+        Rook => true,
+        Bishop => true,
+        Gold => false,
+        Silver => true,
+        Knight => true,
+        Lance => true,
+        Pawn => true,
+        Dragon => false,
+        Horse => false,
+        PromotedSilver => false,
+        PromotedKnight => false,
+        PromotedLance => false,
+        PromotedPawn => false,
+        Kara => false,
+        Owari => false,
+    }
+}
+
+/*
+/// 打てる駒
+pub fn piece_type_can_da(piece_type: GPPieceTypeVo) -> bool {
+    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    match piece_type {
+        King => false,
+        Rook => true,
+        Bishop => true,
+        Gold => true,
+        Silver => true,
+        Knight => true,
+        Lance => true,
+        Pawn => true,
+        Dragon => false,
+        Horse => false,
+        PromotedSilver => false,
+        PromotedKnight => false,
+        PromotedLance => false,
+        PromotedPawn => false,
+        Kara => false,
+        Owari => false,
+    }
+}
+*/

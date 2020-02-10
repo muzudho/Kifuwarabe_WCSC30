@@ -1,42 +1,42 @@
-use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::op_phase_vo::Phase;
-use super::op_piece_vo::OPPieceVo;
+use super::super::game_part::gp_piece_vo::GPPieceVo;
+use super::super::other_part::op_phase_vo::Phase;
+use super::gp_piece_type_vo::GPPieceTypeVo;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
 pub struct PieceStructVo {
-    piece: OPPieceVo,
+    piece: GPPieceVo,
     /// 先後、駒種類。
     phase_piece_type: (Phase, GPPieceTypeVo),
     /// 駒→成駒　（成れない駒は、そのまま）
-    promoted: OPPieceVo,
+    promoted: GPPieceVo,
     /// 成駒→駒　（成っていない駒は、そのまま）
-    demoted: OPPieceVo,
+    demoted: GPPieceVo,
     /// 先後付き駒　を　持ち駒種類　へ変換。
     /// 持ち駒にするので、先後は反転するぜ☆（＾～＾）
-    captured: OPPieceVo,
+    captured: GPPieceVo,
     /// 先後付き駒の配列のインデックス
     serial_piece_number: usize,
 }
 impl PieceStructVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
-    pub fn from_piece(p: OPPieceVo) -> Self {
-        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
-        use super::op_phase_vo::Phase::*;
-        use super::op_piece_vo::OPPieceVo::*;
+    pub fn from_piece(p: GPPieceVo) -> Self {
+        use super::super::game_part::gp_piece_vo::GPPieceVo::*;
+        use super::super::other_part::op_phase_vo::Phase::*;
+        use super::gp_piece_type_vo::GPPieceTypeVo::*;
         match p {
             King1 => PieceStructVo {
                 piece: King1,
                 phase_piece_type: (First, King),
                 promoted: King1,
                 demoted: King1,
-                captured: OPPieceVo::Owari,
+                captured: GPPieceVo::Owari,
                 serial_piece_number: 0,
             },
             Rook1 => PieceStructVo {
                 piece: Rook1,
                 phase_piece_type: (First, Rook),
-                promoted: PromotedRook1,
+                promoted: Dragon1,
                 demoted: Rook1,
                 captured: Rook2,
                 serial_piece_number: 1,
@@ -44,7 +44,7 @@ impl PieceStructVo {
             Bishop1 => PieceStructVo {
                 piece: Bishop1,
                 phase_piece_type: (First, Bishop),
-                promoted: PromotedBishop1,
+                promoted: Horse1,
                 demoted: Bishop1,
                 captured: Bishop2,
                 serial_piece_number: 2,
@@ -89,18 +89,18 @@ impl PieceStructVo {
                 captured: Pawn2,
                 serial_piece_number: 7,
             },
-            PromotedRook1 => PieceStructVo {
-                piece: PromotedRook1,
+            Dragon1 => PieceStructVo {
+                piece: Dragon1,
                 phase_piece_type: (First, Dragon),
-                promoted: PromotedRook1,
+                promoted: Dragon1,
                 demoted: Rook1,
                 captured: Rook2,
                 serial_piece_number: 8,
             },
-            PromotedBishop1 => PieceStructVo {
-                piece: PromotedBishop1,
+            Horse1 => PieceStructVo {
+                piece: Horse1,
                 phase_piece_type: (First, Horse),
-                promoted: PromotedBishop1,
+                promoted: Horse1,
                 demoted: Bishop1,
                 captured: Bishop2,
                 serial_piece_number: 9,
@@ -142,13 +142,13 @@ impl PieceStructVo {
                 phase_piece_type: (Second, King),
                 promoted: King2,
                 demoted: King2,
-                captured: OPPieceVo::Owari,
+                captured: GPPieceVo::Owari,
                 serial_piece_number: 14,
             },
             Rook2 => PieceStructVo {
                 piece: Rook2,
                 phase_piece_type: (Second, Rook),
-                promoted: PromotedRook2,
+                promoted: Dragon2,
                 demoted: Rook2,
                 captured: Rook1,
                 serial_piece_number: 15,
@@ -156,7 +156,7 @@ impl PieceStructVo {
             Bishop2 => PieceStructVo {
                 piece: Bishop2,
                 phase_piece_type: (Second, Bishop),
-                promoted: PromotedBishop2,
+                promoted: Horse2,
                 demoted: Bishop2,
                 captured: Bishop1,
                 serial_piece_number: 16,
@@ -201,18 +201,18 @@ impl PieceStructVo {
                 captured: Pawn1,
                 serial_piece_number: 21,
             },
-            PromotedRook2 => PieceStructVo {
-                piece: PromotedRook2,
+            Dragon2 => PieceStructVo {
+                piece: Dragon2,
                 phase_piece_type: (Second, Dragon),
-                promoted: PromotedRook2,
+                promoted: Dragon2,
                 demoted: Rook2,
                 captured: Rook1,
                 serial_piece_number: 22,
             },
-            PromotedBishop2 => PieceStructVo {
-                piece: PromotedBishop2,
+            Horse2 => PieceStructVo {
+                piece: Horse2,
                 phase_piece_type: (Second, Horse),
-                promoted: PromotedBishop2,
+                promoted: Horse2,
                 demoted: Bishop2,
                 captured: Bishop1,
                 serial_piece_number: 23,
@@ -249,27 +249,27 @@ impl PieceStructVo {
                 captured: Pawn1,
                 serial_piece_number: 27,
             },
-            OPPieceVo::Kara => PieceStructVo {
-                piece: OPPieceVo::Kara,
+            GPPieceVo::Kara => PieceStructVo {
+                piece: GPPieceVo::Kara,
                 phase_piece_type: (Phase::None, GPPieceTypeVo::Kara),
-                promoted: OPPieceVo::Kara,
-                demoted: OPPieceVo::Kara,
-                captured: OPPieceVo::Owari,
+                promoted: GPPieceVo::Kara,
+                demoted: GPPieceVo::Kara,
+                captured: GPPieceVo::Owari,
                 serial_piece_number: 28,
             },
-            OPPieceVo::Owari => PieceStructVo {
-                piece: OPPieceVo::Owari,
+            GPPieceVo::Owari => PieceStructVo {
+                piece: GPPieceVo::Owari,
                 phase_piece_type: (Phase::None, GPPieceTypeVo::Owari),
-                promoted: OPPieceVo::Owari,
-                demoted: OPPieceVo::Owari,
-                captured: OPPieceVo::Owari,
+                promoted: GPPieceVo::Owari,
+                demoted: GPPieceVo::Owari,
+                captured: GPPieceVo::Owari,
                 serial_piece_number: 29,
             },
         }
     }
 
     pub fn from_serial_piece_number(km_num: usize) -> Self {
-        use super::op_piece_vo::OPPieceVo::*;
+        use super::super::game_part::gp_piece_vo::GPPieceVo::*;
         match km_num {
             0 => PieceStructVo::from_piece(King1),
             1 => PieceStructVo::from_piece(Rook1),
@@ -279,8 +279,8 @@ impl PieceStructVo {
             5 => PieceStructVo::from_piece(Knight1),
             6 => PieceStructVo::from_piece(Lance1),
             7 => PieceStructVo::from_piece(Pawn1),
-            8 => PieceStructVo::from_piece(PromotedRook1),
-            9 => PieceStructVo::from_piece(PromotedBishop1),
+            8 => PieceStructVo::from_piece(Dragon1),
+            9 => PieceStructVo::from_piece(Horse1),
             10 => PieceStructVo::from_piece(PromotedSilver1),
             11 => PieceStructVo::from_piece(PromotedKnight1),
             12 => PieceStructVo::from_piece(PromotedLance1),
@@ -293,8 +293,8 @@ impl PieceStructVo {
             19 => PieceStructVo::from_piece(Knight2),
             20 => PieceStructVo::from_piece(Lance2),
             21 => PieceStructVo::from_piece(Pawn2),
-            22 => PieceStructVo::from_piece(PromotedRook2),
-            23 => PieceStructVo::from_piece(PromotedBishop2),
+            22 => PieceStructVo::from_piece(Dragon2),
+            23 => PieceStructVo::from_piece(Horse2),
             24 => PieceStructVo::from_piece(PromotedSilver2),
             25 => PieceStructVo::from_piece(PromotedKnight2),
             26 => PieceStructVo::from_piece(PromotedLance2),
@@ -311,7 +311,7 @@ impl PieceStructVo {
         (hash >> 5, ps)
     }
 
-    pub fn piece(&self) -> &OPPieceVo {
+    pub fn piece(&self) -> &GPPieceVo {
         &self.piece
     }
 
@@ -327,11 +327,11 @@ impl PieceStructVo {
         self.phase_piece_type.1
     }
 
-    pub fn promote(&self) -> &OPPieceVo {
+    pub fn promote(&self) -> &GPPieceVo {
         &self.promoted
     }
 
-    pub fn demote(&self) -> &OPPieceVo {
+    pub fn demote(&self) -> &GPPieceVo {
         &self.demoted
     }
 
@@ -342,7 +342,7 @@ impl PieceStructVo {
     }
 
     /// 持ち駒にするぜ☆（＾～＾）相手の持ち物になるぜ☆（＾～＾）
-    pub fn capture(&self) -> &OPPieceVo {
+    pub fn capture(&self) -> &GPPieceVo {
         &self.captured
     }
 

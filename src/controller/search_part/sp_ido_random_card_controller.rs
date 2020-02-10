@@ -10,9 +10,9 @@ use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::search_part::sp_jisatusyu_result_controller::*;
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use std::collections::HashSet;
 
 /**
@@ -22,7 +22,7 @@ use std::collections::HashSet;
  */
 pub fn get_ido_ss_by_km_random(
     ml_dto: &MLDto,
-    piece_dst: &OPPieceVo,
+    piece_dst: &GPPieceVo,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> MLMovementDto {
     let mut ss_hashset = HashSet::new();

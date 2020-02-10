@@ -3,7 +3,6 @@
 //!
 //! unit-test コマンドで実行しろだぜ☆（＾～＾）
 //!
-use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
 use super::super::super::controller::common_use::cu_math_controller::*;
 use super::super::super::controller::common_use::cu_random_move_controller;
@@ -11,6 +10,7 @@ use super::super::super::controller::movement_generation::mg_sub_part_controller
 use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;

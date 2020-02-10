@@ -6,20 +6,19 @@ extern crate rand;
 use rand::Rng;
 
 use super::super::super::super::config::*;
-use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
+use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
+use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
-use super::super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
-use super::super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
-use super::super::super::super::model::vo::other_part::op_piece_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use super::super::super::dto::search_part::sp_dto::*;
 use std::fs::File;
@@ -233,11 +232,11 @@ impl MLDto {
      ********/
 
     /// 初期局面の盤上に駒の位置を設定するもの
-    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: OPPieceVo) {
+    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: GPPieceVo) {
         self.get_starting_position_mut()
             .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
-    pub fn set_starting_position_hand_piece(&mut self, km: OPPieceVo, maisu: i8) {
+    pub fn set_starting_position_hand_piece(&mut self, km: GPPieceVo, maisu: i8) {
         self.get_starting_position_mut().mg[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStructVo) -> Person {
@@ -407,21 +406,21 @@ impl MLDto {
             cur_pos.get_piece_by_square(&Square::from_umasu(81)),
             cur_pos.get_piece_by_square(&Square::from_umasu(91)),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            cur_pos.mg[OPPieceVo::Rook1 as usize],
-            cur_pos.mg[OPPieceVo::Bishop1 as usize],
-            cur_pos.mg[OPPieceVo::Gold1 as usize],
-            cur_pos.mg[OPPieceVo::Silver1 as usize],
-            cur_pos.mg[OPPieceVo::Knight1 as usize],
-            cur_pos.mg[OPPieceVo::Lance1 as usize],
-            cur_pos.mg[OPPieceVo::Pawn1 as usize],
+            cur_pos.mg[GPPieceVo::Rook1 as usize],
+            cur_pos.mg[GPPieceVo::Bishop1 as usize],
+            cur_pos.mg[GPPieceVo::Gold1 as usize],
+            cur_pos.mg[GPPieceVo::Silver1 as usize],
+            cur_pos.mg[GPPieceVo::Knight1 as usize],
+            cur_pos.mg[GPPieceVo::Lance1 as usize],
+            cur_pos.mg[GPPieceVo::Pawn1 as usize],
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            cur_pos.mg[OPPieceVo::Rook2 as usize],
-            cur_pos.mg[OPPieceVo::Bishop2 as usize],
-            cur_pos.mg[OPPieceVo::Gold2 as usize],
-            cur_pos.mg[OPPieceVo::Silver2 as usize],
-            cur_pos.mg[OPPieceVo::Knight2 as usize],
-            cur_pos.mg[OPPieceVo::Lance2 as usize],
-            cur_pos.mg[OPPieceVo::Pawn2 as usize],
+            cur_pos.mg[GPPieceVo::Rook2 as usize],
+            cur_pos.mg[GPPieceVo::Bishop2 as usize],
+            cur_pos.mg[GPPieceVo::Gold2 as usize],
+            cur_pos.mg[GPPieceVo::Silver2 as usize],
+            cur_pos.mg[GPPieceVo::Knight2 as usize],
+            cur_pos.mg[GPPieceVo::Lance2 as usize],
+            cur_pos.mg[GPPieceVo::Pawn2 as usize],
             self.get_search_part().get_ply(),
             self.sp_dto.get_phase(&Person::Friend),
             self.count_same_ky()
@@ -434,7 +433,7 @@ impl MLDto {
     pub fn kaku_number_board(
         &self,
         phase: &Phase,
-        pc: &OPPieceVo,
+        pc: &GPPieceVo,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> String {
         let nb = match *phase {

@@ -5,13 +5,13 @@
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
+use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
 use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
-use super::super::super::model::vo::other_part::op_piece_struct_vo::PieceStructVo;
-use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo;
 use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -288,7 +288,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
 fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStructVo) -> bool {
     let (_dx, dy) = square_dst.to_file_rank();
 
-    use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
+    use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
     match ps_dst.piece() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
@@ -1118,7 +1118,7 @@ fn make_before_promotion_source_sliding_to_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1147,7 +1147,7 @@ fn make_before_promotion_source_to_west_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1169,7 +1169,7 @@ fn make_before_promotion_source_sliding_to_north_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1198,7 +1198,7 @@ fn make_before_promotion_source_to_north_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1220,7 +1220,7 @@ fn make_before_promotion_source_to_north_north_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1242,7 +1242,7 @@ fn make_before_promotion_source_sliding_to_north<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1271,7 +1271,7 @@ fn make_before_promotion_source_to_north<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1293,7 +1293,7 @@ fn make_before_promotion_source_to_north_north_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1315,7 +1315,7 @@ fn make_before_promotion_source_sliding_to_north_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1344,7 +1344,7 @@ fn make_before_promotion_source_to_north_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1366,7 +1366,7 @@ fn make_before_promotion_source_sliding_to_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1398,7 +1398,7 @@ fn make_before_promotion_source_to_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1420,7 +1420,7 @@ fn make_before_promotion_source_sliding_to_south_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1449,7 +1449,7 @@ fn make_before_promotion_source_to_south_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1471,7 +1471,7 @@ fn make_before_promotion_source_to_south_south_west<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1493,7 +1493,7 @@ fn make_before_promotion_source_sliding_to_south<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1522,7 +1522,7 @@ fn make_before_promotion_source_to_south<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1544,7 +1544,7 @@ fn make_before_promotion_source_to_south_south_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1566,7 +1566,7 @@ fn make_before_promotion_source_sliding_to_south_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1595,7 +1595,7 @@ fn make_before_promotion_source_to_south_east<F1>(
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &OPPieceVo,
+    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
@@ -1623,7 +1623,7 @@ fn make_before_promotion_source_to_south_east<F1>(
 /// そこに打てる駒種類を返す。
 pub fn make_drop_piece_type_by_square_piece<F1>(
     square_dst: &Square,
-    piece_dst: &OPPieceVo,
+    piece_dst: &GPPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_piece_type_hash: F1,
@@ -1636,7 +1636,11 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
         .ml_piece_struct_master_vo
         .get_piece_vo(piece_dst);
     let piece_type_dst = ps_dst.piece_type();
-    if !piece_type_can_da(piece_type_dst) {
+    if !speed_of_light
+        .ml_piece_struct_type_master_vo
+        .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
+        .can_drop
+    {
         return; // 打って出てくることがない駒なら終了
     }
 
@@ -1647,7 +1651,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
         .get_current_position()
         .get_piece_by_square(square_dst);
     match km_banjo {
-        OPPieceVo::Kara => {}
+        GPPieceVo::Kara => {}
         _ => {
             return;
         } // 駒があるところに打つ手は終了
@@ -1683,7 +1687,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
+    use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
     match piece_dst.clone() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
@@ -1755,7 +1759,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 /// sp_dto       : 探索部
 pub fn make_destination_by_square_piece<S: BuildHasher>(
     sq_src: &Square,
-    km_src: &OPPieceVo,
+    km_src: &GPPieceVo,
     to_nari: bool,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
@@ -1982,7 +1986,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
         // +------------------------------+
         // | 成れる動き以外での成りの禁止 |
         // +------------------------------+
-        use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
+        use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
         match km_src.clone() {
             Rook1 | Bishop1 | Silver1 => {
                 // ▼きりん、▼ぞう、▼ねこ　は
@@ -2010,7 +2014,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
         // +----------------------------------------+
         // | 行先の無いところに駒を進めることの禁止 |
         // +----------------------------------------+
-        use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
+        use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
         match km_src {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
@@ -2640,7 +2644,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
             .get_piece_vo_by_phase_and_piece_type(&phase, *piece_type)
             .piece()
             .clone();
-        use super::super::super::model::vo::other_part::op_piece_vo::OPPieceVo::*;
+        use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
         match km {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
@@ -3533,7 +3537,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
         }
 
         let prokm_src = ps_src.promote();
-        if let OPPieceVo::Kara = prokm_src {
+        if let GPPieceVo::Kara = prokm_src {
             // 成れない駒は、成る動きを考えなくていいぜ☆（＾～＾）
             continue;
         }
