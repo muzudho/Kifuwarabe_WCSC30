@@ -159,7 +159,7 @@ impl OPPieceVo {
                 PH => PromotedPawn2,
                 _ => OPPieceVo::Owari,
             },
-            Phase::Owari => OPPieceVo::Owari,
+            Phase::None => OPPieceVo::Owari,
         }
     }
 }

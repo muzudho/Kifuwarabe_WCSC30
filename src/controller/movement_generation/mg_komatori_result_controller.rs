@@ -194,7 +194,7 @@ pub fn lookup_catching_king_on_board(
 
     let mut multiple_movements_hashset = HashSet::new();
 
-    for piece_type_dst in KMS_ARRAY.iter() {
+    for piece_type_dst in PIECE_TYPE_ARRAY.iter() {
         // 移動した後の相手の駒
         let ps_dst = speed_of_light
             .ml_piece_struct_master_vo

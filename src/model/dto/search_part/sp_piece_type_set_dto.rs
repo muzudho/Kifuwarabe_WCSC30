@@ -16,7 +16,7 @@ impl SPPieceTypeSetDto {
      */
     pub fn new_all() -> SPPieceTypeSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
-        for piece_type in KMS_ARRAY.iter() {
+        for piece_type in PIECE_TYPE_ARRAY.iter() {
             num_syugo1.insert(piece_type_to_num(*piece_type));
         }
         SPPieceTypeSetDto {

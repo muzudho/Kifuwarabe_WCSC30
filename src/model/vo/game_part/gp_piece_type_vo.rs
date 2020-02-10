@@ -81,7 +81,7 @@ pub fn match_piece_type(a: GPPieceTypeVo, b: GPPieceTypeVo) -> bool {
 // 駒種類数
 pub const KMS_ARRAY_LN: usize = 14;
 // 駒種類
-pub const KMS_ARRAY: [GPPieceTypeVo; KMS_ARRAY_LN] = [
+pub const PIECE_TYPE_ARRAY: [GPPieceTypeVo; KMS_ARRAY_LN] = [
     GPPieceTypeVo::R,  // らいおん
     GPPieceTypeVo::K,  // きりん
     GPPieceTypeVo::Z,  // ぞう

@@ -251,7 +251,7 @@ impl PieceStructVo {
             },
             OPPieceVo::Kara => PieceStructVo {
                 piece: OPPieceVo::Kara,
-                phase_piece_type: (Phase::Owari, GPPieceTypeVo::Kara),
+                phase_piece_type: (Phase::None, GPPieceTypeVo::Kara),
                 promoted: OPPieceVo::Kara,
                 demoted: OPPieceVo::Kara,
                 captured: OPPieceVo::Owari,
@@ -259,7 +259,7 @@ impl PieceStructVo {
             },
             OPPieceVo::Owari => PieceStructVo {
                 piece: OPPieceVo::Owari,
-                phase_piece_type: (Phase::Owari, GPPieceTypeVo::Owari),
+                phase_piece_type: (Phase::None, GPPieceTypeVo::Owari),
                 promoted: OPPieceVo::Owari,
                 demoted: OPPieceVo::Owari,
                 captured: OPPieceVo::Owari,

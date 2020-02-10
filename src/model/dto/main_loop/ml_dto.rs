@@ -438,7 +438,7 @@ impl MLDto {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> String {
         let nb = match *phase {
-            Phase::Owari => {
+            Phase::None => {
                 &self.sp_dto.effect_count_by_piece[speed_of_light
                     .ml_piece_struct_master_vo
                     .get_piece_vo(pc)
@@ -556,7 +556,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
     // 駒の動きを出力
     pub fn hyoji_kmugoki(&self) {
-        for piece_type in KMS_ARRAY.iter() {
+        for piece_type in PIECE_TYPE_ARRAY.iter() {
             g_write(&format!("{} ", piece_type));
             self.hyoji_kmugoki_dir(*piece_type);
             g_writeln(""); //改行

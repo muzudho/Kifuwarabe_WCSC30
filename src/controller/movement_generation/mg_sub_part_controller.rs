@@ -2051,7 +2051,7 @@ fn make_destination_sliding_to_east<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2096,7 +2096,7 @@ fn make_destination_sliding_to_north_east<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2161,7 +2161,7 @@ fn make_destination_sliding_to_north<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2226,7 +2226,7 @@ fn make_destination_sliding_to_north_west<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2271,7 +2271,7 @@ fn make_destination_sliding_to_west<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2316,7 +2316,7 @@ fn make_destination_sliding_to_south_west<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2381,7 +2381,7 @@ fn make_destination_sliding_to_south<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2446,7 +2446,7 @@ fn make_destination_sliding_to_south_east<S: BuildHasher>(
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -2633,7 +2633,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
     let (_dx, dy) = square_dst.to_file_rank();
 
     // 駒種類
-    for piece_type in KMS_ARRAY.iter() {
+    for piece_type in PIECE_TYPE_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
         let km = speed_of_light
             .ml_piece_struct_master_vo
@@ -2957,7 +2957,7 @@ fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3014,7 +3014,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3097,7 +3097,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3183,7 +3183,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3240,7 +3240,7 @@ fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3297,7 +3297,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3380,7 +3380,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3466,7 +3466,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3516,7 +3516,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
     assert_banjo_sq(&square_dst, "make_before_promotion_source_by_phase_square");
 
     // 駒種類
-    for piece_type in KMS_ARRAY.iter() {
+    for piece_type in PIECE_TYPE_ARRAY.iter() {
         let km_src = speed_of_light
             .ml_piece_struct_master_vo
             .get_piece_vo_by_phase_and_piece_type(&phase, *piece_type)
@@ -3830,7 +3830,7 @@ fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3887,7 +3887,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_east<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -3970,7 +3970,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -4056,7 +4056,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_west<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -4113,7 +4113,7 @@ fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -4170,7 +4170,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_west<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -4253,7 +4253,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }
@@ -4339,7 +4339,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_east<F1>(
             if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::Owari {
+            if &phase_ms != &Phase::None {
                 break;
             }
         }

@@ -52,7 +52,7 @@ pub fn hyoji_ss_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
 pub fn cmd_kikisu(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) {
     for pc in KM_ARRAY.iter() {
         g_writeln(&format!("利き数：{}", pc));
-        let s = ml_dto.kaku_number_board(&Phase::Owari, pc, speed_of_light);
+        let s = ml_dto.kaku_number_board(&Phase::None, pc, speed_of_light);
         g_writeln(&s);
     }
 

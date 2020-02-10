@@ -625,7 +625,7 @@ impl SPDto {
     pub fn get_phase(&self, person: &Person) -> Phase {
         use super::super::super::super::model::vo::other_part::op_person_vo::Person::*;
         match *person {
-            None => Phase::Owari,
+            None => Phase::None,
             Friend => {
                 // 手番
                 if self.ply % 2 == 0 {

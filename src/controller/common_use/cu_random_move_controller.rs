@@ -28,5 +28,5 @@ pub fn random_square() -> Square {
  * ランダムに 駒の種類を返す
  */
 pub fn random_piece_type() -> &'static GPPieceTypeVo {
-    &KMS_ARRAY[rand::thread_rng().gen_range(0, KMS_ARRAY_LN)]
+    &PIECE_TYPE_ARRAY[rand::thread_rng().gen_range(0, KMS_ARRAY_LN)]
 }

@@ -160,7 +160,7 @@ impl MLPieceStructMasterVo {
                 PH => self.get_piece_vo(&PromotedPawn2),
                 _ => self.get_piece_vo(&OPPieceVo::Owari),
             },
-            Phase::Owari => self.get_piece_vo(&OPPieceVo::Owari),
+            Phase::None => self.get_piece_vo(&OPPieceVo::Owari),
         }
     }
 }
