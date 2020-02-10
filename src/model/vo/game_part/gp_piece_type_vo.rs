@@ -4,11 +4,12 @@
 //! 先後なしの駒と空白
 //!
 
+use super::super::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
 /// USIでCopyするので、Copyが要る。
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum GPPieceTypeVo {
     // 玉
     King,
@@ -70,12 +71,6 @@ impl fmt::Display for GPPieceTypeVo {
 
 // 駒の動ける方向数、終端子込み
 pub const KM_UGOKI_LN: usize = 9;
-/**
- * 駒種類の一致比較
- */
-pub fn match_piece_type(a: GPPieceTypeVo, b: GPPieceTypeVo) -> bool {
-    piece_type_to_num(a) == piece_type_to_num(b)
-}
 
 // 駒種類数
 pub const KMS_ARRAY_LN: usize = 14;
@@ -136,29 +131,6 @@ pub const MGS_ARRAY: [GPPieceTypeVo; MGS_ARRAY_LN] = [
     GPPieceTypeVo::Pawn,
 ];
 
-/// 駒種類の数値化
-pub fn piece_type_to_num(piece_type: GPPieceTypeVo) -> usize {
-    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
-    match piece_type {
-        King => 0,
-        Rook => 1,
-        Bishop => 2,
-        Gold => 3,
-        Silver => 4,
-        Knight => 5,
-        Lance => 6,
-        Pawn => 7,
-        Dragon => 8,
-        Horse => 9,
-        PromotedSilver => 10,
-        PromotedKnight => 11,
-        PromotedLance => 12,
-        PromotedPawn => 13,
-        Kara => 14,
-        Owari => 15,
-    }
-}
-
 /// 数値の駒種類化
 pub fn num_to_piece_type(n: usize) -> GPPieceTypeVo {
     use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
@@ -183,9 +155,17 @@ pub fn num_to_piece_type(n: usize) -> GPPieceTypeVo {
 }
 
 /// ハッシュ値を作る
-pub fn push_piece_type_to_hash(hash: u64, piece_type: GPPieceTypeVo) -> u64 {
+pub fn push_piece_type_to_hash(
+    hash: u64,
+    piece_type: GPPieceTypeVo,
+    speed_of_light: &MLSpeedOfLightVo,
+) -> u64 {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
-    (hash << 4) + piece_type_to_num(piece_type) as u64
+    (hash << 4)
+        + speed_of_light
+            .ml_piece_struct_type_master_vo
+            .get_piece_type_struct_vo_from_piece_type(&piece_type)
+            .serial_piece_number as u64
 }
 
 /// ハッシュ値から作る
@@ -194,51 +174,3 @@ pub fn pop_piece_type_from_hash(hash: u64) -> (u64, GPPieceTypeVo) {
     let piece_type_num = num_to_piece_type((hash & 0b1111) as usize);
     (hash >> 4, piece_type_num)
 }
-
-/// 成れる駒
-pub fn piece_type_can_pro(piece_type: GPPieceTypeVo) -> bool {
-    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
-    match piece_type {
-        King => false,
-        Rook => true,
-        Bishop => true,
-        Gold => false,
-        Silver => true,
-        Knight => true,
-        Lance => true,
-        Pawn => true,
-        Dragon => false,
-        Horse => false,
-        PromotedSilver => false,
-        PromotedKnight => false,
-        PromotedLance => false,
-        PromotedPawn => false,
-        Kara => false,
-        Owari => false,
-    }
-}
-
-/*
-/// 打てる駒
-pub fn piece_type_can_da(piece_type: GPPieceTypeVo) -> bool {
-    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
-    match piece_type {
-        King => false,
-        Rook => true,
-        Bishop => true,
-        Gold => true,
-        Silver => true,
-        Knight => true,
-        Lance => true,
-        Pawn => true,
-        Dragon => false,
-        Horse => false,
-        PromotedSilver => false,
-        PromotedKnight => false,
-        PromotedLance => false,
-        PromotedPawn => false,
-        Kara => false,
-        Owari => false,
-    }
-}
-*/

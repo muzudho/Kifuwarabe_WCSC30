@@ -47,7 +47,10 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
         return;
     }
 
-    let piece_type_num = piece_type_to_num(ps_dst.piece_type());
+    let piece_type_num = speed_of_light
+        .ml_piece_struct_type_master_vo
+        .get_piece_type_struct_vo_from_piece_type(&ps_dst.piece_type())
+        .serial_piece_number;
 
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向
@@ -870,12 +873,10 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
         return;
     }
 
-    let piece_type_narumae_num = piece_type_to_num(
-        speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(ps_dst.demote())
-            .piece_type(),
-    );
+    let piece_type_narumae_num = speed_of_light
+        .ml_piece_struct_type_master_vo
+        .get_piece_type_struct_vo_from_piece(ps_dst.demote())
+        .serial_piece_number;
 
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向
@@ -1740,7 +1741,12 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
         _ => {}
     }
 
-    gets_piece_type_hash(piece_type_to_num(piece_type_dst));
+    gets_piece_type_hash(
+        speed_of_light
+            .ml_piece_struct_type_master_vo
+            .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
+            .serial_piece_number,
+    );
 }
 
 /// 移動先升生成
@@ -1779,10 +1785,18 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
     // +--------------+
     // | 成れる駒か？ |
     // +--------------+
-    if to_nari && !piece_type_can_pro(piece_type_src) {
+    if to_nari
+        && !speed_of_light
+            .ml_piece_struct_type_master_vo
+            .get_piece_type_struct_vo_from_piece_type(&piece_type_src)
+            .can_promote
+    {
         return; // 成れる駒でないなら、成りの動きはしない
     }
-    let piece_type_num = piece_type_to_num(piece_type_src);
+    let piece_type_num = speed_of_light
+        .ml_piece_struct_type_master_vo
+        .get_piece_type_struct_vo_from_piece_type(&piece_type_src)
+        .serial_piece_number;
 
     for i_dir in 0..KM_UGOKI_LN {
         // 指定の駒種類の、全ての逆向きに動ける方向
@@ -2673,7 +2687,10 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
             _ => {}
         }
 
-        let piece_type_num = piece_type_to_num(*piece_type);
+        let piece_type_num = speed_of_light
+            .ml_piece_struct_type_master_vo
+            .get_piece_type_struct_vo_from_piece_type(piece_type)
+            .serial_piece_number;
         for i_dir in 0..KM_UGOKI_LN {
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
@@ -2958,7 +2975,7 @@ fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -2988,7 +3005,7 @@ fn make_no_promotion_source_by_phase_to_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3015,7 +3032,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3045,7 +3062,7 @@ fn make_no_promotion_source_by_phase_to_north_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3071,7 +3088,7 @@ fn make_no_promotion_source_by_phase_to_north_north_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3098,7 +3115,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3131,7 +3148,7 @@ fn make_no_promotion_source_by_phase_to_north<F1>(
         // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
         // ));
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3157,7 +3174,7 @@ fn make_no_promotion_source_by_phase_to_north_north_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3184,7 +3201,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3214,7 +3231,7 @@ fn make_no_promotion_source_by_phase_to_north_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3241,7 +3258,7 @@ fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3271,7 +3288,7 @@ fn make_no_promotion_source_by_phase_to_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3298,7 +3315,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3328,7 +3345,7 @@ fn make_no_promotion_source_by_phase_to_south_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3354,7 +3371,7 @@ fn make_no_promotion_source_by_phase_to_south_south_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3381,7 +3398,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3414,7 +3431,7 @@ fn make_no_promotion_source_by_phase_to_south<F1>(
         // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
         // ));
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3440,7 +3457,7 @@ fn make_no_promotion_source_by_phase_to_south_south_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3467,7 +3484,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3497,7 +3514,7 @@ fn make_no_promotion_source_by_phase_to_south_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3545,7 +3562,10 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
         // 成れる駒は、成る前の駒の動きも調べる
         // 成り駒に、行先の無いところは無いぜ☆
 
-        let piece_type_num = piece_type_to_num(*piece_type);
+        let piece_type_num = speed_of_light
+            .ml_piece_struct_type_master_vo
+            .get_piece_type_struct_vo_from_piece_type(piece_type)
+            .serial_piece_number;
         for i_dir in 0..KM_UGOKI_LN {
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
@@ -3831,7 +3851,7 @@ fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3861,7 +3881,7 @@ fn make_before_promotion_source_by_phase_to_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3888,7 +3908,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_east<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -3918,7 +3938,7 @@ fn make_before_promotion_source_by_phase_to_north_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3944,7 +3964,7 @@ fn make_before_promotion_source_by_phase_to_north_north_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -3971,7 +3991,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -4004,7 +4024,7 @@ fn make_before_promotion_source_by_phase_to_north<F1>(
         // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     ms_src, phase_ms, piece_typece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
         // ));
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4030,7 +4050,7 @@ fn make_before_promotion_source_by_phase_to_north_north_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4057,7 +4077,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_west<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -4087,7 +4107,7 @@ fn make_before_promotion_source_by_phase_to_north_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4114,7 +4134,7 @@ fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -4144,7 +4164,7 @@ fn make_before_promotion_source_by_phase_to_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4171,7 +4191,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_west<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -4201,7 +4221,7 @@ fn make_before_promotion_source_by_phase_to_south_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4227,7 +4247,7 @@ fn make_before_promotion_source_by_phase_to_south_south_west<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4254,7 +4274,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -4287,7 +4307,7 @@ fn make_before_promotion_source_by_phase_to_south<F1>(
         // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
         // ));
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4313,7 +4333,7 @@ fn make_before_promotion_source_by_phase_to_south_south_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }
@@ -4340,7 +4360,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_east<F1>(
                 .ml_piece_struct_master_vo
                 .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
-            if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+            if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -4370,7 +4390,7 @@ fn make_before_promotion_source_by_phase_to_south_east<F1>(
             .ml_piece_struct_master_vo
             .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
-        if phase_ms == *phase && match_piece_type(piece_type_ms, piece_type) {
+        if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
         }
     }

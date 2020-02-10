@@ -196,7 +196,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
 
         g_writeln(&format!("info SOLUTED ss={}.", ss_potential));
         // 問題を全て解決していれば、入れる
-        ss_hashset_pickup.insert(ss_potential.to_hash());
+        ss_hashset_pickup.insert(ss_potential.to_hash(speed_of_light));
     }
     g_writeln(&format!("info {} solutions.", ss_hashset_pickup.len()));
 

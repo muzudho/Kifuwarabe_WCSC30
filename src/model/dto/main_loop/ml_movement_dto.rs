@@ -5,6 +5,7 @@ use super::super::super::super::controller::common_use::cu_asserts_controller::*
 use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
+use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use std::fmt;
 
@@ -40,10 +41,10 @@ impl MLMovementDto {
         self.pro = false;
         self.drop = GPPieceTypeVo::Kara;
     }
-    pub fn to_hash(&self) -> u64 {
+    pub fn to_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_piece_type_to_hash(hash, self.drop);
+        hash = push_piece_type_to_hash(hash, self.drop, speed_of_light);
         hash = push_bool_to_hash(hash, self.pro);
         hash = push_sq_to_hash(hash, &self.dst);
         push_sq_to_hash(hash, &self.src)

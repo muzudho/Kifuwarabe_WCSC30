@@ -554,15 +554,20 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     }
 
     // 駒の動きを出力
-    pub fn hyoji_kmugoki(&self) {
+    pub fn hyoji_kmugoki(&self, speed_of_light: &MLSpeedOfLightVo) {
         for piece_type in PIECE_TYPE_ARRAY.iter() {
             g_write(&format!("{} ", piece_type));
-            self.hyoji_kmugoki_dir(*piece_type);
+            self.hyoji_kmugoki_dir(*piece_type, speed_of_light);
             g_writeln(""); //改行
         }
     }
-    pub fn hyoji_kmugoki_dir(&self, piece_type: GPPieceTypeVo) {
-        for kmdir in KM_UGOKI.back[piece_type_to_num(piece_type)].iter() {
+    pub fn hyoji_kmugoki_dir(&self, piece_type: GPPieceTypeVo, speed_of_light: &MLSpeedOfLightVo) {
+        for kmdir in KM_UGOKI.back[speed_of_light
+            .ml_piece_struct_type_master_vo
+            .get_piece_type_struct_vo_from_piece_type(&piece_type)
+            .serial_piece_number]
+            .iter()
+        {
             match *kmdir {
                 PieceDirection::Owari => break,
                 _ => g_write(&format!("{},", kmdir)),

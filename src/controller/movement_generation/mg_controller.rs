@@ -69,7 +69,7 @@ pub fn get_potential_movement<F1>(
                             pro: false, // 成らず
                             drop: GPPieceTypeVo::Kara,
                         }
-                        .to_hash(),
+                        .to_hash(speed_of_light),
                     );
                 }
 
@@ -90,7 +90,7 @@ pub fn get_potential_movement<F1>(
                             pro: true, // 成り
                             drop: GPPieceTypeVo::Kara,
                         }
-                        .to_hash(),
+                        .to_hash(speed_of_light),
                     );
                 }
             }
@@ -140,7 +140,7 @@ pub fn get_potential_movement<F1>(
                             pro: false,                         // 打に成りは無し
                             drop: piece_type,                   // 打った駒種類
                         }
-                        .to_hash(),
+                        .to_hash(speed_of_light),
                     );
                 }
             }
@@ -208,7 +208,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         // 成らず
         ss_hash_builder.pro = false;
         ss_hash_builder.drop = GPPieceTypeVo::Kara;
-        gets_movement(ss_hash_builder.to_hash());
+        gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 
     // +--------------+
@@ -231,7 +231,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         // 成り
         ss_hash_builder.pro = true;
         ss_hash_builder.drop = GPPieceTypeVo::Kara;
-        gets_movement(ss_hash_builder.to_hash());
+        gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 }
 
@@ -297,7 +297,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
             pro: false,
             drop: piece_type_da,
         }
-        .to_hash();
+        .to_hash(speed_of_light);
 
         gets_movement(movement_hash);
     }

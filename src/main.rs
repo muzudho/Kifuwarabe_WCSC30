@@ -126,12 +126,12 @@ fn parse_extend_command(
         // 駒の動きの移動元として有りえる方角
         let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
         g_writeln(&format!("{}のムーブ元", &piece_type));
-        ml_dto.hyoji_kmugoki_dir(*piece_type);
+        ml_dto.hyoji_kmugoki_dir(*piece_type, speed_of_light);
         g_writeln(""); //改行
     } else if 6 < len && &line[starts..7] == "kmugoki" {
         g_writeln("6<len kmugoki");
         // 駒の動きを出力
-        ml_dto.hyoji_kmugoki();
+        ml_dto.hyoji_kmugoki(&speed_of_light);
     } else if 5 < len && &line[starts..6] == "hirate" {
         // 平手初期局面
         controller::main_loop::ml_usi_controller::read_position(
