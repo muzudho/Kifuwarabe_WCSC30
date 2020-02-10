@@ -107,7 +107,7 @@ impl SPPositionDto {
                 .ml_piece_struct_master_vo
                 .get_piece_vo(piece99);
             let (phase_piece, piece_type) = ps100.phase_piece_type();
-            if phase_piece == phase && match_piece_type(piece_type, GPPieceTypeVo::H) {
+            if phase_piece == phase && match_piece_type(piece_type, GPPieceTypeVo::Pawn) {
                 return true;
             }
         }

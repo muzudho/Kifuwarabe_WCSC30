@@ -86,25 +86,25 @@ impl fmt::Display for MLMovementDto {
                 f,
                 "{}*{}{}{}",
                 match self.drop {
-                    K => {
+                    Rook => {
                         "R"
                     }
-                    Z => {
+                    Bishop => {
                         "B"
                     }
-                    I => {
+                    Gold => {
                         "G"
                     }
-                    N => {
+                    Silver => {
                         "S"
                     }
-                    U => {
+                    Knight => {
                         "N"
                     }
-                    S => {
+                    Lance => {
                         "L"
                     }
-                    H => {
+                    Pawn => {
                         "P"
                     }
                     _ => {

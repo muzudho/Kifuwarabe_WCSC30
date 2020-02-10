@@ -178,7 +178,7 @@ pub fn unit_test(
         // 駒の移動元升
         {
             g_writeln("利きテスト1");
-            let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
+            let piece_type = GPPieceTypeVo::PromotedPawn; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
@@ -224,7 +224,7 @@ pub fn unit_test(
         }
         {
             g_writeln("利きテスト2");
-            let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
+            let piece_type = GPPieceTypeVo::PromotedPawn; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
@@ -270,7 +270,7 @@ pub fn unit_test(
         }
         {
             g_writeln("利きテスト3");
-            let piece_type = GPPieceTypeVo::PH; // ぱわーあっぷひよこ
+            let piece_type = GPPieceTypeVo::PromotedPawn; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
@@ -316,7 +316,7 @@ pub fn unit_test(
         }
         {
             g_writeln("利きテスト2");
-            let piece_type = GPPieceTypeVo::R; // らいおん
+            let piece_type = GPPieceTypeVo::King; // らいおん
             let ps = speed_of_light
                 .ml_piece_struct_master_vo
                 .get_piece_vo_by_phase_and_piece_type(&Phase::First, piece_type);

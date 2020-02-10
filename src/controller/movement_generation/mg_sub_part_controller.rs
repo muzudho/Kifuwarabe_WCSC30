@@ -4392,7 +4392,7 @@ pub fn get_ms_vec_as_aigoma(
 
     use teigi::shogi_syugo::GPPieceTypeVo::*;
     match piece_type_attacker {
-        K => {
+        Rook => {
             // 北方向
             // 西方向
             // 南方向
