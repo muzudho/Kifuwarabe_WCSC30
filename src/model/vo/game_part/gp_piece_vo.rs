@@ -72,9 +72,9 @@ pub enum GPPieceVo {
     // △パワーアップヒヨコ
     PromotedPawn2,
     // 空マス
-    Kara,
+    NonePiece,
     // 要素数より1小さい数。該当なしや、エラー値用としても兼用する
-    Owari,
+    OwariPiece,
 }
 
 // 持ち駒の駒のうち、最大の枚数は歩の 18。
@@ -113,8 +113,8 @@ impl fmt::Display for GPPieceVo {
             PromotedKnight2 => write!(f, "△pu"),
             PromotedLance2 => write!(f, "△ps"),
             PromotedPawn2 => write!(f, "△ph"),
-            Kara => write!(f, "　　"),
-            Owari => write!(f, "××"),
+            NonePiece => write!(f, "　　"),
+            OwariPiece => write!(f, "××"),
         }
     }
 }
@@ -140,7 +140,7 @@ impl GPPieceVo {
                 PromotedKnight => PromotedKnight1,
                 PromotedLance => PromotedLance1,
                 PromotedPawn => PromotedPawn1,
-                _ => GPPieceVo::Owari,
+                _ => GPPieceVo::OwariPiece,
             },
             Phase::Second => match piece_type {
                 King => King2,
@@ -157,9 +157,9 @@ impl GPPieceVo {
                 PromotedKnight => PromotedKnight2,
                 PromotedLance => PromotedLance2,
                 PromotedPawn => PromotedPawn2,
-                _ => GPPieceVo::Owari,
+                _ => GPPieceVo::OwariPiece,
             },
-            Phase::None => GPPieceVo::Owari,
+            Phase::None => GPPieceVo::OwariPiece,
         }
     }
 }
@@ -230,19 +230,19 @@ pub const PHASE_KM_ARRAY: [[GPPieceVo; KM_ARRAY_HALF_LN]; PHASE_LN] = [
         GPPieceVo::PromotedPawn2,   // ぱわーあっぷひよこ
     ],
     [
-        GPPieceVo::Owari, // らいおん
-        GPPieceVo::Owari, // きりん
-        GPPieceVo::Owari, // ぞう
-        GPPieceVo::Owari, // いぬ
-        GPPieceVo::Owari, // ねこ
-        GPPieceVo::Owari, // うさぎ
-        GPPieceVo::Owari, // いのしし
-        GPPieceVo::Owari, // ひよこ
-        GPPieceVo::Owari, // ぱわーあっぷきりん
-        GPPieceVo::Owari, // ぱわーあっぷぞう
-        GPPieceVo::Owari, // ぱわーあっぷねこ
-        GPPieceVo::Owari, // ぱわーあっぷうさぎ
-        GPPieceVo::Owari, // ぱわーあっぷいのしし
-        GPPieceVo::Owari, // ぱわーあっぷひよこ
+        GPPieceVo::OwariPiece, // らいおん
+        GPPieceVo::OwariPiece, // きりん
+        GPPieceVo::OwariPiece, // ぞう
+        GPPieceVo::OwariPiece, // いぬ
+        GPPieceVo::OwariPiece, // ねこ
+        GPPieceVo::OwariPiece, // うさぎ
+        GPPieceVo::OwariPiece, // いのしし
+        GPPieceVo::OwariPiece, // ひよこ
+        GPPieceVo::OwariPiece, // ぱわーあっぷきりん
+        GPPieceVo::OwariPiece, // ぱわーあっぷぞう
+        GPPieceVo::OwariPiece, // ぱわーあっぷねこ
+        GPPieceVo::OwariPiece, // ぱわーあっぷうさぎ
+        GPPieceVo::OwariPiece, // ぱわーあっぷいのしし
+        GPPieceVo::OwariPiece, // ぱわーあっぷひよこ
     ],
 ];

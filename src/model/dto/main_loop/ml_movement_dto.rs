@@ -29,7 +29,7 @@ impl Default for MLMovementDto {
             src: Square::from_umasu(0),
             dst: Square::from_umasu(0),
             pro: false,
-            drop: GPPieceTypeVo::Kara,
+            drop: GPPieceTypeVo::KaraPieceType,
         }
     }
 }
@@ -39,7 +39,7 @@ impl MLMovementDto {
         self.src = Square::from_umasu(0);
         self.dst = Square::from_umasu(0);
         self.pro = false;
-        self.drop = GPPieceTypeVo::Kara;
+        self.drop = GPPieceTypeVo::KaraPieceType;
     }
     pub fn to_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = 0;

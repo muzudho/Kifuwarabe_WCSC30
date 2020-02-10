@@ -40,9 +40,9 @@ pub enum GPPieceTypeVo {
     // ぱわーあっぷひよこ
     PromotedPawn,
     // 空マス
-    Kara,
+    KaraPieceType,
     // 要素数より1小さい数。エラー値用に使っても可
-    Owari,
+    OwariPieceType,
 }
 impl fmt::Display for GPPieceTypeVo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -63,8 +63,8 @@ impl fmt::Display for GPPieceTypeVo {
             PromotedKnight => write!(f, "PU"),
             PromotedLance => write!(f, "PS"),
             PromotedPawn => write!(f, "PH"),
-            Kara => write!(f, "　"),
-            Owari => write!(f, "×"),
+            KaraPieceType => write!(f, "　"),
+            OwariPieceType => write!(f, "×"),
         }
     }
 }
@@ -149,8 +149,8 @@ pub fn num_to_piece_type(n: usize) -> GPPieceTypeVo {
         11 => PromotedKnight,
         12 => PromotedLance,
         13 => PromotedPawn,
-        14 => Kara,
-        _ => Owari,
+        14 => KaraPieceType,
+        _ => OwariPieceType,
     }
 }
 

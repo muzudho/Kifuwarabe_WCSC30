@@ -103,8 +103,8 @@ impl KomatoriResult {
         }
 
         // (2-1)
-        let ps_attacker = speed_of_light.get_piece_struct_vo(&self.km_attacker);
-        if ps_attacker.is_slider() {
+        let ps_attacker1 = speed_of_light.get_piece_type_struct_vo_from_piece(&self.km_attacker);
+        if ps_attacker1.slider {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
             assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");
             assert_banjo_sq(&self.sq_target, "(205b4)Ｇet_result");

@@ -64,7 +64,7 @@ pub fn get_potential_movement<F1>(
                             src: sq_src.clone(),
                             dst: sq_dst.clone(),
                             pro: false, // 成らず
-                            drop: GPPieceTypeVo::Kara,
+                            drop: GPPieceTypeVo::KaraPieceType,
                         }
                         .to_hash(speed_of_light),
                     );
@@ -85,7 +85,7 @@ pub fn get_potential_movement<F1>(
                             src: sq_src.clone(),
                             dst: sq_dst.clone(),
                             pro: true, // 成り
-                            drop: GPPieceTypeVo::Kara,
+                            drop: GPPieceTypeVo::KaraPieceType,
                         }
                         .to_hash(speed_of_light),
                     );
@@ -101,7 +101,7 @@ pub fn get_potential_movement<F1>(
         for suji_dst in 1..10 {
             let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
             let piece_dst = sp_dto.get_current_position().get_piece_by_square(&sq_dst);
-            if let GPPieceVo::Kara = piece_dst {
+            if let GPPieceVo::NonePiece = piece_dst {
                 // 駒が無いところに打つ
                 let mut da_piece_type_hashset = HashSet::new();
                 for piece_type_motigoma in MGS_ARRAY.iter() {
@@ -200,7 +200,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成らず
         ss_hash_builder.pro = false;
-        ss_hash_builder.drop = GPPieceTypeVo::Kara;
+        ss_hash_builder.drop = GPPieceTypeVo::KaraPieceType;
         gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 
@@ -223,7 +223,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成り
         ss_hash_builder.pro = true;
-        ss_hash_builder.drop = GPPieceTypeVo::Kara;
+        ss_hash_builder.drop = GPPieceTypeVo::KaraPieceType;
         gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 }

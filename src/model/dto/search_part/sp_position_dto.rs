@@ -35,18 +35,25 @@ pub struct SPPositionDto {
 }
 impl Default for SPPositionDto {
     fn default() -> Self {
-        use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::Kara;
+        use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::NonePiece;
         SPPositionDto {
             // 盤上
             board: [
-                Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-                Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-                Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-                Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-                Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-                Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-                Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-                Kara, Kara,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+                NonePiece, NonePiece,
             ],
             // 持ち駒数
             mg: [
@@ -66,16 +73,21 @@ impl Default for SPPositionDto {
 }
 impl SPPositionDto {
     pub fn clear(&mut self) {
-        use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::Kara;
+        use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::NonePiece;
         self.board = [
-            Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-            Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-            Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-            Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-            Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-            Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-            Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara, Kara,
-            Kara, Kara,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
+            NonePiece, NonePiece, NonePiece, NonePiece,
         ];
         self.mg = [
             // ▲ら,▲き,▲ぞ,▲い,▲ね,▲う,▲し,▲ひ,▲ぱき,▲ぱぞ,▲ぱね,▲ぱう,▲ぱし,▲ぱひ,
@@ -147,7 +159,7 @@ impl SPPositionDto {
     pub fn exists_km(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> bool {
         !speed_of_light
             .get_piece_struct_vo(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.get_piece_struct_vo(&GPPieceVo::Kara))
+            .equals_piece(&speed_of_light.get_piece_struct_vo(&GPPieceVo::NonePiece))
     }
 
     /// 指定の升に指定の駒があれば真

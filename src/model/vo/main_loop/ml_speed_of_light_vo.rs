@@ -46,7 +46,8 @@ pub struct MLSpeedOfLightVo {
     pub promoted_pawn2: PieceStructVo,
     pub none_piece: PieceStructVo,
     pub owari_piece: PieceStructVo,
-    /// イミュータブルなのだから、直接参照してもいい☆（＾～＾）
+
+    /// 駒種類☆（＾～＾）
     pub king: PieceTypeStructVo,
     pub rook: PieceTypeStructVo,
     pub bishop: PieceTypeStructVo,
@@ -96,10 +97,10 @@ impl Default for MLSpeedOfLightVo {
             promoted_lance2: PieceStructVo::from_piece(PromotedLance2),
             promoted_pawn2: PieceStructVo::from_piece(PromotedPawn2),
             none_piece: PieceStructVo::from_piece(
-                super::super::game_part::gp_piece_vo::GPPieceVo::Kara,
+                super::super::game_part::gp_piece_vo::GPPieceVo::NonePiece,
             ),
             owari_piece: PieceStructVo::from_piece(
-                super::super::game_part::gp_piece_vo::GPPieceVo::Owari,
+                super::super::game_part::gp_piece_vo::GPPieceVo::OwariPiece,
             ),
             king: PieceTypeStructVo::from_piece_type(King),
             rook: PieceTypeStructVo::from_piece_type(Rook),
@@ -116,10 +117,10 @@ impl Default for MLSpeedOfLightVo {
             promoted_lance: PieceTypeStructVo::from_piece_type(PromotedLance),
             promoted_pawn: PieceTypeStructVo::from_piece_type(PromotedPawn),
             none_piece_type: PieceTypeStructVo::from_piece_type(
-                super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::Kara,
+                super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::KaraPieceType,
             ),
             owari_piece_type: PieceTypeStructVo::from_piece_type(
-                super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::Owari,
+                super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::OwariPieceType,
             ),
         }
     }
@@ -162,8 +163,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight2,
             PromotedLance2 => &self.promoted_lance2,
             PromotedPawn2 => &self.promoted_pawn2,
-            super::super::game_part::gp_piece_vo::GPPieceVo::Kara => &self.none_piece,
-            super::super::game_part::gp_piece_vo::GPPieceVo::Owari => &self.owari_piece,
+            super::super::game_part::gp_piece_vo::GPPieceVo::NonePiece => &self.none_piece,
+            super::super::game_part::gp_piece_vo::GPPieceVo::OwariPiece => &self.owari_piece,
         }
     }
 
@@ -191,7 +192,7 @@ impl MLSpeedOfLightVo {
                 PromotedKnight => self.get_piece_struct_vo(&PromotedKnight1),
                 PromotedLance => self.get_piece_struct_vo(&PromotedLance1),
                 PromotedPawn => self.get_piece_struct_vo(&PromotedPawn1),
-                _ => self.get_piece_struct_vo(&GPPieceVo::Owari),
+                _ => self.get_piece_struct_vo(&GPPieceVo::OwariPiece),
             },
             Phase::Second => match piece_type {
                 King => self.get_piece_struct_vo(&King2),
@@ -208,9 +209,9 @@ impl MLSpeedOfLightVo {
                 PromotedKnight => self.get_piece_struct_vo(&PromotedKnight2),
                 PromotedLance => self.get_piece_struct_vo(&PromotedLance2),
                 PromotedPawn => self.get_piece_struct_vo(&PromotedPawn2),
-                _ => self.get_piece_struct_vo(&GPPieceVo::Owari),
+                _ => self.get_piece_struct_vo(&GPPieceVo::OwariPiece),
             },
-            Phase::None => self.get_piece_struct_vo(&GPPieceVo::Owari),
+            Phase::None => self.get_piece_struct_vo(&GPPieceVo::OwariPiece),
         }
     }
     /// 駒の属性を参照するぜ☆（＾～＾）
@@ -239,8 +240,10 @@ impl MLSpeedOfLightVo {
             PromotedKnight => &self.promoted_knight,
             PromotedLance => &self.promoted_lance,
             PromotedPawn => &self.promoted_pawn,
-            super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::Kara => &self.none_piece_type,
-            super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::Owari => {
+            super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::KaraPieceType => {
+                &self.none_piece_type
+            }
+            super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::OwariPieceType => {
                 &self.owari_piece_type
             }
         }
@@ -286,8 +289,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight,
             PromotedLance2 => &self.promoted_lance,
             PromotedPawn2 => &self.promoted_pawn,
-            super::super::game_part::gp_piece_vo::GPPieceVo::Kara => &self.none_piece_type,
-            super::super::game_part::gp_piece_vo::GPPieceVo::Owari => &self.owari_piece_type,
+            super::super::game_part::gp_piece_vo::GPPieceVo::NonePiece => &self.none_piece_type,
+            super::super::game_part::gp_piece_vo::GPPieceVo::OwariPiece => &self.owari_piece_type,
         }
     }
 }

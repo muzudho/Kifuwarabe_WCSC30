@@ -184,7 +184,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, ml_dto: &mut MLDt
                 .set_move_src(&Square::from_file_rank(suji, dan));
             ml_dto
                 .get_search_part_mut()
-                .set_move_drop(GPPieceTypeVo::Kara);
+                .set_move_drop(GPPieceTypeVo::KaraPieceType);
         }
     }
 
@@ -321,64 +321,64 @@ pub fn read_banjo(
             }
             "1" => {
                 *starts += 1;
-                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
             }
             "2" => {
                 *starts += 1;
-                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
-                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
             }
             "3" => {
                 *starts += 1;
-                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
-                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
-                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
             }
             "4" => {
                 *starts += 1;
                 for _i_kara in 0..4 {
-                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "5" => {
                 *starts += 1;
                 for _i_kara in 0..5 {
-                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "6" => {
                 *starts += 1;
                 for _i_kara in 0..6 {
-                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "7" => {
                 *starts += 1;
                 for _i_kara in 0..7 {
-                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "8" => {
                 *starts += 1;
                 for _i_kara in 0..8 {
-                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "9" => {
                 *starts += 1;
                 for _i_kara in 0..9 {
-                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::Kara);
+                    ml_dto.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }

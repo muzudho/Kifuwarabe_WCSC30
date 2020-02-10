@@ -156,7 +156,7 @@ pub fn unit_test(
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = GPPieceTypeVo::Kara;
+            ss.drop = GPPieceTypeVo::KaraPieceType;
         }
         /*
         for sq_src in mv_src_hashset {
@@ -164,7 +164,7 @@ pub fn unit_test(
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = GPPieceTypeVo::Kara;
+            ss.drop = GPPieceTypeVo::KaraPieceType;
             break;
         }
         */

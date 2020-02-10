@@ -8,13 +8,17 @@ pub struct PieceStructVo {
     piece: GPPieceVo,
     /// 先後、駒種類。
     phase_piece_type: (Phase, GPPieceTypeVo),
+
     /// 駒→成駒　（成れない駒は、そのまま）
     promoted: GPPieceVo,
+
     /// 成駒→駒　（成っていない駒は、そのまま）
     demoted: GPPieceVo,
+
     /// 先後付き駒　を　持ち駒種類　へ変換。
     /// 持ち駒にするので、先後は反転するぜ☆（＾～＾）
     captured: GPPieceVo,
+
     /// 先後付き駒の配列のインデックス
     serial_piece_number: usize,
 }
@@ -30,7 +34,7 @@ impl PieceStructVo {
                 phase_piece_type: (First, King),
                 promoted: King1,
                 demoted: King1,
-                captured: GPPieceVo::Owari,
+                captured: GPPieceVo::OwariPiece,
                 serial_piece_number: 0,
             },
             Rook1 => PieceStructVo {
@@ -142,7 +146,7 @@ impl PieceStructVo {
                 phase_piece_type: (Second, King),
                 promoted: King2,
                 demoted: King2,
-                captured: GPPieceVo::Owari,
+                captured: GPPieceVo::OwariPiece,
                 serial_piece_number: 14,
             },
             Rook2 => PieceStructVo {
@@ -249,20 +253,20 @@ impl PieceStructVo {
                 captured: Pawn1,
                 serial_piece_number: 27,
             },
-            GPPieceVo::Kara => PieceStructVo {
-                piece: GPPieceVo::Kara,
-                phase_piece_type: (Phase::None, GPPieceTypeVo::Kara),
-                promoted: GPPieceVo::Kara,
-                demoted: GPPieceVo::Kara,
-                captured: GPPieceVo::Owari,
+            GPPieceVo::NonePiece => PieceStructVo {
+                piece: GPPieceVo::NonePiece,
+                phase_piece_type: (Phase::None, GPPieceTypeVo::KaraPieceType),
+                promoted: GPPieceVo::NonePiece,
+                demoted: GPPieceVo::NonePiece,
+                captured: GPPieceVo::OwariPiece,
                 serial_piece_number: 28,
             },
-            GPPieceVo::Owari => PieceStructVo {
-                piece: GPPieceVo::Owari,
-                phase_piece_type: (Phase::None, GPPieceTypeVo::Owari),
-                promoted: GPPieceVo::Owari,
-                demoted: GPPieceVo::Owari,
-                captured: GPPieceVo::Owari,
+            GPPieceVo::OwariPiece => PieceStructVo {
+                piece: GPPieceVo::OwariPiece,
+                phase_piece_type: (Phase::None, GPPieceTypeVo::OwariPieceType),
+                promoted: GPPieceVo::OwariPiece,
+                demoted: GPPieceVo::OwariPiece,
+                captured: GPPieceVo::OwariPiece,
                 serial_piece_number: 29,
             },
         }
@@ -299,8 +303,8 @@ impl PieceStructVo {
             25 => PieceStructVo::from_piece(PromotedKnight2),
             26 => PieceStructVo::from_piece(PromotedLance2),
             27 => PieceStructVo::from_piece(PromotedPawn2),
-            28 => PieceStructVo::from_piece(Kara),
-            _ => PieceStructVo::from_piece(Owari),
+            28 => PieceStructVo::from_piece(NonePiece),
+            _ => PieceStructVo::from_piece(OwariPiece),
         }
     }
 
@@ -373,33 +377,8 @@ impl PieceStructVo {
             PromotedKnight => true,
             PromotedLance => true,
             PromotedPawn => true,
-            Kara => false,
-            Owari => false,
-        }
-    }
-
-    /// スライダー（長い利きのある駒）か☆（＾～＾）
-    ///
-    /// 合い駒で、進路を防ぎえる可能性があれば真
-    pub fn is_slider(&self) -> bool {
-        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
-        match &self.piece_type() {
-            King => false,
-            Rook => true,
-            Bishop => true,
-            Gold => false,
-            Silver => false,
-            Knight => false,
-            Lance => true,
-            Pawn => false,
-            Dragon => true,
-            Horse => true,
-            PromotedSilver => false,
-            PromotedKnight => false,
-            PromotedLance => false,
-            PromotedPawn => false,
-            Kara => false,
-            Owari => false,
+            KaraPieceType => false,
+            OwariPieceType => false,
         }
     }
 

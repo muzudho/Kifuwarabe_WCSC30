@@ -1645,7 +1645,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
         .get_current_position()
         .get_piece_by_square(square_dst);
     match km_banjo {
-        GPPieceVo::Kara => {}
+        GPPieceVo::NonePiece => {}
         _ => {
             return;
         } // 駒があるところに打つ手は終了
@@ -3517,7 +3517,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
         }
 
         let prokm_src = ps_src.promote();
-        if let GPPieceVo::Kara = prokm_src {
+        if let GPPieceVo::NonePiece = prokm_src {
             // 成れない駒は、成る動きを考えなくていいぜ☆（＾～＾）
             continue;
         }
