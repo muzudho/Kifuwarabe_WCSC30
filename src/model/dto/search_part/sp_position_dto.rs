@@ -103,9 +103,7 @@ impl SPPositionDto {
         for dan in DAN_1..DAN_10 {
             let sq = Square::from_file_rank(suji, dan);
             let piece99 = self.get_piece_by_square(&sq);
-            let ps100 = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(piece99);
+            let ps100 = speed_of_light.get_piece_struct_vo(piece99);
             let (phase_piece, piece_type) = ps100.phase_piece_type();
             if phase_piece == phase && piece_type == GPPieceTypeVo::Pawn {
                 return true;
@@ -134,14 +132,12 @@ impl SPPositionDto {
      */
     pub fn add_hand(&mut self, hand: &GPPieceVo, maisu: i8, speed_of_light: &MLSpeedOfLightVo) {
         self.mg[speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(hand)
+            .get_piece_struct_vo(hand)
             .serial_piece_number()] += maisu;
     }
     pub fn get_hand(&self, hand: &GPPieceVo, speed_of_light: &MLSpeedOfLightVo) -> i8 {
         self.mg[speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(hand)
+            .get_piece_struct_vo(hand)
             .serial_piece_number()]
     }
 
@@ -150,13 +146,8 @@ impl SPPositionDto {
      */
     pub fn exists_km(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> bool {
         !speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(self.get_piece_by_square(&sq))
-            .equals_piece(
-                &speed_of_light
-                    .ml_piece_struct_master_vo
-                    .get_piece_vo(&GPPieceVo::Kara),
-            )
+            .get_piece_struct_vo(self.get_piece_by_square(&sq))
+            .equals_piece(&speed_of_light.get_piece_struct_vo(&GPPieceVo::Kara))
     }
 
     /// 指定の升に指定の駒があれば真
@@ -167,16 +158,14 @@ impl SPPositionDto {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
         speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.ml_piece_struct_master_vo.get_piece_vo(piece))
+            .get_piece_struct_vo(self.get_piece_by_square(&sq))
+            .equals_piece(&speed_of_light.get_piece_struct_vo(piece))
     }
 
     /// 指定の升にある駒の先後、または空升
     pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Phase {
         speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(self.get_piece_by_square(sq))
+            .get_piece_struct_vo(self.get_piece_by_square(sq))
             .phase()
     }
 
@@ -189,14 +178,10 @@ impl SPPositionDto {
     ) -> bool {
         let km_src = self.get_piece_by_square(&sq_src);
 
-        let ps_src = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(km_src);
+        let ps_src = speed_of_light.get_piece_struct_vo(km_src);
         let km_dst = self.get_piece_by_square(&sq_dst);
 
-        let ps_dst = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(km_dst);
+        let ps_dst = speed_of_light.get_piece_struct_vo(km_dst);
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = ps_dst.is_promoted();
         let pro_src = ps_src.is_promoted();
@@ -213,19 +198,13 @@ impl SPPositionDto {
         for i_ms in MASU_0..BAN_SIZE {
             let i_sq = Square::from_umasu(i_ms as umasu);
             let km = self.get_piece_by_square(&i_sq);
-            let num_km = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(km)
-                .serial_piece_number();
+            let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();
             hash ^= ml_dto.get_position_hash_seed().km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
         for km in &KM_ARRAY {
-            let num_km = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(km)
-                .serial_piece_number();
+            let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();
 
             let maisu = self.get_hand(km, &speed_of_light);
             debug_assert!(

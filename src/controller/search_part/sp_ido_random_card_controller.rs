@@ -75,12 +75,10 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
         assert_banjo_sq(&sq_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
-        let ps_dst = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo_by_phase_and_piece_type(
-                &ml_dto.get_search_part().get_phase(&Person::Friend),
-                *cu_random_move_controller::random_piece_type(),
-            );
+        let ps_dst = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
+            &ml_dto.get_search_part().get_phase(&Person::Friend),
+            *cu_random_move_controller::random_piece_type(),
+        );
         let piece_dst = ps_dst.piece();
 
         ss_hashset.clear();

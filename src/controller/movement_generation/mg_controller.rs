@@ -39,10 +39,7 @@ pub fn get_potential_movement<F1>(
             let sq_src = Square::from_file_rank(suji_src, dan_src);
             let piece_src = sp_dto.get_current_position().get_piece_by_square(&sq_src);
 
-            if &speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(&piece_src)
-                .phase()
+            if &speed_of_light.get_piece_struct_vo(&piece_src).phase()
                 == &sp_dto.get_phase(&Person::Friend)
             {
                 // 手番の駒
@@ -108,12 +105,10 @@ pub fn get_potential_movement<F1>(
                 // 駒が無いところに打つ
                 let mut da_piece_type_hashset = HashSet::new();
                 for piece_type_motigoma in MGS_ARRAY.iter() {
-                    let ps_motigoma = speed_of_light
-                        .ml_piece_struct_master_vo
-                        .get_piece_vo_by_phase_and_piece_type(
-                            &sp_dto.get_phase(&Person::Friend),
-                            *piece_type_motigoma,
-                        );
+                    let ps_motigoma = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
+                        &sp_dto.get_phase(&Person::Friend),
+                        *piece_type_motigoma,
+                    );
                     let pc_motigoma = ps_motigoma.piece();
                     if 0 < sp_dto
                         .get_current_position()
@@ -164,9 +159,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let ps_dst = speed_of_light
-        .ml_piece_struct_master_vo
-        .get_piece_vo(&piece_dst);
+    let ps_dst = speed_of_light.get_piece_struct_vo(&piece_dst);
     let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
@@ -251,9 +244,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
-    let piece_vo_dst = speed_of_light
-        .ml_piece_struct_master_vo
-        .get_piece_vo(piece_dst);
+    let piece_vo_dst = speed_of_light.get_piece_struct_vo(piece_dst);
     let (phase, _piece_type_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。

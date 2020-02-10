@@ -48,7 +48,6 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
     }
 
     let piece_type_num = speed_of_light
-        .ml_piece_struct_type_master_vo
         .get_piece_type_struct_vo_from_piece_type(&ps_dst.piece_type())
         .serial_piece_number;
 
@@ -856,12 +855,10 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
     let piece_type_src = speed_of_light
-        .ml_piece_struct_master_vo
-        .get_piece_vo(ps_dst.demote())
+        .get_piece_struct_vo(ps_dst.demote())
         .piece_type();
     let piece_src = speed_of_light
-        .ml_piece_struct_master_vo
-        .get_piece_vo_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
+        .get_piece_struct_vo_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
         .piece();
 
     // 例えば移動先の駒種類が「ぱひ」なら、「ぱひ」が動いた可能性の他に、
@@ -874,7 +871,6 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     }
 
     let piece_type_narumae_num = speed_of_light
-        .ml_piece_struct_type_master_vo
         .get_piece_type_struct_vo_from_piece(ps_dst.demote())
         .serial_piece_number;
 
@@ -1633,12 +1629,9 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 {
     assert_banjo_sq(&square_dst, "make_drop_piece_type_by_square_piece");
 
-    let ps_dst = speed_of_light
-        .ml_piece_struct_master_vo
-        .get_piece_vo(piece_dst);
+    let ps_dst = speed_of_light.get_piece_struct_vo(piece_dst);
     let piece_type_dst = ps_dst.piece_type();
     if !speed_of_light
-        .ml_piece_struct_type_master_vo
         .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
         .can_drop
     {
@@ -1743,7 +1736,6 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 
     gets_piece_type_hash(
         speed_of_light
-            .ml_piece_struct_type_master_vo
             .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
             .serial_piece_number,
     );
@@ -1777,9 +1769,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
 
     // 移動先の筋、段、駒種類、駒種類インデックス
     let (dx, dy) = sq_src.to_file_rank();
-    let ps_src = speed_of_light
-        .ml_piece_struct_master_vo
-        .get_piece_vo(km_src);
+    let ps_src = speed_of_light.get_piece_struct_vo(km_src);
     let piece_type_src = ps_src.piece_type();
 
     // +--------------+
@@ -1787,14 +1777,12 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
     // +--------------+
     if to_nari
         && !speed_of_light
-            .ml_piece_struct_type_master_vo
             .get_piece_type_struct_vo_from_piece_type(&piece_type_src)
             .can_promote
     {
         return; // 成れる駒でないなら、成りの動きはしない
     }
     let piece_type_num = speed_of_light
-        .ml_piece_struct_type_master_vo
         .get_piece_type_struct_vo_from_piece_type(&piece_type_src)
         .serial_piece_number;
 
@@ -2654,8 +2642,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
     for piece_type in PIECE_TYPE_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
         let km = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo_by_phase_and_piece_type(&phase, *piece_type)
+            .get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type)
             .piece()
             .clone();
         use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
@@ -2688,7 +2675,6 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
         }
 
         let piece_type_num = speed_of_light
-            .ml_piece_struct_type_master_vo
             .get_piece_type_struct_vo_from_piece_type(piece_type)
             .serial_piece_number;
         for i_dir in 0..KM_UGOKI_LN {
@@ -2972,8 +2958,7 @@ fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3002,8 +2987,7 @@ fn make_no_promotion_source_by_phase_to_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3029,8 +3013,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3059,8 +3042,7 @@ fn make_no_promotion_source_by_phase_to_north_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3085,8 +3067,7 @@ fn make_no_promotion_source_by_phase_to_north_north_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3112,8 +3093,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3142,8 +3122,7 @@ fn make_no_promotion_source_by_phase_to_north<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -3171,8 +3150,7 @@ fn make_no_promotion_source_by_phase_to_north_north_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3198,8 +3176,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3228,8 +3205,7 @@ fn make_no_promotion_source_by_phase_to_north_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3255,8 +3231,7 @@ fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3285,8 +3260,7 @@ fn make_no_promotion_source_by_phase_to_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3312,8 +3286,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3342,8 +3315,7 @@ fn make_no_promotion_source_by_phase_to_south_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3368,8 +3340,7 @@ fn make_no_promotion_source_by_phase_to_south_south_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3395,8 +3366,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3425,8 +3395,7 @@ fn make_no_promotion_source_by_phase_to_south<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -3454,8 +3423,7 @@ fn make_no_promotion_source_by_phase_to_south_south_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3481,8 +3449,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3511,8 +3478,7 @@ fn make_no_promotion_source_by_phase_to_south_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3539,16 +3505,13 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
     // 駒種類
     for piece_type in PIECE_TYPE_ARRAY.iter() {
         let km_src = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo_by_phase_and_piece_type(&phase, *piece_type)
+            .get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type)
             .piece();
 
         // +--------------------+
         // | 移動前は非成駒か？ |
         // +--------------------+
-        let ps_src = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(km_src);
+        let ps_src = speed_of_light.get_piece_struct_vo(km_src);
         if ps_src.is_promoted() {
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
@@ -3563,7 +3526,6 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
         // 成り駒に、行先の無いところは無いぜ☆
 
         let piece_type_num = speed_of_light
-            .ml_piece_struct_type_master_vo
             .get_piece_type_struct_vo_from_piece_type(piece_type)
             .serial_piece_number;
         for i_dir in 0..KM_UGOKI_LN {
@@ -3848,8 +3810,7 @@ fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3878,8 +3839,7 @@ fn make_before_promotion_source_by_phase_to_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3905,8 +3865,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_east<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3935,8 +3894,7 @@ fn make_before_promotion_source_by_phase_to_north_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3961,8 +3919,7 @@ fn make_before_promotion_source_by_phase_to_north_north_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3988,8 +3945,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4018,8 +3974,7 @@ fn make_before_promotion_source_by_phase_to_north<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     ms_src, phase_ms, piece_typece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -4047,8 +4002,7 @@ fn make_before_promotion_source_by_phase_to_north_north_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4074,8 +4028,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_west<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4104,8 +4057,7 @@ fn make_before_promotion_source_by_phase_to_north_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4131,8 +4083,7 @@ fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4161,8 +4112,7 @@ fn make_before_promotion_source_by_phase_to_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4188,8 +4138,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_west<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4218,8 +4167,7 @@ fn make_before_promotion_source_by_phase_to_south_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4244,8 +4192,7 @@ fn make_before_promotion_source_by_phase_to_south_south_west<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4271,8 +4218,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4301,8 +4247,7 @@ fn make_before_promotion_source_by_phase_to_south<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -4330,8 +4275,7 @@ fn make_before_promotion_source_by_phase_to_south_south_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4357,8 +4301,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_east<F1>(
                 .get_current_position()
                 .get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .ml_piece_struct_master_vo
-                .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4387,8 +4330,7 @@ fn make_before_promotion_source_by_phase_to_south_east<F1>(
             .get_current_position()
             .get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);

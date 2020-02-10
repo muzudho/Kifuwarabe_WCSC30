@@ -692,8 +692,7 @@ impl SPDto {
             if move2.pro {
                 // 成ったなら、成る前へ
                 speed_of_light
-                    .ml_piece_struct_master_vo
-                    .get_piece_vo(self.current_position.get_piece_by_square(&move2.dst))
+                    .get_piece_struct_vo(self.current_position.get_piece_by_square(&move2.dst))
                     .demote()
                     .clone()
             } else {
@@ -710,10 +709,7 @@ impl SPDto {
             _ => {
                 // 自分の持ち駒を減らす
                 self.current_position.add_hand(
-                    speed_of_light
-                        .ml_piece_struct_master_vo
-                        .get_piece_vo(&cap)
-                        .capture(),
+                    speed_of_light.get_piece_struct_vo(&cap).capture(),
                     -1,
                     speed_of_light,
                 );
@@ -760,8 +756,7 @@ impl SPDto {
                 let piece152 = if move1.pro {
                     // 成りなら
                     speed_of_light
-                        .ml_piece_struct_master_vo
-                        .get_piece_vo(self.current_position.get_piece_by_square(&move1.src))
+                        .get_piece_struct_vo(self.current_position.get_piece_by_square(&move1.src))
                         .promote()
                         .clone()
                 } else {
@@ -793,8 +788,7 @@ impl SPDto {
                     let cap773;
                     {
                         cap773 = speed_of_light
-                            .ml_piece_struct_master_vo
-                            .get_piece_vo(&cap764)
+                            .get_piece_struct_vo(&cap764)
                             .capture()
                             .clone();
                     }

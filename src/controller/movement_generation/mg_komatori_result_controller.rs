@@ -67,8 +67,7 @@ impl KomatoriResult {
         hash = push_sq_to_hash(hash, &self.sq_target);
         hash = push_sq_to_hash(hash, &self.sq_attacker);
         speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(&self.km_attacker)
+            .get_piece_struct_vo(&self.km_attacker)
             .add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
@@ -104,9 +103,7 @@ impl KomatoriResult {
         }
 
         // (2-1)
-        let ps_attacker = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo(&self.km_attacker);
+        let ps_attacker = speed_of_light.get_piece_struct_vo(&self.km_attacker);
         if ps_attacker.is_slider() {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
             assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");
@@ -196,9 +193,8 @@ pub fn lookup_catching_king_on_board(
 
     for piece_type_dst in PIECE_TYPE_ARRAY.iter() {
         // 移動した後の相手の駒
-        let ps_dst = speed_of_light
-            .ml_piece_struct_master_vo
-            .get_piece_vo_by_phase_and_piece_type(&phase, *piece_type_dst);
+        let ps_dst =
+            speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type_dst);
         let km_dst = ps_dst.piece();
         //let km_dst = phase_piece_type_to_km( &phase, random_piece_type() );
         // 指定マスに移動できるか

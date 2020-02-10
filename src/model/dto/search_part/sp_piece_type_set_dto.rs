@@ -19,7 +19,6 @@ impl SPPieceTypeSetDto {
         for piece_type in PIECE_TYPE_ARRAY.iter() {
             num_syugo1.insert(
                 speed_of_light
-                    .ml_piece_struct_type_master_vo
                     .get_piece_type_struct_vo_from_piece_type(piece_type)
                     .serial_piece_number,
             );
@@ -31,7 +30,6 @@ impl SPPieceTypeSetDto {
     pub fn remove(&mut self, piece_type: GPPieceTypeVo, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo.remove(
             &speed_of_light
-                .ml_piece_struct_type_master_vo
                 .get_piece_type_struct_vo_from_piece_type(&piece_type)
                 .serial_piece_number,
         );

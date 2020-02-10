@@ -17,9 +17,7 @@ pub fn is_jisatusyu(ml_dto: &MLDto, ss: &MLMovementDto, speed_of_light: &MLSpeed
         .get_search_part()
         .get_current_position()
         .get_piece_by_square(&ss.src);
-    let ps_src = speed_of_light
-        .ml_piece_struct_master_vo
-        .get_piece_vo(km_src);
+    let ps_src = speed_of_light.get_piece_struct_vo(km_src);
     let (phase_teban, _piece_type) = ps_src.phase_piece_type();
     // 相手番の先後
     let phase_aite = turn_phase(&phase_teban);

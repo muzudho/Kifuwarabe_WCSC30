@@ -438,10 +438,8 @@ impl MLDto {
     ) -> String {
         let nb = match *phase {
             Phase::None => {
-                &self.sp_dto.effect_count_by_piece[speed_of_light
-                    .ml_piece_struct_master_vo
-                    .get_piece_vo(pc)
-                    .serial_piece_number()]
+                &self.sp_dto.effect_count_by_piece
+                    [speed_of_light.get_piece_struct_vo(pc).serial_piece_number()]
             }
             _ => &self.sp_dto.effect_count_by_phase[phase_to_num(&phase)],
         };
@@ -563,7 +561,6 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     }
     pub fn hyoji_kmugoki_dir(&self, piece_type: GPPieceTypeVo, speed_of_light: &MLSpeedOfLightVo) {
         for kmdir in KM_UGOKI.back[speed_of_light
-            .ml_piece_struct_type_master_vo
             .get_piece_type_struct_vo_from_piece_type(&piece_type)
             .serial_piece_number]
             .iter()
