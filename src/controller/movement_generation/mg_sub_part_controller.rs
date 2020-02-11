@@ -5,9 +5,10 @@
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::model::dto::search_part::sp_position_dto::*;
-use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
+use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::super::super::model::vo::game_part::gp_square_and_piece_struct_vo::GPSquareAndPieceStructVo;
 use super::super::super::model::vo::game_part::gp_square_and_piece_vo::*;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -34,7 +35,7 @@ use std::hash::BuildHasher;
 /// TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
 pub fn make_no_promotion_source_by_square_and_piece<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
@@ -288,7 +289,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
 }
 
 /// この駒には行き先があります。
-fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStructVo) -> bool {
+fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -> bool {
     let (_dx, dy) = square_dst.to_file_rank();
 
     use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
@@ -326,7 +327,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStructVo) -> 
 // 成る前を含めない、長い西
 fn make_no_promotion_source_by_piece_sliding_to_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -350,7 +351,7 @@ fn make_no_promotion_source_by_piece_sliding_to_east<F1>(
 /// 成る前を含めない、西東
 fn make_no_promotion_source_by_piece_to_west_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -369,7 +370,7 @@ fn make_no_promotion_source_by_piece_to_west_east<F1>(
 /// 成る前を含めない、長い北東
 fn make_no_promotion_source_by_piece_sliding_to_north_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -392,7 +393,7 @@ fn make_no_promotion_source_by_piece_sliding_to_north_east<F1>(
 /// 成る前を含めない、北東
 fn make_no_promotion_source_by_piece_to_north_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -411,7 +412,7 @@ fn make_no_promotion_source_by_piece_to_north_east<F1>(
 /// 成る前を含めない、北北東
 fn make_no_promotion_source_by_piece_to_north_north_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -430,7 +431,7 @@ fn make_no_promotion_source_by_piece_to_north_north_east<F1>(
 /// 成る前を含めない、長い北
 fn make_no_promotion_source_by_piece_sliding_to_north<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -453,7 +454,7 @@ fn make_no_promotion_source_by_piece_sliding_to_north<F1>(
 /// 成る前を含めない、北
 fn make_no_promotion_source_by_piece_to_north<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -472,7 +473,7 @@ fn make_no_promotion_source_by_piece_to_north<F1>(
 /// 成る前を含めない、北北西
 fn make_no_promotion_source_by_piece_to_north_north_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -491,7 +492,7 @@ fn make_no_promotion_source_by_piece_to_north_north_west<F1>(
 /// 成る前を含めない、長い北西
 fn make_no_promotion_source_by_piece_sliding_to_north_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -514,7 +515,7 @@ fn make_no_promotion_source_by_piece_sliding_to_north_west<F1>(
 /// 成る前を含めない、北西
 fn make_no_promotion_source_by_piece_to_north_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -533,7 +534,7 @@ fn make_no_promotion_source_by_piece_to_north_west<F1>(
 /// 成る前を含めない、長い西
 fn make_no_promotion_source_by_piece_sliding_to_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -559,7 +560,7 @@ fn make_no_promotion_source_by_piece_sliding_to_west<F1>(
 /// 成る前を含めない、西
 fn make_no_promotion_source_by_piece_to_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -578,7 +579,7 @@ fn make_no_promotion_source_by_piece_to_west<F1>(
 /// 成る前を含めない、長い南西
 fn make_no_promotion_source_by_piece_sliding_to_south_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -601,7 +602,7 @@ fn make_no_promotion_source_by_piece_sliding_to_south_west<F1>(
 /// 成る前を含めない、南西
 fn make_no_promotion_source_by_piece_to_south_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -620,7 +621,7 @@ fn make_no_promotion_source_by_piece_to_south_west<F1>(
 /// 成る前を含めない、南南西
 fn make_no_promotion_source_by_piece_to_south_south_west<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -639,7 +640,7 @@ fn make_no_promotion_source_by_piece_to_south_south_west<F1>(
 /// 成る前を含めない、長い南
 fn make_no_promotion_source_by_piece_sliding_to_south<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -662,7 +663,7 @@ fn make_no_promotion_source_by_piece_sliding_to_south<F1>(
 /// 成る前を含めない、南
 fn make_no_promotion_source_by_piece_to_south<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -681,7 +682,7 @@ fn make_no_promotion_source_by_piece_to_south<F1>(
 /// 成る前を含めない、南南東
 fn make_no_promotion_source_by_piece_to_south_south_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -700,7 +701,7 @@ fn make_no_promotion_source_by_piece_to_south_south_east<F1>(
 /// 成る前を含めない、長南東
 fn make_no_promotion_source_by_piece_sliding_to_south_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -723,7 +724,7 @@ fn make_no_promotion_source_by_piece_sliding_to_south_east<F1>(
 /// 成る前を含めない、南東
 fn make_no_promotion_source_by_piece_to_south_east<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -751,7 +752,7 @@ fn make_no_promotion_source_by_piece_to_south_east<F1>(
 /// 成り　の動きでその結果になるような、元の升を返す☆（＾～＾）
 pub fn make_before_promotion_source_by_square_piece<F1>(
     square_dst: &Square,
-    ps_dst: &PieceStructVo,
+    ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
@@ -1549,6 +1550,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
 
     // 移動先の筋、段、駒種類、駒種類インデックス
     let ps_src = speed_of_light.get_piece_struct_vo(&source_sqp.piece);
+    let source_sqps = GPSquareAndPieceStructVo::new(&source_sqp.square, &ps_src);
     let piece_type_src = ps_src.piece_type();
 
     // +--------------+
@@ -1585,8 +1587,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長東
                     make_destination_sliding_to_east(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1594,8 +1595,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 西東
                     make_destination_to_west_east(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1607,8 +1607,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長北東
                     make_destination_sliding_to_north_east(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1616,8 +1615,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 北東
                     make_destination_to_north_east(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1627,8 +1625,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
             NNE => {
                 // 北北東
                 make_destination_sliding_to_north_north_east(
-                    &source_sqp.square,
-                    ps_src,
+                    &source_sqps,
                     current_position,
                     speed_of_light,
                     result,
@@ -1639,8 +1636,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長北
                     make_destination_sliding_to_north(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1648,8 +1644,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 北
                     make_destination_to_north(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1659,8 +1654,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
             NNW => {
                 // 北北西
                 make_destination_to_north_north_west(
-                    &source_sqp.square,
-                    ps_src,
+                    &source_sqps,
                     current_position,
                     speed_of_light,
                     result,
@@ -1671,8 +1665,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長北西
                     make_destination_sliding_to_north_west(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1680,8 +1673,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 北西
                     make_destination_to_north_west(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1693,8 +1685,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長西
                     make_destination_sliding_to_west(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1702,8 +1693,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 西
                     make_destination_to_west(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1715,8 +1705,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長南西
                     make_destination_sliding_to_south_west(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1724,8 +1713,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 南西
                     make_destination_to_south_west(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1735,8 +1723,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
             SSW => {
                 // 南南西
                 make_destination_to_south_south_west(
-                    &source_sqp.square,
-                    ps_src,
+                    &source_sqps,
                     current_position,
                     speed_of_light,
                     result,
@@ -1747,8 +1734,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長南
                     make_destination_sliding_to_south(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1756,8 +1742,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 南
                     make_destination_to_south(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1767,8 +1752,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
             SSE => {
                 // 南南東
                 make_destination_to_south_south_east(
-                    &source_sqp.square,
-                    ps_src,
+                    &source_sqps,
                     current_position,
                     speed_of_light,
                     result,
@@ -1779,8 +1763,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長南東
                     make_destination_sliding_to_south_east(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1788,8 +1771,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 } else {
                     // 南東
                     make_destination_to_south_east(
-                        &source_sqp.square,
-                        ps_src,
+                        &source_sqps,
                         current_position,
                         speed_of_light,
                         result,
@@ -1857,17 +1839,19 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
 
 /// 移動先升、長い東
 fn make_destination_sliding_to_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_east in 1..9 {
-        if square_dst.file + i_east < SUJI_10 {
-            let sq_src = Square::from_file_rank(square_dst.file + i_east, square_dst.rank);
+        if sq_dst_ps_src.square.file + i_east < SUJI_10 {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file + i_east,
+                sq_dst_ps_src.square.rank,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -1879,16 +1863,16 @@ fn make_destination_sliding_to_east<S: BuildHasher>(
 
 /// 移動先升、 西東
 fn make_destination_to_west_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if square_dst.file + 1 < SUJI_10 {
-        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank);
+    if sq_dst_ps_src.square.file + 1 < SUJI_10 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file + 1, sq_dst_ps_src.square.rank);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -1896,17 +1880,19 @@ fn make_destination_to_west_east<S: BuildHasher>(
 
 /// 移動先升、 長い北東
 fn make_destination_sliding_to_north_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_ne in 1..9 {
-        if square_dst.file + i_ne < SUJI_10 && square_dst.rank + i_ne < DAN_10 {
-            let sq_src = Square::from_file_rank(square_dst.file + i_ne, square_dst.rank + i_ne);
+        if sq_dst_ps_src.square.file + i_ne < SUJI_10 && sq_dst_ps_src.square.rank + i_ne < DAN_10 {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file + i_ne,
+                sq_dst_ps_src.square.rank + i_ne,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -1918,16 +1904,16 @@ fn make_destination_sliding_to_north_east<S: BuildHasher>(
 
 /// 移動先升、 北東
 fn make_destination_to_north_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if square_dst.file + 1 < SUJI_10 && square_dst.rank + 1 < DAN_10 {
-        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank + 1);
+    if sq_dst_ps_src.square.file + 1 < SUJI_10 && sq_dst_ps_src.square.rank + 1 < DAN_10 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file + 1, sq_dst_ps_src.square.rank + 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -1935,16 +1921,16 @@ fn make_destination_to_north_east<S: BuildHasher>(
 
 /// 移動先升、 北北東
 fn make_destination_sliding_to_north_north_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if square_dst.file + 1 < SUJI_10 && square_dst.rank + 2 < DAN_10 {
-        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank + 2);
+    if sq_dst_ps_src.square.file + 1 < SUJI_10 && sq_dst_ps_src.square.rank + 2 < DAN_10 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file + 1, sq_dst_ps_src.square.rank + 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -1952,17 +1938,19 @@ fn make_destination_sliding_to_north_north_east<S: BuildHasher>(
 
 /// 移動先升、 長い北
 fn make_destination_sliding_to_north<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_south in 1..9 {
-        if square_dst.rank + i_south < DAN_10 {
-            let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank + i_south);
+        if sq_dst_ps_src.square.rank + i_south < DAN_10 {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file,
+                sq_dst_ps_src.square.rank + i_south,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -1974,16 +1962,16 @@ fn make_destination_sliding_to_north<S: BuildHasher>(
 
 /// 移動先升、 北
 fn make_destination_to_north<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if square_dst.rank + 1 < DAN_10 {
-        let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank + 1);
+    if sq_dst_ps_src.square.rank + 1 < DAN_10 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file, sq_dst_ps_src.square.rank + 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -1991,16 +1979,16 @@ fn make_destination_to_north<S: BuildHasher>(
 
 /// 移動先升、 北北西
 fn make_destination_to_north_north_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if SUJI_0 < square_dst.file - 1 && square_dst.rank + 2 < DAN_10 {
-        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank + 2);
+    if SUJI_0 < sq_dst_ps_src.square.file - 1 && sq_dst_ps_src.square.rank + 2 < DAN_10 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file - 1, sq_dst_ps_src.square.rank + 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -2008,17 +1996,19 @@ fn make_destination_to_north_north_west<S: BuildHasher>(
 
 /// 移動先升、 長い北西
 fn make_destination_sliding_to_north_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_se in 1..9 {
-        if SUJI_0 < square_dst.file - i_se && square_dst.rank + i_se < DAN_10 {
-            let sq_src = Square::from_file_rank(square_dst.file - i_se, square_dst.rank + i_se);
+        if SUJI_0 < sq_dst_ps_src.square.file - i_se && sq_dst_ps_src.square.rank + i_se < DAN_10 {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file - i_se,
+                sq_dst_ps_src.square.rank + i_se,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -2030,16 +2020,16 @@ fn make_destination_sliding_to_north_west<S: BuildHasher>(
 
 /// 移動先升、 北西
 fn make_destination_to_north_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if square_dst.file - 1 > SUJI_0 && DAN_10 > square_dst.rank + 1 {
-        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank + 1);
+    if sq_dst_ps_src.square.file - 1 > SUJI_0 && DAN_10 > sq_dst_ps_src.square.rank + 1 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file - 1, sq_dst_ps_src.square.rank + 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -2047,17 +2037,19 @@ fn make_destination_to_north_west<S: BuildHasher>(
 
 /// 移動先升、 長い西
 fn make_destination_sliding_to_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_east in 1..9 {
-        if SUJI_0 < square_dst.file - i_east {
-            let sq_src = Square::from_file_rank(square_dst.file - i_east, square_dst.rank);
+        if SUJI_0 < sq_dst_ps_src.square.file - i_east {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file - i_east,
+                sq_dst_ps_src.square.rank,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -2069,16 +2061,16 @@ fn make_destination_sliding_to_west<S: BuildHasher>(
 
 /// 移動先升、 西
 fn make_destination_to_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if SUJI_0 < square_dst.file - 1 {
-        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank);
+    if SUJI_0 < sq_dst_ps_src.square.file - 1 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file - 1, sq_dst_ps_src.square.rank);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -2086,17 +2078,19 @@ fn make_destination_to_west<S: BuildHasher>(
 
 /// 移動先升、 長い南西
 fn make_destination_sliding_to_south_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_ne in 1..9 {
-        if SUJI_0 < square_dst.file - i_ne && DAN_0 < square_dst.rank - i_ne {
-            let sq_src = Square::from_file_rank(square_dst.file - i_ne, square_dst.rank - i_ne);
+        if SUJI_0 < sq_dst_ps_src.square.file - i_ne && DAN_0 < sq_dst_ps_src.square.rank - i_ne {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file - i_ne,
+                sq_dst_ps_src.square.rank - i_ne,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -2108,16 +2102,16 @@ fn make_destination_sliding_to_south_west<S: BuildHasher>(
 
 /// 移動先升、 南西
 fn make_destination_to_south_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if SUJI_0 < square_dst.file - 1 && DAN_0 < square_dst.rank - 1 {
-        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank - 1);
+    if SUJI_0 < sq_dst_ps_src.square.file - 1 && DAN_0 < sq_dst_ps_src.square.rank - 1 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file - 1, sq_dst_ps_src.square.rank - 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -2125,16 +2119,16 @@ fn make_destination_to_south_west<S: BuildHasher>(
 
 /// 移動先升、 南南西
 fn make_destination_to_south_south_west<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if SUJI_0 < square_dst.file - 1 && DAN_0 < square_dst.rank - 2 {
-        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank - 2);
+    if SUJI_0 < sq_dst_ps_src.square.file - 1 && DAN_0 < sq_dst_ps_src.square.rank - 2 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file - 1, sq_dst_ps_src.square.rank - 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -2142,17 +2136,19 @@ fn make_destination_to_south_south_west<S: BuildHasher>(
 
 /// 移動先升、 長い南
 fn make_destination_sliding_to_south<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_north in 1..9 {
-        if DAN_0 < square_dst.file - i_north {
-            let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank - i_north);
+        if DAN_0 < sq_dst_ps_src.square.file - i_north {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file,
+                sq_dst_ps_src.square.rank - i_north,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -2164,16 +2160,16 @@ fn make_destination_sliding_to_south<S: BuildHasher>(
 
 /// 移動先升、 南
 fn make_destination_to_south<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if DAN_0 < square_dst.rank - 1 {
-        let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank - 1);
+    if DAN_0 < sq_dst_ps_src.square.rank - 1 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file, sq_dst_ps_src.square.rank - 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -2181,16 +2177,16 @@ fn make_destination_to_south<S: BuildHasher>(
 
 /// 移動先升、 南南東
 fn make_destination_to_south_south_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if square_dst.file + 1 < SUJI_10 && DAN_0 < square_dst.rank - 2 {
-        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank - 2);
+    if sq_dst_ps_src.square.file + 1 < SUJI_10 && DAN_0 < sq_dst_ps_src.square.rank - 2 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file + 1, sq_dst_ps_src.square.rank - 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }
@@ -2198,17 +2194,19 @@ fn make_destination_to_south_south_east<S: BuildHasher>(
 
 /// 移動先升、 長い南東
 fn make_destination_sliding_to_south_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
     for i_nw in 1..9 {
-        if square_dst.file + i_nw < SUJI_10 && DAN_0 < square_dst.rank - i_nw {
-            let sq_src = Square::from_file_rank(square_dst.file + i_nw, square_dst.rank - i_nw);
+        if sq_dst_ps_src.square.file + i_nw < SUJI_10 && DAN_0 < sq_dst_ps_src.square.rank - i_nw {
+            let sq_src = Square::from_file_rank(
+                sq_dst_ps_src.square.file + i_nw,
+                sq_dst_ps_src.square.rank - i_nw,
+            );
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            if &phase_ms != &ps_src.phase() {
+            if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
                 result.insert(sq_src);
             }
             if &phase_ms != &Phase::None {
@@ -2220,16 +2218,16 @@ fn make_destination_sliding_to_south_east<S: BuildHasher>(
 
 /// 移動先升、 南東
 fn make_destination_to_south_east<S: BuildHasher>(
-    square_dst: &Square,
-    ps_src: &PieceStructVo,
+    sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    if square_dst.file + 1 < SUJI_10 && DAN_0 < square_dst.rank - 1 {
-        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank - 1);
+    if sq_dst_ps_src.square.file + 1 < SUJI_10 && DAN_0 < sq_dst_ps_src.square.rank - 1 {
+        let sq_src =
+            Square::from_file_rank(sq_dst_ps_src.square.file + 1, sq_dst_ps_src.square.rank - 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        if &phase_ms != &ps_src.phase() {
+        if &phase_ms != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(sq_src);
         }
     }

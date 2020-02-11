@@ -8,7 +8,7 @@ use rand::Rng;
 use super::super::super::super::config::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
-use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
+use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
@@ -239,7 +239,7 @@ impl MLDto {
     pub fn set_starting_position_hand_piece(&mut self, km: GPPieceVo, maisu: i8) {
         self.get_starting_position_mut().hand[km as usize] = maisu;
     }
-    pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStructVo) -> Person {
+    pub fn get_person_by_piece_vo(&self, piece_vo: &GPPieceStructVo) -> Person {
         if &piece_vo.phase() == &self.sp_earth_dto.get_phase(&Person::Friend) {
             Person::Friend
         } else {

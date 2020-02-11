@@ -10,7 +10,7 @@ use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
-use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
+use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
@@ -45,7 +45,7 @@ pub struct KomatoriResult {
 }
 impl fmt::Display for KomatoriResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // let ps_attacker = PieceStructVo::from_piece(self.km_attacker.clone());
+        // let ps_attacker = GPPieceStructVo::from_piece(self.km_attacker.clone());
         write!(
             f,
             "KmTori:{}{}->{}",
@@ -72,7 +72,7 @@ impl KomatoriResult {
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, km_atk) = PieceStructVo::from_hash(hash);
+        let (hash, km_atk) = GPPieceStructVo::from_hash(hash);
         let (hash, sq_atk) = pop_sq_from_hash(hash);
         let (_hash, sq_tgt) = pop_sq_from_hash(hash);
         KomatoriResult {

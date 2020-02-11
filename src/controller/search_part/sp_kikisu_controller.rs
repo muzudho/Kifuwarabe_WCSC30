@@ -4,7 +4,7 @@
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
-use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
+use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -18,7 +18,7 @@ pub fn update_effect_count(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeed
     // ゼロ・リセット
     for pc in KM_ARRAY.iter() {
         ml_universe_dto.get_search_part_mut().effect_count_by_piece
-            [PieceStructVo::from_piece((*pc).clone()).serial_piece_number()]
+            [GPPieceStructVo::from_piece((*pc).clone()).serial_piece_number()]
         .clear();
     }
 
@@ -28,7 +28,7 @@ pub fn update_effect_count(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeed
 
     // カウント
     for km_dst in KM_ARRAY.iter() {
-        let ps_dst = PieceStructVo::from_piece((*km_dst).clone());
+        let ps_dst = GPPieceStructVo::from_piece((*km_dst).clone());
 
         for x in SUJI_1..SUJI_10 {
             // 9..0 みたいに降順に書いても動かない？
