@@ -2428,6 +2428,11 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
             _ => {}
         }
 
+        let dst_sq_piece = GPSquareAndPieceVo::new(
+            square_dst,
+            &GPPieceVo::from_phase_and_piece_type(phase, *piece_type),
+        );
+
         let piece_type_num = speed_of_light
             .get_piece_type_struct_vo_from_piece_type(piece_type)
             .serial_piece_number;
@@ -2456,22 +2461,16 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長東
                         make_no_promotion_source_by_phase_sliding_to_east(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 東
                         make_no_promotion_source_by_phase_to_east(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
@@ -2480,34 +2479,25 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北東
                         make_no_promotion_source_by_phase_sliding_to_north_east(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 北東
                         make_no_promotion_source_by_phase_to_north_east(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
                 NNE => {
                     // 北北東
                     make_no_promotion_source_by_phase_to_north_north_east(
-                        phase,
-                        square_dst,
+                        &dst_sq_piece,
                         current_position,
-                        speed_of_light,
                         &mut gets_square,
-                        *piece_type,
                     );
                 }
                 // 北
@@ -2515,34 +2505,25 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北
                         make_no_promotion_source_by_phase_sliding_to_north(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 北
                         make_no_promotion_source_by_phase_to_north(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
                 NNW => {
                     // 北北西
                     make_no_promotion_source_by_phase_to_north_north_west(
-                        phase,
-                        square_dst,
+                        &dst_sq_piece,
                         current_position,
-                        speed_of_light,
                         &mut gets_square,
-                        *piece_type,
                     );
                 }
                 // 北西
@@ -2550,22 +2531,16 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北西
                         make_no_promotion_source_by_phase_sliding_to_north_west(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 北西
                         make_no_promotion_source_by_phase_to_north_west(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
@@ -2574,22 +2549,16 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長西
                         make_no_promotion_source_by_phase_sliding_to_west(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 西
                         make_no_promotion_source_by_phase_to_west(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
@@ -2598,34 +2567,25 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南西
                         make_no_promotion_source_by_phase_sliding_to_south_west(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 南西
                         make_no_promotion_source_by_phase_to_south_west(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
                 SSW => {
                     // 南南西
                     make_no_promotion_source_by_phase_to_south_south_west(
-                        phase,
-                        square_dst,
+                        &dst_sq_piece,
                         current_position,
-                        speed_of_light,
                         &mut gets_square,
-                        *piece_type,
                     );
                 }
                 // 南
@@ -2633,34 +2593,25 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南
                         make_no_promotion_source_by_phase_sliding_to_south(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 南
                         make_no_promotion_source_by_phase_to_south(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
                 SSE => {
                     // 南南東
                     make_no_promotion_source_by_phase_to_south_south_east(
-                        phase,
-                        square_dst,
+                        &dst_sq_piece,
                         current_position,
-                        speed_of_light,
                         &mut gets_square,
-                        *piece_type,
                     );
                 }
                 // 南東
@@ -2668,22 +2619,16 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南東
                         make_no_promotion_source_by_phase_sliding_to_south_east(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     } else {
                         // 南東
                         make_no_promotion_source_by_phase_to_south_east(
-                            phase,
-                            square_dst,
+                            &dst_sq_piece,
                             current_position,
-                            speed_of_light,
                             &mut gets_square,
-                            *piece_type,
                         );
                     }
                 }
@@ -2695,27 +2640,22 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
 
 // 移動元升、長い東
 fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_east in 1..9 {
         if dx + i_east < SUJI_10 {
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -2723,50 +2663,39 @@ fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
 }
 // 移動元升、東
 fn make_no_promotion_source_by_phase_to_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、長い北東
 fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -2774,73 +2703,56 @@ fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
 }
 // 移動元升、北東
 fn make_no_promotion_source_by_phase_to_north_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、北北東
 fn make_no_promotion_source_by_phase_to_north_north_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、長い北
 fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -2848,76 +2760,56 @@ fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
 }
 // 移動元升、北
 fn make_no_promotion_source_by_phase_to_north<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
-        //     ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
-        // ));
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、北北西
 fn make_no_promotion_source_by_phase_to_north_north_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、長い北西
 fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -2925,50 +2817,39 @@ fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
 }
 // 移動元升、北西
 fn make_no_promotion_source_by_phase_to_north_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、長い西
 fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_east in 1..9 {
         if SUJI_0 < dx - i_east {
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -2976,50 +2857,39 @@ fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
 }
 // 移動元升、西
 fn make_no_promotion_source_by_phase_to_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、長い南西
 fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3027,73 +2897,56 @@ fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
 }
 // 移動元升、南西
 fn make_no_promotion_source_by_phase_to_south_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、南南西
 fn make_no_promotion_source_by_phase_to_south_south_west<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、長い南
 fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_north in 1..9 {
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3101,76 +2954,56 @@ fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
 }
 // 移動元升、南
 fn make_no_promotion_source_by_phase_to_south<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
-        //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
-        // ));
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、南南東
 fn make_no_promotion_source_by_phase_to_south_south_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
 }
 // 移動元升、長い南東
 fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type();
-            if phase_ms == *phase && piece_type_ms == piece_type {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == dst_sq_piece.piece {
                 gets_square(sq_src);
             }
-            if &phase_ms != &Phase::None {
+            // End of sliding.
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3178,23 +3011,17 @@ fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
 }
 // 移動元升、南東
 fn make_no_promotion_source_by_phase_to_south_east<F1>(
-    phase: &Phase,
-    square_dst: &Square,
+    dst_sq_piece: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-    piece_type: GPPieceTypeVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = dst_sq_piece.square.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-        let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-            .piece_type();
-        if phase_ms == *phase && piece_type_ms == piece_type {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == dst_sq_piece.piece {
             gets_square(sq_src);
         }
     }
