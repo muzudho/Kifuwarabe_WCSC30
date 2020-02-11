@@ -1003,196 +1003,256 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
             E(b) => {
                 if b {
                     // 長東
-                    make_destination_sliding_to_east(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_east(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 東
-                    make_destination_to_east(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_east(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             // 北東
             NE(b) => {
                 if b {
                     // 長北東
-                    make_destination_sliding_to_north_east(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_north_east(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 北東
-                    make_destination_to_north_east(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_north_east(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             NNE => {
                 // 北北東
-                make_destination_sliding_to_north_north_east(
-                    &source_sqps,
-                    current_position,
-                    speed_of_light,
-                    result,
-                );
+                SquareScanner::next_to_north_north_east(&source_sqps.square, &mut |next_square| {
+                    make_destination_next(
+                        &source_sqps,
+                        current_position,
+                        speed_of_light,
+                        result,
+                        next_square,
+                    )
+                });
             }
             // 北
             N(b) => {
                 if b {
                     // 長北
-                    make_destination_sliding_to_north(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_north(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 北
-                    make_destination_to_north(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_north(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             NNW => {
                 // 北北西
-                make_destination_to_north_north_west(
-                    &source_sqps,
-                    current_position,
-                    speed_of_light,
-                    result,
-                );
+                SquareScanner::next_to_north_north_west(&source_sqps.square, &mut |next_square| {
+                    make_destination_next(
+                        &source_sqps,
+                        current_position,
+                        speed_of_light,
+                        result,
+                        next_square,
+                    )
+                });
             }
             // 北西
             NW(b) => {
                 if b {
                     // 長北西
-                    make_destination_sliding_to_north_west(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_north_west(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 北西
-                    make_destination_to_north_west(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_north_west(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             // 西
             W(b) => {
                 if b {
                     // 長西
-                    make_destination_sliding_to_west(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_west(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 西
-                    make_destination_to_west(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_west(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             // 南西
             SW(b) => {
                 if b {
                     // 長南西
-                    make_destination_sliding_to_south_west(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_south_west(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 南西
-                    make_destination_to_south_west(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_south_west(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             SSW => {
                 // 南南西
-                make_destination_to_south_south_west(
-                    &source_sqps,
-                    current_position,
-                    speed_of_light,
-                    result,
-                );
+                SquareScanner::next_to_south_south_west(&source_sqps.square, &mut |next_square| {
+                    make_destination_next(
+                        &source_sqps,
+                        current_position,
+                        speed_of_light,
+                        result,
+                        next_square,
+                    )
+                });
             }
             // 南
             S(b) => {
                 if b {
                     // 長南
-                    make_destination_sliding_to_south(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_south(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 南
-                    make_destination_to_south(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_south(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             SSE => {
                 // 南南東
-                make_destination_to_south_south_east(
-                    &source_sqps,
-                    current_position,
-                    speed_of_light,
-                    result,
-                );
+                SquareScanner::next_to_south_south_east(&source_sqps.square, &mut |next_square| {
+                    make_destination_next(
+                        &source_sqps,
+                        current_position,
+                        speed_of_light,
+                        result,
+                        next_square,
+                    )
+                });
             }
             // 南東
             SE(b) => {
                 if b {
                     // 長南東
-                    make_destination_sliding_to_south_east(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::for_each_south_east(&source_sqps.square, &mut |next_square| {
+                        make_destination_sliding(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 南東
-                    make_destination_to_south_east(
-                        &source_sqps,
-                        current_position,
-                        speed_of_light,
-                        result,
-                    );
+                    SquareScanner::next_to_south_east(&source_sqps.square, &mut |next_square| {
+                        make_destination_next(
+                            &source_sqps,
+                            current_position,
+                            speed_of_light,
+                            result,
+                            next_square,
+                        )
+                    });
                 }
             }
             Owari => break,
@@ -1254,341 +1314,40 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
     }
 }
 
-/// 移動先升、長い東
+/// 移動先升、長い利き
 ///
 /// # Arguments
 ///
 /// * `speed_of_light` - 盤上の駒の Phase を調べるために使う☆（＾～＾）
-fn make_destination_sliding_to_east<S: BuildHasher>(
+fn make_destination_sliding<S: BuildHasher>(
     sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_east(&sq_dst_ps_src.square, &mut |next_square| {
-        // 自駒でなければ進める。
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if dst_phase != sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
+    next_square: Square,
+) -> bool {
+    // 自駒でなければ進める。
+    let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
+    if dst_phase != sq_dst_ps_src.piece_struct.phase() {
+        result.insert(next_square);
+    }
 
-        // 駒があったのなら、ループ終わり。
-        dst_phase == Phase::None
-    });
+    // 駒があったのなら、ループ終わり。
+    dst_phase != Phase::None
 }
 
-/// 移動先升、 東
-fn make_destination_to_east<S: BuildHasher>(
+/// 移動先升、 隣☆（＾～＾）
+fn make_destination_next<S: BuildHasher>(
     sq_dst_ps_src: &GPSquareAndPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
+    next_square: Square,
 ) {
-    SquareScanner::next_to_east(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 長い北東
-fn make_destination_sliding_to_north_east<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_north_east(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-        if &dst_phase != &Phase::None {
-            return true;
-        }
-        false
-    });
-}
-
-/// 移動先升、 北東
-fn make_destination_to_north_east<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_north_east(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 北北東
-fn make_destination_sliding_to_north_north_east<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_north_north_east(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 長い北
-fn make_destination_sliding_to_north<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_north(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-        if &dst_phase != &Phase::None {
-            return true;
-        }
-        false
-    });
-}
-
-/// 移動先升、 北
-fn make_destination_to_north<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_north(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 北北西
-fn make_destination_to_north_north_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_north_north_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 長い北西
-fn make_destination_sliding_to_north_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_north_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-        if &dst_phase != &Phase::None {
-            return true;
-        }
-        false
-    });
-}
-
-/// 移動先升、 北西
-fn make_destination_to_north_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_north_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 長い西
-fn make_destination_sliding_to_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-        if &dst_phase != &Phase::None {
-            return true;
-        }
-        false
-    });
-}
-
-/// 移動先升、 西
-fn make_destination_to_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 長い南西
-fn make_destination_sliding_to_south_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_south_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-        if &dst_phase != &Phase::None {
-            return true;
-        }
-        false
-    });
-}
-
-/// 移動先升、 南西
-fn make_destination_to_south_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_south_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 南南西
-fn make_destination_to_south_south_west<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_south_south_west(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 長い南
-fn make_destination_sliding_to_south<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_south(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-        if &dst_phase != &Phase::None {
-            return true;
-        }
-        false
-    });
-}
-
-/// 移動先升、 南
-fn make_destination_to_south<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_south(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 南南東
-fn make_destination_to_south_south_east<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_south_south_east(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
-}
-
-/// 移動先升、 長い南東
-fn make_destination_sliding_to_south_east<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::for_each_south_east(&sq_dst_ps_src.square, &mut |next_square| {
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-        if &dst_phase != &Phase::None {
-            return true;
-        }
-        false
-    });
-}
-
-/// 移動先升、 南東
-fn make_destination_to_south_east<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    result: &mut HashSet<Square, S>,
-) {
-    SquareScanner::next_to_south_east(&sq_dst_ps_src.square, &mut |next_square| {
-        // 自駒でなければ進める。
-        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-            result.insert(next_square);
-        }
-    });
+    let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
+    if dst_phase != sq_dst_ps_src.piece_struct.phase() {
+        result.insert(next_square);
+    }
 }
 
 /// 移動先升、成り：▼きりん、▼ぞう、▼ねこ
