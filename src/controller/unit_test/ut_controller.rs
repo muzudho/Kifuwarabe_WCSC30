@@ -7,8 +7,8 @@ use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
 use super::super::super::controller::common_use::cu_math_controller::*;
 use super::super::super::controller::common_use::cu_random_move_controller;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
-use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -62,7 +62,7 @@ pub fn unit_test(
     line: &str,
     starts: &mut usize,
     len: usize,
-    ml_dto: &mut MLDto,
+    ml_universe_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // いろいろな動作テスト
@@ -75,7 +75,7 @@ pub fn unit_test(
         g_writeln("駒の移動元升");
         let piece_type = cu_random_move_controller::random_piece_type();
         let ps = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-            &ml_dto.get_search_part().get_phase(&Person::Friend),
+            &ml_universe_dto.get_search_part().get_phase(&Person::Friend),
             *piece_type,
         );
         let pc = ps.piece();
@@ -91,7 +91,7 @@ pub fn unit_test(
         make_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -100,7 +100,7 @@ pub fn unit_test(
         make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -109,7 +109,7 @@ pub fn unit_test(
         make_drop_piece_type_by_square_piece(
             &sq_dst,
             pc,
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |piece_type_hash| {
                 da_piece_type_hashset.insert(piece_type_hash);
@@ -122,7 +122,7 @@ pub fn unit_test(
         // 移動後の駒
         let piece_type = cu_random_move_controller::random_piece_type();
         let ps = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-            &ml_dto.get_search_part().get_phase(&Person::Friend),
+            &ml_universe_dto.get_search_part().get_phase(&Person::Friend),
             *piece_type,
         );
         // 移動先の升、および　不成駒／成駒
@@ -135,7 +135,7 @@ pub fn unit_test(
         make_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -144,13 +144,13 @@ pub fn unit_test(
         make_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
             },
         );
-        //insert_da_piece_type_by_sq_km      ( ms_dst, pc, &ml_dto, &mut da_piece_type_hashset );
+        //insert_da_piece_type_by_sq_km      ( ms_dst, pc, &ml_universe_dto, &mut da_piece_type_hashset );
         if let Some(sq_src) = mv_src_hashset.iter().next() {
             ss.src = (*sq_src).clone();
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
@@ -190,7 +190,7 @@ pub fn unit_test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -199,7 +199,7 @@ pub fn unit_test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -208,7 +208,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -235,7 +235,7 @@ pub fn unit_test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -244,7 +244,7 @@ pub fn unit_test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -253,7 +253,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -280,7 +280,7 @@ pub fn unit_test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -289,7 +289,7 @@ pub fn unit_test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -298,7 +298,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -325,7 +325,7 @@ pub fn unit_test(
             make_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -334,7 +334,7 @@ pub fn unit_test(
             make_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -343,7 +343,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_dto.get_search_part(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -765,12 +765,12 @@ pub fn unit_test(
         ));
     } else {
         //g_writeln( &format!( "未定義のテスト「{}」", &line[*starts..len-1] ) );
-        ml_dto.push_command( &"position startpos moves 6i5h 8c8d 9i9h 8d8e 3g3f 8e8f 5h4h 8f8g+ 1i1h 8g9h 2g2f 9h8h 9g9f 8h7i 2i3g 8b8i+ 2f2e 7i7h".to_string() );
-        ml_dto.push_command(&"position1".to_string());
-        //g_writeln( &ml_dto.pop_command() );
+        ml_universe_dto.push_command( &"position startpos moves 6i5h 8c8d 9i9h 8d8e 3g3f 8e8f 5h4h 8f8g+ 1i1h 8g9h 2g2f 9h8h 9g9f 8h7i 2i3g 8b8i+ 2f2e 7i7h".to_string() );
+        ml_universe_dto.push_command(&"position1".to_string());
+        //g_writeln( &ml_universe_dto.pop_command() );
     }
 
     // positionコマンドの読取を丸投げ
-    // tusin::usi::read_position(&POS_593.to_string(), &mut ml_dto);
-    // tusin::usi::read_position(&POS_2.to_string(), &mut ml_dto);
+    // tusin::usi::read_position(&POS_593.to_string(), &mut ml_universe_dto);
+    // tusin::usi::read_position(&POS_2.to_string(), &mut ml_universe_dto);
 }

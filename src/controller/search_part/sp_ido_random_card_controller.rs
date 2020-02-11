@@ -8,8 +8,8 @@ use super::super::super::controller::common_use::cu_random_move_controller;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::search_part::sp_jisatusyu_result_controller::*;
-use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
@@ -21,7 +21,7 @@ use std::collections::HashSet;
  * piece_dst : 移動した先の駒
  */
 pub fn get_ido_ss_by_km_random(
-    ml_dto: &MLDto,
+    ml_universe_dto: &MLDto,
     piece_dst: &GPPieceVo,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> MLMovementDto {
@@ -37,7 +37,7 @@ pub fn get_ido_ss_by_km_random(
         get_movement_by_square_and_piece_on_board(
             &sq_dst,
             piece_dst.clone(),
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
@@ -46,7 +46,7 @@ pub fn get_ido_ss_by_km_random(
         get_movement_by_square_and_piece_on_drop(
             &sq_dst,
             piece_dst,
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
@@ -65,7 +65,10 @@ pub fn get_ido_ss_by_km_random(
 /**
  * 指し手１つをランダム選出
  */
-pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> MLMovementDto {
+pub fn get_ss_by_random(
+    ml_universe_dto: &MLDto,
+    speed_of_light: &MLSpeedOfLightVo,
+) -> MLMovementDto {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -76,7 +79,7 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
 
         // 手番の、移動した先の駒
         let ps_dst = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-            &ml_dto.get_search_part().get_phase(&Person::Friend),
+            &ml_universe_dto.get_search_part().get_phase(&Person::Friend),
             *cu_random_move_controller::random_piece_type(),
         );
         let piece_dst = ps_dst.piece();
@@ -85,7 +88,7 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
         get_movement_by_square_and_piece_on_board(
             &sq_dst,
             piece_dst.clone(),
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
@@ -94,7 +97,7 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
         get_movement_by_square_and_piece_on_drop(
             &sq_dst,
             piece_dst,
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
@@ -103,7 +106,7 @@ pub fn get_ss_by_random(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> ML
         let ss = choice_1movement_from_hashset(&ss_hashset);
 
         // 移動後は、玉が利きに飛び込まないか？
-        if is_jisatusyu(&ml_dto, &ss, speed_of_light) {
+        if is_jisatusyu(&ml_universe_dto, &ss, speed_of_light) {
             continue 'random;
         }
 

@@ -2,8 +2,8 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -49,16 +49,16 @@ pub fn hyoji_ss_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
 }
 
 /// 利き数表示
-pub fn cmd_kikisu(ml_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) {
+pub fn cmd_kikisu(ml_universe_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) {
     for pc in KM_ARRAY.iter() {
         g_writeln(&format!("利き数：{}", pc));
-        let s = ml_dto.kaku_number_board(&Phase::None, pc, speed_of_light);
+        let s = ml_universe_dto.kaku_number_board(&Phase::None, pc, speed_of_light);
         g_writeln(&s);
     }
 
     for phase in PHASE_ARRAY.iter() {
         g_writeln(&format!("利き数：{}", phase));
-        let s = ml_dto.kaku_number_board(&phase, &GPPieceVo::OwariPiece, speed_of_light);
+        let s = ml_universe_dto.kaku_number_board(&phase, &GPPieceVo::OwariPiece, speed_of_light);
         g_writeln(&s);
     }
 }

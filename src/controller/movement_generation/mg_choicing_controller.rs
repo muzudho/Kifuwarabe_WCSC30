@@ -9,9 +9,10 @@ use rand::Rng;
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::movement_generation::mg_komatori_result_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
-use super::super::super::model::dto::main_loop::ml_dto::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_ply_vo::*;
@@ -74,13 +75,13 @@ pub fn select_movement_except_check<S: BuildHasher>(
         let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
         // 指せる手から、王手が消えている手だけ、選び抜くぜ☆（＾～＾）
-        'idea: for hash_ss_potential in ss_hashset_input.iter() {
-            let ss_potential = MLMovementDto::from_hash(*hash_ss_potential);
+        'idea: for hash_potential_movement in ss_hashset_input.iter() {
+            let potential_movement = MLMovementDto::from_hash(*hash_potential_movement);
             for komatori_result_hash in komatori_result_hashset.iter() {
                 let komatori_result = KomatoriResult::from_hash(*komatori_result_hash);
 
-                assert_banjo_sq(&ss_potential.dst, "(206)Ｓearch_gohoshu_hash");
-                match komatori_result.get_result(&ss_potential, speed_of_light) {
+                assert_banjo_sq(&potential_movement.dst, "(206)Ｓearch_gohoshu_hash");
+                match komatori_result.get_result(&potential_movement, speed_of_light) {
                     KomatoriResultResult::NoneAttacker
                     | KomatoriResultResult::NoneAigoma
                     | KomatoriResultResult::NoneMoved => {
@@ -94,7 +95,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
             }
 
             // 王手を回避している指し手
-            ss_hashset_pickup.insert(*hash_ss_potential);
+            ss_hashset_pickup.insert(*hash_potential_movement);
         }
 
         // 振り替え
@@ -114,18 +115,18 @@ pub fn select_movement_except_check<S: BuildHasher>(
  */
 pub fn select_movement_except_suiceid<S: BuildHasher>(
     ss_hashset_input: &mut HashSet<u64, S>,
-    ml_dto: &mut MLDto,
+    ml_universe_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
     // 自玉の位置
-    let sq_r = ml_dto
+    let sq_r = ml_universe_dto
         .get_search_part()
         .get_current_position()
         .get_sq_r(phase_to_num(
-            &ml_dto.get_search_part().get_phase(&Person::Friend),
+            &ml_universe_dto.get_search_part().get_phase(&Person::Friend),
         ))
         .clone();
 
@@ -133,18 +134,18 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
     // TODO 王手が２か所から掛かっていたら、全部回避しないといけない☆
 
     // 指せる手から、王手が消えている手だけ、選び抜くぜ☆（＾～＾）
-    'idea: for hash_ss_potential in ss_hashset_input.iter() {
-        let ss_potential = MLMovementDto::from_hash(*hash_ss_potential);
+    'idea: for hash_potential_movement in ss_hashset_input.iter() {
+        let potential_movement = GPMovementVo::from_hash(*hash_potential_movement);
 
         // その手を指してみる
-        ml_dto.do_ss(&ss_potential, speed_of_light);
+        ml_universe_dto.do_ss(&potential_movement, speed_of_light);
         // // 現局面表示
-        // let s1 = &ml_dto.kaku_ky( &KyNums::Current );
+        // let s1 = &ml_universe_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
 
         // 狙われている方の玉の位置
-        let sq_r_new = if ss_potential.src.to_umasu() == sq_r.to_umasu() {
-            ss_potential.dst.clone() // 狙われていた方の玉が動いた先
+        let sq_r_new = if potential_movement.source.to_umasu() == sq_r.to_umasu() {
+            potential_movement.destination.clone() // 狙われていた方の玉が動いた先
         } else {
             sq_r.clone() // 動いていない、狙われていた方の玉の居場所
         };
@@ -153,18 +154,18 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
         make_no_promotion_source_by_phase_square(
-            &ml_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                            // 指定の升
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                                     // 指定の升
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 attackers.insert(square);
             },
         );
         make_before_promotion_source_by_phase_square(
-            &ml_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                            // 指定の升
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                                     // 指定の升
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |square| {
                 attackers.insert(square);
@@ -175,9 +176,9 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         let jisatusyu = !attackers.is_empty();
         g_writeln(&format!(
             "info {} evaluated => {} attackers. offence={}->{}",
-            ss_potential,
+            potential_movement,
             attackers.len(),
-            ml_dto.get_search_part().get_phase(&Person::Friend),
+            ml_universe_dto.get_search_part().get_phase(&Person::Friend),
             sq_r_new.to_umasu()
         ));
         for sq_atk in attackers.iter() {
@@ -185,18 +186,18 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         }
 
         // 手を戻す
-        ml_dto.undo_ss(speed_of_light);
+        ml_universe_dto.undo_ss(speed_of_light);
         // // 現局面表示
-        // let s2 = &ml_dto.kaku_ky( &KyNums::Current );
+        // let s2 = &ml_universe_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );
 
         if jisatusyu {
             continue 'idea;
         }
 
-        g_writeln(&format!("info SOLUTED ss={}.", ss_potential));
+        g_writeln(&format!("info SOLUTED movement={}.", potential_movement));
         // 問題を全て解決していれば、入れる
-        ss_hashset_pickup.insert(ss_potential.to_hash(speed_of_light));
+        ss_hashset_pickup.insert(potential_movement.to_hash(speed_of_light));
     }
     g_writeln(&format!("info {} solutions.", ss_hashset_pickup.len()));
 
@@ -213,33 +214,33 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
 /// ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
 pub fn select_movement_except_fourfold_repetition<S: BuildHasher>(
     ss_hashset_input: &mut HashSet<u64, S>,
-    ml_dto: &mut MLDto,
+    ml_universe_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     let mut ss_hashset_pickup = HashSet::new();
     // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）
     // 'idea:
-    for hash_ss_potential in ss_hashset_input.iter() {
-        let ss = MLMovementDto::from_hash(*hash_ss_potential);
-        //ss_hashset.insert( *hash_ss_potential );
+    for hash_potential_movement in ss_hashset_input.iter() {
+        let movement = GPMovementVo::from_hash(*hash_potential_movement);
+        //ss_hashset.insert( *hash_potential_movement );
 
         // その手を指してみる
-        ml_dto.do_ss(&ss, speed_of_light);
+        ml_universe_dto.do_ss(&movement, speed_of_light);
         // 現局面表示
-        // let s1 = &ml_dto.kaku_ky( &KyNums::Current );
+        // let s1 = &ml_universe_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s1 );
 
         // 千日手かどうかを判定する☆（＾～＾）
-        if ml_dto.count_same_ky() < SENNTITE_NUM {
-            ss_hashset_pickup.insert(*hash_ss_potential);
+        if ml_universe_dto.count_same_ky() < SENNTITE_NUM {
+            ss_hashset_pickup.insert(*hash_potential_movement);
         } else {
             // 千日手
         }
 
         // 手を戻す FIXME: 打った象が戻ってない？
-        ml_dto.undo_ss(speed_of_light);
+        ml_universe_dto.undo_ss(speed_of_light);
         // 現局面表示
-        // let s2 = &ml_dto.kaku_ky( &KyNums::Current );
+        // let s2 = &ml_universe_dto.kaku_ky( &KyNums::Current );
         // g_writeln( &s2 );
     }
 

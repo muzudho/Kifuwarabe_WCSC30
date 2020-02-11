@@ -3,7 +3,7 @@
 //!
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
-use super::super::super::model::dto::main_loop::ml_dto::*;
+use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -14,16 +14,16 @@ use std::collections::HashSet;
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn update_effect_count(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
+pub fn update_effect_count(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
     // ゼロ・リセット
     for pc in KM_ARRAY.iter() {
-        ml_dto.get_search_part_mut().effect_count_by_piece
+        ml_universe_dto.get_search_part_mut().effect_count_by_piece
             [PieceStructVo::from_piece((*pc).clone()).serial_piece_number()]
         .clear();
     }
 
     for phase in PHASE_ARRAY.iter() {
-        ml_dto.get_search_part_mut().effect_count_by_phase[phase_to_num(phase)].clear();
+        ml_universe_dto.get_search_part_mut().effect_count_by_phase[phase_to_num(phase)].clear();
     }
 
     // カウント
@@ -41,7 +41,7 @@ pub fn update_effect_count(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo
                 make_no_promotion_source_by_square_and_piece(
                     &sq_dst,
                     &ps_dst,
-                    &ml_dto.get_search_part(),
+                    &ml_universe_dto.get_search_part(),
                     &speed_of_light,
                     |square| {
                         mv_src_hashset.insert(square);
@@ -50,7 +50,7 @@ pub fn update_effect_count(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo
                 make_before_promotion_source_by_square_piece(
                     &sq_dst,
                     &ps_dst,
-                    &ml_dto.get_search_part(),
+                    &ml_universe_dto.get_search_part(),
                     &speed_of_light,
                     |square| {
                         mv_src_hashset.insert(square);
@@ -60,12 +60,14 @@ pub fn update_effect_count(ml_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo
                 let kikisu = mv_src_hashset.len();
 
                 // 駒別
-                ml_dto.get_search_part_mut().effect_count_by_piece[ps_dst.serial_piece_number()]
-                    .add_su_by_sq(&sq_dst, kikisu as i8);
+                ml_universe_dto.get_search_part_mut().effect_count_by_piece
+                    [ps_dst.serial_piece_number()]
+                .add_su_by_sq(&sq_dst, kikisu as i8);
 
                 // 先後別
-                ml_dto.get_search_part_mut().effect_count_by_phase[phase_to_num(&ps_dst.phase())]
-                    .add_su_by_sq(&sq_dst, kikisu as i8);
+                ml_universe_dto.get_search_part_mut().effect_count_by_phase
+                    [phase_to_num(&ps_dst.phase())]
+                .add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }
     }

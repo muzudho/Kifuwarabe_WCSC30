@@ -79,7 +79,8 @@ pub const MASU_0: umasu = 0;
 /// 指し手。打の場合のsrc
 pub const SS_SRC_DA: umasu = 0;
 
-#[derive(Clone, PartialEq, Eq, Hash)]
+/// Copy: 配列の要素の初期化時に使う☆（＾～＾）
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Square {
     /// 行番号。いわゆる段。上から 1, 2, 3 ...
     rank: i8,

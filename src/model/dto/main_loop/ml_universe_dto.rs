@@ -6,8 +6,8 @@ extern crate rand;
 use rand::Rng;
 
 use super::super::super::super::config::*;
-use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
+use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
@@ -573,13 +573,13 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     }
 
     // 入れた指し手の通り指すぜ☆（＾～＾）
-    pub fn do_ss(&mut self, move3: &MLMovementDto, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn do_ss(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
-        self.sp_dto.moves_history[ply as usize] = (*move3).clone();
+        self.sp_dto.set_current_movement(movement);
         let cap;
         {
-            cap = self.sp_dto.do_move(move3, speed_of_light);
+            cap = self.sp_dto.do_move(movement, speed_of_light);
         }
         self.sp_dto.set_cap(ply as usize, cap);
 

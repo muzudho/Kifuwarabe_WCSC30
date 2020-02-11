@@ -23,7 +23,7 @@ use controller::movement_generation::mg_controller::*;
 use controller::search_part::sp_controller::*;
 use controller::title_screen::ts_controller::*;
 use controller::unit_test::ut_controller::*;
-use model::dto::main_loop::ml_dto::*;
+use model::dto::main_loop::ml_universe_dto::*;
 use model::vo::main_loop::ml_speed_of_light_vo::*;
 use model::vo::other_part::op_constants_vo::*;
 use model::vo::other_part::op_misc_vo::*;
@@ -36,16 +36,16 @@ fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
     let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::default();
     // 宇宙
-    let mut ml_dto: MLDto = MLDto::default();
-    ml_dto.big_bang();
+    let mut ml_universe_dto: MLDto = MLDto::default();
+    ml_universe_dto.big_bang();
 
     // [Ctrl]+[C] で強制終了
     loop {
-        let mut line: String = if ml_dto.is_empty_command() {
+        let mut line: String = if ml_universe_dto.is_empty_command() {
             String::new()
         } else {
             // バッファーに溜まっていれば☆（＾～＾）
-            ml_dto.pop_command()
+            ml_universe_dto.pop_command()
         };
 
         // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
@@ -67,26 +67,26 @@ fn main() {
 
         if len == 0 {
             g_writeln("len==0");
-            if !&ml_dto.dialogue_mode {
+            if !&ml_universe_dto.dialogue_mode {
                 // 空打ち１回目なら、対話モードへ☆（＾～＾）
-                ml_dto.dialogue_mode = true;
+                ml_universe_dto.dialogue_mode = true;
                 // タイトル表示
                 // １画面は２５行だが、最後の２行は開けておかないと、
                 // カーソルが２行分場所を取るんだぜ☆（＾～＾）
                 hyoji_title();
             } else {
                 // 局面表示
-                let s = &ml_dto.kaku_ky(&KyNums::Current);
+                let s = &ml_universe_dto.kaku_ky(&KyNums::Current);
                 g_writeln(&s);
             }
         // 文字数の長いものからチェック
         } else if 9 < len && &line[starts..10] == "usinewgame" {
-            ml_dto.clear_all_positions();
+            ml_universe_dto.clear_all_positions();
         } else if line.starts_with("position") {
             // positionコマンドの読取を丸投げ
             controller::main_loop::ml_usi_controller::read_position(
                 &line,
-                &mut ml_dto,
+                &mut ml_universe_dto,
                 &speed_of_light,
             );
         } else if 6 < len && &line[starts..7] == "isready" {
@@ -102,11 +102,11 @@ fn main() {
         } else if 1 < len && &line[starts..2] == "go" {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = search17(&mut ml_dto, &speed_of_light);
+            let bestmove = search17(&mut ml_universe_dto, &speed_of_light);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove));
         } else {
-            parse_extend_command(&line, starts, &mut ml_dto, &speed_of_light);
+            parse_extend_command(&line, starts, &mut ml_universe_dto, &speed_of_light);
         }
     } //loop
 }
@@ -115,7 +115,7 @@ fn main() {
 fn parse_extend_command(
     line: &str,
     mut starts: usize,
-    ml_dto: &mut MLDto,
+    ml_universe_dto: &mut MLDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 文字数を調べようぜ☆（＾～＾）
@@ -126,22 +126,22 @@ fn parse_extend_command(
         // 駒の動きの移動元として有りえる方角
         let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
         g_writeln(&format!("{}のムーブ元", &piece_type));
-        ml_dto.hyoji_kmugoki_dir(*piece_type, speed_of_light);
+        ml_universe_dto.hyoji_kmugoki_dir(*piece_type, speed_of_light);
         g_writeln(""); //改行
     } else if 6 < len && &line[starts..7] == "kmugoki" {
         g_writeln("6<len kmugoki");
         // 駒の動きを出力
-        ml_dto.hyoji_kmugoki(&speed_of_light);
+        ml_universe_dto.hyoji_kmugoki(&speed_of_light);
     } else if 5 < len && &line[starts..6] == "hirate" {
         // 平手初期局面
         controller::main_loop::ml_usi_controller::read_position(
             &POS_1.to_string(),
-            ml_dto,
+            ml_universe_dto,
             &speed_of_light,
         );
     } else if 5 < len && &line[starts..6] == "kikisu" {
         // 利き数表示
-        controller::main_loop::ml_main_controller::cmd_kikisu(&ml_dto, &speed_of_light);
+        controller::main_loop::ml_main_controller::cmd_kikisu(&ml_universe_dto, &speed_of_light);
     } else if 5 < len && &line[starts..6] == "random_piece_type" {
         g_writeln("5<len random_piece_type");
         // 乱駒種類
@@ -151,7 +151,7 @@ fn parse_extend_command(
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
         get_potential_movement(
-            &ml_dto.get_search_part(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |movement_hash| {
                 ss_potential_hashset.insert(movement_hash);
@@ -183,11 +183,11 @@ fn parse_extend_command(
         }
     } else if 3 < len && &line[starts..4] == "hash" {
         g_writeln("局面ハッシュ表示");
-        let s = ml_dto.get_all_position_hash_text();
+        let s = ml_universe_dto.get_all_position_hash_text();
         g_writeln(&s);
     } else if 3 < len && &line[starts..4] == "kifu" {
         g_writeln("棋譜表示");
-        let s = ml_dto.get_search_part().get_moves_history_text();
+        let s = ml_universe_dto.get_search_part().get_moves_history_text();
         g_writeln(&s);
     } else if 3 < len && &line[starts..4] == "rand" {
         g_writeln("3<len rand");
@@ -195,13 +195,13 @@ fn parse_extend_command(
         let secret_number = rand::thread_rng().gen_range(1, 101); //1~100
         g_writeln(&format!("乱数={}", secret_number));
     } else if 3 < len && &line[starts..4] == "same" {
-        let count = ml_dto.count_same_ky();
+        let count = ml_universe_dto.count_same_ky();
         g_writeln(&format!("同一局面調べ count={}", count));
     } else if 3 < len && &line[starts..4] == "undo" {
-        if !ml_dto.undo_ss(&speed_of_light) {
+        if !ml_universe_dto.undo_ss(&speed_of_light) {
             g_writeln(&format!(
                 "ply={} を、これより戻せません",
-                ml_dto.get_search_part().get_ply()
+                ml_universe_dto.get_search_part().get_ply()
             ));
         }
     } else if 8 < len && &line[starts..9] == "unit-test" {
@@ -212,26 +212,26 @@ fn parse_extend_command(
         }
         // いろいろな動作テスト
         g_writeln(&format!("unit-test starts={} len={}", starts, len));
-        unit_test(&line, &mut starts, len, ml_dto, &speed_of_light);
-    //g_writeln( &ml_dto.pop_command() );
+        unit_test(&line, &mut starts, len, ml_universe_dto, &speed_of_light);
+    //g_writeln( &ml_universe_dto.pop_command() );
     } else if 2 < len && &line[starts..3] == "do " {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える
-        if read_sasite(&line, &mut starts, len, ml_dto) {
+        if read_sasite(&line, &mut starts, len, ml_universe_dto) {
             // 手目を戻す
-            ml_dto.get_search_part_mut().add_ply(-1);
+            ml_universe_dto.get_search_part_mut().add_ply(-1);
             // 入っている指し手の通り指すぜ☆（＾～＾）
-            let ply = ml_dto.get_search_part().get_ply();
-            let ss = ml_dto.get_search_part().get_moves_history()[ply as usize].clone();
-            ml_dto.do_ss(&ss, speed_of_light);
+            let ply = ml_universe_dto.get_search_part().get_ply();
+            let ss = ml_universe_dto.get_search_part().get_moves_history()[ply as usize].clone();
+            ml_universe_dto.do_ss(&ss, speed_of_light);
         }
     } else if 2 < len && &line[starts..3] == "pos0" {
         // 初期局面表示
-        let s = ml_dto.kaku_ky(&KyNums::Start);
+        let s = ml_universe_dto.kaku_ky(&KyNums::Start);
         g_writeln(&s);
     } else if 1 < len && &line[starts..2] == "pos" {
         // 現局面表示
-        let s = &ml_dto.kaku_ky(&KyNums::Current);
+        let s = &ml_universe_dto.kaku_ky(&KyNums::Current);
         g_writeln(&s);
     }
 }
