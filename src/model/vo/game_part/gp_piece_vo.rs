@@ -4,7 +4,7 @@
 //! 先後付き駒
 //!
 
-use super::super::other_part::op_phase_vo::*;
+use super::gp_phase_vo::*;
 use super::gp_piece_type_vo::*;
 use std::fmt;
 
@@ -121,7 +121,7 @@ impl fmt::Display for GPPieceVo {
 impl GPPieceVo {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
-    pub fn from_phase_piece_type(phase: &Phase, piece_type: GPPieceTypeVo) -> Self {
+    pub fn from_phase_and_piece_type(phase: &Phase, piece_type: GPPieceTypeVo) -> Self {
         use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         use super::gp_piece_vo::GPPieceVo::*;
         match *phase {

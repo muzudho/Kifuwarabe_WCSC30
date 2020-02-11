@@ -8,6 +8,7 @@ use rand::Rng;
 use super::super::super::super::config::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
+use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
@@ -17,7 +18,6 @@ use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::super::super::dto::search_part::sp_earth_dto::*;
@@ -638,7 +638,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use super::super::super::vo::other_part::op_phase_vo::Phase::*;
+        use super::super::super::vo::game_part::gp_phase_vo::Phase::*;
         match self.sp_earth_dto.get_phase(&Person::Friend) {
             First => hash ^= self.get_position_hash_seed().phase[PHASE_FIRST],
             Second => hash ^= self.get_position_hash_seed().phase[PHASE_SECOND],

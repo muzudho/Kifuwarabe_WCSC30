@@ -3,12 +3,12 @@ use super::super::super::super::controller::search_part::sp_number_board_control
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
+use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::*;
-use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_ply_vo::*;
 
 pub struct SPEarthDto {
@@ -164,7 +164,7 @@ impl SPEarthDto {
         // 移動先の駒
         let piece186 = if movement.source.to_umasu() == SS_SRC_DA {
             // 打なら
-            let piece679 = GPPieceVo::from_phase_piece_type(phase, movement.drop);
+            let piece679 = GPPieceVo::from_phase_and_piece_type(phase, movement.drop);
             // 自分の持ち駒を増やす
             //let mg = km_to_mg(km);
             //self.add_hand(mg,1);
@@ -234,7 +234,7 @@ impl SPEarthDto {
             let piece144 = if movement.source.to_umasu() == SS_SRC_DA {
                 // 打なら
                 // 自分の持ち駒を減らす
-                let piece734 = GPPieceVo::from_phase_piece_type(&phase, movement.drop);
+                let piece734 = GPPieceVo::from_phase_and_piece_type(&phase, movement.drop);
                 self.current_position
                     .add_hand(&piece734, -1, speed_of_light);
                 piece734

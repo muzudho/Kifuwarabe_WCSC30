@@ -1,4 +1,4 @@
-use super::super::other_part::op_phase_vo::Phase;
+use super::gp_phase_vo::Phase;
 use super::gp_piece_type_vo::GPPieceTypeVo;
 use super::gp_piece_vo::GPPieceVo;
 
@@ -26,8 +26,8 @@ pub struct GPPieceStructVo {
 impl GPPieceStructVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: GPPieceVo) -> Self {
+        use super::super::game_part::gp_phase_vo::Phase::*;
         use super::super::game_part::gp_piece_vo::GPPieceVo::*;
-        use super::super::other_part::op_phase_vo::Phase::*;
         use super::gp_piece_type_vo::GPPieceTypeVo::*;
         match p {
             King1 => GPPieceStructVo {

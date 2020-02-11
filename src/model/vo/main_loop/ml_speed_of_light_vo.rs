@@ -4,13 +4,13 @@
 //!
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
+use super::super::game_part::gp_phase_vo::Phase;
 use super::super::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::game_part::gp_piece_type_struct_vo::PieceTypeStructVo;
 use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
 use super::super::game_part::gp_piece_vo::GPPieceVo;
 use super::super::game_part::gp_piece_vo::GPPieceVo::*;
-use super::super::other_part::op_phase_vo::Phase;
 
 pub struct MLSpeedOfLightVo {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）

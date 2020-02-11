@@ -6,8 +6,8 @@
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::other_part::op_phase_vo::phase_to_num;
-use crate::model::vo::other_part::op_phase_vo::turn_phase;
+use crate::model::vo::game_part::gp_phase_vo::phase_to_num;
+use crate::model::vo::game_part::gp_phase_vo::turn_phase;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい

@@ -3,7 +3,7 @@
 //!
 
 extern crate rand;
-use crate::model::vo::other_part::op_phase_vo::phase_to_num;
+use crate::model::vo::game_part::gp_phase_vo::phase_to_num;
 use rand::Rng;
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;

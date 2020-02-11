@@ -9,12 +9,12 @@
 //!
 
 use super::super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
@@ -99,9 +99,7 @@ impl SPPositionDto {
         &self.square_of_king[phase_number]
     }
 
-    /**
-     * 歩が置いてあるか確認
-     */
+    /// 歩が置いてあるか確認
     pub fn exists_fu_by_phase_suji(
         &self,
         phase: &Phase,
@@ -128,7 +126,7 @@ impl SPPositionDto {
         self.board[sq.to_umasu()] = piece.clone();
 
         // 玉の位置を覚え直します。
-        use super::super::super::super::model::vo::other_part::op_phase_vo::Phase::*;
+        use super::super::super::super::model::vo::game_part::gp_phase_vo::Phase::*;
         match *piece {
             GPPieceVo::King1 => self.square_of_king[First as usize] = sq.clone(),
             GPPieceVo::King2 => self.square_of_king[Second as usize] = sq.clone(),
