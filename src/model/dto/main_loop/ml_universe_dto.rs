@@ -20,7 +20,7 @@ use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
-use super::super::super::dto::search_part::sp_dto::*;
+use super::super::super::dto::search_part::sp_earth_dto::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -79,9 +79,9 @@ pub fn g_writeln(s: &str) {
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
 pub struct PositionHashSeed {
     // 盤上の駒
-    pub km: [[u64; KM_LN]; BAN_SIZE],
+    pub km: [[u64; PIECE_LN]; BOARD_SIZE],
     // 持ち駒
-    pub mg: [[u64; MG_MAX]; KM_LN],
+    pub mg: [[u64; MG_MAX]; PIECE_LN],
     // 先後
     pub phase: [u64; PHASE_LN],
 }
@@ -99,7 +99,7 @@ pub struct MLDto {
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
     /// 探索部
-    sp_dto: SPDto,
+    sp_earth_dto: SPEarthDto,
 }
 
 impl Default for MLDto {
@@ -107,9 +107,9 @@ impl Default for MLDto {
         MLDto {
             position_hash_seed: PositionHashSeed {
                 // 盤上の駒
-                km: [[0; KM_LN]; BAN_SIZE],
+                km: [[0; PIECE_LN]; BOARD_SIZE],
                 // 持ち駒
-                mg: [[0; MG_MAX]; KM_LN],
+                mg: [[0; MG_MAX]; PIECE_LN],
                 // 先後
                 phase: [0; PHASE_LN],
             },
@@ -117,7 +117,7 @@ impl Default for MLDto {
             starting_position_hash: 0,
             dialogue_mode: false,
             vec_command: Vec::new(),
-            sp_dto: SPDto::default(),
+            sp_earth_dto: SPEarthDto::default(),
         }
     }
 }
@@ -129,15 +129,15 @@ impl MLDto {
         // 局面ハッシュの種をリセット
 
         // 盤上の駒
-        for i_ms in MASU_0..BAN_SIZE {
-            for i_km in 0..KM_LN {
+        for i_ms in MASU_0..BOARD_SIZE {
+            for i_km in 0..PIECE_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
                 self.get_position_hash_seed_mut().km[i_ms][i_km] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 持ち駒
-        for i_km in 0..KM_LN {
+        for i_km in 0..PIECE_LN {
             for i_mg in 0..MG_MAX {
                 self.get_position_hash_seed_mut().mg[i_km][i_mg] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
@@ -163,20 +163,20 @@ impl MLDto {
     /// 開始局面を、現局面にコピーします
     pub fn copy_starting_position_to_current_position(&mut self) {
         // 盤上の駒。
-        for i_ms in 0..BAN_SIZE {
+        for i_ms in 0..BOARD_SIZE {
             let i_sq = Square::from_umasu(i_ms);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
             let piece = self.starting_position.get_piece_by_square(&i_sq);
-            self.sp_dto
+            self.sp_earth_dto
                 .get_current_position_mut()
                 .set_piece_by_square(&i_sq, piece);
         }
 
         // 持ち駒
-        self.sp_dto.get_current_position_mut().mg[..KM_LN]
-            .clone_from_slice(&self.starting_position.mg[..KM_LN]);
+        self.sp_earth_dto.get_current_position_mut().hand[..PIECE_LN]
+            .clone_from_slice(&self.starting_position.hand[..PIECE_LN]);
         /*
-        for i_mg in 0..KM_LN {
+        for i_mg in 0..PIECE_LN {
             self.get_search_part_mut().get_current_position_mut().mg[i_mg] =
                 self.get_starting_position().mg[i_mg];
         }
@@ -207,11 +207,11 @@ impl MLDto {
         self.starting_position_hash = val;
     }
 
-    pub fn get_search_part_mut(&mut self) -> &mut SPDto {
-        &mut self.sp_dto
+    pub fn get_search_part_mut(&mut self) -> &mut SPEarthDto {
+        &mut self.sp_earth_dto
     }
-    pub fn get_search_part(&self) -> &SPDto {
-        &self.sp_dto
+    pub fn get_search_part(&self) -> &SPEarthDto {
+        &self.sp_earth_dto
     }
 
     /* **********************
@@ -237,10 +237,10 @@ impl MLDto {
             .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
     pub fn set_starting_position_hand_piece(&mut self, km: GPPieceVo, maisu: i8) {
-        self.get_starting_position_mut().mg[km as usize] = maisu;
+        self.get_starting_position_mut().hand[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStructVo) -> Person {
-        if &piece_vo.phase() == &self.sp_dto.get_phase(&Person::Friend) {
+        if &piece_vo.phase() == &self.sp_earth_dto.get_phase(&Person::Friend) {
             Person::Friend
         } else {
             Person::Opponent
@@ -268,7 +268,7 @@ impl MLDto {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.sp_dto.get_phase(&Person::Friend) {
+        if let Phase::First = self.sp_earth_dto.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
@@ -279,7 +279,7 @@ impl MLDto {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.sp_dto.get_phase(&Person::Friend) {
+        if let Phase::First = self.sp_earth_dto.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
@@ -294,7 +294,7 @@ impl MLDto {
      */
     pub fn kaku_ky(&self, num: &KyNums) -> String {
         let cur_pos = match *num {
-            KyNums::Current => self.sp_dto.get_current_position(),
+            KyNums::Current => self.sp_earth_dto.get_current_position(),
             KyNums::Start => self.get_starting_position(),
         };
 
@@ -406,23 +406,23 @@ impl MLDto {
             cur_pos.get_piece_by_square(&Square::from_umasu(81)),
             cur_pos.get_piece_by_square(&Square::from_umasu(91)),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            cur_pos.mg[GPPieceVo::Rook1 as usize],
-            cur_pos.mg[GPPieceVo::Bishop1 as usize],
-            cur_pos.mg[GPPieceVo::Gold1 as usize],
-            cur_pos.mg[GPPieceVo::Silver1 as usize],
-            cur_pos.mg[GPPieceVo::Knight1 as usize],
-            cur_pos.mg[GPPieceVo::Lance1 as usize],
-            cur_pos.mg[GPPieceVo::Pawn1 as usize],
+            cur_pos.hand[GPPieceVo::Rook1 as usize],
+            cur_pos.hand[GPPieceVo::Bishop1 as usize],
+            cur_pos.hand[GPPieceVo::Gold1 as usize],
+            cur_pos.hand[GPPieceVo::Silver1 as usize],
+            cur_pos.hand[GPPieceVo::Knight1 as usize],
+            cur_pos.hand[GPPieceVo::Lance1 as usize],
+            cur_pos.hand[GPPieceVo::Pawn1 as usize],
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            cur_pos.mg[GPPieceVo::Rook2 as usize],
-            cur_pos.mg[GPPieceVo::Bishop2 as usize],
-            cur_pos.mg[GPPieceVo::Gold2 as usize],
-            cur_pos.mg[GPPieceVo::Silver2 as usize],
-            cur_pos.mg[GPPieceVo::Knight2 as usize],
-            cur_pos.mg[GPPieceVo::Lance2 as usize],
-            cur_pos.mg[GPPieceVo::Pawn2 as usize],
+            cur_pos.hand[GPPieceVo::Rook2 as usize],
+            cur_pos.hand[GPPieceVo::Bishop2 as usize],
+            cur_pos.hand[GPPieceVo::Gold2 as usize],
+            cur_pos.hand[GPPieceVo::Silver2 as usize],
+            cur_pos.hand[GPPieceVo::Knight2 as usize],
+            cur_pos.hand[GPPieceVo::Lance2 as usize],
+            cur_pos.hand[GPPieceVo::Pawn2 as usize],
             self.get_search_part().get_ply(),
-            self.sp_dto.get_phase(&Person::Friend),
+            self.sp_earth_dto.get_phase(&Person::Friend),
             self.count_same_ky()
         )
     }
@@ -438,10 +438,10 @@ impl MLDto {
     ) -> String {
         let nb = match *phase {
             Phase::None => {
-                &self.sp_dto.effect_count_by_piece
+                &self.sp_earth_dto.effect_count_by_piece
                     [speed_of_light.get_piece_struct_vo(pc).serial_piece_number()]
             }
-            _ => &self.sp_dto.effect_count_by_phase[phase_to_num(&phase)],
+            _ => &self.sp_earth_dto.effect_count_by_phase[phase_to_num(&phase)],
         };
 
         // 数盤表示
@@ -576,12 +576,12 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn do_ss(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
-        self.sp_dto.set_current_movement(movement);
+        self.sp_earth_dto.set_current_movement(movement);
         let cap;
         {
-            cap = self.sp_dto.do_move(movement, speed_of_light);
+            cap = self.sp_earth_dto.do_move(movement, speed_of_light);
         }
-        self.sp_dto.set_cap(ply as usize, cap);
+        self.sp_earth_dto.set_cap(ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash(speed_of_light);
@@ -595,9 +595,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
-            let phase = self.sp_dto.get_phase(&Person::Friend);
-            let ss = &self.sp_dto.get_move().clone();
-            self.sp_dto.undo_move(&phase, ss, speed_of_light);
+            let phase = self.sp_earth_dto.get_phase(&Person::Friend);
+            let ss = &self.sp_earth_dto.get_move().clone();
+            self.sp_earth_dto.undo_move(&phase, ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -609,7 +609,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn remake_visions(&mut self) {
         for phase in PHASE_ARRAY.iter() {
             // 全部忘れる☆（＾～＾）
-            self.sp_dto.vision_tree_by_phase[phase_to_num(phase)].clear();
+            self.sp_earth_dto.vision_tree_by_phase[phase_to_num(phase)].clear();
         }
     }
     */
@@ -639,7 +639,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
         // 手番ハッシュ
         use super::super::super::vo::other_part::op_phase_vo::Phase::*;
-        match self.sp_dto.get_phase(&Person::Friend) {
+        match self.sp_earth_dto.get_phase(&Person::Friend) {
             First => hash ^= self.get_position_hash_seed().phase[PHASE_FIRST],
             Second => hash ^= self.get_position_hash_seed().phase[PHASE_SECOND],
             _ => {}
@@ -684,7 +684,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     /*
     // 相手の　玉　の位置を覚えます。
     pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
-        self.sp_dto
+        self.sp_earth_dto
             .memory_opponent_king(&phase, &opponent_phase);
     }
     */
