@@ -6,9 +6,9 @@ use super::super::super::controller::movement_generation::mg_sub_part_controller
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_vo::*;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::*;
-use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
 /// 盤上の利き升調べ
@@ -41,7 +41,7 @@ pub fn update_effect_count(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeed
                 make_no_promotion_source_by_square_and_piece(
                     &sq_dst,
                     &ps_dst,
-                    &ml_universe_dto.get_search_part(),
+                    &ml_universe_dto.get_search_part().get_current_position(),
                     &speed_of_light,
                     |square| {
                         mv_src_hashset.insert(square);
@@ -50,7 +50,7 @@ pub fn update_effect_count(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeed
                 make_before_promotion_source_by_square_piece(
                     &sq_dst,
                     &ps_dst,
-                    &ml_universe_dto.get_search_part(),
+                    &ml_universe_dto.get_search_part().get_current_position(),
                     &speed_of_light,
                     |square| {
                         mv_src_hashset.insert(square);

@@ -5,8 +5,8 @@ use super::super::super::super::controller::common_use::cu_asserts_controller::*
 use super::super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
+use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
-use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use std::fmt;
 
 /// 指し手

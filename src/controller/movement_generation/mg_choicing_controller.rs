@@ -13,10 +13,10 @@ use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::model::vo::game_part::gp_movement_vo::*;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_ply_vo::*;
-use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
@@ -156,7 +156,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         make_no_promotion_source_by_phase_square(
             &ml_universe_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                                     // 指定の升
-            &ml_universe_dto.get_search_part(),
+            &ml_universe_dto.get_search_part().get_current_position(),
             &speed_of_light,
             |square| {
                 attackers.insert(square);
@@ -165,7 +165,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         make_before_promotion_source_by_phase_square(
             &ml_universe_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                                     // 指定の升
-            &ml_universe_dto.get_search_part(),
+            &ml_universe_dto.get_search_part().get_current_position(),
             &speed_of_light,
             |square| {
                 attackers.insert(square);

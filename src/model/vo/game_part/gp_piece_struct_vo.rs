@@ -1,6 +1,6 @@
-use super::super::game_part::gp_piece_vo::GPPieceVo;
 use super::super::other_part::op_phase_vo::Phase;
 use super::gp_piece_type_vo::GPPieceTypeVo;
+use super::gp_piece_vo::GPPieceVo;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？

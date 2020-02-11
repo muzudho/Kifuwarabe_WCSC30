@@ -6,7 +6,7 @@ use rand::Rng;
 
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::model::vo::other_part::op_square_vo::*;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 
 /**
  * ランダムに真偽を返す。

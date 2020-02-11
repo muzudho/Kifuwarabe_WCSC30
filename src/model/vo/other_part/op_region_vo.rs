@@ -2,7 +2,7 @@
 //! 陣
 //!
 
-use super::op_square_vo::*;
+use super::super::game_part::gp_square_vo::*;
 
 /// 先手陣
 pub struct SenteJin {}

@@ -10,9 +10,9 @@ use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::game_part::gp_square_and_piece_vo::GPSquareAndPieceVo;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 
 ///
@@ -61,7 +61,7 @@ pub fn get_potential_movement<F1>(
                 make_destination_by_square_piece(
                     &source_of_sqp,
                     false, // 成らず
-                    &sp_earth_dto,
+                    &sp_earth_dto.get_current_position(),
                     &speed_of_light,
                     &mut dst_hashset,
                 );
@@ -86,7 +86,7 @@ pub fn get_potential_movement<F1>(
                 make_destination_by_square_piece(
                     &source_of_sqp,
                     true, // 成り
-                    &sp_earth_dto,
+                    &sp_earth_dto.get_current_position(),
                     &speed_of_light,
                     &mut dst_hashset,
                 );
@@ -131,15 +131,14 @@ pub fn get_potential_movement<F1>(
                         &sp_earth_dto.get_phase(&Person::Friend),
                         *piece_type_motigoma,
                     );
-                    let pc_motigoma = ps_motigoma.piece();
+                    let hand_piece = ps_motigoma.piece();
                     if 0 < sp_earth_dto
                         .get_current_position()
-                        .get_hand(pc_motigoma, speed_of_light)
+                        .get_hand(hand_piece, speed_of_light)
                     {
                         // 駒を持っていれば
                         make_drop_piece_type_by_square_piece(
-                            &destination_of_sqp.square,
-                            pc_motigoma,
+                            &GPSquareAndPieceVo::new(&destination_of_sqp.square, hand_piece),
                             &sp_earth_dto.get_current_position(),
                             &speed_of_light,
                             |piece_type_hash| {
@@ -207,7 +206,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     make_no_promotion_source_by_square_and_piece(
         &sq_dst,
         &ps_dst,
-        &sp_earth_dto,
+        &sp_earth_dto.get_current_position(),
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -233,7 +232,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     make_before_promotion_source_by_square_piece(
         sq_dst,
         &ps_dst,
-        &sp_earth_dto,
+        &sp_earth_dto.get_current_position(),
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -292,8 +291,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 
     let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
     make_drop_piece_type_by_square_piece(
-        &sq_dst,
-        piece_dst,
+        &GPSquareAndPieceVo::new(&sq_dst, piece_dst),
         &sp_earth_dto.get_current_position(),
         &speed_of_light,
         |piece_type_hash| {

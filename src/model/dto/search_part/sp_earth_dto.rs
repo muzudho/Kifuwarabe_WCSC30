@@ -5,11 +5,11 @@ use super::super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
+use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::*;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_ply_vo::*;
-use super::super::super::super::model::vo::other_part::op_square_vo::*;
 
 pub struct SPEarthDto {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）

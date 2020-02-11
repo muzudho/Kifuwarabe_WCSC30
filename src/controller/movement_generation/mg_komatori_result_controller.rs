@@ -13,9 +13,9 @@ use super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
-use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 use std::fmt;
 

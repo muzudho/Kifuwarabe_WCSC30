@@ -13,13 +13,13 @@ use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceT
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
+use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_misc_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
-use super::super::super::super::model::vo::other_part::op_square_vo::*;
 use super::super::super::dto::search_part::sp_earth_dto::*;
 use std::fs::File;
 use std::io::Write;

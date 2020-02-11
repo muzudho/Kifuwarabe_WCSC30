@@ -4,17 +4,16 @@
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::common_use::cu_conv_controller::*;
-use super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::game_part::gp_square_and_piece_vo::*;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
 use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
-use super::super::super::model::vo::other_part::op_square_vo::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
@@ -36,7 +35,7 @@ use std::hash::BuildHasher;
 pub fn make_no_promotion_source_by_square_and_piece<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_earth_dto: &SPEarthDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -74,7 +73,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_east(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -83,7 +82,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_west_east(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -96,7 +95,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_north_east(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -105,7 +104,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_north_east(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -116,7 +115,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_north_north_east(
                     square_dst,
                     ps_dst,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -128,7 +127,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_north(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -137,7 +136,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_north(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -148,7 +147,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_north_north_west(
                     square_dst,
                     ps_dst,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -160,7 +159,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_north_west(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -169,7 +168,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_north_west(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -182,7 +181,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_west(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -191,7 +190,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_west(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -204,7 +203,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_south_west(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -213,7 +212,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_south_west(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -224,7 +223,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_south_south_west(
                     square_dst,
                     ps_dst,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -236,7 +235,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_south(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -245,7 +244,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_south(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -256,7 +255,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_south_south_east(
                     square_dst,
                     ps_dst,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -268,7 +267,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_south_east(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -277,7 +276,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_south_east(
                         square_dst,
                         ps_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -753,7 +752,7 @@ fn make_no_promotion_source_by_piece_to_south_east<F1>(
 pub fn make_before_promotion_source_by_square_piece<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_earth_dto: &SPEarthDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -768,6 +767,15 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
         return; // 成り駒でないなら、成りの動きをしていない
     }
 
+    // 例えば移動先の駒種類が「ぱひ」なら、「ぱひ」が動いた可能性の他に、
+    // 「ひ」が動いたのかもしれない。
+    // 「ぱひ」は、敵陣の１～３段目にいて、動きが北だった場合、元が「ひ」の可能性がある。
+    //
+    // 成る前に戻れない駒は、成ったかどうかを考えなくていいぜ☆（＾～＾）
+    if !ps_dst.can_demote() {
+        return;
+    }
+
     // +--------------------+
     // | 移動前は成る前の駒 |
     // +--------------------+
@@ -779,15 +787,6 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
         .get_piece_struct_vo_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
         .piece();
     let square_dst_piece_src = GPSquareAndPieceVo::new(square_dst, piece_src);
-
-    // 例えば移動先の駒種類が「ぱひ」なら、「ぱひ」が動いた可能性の他に、
-    // 「ひ」が動いたのかもしれない。
-    // 「ぱひ」は、敵陣の１～３段目にいて、動きが北だった場合、元が「ひ」の可能性がある。
-    //
-    // 成る前に戻れない駒は、成ったかどうかを考えなくていいぜ☆（＾～＾）
-    if !ps_dst.can_demote() {
-        return;
-    }
 
     let piece_type_narumae_num = speed_of_light
         .get_piece_type_struct_vo_from_piece(ps_dst.demote())
@@ -813,7 +812,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長東
                     make_before_promotion_source_sliding_to_east(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -821,7 +820,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 西東
                     make_before_promotion_source_to_west_east(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -833,7 +832,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長北東
                     make_before_promotion_source_sliding_to_north_east(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -841,7 +840,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 北東
                     make_before_promotion_source_to_north_east(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -851,7 +850,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 北北東
                 make_before_promotion_source_to_north_north_east(
                     &square_dst_piece_src,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -862,7 +861,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長北
                     make_before_promotion_source_sliding_to_north(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -870,7 +869,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 北
                     make_before_promotion_source_to_north(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -880,7 +879,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 北北西
                 make_before_promotion_source_to_north_north_west(
                     &square_dst_piece_src,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -891,7 +890,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長北西
                     make_before_promotion_source_sliding_to_north_west(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -899,7 +898,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 北西
                     make_before_promotion_source_to_north_west(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -911,7 +910,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長西
                     make_before_promotion_source_sliding_to_west(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -919,7 +918,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 西
                     make_before_promotion_source_to_west(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -931,7 +930,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長南西
                     make_before_promotion_source_sliding_to_south_west(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -939,7 +938,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 南西
                     make_before_promotion_source_to_south_west(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -949,7 +948,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 南南西
                 make_before_promotion_source_to_south_south_west(
                     &square_dst_piece_src,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -960,7 +959,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長南
                     make_before_promotion_source_sliding_to_south(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -968,7 +967,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 南
                     make_before_promotion_source_to_south(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -978,7 +977,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 南南東
                 make_before_promotion_source_to_south_south_east(
                     &square_dst_piece_src,
-                    sp_earth_dto.get_current_position(),
+                    current_position,
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -989,7 +988,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長南東
                     make_before_promotion_source_sliding_to_south_east(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -997,7 +996,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 南東
                     make_before_promotion_source_to_south_east(
                         &square_dst_piece_src,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1414,17 +1413,19 @@ fn make_before_promotion_source_to_south_east<F1>(
 ///
 /// そこに打てる駒種類を返す。
 pub fn make_drop_piece_type_by_square_piece<F1>(
-    square_dst: &Square,
-    piece_dst: &GPPieceVo,
+    destination_sqp: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_piece_type_hash: F1,
 ) where
     F1: FnMut(usize),
 {
-    assert_banjo_sq(&square_dst, "make_drop_piece_type_by_square_piece");
+    assert_banjo_sq(
+        &destination_sqp.square,
+        "make_drop_piece_type_by_square_piece",
+    );
 
-    let ps_dst = speed_of_light.get_piece_struct_vo(piece_dst);
+    let ps_dst = speed_of_light.get_piece_struct_vo(&destination_sqp.piece);
     let piece_type_dst = ps_dst.piece_type();
     if !speed_of_light
         .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
@@ -1436,7 +1437,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     // +------------------------+
     // | 打ちたいところは空升か |
     // +------------------------+
-    let km_banjo = current_position.get_piece_by_square(square_dst);
+    let km_banjo = current_position.get_piece_by_square(&destination_sqp.square);
     match km_banjo {
         GPPieceVo::NonePiece => {}
         _ => {
@@ -1448,12 +1449,12 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     // +------------------+
     // | 持っている駒か？ |
     // +------------------+
-    if current_position.get_hand(piece_dst, speed_of_light) < 1 {
+    if current_position.get_hand(&destination_sqp.piece, speed_of_light) < 1 {
         return; // 持っていない駒は打てない
     }
 
     // 回転していない将棋盤から見た筋番号
-    let (suji, dy) = square_dst.to_file_rank();
+    let (suji, dy) = destination_sqp.square.to_file_rank();
     /*
      * Square は 将棋盤座標
      *
@@ -1464,14 +1465,14 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
      * 12 22 32
      * 11 21 31 ...
      */
-    let sq = kaiten180_sq_by_sq_phase(&square_dst, &ps_dst.phase());
+    let sq = kaiten180_sq_by_sq_phase(&destination_sqp.square, &ps_dst.phase());
 
     assert_banjo_sq(&sq, "Ｉnsert_da_piece_type_by_ms_km＜その２＞");
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
-    match piece_dst.clone() {
+    match destination_sqp.piece {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
             if dy < DAN_3 {
@@ -1535,11 +1536,10 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 /// km_src   : 移動元の駒
 /// ms_src   : 移動元の升
 /// to_nari  : 成りの手を生成するなら真
-/// sp_earth_dto       : 探索部
 pub fn make_destination_by_square_piece<S: BuildHasher>(
     source_sqp: &GPSquareAndPieceVo,
     to_nari: bool,
-    sp_earth_dto: &SPEarthDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     // result, result2 で入れ直しがあるのでむずかしい☆（＾～＾）
     // 成れない動きをあとで除外する☆（＾～＾）
@@ -1548,7 +1548,6 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
     assert_banjo_sq(&source_sqp.square, "make_destination_by_square_piece");
 
     // 移動先の筋、段、駒種類、駒種類インデックス
-    let (dx, dy) = source_sqp.square.to_file_rank();
     let ps_src = speed_of_light.get_piece_struct_vo(&source_sqp.piece);
     let piece_type_src = ps_src.piece_type();
 
@@ -1562,6 +1561,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
     {
         return; // 成れる駒でないなら、成りの動きはしない
     }
+
     let piece_type_num = speed_of_light
         .get_piece_type_struct_vo_from_piece_type(&piece_type_src)
         .serial_piece_number;
@@ -1585,22 +1585,20 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長東
                     make_destination_sliding_to_east(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 西東
                     make_destination_to_west_east(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
@@ -1609,34 +1607,31 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長北東
                     make_destination_sliding_to_north_east(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 北東
                     make_destination_to_north_east(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
             NNE => {
                 // 北北東
                 make_destination_sliding_to_north_north_east(
-                    dx,
-                    dy,
-                    sp_earth_dto.get_current_position(),
+                    &source_sqp.square,
+                    ps_src,
+                    current_position,
                     speed_of_light,
                     result,
-                    ps_src,
                 );
             }
             // 北
@@ -1644,34 +1639,31 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長北
                     make_destination_sliding_to_north(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 北
                     make_destination_to_north(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
             NNW => {
                 // 北北西
                 make_destination_to_north_north_west(
-                    dx,
-                    dy,
-                    sp_earth_dto.get_current_position(),
+                    &source_sqp.square,
+                    ps_src,
+                    current_position,
                     speed_of_light,
                     result,
-                    ps_src,
                 );
             }
             // 北西
@@ -1679,22 +1671,20 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長北西
                     make_destination_sliding_to_north_west(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 北西
                     make_destination_to_north_west(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
@@ -1703,22 +1693,20 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長西
                     make_destination_sliding_to_west(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 西
                     make_destination_to_west(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
@@ -1727,34 +1715,31 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長南西
                     make_destination_sliding_to_south_west(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 南西
                     make_destination_to_south_west(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
             SSW => {
                 // 南南西
                 make_destination_to_south_south_west(
-                    dx,
-                    dy,
-                    sp_earth_dto.get_current_position(),
+                    &source_sqp.square,
+                    ps_src,
+                    current_position,
                     speed_of_light,
                     result,
-                    ps_src,
                 );
             }
             // 南
@@ -1762,34 +1747,31 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長南
                     make_destination_sliding_to_south(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 南
                     make_destination_to_south(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
             SSE => {
                 // 南南東
                 make_destination_to_south_south_east(
-                    dx,
-                    dy,
-                    sp_earth_dto.get_current_position(),
+                    &source_sqp.square,
+                    ps_src,
+                    current_position,
                     speed_of_light,
                     result,
-                    ps_src,
                 );
             }
             // 南東
@@ -1797,22 +1779,20 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 if b {
                     // 長南東
                     make_destination_sliding_to_south_east(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 } else {
                     // 南東
                     make_destination_to_south_east(
-                        dx,
-                        dy,
-                        sp_earth_dto.get_current_position(),
+                        &source_sqp.square,
+                        ps_src,
+                        current_position,
                         speed_of_light,
                         result,
-                        ps_src,
                     );
                 }
             }
@@ -1877,16 +1857,15 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
 
 /// 移動先升、長い東
 fn make_destination_sliding_to_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_east in 1..9 {
-        if dx + i_east < SUJI_10 {
-            let sq_src = Square::from_file_rank(dx + i_east, dy);
+        if square_dst.file + i_east < SUJI_10 {
+            let sq_src = Square::from_file_rank(square_dst.file + i_east, square_dst.rank);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -1900,15 +1879,14 @@ fn make_destination_sliding_to_east<S: BuildHasher>(
 
 /// 移動先升、 西東
 fn make_destination_to_west_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if dx + 1 < SUJI_10 {
-        let sq_src = Square::from_file_rank(dx + 1, dy);
+    if square_dst.file + 1 < SUJI_10 {
+        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -1918,16 +1896,15 @@ fn make_destination_to_west_east<S: BuildHasher>(
 
 /// 移動先升、 長い北東
 fn make_destination_sliding_to_north_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_ne in 1..9 {
-        if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
-            let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
+        if square_dst.file + i_ne < SUJI_10 && square_dst.rank + i_ne < DAN_10 {
+            let sq_src = Square::from_file_rank(square_dst.file + i_ne, square_dst.rank + i_ne);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -1941,15 +1918,14 @@ fn make_destination_sliding_to_north_east<S: BuildHasher>(
 
 /// 移動先升、 北東
 fn make_destination_to_north_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
-        let sq_src = Square::from_file_rank(dx + 1, dy + 1);
+    if square_dst.file + 1 < SUJI_10 && square_dst.rank + 1 < DAN_10 {
+        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank + 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -1959,15 +1935,14 @@ fn make_destination_to_north_east<S: BuildHasher>(
 
 /// 移動先升、 北北東
 fn make_destination_sliding_to_north_north_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
-        let sq_src = Square::from_file_rank(dx + 1, dy + 2);
+    if square_dst.file + 1 < SUJI_10 && square_dst.rank + 2 < DAN_10 {
+        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank + 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -1977,16 +1952,15 @@ fn make_destination_sliding_to_north_north_east<S: BuildHasher>(
 
 /// 移動先升、 長い北
 fn make_destination_sliding_to_north<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_south in 1..9 {
-        if dy + i_south < DAN_10 {
-            let sq_src = Square::from_file_rank(dx, dy + i_south);
+        if square_dst.rank + i_south < DAN_10 {
+            let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank + i_south);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -2000,15 +1974,14 @@ fn make_destination_sliding_to_north<S: BuildHasher>(
 
 /// 移動先升、 北
 fn make_destination_to_north<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if dy + 1 < DAN_10 {
-        let sq_src = Square::from_file_rank(dx, dy + 1);
+    if square_dst.rank + 1 < DAN_10 {
+        let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank + 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2018,15 +1991,14 @@ fn make_destination_to_north<S: BuildHasher>(
 
 /// 移動先升、 北北西
 fn make_destination_to_north_north_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
-        let sq_src = Square::from_file_rank(dx - 1, dy + 2);
+    if SUJI_0 < square_dst.file - 1 && square_dst.rank + 2 < DAN_10 {
+        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank + 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2036,16 +2008,15 @@ fn make_destination_to_north_north_west<S: BuildHasher>(
 
 /// 移動先升、 長い北西
 fn make_destination_sliding_to_north_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_se in 1..9 {
-        if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
-            let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
+        if SUJI_0 < square_dst.file - i_se && square_dst.rank + i_se < DAN_10 {
+            let sq_src = Square::from_file_rank(square_dst.file - i_se, square_dst.rank + i_se);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -2059,15 +2030,14 @@ fn make_destination_sliding_to_north_west<S: BuildHasher>(
 
 /// 移動先升、 北西
 fn make_destination_to_north_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
-        let sq_src = Square::from_file_rank(dx - 1, dy + 1);
+    if square_dst.file - 1 > SUJI_0 && DAN_10 > square_dst.rank + 1 {
+        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank + 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2077,16 +2047,15 @@ fn make_destination_to_north_west<S: BuildHasher>(
 
 /// 移動先升、 長い西
 fn make_destination_sliding_to_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_east in 1..9 {
-        if SUJI_0 < dx - i_east {
-            let sq_src = Square::from_file_rank(dx - i_east, dy);
+        if SUJI_0 < square_dst.file - i_east {
+            let sq_src = Square::from_file_rank(square_dst.file - i_east, square_dst.rank);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -2100,15 +2069,14 @@ fn make_destination_sliding_to_west<S: BuildHasher>(
 
 /// 移動先升、 西
 fn make_destination_to_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if SUJI_0 < dx - 1 {
-        let sq_src = Square::from_file_rank(dx - 1, dy);
+    if SUJI_0 < square_dst.file - 1 {
+        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2118,16 +2086,15 @@ fn make_destination_to_west<S: BuildHasher>(
 
 /// 移動先升、 長い南西
 fn make_destination_sliding_to_south_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_ne in 1..9 {
-        if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
-            let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
+        if SUJI_0 < square_dst.file - i_ne && DAN_0 < square_dst.rank - i_ne {
+            let sq_src = Square::from_file_rank(square_dst.file - i_ne, square_dst.rank - i_ne);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -2141,15 +2108,14 @@ fn make_destination_sliding_to_south_west<S: BuildHasher>(
 
 /// 移動先升、 南西
 fn make_destination_to_south_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
-        let sq_src = Square::from_file_rank(dx - 1, dy - 1);
+    if SUJI_0 < square_dst.file - 1 && DAN_0 < square_dst.rank - 1 {
+        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank - 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2159,15 +2125,14 @@ fn make_destination_to_south_west<S: BuildHasher>(
 
 /// 移動先升、 南南西
 fn make_destination_to_south_south_west<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
-        let sq_src = Square::from_file_rank(dx - 1, dy - 2);
+    if SUJI_0 < square_dst.file - 1 && DAN_0 < square_dst.rank - 2 {
+        let sq_src = Square::from_file_rank(square_dst.file - 1, square_dst.rank - 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2177,16 +2142,15 @@ fn make_destination_to_south_south_west<S: BuildHasher>(
 
 /// 移動先升、 長い南
 fn make_destination_sliding_to_south<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_north in 1..9 {
-        if DAN_0 < dy - i_north {
-            let sq_src = Square::from_file_rank(dx, dy - i_north);
+        if DAN_0 < square_dst.file - i_north {
+            let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank - i_north);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -2200,15 +2164,14 @@ fn make_destination_sliding_to_south<S: BuildHasher>(
 
 /// 移動先升、 南
 fn make_destination_to_south<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if DAN_0 < dy - 1 {
-        let sq_src = Square::from_file_rank(dx, dy - 1);
+    if DAN_0 < square_dst.rank - 1 {
+        let sq_src = Square::from_file_rank(square_dst.file, square_dst.rank - 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2218,15 +2181,14 @@ fn make_destination_to_south<S: BuildHasher>(
 
 /// 移動先升、 南南東
 fn make_destination_to_south_south_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
-        let sq_src = Square::from_file_rank(dx + 1, dy - 2);
+    if square_dst.file + 1 < SUJI_10 && DAN_0 < square_dst.rank - 2 {
+        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank - 2);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2236,16 +2198,15 @@ fn make_destination_to_south_south_east<S: BuildHasher>(
 
 /// 移動先升、 長い南東
 fn make_destination_sliding_to_south_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
     for i_nw in 1..9 {
-        if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
-            let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
+        if square_dst.file + i_nw < SUJI_10 && DAN_0 < square_dst.rank - i_nw {
+            let sq_src = Square::from_file_rank(square_dst.file + i_nw, square_dst.rank - i_nw);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
@@ -2259,15 +2220,14 @@ fn make_destination_sliding_to_south_east<S: BuildHasher>(
 
 /// 移動先升、 南東
 fn make_destination_to_south_east<S: BuildHasher>(
-    dx: i8,
-    dy: i8,
+    square_dst: &Square,
+    ps_src: &PieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
-    ps_src: &PieceStructVo,
 ) {
-    if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
-        let sq_src = Square::from_file_rank(dx + 1, dy - 1);
+    if square_dst.file + 1 < SUJI_10 && DAN_0 < square_dst.rank - 1 {
+        let sq_src = Square::from_file_rank(square_dst.file + 1, square_dst.rank - 1);
         let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
@@ -2282,7 +2242,7 @@ fn remake_promotion_destination_rook_bishop_silver1<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if sq_src.get_rank() < DAN_4 && square_dst.get_rank() < DAN_4 {
+        if sq_src.rank < DAN_4 && square_dst.rank < DAN_4 {
             result2.insert(square_dst.clone());
         }
     }
@@ -2299,7 +2259,7 @@ fn remake_promotion_destination_knight_lance_pawn1<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if square_dst.get_rank() < DAN_4 {
+        if square_dst.rank < DAN_4 {
             result2.insert(square_dst.clone());
         }
     }
@@ -2317,7 +2277,7 @@ fn remake_promotion_destination_rook_bishop_silver2<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_6 < sq_src.get_rank() && DAN_6 < square_dst.get_rank() {
+        if DAN_6 < sq_src.rank && DAN_6 < square_dst.rank {
             result2.insert(square_dst.clone());
         }
     }
@@ -2334,7 +2294,7 @@ fn remake_promotion_destination_knight_lance_pawn2<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_6 < square_dst.get_rank() {
+        if DAN_6 < square_dst.rank {
             result2.insert(square_dst.clone());
         }
     }
@@ -2349,7 +2309,7 @@ fn remake_promotion_destination_knight_lance_pawn2<S: BuildHasher>(
 fn remake_forbidden_destination_knight1<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if square_dst.get_rank() < DAN_3 {
+        if square_dst.rank < DAN_3 {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -2365,7 +2325,7 @@ fn remake_forbidden_destination_knight1<S: BuildHasher>(result: &mut HashSet<Squ
 fn remake_forbidden_destination_lance_pawn1<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if square_dst.get_rank() < DAN_2 {
+        if square_dst.rank < DAN_2 {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -2381,7 +2341,7 @@ fn remake_forbidden_destination_lance_pawn1<S: BuildHasher>(result: &mut HashSet
 fn remake_forbidden_destination_knight2<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_7 < square_dst.get_rank() {
+        if DAN_7 < square_dst.rank {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -2397,7 +2357,7 @@ fn remake_forbidden_destination_knight2<S: BuildHasher>(result: &mut HashSet<Squ
 fn remake_forbidden_destination_lance_pawn2<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_8 < square_dst.get_rank() {
+        if DAN_8 < square_dst.rank {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -2423,7 +2383,7 @@ fn remake_forbidden_destination_lance_pawn2<S: BuildHasher>(result: &mut HashSet
 pub fn make_no_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_earth_dto: &SPEarthDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -2500,7 +2460,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2510,7 +2470,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2524,7 +2484,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_north_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2534,7 +2494,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_north_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2546,7 +2506,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_north_north_east(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2559,7 +2519,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_north(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2569,7 +2529,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_north(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2581,7 +2541,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_north_north_west(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2594,7 +2554,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_north_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2604,7 +2564,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_north_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2618,7 +2578,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2628,7 +2588,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2642,7 +2602,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_south_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2652,7 +2612,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_south_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2664,7 +2624,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_south_south_west(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2677,7 +2637,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_south(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2687,7 +2647,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_south(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2699,7 +2659,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_south_south_east(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2712,7 +2672,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_south_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2722,7 +2682,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_south_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3250,7 +3210,7 @@ fn make_no_promotion_source_by_phase_to_south_east<F1>(
 pub fn make_before_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_earth_dto: &SPEarthDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -3312,7 +3272,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3322,7 +3282,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3336,7 +3296,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_north_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3346,7 +3306,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_north_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3358,7 +3318,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_north_north_east(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3371,7 +3331,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_north(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3381,7 +3341,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_north(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3393,7 +3353,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_north_north_west(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3406,7 +3366,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_north_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3416,7 +3376,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_north_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3430,7 +3390,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3440,7 +3400,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3454,7 +3414,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_south_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3464,7 +3424,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_south_west(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3476,7 +3436,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_south_south_west(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3489,7 +3449,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_south(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3499,7 +3459,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_south(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3511,7 +3471,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_south_south_east(
                         phase,
                         square_dst,
-                        sp_earth_dto.get_current_position(),
+                        current_position,
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3524,7 +3484,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_south_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3534,7 +3494,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_south_east(
                             phase,
                             square_dst,
-                            sp_earth_dto.get_current_position(),
+                            current_position,
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,

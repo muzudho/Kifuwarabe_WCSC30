@@ -82,10 +82,11 @@ pub const SS_SRC_DA: umasu = 0;
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Square {
+    /// イミュータブルとして使えだぜ☆（＾～＾）それならアクセッサは要らないぜ☆（＾～＾）
     /// 行番号。いわゆる段。上から 1, 2, 3 ...
-    rank: i8,
+    pub rank: i8,
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...
-    file: i8,
+    pub file: i8,
 }
 impl Square {
     pub fn from_umasu(ms: umasu) -> Self {
@@ -104,13 +105,6 @@ impl Square {
         debug_assert!(p_in_ban(&p), "(204b)from_point x={},y={}", p.x, p.y);
 
         Square::from_umasu((p.x * 10 + p.y) as umasu)
-    }
-
-    pub fn get_file(&self) -> i8 {
-        self.file
-    }
-    pub fn get_rank(&self) -> i8 {
-        self.rank
     }
 
     pub fn to_umasu(&self) -> umasu {

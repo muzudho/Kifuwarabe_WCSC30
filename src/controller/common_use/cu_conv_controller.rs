@@ -3,10 +3,10 @@
 //!
 #![allow(dead_code)]
 use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::other_part::op_direction_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
-use super::super::super::model::vo::other_part::op_square_vo::*;
 
 /**********
  * 論理値 *

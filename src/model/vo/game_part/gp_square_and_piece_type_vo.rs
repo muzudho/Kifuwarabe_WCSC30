@@ -1,5 +1,5 @@
-use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::vo::other_part::op_square_vo::*;
+use super::gp_piece_type_vo::GPPieceTypeVo;
+use super::gp_square_vo::*;
 
 /// 升 × 駒種類
 pub struct GPSquareAndPieceTypeVo {

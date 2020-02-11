@@ -7,4 +7,3 @@ pub mod op_piece_direction_vo;
 pub mod op_piece_movement_vo;
 pub mod op_ply_vo;
 pub mod op_region_vo;
-pub mod op_square_vo;
