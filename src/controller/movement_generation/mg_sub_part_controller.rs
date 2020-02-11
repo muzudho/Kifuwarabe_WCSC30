@@ -72,216 +72,256 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
             E(b) => {
                 if b {
                     // 長東
-                    make_no_promotion_source_by_piece_sliding_to_east(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_east(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 東
-                    make_no_promotion_source_by_piece_to_east(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_east(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             // 北東
             NE(b) => {
                 if b {
                     // 長北東
-                    make_no_promotion_source_by_piece_sliding_to_north_east(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_north_east(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 北東
-                    make_no_promotion_source_by_piece_to_north_east(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_north_east(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             NNE => {
                 // 北北東
-                make_no_promotion_source_by_piece_to_north_north_east(
-                    square_dst,
-                    ps_dst,
-                    current_position,
-                    speed_of_light,
-                    &mut gets_square,
-                );
+                SquareScanner::next_to_north_north_east(square_dst, &mut |next_square| {
+                    make_no_promotion_source_by_piece_next(
+                        ps_dst,
+                        current_position,
+                        speed_of_light,
+                        &mut gets_square,
+                        next_square,
+                    )
+                });
             }
             // 北
             N(b) => {
                 if b {
                     // 長北
-                    make_no_promotion_source_by_piece_sliding_to_north(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_north(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 北
-                    make_no_promotion_source_by_piece_to_north(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_north(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             NNW => {
                 // 北北西
-                make_no_promotion_source_by_piece_to_north_north_west(
-                    square_dst,
-                    ps_dst,
-                    current_position,
-                    speed_of_light,
-                    &mut gets_square,
-                );
+                SquareScanner::next_to_north_north_west(square_dst, &mut |next_square| {
+                    make_no_promotion_source_by_piece_next(
+                        ps_dst,
+                        current_position,
+                        speed_of_light,
+                        &mut gets_square,
+                        next_square,
+                    )
+                });
             }
             // 北西
             NW(b) => {
                 if b {
                     // 長北西
-                    make_no_promotion_source_by_piece_sliding_to_north_west(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_north_west(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 北西
-                    make_no_promotion_source_by_piece_to_north_west(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_north_west(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             // 西
             W(b) => {
                 if b {
                     // 長西
-                    make_no_promotion_source_by_piece_sliding_to_west(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_west(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 西
-                    make_no_promotion_source_by_piece_to_west(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_west(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             // 南西
             SW(b) => {
                 if b {
                     // 長南西
-                    make_no_promotion_source_by_piece_sliding_to_south_west(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_south_west(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 南西
-                    make_no_promotion_source_by_piece_to_south_west(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_south_west(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             SSW => {
                 // 南南西
-                make_no_promotion_source_by_piece_to_south_south_west(
-                    square_dst,
-                    ps_dst,
-                    current_position,
-                    speed_of_light,
-                    &mut gets_square,
-                );
+                SquareScanner::next_to_south_south_west(square_dst, &mut |next_square| {
+                    make_no_promotion_source_by_piece_next(
+                        ps_dst,
+                        current_position,
+                        speed_of_light,
+                        &mut gets_square,
+                        next_square,
+                    )
+                });
             }
             // 南
             S(b) => {
                 if b {
                     // 長南
-                    make_no_promotion_source_by_piece_sliding_to_south(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_south(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 南
-                    make_no_promotion_source_by_piece_to_south(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_south(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             SSE => {
                 // 南南東
-                make_no_promotion_source_by_piece_to_south_south_east(
-                    square_dst,
-                    ps_dst,
-                    current_position,
-                    speed_of_light,
-                    &mut gets_square,
-                );
+                SquareScanner::next_to_south_south_east(square_dst, &mut |next_square| {
+                    make_no_promotion_source_by_piece_next(
+                        ps_dst,
+                        current_position,
+                        speed_of_light,
+                        &mut gets_square,
+                        next_square,
+                    )
+                });
             }
             // 南東
             SE(b) => {
                 if b {
                     // 長南東
-                    make_no_promotion_source_by_piece_sliding_to_south_east(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::for_each_south_east(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_sliding(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 } else {
                     // 南東
-                    make_no_promotion_source_by_piece_to_south_east(
-                        square_dst,
-                        ps_dst,
-                        current_position,
-                        speed_of_light,
-                        &mut gets_square,
-                    );
+                    SquareScanner::next_to_south_east(square_dst, &mut |next_square| {
+                        make_no_promotion_source_by_piece_next(
+                            ps_dst,
+                            current_position,
+                            speed_of_light,
+                            &mut gets_square,
+                            next_square,
+                        )
+                    });
                 }
             }
             Owari => break,
@@ -325,372 +365,40 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -
     true
 }
 
-// 成る前を含めない、長い東
-fn make_no_promotion_source_by_piece_sliding_to_east<F1>(
-    square_dst: &Square,
+// 成る前を含めない、長い利き
+fn make_no_promotion_source_by_piece_sliding<F1>(
     ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
-) where
+    next_square: Square,
+) -> bool
+where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            // ループを抜けるぜ☆（＾～＾）
-            return true;
-        }
-        false
-    });
+    if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
+        // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
+        gets_square(next_square);
+    } else if current_position.exists_km(&next_square, speed_of_light) {
+        // ループを抜けるぜ☆（＾～＾）
+        return true;
+    }
+    false
 }
 
-/// 成る前を含めない、東
-fn make_no_promotion_source_by_piece_to_east<F1>(
-    square_dst: &Square,
+/// 成る前を含めない、隣への利き
+fn make_no_promotion_source_by_piece_next<F1>(
     ps_dst: &GPPieceStructVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
+    next_square: Square,
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::next_to_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、長い北東
-fn make_no_promotion_source_by_piece_sliding_to_north_east<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::for_each_north_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            return true;
-        }
-        false
-    });
-}
-
-/// 成る前を含めない、北東
-fn make_no_promotion_source_by_piece_to_north_east<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_north_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、北北東
-fn make_no_promotion_source_by_piece_to_north_north_east<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_north_north_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、長い北
-fn make_no_promotion_source_by_piece_sliding_to_north<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::for_each_north(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            return true;
-        }
-        false
-    });
-}
-
-/// 成る前を含めない、北
-fn make_no_promotion_source_by_piece_to_north<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_north(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、北北西
-fn make_no_promotion_source_by_piece_to_north_north_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_north_north_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、長い北西
-fn make_no_promotion_source_by_piece_sliding_to_north_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::for_each_north_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            return true;
-        }
-        false
-    });
-}
-
-/// 成る前を含めない、北西
-fn make_no_promotion_source_by_piece_to_north_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_north_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、長い西
-fn make_no_promotion_source_by_piece_sliding_to_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::for_each_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            // 指定の駒があれば、その升は移動元。続行
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            // なんか他の駒があれば終わり
-            return true;
-        }
-        false
-    });
-}
-
-/// 成る前を含めない、西
-fn make_no_promotion_source_by_piece_to_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、長い南西
-fn make_no_promotion_source_by_piece_sliding_to_south_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::for_each_south_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            return true;
-        }
-        false
-    });
-}
-
-/// 成る前を含めない、南西
-fn make_no_promotion_source_by_piece_to_south_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_south_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、南南西
-fn make_no_promotion_source_by_piece_to_south_south_west<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_south_south_west(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、長い南
-fn make_no_promotion_source_by_piece_sliding_to_south<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::for_each_south(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            return true;
-        }
-        false
-    });
-}
-
-/// 成る前を含めない、南
-fn make_no_promotion_source_by_piece_to_south<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_south(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、南南東
-fn make_no_promotion_source_by_piece_to_south_south_east<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_south_south_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
-}
-
-/// 成る前を含めない、長南東
-fn make_no_promotion_source_by_piece_sliding_to_south_east<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::for_each_south_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        } else if current_position.exists_km(&next_square, speed_of_light) {
-            return true;
-        }
-        false
-    });
-}
-
-/// 成る前を含めない、南東
-fn make_no_promotion_source_by_piece_to_south_east<F1>(
-    square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
-    speed_of_light: &MLSpeedOfLightVo,
-    gets_square: &mut F1,
-) where
-    F1: FnMut(Square),
-{
-    SquareScanner::next_to_south_east(square_dst, &mut |next_square| {
-        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
-            gets_square(next_square);
-        }
-    });
+    if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
+        gets_square(next_square);
+    }
 }
 
 /// 成る前の移動元升生成
