@@ -109,7 +109,7 @@ pub fn unit_test(
         make_drop_piece_type_by_square_piece(
             &sq_dst,
             pc,
-            &ml_universe_dto.get_search_part().get_current_position(),
+            &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |piece_type_hash| {
                 da_piece_type_hashset.insert(piece_type_hash);
@@ -208,7 +208,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_universe_dto.get_search_part().get_current_position(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -253,7 +253,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_universe_dto.get_search_part().get_current_position(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -298,7 +298,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_universe_dto.get_search_part().get_current_position(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -343,7 +343,7 @@ pub fn unit_test(
             make_drop_piece_type_by_square_piece(
                 &sq_dst,
                 pc,
-                &ml_universe_dto.get_search_part().get_current_position(),
+                &ml_universe_dto.get_search_part(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);

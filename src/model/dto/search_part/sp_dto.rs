@@ -11,7 +11,7 @@ use super::super::super::super::model::vo::other_part::op_phase_vo::*;
 use super::super::super::super::model::vo::other_part::op_ply_vo::*;
 use super::super::super::super::model::vo::other_part::op_square_vo::*;
 
-pub struct SPEarthDto {
+pub struct SPDto {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
     ply: i16,
 
@@ -34,13 +34,13 @@ pub struct SPEarthDto {
     pub effect_count_by_phase: [NumberBoard; PHASE_LN],
 
     /// 利きの数（先後付き駒別）
-    pub effect_count_by_piece: [NumberBoard; PIECE_LN],
+    pub effect_count_by_piece: [NumberBoard; KM_LN],
     // ビジョン・ツリー
     // pub vision_tree_by_phase: [VisionTree; PHASE_LN],
 }
-impl Default for SPEarthDto {
+impl Default for SPDto {
     fn default() -> Self {
-        SPEarthDto {
+        SPDto {
             ply: 0,
             // 現局面
             current_position: SPPositionDto::default(),
@@ -93,7 +93,7 @@ impl Default for SPEarthDto {
         }
     }
 }
-impl SPEarthDto {
+impl SPDto {
     pub fn add_ply(&mut self, ply1: i16) {
         self.ply += ply1
     }

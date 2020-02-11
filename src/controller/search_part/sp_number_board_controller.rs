@@ -8,7 +8,7 @@ pub struct NumberBoard {
      * 10の位を筋、1の位を段とする。
      * 0筋、0段は未使用
      */
-    ban: [i8; BOARD_SIZE],
+    ban: [i8; BAN_SIZE],
 }
 impl Default for NumberBoard {
     fn default() -> NumberBoard {
