@@ -104,4 +104,158 @@ impl SquareScanner {
             }
         }
     }
+
+    /// 東隣☆（＾～＾）
+    pub fn next_to_east<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if start_square.file + 1 < SUJI_10 {
+            callback(Square::from_file_rank(
+                start_square.file + 1,
+                start_square.rank,
+            ));
+        }
+    }
+
+    /// 北隣☆（＾～＾）
+    pub fn next_to_north<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if start_square.rank + 1 < DAN_10 {
+            callback(Square::from_file_rank(
+                start_square.file,
+                start_square.rank + 1,
+            ));
+        }
+    }
+    /// 北東隣☆（＾～＾）
+    pub fn next_to_north_east<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if start_square.file + 1 < SUJI_10 && start_square.rank + 1 < DAN_10 {
+            callback(Square::from_file_rank(
+                start_square.file + 1,
+                start_square.rank + 1,
+            ));
+        }
+    }
+
+    /// 北北東隣☆（＾～＾）
+    pub fn next_to_north_north_east<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if start_square.file + 1 < SUJI_10 && start_square.rank + 2 < DAN_10 {
+            callback(Square::from_file_rank(
+                start_square.file + 1,
+                start_square.rank + 2,
+            ));
+        }
+    }
+
+    /// 北北西隣☆（＾～＾）
+    pub fn next_to_north_north_west<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if SUJI_0 < start_square.file - 1 && start_square.rank + 2 < DAN_10 {
+            callback(Square::from_file_rank(
+                start_square.file - 1,
+                start_square.rank + 2,
+            ));
+        }
+    }
+
+    /// 北西隣☆（＾～＾）
+    pub fn next_to_north_west<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if start_square.file - 1 > SUJI_0 && DAN_10 > start_square.rank + 1 {
+            callback(Square::from_file_rank(
+                start_square.file - 1,
+                start_square.rank + 1,
+            ));
+        }
+    }
+
+    /// 南隣☆（＾～＾）
+    pub fn next_to_south<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if DAN_0 < start_square.rank - 1 {
+            callback(Square::from_file_rank(
+                start_square.file,
+                start_square.rank - 1,
+            ));
+        }
+    }
+
+    /// 南東隣☆（＾～＾）
+    pub fn next_to_south_east<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if start_square.file + 1 < SUJI_10 && DAN_0 < start_square.rank - 1 {
+            callback(Square::from_file_rank(
+                start_square.file + 1,
+                start_square.rank - 1,
+            ));
+        }
+    }
+
+    /// 南南東隣☆（＾～＾）
+    pub fn next_to_south_south_east<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if start_square.file + 1 < SUJI_10 && DAN_0 < start_square.rank - 2 {
+            callback(Square::from_file_rank(
+                start_square.file + 1,
+                start_square.rank - 2,
+            ));
+        }
+    }
+    /// 南南西隣☆（＾～＾）
+    pub fn next_to_south_south_west<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if SUJI_0 < start_square.file - 1 && DAN_0 < start_square.rank - 2 {
+            callback(Square::from_file_rank(
+                start_square.file - 1,
+                start_square.rank - 2,
+            ));
+        }
+    }
+
+    /// 南西隣☆（＾～＾）
+    pub fn next_to_south_west<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if SUJI_0 < start_square.file - 1 && DAN_0 < start_square.rank - 1 {
+            callback(Square::from_file_rank(
+                start_square.file - 1,
+                start_square.rank - 1,
+            ));
+        }
+    }
+
+    /// 西☆（＾～＾）
+    pub fn next_to_west<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        if SUJI_0 < start_square.file - 1 {
+            callback(Square::from_file_rank(
+                start_square.file - 1,
+                start_square.rank,
+            ));
+        }
+    }
 }
