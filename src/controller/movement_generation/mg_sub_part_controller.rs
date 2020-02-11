@@ -4,7 +4,8 @@
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::common_use::cu_conv_controller::*;
-use super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::model::dto::search_part::sp_earth_dto::*;
+use super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
@@ -35,7 +36,7 @@ use std::hash::BuildHasher;
 pub fn make_no_promotion_source_by_square_and_piece<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -73,7 +74,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_east(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -82,7 +83,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_west_east(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -95,7 +96,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_north_east(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -104,7 +105,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_north_east(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -115,7 +116,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_north_north_east(
                     square_dst,
                     ps_dst,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -127,7 +128,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_north(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -136,7 +137,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_north(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -147,7 +148,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_north_north_west(
                     square_dst,
                     ps_dst,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -159,7 +160,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_north_west(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -168,7 +169,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_north_west(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -181,7 +182,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_west(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -190,7 +191,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_west(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -203,7 +204,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_south_west(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -212,7 +213,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_south_west(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -223,7 +224,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_south_south_west(
                     square_dst,
                     ps_dst,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -235,7 +236,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_south(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -244,7 +245,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_south(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -255,7 +256,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 make_no_promotion_source_by_piece_to_south_south_east(
                     square_dst,
                     ps_dst,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -267,7 +268,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_sliding_to_south_east(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -276,7 +277,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     make_no_promotion_source_by_piece_to_south_east(
                         square_dst,
                         ps_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -327,7 +328,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStructVo) -> 
 fn make_no_promotion_source_by_piece_sliding_to_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -337,16 +338,10 @@ fn make_no_promotion_source_by_piece_sliding_to_east<F1>(
     for i_east in 1..9 {
         if dx + i_east < SUJI_10 {
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -357,7 +352,7 @@ fn make_no_promotion_source_by_piece_sliding_to_east<F1>(
 fn make_no_promotion_source_by_piece_to_west_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -366,10 +361,7 @@ fn make_no_promotion_source_by_piece_to_west_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -379,7 +371,7 @@ fn make_no_promotion_source_by_piece_to_west_east<F1>(
 fn make_no_promotion_source_by_piece_sliding_to_north_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -389,15 +381,9 @@ fn make_no_promotion_source_by_piece_sliding_to_north_east<F1>(
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -408,7 +394,7 @@ fn make_no_promotion_source_by_piece_sliding_to_north_east<F1>(
 fn make_no_promotion_source_by_piece_to_north_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -417,10 +403,7 @@ fn make_no_promotion_source_by_piece_to_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -430,7 +413,7 @@ fn make_no_promotion_source_by_piece_to_north_east<F1>(
 fn make_no_promotion_source_by_piece_to_north_north_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -439,10 +422,7 @@ fn make_no_promotion_source_by_piece_to_north_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -452,7 +432,7 @@ fn make_no_promotion_source_by_piece_to_north_north_east<F1>(
 fn make_no_promotion_source_by_piece_sliding_to_north<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -462,15 +442,9 @@ fn make_no_promotion_source_by_piece_sliding_to_north<F1>(
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -481,7 +455,7 @@ fn make_no_promotion_source_by_piece_sliding_to_north<F1>(
 fn make_no_promotion_source_by_piece_to_north<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -490,10 +464,7 @@ fn make_no_promotion_source_by_piece_to_north<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -503,7 +474,7 @@ fn make_no_promotion_source_by_piece_to_north<F1>(
 fn make_no_promotion_source_by_piece_to_north_north_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -512,10 +483,7 @@ fn make_no_promotion_source_by_piece_to_north_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -525,7 +493,7 @@ fn make_no_promotion_source_by_piece_to_north_north_west<F1>(
 fn make_no_promotion_source_by_piece_sliding_to_north_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -535,15 +503,9 @@ fn make_no_promotion_source_by_piece_sliding_to_north_west<F1>(
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -554,7 +516,7 @@ fn make_no_promotion_source_by_piece_sliding_to_north_west<F1>(
 fn make_no_promotion_source_by_piece_to_north_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -563,10 +525,7 @@ fn make_no_promotion_source_by_piece_to_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -576,7 +535,7 @@ fn make_no_promotion_source_by_piece_to_north_west<F1>(
 fn make_no_promotion_source_by_piece_sliding_to_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -587,16 +546,10 @@ fn make_no_promotion_source_by_piece_sliding_to_west<F1>(
         if SUJI_0 < dx - i_east {
             // 進みたいマスから戻ったマス
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 // 指定の駒があれば、その升は移動元。続行
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 // なんか他の駒があれば終わり
                 break;
             }
@@ -608,7 +561,7 @@ fn make_no_promotion_source_by_piece_sliding_to_west<F1>(
 fn make_no_promotion_source_by_piece_to_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -617,10 +570,7 @@ fn make_no_promotion_source_by_piece_to_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -630,7 +580,7 @@ fn make_no_promotion_source_by_piece_to_west<F1>(
 fn make_no_promotion_source_by_piece_sliding_to_south_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -640,15 +590,9 @@ fn make_no_promotion_source_by_piece_sliding_to_south_west<F1>(
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -659,7 +603,7 @@ fn make_no_promotion_source_by_piece_sliding_to_south_west<F1>(
 fn make_no_promotion_source_by_piece_to_south_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -668,10 +612,7 @@ fn make_no_promotion_source_by_piece_to_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -681,7 +622,7 @@ fn make_no_promotion_source_by_piece_to_south_west<F1>(
 fn make_no_promotion_source_by_piece_to_south_south_west<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -690,10 +631,7 @@ fn make_no_promotion_source_by_piece_to_south_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -703,7 +641,7 @@ fn make_no_promotion_source_by_piece_to_south_south_west<F1>(
 fn make_no_promotion_source_by_piece_sliding_to_south<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -713,15 +651,9 @@ fn make_no_promotion_source_by_piece_sliding_to_south<F1>(
     for i_north in 1..9 {
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -732,7 +664,7 @@ fn make_no_promotion_source_by_piece_sliding_to_south<F1>(
 fn make_no_promotion_source_by_piece_to_south<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -741,10 +673,7 @@ fn make_no_promotion_source_by_piece_to_south<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -754,7 +683,7 @@ fn make_no_promotion_source_by_piece_to_south<F1>(
 fn make_no_promotion_source_by_piece_to_south_south_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -763,10 +692,7 @@ fn make_no_promotion_source_by_piece_to_south_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -776,7 +702,7 @@ fn make_no_promotion_source_by_piece_to_south_south_east<F1>(
 fn make_no_promotion_source_by_piece_sliding_to_south_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -786,15 +712,9 @@ fn make_no_promotion_source_by_piece_sliding_to_south_east<F1>(
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-            {
+            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -805,7 +725,7 @@ fn make_no_promotion_source_by_piece_sliding_to_south_east<F1>(
 fn make_no_promotion_source_by_piece_to_south_east<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
 ) where
@@ -814,10 +734,7 @@ fn make_no_promotion_source_by_piece_to_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, ps_dst.piece(), speed_of_light)
-        {
+        if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -836,7 +753,7 @@ fn make_no_promotion_source_by_piece_to_south_east<F1>(
 pub fn make_before_promotion_source_by_square_piece<F1>(
     square_dst: &Square,
     ps_dst: &PieceStructVo,
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -896,7 +813,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長東
                     make_before_promotion_source_sliding_to_east(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -904,7 +821,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 西東
                     make_before_promotion_source_to_west_east(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -916,7 +833,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長北東
                     make_before_promotion_source_sliding_to_north_east(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -924,7 +841,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 北東
                     make_before_promotion_source_to_north_east(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -934,7 +851,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 北北東
                 make_before_promotion_source_to_north_north_east(
                     &square_dst_piece_src,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -945,7 +862,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長北
                     make_before_promotion_source_sliding_to_north(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -953,7 +870,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 北
                     make_before_promotion_source_to_north(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -963,7 +880,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 北北西
                 make_before_promotion_source_to_north_north_west(
                     &square_dst_piece_src,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -974,7 +891,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長北西
                     make_before_promotion_source_sliding_to_north_west(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -982,7 +899,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 北西
                     make_before_promotion_source_to_north_west(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -994,7 +911,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長西
                     make_before_promotion_source_sliding_to_west(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1002,7 +919,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 西
                     make_before_promotion_source_to_west(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1014,7 +931,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長南西
                     make_before_promotion_source_sliding_to_south_west(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1022,7 +939,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 南西
                     make_before_promotion_source_to_south_west(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1032,7 +949,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 南南西
                 make_before_promotion_source_to_south_south_west(
                     &square_dst_piece_src,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -1043,7 +960,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長南
                     make_before_promotion_source_sliding_to_south(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1051,7 +968,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 南
                     make_before_promotion_source_to_south(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1061,7 +978,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 // 南南東
                 make_before_promotion_source_to_south_south_east(
                     &square_dst_piece_src,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     &mut gets_square,
                 );
@@ -1072,7 +989,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 長南東
                     make_before_promotion_source_sliding_to_south_east(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1080,7 +997,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 南東
                     make_before_promotion_source_to_south_east(
                         &square_dst_piece_src,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                     );
@@ -1094,7 +1011,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
 /// 成る前の移動元、長い東
 fn make_before_promotion_source_sliding_to_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1104,16 +1021,9 @@ fn make_before_promotion_source_sliding_to_east<F1>(
     for i_east in 1..9 {
         if dx + i_east < SUJI_10 {
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -1123,7 +1033,7 @@ fn make_before_promotion_source_sliding_to_east<F1>(
 /// 成る前の移動元、 西東
 fn make_before_promotion_source_to_west_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1132,11 +1042,7 @@ fn make_before_promotion_source_to_west_east<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1145,7 +1051,7 @@ fn make_before_promotion_source_to_west_east<F1>(
 /// 成る前の移動元、 長い北東
 fn make_before_promotion_source_sliding_to_north_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1155,16 +1061,9 @@ fn make_before_promotion_source_sliding_to_north_east<F1>(
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -1174,7 +1073,7 @@ fn make_before_promotion_source_sliding_to_north_east<F1>(
 /// 成る前の移動元、 北東
 fn make_before_promotion_source_to_north_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1183,11 +1082,7 @@ fn make_before_promotion_source_to_north_east<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1196,7 +1091,7 @@ fn make_before_promotion_source_to_north_east<F1>(
 /// 成る前の移動元、 北北東
 fn make_before_promotion_source_to_north_north_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1205,11 +1100,7 @@ fn make_before_promotion_source_to_north_north_east<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1218,7 +1109,7 @@ fn make_before_promotion_source_to_north_north_east<F1>(
 /// 成る前の移動元、 長い北
 fn make_before_promotion_source_sliding_to_north<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1228,16 +1119,9 @@ fn make_before_promotion_source_sliding_to_north<F1>(
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -1247,7 +1131,7 @@ fn make_before_promotion_source_sliding_to_north<F1>(
 /// 成る前の移動元、 北
 fn make_before_promotion_source_to_north<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1256,11 +1140,7 @@ fn make_before_promotion_source_to_north<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1269,7 +1149,7 @@ fn make_before_promotion_source_to_north<F1>(
 /// 成る前の移動元、 北北西
 fn make_before_promotion_source_to_north_north_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1278,11 +1158,7 @@ fn make_before_promotion_source_to_north_north_west<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1291,7 +1167,7 @@ fn make_before_promotion_source_to_north_north_west<F1>(
 /// 成る前の移動元、 長い北西
 fn make_before_promotion_source_sliding_to_north_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1301,16 +1177,9 @@ fn make_before_promotion_source_sliding_to_north_west<F1>(
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -1320,7 +1189,7 @@ fn make_before_promotion_source_sliding_to_north_west<F1>(
 /// 成る前の移動元、 北西
 fn make_before_promotion_source_to_north_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1329,11 +1198,7 @@ fn make_before_promotion_source_to_north_west<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1342,7 +1207,7 @@ fn make_before_promotion_source_to_north_west<F1>(
 /// 成る前の移動元、 長い西
 fn make_before_promotion_source_sliding_to_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1353,17 +1218,10 @@ fn make_before_promotion_source_sliding_to_west<F1>(
         if SUJI_0 < dx - i_east {
             // 進みたいマスから戻ったマス
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 // 指定の駒があれば、その升は移動元。続行
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 // なんか他の駒があれば終わり
                 break;
             }
@@ -1374,7 +1232,7 @@ fn make_before_promotion_source_sliding_to_west<F1>(
 /// 成る前の移動元、 西
 fn make_before_promotion_source_to_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1383,11 +1241,7 @@ fn make_before_promotion_source_to_west<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1396,7 +1250,7 @@ fn make_before_promotion_source_to_west<F1>(
 /// 成る前の移動元、 長い南西
 fn make_before_promotion_source_sliding_to_south_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1406,16 +1260,9 @@ fn make_before_promotion_source_sliding_to_south_west<F1>(
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -1425,7 +1272,7 @@ fn make_before_promotion_source_sliding_to_south_west<F1>(
 /// 成る前の移動元、 南西
 fn make_before_promotion_source_to_south_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1434,11 +1281,7 @@ fn make_before_promotion_source_to_south_west<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1447,7 +1290,7 @@ fn make_before_promotion_source_to_south_west<F1>(
 /// 成る前の移動元、 南南西
 fn make_before_promotion_source_to_south_south_west<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1456,11 +1299,7 @@ fn make_before_promotion_source_to_south_south_west<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1469,7 +1308,7 @@ fn make_before_promotion_source_to_south_south_west<F1>(
 /// 成る前の移動元、 長い南
 fn make_before_promotion_source_sliding_to_south<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1479,16 +1318,9 @@ fn make_before_promotion_source_sliding_to_south<F1>(
     for i_north in 1..9 {
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -1498,7 +1330,7 @@ fn make_before_promotion_source_sliding_to_south<F1>(
 /// 成る前の移動元、 南
 fn make_before_promotion_source_to_south<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1507,11 +1339,7 @@ fn make_before_promotion_source_to_south<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1520,7 +1348,7 @@ fn make_before_promotion_source_to_south<F1>(
 /// 成る前の移動元、 南南東
 fn make_before_promotion_source_to_south_south_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1529,11 +1357,7 @@ fn make_before_promotion_source_to_south_south_east<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1542,7 +1366,7 @@ fn make_before_promotion_source_to_south_south_east<F1>(
 /// 成る前の移動元、 長い南東
 fn make_before_promotion_source_sliding_to_south_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1552,16 +1376,9 @@ fn make_before_promotion_source_sliding_to_south_east<F1>(
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            if sp_dto.get_current_position().has_sq_km(
-                &sq_src,
-                &square_dst_piece_src.piece,
-                speed_of_light,
-            ) {
+            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
                 gets_square(sq_src);
-            } else if sp_dto
-                .get_current_position()
-                .exists_km(&sq_src, speed_of_light)
-            {
+            } else if current_position.exists_km(&sq_src, speed_of_light) {
                 break;
             }
         }
@@ -1571,7 +1388,7 @@ fn make_before_promotion_source_sliding_to_south_east<F1>(
 /// 成る前の移動元、 南東
 fn make_before_promotion_source_to_south_east<F1>(
     square_dst_piece_src: &GPSquareAndPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -1580,11 +1397,7 @@ fn make_before_promotion_source_to_south_east<F1>(
     let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        if sp_dto.get_current_position().has_sq_km(
-            &sq_src,
-            &square_dst_piece_src.piece,
-            speed_of_light,
-        ) {
+        if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(sq_src);
         }
     }
@@ -1603,7 +1416,7 @@ fn make_before_promotion_source_to_south_east<F1>(
 pub fn make_drop_piece_type_by_square_piece<F1>(
     square_dst: &Square,
     piece_dst: &GPPieceVo,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_piece_type_hash: F1,
 ) where
@@ -1623,9 +1436,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     // +------------------------+
     // | 打ちたいところは空升か |
     // +------------------------+
-    let km_banjo = sp_dto
-        .get_current_position()
-        .get_piece_by_square(square_dst);
+    let km_banjo = current_position.get_piece_by_square(square_dst);
     match km_banjo {
         GPPieceVo::NonePiece => {}
         _ => {
@@ -1637,11 +1448,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
     // +------------------+
     // | 持っている駒か？ |
     // +------------------+
-    if sp_dto
-        .get_current_position()
-        .get_hand(piece_dst, speed_of_light)
-        < 1
-    {
+    if current_position.get_hand(piece_dst, speed_of_light) < 1 {
         return; // 持っていない駒は打てない
     }
 
@@ -1680,11 +1487,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
         Pawn1 => {
             // ▼ひよこ　は２歩できない
             if dy < DAN_2
-                || sp_dto.get_current_position().exists_fu_by_phase_suji(
-                    &ps_dst.phase(),
-                    suji,
-                    speed_of_light,
-                )
+                || current_position.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
                 return;
             }
@@ -1704,11 +1507,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
         Pawn2 => {
             // △ひよこ　は２歩できない
             if DAN_8 < dy
-                || sp_dto.get_current_position().exists_fu_by_phase_suji(
-                    &ps_dst.phase(),
-                    suji,
-                    speed_of_light,
-                )
+                || current_position.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
                 return;
             }
@@ -1736,11 +1535,11 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 /// km_src   : 移動元の駒
 /// ms_src   : 移動元の升
 /// to_nari  : 成りの手を生成するなら真
-/// sp_dto       : 探索部
+/// sp_earth_dto       : 探索部
 pub fn make_destination_by_square_piece<S: BuildHasher>(
     source_sqp: &GPSquareAndPieceVo,
     to_nari: bool,
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     // result, result2 で入れ直しがあるのでむずかしい☆（＾～＾）
     // 成れない動きをあとで除外する☆（＾～＾）
@@ -1788,14 +1587,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_east(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 西東
-                    make_destination_to_west_east(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_west_east(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             // 北東
@@ -1805,14 +1611,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_north_east(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 北東
-                    make_destination_to_north_east(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_north_east(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             NNE => {
@@ -1820,7 +1633,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 make_destination_sliding_to_north_north_east(
                     dx,
                     dy,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     result,
                     ps_src,
@@ -1833,14 +1646,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_north(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 北
-                    make_destination_to_north(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_north(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             NNW => {
@@ -1848,7 +1668,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 make_destination_to_north_north_west(
                     dx,
                     dy,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     result,
                     ps_src,
@@ -1861,14 +1681,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_north_west(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 北西
-                    make_destination_to_north_west(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_north_west(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             // 西
@@ -1878,14 +1705,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_west(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 西
-                    make_destination_to_west(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_west(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             // 南西
@@ -1895,14 +1729,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_south_west(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 南西
-                    make_destination_to_south_west(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_south_west(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             SSW => {
@@ -1910,7 +1751,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 make_destination_to_south_south_west(
                     dx,
                     dy,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     result,
                     ps_src,
@@ -1923,14 +1764,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_south(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 南
-                    make_destination_to_south(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_south(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             SSE => {
@@ -1938,7 +1786,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 make_destination_to_south_south_east(
                     dx,
                     dy,
-                    sp_dto,
+                    sp_earth_dto.get_current_position(),
                     speed_of_light,
                     result,
                     ps_src,
@@ -1951,14 +1799,21 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     make_destination_sliding_to_south_east(
                         dx,
                         dy,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         result,
                         ps_src,
                     );
                 } else {
                     // 南東
-                    make_destination_to_south_east(dx, dy, sp_dto, speed_of_light, result, ps_src);
+                    make_destination_to_south_east(
+                        dx,
+                        dy,
+                        sp_earth_dto.get_current_position(),
+                        speed_of_light,
+                        result,
+                        ps_src,
+                    );
                 }
             }
             Owari => break,
@@ -2024,7 +1879,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
 fn make_destination_sliding_to_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2032,9 +1887,7 @@ fn make_destination_sliding_to_east<S: BuildHasher>(
     for i_east in 1..9 {
         if dx + i_east < SUJI_10 {
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2049,16 +1902,14 @@ fn make_destination_sliding_to_east<S: BuildHasher>(
 fn make_destination_to_west_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2069,7 +1920,7 @@ fn make_destination_to_west_east<S: BuildHasher>(
 fn make_destination_sliding_to_north_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2077,9 +1928,7 @@ fn make_destination_sliding_to_north_east<S: BuildHasher>(
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2094,16 +1943,14 @@ fn make_destination_sliding_to_north_east<S: BuildHasher>(
 fn make_destination_to_north_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2114,16 +1961,14 @@ fn make_destination_to_north_east<S: BuildHasher>(
 fn make_destination_sliding_to_north_north_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2134,7 +1979,7 @@ fn make_destination_sliding_to_north_north_east<S: BuildHasher>(
 fn make_destination_sliding_to_north<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2142,9 +1987,7 @@ fn make_destination_sliding_to_north<S: BuildHasher>(
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2159,16 +2002,14 @@ fn make_destination_sliding_to_north<S: BuildHasher>(
 fn make_destination_to_north<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2179,16 +2020,14 @@ fn make_destination_to_north<S: BuildHasher>(
 fn make_destination_to_north_north_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2199,7 +2038,7 @@ fn make_destination_to_north_north_west<S: BuildHasher>(
 fn make_destination_sliding_to_north_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2207,9 +2046,7 @@ fn make_destination_sliding_to_north_west<S: BuildHasher>(
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2224,16 +2061,14 @@ fn make_destination_sliding_to_north_west<S: BuildHasher>(
 fn make_destination_to_north_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2244,7 +2079,7 @@ fn make_destination_to_north_west<S: BuildHasher>(
 fn make_destination_sliding_to_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2252,9 +2087,7 @@ fn make_destination_sliding_to_west<S: BuildHasher>(
     for i_east in 1..9 {
         if SUJI_0 < dx - i_east {
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2269,16 +2102,14 @@ fn make_destination_sliding_to_west<S: BuildHasher>(
 fn make_destination_to_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2289,7 +2120,7 @@ fn make_destination_to_west<S: BuildHasher>(
 fn make_destination_sliding_to_south_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2297,9 +2128,7 @@ fn make_destination_sliding_to_south_west<S: BuildHasher>(
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2314,16 +2143,14 @@ fn make_destination_sliding_to_south_west<S: BuildHasher>(
 fn make_destination_to_south_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2334,16 +2161,14 @@ fn make_destination_to_south_west<S: BuildHasher>(
 fn make_destination_to_south_south_west<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2354,7 +2179,7 @@ fn make_destination_to_south_south_west<S: BuildHasher>(
 fn make_destination_sliding_to_south<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2362,9 +2187,7 @@ fn make_destination_sliding_to_south<S: BuildHasher>(
     for i_north in 1..9 {
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2379,16 +2202,14 @@ fn make_destination_sliding_to_south<S: BuildHasher>(
 fn make_destination_to_south<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2399,16 +2220,14 @@ fn make_destination_to_south<S: BuildHasher>(
 fn make_destination_to_south_south_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2419,7 +2238,7 @@ fn make_destination_to_south_south_east<S: BuildHasher>(
 fn make_destination_sliding_to_south_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
@@ -2427,9 +2246,7 @@ fn make_destination_sliding_to_south_east<S: BuildHasher>(
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             if &phase_ms != &ps_src.phase() {
                 result.insert(sq_src);
             }
@@ -2444,16 +2261,14 @@ fn make_destination_sliding_to_south_east<S: BuildHasher>(
 fn make_destination_to_south_east<S: BuildHasher>(
     dx: i8,
     dy: i8,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     ps_src: &PieceStructVo,
 ) {
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         if &phase_ms != &ps_src.phase() {
             result.insert(sq_src);
         }
@@ -2608,7 +2423,7 @@ fn remake_forbidden_destination_lance_pawn2<S: BuildHasher>(result: &mut HashSet
 pub fn make_no_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -2685,7 +2500,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2695,7 +2510,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2709,7 +2524,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_north_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2719,7 +2534,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_north_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2731,7 +2546,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_north_north_east(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2744,7 +2559,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_north(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2754,7 +2569,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_north(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2766,7 +2581,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_north_north_west(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2779,7 +2594,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_north_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2789,7 +2604,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_north_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2803,7 +2618,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2813,7 +2628,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2827,7 +2642,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_south_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2837,7 +2652,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_south_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2849,7 +2664,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_south_south_west(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2862,7 +2677,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_south(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2872,7 +2687,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_south(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2884,7 +2699,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                     make_no_promotion_source_by_phase_to_south_south_east(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -2897,7 +2712,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_sliding_to_south_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2907,7 +2722,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
                         make_no_promotion_source_by_phase_to_south_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -2924,7 +2739,7 @@ pub fn make_no_promotion_source_by_phase_square<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -2935,11 +2750,9 @@ fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
     for i_east in 1..9 {
         if dx + i_east < SUJI_10 {
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -2954,7 +2767,7 @@ fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
 fn make_no_promotion_source_by_phase_to_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -2964,11 +2777,9 @@ fn make_no_promotion_source_by_phase_to_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -2979,7 +2790,7 @@ fn make_no_promotion_source_by_phase_to_east<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -2990,11 +2801,9 @@ fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3009,7 +2818,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_east<F1>(
 fn make_no_promotion_source_by_phase_to_north_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3019,11 +2828,9 @@ fn make_no_promotion_source_by_phase_to_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3034,7 +2841,7 @@ fn make_no_promotion_source_by_phase_to_north_east<F1>(
 fn make_no_promotion_source_by_phase_to_north_north_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3044,11 +2851,9 @@ fn make_no_promotion_source_by_phase_to_north_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3059,7 +2864,7 @@ fn make_no_promotion_source_by_phase_to_north_north_east<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3070,11 +2875,9 @@ fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3089,7 +2892,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
 fn make_no_promotion_source_by_phase_to_north<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3099,11 +2902,9 @@ fn make_no_promotion_source_by_phase_to_north<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -3117,7 +2918,7 @@ fn make_no_promotion_source_by_phase_to_north<F1>(
 fn make_no_promotion_source_by_phase_to_north_north_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3127,11 +2928,9 @@ fn make_no_promotion_source_by_phase_to_north_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3142,7 +2941,7 @@ fn make_no_promotion_source_by_phase_to_north_north_west<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3153,11 +2952,9 @@ fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3172,7 +2969,7 @@ fn make_no_promotion_source_by_phase_sliding_to_north_west<F1>(
 fn make_no_promotion_source_by_phase_to_north_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3182,11 +2979,9 @@ fn make_no_promotion_source_by_phase_to_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3197,7 +2992,7 @@ fn make_no_promotion_source_by_phase_to_north_west<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3208,11 +3003,9 @@ fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
     for i_east in 1..9 {
         if SUJI_0 < dx - i_east {
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3227,7 +3020,7 @@ fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
 fn make_no_promotion_source_by_phase_to_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3237,11 +3030,9 @@ fn make_no_promotion_source_by_phase_to_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3252,7 +3043,7 @@ fn make_no_promotion_source_by_phase_to_west<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3263,11 +3054,9 @@ fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3282,7 +3071,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_west<F1>(
 fn make_no_promotion_source_by_phase_to_south_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3292,11 +3081,9 @@ fn make_no_promotion_source_by_phase_to_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3307,7 +3094,7 @@ fn make_no_promotion_source_by_phase_to_south_west<F1>(
 fn make_no_promotion_source_by_phase_to_south_south_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3317,11 +3104,9 @@ fn make_no_promotion_source_by_phase_to_south_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3332,7 +3117,7 @@ fn make_no_promotion_source_by_phase_to_south_south_west<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3343,11 +3128,9 @@ fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
     for i_north in 1..9 {
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3362,7 +3145,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
 fn make_no_promotion_source_by_phase_to_south<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3372,11 +3155,9 @@ fn make_no_promotion_source_by_phase_to_south<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -3390,7 +3171,7 @@ fn make_no_promotion_source_by_phase_to_south<F1>(
 fn make_no_promotion_source_by_phase_to_south_south_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3400,11 +3181,9 @@ fn make_no_promotion_source_by_phase_to_south_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3415,7 +3194,7 @@ fn make_no_promotion_source_by_phase_to_south_south_east<F1>(
 fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3426,11 +3205,9 @@ fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3445,7 +3222,7 @@ fn make_no_promotion_source_by_phase_sliding_to_south_east<F1>(
 fn make_no_promotion_source_by_phase_to_south_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3455,11 +3232,9 @@ fn make_no_promotion_source_by_phase_to_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3475,7 +3250,7 @@ fn make_no_promotion_source_by_phase_to_south_east<F1>(
 pub fn make_before_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
 ) where
@@ -3537,7 +3312,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3547,7 +3322,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3561,7 +3336,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_north_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3571,7 +3346,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_north_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3583,7 +3358,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_north_north_east(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3596,7 +3371,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_north(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3606,7 +3381,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_north(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3618,7 +3393,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_north_north_west(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3631,7 +3406,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_north_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3641,7 +3416,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_north_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3655,7 +3430,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3665,7 +3440,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3679,7 +3454,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_south_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3689,7 +3464,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_south_west(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3701,7 +3476,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_south_south_west(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3714,7 +3489,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_south(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3724,7 +3499,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_south(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3736,7 +3511,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                     make_before_promotion_source_by_phase_to_south_south_east(
                         phase,
                         square_dst,
-                        sp_dto,
+                        sp_earth_dto.get_current_position(),
                         speed_of_light,
                         &mut gets_square,
                         *piece_type,
@@ -3749,7 +3524,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_sliding_to_south_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3759,7 +3534,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
                         make_before_promotion_source_by_phase_to_south_east(
                             phase,
                             square_dst,
-                            sp_dto,
+                            sp_earth_dto.get_current_position(),
                             speed_of_light,
                             &mut gets_square,
                             *piece_type,
@@ -3776,7 +3551,7 @@ pub fn make_before_promotion_source_by_phase_square<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3787,11 +3562,9 @@ fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
     for i_east in 1..9 {
         if dx + i_east < SUJI_10 {
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3806,7 +3579,7 @@ fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
 fn make_before_promotion_source_by_phase_to_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3816,11 +3589,9 @@ fn make_before_promotion_source_by_phase_to_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3831,7 +3602,7 @@ fn make_before_promotion_source_by_phase_to_east<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_north_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3842,11 +3613,9 @@ fn make_before_promotion_source_by_phase_sliding_to_north_east<F1>(
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3861,7 +3630,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_east<F1>(
 fn make_before_promotion_source_by_phase_to_north_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3871,11 +3640,9 @@ fn make_before_promotion_source_by_phase_to_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3886,7 +3653,7 @@ fn make_before_promotion_source_by_phase_to_north_east<F1>(
 fn make_before_promotion_source_by_phase_to_north_north_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3896,11 +3663,9 @@ fn make_before_promotion_source_by_phase_to_north_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3911,7 +3676,7 @@ fn make_before_promotion_source_by_phase_to_north_north_east<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3922,11 +3687,9 @@ fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -3941,7 +3704,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
 fn make_before_promotion_source_by_phase_to_north<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3951,11 +3714,9 @@ fn make_before_promotion_source_by_phase_to_north<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     ms_src, phase_ms, piece_typece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -3969,7 +3730,7 @@ fn make_before_promotion_source_by_phase_to_north<F1>(
 fn make_before_promotion_source_by_phase_to_north_north_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -3979,11 +3740,9 @@ fn make_before_promotion_source_by_phase_to_north_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -3994,7 +3753,7 @@ fn make_before_promotion_source_by_phase_to_north_north_west<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_north_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4005,11 +3764,9 @@ fn make_before_promotion_source_by_phase_sliding_to_north_west<F1>(
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4024,7 +3781,7 @@ fn make_before_promotion_source_by_phase_sliding_to_north_west<F1>(
 fn make_before_promotion_source_by_phase_to_north_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4034,11 +3791,9 @@ fn make_before_promotion_source_by_phase_to_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4049,7 +3804,7 @@ fn make_before_promotion_source_by_phase_to_north_west<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4060,11 +3815,9 @@ fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
     for i_east in 1..9 {
         if SUJI_0 < dx - i_east {
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4079,7 +3832,7 @@ fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
 fn make_before_promotion_source_by_phase_to_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4089,11 +3842,9 @@ fn make_before_promotion_source_by_phase_to_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4104,7 +3855,7 @@ fn make_before_promotion_source_by_phase_to_west<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_south_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4115,11 +3866,9 @@ fn make_before_promotion_source_by_phase_sliding_to_south_west<F1>(
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4134,7 +3883,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_west<F1>(
 fn make_before_promotion_source_by_phase_to_south_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4144,11 +3893,9 @@ fn make_before_promotion_source_by_phase_to_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4159,7 +3906,7 @@ fn make_before_promotion_source_by_phase_to_south_west<F1>(
 fn make_before_promotion_source_by_phase_to_south_south_west<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4169,11 +3916,9 @@ fn make_before_promotion_source_by_phase_to_south_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4184,7 +3929,7 @@ fn make_before_promotion_source_by_phase_to_south_south_west<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4195,11 +3940,9 @@ fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
     for i_north in 1..9 {
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4214,7 +3957,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
 fn make_before_promotion_source_by_phase_to_south<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4224,11 +3967,9 @@ fn make_before_promotion_source_by_phase_to_south<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
@@ -4242,7 +3983,7 @@ fn make_before_promotion_source_by_phase_to_south<F1>(
 fn make_before_promotion_source_by_phase_to_south_south_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4252,11 +3993,9 @@ fn make_before_promotion_source_by_phase_to_south_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);
@@ -4267,7 +4006,7 @@ fn make_before_promotion_source_by_phase_to_south_south_east<F1>(
 fn make_before_promotion_source_by_phase_sliding_to_south_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4278,11 +4017,9 @@ fn make_before_promotion_source_by_phase_sliding_to_south_east<F1>(
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            let phase_ms = sp_dto
-                .get_current_position()
-                .get_phase_by_sq(&sq_src, speed_of_light);
+            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
             let piece_type_ms = speed_of_light
-                .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
                 .piece_type();
             if phase_ms == *phase && piece_type_ms == piece_type {
                 gets_square(sq_src);
@@ -4297,7 +4034,7 @@ fn make_before_promotion_source_by_phase_sliding_to_south_east<F1>(
 fn make_before_promotion_source_by_phase_to_south_east<F1>(
     phase: &Phase,
     square_dst: &Square,
-    sp_dto: &SPDto,
+    current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
     piece_type: GPPieceTypeVo,
@@ -4307,11 +4044,9 @@ fn make_before_promotion_source_by_phase_to_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        let phase_ms = sp_dto
-            .get_current_position()
-            .get_phase_by_sq(&sq_src, speed_of_light);
+        let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
         let piece_type_ms = speed_of_light
-            .get_piece_struct_vo(sp_dto.get_current_position().get_piece_by_square(&sq_src))
+            .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
             .piece_type();
         if phase_ms == *phase && piece_type_ms == piece_type {
             gets_square(sq_src);

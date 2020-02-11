@@ -45,7 +45,7 @@ pub const BAN_MAX: usize = 99;
 // 筋と段は x,y とは逆方向なので、幅も左端、下端を指す。
 //pub const BAN_W :i8 = 9;
 //pub const BAN_H :i8 = 9;
-pub const BAN_SIZE: usize = 100;
+pub const BOARD_SIZE: usize = 100;
 // 1辺の長さ
 //pub const BAN_LINE :usize = 10;
 

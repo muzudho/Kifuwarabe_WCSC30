@@ -5,7 +5,7 @@
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::search_part::sp_dto::*;
+use super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
@@ -26,7 +26,7 @@ use std::collections::HashSet;
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
 pub fn get_potential_movement<F1>(
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement_callback: F1,
 ) where
@@ -44,14 +44,16 @@ pub fn get_potential_movement<F1>(
                 let sq_src = Square::from_file_rank(file_src, rank_src);
                 source_of_sqp = GPSquareAndPieceVo::new(
                     &sq_src,
-                    sp_dto.get_current_position().get_piece_by_square(&sq_src),
+                    sp_earth_dto
+                        .get_current_position()
+                        .get_piece_by_square(&sq_src),
                 );
             }
 
             if &speed_of_light
                 .get_piece_struct_vo(&source_of_sqp.piece)
                 .phase()
-                == &sp_dto.get_phase(&Person::Friend)
+                == &sp_earth_dto.get_phase(&Person::Friend)
             {
                 // 手番の駒
 
@@ -59,7 +61,7 @@ pub fn get_potential_movement<F1>(
                 make_destination_by_square_piece(
                     &source_of_sqp,
                     false, // 成らず
-                    &sp_dto,
+                    &sp_earth_dto,
                     &speed_of_light,
                     &mut dst_hashset,
                 );
@@ -84,7 +86,7 @@ pub fn get_potential_movement<F1>(
                 make_destination_by_square_piece(
                     &source_of_sqp,
                     true, // 成り
-                    &sp_dto,
+                    &sp_earth_dto,
                     &speed_of_light,
                     &mut dst_hashset,
                 );
@@ -115,7 +117,9 @@ pub fn get_potential_movement<F1>(
                 let sq_dst = Square::from_file_rank(file_dst, rank_dst);
                 destination_of_sqp = GPSquareAndPieceVo::new(
                     &sq_dst,
-                    sp_dto.get_current_position().get_piece_by_square(&sq_dst),
+                    sp_earth_dto
+                        .get_current_position()
+                        .get_piece_by_square(&sq_dst),
                 );
             }
 
@@ -124,11 +128,11 @@ pub fn get_potential_movement<F1>(
                 let mut da_piece_type_hashset = HashSet::new();
                 for piece_type_motigoma in MGS_ARRAY.iter() {
                     let ps_motigoma = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-                        &sp_dto.get_phase(&Person::Friend),
+                        &sp_earth_dto.get_phase(&Person::Friend),
                         *piece_type_motigoma,
                     );
                     let pc_motigoma = ps_motigoma.piece();
-                    if 0 < sp_dto
+                    if 0 < sp_earth_dto
                         .get_current_position()
                         .get_hand(pc_motigoma, speed_of_light)
                     {
@@ -136,7 +140,7 @@ pub fn get_potential_movement<F1>(
                         make_drop_piece_type_by_square_piece(
                             &destination_of_sqp.square,
                             pc_motigoma,
-                            &sp_dto,
+                            &sp_earth_dto.get_current_position(),
                             &speed_of_light,
                             |piece_type_hash| {
                                 da_piece_type_hashset.insert(piece_type_hash);
@@ -168,7 +172,7 @@ pub fn get_potential_movement<F1>(
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
     piece_dst: GPPieceVo,
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
@@ -181,7 +185,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if sp_dto
+    if sp_earth_dto
         .get_current_position()
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
@@ -203,7 +207,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     make_no_promotion_source_by_square_and_piece(
         &sq_dst,
         &ps_dst,
-        &sp_dto,
+        &sp_earth_dto,
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -229,7 +233,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     make_before_promotion_source_by_square_piece(
         sq_dst,
         &ps_dst,
-        &sp_dto,
+        &sp_earth_dto,
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -253,7 +257,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
     piece_dst: &GPPieceVo,
-    sp_dto: &SPDto,
+    sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
@@ -266,7 +270,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let (phase, _piece_type_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if sp_dto
+    if sp_earth_dto
         .get_current_position()
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
@@ -290,7 +294,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     make_drop_piece_type_by_square_piece(
         &sq_dst,
         piece_dst,
-        &sp_dto,
+        &sp_earth_dto.get_current_position(),
         &speed_of_light,
         |piece_type_hash| {
             da_piece_type_hashset.insert(piece_type_hash);
