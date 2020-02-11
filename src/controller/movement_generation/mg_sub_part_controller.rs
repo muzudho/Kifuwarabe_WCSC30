@@ -335,7 +335,7 @@ fn make_no_promotion_source_by_piece_sliding_to_east<F1>(
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_east(*square_dst, &mut |next_square| {
+    SquareScanner::for_each_east(square_dst, &mut |next_square| {
         if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
             // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
             gets_square(next_square);
@@ -437,17 +437,14 @@ fn make_no_promotion_source_by_piece_sliding_to_north<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
-    for i_south in 1..9 {
-        if dy + i_south < DAN_10 {
-            let sq_src = Square::from_file_rank(dx, dy + i_south);
-            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
-                gets_square(sq_src);
-            } else if current_position.exists_km(&sq_src, speed_of_light) {
-                break;
-            }
+    SquareScanner::for_each_north(square_dst, &mut |next_square| {
+        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
+            gets_square(next_square);
+        } else if current_position.exists_km(&next_square, speed_of_light) {
+            return true;
         }
-    }
+        false
+    });
 }
 
 /// 成る前を含めない、北
@@ -540,7 +537,7 @@ fn make_no_promotion_source_by_piece_sliding_to_west<F1>(
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_west(*square_dst, &mut |next_square| {
+    SquareScanner::for_each_west(square_dst, &mut |next_square| {
         if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
             // 指定の駒があれば、その升は移動元。続行
             gets_square(next_square);
@@ -642,17 +639,14 @@ fn make_no_promotion_source_by_piece_sliding_to_south<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
-    for i_north in 1..9 {
-        if DAN_0 < dy - i_north {
-            let sq_src = Square::from_file_rank(dx, dy - i_north);
-            if current_position.has_sq_km(&sq_src, ps_dst.piece(), speed_of_light) {
-                gets_square(sq_src);
-            } else if current_position.exists_km(&sq_src, speed_of_light) {
-                break;
-            }
+    SquareScanner::for_each_south(square_dst, &mut |next_square| {
+        if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
+            gets_square(next_square);
+        } else if current_position.exists_km(&next_square, speed_of_light) {
+            return true;
         }
-    }
+        false
+    });
 }
 
 /// 成る前を含めない、南
@@ -1012,7 +1006,7 @@ fn make_before_promotion_source_sliding_to_east<F1>(
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_east(square_dst_piece_src.square, &mut |next_square| {
+    SquareScanner::for_each_east(&square_dst_piece_src.square, &mut |next_square| {
         if current_position.has_sq_km(&next_square, &square_dst_piece_src.piece, speed_of_light) {
             gets_square(next_square);
         } else if current_position.exists_km(&next_square, speed_of_light) {
@@ -1108,17 +1102,14 @@ fn make_before_promotion_source_sliding_to_north<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
-    for i_south in 1..9 {
-        if dy + i_south < DAN_10 {
-            let sq_src = Square::from_file_rank(dx, dy + i_south);
-            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
-                gets_square(sq_src);
-            } else if current_position.exists_km(&sq_src, speed_of_light) {
-                break;
-            }
+    SquareScanner::for_each_north(&square_dst_piece_src.square, &mut |next_square| {
+        if current_position.has_sq_km(&next_square, &square_dst_piece_src.piece, speed_of_light) {
+            gets_square(next_square);
+        } else if current_position.exists_km(&next_square, speed_of_light) {
+            return true;
         }
-    }
+        false
+    });
 }
 
 /// 成る前の移動元、 北
@@ -1207,7 +1198,7 @@ fn make_before_promotion_source_sliding_to_west<F1>(
     F1: FnMut(Square),
 {
     // 進みたいマスから戻ったマス
-    SquareScanner::for_each_west(square_dst_piece_src.square, &mut |next_square| {
+    SquareScanner::for_each_west(&square_dst_piece_src.square, &mut |next_square| {
         if current_position.has_sq_km(&next_square, &square_dst_piece_src.piece, speed_of_light) {
             // 指定の駒があれば、その升は移動元。続行
             gets_square(next_square);
@@ -1304,17 +1295,14 @@ fn make_before_promotion_source_sliding_to_south<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
-    for i_north in 1..9 {
-        if DAN_0 < dy - i_north {
-            let sq_src = Square::from_file_rank(dx, dy - i_north);
-            if current_position.has_sq_km(&sq_src, &square_dst_piece_src.piece, speed_of_light) {
-                gets_square(sq_src);
-            } else if current_position.exists_km(&sq_src, speed_of_light) {
-                break;
-            }
+    SquareScanner::for_each_south(&square_dst_piece_src.square, &mut |next_square| {
+        if current_position.has_sq_km(&next_square, &square_dst_piece_src.piece, speed_of_light) {
+            gets_square(next_square);
+        } else if current_position.exists_km(&next_square, speed_of_light) {
+            return true;
         }
-    }
+        false
+    });
 }
 
 /// 成る前の移動元、 南
@@ -1838,7 +1826,7 @@ fn make_destination_sliding_to_east<S: BuildHasher>(
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    SquareScanner::for_each_east(sq_dst_ps_src.square, &mut |next_square| {
+    SquareScanner::for_each_east(&sq_dst_ps_src.square, &mut |next_square| {
         // 自駒でなければ進める。
         let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
         if dst_phase != sq_dst_ps_src.piece_struct.phase() {
@@ -1932,21 +1920,16 @@ fn make_destination_sliding_to_north<S: BuildHasher>(
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    for i_south in 1..9 {
-        if sq_dst_ps_src.square.rank + i_south < DAN_10 {
-            let dst_sq = Square::from_file_rank(
-                sq_dst_ps_src.square.file,
-                sq_dst_ps_src.square.rank + i_south,
-            );
-            let dst_phase = current_position.get_phase_by_sq(&dst_sq, speed_of_light);
-            if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-                result.insert(dst_sq);
-            }
-            if &dst_phase != &Phase::None {
-                break;
-            }
+    SquareScanner::for_each_north(&sq_dst_ps_src.square, &mut |next_square| {
+        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
+        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
+            result.insert(next_square);
         }
-    }
+        if &dst_phase != &Phase::None {
+            return true;
+        }
+        false
+    });
 }
 
 /// 移動先升、 北
@@ -2031,7 +2014,7 @@ fn make_destination_sliding_to_west<S: BuildHasher>(
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    SquareScanner::for_each_west(sq_dst_ps_src.square, &mut |next_square| {
+    SquareScanner::for_each_west(&sq_dst_ps_src.square, &mut |next_square| {
         let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
         if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
             result.insert(next_square);
@@ -2125,21 +2108,16 @@ fn make_destination_sliding_to_south<S: BuildHasher>(
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
 ) {
-    for i_north in 1..9 {
-        if DAN_0 < sq_dst_ps_src.square.file - i_north {
-            let dst_sq = Square::from_file_rank(
-                sq_dst_ps_src.square.file,
-                sq_dst_ps_src.square.rank - i_north,
-            );
-            let dst_phase = current_position.get_phase_by_sq(&dst_sq, speed_of_light);
-            if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
-                result.insert(dst_sq);
-            }
-            if &dst_phase != &Phase::None {
-                break;
-            }
+    SquareScanner::for_each_south(&sq_dst_ps_src.square, &mut |next_square| {
+        let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
+        if &dst_phase != &sq_dst_ps_src.piece_struct.phase() {
+            result.insert(next_square);
         }
-    }
+        if &dst_phase != &Phase::None {
+            return true;
+        }
+        false
+    });
 }
 
 /// 移動先升、 南
@@ -2631,7 +2609,7 @@ fn make_no_promotion_source_by_phase_sliding_to_east<F1>(
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_east(dst_sq_piece.square, &mut |next_square| {
+    SquareScanner::for_each_east(&dst_sq_piece.square, &mut |next_square| {
         let exists_piece = current_position.get_piece_by_square(&next_square);
         if *exists_piece == dst_sq_piece.piece {
             gets_square(next_square);
@@ -2725,20 +2703,17 @@ fn make_no_promotion_source_by_phase_sliding_to_north<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = dst_sq_piece.square.to_file_rank();
-    for i_south in 1..9 {
-        if dy + i_south < DAN_10 {
-            let sq_src = Square::from_file_rank(dx, dy + i_south);
-            let exists_piece = current_position.get_piece_by_square(&sq_src);
-            if *exists_piece == dst_sq_piece.piece {
-                gets_square(sq_src);
-            }
-            // End of sliding.
-            if *exists_piece != GPPieceVo::NonePiece {
-                break;
-            }
+    SquareScanner::for_each_north(&dst_sq_piece.square, &mut |next_square| {
+        let exists_piece = current_position.get_piece_by_square(&next_square);
+        if *exists_piece == dst_sq_piece.piece {
+            gets_square(next_square);
         }
-    }
+        // End of sliding.
+        if *exists_piece != GPPieceVo::NonePiece {
+            return true;
+        }
+        false
+    });
 }
 // 移動元升、北
 fn make_no_promotion_source_by_phase_to_north<F1>(
@@ -2822,7 +2797,7 @@ fn make_no_promotion_source_by_phase_sliding_to_west<F1>(
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_west(dst_sq_piece.square, &mut |next_square| {
+    SquareScanner::for_each_west(&dst_sq_piece.square, &mut |next_square| {
         let exists_piece = current_position.get_piece_by_square(&next_square);
         if *exists_piece == dst_sq_piece.piece {
             gets_square(next_square);
@@ -2916,20 +2891,17 @@ fn make_no_promotion_source_by_phase_sliding_to_south<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = dst_sq_piece.square.to_file_rank();
-    for i_north in 1..9 {
-        if DAN_0 < dy - i_north {
-            let sq_src = Square::from_file_rank(dx, dy - i_north);
-            let exists_piece = current_position.get_piece_by_square(&sq_src);
-            if *exists_piece == dst_sq_piece.piece {
-                gets_square(sq_src);
-            }
-            // End of sliding.
-            if *exists_piece != GPPieceVo::NonePiece {
-                break;
-            }
+    SquareScanner::for_each_south(&dst_sq_piece.square, &mut |next_square| {
+        let exists_piece = current_position.get_piece_by_square(&next_square);
+        if *exists_piece == dst_sq_piece.piece {
+            gets_square(next_square);
         }
-    }
+        // End of sliding.
+        if *exists_piece != GPPieceVo::NonePiece {
+            return true;
+        }
+        false
+    });
 }
 // 移動元升、南
 fn make_no_promotion_source_by_phase_to_south<F1>(
@@ -3264,7 +3236,7 @@ fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_east(dst_sq_and_demoted_piece.square, &mut |next_square| {
+    SquareScanner::for_each_east(&dst_sq_and_demoted_piece.square, &mut |next_square| {
         let exists_piece = current_position.get_piece_by_square(&next_square);
         // 指定した駒に一致すれば。
         if *exists_piece == dst_sq_and_demoted_piece.piece {
@@ -3359,20 +3331,17 @@ fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = dst_sq_and_demoted_piece.square.to_file_rank();
-    for i_south in 1..9 {
-        if dy + i_south < DAN_10 {
-            let sq_src = Square::from_file_rank(dx, dy + i_south);
-            let exists_piece = current_position.get_piece_by_square(&sq_src);
-            if *exists_piece == dst_sq_and_demoted_piece.piece {
-                gets_square(sq_src);
-            }
-            // End of sliding.
-            if *exists_piece != GPPieceVo::NonePiece {
-                break;
-            }
+    SquareScanner::for_each_north(&dst_sq_and_demoted_piece.square, &mut |next_square| {
+        let exists_piece = current_position.get_piece_by_square(&next_square);
+        if *exists_piece == dst_sq_and_demoted_piece.piece {
+            gets_square(next_square);
         }
-    }
+        // End of sliding.
+        if *exists_piece != GPPieceVo::NonePiece {
+            return true;
+        }
+        false
+    });
 }
 /// 成る前移動元升、 北
 fn make_before_promotion_source_by_phase_to_north<F1>(
@@ -3459,7 +3428,7 @@ fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
 ) where
     F1: FnMut(Square),
 {
-    SquareScanner::for_each_west(dst_sq_and_demoted_piece.square, &mut |next_square| {
+    SquareScanner::for_each_west(&dst_sq_and_demoted_piece.square, &mut |next_square| {
         let exists_piece = current_position.get_piece_by_square(&next_square);
         if *exists_piece == dst_sq_and_demoted_piece.piece {
             gets_square(next_square);
@@ -3553,20 +3522,17 @@ fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = dst_sq_and_demoted_piece.square.to_file_rank();
-    for i_north in 1..9 {
-        if DAN_0 < dy - i_north {
-            let sq_src = Square::from_file_rank(dx, dy - i_north);
-            let exists_piece = current_position.get_piece_by_square(&sq_src);
-            if *exists_piece == dst_sq_and_demoted_piece.piece {
-                gets_square(sq_src);
-            }
-            // End of sliding.
-            if *exists_piece != GPPieceVo::NonePiece {
-                break;
-            }
+    SquareScanner::for_each_south(&dst_sq_and_demoted_piece.square, &mut |next_square| {
+        let exists_piece = current_position.get_piece_by_square(&next_square);
+        if *exists_piece == dst_sq_and_demoted_piece.piece {
+            gets_square(next_square);
         }
-    }
+        // End of sliding.
+        if *exists_piece != GPPieceVo::NonePiece {
+            return true;
+        }
+        false
+    });
 }
 /// 成る前移動元升、 南
 fn make_before_promotion_source_by_phase_to_south<F1>(
