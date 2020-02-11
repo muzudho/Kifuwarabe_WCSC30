@@ -3,7 +3,7 @@
 //!
 
 /// USI対応コンピューター将棋ソフトの名前☆（＾～＾）
-pub const ENGINE_NAME: &str = "Kifuwarabe WCSC30.build83";
+pub const ENGINE_NAME: &str = "Kifuwarabe WCSC30.build84";
 
 /// 作者の名前。姓・名の順にしたいぜ☆（＾～＾）異文化に通じる表記方法はないものか☆（＾～＾）
 pub const ENGINE_AUTHOR: &str = "TAKAHASHI, Satoshi";
