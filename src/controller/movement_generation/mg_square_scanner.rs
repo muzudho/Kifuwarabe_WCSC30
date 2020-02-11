@@ -54,6 +54,23 @@ impl SquareScanner {
         }
     }
 
+    /// 北西隣の升から北西へ☆（＾～＾）
+    pub fn for_each_north_west<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        for i_nw in 1..9 {
+            if SUJI_0 < start_square.file - i_nw && start_square.rank + i_nw < DAN_10 {
+                if callback(Square::from_file_rank(
+                    start_square.file - i_nw,
+                    start_square.rank + i_nw,
+                )) {
+                    break;
+                }
+            }
+        }
+    }
+
     /// 南隣の升から南へ☆（＾～＾）
     pub fn for_each_south<F1>(start_square: &Square, callback: &mut F1)
     where
@@ -71,7 +88,23 @@ impl SquareScanner {
         }
     }
 
-    /// 北東隣の升から南西へ☆（＾～＾）
+    /// 南東隣の升から南東へ☆（＾～＾）
+    pub fn for_each_south_east<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        for i_se in 1..9 {
+            if start_square.file + i_se < SUJI_10 && DAN_0 < start_square.rank - i_se {
+                if callback(Square::from_file_rank(
+                    start_square.file + i_se,
+                    start_square.rank - i_se,
+                )) {
+                    break;
+                }
+            }
+        }
+    }
+    /// 南西隣の升から南西へ☆（＾～＾）
     pub fn for_each_south_west<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
