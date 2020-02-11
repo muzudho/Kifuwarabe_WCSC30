@@ -37,6 +37,23 @@ impl SquareScanner {
         }
     }
 
+    /// 北東隣の升から北東へ☆（＾～＾）
+    pub fn for_each_north_east<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        for i_ne in 1..9 {
+            if start_square.file + i_ne < SUJI_10 && start_square.rank + i_ne < DAN_10 {
+                if callback(Square::from_file_rank(
+                    start_square.file + i_ne,
+                    start_square.rank + i_ne,
+                )) {
+                    break;
+                }
+            }
+        }
+    }
+
     /// 南隣の升から南へ☆（＾～＾）
     pub fn for_each_south<F1>(start_square: &Square, callback: &mut F1)
     where
