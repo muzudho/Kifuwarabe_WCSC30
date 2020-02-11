@@ -175,6 +175,21 @@ impl SPPositionDto {
             .phase()
     }
 
+    /*
+    /// 指定の升にある駒の先後、または空升
+    pub fn is_phase_by_sq(
+        &self,
+        ph: &Phase,
+        sq: &Square,
+        speed_of_light: &MLSpeedOfLightVo,
+    ) -> bool {
+        speed_of_light
+            .get_piece_struct_vo(self.get_piece_by_square(sq))
+            .phase()
+            == *ph
+    }
+    */
+
     /// 移動先と移動元を比較し、違う駒があれば、成ったと判定するぜ☆（＾～＾）
     pub fn is_natta(
         &self,
