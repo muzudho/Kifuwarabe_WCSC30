@@ -35,11 +35,13 @@ pub fn get_potential_movement<F1>(
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
-    for dan_src in 1..10 {
-        for suji_src in 1..10 {
+    // (段)
+    for rank_src in 1..10 {
+        // (筋)
+        for file_src in 1..10 {
             let source_of_sqp;
             {
-                let sq_src = Square::from_file_rank(suji_src, dan_src);
+                let sq_src = Square::from_file_rank(file_src, rank_src);
                 source_of_sqp = GPSquareAndPieceVo::new(
                     &sq_src,
                     sp_dto.get_current_position().get_piece_by_square(&sq_src),
@@ -104,11 +106,20 @@ pub fn get_potential_movement<F1>(
     // +----+
     // | 打 |
     // +----+
-    for dan_dst in 1..10 {
-        for suji_dst in 1..10 {
-            let sq_dst = Square::from_file_rank(suji_dst, dan_dst);
-            let piece_dst = sp_dto.get_current_position().get_piece_by_square(&sq_dst);
-            if let GPPieceVo::NonePiece = piece_dst {
+    // (段)
+    for rank_dst in 1..10 {
+        // (筋)
+        for file_dst in 1..10 {
+            let destination_of_sqp;
+            {
+                let sq_dst = Square::from_file_rank(file_dst, rank_dst);
+                destination_of_sqp = GPSquareAndPieceVo::new(
+                    &sq_dst,
+                    sp_dto.get_current_position().get_piece_by_square(&sq_dst),
+                );
+            }
+
+            if let GPPieceVo::NonePiece = destination_of_sqp.piece {
                 // 駒が無いところに打つ
                 let mut da_piece_type_hashset = HashSet::new();
                 for piece_type_motigoma in MGS_ARRAY.iter() {
@@ -123,7 +134,7 @@ pub fn get_potential_movement<F1>(
                     {
                         // 駒を持っていれば
                         make_drop_piece_type_by_square_piece(
-                            &sq_dst,
+                            &destination_of_sqp.square,
                             pc_motigoma,
                             &sp_dto,
                             &speed_of_light,
@@ -137,10 +148,10 @@ pub fn get_potential_movement<F1>(
                     let piece_type = num_to_piece_type(num_piece_type_da);
                     gets_movement_callback(
                         MLMovementDto {
-                            src: Square::from_umasu(SS_SRC_DA), // 駒大
-                            dst: sq_dst.clone(),                // どの升へ行きたいか
-                            pro: false,                         // 打に成りは無し
-                            drop: piece_type,                   // 打った駒種類
+                            src: Square::from_umasu(SS_SRC_DA),     // 駒大
+                            dst: destination_of_sqp.square.clone(), // どの升へ行きたいか
+                            pro: false,                             // 打に成りは無し
+                            drop: piece_type,                       // 打った駒種類
                         }
                         .to_hash(speed_of_light),
                     );

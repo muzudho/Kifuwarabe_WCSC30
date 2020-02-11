@@ -861,6 +861,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
     let piece_src = speed_of_light
         .get_piece_struct_vo_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
         .piece();
+    let square_dst_piece_src = GPSquareAndPieceVo::new(square_dst, piece_src);
 
     // 例えば移動先の駒種類が「ぱひ」なら、「ぱひ」が動いた可能性の他に、
     // 「ひ」が動いたのかもしれない。
@@ -894,20 +895,18 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長東
                     make_before_promotion_source_sliding_to_east(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 西東
                     make_before_promotion_source_to_west_east(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
@@ -916,31 +915,28 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長北東
                     make_before_promotion_source_sliding_to_north_east(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 北東
                     make_before_promotion_source_to_north_east(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
             NNE => {
                 // 北北東
                 make_before_promotion_source_to_north_north_east(
-                    square_dst,
+                    &square_dst_piece_src,
                     sp_dto,
                     speed_of_light,
                     &mut gets_square,
-                    piece_src,
                 );
             }
             // 北
@@ -948,31 +944,28 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長北
                     make_before_promotion_source_sliding_to_north(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 北
                     make_before_promotion_source_to_north(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
             NNW => {
                 // 北北西
                 make_before_promotion_source_to_north_north_west(
-                    square_dst,
+                    &square_dst_piece_src,
                     sp_dto,
                     speed_of_light,
                     &mut gets_square,
-                    piece_src,
                 );
             }
             // 北西
@@ -980,20 +973,18 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長北西
                     make_before_promotion_source_sliding_to_north_west(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 北西
                     make_before_promotion_source_to_north_west(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
@@ -1002,20 +993,18 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長西
                     make_before_promotion_source_sliding_to_west(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 西
                     make_before_promotion_source_to_west(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
@@ -1024,31 +1013,28 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長南西
                     make_before_promotion_source_sliding_to_south_west(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 南西
                     make_before_promotion_source_to_south_west(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
             SSW => {
                 // 南南西
                 make_before_promotion_source_to_south_south_west(
-                    square_dst,
+                    &square_dst_piece_src,
                     sp_dto,
                     speed_of_light,
                     &mut gets_square,
-                    piece_src,
                 );
             }
             // 南
@@ -1056,31 +1042,28 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長南
                     make_before_promotion_source_sliding_to_south(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 南
                     make_before_promotion_source_to_south(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
             SSE => {
                 // 南南東
                 make_before_promotion_source_to_south_south_east(
-                    square_dst,
+                    &square_dst_piece_src,
                     sp_dto,
                     speed_of_light,
                     &mut gets_square,
-                    piece_src,
                 );
             }
             // 南東
@@ -1088,20 +1071,18 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長南東
                     make_before_promotion_source_sliding_to_south_east(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 } else {
                     // 南東
                     make_before_promotion_source_to_south_east(
-                        square_dst,
+                        &square_dst_piece_src,
                         sp_dto,
                         speed_of_light,
                         &mut gets_square,
-                        piece_src,
                     );
                 }
             }
@@ -1112,22 +1093,22 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
 
 /// 成る前の移動元、長い東
 fn make_before_promotion_source_sliding_to_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_east in 1..9 {
         if dx + i_east < SUJI_10 {
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 gets_square(sq_src);
             } else if sp_dto
                 .get_current_position()
@@ -1141,21 +1122,21 @@ fn make_before_promotion_source_sliding_to_east<F1>(
 
 /// 成る前の移動元、 西東
 fn make_before_promotion_source_to_west_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1163,22 +1144,22 @@ fn make_before_promotion_source_to_west_east<F1>(
 
 /// 成る前の移動元、 長い北東
 fn make_before_promotion_source_sliding_to_north_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 gets_square(sq_src);
             } else if sp_dto
                 .get_current_position()
@@ -1192,21 +1173,21 @@ fn make_before_promotion_source_sliding_to_north_east<F1>(
 
 /// 成る前の移動元、 北東
 fn make_before_promotion_source_to_north_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1214,21 +1195,21 @@ fn make_before_promotion_source_to_north_east<F1>(
 
 /// 成る前の移動元、 北北東
 fn make_before_promotion_source_to_north_north_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1236,22 +1217,22 @@ fn make_before_promotion_source_to_north_north_east<F1>(
 
 /// 成る前の移動元、 長い北
 fn make_before_promotion_source_sliding_to_north<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 gets_square(sq_src);
             } else if sp_dto
                 .get_current_position()
@@ -1265,21 +1246,21 @@ fn make_before_promotion_source_sliding_to_north<F1>(
 
 /// 成る前の移動元、 北
 fn make_before_promotion_source_to_north<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1287,21 +1268,21 @@ fn make_before_promotion_source_to_north<F1>(
 
 /// 成る前の移動元、 北北西
 fn make_before_promotion_source_to_north_north_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1309,22 +1290,22 @@ fn make_before_promotion_source_to_north_north_west<F1>(
 
 /// 成る前の移動元、 長い北西
 fn make_before_promotion_source_sliding_to_north_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 gets_square(sq_src);
             } else if sp_dto
                 .get_current_position()
@@ -1338,21 +1319,21 @@ fn make_before_promotion_source_sliding_to_north_west<F1>(
 
 /// 成る前の移動元、 北西
 fn make_before_promotion_source_to_north_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1360,23 +1341,23 @@ fn make_before_promotion_source_to_north_west<F1>(
 
 /// 成る前の移動元、 長い西
 fn make_before_promotion_source_sliding_to_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_east in 1..9 {
         if SUJI_0 < dx - i_east {
             // 進みたいマスから戻ったマス
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 // 指定の駒があれば、その升は移動元。続行
                 gets_square(sq_src);
             } else if sp_dto
@@ -1392,21 +1373,21 @@ fn make_before_promotion_source_sliding_to_west<F1>(
 
 /// 成る前の移動元、 西
 fn make_before_promotion_source_to_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1414,22 +1395,22 @@ fn make_before_promotion_source_to_west<F1>(
 
 /// 成る前の移動元、 長い南西
 fn make_before_promotion_source_sliding_to_south_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 gets_square(sq_src);
             } else if sp_dto
                 .get_current_position()
@@ -1443,21 +1424,21 @@ fn make_before_promotion_source_sliding_to_south_west<F1>(
 
 /// 成る前の移動元、 南西
 fn make_before_promotion_source_to_south_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1465,21 +1446,21 @@ fn make_before_promotion_source_to_south_west<F1>(
 
 /// 成る前の移動元、 南南西
 fn make_before_promotion_source_to_south_south_west<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1487,22 +1468,22 @@ fn make_before_promotion_source_to_south_south_west<F1>(
 
 /// 成る前の移動元、 長い南
 fn make_before_promotion_source_sliding_to_south<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_north in 1..9 {
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 gets_square(sq_src);
             } else if sp_dto
                 .get_current_position()
@@ -1516,21 +1497,21 @@ fn make_before_promotion_source_sliding_to_south<F1>(
 
 /// 成る前の移動元、 南
 fn make_before_promotion_source_to_south<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1538,21 +1519,21 @@ fn make_before_promotion_source_to_south<F1>(
 
 /// 成る前の移動元、 南南東
 fn make_before_promotion_source_to_south_south_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
@@ -1560,22 +1541,22 @@ fn make_before_promotion_source_to_south_south_east<F1>(
 
 /// 成る前の移動元、 長い南東
 fn make_before_promotion_source_sliding_to_south_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            if sp_dto
-                .get_current_position()
-                .has_sq_km(&sq_src, piece_src, speed_of_light)
-            {
+            if sp_dto.get_current_position().has_sq_km(
+                &sq_src,
+                &square_dst_piece_src.piece,
+                speed_of_light,
+            ) {
                 gets_square(sq_src);
             } else if sp_dto
                 .get_current_position()
@@ -1589,21 +1570,21 @@ fn make_before_promotion_source_sliding_to_south_east<F1>(
 
 /// 成る前の移動元、 南東
 fn make_before_promotion_source_to_south_east<F1>(
-    square_dst: &Square,
+    square_dst_piece_src: &GPSquareAndPieceVo,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
-    piece_src: &GPPieceVo,
 ) where
     F1: FnMut(Square),
 {
-    let (dx, dy) = square_dst.to_file_rank();
+    let (dx, dy) = square_dst_piece_src.square.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        if sp_dto
-            .get_current_position()
-            .has_sq_km(&sq_src, piece_src, speed_of_light)
-        {
+        if sp_dto.get_current_position().has_sq_km(
+            &sq_src,
+            &square_dst_piece_src.piece,
+            speed_of_light,
+        ) {
             gets_square(sq_src);
         }
     }
