@@ -70,6 +70,24 @@ impl SquareScanner {
             }
         }
     }
+
+    /// 北東隣の升から南西へ☆（＾～＾）
+    pub fn for_each_south_west<F1>(start_square: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        for i_sw in 1..9 {
+            if SUJI_0 < start_square.file - i_sw && DAN_0 < start_square.rank - i_sw {
+                if callback(Square::from_file_rank(
+                    start_square.file - i_sw,
+                    start_square.rank - i_sw,
+                )) {
+                    break;
+                }
+            }
+        }
+    }
+
     /// 西隣の升から西へ☆（＾～＾）
     pub fn for_each_west<F1>(start_square: &Square, callback: &mut F1)
     where
