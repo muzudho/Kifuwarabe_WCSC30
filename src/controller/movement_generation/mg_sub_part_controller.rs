@@ -8,6 +8,7 @@ use super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::PieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::super::super::model::vo::game_part::gp_square_and_piece_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_phase_vo::Phase;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
@@ -1756,8 +1757,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 /// to_nari  : 成りの手を生成するなら真
 /// sp_dto       : 探索部
 pub fn make_destination_by_square_piece<S: BuildHasher>(
-    sq_src: &Square,
-    km_src: &GPPieceVo,
+    source_sqp: &GPSquareAndPieceVo,
     to_nari: bool,
     sp_dto: &SPDto,
     speed_of_light: &MLSpeedOfLightVo,
@@ -1765,11 +1765,11 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
     // 成れない動きをあとで除外する☆（＾～＾）
     result: &mut HashSet<Square, S>,
 ) {
-    assert_banjo_sq(&sq_src, "make_destination_by_square_piece");
+    assert_banjo_sq(&source_sqp.square, "make_destination_by_square_piece");
 
     // 移動先の筋、段、駒種類、駒種類インデックス
-    let (dx, dy) = sq_src.to_file_rank();
-    let ps_src = speed_of_light.get_piece_struct_vo(km_src);
+    let (dx, dy) = source_sqp.square.to_file_rank();
+    let ps_src = speed_of_light.get_piece_struct_vo(&source_sqp.piece);
     let piece_type_src = ps_src.piece_type();
 
     // +--------------+
@@ -1989,11 +1989,11 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
         // | 成れる動き以外での成りの禁止 |
         // +------------------------------+
         use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
-        match km_src.clone() {
+        match source_sqp.piece {
             Rook1 | Bishop1 | Silver1 => {
                 // ▼きりん、▼ぞう、▼ねこ　は
                 // 移動元または移動先が　１～３段目なら成れる
-                remake_promotion_destination_rook_bishop_silver1(sq_src, result);
+                remake_promotion_destination_rook_bishop_silver1(&source_sqp.square, result);
             }
             Knight1 | Lance1 | Pawn1 => {
                 // ▼うさぎ、▼しし、▼ひよこ　は
@@ -2003,7 +2003,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
             Rook2 | Bishop2 | Silver2 => {
                 // △きりん、△ぞう、△ねこ　は
                 // 移動元または移動先が　７～９段目なら成れる
-                remake_promotion_destination_rook_bishop_silver2(sq_src, result);
+                remake_promotion_destination_rook_bishop_silver2(&source_sqp.square, result);
             }
             Knight2 | Lance2 | Pawn2 => {
                 // △うさぎ、△しし、△ひよこ　は
@@ -2017,7 +2017,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
         // | 行先の無いところに駒を進めることの禁止 |
         // +----------------------------------------+
         use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
-        match km_src {
+        match source_sqp.piece {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
                 remake_forbidden_destination_knight1(result);

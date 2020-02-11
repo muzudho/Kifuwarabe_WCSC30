@@ -9,6 +9,7 @@ use super::super::super::model::dto::search_part::sp_dto::*;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::super::super::model::vo::game_part::gp_square_and_piece_vo::GPSquareAndPieceVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_square_vo::*;
@@ -36,18 +37,25 @@ pub fn get_potential_movement<F1>(
     // +----------------+
     for dan_src in 1..10 {
         for suji_src in 1..10 {
-            let sq_src = Square::from_file_rank(suji_src, dan_src);
-            let piece_src = sp_dto.get_current_position().get_piece_by_square(&sq_src);
+            let source_of_sqp;
+            {
+                let sq_src = Square::from_file_rank(suji_src, dan_src);
+                source_of_sqp = GPSquareAndPieceVo::new(
+                    &sq_src,
+                    sp_dto.get_current_position().get_piece_by_square(&sq_src),
+                );
+            }
 
-            if &speed_of_light.get_piece_struct_vo(&piece_src).phase()
+            if &speed_of_light
+                .get_piece_struct_vo(&source_of_sqp.piece)
+                .phase()
                 == &sp_dto.get_phase(&Person::Friend)
             {
                 // 手番の駒
 
                 let mut dst_hashset: HashSet<Square> = HashSet::<Square>::new();
                 make_destination_by_square_piece(
-                    &sq_src,
-                    piece_src,
+                    &source_of_sqp,
                     false, // 成らず
                     &sp_dto,
                     &speed_of_light,
@@ -61,7 +69,7 @@ pub fn get_potential_movement<F1>(
                 for sq_dst in &dst_hashset {
                     gets_movement_callback(
                         MLMovementDto {
-                            src: sq_src.clone(),
+                            src: source_of_sqp.square.clone(),
                             dst: sq_dst.clone(),
                             pro: false, // 成らず
                             drop: GPPieceTypeVo::KaraPieceType,
@@ -72,8 +80,7 @@ pub fn get_potential_movement<F1>(
 
                 dst_hashset.clear();
                 make_destination_by_square_piece(
-                    &sq_src,
-                    piece_src,
+                    &source_of_sqp,
                     true, // 成り
                     &sp_dto,
                     &speed_of_light,
@@ -82,7 +89,7 @@ pub fn get_potential_movement<F1>(
                 for sq_dst in &dst_hashset {
                     gets_movement_callback(
                         MLMovementDto {
-                            src: sq_src.clone(),
+                            src: source_of_sqp.square.clone(),
                             dst: sq_dst.clone(),
                             pro: true, // 成り
                             drop: GPPieceTypeVo::KaraPieceType,
