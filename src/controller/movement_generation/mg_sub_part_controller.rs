@@ -3500,21 +3500,13 @@ fn make_before_promotion_source_by_phase_sliding_to_east<F1>(
         if dx + i_east < SUJI_10 {
             // 移動元升の位置。
             let sq_src = Square::from_file_rank(dx + i_east, dy);
-            // その升にある駒の先後。
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                // その升にある駒種類。
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
             // 指定した駒に一致すれば。
-            if exists_piece == piece {
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if phase_ms != Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3533,13 +3525,8 @@ fn make_before_promotion_source_by_phase_to_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3558,18 +3545,12 @@ fn make_before_promotion_source_by_phase_sliding_to_north_east<F1>(
     for i_ne in 1..9 {
         if dx + i_ne < SUJI_10 && dy + i_ne < DAN_10 {
             let sq_src = Square::from_file_rank(dx + i_ne, dy + i_ne);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
-            if exists_piece == piece {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if &phase_ms != &Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3588,13 +3569,8 @@ fn make_before_promotion_source_by_phase_to_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 1);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3612,13 +3588,8 @@ fn make_before_promotion_source_by_phase_to_north_north_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx + 1, dy + 2);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3637,18 +3608,12 @@ fn make_before_promotion_source_by_phase_sliding_to_north<F1>(
     for i_south in 1..9 {
         if dy + i_south < DAN_10 {
             let sq_src = Square::from_file_rank(dx, dy + i_south);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
-            if exists_piece == piece {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if &phase_ms != &Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3667,16 +3632,11 @@ fn make_before_promotion_source_by_phase_to_north<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dy + 1 < DAN_10 {
         let sq_src = Square::from_file_rank(dx, dy + 1);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
         // g_writeln(&format!("get_src_by_phase_ms 北 ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     ms_src, phase_ms, piece_typece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
         // ));
-        if exists_piece == piece {
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3694,13 +3654,8 @@ fn make_before_promotion_source_by_phase_to_north_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && dy + 2 < DAN_10 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 2);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3719,18 +3674,12 @@ fn make_before_promotion_source_by_phase_sliding_to_north_west<F1>(
     for i_se in 1..9 {
         if SUJI_0 < dx - i_se && dy + i_se < DAN_10 {
             let sq_src = Square::from_file_rank(dx - i_se, dy + i_se);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
-            if exists_piece == piece {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if &phase_ms != &Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3749,13 +3698,8 @@ fn make_before_promotion_source_by_phase_to_north_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx - 1 > SUJI_0 && DAN_10 > dy + 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy + 1);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3774,18 +3718,12 @@ fn make_before_promotion_source_by_phase_sliding_to_west<F1>(
     for i_east in 1..9 {
         if SUJI_0 < dx - i_east {
             let sq_src = Square::from_file_rank(dx - i_east, dy);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
-            if exists_piece == piece {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if &phase_ms != &Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3804,13 +3742,8 @@ fn make_before_promotion_source_by_phase_to_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3829,18 +3762,12 @@ fn make_before_promotion_source_by_phase_sliding_to_south_west<F1>(
     for i_ne in 1..9 {
         if SUJI_0 < dx - i_ne && DAN_0 < dy - i_ne {
             let sq_src = Square::from_file_rank(dx - i_ne, dy - i_ne);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
-            if exists_piece == piece {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if &phase_ms != &Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3859,13 +3786,8 @@ fn make_before_promotion_source_by_phase_to_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 1);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3883,13 +3805,8 @@ fn make_before_promotion_source_by_phase_to_south_south_west<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if SUJI_0 < dx - 1 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx - 1, dy - 2);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3909,17 +3826,12 @@ fn make_before_promotion_source_by_phase_sliding_to_south<F1>(
         if DAN_0 < dy - i_north {
             let sq_src = Square::from_file_rank(dx, dy - i_north);
             let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
-            if exists_piece == piece {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if &phase_ms != &Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -3938,16 +3850,11 @@ fn make_before_promotion_source_by_phase_to_south<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx, dy - 1);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
         // g_writeln(&format!("get_src_by_phase_ms 南 piece_type={} piece_type_num={} ms_src={} phase_ms=>{} piece_type_ms={} match_phase={} match_piece_type={}",
         //     piece_type, piece_type_num, ms_src, phase_ms, piece_type_ms, match_phase( &phase_ms, &phase ), match_piece_type( piece_type_ms, *piece_type )
         // ));
-        if exists_piece == piece {
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3965,13 +3872,8 @@ fn make_before_promotion_source_by_phase_to_south_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 2 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 2);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
@@ -3990,18 +3892,12 @@ fn make_before_promotion_source_by_phase_sliding_to_south_east<F1>(
     for i_nw in 1..9 {
         if dx + i_nw < SUJI_10 && DAN_0 < dy - i_nw {
             let sq_src = Square::from_file_rank(dx + i_nw, dy - i_nw);
-            let phase_ms = current_position.get_phase_by_sq(&sq_src, speed_of_light);
-            let exists_piece = GPPieceVo::from_phase_and_piece_type(
-                &phase_ms,
-                speed_of_light
-                    .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                    .piece_type(),
-            );
-            if exists_piece == piece {
+            let exists_piece = current_position.get_piece_by_square(&sq_src);
+            if *exists_piece == piece {
                 gets_square(sq_src);
             }
             // End of sliding.
-            if &phase_ms != &Phase::None {
+            if *exists_piece != GPPieceVo::NonePiece {
                 break;
             }
         }
@@ -4020,13 +3916,8 @@ fn make_before_promotion_source_by_phase_to_south_east<F1>(
     let (dx, dy) = square_dst.to_file_rank();
     if dx + 1 < SUJI_10 && DAN_0 < dy - 1 {
         let sq_src = Square::from_file_rank(dx + 1, dy - 1);
-        let exists_piece = GPPieceVo::from_phase_and_piece_type(
-            &current_position.get_phase_by_sq(&sq_src, speed_of_light),
-            speed_of_light
-                .get_piece_struct_vo(current_position.get_piece_by_square(&sq_src))
-                .piece_type(),
-        );
-        if exists_piece == piece {
+        let exists_piece = current_position.get_piece_by_square(&sq_src);
+        if *exists_piece == piece {
             gets_square(sq_src);
         }
     }
