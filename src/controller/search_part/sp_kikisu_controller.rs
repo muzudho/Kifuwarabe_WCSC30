@@ -38,7 +38,7 @@ pub fn update_effect_count(ml_universe_dto: &mut MLUniverseDto, speed_of_light: 
 
                 // 移動元の升
                 let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-                make_no_promotion_source_by_square_and_piece(
+                lookup_no_promotion_source_by_square_and_piece(
                     &sq_dst,
                     &ps_dst,
                     &ml_universe_dto.get_search_part().get_current_position(),
@@ -47,7 +47,7 @@ pub fn update_effect_count(ml_universe_dto: &mut MLUniverseDto, speed_of_light: 
                         mv_src_hashset.insert(square);
                     },
                 );
-                make_before_promotion_source_by_square_piece(
+                lookup_before_promotion_source_by_square_piece(
                     &sq_dst,
                     &ps_dst,
                     &ml_universe_dto.get_search_part().get_current_position(),

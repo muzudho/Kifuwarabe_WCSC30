@@ -28,6 +28,19 @@ pub fn let_there_be_light(
     universe: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> MLMovementDto {
+    // TODO 指し手の一覧を作るぜ☆（＾～＾）
+    // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）
+    // TODO 進めた局面に評価値を付けるぜ☆（＾～＾）
+    // TODO 繰り返すぜ☆（＾～＾）
+    // TODO 一番良い評価値になる１手を選ぶぜ☆（＾～＾）それが最善手だぜ☆（＾～＾）
+    get_best_movement(universe, speed_of_light)
+}
+
+/// 最善手を返すぜ☆（＾～＾）
+fn get_best_movement(
+    universe: &mut MLUniverseDto,
+    speed_of_light: &MLSpeedOfLightVo,
+) -> MLMovementDto {
     // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
     // 相手の利き升調べ（自殺手、特に王手放置回避漏れ　防止のため）
     {

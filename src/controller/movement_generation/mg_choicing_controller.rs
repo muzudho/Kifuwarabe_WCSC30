@@ -153,7 +153,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         // 利きの再計算
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
-        make_no_promotion_source_by_phase_square(
+        lookup_no_promotion_source_by_phase_square(
             &ml_universe_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                                     // 指定の升
             &ml_universe_dto.get_search_part().get_current_position(),
@@ -162,7 +162,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
                 attackers.insert(square);
             },
         );
-        make_before_promotion_source_by_phase_square(
+        lookup_before_promotion_source_by_phase_square(
             &ml_universe_dto.get_search_part().get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                                     // 指定の升
             &ml_universe_dto.get_search_part().get_current_position(),

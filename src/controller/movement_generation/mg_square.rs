@@ -2,8 +2,8 @@ use super::super::super::model::vo::game_part::gp_square_vo::Square;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 
 /// 全升☆（＾～＾）
-pub struct GPSquares {}
-impl GPSquares {
+pub struct MGSquares {}
+impl MGSquares {
     /// 全升☆（＾～＾）
     pub fn for_all<F1>(callback: &mut F1)
     where
@@ -20,8 +20,8 @@ impl GPSquares {
 }
 
 /// 並んだ升☆（＾～＾）
-pub struct GPLinedSquares {}
-impl GPLinedSquares {
+pub struct MGLinedSquares {}
+impl MGLinedSquares {
     /// 東隣の升から東へ☆（＾～＾）
     pub fn for_each_east<F1>(start_square: &Square, callback: &mut F1)
     where
@@ -158,8 +158,8 @@ impl GPLinedSquares {
     }
 }
 
-pub struct GPNextSquare {}
-impl GPNextSquare {
+pub struct MGSquare {}
+impl MGSquare {
     /// 東隣☆（＾～＾）
     pub fn east_of<F1>(start_square: &Square, callback: &mut F1)
     where

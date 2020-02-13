@@ -89,7 +89,7 @@ pub fn unit_test(
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-        make_no_promotion_source_by_square_and_piece(
+        lookup_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
             &ml_universe_dto.get_search_part().get_current_position(),
@@ -98,7 +98,7 @@ pub fn unit_test(
                 mv_src_hashset.insert(square);
             },
         );
-        make_before_promotion_source_by_square_piece(
+        lookup_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
             &ml_universe_dto.get_search_part().get_current_position(),
@@ -107,7 +107,7 @@ pub fn unit_test(
                 mv_src_hashset.insert(square);
             },
         );
-        make_drop_by_square_piece(
+        lookup_drop_by_square_piece(
             &GPSquareAndPieceVo::new(&sq_dst, pc),
             &ml_universe_dto.get_search_part().get_current_position(),
             &speed_of_light,
@@ -132,7 +132,7 @@ pub fn unit_test(
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_piece_type_hashset : HashSet<usize> = HashSet::new();
-        make_no_promotion_source_by_square_and_piece(
+        lookup_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
             &ml_universe_dto.get_search_part().get_current_position(),
@@ -141,7 +141,7 @@ pub fn unit_test(
                 mv_src_hashset.insert(square);
             },
         );
-        make_before_promotion_source_by_square_piece(
+        lookup_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
             &ml_universe_dto.get_search_part().get_current_position(),
@@ -187,7 +187,7 @@ pub fn unit_test(
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-            make_no_promotion_source_by_square_and_piece(
+            lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -196,7 +196,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_before_promotion_source_by_square_piece(
+            lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -205,7 +205,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_by_square_piece(
+            lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,
@@ -231,7 +231,7 @@ pub fn unit_test(
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-            make_no_promotion_source_by_square_and_piece(
+            lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -240,7 +240,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_before_promotion_source_by_square_piece(
+            lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -249,7 +249,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_by_square_piece(
+            lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,
@@ -275,7 +275,7 @@ pub fn unit_test(
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-            make_no_promotion_source_by_square_and_piece(
+            lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -284,7 +284,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_before_promotion_source_by_square_piece(
+            lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -293,7 +293,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_by_square_piece(
+            lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,
@@ -319,7 +319,7 @@ pub fn unit_test(
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-            make_no_promotion_source_by_square_and_piece(
+            lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -328,7 +328,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_before_promotion_source_by_square_piece(
+            lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
                 &ml_universe_dto.get_search_part().get_current_position(),
@@ -337,7 +337,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_by_square_piece(
+            lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,

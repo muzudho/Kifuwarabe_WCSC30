@@ -3,7 +3,7 @@
 //!
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::movement_generation::mg_square_scanner::*;
+use super::super::super::controller::movement_generation::mg_square::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
@@ -36,7 +36,7 @@ pub fn get_up_potential_movement<F1>(
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
-    GPSquares::for_all(&mut |any_square| {
+    MGSquares::for_all(&mut |any_square| {
         let source_of_sqp = GPSquareAndPieceVo::new(
             &any_square,
             sp_earth_dto
@@ -101,7 +101,7 @@ pub fn get_up_potential_movement<F1>(
     // +----+
     // | 打 |
     // +----+
-    GPSquares::for_all(&mut |any_square| {
+    MGSquares::for_all(&mut |any_square| {
         let exists_piece = sp_earth_dto
             .get_current_position()
             .get_piece_by_square(&any_square);
@@ -121,7 +121,7 @@ pub fn get_up_potential_movement<F1>(
                     .get_hand(hand_piece, speed_of_light)
                 {
                     // 駒を持っていれば
-                    make_drop_by_square_piece(
+                    lookup_drop_by_square_piece(
                         &GPSquareAndPieceVo::new(&any_square, hand_piece),
                         &sp_earth_dto.get_current_position(),
                         &speed_of_light,
@@ -186,7 +186,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     // +----------------+
     // | 盤上（成らず） |
     // +----------------+
-    make_no_promotion_source_by_square_and_piece(
+    lookup_no_promotion_source_by_square_and_piece(
         &sq_dst,
         &ps_dst,
         &sp_earth_dto.get_current_position(),
@@ -212,7 +212,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     // | 盤上（成り） |
     // +--------------+
     mv_src_hashset.clear();
-    make_before_promotion_source_by_square_piece(
+    lookup_before_promotion_source_by_square_piece(
         sq_dst,
         &ps_dst,
         &sp_earth_dto.get_current_position(),
@@ -273,7 +273,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     // +----+
 
     let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-    make_drop_by_square_piece(
+    lookup_drop_by_square_piece(
         &GPSquareAndPieceVo::new(&sq_dst, piece_dst),
         &sp_earth_dto.get_current_position(),
         &speed_of_light,
