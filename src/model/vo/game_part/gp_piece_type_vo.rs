@@ -118,18 +118,28 @@ pub const KMS_PRO_ARRAY: [GPPieceTypeVo; KMS_PRO_ARRAY_LN] = [
     GPPieceTypeVo::PromotedPawn,   // ぱわーあっぷひよこ
 ];
 
-// 持駒種類数
-pub const MGS_ARRAY_LN: usize = 7;
-// 持駒種類
-pub const MGS_ARRAY: [GPPieceTypeVo; MGS_ARRAY_LN] = [
-    GPPieceTypeVo::Rook,
-    GPPieceTypeVo::Bishop,
-    GPPieceTypeVo::Gold,
-    GPPieceTypeVo::Silver,
-    GPPieceTypeVo::Knight,
-    GPPieceTypeVo::Lance,
-    GPPieceTypeVo::Pawn,
-];
+pub struct GPPieceTypeScanner {}
+impl GPPieceTypeScanner {
+    pub fn for_all_hand<F1>(callback: &mut F1)
+    where
+        F1: FnMut(GPPieceTypeVo),
+    {
+        // 持駒種類
+        const MGS_ARRAY: [GPPieceTypeVo; 7] = [
+            GPPieceTypeVo::Rook,
+            GPPieceTypeVo::Bishop,
+            GPPieceTypeVo::Gold,
+            GPPieceTypeVo::Silver,
+            GPPieceTypeVo::Knight,
+            GPPieceTypeVo::Lance,
+            GPPieceTypeVo::Pawn,
+        ];
+
+        for hand_piece_type in MGS_ARRAY.iter() {
+            callback(*hand_piece_type);
+        }
+    }
+}
 
 /// 数値の駒種類化
 pub fn num_to_piece_type(n: usize) -> GPPieceTypeVo {

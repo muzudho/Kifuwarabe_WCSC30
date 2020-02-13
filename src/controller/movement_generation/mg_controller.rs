@@ -111,12 +111,12 @@ pub fn get_potential_movement<F1>(
         if let GPPieceVo::NonePiece = destination_of_sqp.piece {
             // 駒が無いところに打つ
             let mut da_piece_type_hashset = HashSet::new();
-            for piece_type_motigoma in MGS_ARRAY.iter() {
-                let ps_motigoma = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
+            GPPieceTypeScanner::for_all_hand(&mut |next_hand_piece_type| {
+                let hand_piece_struct = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
                     &sp_earth_dto.get_phase(&Person::Friend),
-                    *piece_type_motigoma,
+                    next_hand_piece_type,
                 );
-                let hand_piece = ps_motigoma.piece();
+                let hand_piece = hand_piece_struct.piece();
                 if 0 < sp_earth_dto
                     .get_current_position()
                     .get_hand(hand_piece, speed_of_light)
@@ -131,7 +131,7 @@ pub fn get_potential_movement<F1>(
                         },
                     );
                 }
-            }
+            });
             for num_piece_type_da in da_piece_type_hashset {
                 let piece_type = num_to_piece_type(num_piece_type_da);
                 gets_movement_callback(
