@@ -10,3 +10,4 @@ edition = "2018"
 
 rand="0.7.3"
 lazy_static = "1.4.0"
+clippy = { version = "*", optional = true }
