@@ -74,7 +74,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長東
                     SquareScanner::for_each_east(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -85,7 +85,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 東
                     SquareScanner::next_to_east(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -100,7 +100,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長北東
                     SquareScanner::for_each_north_east(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -111,7 +111,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 北東
                     SquareScanner::next_to_north_east(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -124,7 +124,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 // 北北東
                 SquareScanner::next_to_north_north_east(square_dst, &mut |next_square| {
                     make_no_promotion_source_by_piece_next(
-                        ps_dst,
+                        ps_dst.piece(),
                         current_position,
                         speed_of_light,
                         &mut gets_square,
@@ -138,7 +138,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長北
                     SquareScanner::for_each_north(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -149,7 +149,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 北
                     SquareScanner::next_to_north(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -162,7 +162,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 // 北北西
                 SquareScanner::next_to_north_north_west(square_dst, &mut |next_square| {
                     make_no_promotion_source_by_piece_next(
-                        ps_dst,
+                        ps_dst.piece(),
                         current_position,
                         speed_of_light,
                         &mut gets_square,
@@ -176,7 +176,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長北西
                     SquareScanner::for_each_north_west(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -187,7 +187,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 北西
                     SquareScanner::next_to_north_west(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -202,7 +202,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長西
                     SquareScanner::for_each_west(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -213,7 +213,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 西
                     SquareScanner::next_to_west(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -228,7 +228,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長南西
                     SquareScanner::for_each_south_west(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -239,7 +239,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 南西
                     SquareScanner::next_to_south_west(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -252,7 +252,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 // 南南西
                 SquareScanner::next_to_south_south_west(square_dst, &mut |next_square| {
                     make_no_promotion_source_by_piece_next(
-                        ps_dst,
+                        ps_dst.piece(),
                         current_position,
                         speed_of_light,
                         &mut gets_square,
@@ -266,7 +266,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長南
                     SquareScanner::for_each_south(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -277,7 +277,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 南
                     SquareScanner::next_to_south(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -290,7 +290,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                 // 南南東
                 SquareScanner::next_to_south_south_east(square_dst, &mut |next_square| {
                     make_no_promotion_source_by_piece_next(
-                        ps_dst,
+                        ps_dst.piece(),
                         current_position,
                         speed_of_light,
                         &mut gets_square,
@@ -304,7 +304,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 長南東
                     SquareScanner::for_each_south_east(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_sliding(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -315,7 +315,7 @@ pub fn make_no_promotion_source_by_square_and_piece<F1>(
                     // 南東
                     SquareScanner::next_to_south_east(square_dst, &mut |next_square| {
                         make_no_promotion_source_by_piece_next(
-                            ps_dst,
+                            ps_dst.piece(),
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -367,7 +367,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -
 
 // 成る前を含めない、長い利き
 fn make_no_promotion_source_by_piece_sliding<F1>(
-    ps_dst: &GPPieceStructVo,
+    dst_piece: &GPPieceVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -376,7 +376,7 @@ fn make_no_promotion_source_by_piece_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
+    if current_position.has_sq_km(&next_square, dst_piece, speed_of_light) {
         // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
         gets_square(next_square);
     } else if current_position.exists_km(&next_square, speed_of_light) {
@@ -388,7 +388,7 @@ where
 
 /// 成る前を含めない、隣への利き
 fn make_no_promotion_source_by_piece_next<F1>(
-    ps_dst: &GPPieceStructVo,
+    dst_piece: &GPPieceVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     gets_square: &mut F1,
@@ -396,7 +396,7 @@ fn make_no_promotion_source_by_piece_next<F1>(
 ) where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, ps_dst.piece(), speed_of_light) {
+    if current_position.has_sq_km(&next_square, dst_piece, speed_of_light) {
         gets_square(next_square);
     }
 }
@@ -477,7 +477,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -489,7 +489,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 東
                     SquareScanner::next_to_east(&square_dst_piece_src.square, &mut |next_square| {
                         make_before_promotion_source_next(
-                            &square_dst_piece_src,
+                            &square_dst_piece_src.piece,
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -506,7 +506,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -520,7 +520,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_next(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -536,7 +536,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     &square_dst_piece_src.square,
                     &mut |next_square| {
                         make_before_promotion_source_next(
-                            &square_dst_piece_src,
+                            &square_dst_piece_src.piece,
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -553,7 +553,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -567,7 +567,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_next(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -583,7 +583,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     &square_dst_piece_src.square,
                     &mut |next_square| {
                         make_before_promotion_source_next(
-                            &square_dst_piece_src,
+                            &square_dst_piece_src.piece,
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -600,7 +600,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -614,7 +614,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_next(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -632,7 +632,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -644,7 +644,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     // 西
                     SquareScanner::next_to_west(&square_dst_piece_src.square, &mut |next_square| {
                         make_before_promotion_source_next(
-                            &square_dst_piece_src,
+                            &square_dst_piece_src.piece,
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -661,7 +661,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -675,7 +675,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_next(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -691,7 +691,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     &square_dst_piece_src.square,
                     &mut |next_square| {
                         make_before_promotion_source_next(
-                            &square_dst_piece_src,
+                            &square_dst_piece_src.piece,
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -708,7 +708,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -722,7 +722,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_next(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -738,7 +738,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                     &square_dst_piece_src.square,
                     &mut |next_square| {
                         make_before_promotion_source_next(
-                            &square_dst_piece_src,
+                            &square_dst_piece_src.piece,
                             current_position,
                             speed_of_light,
                             &mut gets_square,
@@ -755,7 +755,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_sliding(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -769,7 +769,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             make_before_promotion_source_next(
-                                &square_dst_piece_src,
+                                &square_dst_piece_src.piece,
                                 current_position,
                                 speed_of_light,
                                 &mut gets_square,
@@ -786,7 +786,7 @@ pub fn make_before_promotion_source_by_square_piece<F1>(
 
 /// 成る前の移動元、長い利き
 fn make_before_promotion_source_sliding<F1>(
-    square_dst_piece_src: &GPSquareAndPieceVo,
+    source_piece: &GPPieceVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
@@ -795,7 +795,7 @@ fn make_before_promotion_source_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, &square_dst_piece_src.piece, speed_of_light) {
+    if current_position.has_sq_km(&next_square, source_piece, speed_of_light) {
         // 指定の駒があれば、その升は移動元になる☆ 続行☆（＾～＾）
         gets_square(next_square);
     } else if current_position.exists_km(&next_square, speed_of_light) {
@@ -807,7 +807,7 @@ where
 
 /// 成る前の移動元、 隣升への利き
 fn make_before_promotion_source_next<F1>(
-    square_dst_piece_src: &GPSquareAndPieceVo,
+    source_piece: &GPPieceVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_square: F1,
@@ -815,7 +815,7 @@ fn make_before_promotion_source_next<F1>(
 ) where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, &square_dst_piece_src.piece, speed_of_light) {
+    if current_position.has_sq_km(&next_square, source_piece, speed_of_light) {
         gets_square(next_square);
     }
 }
@@ -1005,7 +1005,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長東
                     SquareScanner::for_each_east(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1016,7 +1016,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 東
                     SquareScanner::next_to_east(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1031,7 +1031,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長北東
                     SquareScanner::for_each_north_east(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1042,7 +1042,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 北東
                     SquareScanner::next_to_north_east(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1055,7 +1055,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 // 北北東
                 SquareScanner::next_to_north_north_east(&source_sqps.square, &mut |next_square| {
                     make_destination_next(
-                        &source_sqps,
+                        &source_sqps.piece_struct.phase(),
                         current_position,
                         speed_of_light,
                         result,
@@ -1069,7 +1069,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長北
                     SquareScanner::for_each_north(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1080,7 +1080,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 北
                     SquareScanner::next_to_north(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1093,7 +1093,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 // 北北西
                 SquareScanner::next_to_north_north_west(&source_sqps.square, &mut |next_square| {
                     make_destination_next(
-                        &source_sqps,
+                        &source_sqps.piece_struct.phase(),
                         current_position,
                         speed_of_light,
                         result,
@@ -1107,7 +1107,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長北西
                     SquareScanner::for_each_north_west(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1118,7 +1118,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 北西
                     SquareScanner::next_to_north_west(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1133,7 +1133,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長西
                     SquareScanner::for_each_west(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1144,7 +1144,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 西
                     SquareScanner::next_to_west(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1159,7 +1159,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長南西
                     SquareScanner::for_each_south_west(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1170,7 +1170,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 南西
                     SquareScanner::next_to_south_west(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1183,7 +1183,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 // 南南西
                 SquareScanner::next_to_south_south_west(&source_sqps.square, &mut |next_square| {
                     make_destination_next(
-                        &source_sqps,
+                        &source_sqps.piece_struct.phase(),
                         current_position,
                         speed_of_light,
                         result,
@@ -1197,7 +1197,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長南
                     SquareScanner::for_each_south(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1208,7 +1208,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 南
                     SquareScanner::next_to_south(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1221,7 +1221,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                 // 南南東
                 SquareScanner::next_to_south_south_east(&source_sqps.square, &mut |next_square| {
                     make_destination_next(
-                        &source_sqps,
+                        &source_sqps.piece_struct.phase(),
                         current_position,
                         speed_of_light,
                         result,
@@ -1235,7 +1235,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 長南東
                     SquareScanner::for_each_south_east(&source_sqps.square, &mut |next_square| {
                         make_destination_sliding(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1246,7 +1246,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     // 南東
                     SquareScanner::next_to_south_east(&source_sqps.square, &mut |next_square| {
                         make_destination_next(
-                            &source_sqps,
+                            &source_sqps.piece_struct.phase(),
                             current_position,
                             speed_of_light,
                             result,
@@ -1320,7 +1320,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
 ///
 /// * `speed_of_light` - 盤上の駒の Phase を調べるために使う☆（＾～＾）
 fn make_destination_sliding<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
+    source_piece_phase: &Phase,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
@@ -1328,7 +1328,7 @@ fn make_destination_sliding<S: BuildHasher>(
 ) -> bool {
     // 自駒でなければ進める。
     let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-    if dst_phase != sq_dst_ps_src.piece_struct.phase() {
+    if dst_phase != *source_piece_phase {
         result.insert(next_square);
     }
 
@@ -1338,14 +1338,14 @@ fn make_destination_sliding<S: BuildHasher>(
 
 /// 移動先升、 隣☆（＾～＾）
 fn make_destination_next<S: BuildHasher>(
-    sq_dst_ps_src: &GPSquareAndPieceStructVo,
+    source_piece_phase: &Phase,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
     result: &mut HashSet<Square, S>,
     next_square: Square,
 ) {
     let dst_phase = current_position.get_phase_by_sq(&next_square, speed_of_light);
-    if dst_phase != sq_dst_ps_src.piece_struct.phase() {
+    if dst_phase != *source_piece_phase {
         result.insert(next_square);
     }
 }
