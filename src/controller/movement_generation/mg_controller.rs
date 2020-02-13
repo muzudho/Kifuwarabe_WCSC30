@@ -26,7 +26,7 @@ use std::collections::HashSet;
 ///
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
-pub fn get_potential_movement<F1>(
+pub fn get_up_potential_movement<F1>(
     sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement_callback: F1,
@@ -36,12 +36,12 @@ pub fn get_potential_movement<F1>(
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
-    SquareScanner::for_all(&mut |next_square| {
+    GPSquares::for_all(&mut |any_square| {
         let source_of_sqp = GPSquareAndPieceVo::new(
-            &next_square,
+            &any_square,
             sp_earth_dto
                 .get_current_position()
-                .get_piece_by_square(&next_square),
+                .get_piece_by_square(&any_square),
         );
 
         if &speed_of_light
@@ -101,45 +101,44 @@ pub fn get_potential_movement<F1>(
     // +----+
     // | 打 |
     // +----+
-    SquareScanner::for_all(&mut |next_square| {
-        let destination_of_sqp = GPSquareAndPieceVo::new(
-            &next_square,
-            sp_earth_dto
-                .get_current_position()
-                .get_piece_by_square(&next_square),
-        );
-        if let GPPieceVo::NonePiece = destination_of_sqp.piece {
+    GPSquares::for_all(&mut |any_square| {
+        let exists_piece = sp_earth_dto
+            .get_current_position()
+            .get_piece_by_square(&any_square);
+        if let GPPieceVo::NonePiece = exists_piece {
             // 駒が無いところに打つ
-            let mut da_piece_type_hashset = HashSet::new();
-            GPPieceTypeScanner::for_all_hand(&mut |next_hand_piece_type| {
-                let hand_piece_struct = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-                    &sp_earth_dto.get_phase(&Person::Friend),
-                    next_hand_piece_type,
-                );
-                let hand_piece = hand_piece_struct.piece();
+            // 駒種類のハッシュ集合。
+            let mut drops_set = HashSet::new();
+            GPHandPieces::for_all(&mut |any_piece_type| {
+                let hand_piece = speed_of_light
+                    .get_piece_struct_vo_by_phase_and_piece_type(
+                        &sp_earth_dto.get_phase(&Person::Friend),
+                        any_piece_type,
+                    )
+                    .piece();
                 if 0 < sp_earth_dto
                     .get_current_position()
                     .get_hand(hand_piece, speed_of_light)
                 {
                     // 駒を持っていれば
-                    make_drop_piece_type_by_square_piece(
-                        &GPSquareAndPieceVo::new(&destination_of_sqp.square, hand_piece),
+                    make_drop_by_square_piece(
+                        &GPSquareAndPieceVo::new(&any_square, hand_piece),
                         &sp_earth_dto.get_current_position(),
                         &speed_of_light,
                         |piece_type_hash| {
-                            da_piece_type_hashset.insert(piece_type_hash);
+                            drops_set.insert(piece_type_hash);
                         },
                     );
                 }
             });
-            for num_piece_type_da in da_piece_type_hashset {
-                let piece_type = num_to_piece_type(num_piece_type_da);
+            // 駒種類のハッシュ。
+            for drops_hash in drops_set {
                 gets_movement_callback(
                     MLMovementDto {
-                        src: Square::from_umasu(SS_SRC_DA),     // 駒大
-                        dst: destination_of_sqp.square.clone(), // どの升へ行きたいか
-                        pro: false,                             // 打に成りは無し
-                        drop: piece_type,                       // 打った駒種類
+                        src: Square::from_umasu(SS_SRC_DA),  // 駒台
+                        dst: any_square.clone(),             // どの升へ行きたいか
+                        pro: false,                          // 打に成りは無し
+                        drop: num_to_piece_type(drops_hash), // 打った駒種類
                     }
                     .to_hash(speed_of_light),
                 );
@@ -274,7 +273,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     // +----+
 
     let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-    make_drop_piece_type_by_square_piece(
+    make_drop_by_square_piece(
         &GPSquareAndPieceVo::new(&sq_dst, piece_dst),
         &sp_earth_dto.get_current_position(),
         &speed_of_light,

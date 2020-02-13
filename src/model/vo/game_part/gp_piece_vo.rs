@@ -164,38 +164,50 @@ impl GPPieceVo {
     }
 }
 
+pub struct GPPieces {}
+impl GPPieces {
+    /// すべての駒☆（＾～＾）
+    pub fn for_all<F1>(callback: &mut F1)
+    where
+        F1: FnMut(GPPieceVo),
+    {
+        const KM_ARRAY: [GPPieceVo; 28] = [
+            GPPieceVo::King1,           // らいおん
+            GPPieceVo::Rook1,           // きりん
+            GPPieceVo::Bishop1,         // ぞう
+            GPPieceVo::Gold1,           // いぬ
+            GPPieceVo::Silver1,         // ねこ
+            GPPieceVo::Knight1,         // うさぎ
+            GPPieceVo::Lance1,          // いのしし
+            GPPieceVo::Pawn1,           // ひよこ
+            GPPieceVo::Dragon1,         // ぱわーあっぷきりん
+            GPPieceVo::Horse1,          // ぱわーあっぷぞう
+            GPPieceVo::PromotedSilver1, // ぱわーあっぷねこ
+            GPPieceVo::PromotedKnight1, // ぱわーあっぷうさぎ
+            GPPieceVo::PromotedLance1,  // ぱわーあっぷいのしし
+            GPPieceVo::PromotedPawn1,   // ぱわーあっぷひよこ
+            GPPieceVo::King2,           // らいおん
+            GPPieceVo::Rook2,           // きりん
+            GPPieceVo::Bishop2,         // ぞう
+            GPPieceVo::Gold2,           // いぬ
+            GPPieceVo::Silver2,         // ねこ
+            GPPieceVo::Knight2,         // うさぎ
+            GPPieceVo::Lance2,          // いのしし
+            GPPieceVo::Pawn2,           // ひよこ
+            GPPieceVo::Dragon2,         // ぱわーあっぷきりん
+            GPPieceVo::Horse2,          // ぱわーあっぷぞう
+            GPPieceVo::PromotedSilver2, // ぱわーあっぷねこ
+            GPPieceVo::PromotedKnight2, // ぱわーあっぷうさぎ
+            GPPieceVo::PromotedLance2,  // ぱわーあっぷいのしし
+            GPPieceVo::PromotedPawn2,   // ぱわーあっぷひよこ
+        ];
+        for piece in KM_ARRAY.iter() {
+            callback(*piece);
+        }
+    }
+}
+/*
 pub const KM_ARRAY_HALF_LN: usize = 14;
-pub const KM_ARRAY_LN: usize = 28;
-pub const KM_ARRAY: [GPPieceVo; KM_ARRAY_LN] = [
-    GPPieceVo::King1,           // らいおん
-    GPPieceVo::Rook1,           // きりん
-    GPPieceVo::Bishop1,         // ぞう
-    GPPieceVo::Gold1,           // いぬ
-    GPPieceVo::Silver1,         // ねこ
-    GPPieceVo::Knight1,         // うさぎ
-    GPPieceVo::Lance1,          // いのしし
-    GPPieceVo::Pawn1,           // ひよこ
-    GPPieceVo::Dragon1,         // ぱわーあっぷきりん
-    GPPieceVo::Horse1,          // ぱわーあっぷぞう
-    GPPieceVo::PromotedSilver1, // ぱわーあっぷねこ
-    GPPieceVo::PromotedKnight1, // ぱわーあっぷうさぎ
-    GPPieceVo::PromotedLance1,  // ぱわーあっぷいのしし
-    GPPieceVo::PromotedPawn1,   // ぱわーあっぷひよこ
-    GPPieceVo::King2,           // らいおん
-    GPPieceVo::Rook2,           // きりん
-    GPPieceVo::Bishop2,         // ぞう
-    GPPieceVo::Gold2,           // いぬ
-    GPPieceVo::Silver2,         // ねこ
-    GPPieceVo::Knight2,         // うさぎ
-    GPPieceVo::Lance2,          // いのしし
-    GPPieceVo::Pawn2,           // ひよこ
-    GPPieceVo::Dragon2,         // ぱわーあっぷきりん
-    GPPieceVo::Horse2,          // ぱわーあっぷぞう
-    GPPieceVo::PromotedSilver2, // ぱわーあっぷねこ
-    GPPieceVo::PromotedKnight2, // ぱわーあっぷうさぎ
-    GPPieceVo::PromotedLance2,  // ぱわーあっぷいのしし
-    GPPieceVo::PromotedPawn2,   // ぱわーあっぷひよこ
-];
 pub const PHASE_KM_ARRAY: [[GPPieceVo; KM_ARRAY_HALF_LN]; PHASE_LN] = [
     [
         GPPieceVo::King1,           // らいおん
@@ -246,3 +258,4 @@ pub const PHASE_KM_ARRAY: [[GPPieceVo; KM_ARRAY_HALF_LN]; PHASE_LN] = [
         GPPieceVo::OwariPiece, // ぱわーあっぷひよこ
     ],
 ];
+*/

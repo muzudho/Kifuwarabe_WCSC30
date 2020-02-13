@@ -830,7 +830,7 @@ fn make_before_promotion_source_next<F1>(
 /// 2. 移動先の駒    piece_dst  ※先後が要るので、piece_typeではなくkm。
 ///
 /// そこに打てる駒種類を返す。
-pub fn make_drop_piece_type_by_square_piece<F1>(
+pub fn make_drop_by_square_piece<F1>(
     destination_sqp: &GPSquareAndPieceVo,
     current_position: &SPPositionDto,
     speed_of_light: &MLSpeedOfLightVo,
@@ -838,10 +838,7 @@ pub fn make_drop_piece_type_by_square_piece<F1>(
 ) where
     F1: FnMut(usize),
 {
-    assert_banjo_sq(
-        &destination_sqp.square,
-        "make_drop_piece_type_by_square_piece",
-    );
+    assert_banjo_sq(&destination_sqp.square, "make_drop_by_square_piece");
 
     let ps_dst = speed_of_light.get_piece_struct_vo(&destination_sqp.piece);
     let piece_type_dst = ps_dst.piece_type();

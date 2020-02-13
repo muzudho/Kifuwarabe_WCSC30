@@ -87,7 +87,7 @@ pub struct PositionHashSeed {
 }
 
 /// アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）
-pub struct MLDto {
+pub struct MLUniverseDto {
     /// 局面ハッシュ種☆（＾～＾）
     position_hash_seed: PositionHashSeed,
     /// 初期局面
@@ -102,9 +102,9 @@ pub struct MLDto {
     sp_earth_dto: SPEarthDto,
 }
 
-impl Default for MLDto {
+impl Default for MLUniverseDto {
     fn default() -> Self {
-        MLDto {
+        MLUniverseDto {
             position_hash_seed: PositionHashSeed {
                 // 盤上の駒
                 km: [[0; PIECE_LN]; BOARD_SIZE],
@@ -121,7 +121,7 @@ impl Default for MLDto {
         }
     }
 }
-impl MLDto {
+impl MLUniverseDto {
     /**
      * 宇宙誕生
      */

@@ -18,10 +18,10 @@ impl SPPieceSetDto {
      */
     pub fn new_all(speed_of_light: &MLSpeedOfLightVo) -> SPPieceSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
-        for piece in KM_ARRAY.iter() {
-            let ps = speed_of_light.get_piece_struct_vo(piece);
+        GPPieces::for_all(&mut |any_piece| {
+            let ps = speed_of_light.get_piece_struct_vo(&any_piece);
             num_syugo1.insert(ps.serial_piece_number());
-        }
+        });
         SPPieceSetDto {
             num_syugo: num_syugo1,
         }
@@ -37,13 +37,13 @@ impl SPPieceSetDto {
     ) -> SPPieceSetDto {
         let phase0 = sp_earth_dto.get_phase(&person);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
-        for km in KM_ARRAY.iter() {
-            let ps = speed_of_light.get_piece_struct_vo(km);
+        GPPieces::for_all(&mut |any_piece| {
+            let ps = speed_of_light.get_piece_struct_vo(&any_piece);
             let (phase1, _piece_type) = ps.phase_piece_type();
             if phase0 == *phase1 {
                 num_syugo1.insert(ps.serial_piece_number());
             }
-        }
+        });
         SPPieceSetDto {
             num_syugo: num_syugo1,
         }

@@ -212,7 +212,11 @@ impl SPPositionDto {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_hash(&self, ml_universe_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) -> u64 {
+    pub fn create_hash(
+        &self,
+        ml_universe_dto: &MLUniverseDto,
+        speed_of_light: &MLSpeedOfLightVo,
+    ) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒
@@ -224,20 +228,22 @@ impl SPPositionDto {
         }
 
         // 持ち駒ハッシュ
-        for km in &KM_ARRAY {
-            let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();
+        GPPieces::for_all(&mut |any_piece| {
+            let num_km = speed_of_light
+                .get_piece_struct_vo(&any_piece)
+                .serial_piece_number();
 
-            let maisu = self.get_hand(km, &speed_of_light);
+            let maisu = self.get_hand(&any_piece, &speed_of_light);
             debug_assert!(
                 -1 < maisu && maisu <= MG_MAX as i8,
                 "持ち駒 {} の枚数 {} <= {}",
-                km,
+                &any_piece,
                 maisu,
                 MG_MAX
             );
 
             hash ^= ml_universe_dto.get_position_hash_seed().mg[num_km][maisu as usize];
-        }
+        });
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）
 

@@ -13,47 +13,57 @@ use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 
+/// Let there be light. (光在れ)
 /// 現局面での最善手を返すぜ☆（*＾～＾*）
-pub fn search17(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) -> MLMovementDto {
+///
+/// # Arguments
+///
+/// * `universe` - (宇宙)
+/// * `speed_of_light` - (光速)
+///
+/// # Returns
+///
+/// Best movement.
+pub fn let_there_be_light(
+    universe: &mut MLUniverseDto,
+    speed_of_light: &MLSpeedOfLightVo,
+) -> MLMovementDto {
     // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
     // 相手の利き升調べ（自殺手、特に王手放置回避漏れ　防止のため）
     {
-        update_effect_count(ml_universe_dto, speed_of_light);
+        update_effect_count(universe, speed_of_light);
     }
 
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
-    let mut ss_hashset = HashSet::<u64>::new();
+    // 指し手はハッシュ値で入っている☆（＾～＾）
+    let mut movement_set = HashSet::<u64>::new();
 
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_potential_movement(
-        &ml_universe_dto.get_search_part(),
-        &speed_of_light,
-        |movement_hash| {
-            ss_hashset.insert(movement_hash);
-        },
-    );
+    get_up_potential_movement(&universe.get_search_part(), &speed_of_light, |movement| {
+        movement_set.insert(movement);
+    });
     // g_writeln("テスト ポテンシャルムーブ.");
     // use consoles::visuals::dumps::*;
     // hyoji_ss_hashset( &ss_hashset );
 
     select_movement_except_check(
-        &mut ss_hashset,
-        &ml_universe_dto.get_search_part(),
+        &mut movement_set,
+        &universe.get_search_part(),
         &speed_of_light,
     );
 
     // FIXME 負けてても、千日手は除くぜ☆（＾～＾）ただし、千日手を取り除くと手がなくなる場合は取り除かないぜ☆（＾～＾）
-    select_movement_except_fourfold_repetition(&mut ss_hashset, ml_universe_dto, speed_of_light);
+    select_movement_except_fourfold_repetition(&mut movement_set, universe, speed_of_light);
 
     // 自殺手は省くぜ☆（＾～＾）
-    select_movement_except_suiceid(&mut ss_hashset, ml_universe_dto, speed_of_light);
+    select_movement_except_suiceid(&mut movement_set, universe, speed_of_light);
 
-    if ss_hashset.is_empty() {
+    if movement_set.is_empty() {
         // 投了
         MLMovementDto::default()
     } else {
-        let index = rand::thread_rng().gen_range(0, ss_hashset.len());
-        for (i, ss_hash) in ss_hashset.into_iter().enumerate() {
+        let index = rand::thread_rng().gen_range(0, movement_set.len());
+        for (i, ss_hash) in movement_set.into_iter().enumerate() {
             if i == index {
                 //let result : MLMovementDto = ss.clone();
                 let best_movement = MLMovementDto::from_hash(ss_hash);

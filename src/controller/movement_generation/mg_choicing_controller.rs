@@ -115,7 +115,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
  */
 pub fn select_movement_except_suiceid<S: BuildHasher>(
     ss_hashset_input: &mut HashSet<u64, S>,
-    ml_universe_dto: &mut MLDto,
+    ml_universe_dto: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 残すのはここに退避する☆（＾～＾）
@@ -214,7 +214,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
 /// ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
 pub fn select_movement_except_fourfold_repetition<S: BuildHasher>(
     ss_hashset_input: &mut HashSet<u64, S>,
-    ml_universe_dto: &mut MLDto,
+    ml_universe_dto: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     let mut ss_hashset_pickup = HashSet::new();

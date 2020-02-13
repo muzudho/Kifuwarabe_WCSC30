@@ -21,7 +21,7 @@ use std::collections::HashSet;
  * piece_dst : 移動した先の駒
  */
 pub fn get_ido_ss_by_km_random(
-    ml_universe_dto: &MLDto,
+    ml_universe_dto: &MLUniverseDto,
     piece_dst: &GPPieceVo,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> MLMovementDto {
@@ -66,7 +66,7 @@ pub fn get_ido_ss_by_km_random(
  * 指し手１つをランダム選出
  */
 pub fn get_ss_by_random(
-    ml_universe_dto: &MLDto,
+    ml_universe_dto: &MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> MLMovementDto {
     let mut ss_hashset = HashSet::new();

@@ -1,8 +1,8 @@
 use super::super::super::model::vo::game_part::gp_square_vo::Square;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 
-pub struct SquareScanner {}
-impl SquareScanner {
+pub struct GPSquares {}
+impl GPSquares {
     /// 全升☆（＾～＾）
     pub fn for_all<F1>(callback: &mut F1)
     where
@@ -16,7 +16,10 @@ impl SquareScanner {
             }
         }
     }
+}
 
+pub struct SquareScanner {}
+impl SquareScanner {
     /// 東隣の升から東へ☆（＾～＾）
     pub fn for_each_east<F1>(start_square: &Square, callback: &mut F1)
     where

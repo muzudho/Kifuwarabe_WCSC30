@@ -14,21 +14,21 @@ use std::collections::HashSet;
 /// 盤上の利き升調べ
 ///
 /// 用途：自殺手防止他
-pub fn update_effect_count(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
+pub fn update_effect_count(ml_universe_dto: &mut MLUniverseDto, speed_of_light: &MLSpeedOfLightVo) {
     // ゼロ・リセット
-    for pc in KM_ARRAY.iter() {
+    GPPieces::for_all(&mut |any_piece| {
         ml_universe_dto.get_search_part_mut().effect_count_by_piece
-            [GPPieceStructVo::from_piece((*pc).clone()).serial_piece_number()]
+            [GPPieceStructVo::from_piece(any_piece).serial_piece_number()]
         .clear();
-    }
+    });
 
     for phase in PHASE_ARRAY.iter() {
         ml_universe_dto.get_search_part_mut().effect_count_by_phase[phase_to_num(phase)].clear();
     }
 
     // カウント
-    for km_dst in KM_ARRAY.iter() {
-        let ps_dst = GPPieceStructVo::from_piece((*km_dst).clone());
+    GPPieces::for_all(&mut |any_piece| {
+        let ps_dst = GPPieceStructVo::from_piece(any_piece);
 
         for x in SUJI_1..SUJI_10 {
             // 9..0 みたいに降順に書いても動かない？
@@ -70,5 +70,5 @@ pub fn update_effect_count(ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeed
                 .add_su_by_sq(&sq_dst, kikisu as i8);
             }
         }
-    }
+    });
 }

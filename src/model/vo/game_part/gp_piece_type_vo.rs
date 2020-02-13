@@ -118,9 +118,9 @@ pub const KMS_PRO_ARRAY: [GPPieceTypeVo; KMS_PRO_ARRAY_LN] = [
     GPPieceTypeVo::PromotedPawn,   // ぱわーあっぷひよこ
 ];
 
-pub struct GPPieceTypeScanner {}
-impl GPPieceTypeScanner {
-    pub fn for_all_hand<F1>(callback: &mut F1)
+pub struct GPHandPieces {}
+impl GPHandPieces {
+    pub fn for_all<F1>(callback: &mut F1)
     where
         F1: FnMut(GPPieceTypeVo),
     {

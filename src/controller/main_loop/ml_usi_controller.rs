@@ -19,7 +19,7 @@ pub fn read_sasite(
     line: &str,
     starts: &mut usize,
     len: usize,
-    ml_universe_dto: &mut MLDto,
+    ml_universe_dto: &mut MLUniverseDto,
 ) -> bool {
     // 4文字か5文字あるはず。
     if (len - *starts) < 4 {
@@ -323,7 +323,7 @@ pub fn read_banjo(
     line: &str,
     starts: &mut usize,
     len: usize,
-    ml_universe_dto: &mut MLDto,
+    ml_universe_dto: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 盤部
@@ -610,7 +610,11 @@ pub fn read_banjo(
 /**
  * position コマンド読取
  */
-pub fn read_position(line: &str, ml_universe_dto: &mut MLDto, speed_of_light: &MLSpeedOfLightVo) {
+pub fn read_position(
+    line: &str,
+    ml_universe_dto: &mut MLUniverseDto,
+    speed_of_light: &MLSpeedOfLightVo,
+) {
     let mut starts = 0;
 
     // 全体の長さ

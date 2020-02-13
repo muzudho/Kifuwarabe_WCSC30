@@ -12,7 +12,7 @@ use crate::model::vo::game_part::gp_phase_vo::turn_phase;
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい
 pub fn is_jisatusyu(
-    ml_universe_dto: &MLDto,
+    ml_universe_dto: &MLUniverseDto,
     ss: &MLMovementDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> bool {

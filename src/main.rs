@@ -36,7 +36,7 @@ fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
     let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::default();
     // 宇宙
-    let mut ml_universe_dto: MLDto = MLDto::default();
+    let mut ml_universe_dto: MLUniverseDto = MLUniverseDto::default();
     ml_universe_dto.big_bang();
 
     // [Ctrl]+[C] で強制終了
@@ -102,7 +102,7 @@ fn main() {
         } else if 1 < len && &line[starts..2] == "go" {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = search17(&mut ml_universe_dto, &speed_of_light);
+            let bestmove = let_there_be_light(&mut ml_universe_dto, &speed_of_light);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove));
         } else {
@@ -115,7 +115,7 @@ fn main() {
 fn parse_extend_command(
     line: &str,
     mut starts: usize,
-    ml_universe_dto: &mut MLDto,
+    ml_universe_dto: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 文字数を調べようぜ☆（＾～＾）
@@ -150,7 +150,7 @@ fn parse_extend_command(
     } else if 5 < len && &line[starts..6] == "sasite" {
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
-        get_potential_movement(
+        get_up_potential_movement(
             &ml_universe_dto.get_search_part(),
             &speed_of_light,
             |movement_hash| {

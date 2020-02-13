@@ -49,12 +49,12 @@ pub fn hyoji_ss_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
 }
 
 /// 利き数表示
-pub fn cmd_kikisu(ml_universe_dto: &MLDto, speed_of_light: &MLSpeedOfLightVo) {
-    for pc in KM_ARRAY.iter() {
-        g_writeln(&format!("利き数：{}", pc));
-        let s = ml_universe_dto.kaku_number_board(&Phase::None, pc, speed_of_light);
+pub fn cmd_kikisu(ml_universe_dto: &MLUniverseDto, speed_of_light: &MLSpeedOfLightVo) {
+    GPPieces::for_all(&mut |any_piece| {
+        g_writeln(&format!("利き数：{}", any_piece));
+        let s = ml_universe_dto.kaku_number_board(&Phase::None, &any_piece, speed_of_light);
         g_writeln(&s);
-    }
+    });
 
     for phase in PHASE_ARRAY.iter() {
         g_writeln(&format!("利き数：{}", phase));

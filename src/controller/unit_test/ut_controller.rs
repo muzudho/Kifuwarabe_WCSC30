@@ -63,7 +63,7 @@ pub fn unit_test(
     line: &str,
     starts: &mut usize,
     len: usize,
-    ml_universe_dto: &mut MLDto,
+    ml_universe_dto: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // いろいろな動作テスト
@@ -107,7 +107,7 @@ pub fn unit_test(
                 mv_src_hashset.insert(square);
             },
         );
-        make_drop_piece_type_by_square_piece(
+        make_drop_by_square_piece(
             &GPSquareAndPieceVo::new(&sq_dst, pc),
             &ml_universe_dto.get_search_part().get_current_position(),
             &speed_of_light,
@@ -205,7 +205,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_piece_type_by_square_piece(
+            make_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,
@@ -249,7 +249,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_piece_type_by_square_piece(
+            make_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,
@@ -293,7 +293,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_piece_type_by_square_piece(
+            make_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,
@@ -337,7 +337,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            make_drop_piece_type_by_square_piece(
+            make_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
                 &ml_universe_dto.get_search_part().get_current_position(),
                 &speed_of_light,
