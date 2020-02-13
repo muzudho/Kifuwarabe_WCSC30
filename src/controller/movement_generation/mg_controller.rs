@@ -3,6 +3,7 @@
 //!
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
+use super::super::super::controller::movement_generation::mg_square_scanner::*;
 use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
@@ -35,133 +36,116 @@ pub fn get_potential_movement<F1>(
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
-    // (段)
-    for rank_src in 1..10 {
-        // (筋)
-        for file_src in 1..10 {
-            let source_of_sqp;
-            {
-                let sq_src = Square::from_file_rank(file_src, rank_src);
-                source_of_sqp = GPSquareAndPieceVo::new(
-                    &sq_src,
-                    sp_earth_dto
-                        .get_current_position()
-                        .get_piece_by_square(&sq_src),
+    SquareScanner::for_all(&mut |next_square| {
+        let source_of_sqp = GPSquareAndPieceVo::new(
+            &next_square,
+            sp_earth_dto
+                .get_current_position()
+                .get_piece_by_square(&next_square),
+        );
+
+        if &speed_of_light
+            .get_piece_struct_vo(&source_of_sqp.piece)
+            .phase()
+            == &sp_earth_dto.get_phase(&Person::Friend)
+        {
+            // 手番の駒
+
+            let mut dst_hashset: HashSet<Square> = HashSet::<Square>::new();
+            make_destination_by_square_piece(
+                &source_of_sqp,
+                false, // 成らず
+                &sp_earth_dto.get_current_position(),
+                &speed_of_light,
+                &mut dst_hashset,
+            );
+
+            // g_writeln("テスト ポテンシャルムーブ insert_dst_by_sq_km(成らず).");
+            // use consoles::visuals::dumps::*;
+            // hyoji_sq_hashset( &dst_hashset );
+
+            for sq_dst in &dst_hashset {
+                gets_movement_callback(
+                    MLMovementDto {
+                        src: source_of_sqp.square.clone(),
+                        dst: sq_dst.clone(),
+                        pro: false, // 成らず
+                        drop: GPPieceTypeVo::KaraPieceType,
+                    }
+                    .to_hash(speed_of_light),
                 );
             }
 
-            if &speed_of_light
-                .get_piece_struct_vo(&source_of_sqp.piece)
-                .phase()
-                == &sp_earth_dto.get_phase(&Person::Friend)
-            {
-                // 手番の駒
-
-                let mut dst_hashset: HashSet<Square> = HashSet::<Square>::new();
-                make_destination_by_square_piece(
-                    &source_of_sqp,
-                    false, // 成らず
-                    &sp_earth_dto.get_current_position(),
-                    &speed_of_light,
-                    &mut dst_hashset,
+            dst_hashset.clear();
+            make_destination_by_square_piece(
+                &source_of_sqp,
+                true, // 成り
+                &sp_earth_dto.get_current_position(),
+                &speed_of_light,
+                &mut dst_hashset,
+            );
+            for sq_dst in &dst_hashset {
+                gets_movement_callback(
+                    MLMovementDto {
+                        src: source_of_sqp.square.clone(),
+                        dst: sq_dst.clone(),
+                        pro: true, // 成り
+                        drop: GPPieceTypeVo::KaraPieceType,
+                    }
+                    .to_hash(speed_of_light),
                 );
-
-                // g_writeln("テスト ポテンシャルムーブ insert_dst_by_sq_km(成らず).");
-                // use consoles::visuals::dumps::*;
-                // hyoji_sq_hashset( &dst_hashset );
-
-                for sq_dst in &dst_hashset {
-                    gets_movement_callback(
-                        MLMovementDto {
-                            src: source_of_sqp.square.clone(),
-                            dst: sq_dst.clone(),
-                            pro: false, // 成らず
-                            drop: GPPieceTypeVo::KaraPieceType,
-                        }
-                        .to_hash(speed_of_light),
-                    );
-                }
-
-                dst_hashset.clear();
-                make_destination_by_square_piece(
-                    &source_of_sqp,
-                    true, // 成り
-                    &sp_earth_dto.get_current_position(),
-                    &speed_of_light,
-                    &mut dst_hashset,
-                );
-                for sq_dst in &dst_hashset {
-                    gets_movement_callback(
-                        MLMovementDto {
-                            src: source_of_sqp.square.clone(),
-                            dst: sq_dst.clone(),
-                            pro: true, // 成り
-                            drop: GPPieceTypeVo::KaraPieceType,
-                        }
-                        .to_hash(speed_of_light),
-                    );
-                }
             }
         }
-    }
+    });
 
     // +----+
     // | 打 |
     // +----+
-    // (段)
-    for rank_dst in 1..10 {
-        // (筋)
-        for file_dst in 1..10 {
-            let destination_of_sqp;
-            {
-                let sq_dst = Square::from_file_rank(file_dst, rank_dst);
-                destination_of_sqp = GPSquareAndPieceVo::new(
-                    &sq_dst,
-                    sp_earth_dto
-                        .get_current_position()
-                        .get_piece_by_square(&sq_dst),
+    SquareScanner::for_all(&mut |next_square| {
+        let destination_of_sqp = GPSquareAndPieceVo::new(
+            &next_square,
+            sp_earth_dto
+                .get_current_position()
+                .get_piece_by_square(&next_square),
+        );
+        if let GPPieceVo::NonePiece = destination_of_sqp.piece {
+            // 駒が無いところに打つ
+            let mut da_piece_type_hashset = HashSet::new();
+            for piece_type_motigoma in MGS_ARRAY.iter() {
+                let ps_motigoma = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
+                    &sp_earth_dto.get_phase(&Person::Friend),
+                    *piece_type_motigoma,
+                );
+                let hand_piece = ps_motigoma.piece();
+                if 0 < sp_earth_dto
+                    .get_current_position()
+                    .get_hand(hand_piece, speed_of_light)
+                {
+                    // 駒を持っていれば
+                    make_drop_piece_type_by_square_piece(
+                        &GPSquareAndPieceVo::new(&destination_of_sqp.square, hand_piece),
+                        &sp_earth_dto.get_current_position(),
+                        &speed_of_light,
+                        |piece_type_hash| {
+                            da_piece_type_hashset.insert(piece_type_hash);
+                        },
+                    );
+                }
+            }
+            for num_piece_type_da in da_piece_type_hashset {
+                let piece_type = num_to_piece_type(num_piece_type_da);
+                gets_movement_callback(
+                    MLMovementDto {
+                        src: Square::from_umasu(SS_SRC_DA),     // 駒大
+                        dst: destination_of_sqp.square.clone(), // どの升へ行きたいか
+                        pro: false,                             // 打に成りは無し
+                        drop: piece_type,                       // 打った駒種類
+                    }
+                    .to_hash(speed_of_light),
                 );
             }
-
-            if let GPPieceVo::NonePiece = destination_of_sqp.piece {
-                // 駒が無いところに打つ
-                let mut da_piece_type_hashset = HashSet::new();
-                for piece_type_motigoma in MGS_ARRAY.iter() {
-                    let ps_motigoma = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-                        &sp_earth_dto.get_phase(&Person::Friend),
-                        *piece_type_motigoma,
-                    );
-                    let hand_piece = ps_motigoma.piece();
-                    if 0 < sp_earth_dto
-                        .get_current_position()
-                        .get_hand(hand_piece, speed_of_light)
-                    {
-                        // 駒を持っていれば
-                        make_drop_piece_type_by_square_piece(
-                            &GPSquareAndPieceVo::new(&destination_of_sqp.square, hand_piece),
-                            &sp_earth_dto.get_current_position(),
-                            &speed_of_light,
-                            |piece_type_hash| {
-                                da_piece_type_hashset.insert(piece_type_hash);
-                            },
-                        );
-                    }
-                }
-                for num_piece_type_da in da_piece_type_hashset {
-                    let piece_type = num_to_piece_type(num_piece_type_da);
-                    gets_movement_callback(
-                        MLMovementDto {
-                            src: Square::from_umasu(SS_SRC_DA),     // 駒大
-                            dst: destination_of_sqp.square.clone(), // どの升へ行きたいか
-                            pro: false,                             // 打に成りは無し
-                            drop: piece_type,                       // 打った駒種類
-                        }
-                        .to_hash(speed_of_light),
-                    );
-                }
-            }
-        } //suji
-    } //dan
+        }
+    });
 }
 
 /// 1. 移動先升指定  ms_dst

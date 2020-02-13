@@ -3,6 +3,20 @@ use super::super::super::model::vo::game_part::gp_square_vo::*;
 
 pub struct SquareScanner {}
 impl SquareScanner {
+    /// 全升☆（＾～＾）
+    pub fn for_all<F1>(callback: &mut F1)
+    where
+        F1: FnMut(Square),
+    {
+        // (段)
+        for rank_src in 1..10 {
+            // (筋)
+            for file_src in 1..10 {
+                callback(Square::from_file_rank(file_src, rank_src));
+            }
+        }
+    }
+
     /// 東隣の升から東へ☆（＾～＾）
     pub fn for_each_east<F1>(start_square: &Square, callback: &mut F1)
     where
