@@ -1,6 +1,7 @@
 use super::super::super::model::vo::game_part::gp_square_vo::Square;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 
+/// 全升☆（＾～＾）
 pub struct GPSquares {}
 impl GPSquares {
     /// 全升☆（＾～＾）
@@ -18,8 +19,9 @@ impl GPSquares {
     }
 }
 
-pub struct SquareScanner {}
-impl SquareScanner {
+/// 並んだ升☆（＾～＾）
+pub struct GPLinedSquares {}
+impl GPLinedSquares {
     /// 東隣の升から東へ☆（＾～＾）
     pub fn for_each_east<F1>(start_square: &Square, callback: &mut F1)
     where
@@ -154,9 +156,12 @@ impl SquareScanner {
             }
         }
     }
+}
 
+pub struct GPNextSquare {}
+impl GPNextSquare {
     /// 東隣☆（＾～＾）
-    pub fn next_to_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn east_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -169,7 +174,7 @@ impl SquareScanner {
     }
 
     /// 北隣☆（＾～＾）
-    pub fn next_to_north<F1>(start_square: &Square, callback: &mut F1)
+    pub fn north_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -181,7 +186,7 @@ impl SquareScanner {
         }
     }
     /// 北東隣☆（＾～＾）
-    pub fn next_to_north_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn north_east_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -194,7 +199,7 @@ impl SquareScanner {
     }
 
     /// 北北東隣☆（＾～＾）
-    pub fn next_to_north_north_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn north_north_east_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -207,7 +212,7 @@ impl SquareScanner {
     }
 
     /// 北北西隣☆（＾～＾）
-    pub fn next_to_north_north_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn north_north_west_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -220,7 +225,7 @@ impl SquareScanner {
     }
 
     /// 北西隣☆（＾～＾）
-    pub fn next_to_north_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn north_west_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -233,7 +238,7 @@ impl SquareScanner {
     }
 
     /// 南隣☆（＾～＾）
-    pub fn next_to_south<F1>(start_square: &Square, callback: &mut F1)
+    pub fn south_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -246,7 +251,7 @@ impl SquareScanner {
     }
 
     /// 南東隣☆（＾～＾）
-    pub fn next_to_south_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn south_east_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -259,7 +264,7 @@ impl SquareScanner {
     }
 
     /// 南南東隣☆（＾～＾）
-    pub fn next_to_south_south_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn south_south_east_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -271,7 +276,7 @@ impl SquareScanner {
         }
     }
     /// 南南西隣☆（＾～＾）
-    pub fn next_to_south_south_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn south_south_west_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -284,7 +289,7 @@ impl SquareScanner {
     }
 
     /// 南西隣☆（＾～＾）
-    pub fn next_to_south_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn south_west_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -297,7 +302,7 @@ impl SquareScanner {
     }
 
     /// 西☆（＾～＾）
-    pub fn next_to_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn west_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
