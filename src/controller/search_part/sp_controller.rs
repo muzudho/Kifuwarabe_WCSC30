@@ -12,7 +12,7 @@ use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_movement_vo::GPMovementVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use super::sp_evaluation_controller::*;
 
 /// Let there be light. (光在れ)
 /// 現局面での最善手を返すぜ☆（*＾～＾*）
@@ -48,43 +48,14 @@ pub fn let_there_be_light(
     let mut best_value = -1;
     for movement_hash in movement_set.iter() {
         let movement = GPMovementVo::from_hash(*movement_hash);
-        let cap = universe
+        let captured_piece = universe
             .get_search_part_mut()
             .do_move(&movement, speed_of_light);
-        let value = match cap {
-            GPPieceVo::King1 => 35000,
-            GPPieceVo::Rook1 => 1000,
-            GPPieceVo::Bishop1 => 900,
-            GPPieceVo::Gold1 => 600,
-            GPPieceVo::Silver1 => 500,
-            GPPieceVo::Knight1 => 300,
-            GPPieceVo::Lance1 => 200,
-            GPPieceVo::Pawn1 => 100,
-            GPPieceVo::Dragon1 => 2000,
-            GPPieceVo::Horse1 => 1900,
-            GPPieceVo::PromotedSilver1 => 500,
-            GPPieceVo::PromotedKnight1 => 300,
-            GPPieceVo::PromotedLance1 => 200,
-            GPPieceVo::PromotedPawn1 => 100,
-            GPPieceVo::King2 => 35000,
-            GPPieceVo::Rook2 => 1000,
-            GPPieceVo::Bishop2 => 900,
-            GPPieceVo::Gold2 => 600,
-            GPPieceVo::Silver2 => 500,
-            GPPieceVo::Knight2 => 300,
-            GPPieceVo::Lance2 => 200,
-            GPPieceVo::Pawn2 => 100,
-            GPPieceVo::Dragon2 => 2000,
-            GPPieceVo::Horse2 => 1900,
-            GPPieceVo::PromotedSilver2 => 500,
-            GPPieceVo::PromotedKnight2 => 300,
-            GPPieceVo::PromotedLance2 => 200,
-            GPPieceVo::PromotedPawn2 => 100,
-            _ => 0,
-        };
-        if best_value < value {
+        // 変化した評価値
+        let changed_value = SPEvaluationController::evaluate(captured_piece, speed_of_light);
+        if best_value < changed_value {
             best_movement_hash = *movement_hash;
-            best_value = value;
+            best_value = changed_value;
         }
         universe
             .get_search_part_mut()
