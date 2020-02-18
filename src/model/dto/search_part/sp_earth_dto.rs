@@ -153,18 +153,14 @@ impl SPEarthDto {
      * 指し手の　進む戻る　を逆さにして、盤上の駒配置を動かすぜ☆（＾～＾）
      * 手目のカウントが増えたりはしないぜ☆（＾～＾）
      */
-    pub fn undo_move(
-        &mut self,
-        phase: &Phase,
-        movement: &GPMovementVo,
-        speed_of_light: &MLSpeedOfLightVo,
-    ) {
+    pub fn undo_move(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
+        let phase = self.get_phase(&Person::Friend);
         let cap = self.captured_piece_history[self.get_ply() as usize].clone();
 
         // 移動先の駒
         let piece186 = if movement.source.to_umasu() == SS_SRC_DA {
             // 打なら
-            let piece679 = GPPieceVo::from_phase_and_piece_type(phase, movement.drop);
+            let piece679 = GPPieceVo::from_phase_and_piece_type(&phase, movement.drop);
             // 自分の持ち駒を増やす
             //let mg = km_to_mg(km);
             //self.add_hand(mg,1);

@@ -2,7 +2,7 @@
 //! 利き数
 //!
 use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
+use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;

@@ -595,9 +595,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);
-            let phase = self.sp_earth_dto.get_phase(&Person::Friend);
+            // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
             let ss = &self.sp_earth_dto.get_move().clone();
-            self.sp_earth_dto.undo_move(&phase, ss, speed_of_light);
+            self.sp_earth_dto.undo_move(/*&phase,*/ ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {

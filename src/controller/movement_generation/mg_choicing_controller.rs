@@ -7,8 +7,8 @@ use crate::model::vo::game_part::gp_phase_vo::phase_to_num;
 use rand::Rng;
 
 use super::super::super::controller::common_use::cu_asserts_controller::*;
+use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::movement_generation::mg_komatori_result_controller::*;
-use super::super::super::controller::movement_generation::mg_sub_part_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
