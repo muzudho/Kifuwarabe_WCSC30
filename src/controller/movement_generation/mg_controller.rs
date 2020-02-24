@@ -39,7 +39,7 @@ pub fn get_up_movement(
     });
     // g_writeln("テスト ポテンシャルムーブ.");
     // use consoles::visuals::dumps::*;
-    // hyoji_ss_hashset( &ss_hashset );
+    // print_movement_hashset( &ss_hashset );
     select_movement_except_check(movement_set, &universe.get_search_part(), &speed_of_light);
     // FIXME 負けてても、千日手は除くぜ☆（＾～＾）ただし、千日手を取り除くと手がなくなる場合は取り除かないぜ☆（＾～＾）
     select_movement_except_fourfold_repetition(movement_set, universe, speed_of_light);
@@ -94,7 +94,7 @@ pub fn get_up_potential_movement<F1>(
 
             // g_writeln("テスト ポテンシャルムーブ insert_dst_by_sq_km(成らず).");
             // use consoles::visuals::dumps::*;
-            // hyoji_sq_hashset( &dst_hashset );
+            // print_square_hashset( &dst_hashset );
 
             for sq_dst in &dst_hashset {
                 gets_movement_callback(

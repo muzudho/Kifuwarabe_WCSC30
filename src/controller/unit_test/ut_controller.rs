@@ -11,51 +11,13 @@ use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_square_and_piece_vo::*;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
+use crate::view::unit_test::unit_test_view::print_piece_type_hashset;
+use crate::view::unit_test::unit_test_view::print_square_hashset;
 use std::collections::HashSet;
-use std::hash::BuildHasher;
-
-/// 升を表示
-pub fn hyoji_sq_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
-    g_writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
-    for sq in sq_hashset {
-        let ms = (*sq).to_umasu();
-        match ms {
-            MASU_0 => break,
-            _ => g_writeln(&format!("ms({})", ms)),
-        }
-    }
-}
-
-/// 升を表示
-pub fn hyoji_sq_vec(sq_vec: &[Square]) {
-    g_writeln(&format!("sq_vec.len()={}", sq_vec.len()));
-    for sq in sq_vec {
-        let ms = sq.to_umasu();
-        match ms {
-            MASU_0 => break,
-            _ => g_writeln(&format!("ms({})", ms)),
-        }
-    }
-}
-
-/// 駒種類
-pub fn hyoji_piece_type_hashset<S: BuildHasher>(num_piece_type_hashset: &HashSet<usize, S>) {
-    g_writeln(&format!(
-        "num_piece_type_hashset.len()={}",
-        num_piece_type_hashset.len()
-    ));
-    for num_piece_type in num_piece_type_hashset {
-        g_writeln(&format!(
-            "piece_type({})",
-            num_to_piece_type(*num_piece_type)
-        ));
-    }
-}
 
 /// unit-test 2
 /// といったコマンドに対応☆（＾～＾）
@@ -115,8 +77,8 @@ pub fn unit_test(
                 da_piece_type_hashset.insert(piece_type_hash);
             },
         );
-        hyoji_sq_hashset(&mv_src_hashset);
-        hyoji_piece_type_hashset(&da_piece_type_hashset);
+        print_square_hashset(&mv_src_hashset);
+        print_piece_type_hashset(&da_piece_type_hashset);
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
         *starts += 4;
         // 移動後の駒
@@ -213,8 +175,8 @@ pub fn unit_test(
                     da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
-            hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_piece_type_hashset(&da_piece_type_hashset);
+            print_square_hashset(&mv_src_hashset);
+            print_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             g_writeln("利きテスト2");
@@ -257,8 +219,8 @@ pub fn unit_test(
                     da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
-            hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_piece_type_hashset(&da_piece_type_hashset);
+            print_square_hashset(&mv_src_hashset);
+            print_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             g_writeln("利きテスト3");
@@ -301,8 +263,8 @@ pub fn unit_test(
                     da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
-            hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_piece_type_hashset(&da_piece_type_hashset);
+            print_square_hashset(&mv_src_hashset);
+            print_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             g_writeln("利きテスト2");
@@ -345,8 +307,8 @@ pub fn unit_test(
                     da_piece_type_hashset.insert(piece_type_hash);
                 },
             );
-            hyoji_sq_hashset(&mv_src_hashset);
-            hyoji_piece_type_hashset(&da_piece_type_hashset);
+            print_square_hashset(&mv_src_hashset);
+            print_piece_type_hashset(&da_piece_type_hashset);
         }
     } else if 0 < (len - *starts) && &line[*starts..=*starts] == "2" {
         *starts += 1;

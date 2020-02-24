@@ -10,12 +10,12 @@ use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
+use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -213,7 +213,7 @@ pub fn lookup_catching_king_on_board(
 
         // g_writeln( &format!("テスト lookup_catching_king_on_board get_movement_by_square_and_piece_on_board piece_type_dst={}.",piece_type_dst) );
         // use consoles::visuals::dumps::*;
-        // hyoji_ss_hashset( &multiple_movements_hashset );
+        // print_movement_hashset( &multiple_movements_hashset );
 
         let ss = choice_1movement_from_hashset(&multiple_movements_hashset);
         if ss.exists() {

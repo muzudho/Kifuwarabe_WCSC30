@@ -3,6 +3,8 @@
 //!
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
+use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
+use super::super::super::model::vo::game_part::gp_square_vo::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
@@ -39,5 +41,43 @@ pub fn print_movement_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
 
     for (i, ss_str) in vec_ss_str.into_iter().enumerate() {
         g_writeln(&format!("[{}] {}", i, ss_str));
+    }
+}
+
+/// 升を表示
+pub fn print_square_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
+    g_writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
+    for sq in sq_hashset {
+        let ms = (*sq).to_umasu();
+        match ms {
+            MASU_0 => break,
+            _ => g_writeln(&format!("ms({})", ms)),
+        }
+    }
+}
+
+/// 升を表示
+pub fn print_square_vec(sq_vec: &[Square]) {
+    g_writeln(&format!("sq_vec.len()={}", sq_vec.len()));
+    for sq in sq_vec {
+        let ms = sq.to_umasu();
+        match ms {
+            MASU_0 => break,
+            _ => g_writeln(&format!("ms({})", ms)),
+        }
+    }
+}
+
+/// 駒種類
+pub fn print_piece_type_hashset<S: BuildHasher>(num_piece_type_hashset: &HashSet<usize, S>) {
+    g_writeln(&format!(
+        "num_piece_type_hashset.len()={}",
+        num_piece_type_hashset.len()
+    ));
+    for num_piece_type in num_piece_type_hashset {
+        g_writeln(&format!(
+            "piece_type({})",
+            num_to_piece_type(*num_piece_type)
+        ));
     }
 }

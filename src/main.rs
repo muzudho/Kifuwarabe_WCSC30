@@ -16,6 +16,7 @@ pub mod controller;
 pub mod model;
 pub mod view;
 
+use crate::view::manual_play::mp_position_view::print_pos;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use config::*;
 use controller::common_use::cu_conv_controller::*;
@@ -31,7 +32,7 @@ use model::vo::other_part::op_misc_vo::*;
 use rand::Rng;
 use std::collections::HashSet;
 use std::io;
-use view::title_screen::ts_controller::*;
+use view::title_screen::ts_view::*;
 
 fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
@@ -77,7 +78,7 @@ fn main() {
                 print_title();
             } else {
                 // 局面表示
-                let s = &ml_universe_dto.print_ky(&KyNums::Current);
+                let s = print_pos(&ml_universe_dto, &KyNums::Current);
                 g_writeln(&s);
             }
         // 文字数の長いものからチェック
@@ -127,12 +128,12 @@ fn parse_extend_command(
         // 駒の動きの移動元として有りえる方角
         let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
         g_writeln(&format!("{}のムーブ元", &piece_type));
-        ml_universe_dto.hyoji_kmugoki_dir(*piece_type, speed_of_light);
+        ml_universe_dto.print_kmugoki_dir(*piece_type, speed_of_light);
         g_writeln(""); //改行
     } else if 6 < len && &line[starts..7] == "kmugoki" {
         g_writeln("6<len kmugoki");
         // 駒の動きを出力
-        ml_universe_dto.hyoji_kmugoki(&speed_of_light);
+        ml_universe_dto.print_kmugoki(&speed_of_light);
     } else if 5 < len && &line[starts..6] == "hirate" {
         // 平手初期局面
         controller::main_loop::ml_usi_controller::read_position(
@@ -228,11 +229,11 @@ fn parse_extend_command(
         }
     } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示
-        let s = ml_universe_dto.print_ky(&KyNums::Start);
+        let s = print_pos(&ml_universe_dto, &KyNums::Start);
         g_writeln(&s);
     } else if 2 < len && &line[starts..3] == "pos" {
         // 現局面表示
-        let s = &ml_universe_dto.print_ky(&KyNums::Current);
+        let s = print_pos(&ml_universe_dto, &KyNums::Current);
         g_writeln(&s);
     }
 }
