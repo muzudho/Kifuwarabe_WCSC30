@@ -12,19 +12,22 @@ use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::controller::movement_generation::mg_square::MGSquares;
 use std::collections::HashSet;
 
-/// 盤上の利き升調べ
+/// 指定局面の利き升調べ。一から再計算☆（＾～＾）
 ///
 /// 用途：自殺手防止他
-pub fn update_effect_count(ml_universe_dto: &mut MLUniverseDto, speed_of_light: &MLSpeedOfLightVo) {
+pub fn recalculate_control_count(
+    ml_universe_dto: &mut MLUniverseDto,
+    speed_of_light: &MLSpeedOfLightVo,
+) {
     // ゼロ・リセット
     GPPieces::for_all(&mut |any_piece| {
-        ml_universe_dto.get_search_part_mut().effect_count_by_piece
+        ml_universe_dto.get_search_part_mut().control_count_by_piece
             [GPPieceStructVo::from_piece(any_piece).serial_piece_number()]
         .clear();
     });
 
     for phase in PHASE_ARRAY.iter() {
-        ml_universe_dto.get_search_part_mut().effect_count_by_phase[phase_to_num(phase)].clear();
+        ml_universe_dto.get_search_part_mut().control_count_by_phase[phase_to_num(phase)].clear();
     }
 
     // カウント
@@ -56,17 +59,17 @@ pub fn update_effect_count(ml_universe_dto: &mut MLUniverseDto, speed_of_light: 
                 },
             );
             // 打は考えない。盤上の利き数なので
-            let kikisu = mv_src_hashset.len();
+            let control_count = mv_src_hashset.len();
 
             // 駒別
-            ml_universe_dto.get_search_part_mut().effect_count_by_piece
+            ml_universe_dto.get_search_part_mut().control_count_by_piece
                 [ps_dst.serial_piece_number()]
-            .add_su_by_sq(&any_square, kikisu as i8);
+            .add_count_by_square(&any_square, control_count as i8);
 
             // 先後別
-            ml_universe_dto.get_search_part_mut().effect_count_by_phase
+            ml_universe_dto.get_search_part_mut().control_count_by_phase
                 [phase_to_num(&ps_dst.phase())]
-            .add_su_by_sq(&any_square, kikisu as i8);
+            .add_count_by_square(&any_square, control_count as i8);
         });
     });
 }

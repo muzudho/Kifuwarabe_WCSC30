@@ -27,11 +27,12 @@ pub fn is_jisatusyu(
     let phase_aite = turn_phase(&phase_teban);
 
     // 升の利き数だが、指した後で再計算が要るはず
-    let kikisu = ml_universe_dto.get_search_part().effect_count_by_phase[phase_to_num(&phase_aite)]
-        .get_su_by_sq(&ss.dst);
-    0 < kikisu
+    let control_count = ml_universe_dto.get_search_part().control_count_by_phase
+        [phase_to_num(&phase_aite)]
+    .get_number_by_square(&ss.dst);
+    0 < control_count
     // g_writeln(&format!(
-    //     "info is_jisatusyu={} km_src={} phase_teban={} piece_type={} phase_aite={} ss.dst={} kikisu={}"
-    //     ,result ,km_src ,phase_teban ,piece_type ,phase_aite ,ss.dst ,kikisu
+    //     "info is_jisatusyu={} km_src={} phase_teban={} piece_type={} phase_aite={} ss.dst={} control_count={}"
+    //     ,result ,km_src ,phase_teban ,piece_type ,phase_aite ,ss.dst ,control_count
     // ));
 }

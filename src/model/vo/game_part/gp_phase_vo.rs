@@ -23,11 +23,12 @@ pub enum Phase {
 impl fmt::Display for Phase {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
+        // Windows Terminal では ▼、△が半角サイズで表示されるので、それに合わせている☆（＾～＾） Microsoft 製品に最適化していいのか知らないが……☆（＾～＾）
         use self::Phase::*;
         match *self {
-            None => write!(f, "×"),
-            First => write!(f, "▼"),
-            Second => write!(f, "△"),
+            None => write!(f, "×x"),
+            First => write!(f, " ▼"),
+            Second => write!(f, " △"),
         }
     }
 }

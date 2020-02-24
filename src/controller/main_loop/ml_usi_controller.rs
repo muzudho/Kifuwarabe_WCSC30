@@ -847,7 +847,7 @@ pub fn read_position(
         );
 
         // 現局面表示
-        //let s1 = &ml_universe_dto.kaku_ky( &KyNums::Current );
+        //let s1 = &ml_universe_dto.print_ky( &KyNums::Current );
         //g_writeln( &s1 );
     }
 }

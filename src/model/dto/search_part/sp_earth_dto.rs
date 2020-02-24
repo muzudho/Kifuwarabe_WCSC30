@@ -31,10 +31,10 @@ pub struct SPEarthDto {
     pub current_movement_builder: MLMovementDto,
 
     /// 利きの数（先後別）
-    pub effect_count_by_phase: [NumberBoard; PHASE_LN],
+    pub control_count_by_phase: [NumberBoard; PHASE_LN],
 
     /// 利きの数（先後付き駒別）
-    pub effect_count_by_piece: [NumberBoard; PIECE_LN],
+    pub control_count_by_piece: [NumberBoard; PIECE_LN],
     // ビジョン・ツリー
     // pub vision_tree_by_phase: [VisionTree; PHASE_LN],
 }
@@ -51,13 +51,13 @@ impl Default for SPEarthDto {
             /// 現在の指し手を作成中。
             current_movement_builder: MLMovementDto::default(),
             /// 利き数（先後別）
-            effect_count_by_phase: [
+            control_count_by_phase: [
                 NumberBoard::default(),
                 NumberBoard::default(),
                 NumberBoard::default(),
             ],
             // 利き数（駒別なので３０個ある）
-            effect_count_by_piece: [
+            control_count_by_piece: [
                 NumberBoard::default(),
                 NumberBoard::default(),
                 NumberBoard::default(),

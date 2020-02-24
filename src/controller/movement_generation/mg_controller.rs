@@ -27,6 +27,7 @@ use std::collections::HashSet;
 use std::hash::BuildHasher;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
+/// 利きがどのように変わるかも返して欲しいぜ☆（＾～＾）
 pub fn get_up_movement(
     universe: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,

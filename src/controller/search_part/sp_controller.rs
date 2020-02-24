@@ -7,7 +7,7 @@ extern crate rand;
 use std::collections::HashSet;
 
 use super::super::super::controller::movement_generation::mg_controller::*;
-use super::super::super::controller::search_part::sp_kikisu_controller::*;
+use super::super::super::controller::search_part::sp_control_count_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_movement_vo::GPMovementVo;
@@ -25,15 +25,33 @@ use super::sp_evaluation_controller::*;
 /// # Returns
 ///
 /// Best movement.
-pub fn let_there_be_light(
+pub fn get_best_movement(
     universe: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> MLMovementDto {
-    // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
-    // 相手の利き升調べ（自殺手、特に王手放置回避漏れ　防止のため）
     {
-        update_effect_count(universe, speed_of_light);
+        // 指定局面の利き数ボード再計算。
+        // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
+        // 相手の利き升調べ（自殺手、特に王手放置回避漏れ　防止のため）
+        recalculate_control_count(universe, speed_of_light);
     }
+    // TODO 利きの差分更新をしたいぜ☆（＾～＾）
+    //
+    //  ・先後別の２つの利き数ボード、駒別の約３０種類の利き数ボードがあって、全て最新にすること。
+    //  ・position で送られてくる指定局面は、一から全再計算☆（＾～＾）
+    //  ・指す前の局面でやること。
+    //      ・自分の盤上の駒を動かす前に、レイを飛ばして飛角香を逆探知すること☆（＾～＾）
+    //      ・取られる駒がある場合、両者の駒を動かす前に、取られる駒の利きをスキャンすること☆（＾～＾）
+    //  ・指した後の局面でやること。
+    //      ・自分の駒を動かした先で、レイを飛ばして飛角香を逆探知すること☆（＾～＾）
+    //      ・動かした駒が　飛角香なら、探知☆（＾～＾）ある程度パターンがあるはず☆（＾～＾）
+    //      ・それ以外の駒は、差分のパターンが決まっているので、それに従って増減させること☆（＾～＾）
+    //
+    // 入力：　手番、移動元、動かした駒種類、移動先の取られる駒。
+    // やること：　カウントを引くか、足す。
+    //
+    // do_move, undo_move. 両方用意すること☆（＾～＾）
+    //
     // TODO 指し手の一覧を作るぜ☆（＾～＾）
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
     // 指し手はハッシュ値で入っている☆（＾～＾）

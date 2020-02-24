@@ -1,13 +1,13 @@
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 
 // 対話モードのタイトル画面
-pub fn hyoji_title() {
+pub fn print_title() {
     // 横幅は 半角79文字使えるぜ☆（＾～＾）
     // 80文字目を使うと、次の行が改行で空行になってしまう☆（＾～＾）
     g_writeln(
         &"\
 +--------- --------- --------- --------- --------- --------- --------- -------+
-| KifuWarabe Shogi 2018                                                       |
+| KifuWarabe Shogi 2020                                                       |
 +---------+--------- --------- --------- --------- --------- --------- -------+
           | Created by Muzudho (Doujin Circle Grayscale)                      |
           +--------- --------- --------- --------- --------- --------- -------+

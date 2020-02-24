@@ -14,14 +14,14 @@ extern crate lazy_static;
 pub mod config;
 pub mod controller;
 pub mod model;
+pub mod view;
 
+use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use config::*;
 use controller::common_use::cu_conv_controller::*;
-use controller::main_loop::ml_main_controller::*;
 use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_controller::*;
 use controller::search_part::sp_controller::*;
-use controller::title_screen::ts_controller::*;
 use controller::unit_test::ut_controller::*;
 use model::dto::main_loop::ml_universe_dto::*;
 use model::vo::game_part::gp_square_vo::*;
@@ -31,6 +31,7 @@ use model::vo::other_part::op_misc_vo::*;
 use rand::Rng;
 use std::collections::HashSet;
 use std::io;
+use view::title_screen::ts_controller::*;
 
 fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
@@ -73,10 +74,10 @@ fn main() {
                 // タイトル表示
                 // １画面は２５行だが、最後の２行は開けておかないと、
                 // カーソルが２行分場所を取るんだぜ☆（＾～＾）
-                hyoji_title();
+                print_title();
             } else {
                 // 局面表示
-                let s = &ml_universe_dto.kaku_ky(&KyNums::Current);
+                let s = &ml_universe_dto.print_ky(&KyNums::Current);
                 g_writeln(&s);
             }
         // 文字数の長いものからチェック
@@ -102,7 +103,7 @@ fn main() {
         } else if 1 < len && &line[starts..2] == "go" {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = let_there_be_light(&mut ml_universe_dto, &speed_of_light);
+            let bestmove = get_best_movement(&mut ml_universe_dto, &speed_of_light);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove));
         } else {
@@ -158,7 +159,7 @@ fn parse_extend_command(
             },
         );
         g_writeln("----指し手生成 ここから----");
-        hyoji_ss_hashset(&ss_potential_hashset);
+        print_movement_hashset(&ss_potential_hashset);
         g_writeln("----指し手生成 ここまで----");
     } else if 4 < len && &line[starts..5] == "random_ms" {
         // 乱升
@@ -225,13 +226,13 @@ fn parse_extend_command(
             let ss = ml_universe_dto.get_search_part().get_moves_history()[ply as usize].clone();
             ml_universe_dto.do_ss(&ss, speed_of_light);
         }
-    } else if 2 < len && &line[starts..3] == "pos0" {
+    } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示
-        let s = ml_universe_dto.kaku_ky(&KyNums::Start);
+        let s = ml_universe_dto.print_ky(&KyNums::Start);
         g_writeln(&s);
-    } else if 1 < len && &line[starts..2] == "pos" {
+    } else if 2 < len && &line[starts..3] == "pos" {
         // 現局面表示
-        let s = &ml_universe_dto.kaku_ky(&KyNums::Current);
+        let s = &ml_universe_dto.print_ky(&KyNums::Current);
         g_writeln(&s);
     }
 }
