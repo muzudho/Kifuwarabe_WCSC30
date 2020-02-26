@@ -4,6 +4,7 @@
 
 use super::super::game_part::gp_piece_type_vo::*;
 use super::op_piece_direction_vo::*;
+use crate::controller::movement_generation::mg_direction::KM_UGOKI_LN;
 
 // 駒が戻る動き
 #[allow(dead_code)]

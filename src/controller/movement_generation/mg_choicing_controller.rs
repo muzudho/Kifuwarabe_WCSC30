@@ -16,7 +16,6 @@ use super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::model::vo::other_part::op_ply_vo::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
@@ -206,53 +205,6 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
     // 空っぽにする
     ss_hashset_input.clear();
     // 振り替える
-    for hash_ss in ss_hashset_pickup.iter() {
-        ss_hashset_input.insert(*hash_ss);
-    }
-}
-
-/// 千日手の指し手を取り除いた集合を作るぜ☆（＾～＾）
-///
-/// ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
-pub fn select_movement_except_fourfold_repetition<S: BuildHasher>(
-    ss_hashset_input: &mut HashSet<u64, S>,
-    ml_universe_dto: &mut MLUniverseDto,
-    speed_of_light: &MLSpeedOfLightVo,
-) {
-    let mut ss_hashset_pickup = HashSet::new();
-    // 指せる手から、千日手が消えている手だけ選んで、集合を作るぜ☆（＾～＾）
-    // 'idea:
-    for hash_potential_movement in ss_hashset_input.iter() {
-        let movement = GPMovementVo::from_hash(*hash_potential_movement);
-        //ss_hashset.insert( *hash_potential_movement );
-
-        // その手を指してみる
-        ml_universe_dto.do_ss(&movement, speed_of_light);
-        // 現局面表示
-        // let s1 = &ml_universe_dto.print_ky( &KyNums::Current );
-        // g_writeln( &s1 );
-
-        // 千日手かどうかを判定する☆（＾～＾）
-        if ml_universe_dto.count_same_ky() < SENNTITE_NUM {
-            ss_hashset_pickup.insert(*hash_potential_movement);
-        } else {
-            // 千日手
-        }
-
-        // 手を戻す FIXME: 打った象が戻ってない？
-        ml_universe_dto.undo_ss(speed_of_light);
-        // 現局面表示
-        // let s2 = &ml_universe_dto.print_ky( &KyNums::Current );
-        // g_writeln( &s2 );
-    }
-
-    // ただし、千日手を取り除くと手がない場合は、千日手を選ぶぜ☆（＾～＾）
-    if ss_hashset_pickup.is_empty() {
-        return;
-    }
-
-    // 振り替え
-    ss_hashset_input.clear();
     for hash_ss in ss_hashset_pickup.iter() {
         ss_hashset_input.insert(*hash_ss);
     }

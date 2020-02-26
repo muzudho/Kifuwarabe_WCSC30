@@ -4,6 +4,7 @@
 
 extern crate rand;
 // use rand::Rng;
+use crate::model::vo::other_part::op_ply_vo::SENNTITE_NUM;
 use std::collections::HashSet;
 
 use super::super::super::controller::movement_generation::mg_controller::*;
@@ -60,7 +61,16 @@ pub fn get_best_movement(
     // let を 先に記述した変数の方が、後に記述した変数より　寿命が長いので注意☆（＾～＾）
     // 指し手はハッシュ値で入っている☆（＾～＾）
     let mut movement_set = HashSet::<u64>::new();
+
+    // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
+    g_writeln("info depth 5964");
+
+    // この中でフリーズしている？
     get_up_movement(universe, speed_of_light, &mut movement_set);
+
+    // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
+    g_writeln("info depth 5965");
+
     // 指せる手が無ければ投了☆（＾～＾）
     if movement_set.is_empty() {
         let best_value = 0;
@@ -72,16 +82,26 @@ pub fn get_best_movement(
         ));
         return (resign_move, 0, sum_nodes);
     }
+
+    // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
+    g_writeln("info depth 5966");
+
     // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
     let mut best_movement_hash = 0u64;
     let mut best_value = -1;
+    let mut repetition_move_hash = 0u64; // 千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
         let movement = GPMovementVo::from_hash(*movement_hash);
         let captured_piece = universe
             .get_search_part_mut()
             .do_move(&movement, speed_of_light);
-        if end_depth <= cur_depth {
+
+        // 千日手かどうかを判定する☆（＾～＾）
+        if SENNTITE_NUM <= universe.count_same_ky() {
+            // 千日手なら、この手は戻そうぜ☆（＾～＾）
+            repetition_move_hash = *movement_hash;
+        } else if end_depth <= cur_depth {
             // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
             let changed_value = SPEvaluationController::evaluate(captured_piece, speed_of_light);
             sum_nodes += 1;
@@ -127,20 +147,20 @@ pub fn get_best_movement(
             .undo_move(&movement, speed_of_light)
     }
 
+    let best_movement = if best_movement_hash != 0 {
+        MLMovementDto::from_hash(best_movement_hash)
+    } else {
+        // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
+        MLMovementDto::from_hash(repetition_move_hash)
+    };
+
     // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
     g_writeln(&format!(
         "info depth {} nodes {} score cp {} currmove {}",
-        cur_depth,
-        sum_nodes,
-        best_value,
-        MLMovementDto::from_hash(best_movement_hash)
+        cur_depth, sum_nodes, best_value, best_movement
     ));
 
-    (
-        MLMovementDto::from_hash(best_movement_hash),
-        best_value,
-        sum_nodes,
-    )
+    (best_movement, best_value, sum_nodes)
     /*
     // TODO 進めた局面に評価値を付けるぜ☆（＾～＾）
     // TODO 繰り返すぜ☆（＾～＾）

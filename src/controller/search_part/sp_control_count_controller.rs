@@ -49,6 +49,7 @@ pub fn recalculate_control_count(
                     mv_src_hashset.insert(square);
                 },
             );
+
             lookup_before_promotion_source_by_square_piece(
                 &any_square,
                 &ps_dst,

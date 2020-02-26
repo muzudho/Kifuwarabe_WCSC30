@@ -5,6 +5,7 @@
 use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
+use super::super::super::controller::movement_generation::mg_direction::*;
 use super::super::super::controller::movement_generation::mg_square::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
@@ -22,6 +23,7 @@ use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
 use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::mg_square::{MGLinedSquares, MGSquare};
+use crate::model::dto::main_loop::ml_universe_dto::g_writeln;
 use crate::model::dto::main_loop::ml_universe_dto::MLUniverseDto;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -33,19 +35,30 @@ pub fn get_up_movement(
     speed_of_light: &MLSpeedOfLightVo,
     movement_set: &mut HashSet<u64>,
 ) {
+    // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
+    g_writeln("info depth 75001");
+
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
     get_up_potential_movement(&universe.get_search_part(), &speed_of_light, |movement| {
         movement_set.insert(movement);
     });
+
+    // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
+    g_writeln("info depth 75002");
+
     // g_writeln("テスト ポテンシャルムーブ.");
     // use consoles::visuals::dumps::*;
     // print_movement_hashset( &ss_hashset );
     select_movement_except_check(movement_set, &universe.get_search_part(), &speed_of_light);
-    // FIXME 負けてても、千日手は除くぜ☆（＾～＾）ただし、千日手を取り除くと手がなくなる場合は取り除かないぜ☆（＾～＾）
-    select_movement_except_fourfold_repetition(movement_set, universe, speed_of_light);
+
+    // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
+    g_writeln("info depth 75003");
 
     // 自殺手は省くぜ☆（＾～＾）
     select_movement_except_suiceid(movement_set, universe, speed_of_light);
+
+    // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
+    g_writeln("info depth 75004");
 }
 
 ///
@@ -364,7 +377,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         .get_piece_type_struct_vo_from_piece_type(&ps_dst.piece_type())
         .serial_piece_number;
 
-    for i_dir in 0..KM_UGOKI_LN {
+    MGDirection::for_all(&mut |i_dir| {
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &PieceDirection;
@@ -634,9 +647,10 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 }
             }
-            Owari => break,
+            Owari => return true,
         }
-    }
+        false
+    });
 }
 
 /// この駒には行き先があります。
@@ -764,7 +778,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
         .get_piece_type_struct_vo_from_piece(ps_dst.demote())
         .serial_piece_number;
 
-    for i_dir in 0..KM_UGOKI_LN {
+    MGDirection::for_all(&mut |i_dir| {
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &PieceDirection;
@@ -1059,9 +1073,10 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     });
                 }
             }
-            Owari => break,
+            Owari => return true,
         }
-    }
+        false
+    });
 }
 
 /// 成る前の移動元、長い利き
@@ -1266,7 +1281,7 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
         .get_piece_type_struct_vo_from_piece_type(&piece_type_src)
         .serial_piece_number;
 
-    for i_dir in 0..KM_UGOKI_LN {
+    MGDirection::for_all(&mut |i_dir| {
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &PieceDirection;
@@ -1536,9 +1551,10 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                     });
                 }
             }
-            Owari => break,
+            Owari => return true,
         }
-    }
+        false
+    });
 
     if to_nari {
         // +------------------------------+
@@ -1834,7 +1850,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
         let piece_type_num = speed_of_light
             .get_piece_type_struct_vo_from_piece_type(piece_type)
             .serial_piece_number;
-        for i_dir in 0..KM_UGOKI_LN {
+        MGDirection::for_all(&mut |i_dir| {
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
             let p_kmdir = if &Phase::First == phase {
@@ -2102,9 +2118,10 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         });
                     }
                 }
-                Owari => break,
+                Owari => return true,
             }
-        }
+            false
+        });
     }
 }
 
@@ -2190,7 +2207,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
         let piece_type_num = speed_of_light
             .get_piece_type_struct_vo_from_piece_type(piece_type)
             .serial_piece_number;
-        for i_dir in 0..KM_UGOKI_LN {
+        MGDirection::for_all(&mut |i_dir| {
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
             // let p_kmdir: &PieceDirection;
@@ -2495,9 +2512,10 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         );
                     }
                 }
-                Owari => break,
+                Owari => return true,
             }
-        }
+            false
+        });
     }
 }
 

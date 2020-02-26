@@ -69,9 +69,6 @@ impl fmt::Display for GPPieceTypeVo {
     }
 }
 
-// 駒の動ける方向数、終端子込み
-pub const KM_UGOKI_LN: usize = 9;
-
 // 駒種類数
 pub const KMS_ARRAY_LN: usize = 14;
 // 駒種類
