@@ -49,7 +49,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
 ) {
     // 自玉の位置
     let sq_r = search_part.get_king_sq(&Person::Friend).clone();
-    g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
+    // g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> = lookup_catching_king_on_board(
@@ -61,6 +61,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
     if !komatori_result_hashset.is_empty() {
         // 王手されていれば
 
+        /*
         // 表示
         g_writeln(&format!(
             "info string My raion is {} OUTED.",
@@ -69,8 +70,9 @@ pub fn select_movement_except_check<S: BuildHasher>(
         for komatori_result_hash0 in komatori_result_hashset.iter() {
             let komatori_result = KomatoriResult::from_hash(*komatori_result_hash0);
             // どんな王手か、出力
-            g_writeln(&format!("info OUTE: {}.", komatori_result));
+            g_writeln(&format!("info string OUTE: {}.", komatori_result));
         }
+        */
 
         let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
@@ -105,7 +107,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
         }
     } else {
         // 王手されていなければ
-        g_writeln(&"info string My raion is not outed.".to_string());
+        // g_writeln(&"info string My raion is not outed.".to_string());
     }
 }
 

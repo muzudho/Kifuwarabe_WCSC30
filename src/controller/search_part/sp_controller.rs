@@ -19,16 +19,20 @@ use super::sp_evaluation_controller::*;
 ///
 /// # Arguments
 ///
+/// * `depth` - 0 なら末端局面、1 なら末端局面の1歩手前☆（＾～＾）
 /// * `universe` - (宇宙)
 /// * `speed_of_light` - (光速)
 ///
 /// # Returns
 ///
-/// Best movement.
+/// Best movement, Value, Sum nodes
 pub fn get_best_movement(
+    cur_depth: u16,
+    end_depth: u16,
+    mut sum_nodes: u64,
     universe: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
-) -> MLMovementDto {
+) -> (MLMovementDto, i16, u64) {
     {
         // 指定局面の利き数ボード再計算。
         // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
@@ -59,27 +63,84 @@ pub fn get_best_movement(
     get_up_movement(universe, speed_of_light, &mut movement_set);
     // 指せる手が無ければ投了☆（＾～＾）
     if movement_set.is_empty() {
-        return MLMovementDto::default();
+        let best_value = 0;
+        let resign_move = MLMovementDto::default();
+        // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
+        g_writeln(&format!(
+            "info depth {} nodes {} score cp {} currmove {}",
+            cur_depth, sum_nodes, best_value, resign_move
+        ));
+        return (resign_move, 0, sum_nodes);
     }
     // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
     let mut best_movement_hash = 0u64;
     let mut best_value = -1;
     for movement_hash in movement_set.iter() {
+        // 1手進めるぜ☆（＾～＾）
         let movement = GPMovementVo::from_hash(*movement_hash);
         let captured_piece = universe
             .get_search_part_mut()
             .do_move(&movement, speed_of_light);
-        // 変化した評価値
-        let changed_value = SPEvaluationController::evaluate(captured_piece, speed_of_light);
-        if best_value < changed_value {
-            best_movement_hash = *movement_hash;
-            best_value = changed_value;
+        if end_depth <= cur_depth {
+            // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
+            let changed_value = SPEvaluationController::evaluate(captured_piece, speed_of_light);
+            sum_nodes += 1;
+            if best_value < changed_value {
+                best_movement_hash = *movement_hash;
+                best_value = changed_value;
+            }
+            // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
+            g_writeln(&format!(
+                "info depth {} nodes {} score cp {} currmove {}",
+                cur_depth,
+                sum_nodes,
+                best_value,
+                MLMovementDto::from_hash(best_movement_hash)
+            ));
+        } else {
+            // 枝局面なら、更に深く進むぜ☆（＾～＾）
+            let opponent_best_move = get_best_movement(
+                cur_depth + 1,
+                end_depth,
+                sum_nodes + 1,
+                universe,
+                speed_of_light,
+            );
+            let changed_value = -opponent_best_move.1;
+            sum_nodes = opponent_best_move.2;
+            if best_value < changed_value {
+                best_movement_hash = *movement_hash;
+                best_value = changed_value;
+            }
+            // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
+            g_writeln(&format!(
+                "info depth {} nodes {} score cp {} currmove {}",
+                cur_depth,
+                sum_nodes,
+                best_value,
+                MLMovementDto::from_hash(best_movement_hash)
+            ));
         }
+        // 1手戻すぜ☆（＾～＾）
         universe
             .get_search_part_mut()
             .undo_move(&movement, speed_of_light)
     }
-    MLMovementDto::from_hash(best_movement_hash)
+
+    // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
+    g_writeln(&format!(
+        "info depth {} nodes {} score cp {} currmove {}",
+        cur_depth,
+        sum_nodes,
+        best_value,
+        MLMovementDto::from_hash(best_movement_hash)
+    ));
+
+    (
+        MLMovementDto::from_hash(best_movement_hash),
+        best_value,
+        sum_nodes,
+    )
     /*
     // TODO 進めた局面に評価値を付けるぜ☆（＾～＾）
     // TODO 繰り返すぜ☆（＾～＾）
