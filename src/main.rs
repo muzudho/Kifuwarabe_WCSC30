@@ -200,7 +200,7 @@ fn parse_extend_command(
         let count = ml_universe_dto.count_same_ky();
         g_writeln(&format!("同一局面調べ count={}", count));
     } else if 3 < len && &line[starts..4] == "undo" {
-        if !ml_universe_dto.undo_ss(&speed_of_light) {
+        if !ml_universe_dto.undo_move(&speed_of_light) {
             g_writeln(&format!(
                 "ply={} を、これより戻せません",
                 ml_universe_dto.get_search_part().get_ply()
@@ -225,7 +225,7 @@ fn parse_extend_command(
             // 入っている指し手の通り指すぜ☆（＾～＾）
             let ply = ml_universe_dto.get_search_part().get_ply();
             let ss = ml_universe_dto.get_search_part().get_moves_history()[ply as usize].clone();
-            ml_universe_dto.do_ss(&ss, speed_of_light);
+            ml_universe_dto.do_move(&ss, speed_of_light);
         }
     } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示

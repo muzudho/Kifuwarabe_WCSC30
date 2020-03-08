@@ -63,13 +63,13 @@ pub fn get_best_movement(
     let mut movement_set = HashSet::<u64>::new();
 
     // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
-    g_writeln("info depth 5964");
+    // g_writeln("info depth 5964");
 
     // この中でフリーズしている？
-    get_up_movement(universe, speed_of_light, &mut movement_set);
+    generate_movement(universe, speed_of_light, &mut movement_set);
 
     // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
-    g_writeln("info depth 5965");
+    // g_writeln("info depth 5965");
 
     // 指せる手が無ければ投了☆（＾～＾）
     if movement_set.is_empty() {
@@ -84,7 +84,7 @@ pub fn get_best_movement(
     }
 
     // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
-    g_writeln("info depth 5966");
+    // g_writeln("info depth 5966");
 
     // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
     let mut best_movement_hash = 0u64;

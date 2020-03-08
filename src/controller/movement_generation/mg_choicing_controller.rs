@@ -139,7 +139,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         let potential_movement = GPMovementVo::from_hash(*hash_potential_movement);
 
         // その手を指してみる
-        ml_universe_dto.do_ss(&potential_movement, speed_of_light);
+        ml_universe_dto.do_move(&potential_movement, speed_of_light);
         // // 現局面表示
         // let s1 = &ml_universe_dto.print_ky( &KyNums::Current );
         // g_writeln( &s1 );
@@ -187,7 +187,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         }
 
         // 手を戻す
-        ml_universe_dto.undo_ss(speed_of_light);
+        ml_universe_dto.undo_move(speed_of_light);
         // // 現局面表示
         // let s2 = &ml_universe_dto.print_ky( &KyNums::Current );
         // g_writeln( &s2 );

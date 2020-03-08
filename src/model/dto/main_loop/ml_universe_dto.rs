@@ -431,7 +431,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     }
 
     // 入れた指し手の通り指すぜ☆（＾～＾）
-    pub fn do_ss(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn do_move(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_search_part().get_ply();
         self.sp_earth_dto.set_current_movement(movement);
@@ -449,7 +449,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         self.get_search_part_mut().add_ply(1);
     }
 
-    pub fn undo_ss(&mut self, speed_of_light: &MLSpeedOfLightVo) -> bool {
+    pub fn undo_move(&mut self, speed_of_light: &MLSpeedOfLightVo) -> bool {
         if 0 < self.get_search_part().get_ply() {
             // 棋譜から読取、手目も減る
             self.get_search_part_mut().add_ply(-1);

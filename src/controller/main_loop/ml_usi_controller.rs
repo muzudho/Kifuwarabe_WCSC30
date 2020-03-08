@@ -841,7 +841,7 @@ pub fn read_position(
         ml_universe_dto.get_search_part_mut().add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let ply = ml_universe_dto.get_search_part().get_ply();
-        ml_universe_dto.do_ss(
+        ml_universe_dto.do_move(
             &ml_universe_dto.get_search_part().get_moves_history()[ply as usize].clone(),
             speed_of_light,
         );

@@ -23,7 +23,7 @@ impl MGSquares {
 pub struct MGLinedSquares {}
 impl MGLinedSquares {
     /// 東隣の升から東へ☆（＾～＾）
-    pub fn for_each_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_east_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -40,7 +40,7 @@ impl MGLinedSquares {
     }
 
     /// 北隣の升から北へ☆（＾～＾）
-    pub fn for_each_north<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_north_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -57,7 +57,7 @@ impl MGLinedSquares {
     }
 
     /// 北東隣の升から北東へ☆（＾～＾）
-    pub fn for_each_north_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_north_east_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -74,7 +74,7 @@ impl MGLinedSquares {
     }
 
     /// 北西隣の升から北西へ☆（＾～＾）
-    pub fn for_each_north_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_north_west_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -91,7 +91,7 @@ impl MGLinedSquares {
     }
 
     /// 南隣の升から南へ☆（＾～＾）
-    pub fn for_each_south<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_south_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -108,7 +108,7 @@ impl MGLinedSquares {
     }
 
     /// 南東隣の升から南東へ☆（＾～＾）
-    pub fn for_each_south_east<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_south_east_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -124,7 +124,7 @@ impl MGLinedSquares {
         }
     }
     /// 南西隣の升から南西へ☆（＾～＾）
-    pub fn for_each_south_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_south_west_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -141,7 +141,7 @@ impl MGLinedSquares {
     }
 
     /// 西隣の升から西へ☆（＾～＾）
-    pub fn for_each_west<F1>(start_square: &Square, callback: &mut F1)
+    pub fn looking_west_from<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -199,7 +199,7 @@ impl MGSquare {
     }
 
     /// 北北東隣☆（＾～＾）
-    pub fn north_north_east_of<F1>(start_square: &Square, callback: &mut F1)
+    pub fn north_east_keima_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -212,7 +212,7 @@ impl MGSquare {
     }
 
     /// 北北西隣☆（＾～＾）
-    pub fn north_north_west_of<F1>(start_square: &Square, callback: &mut F1)
+    pub fn north_west_keima_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -264,7 +264,7 @@ impl MGSquare {
     }
 
     /// 南南東隣☆（＾～＾）
-    pub fn south_south_east_of<F1>(start_square: &Square, callback: &mut F1)
+    pub fn south_east_keima_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -276,7 +276,7 @@ impl MGSquare {
         }
     }
     /// 南南西隣☆（＾～＾）
-    pub fn south_south_west_of<F1>(start_square: &Square, callback: &mut F1)
+    pub fn south_west_keima_of<F1>(start_square: &Square, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
