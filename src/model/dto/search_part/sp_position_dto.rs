@@ -16,6 +16,12 @@ use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 
+pub enum ThingsInTheSquare {
+    Space,
+    Friend,
+    Opponent,
+}
+
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
 pub struct SPPositionDto {
@@ -147,9 +153,26 @@ impl SPPositionDto {
             .serial_piece_number()]
     }
 
-    /**
-     * 指定の升に駒があれば真
-     */
+    /// 升には何がありますか？
+    pub fn what_is_in_the_square(
+        &self,
+        ph: &Phase,
+        sq: &Square,
+        speed_of_light: &MLSpeedOfLightVo,
+    ) -> ThingsInTheSquare {
+        // TODO 範囲外チェックは？行わない？
+        let piece_struct = speed_of_light.get_piece_struct_vo(self.get_piece_by_square(&sq));
+        if *piece_struct.piece() == GPPieceVo::NonePiece {
+            return ThingsInTheSquare::Space;
+        }
+
+        if piece_struct.phase() == *ph {
+            return ThingsInTheSquare::Friend;
+        }
+
+        return ThingsInTheSquare::Opponent;
+    }
+    /// 指定の升に駒があれば真
     pub fn exists_km(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> bool {
         !speed_of_light
             .get_piece_struct_vo(self.get_piece_by_square(&sq))
@@ -168,7 +191,7 @@ impl SPPositionDto {
             .equals_piece(&speed_of_light.get_piece_struct_vo(piece))
     }
 
-    /// 指定の升にある駒の先後、または空升
+    /// 指定の升にある駒の先後
     pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Phase {
         speed_of_light
             .get_piece_struct_vo(self.get_piece_by_square(sq))

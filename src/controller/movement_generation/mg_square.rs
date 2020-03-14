@@ -19,6 +19,19 @@ impl MGSquares {
     }
 }
 
+/// 駒が動ける升☆（＾～＾）
+pub struct MGPieceSquares {}
+impl MGPieceSquares {
+    /// 盤上の歩から動けるマスを見ます。
+    pub fn looking_for_squares_from_pawn_on_board<F1>(src_square: &Square, mut callback_square: F1)
+    where
+        F1: FnMut(Square),
+    {
+        // 北
+        MGSquare::north_of(src_square, &mut |dst_square| callback_square(dst_square));
+    }
+}
+
 /// 並んだ升☆（＾～＾）
 pub struct MGLinedSquares {}
 impl MGLinedSquares {
