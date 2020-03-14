@@ -5,7 +5,7 @@ use super::super::super::model::vo::game_part::gp_square_vo::*;
 pub struct MGPieceSquares {}
 impl MGPieceSquares {
     /// 盤上の歩から動けるマスを見ます。
-    pub fn looking_for_square_from_pawn_on_board<F1>(src_square: &Square, mut callback_square: F1)
+    pub fn looking_for_square_from_pawn_on_board<F1>(src_square: &Square, callback_square: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -15,7 +15,7 @@ impl MGPieceSquares {
     /// 盤上の香から動けるマスを見ます。
     pub fn looking_for_squares_from_lance_on_board<F1>(
         src_square: &Square,
-        mut callback_squares: F1,
+        callback_squares: &mut F1,
     ) where
         F1: FnMut(Square) -> bool,
     {
@@ -25,7 +25,7 @@ impl MGPieceSquares {
     /// 盤上の桂から動けるマスを見ます。
     pub fn looking_for_squares_from_knight_on_board<F1>(
         src_square: &Square,
-        mut callback_square: F1,
+        callback_square: &mut F1,
     ) where
         F1: FnMut(Square),
     {
@@ -36,7 +36,7 @@ impl MGPieceSquares {
     /// 盤上の銀から動けるマスを見ます。
     pub fn looking_for_squares_from_silver_on_board<F1>(
         src_square: &Square,
-        mut callback_square: F1,
+        callback_square: &mut F1,
     ) where
         F1: FnMut(Square),
     {
@@ -48,7 +48,7 @@ impl MGPieceSquares {
     }
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
-    pub fn looking_for_squares_from_gold_on_board<F1>(src_square: &Square, mut callback_square: F1)
+    pub fn looking_for_squares_from_gold_on_board<F1>(src_square: &Square, callback_square: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -61,7 +61,7 @@ impl MGPieceSquares {
     }
 
     /// 盤上の玉から動けるマスを見ます。
-    pub fn looking_for_squares_from_king_on_board<F1>(src_square: &Square, mut callback_square: F1)
+    pub fn looking_for_squares_from_king_on_board<F1>(src_square: &Square, callback_square: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -78,7 +78,7 @@ impl MGPieceSquares {
     /// 盤上の角から動けるマスを見ます。
     pub fn looking_for_squares_from_bishop_on_board<F1>(
         src_square: &Square,
-        mut callback_squares: F1,
+        callback_squares: &mut F1,
     ) where
         F1: FnMut(Square) -> bool,
     {
@@ -97,8 +97,10 @@ impl MGPieceSquares {
     }
 
     /// 盤上の飛から動けるマスを見ます。
-    pub fn looking_for_squares_from_rook_on_board<F1>(src_square: &Square, mut callback_squares: F1)
-    where
+    pub fn looking_for_squares_from_rook_on_board<F1>(
+        src_square: &Square,
+        callback_squares: &mut F1,
+    ) where
         F1: FnMut(Square) -> bool,
     {
         MGSquares::looking_north_from(src_square, &mut |dst_square| callback_squares(dst_square));
@@ -110,8 +112,8 @@ impl MGPieceSquares {
     /// 盤上の馬から動けるマスを見ます。
     pub fn looking_for_squares_from_horse_on_board<F1, F2>(
         src_square: &Square,
-        mut callback_square: F1,
-        mut callback_squares: F2,
+        callback_square: &mut F1,
+        callback_squares: &mut F2,
     ) where
         F1: FnMut(Square),
         F2: FnMut(Square) -> bool,
@@ -137,8 +139,8 @@ impl MGPieceSquares {
     /// 盤上の竜から動けるマスを見ます。
     pub fn looking_for_squares_from_dragon_on_board<F1, F2>(
         src_square: &Square,
-        mut callback_square: F1,
-        mut callback_squares: F2,
+        callback_square: &mut F1,
+        callback_squares: &mut F2,
     ) where
         F1: FnMut(Square),
         F2: FnMut(Square) -> bool,
