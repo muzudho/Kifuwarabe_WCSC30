@@ -36,7 +36,7 @@ pub fn read_sasite(
             *starts += 2;
             ml_universe_dto
                 .get_search_part_mut()
-                .set_current_movement_source_temporary(&Square::from_umasu(0));
+                .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
                 .get_search_part_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Rook);
@@ -45,7 +45,7 @@ pub fn read_sasite(
             *starts += 2;
             ml_universe_dto
                 .get_search_part_mut()
-                .set_current_movement_source_temporary(&Square::from_umasu(0));
+                .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
                 .get_search_part_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Bishop);
@@ -54,7 +54,7 @@ pub fn read_sasite(
             *starts += 2;
             ml_universe_dto
                 .get_search_part_mut()
-                .set_current_movement_source_temporary(&Square::from_umasu(0));
+                .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
                 .get_search_part_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Gold);
@@ -63,7 +63,7 @@ pub fn read_sasite(
             *starts += 2;
             ml_universe_dto
                 .get_search_part_mut()
-                .set_current_movement_source_temporary(&Square::from_umasu(0));
+                .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
                 .get_search_part_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Silver);
@@ -72,7 +72,7 @@ pub fn read_sasite(
             *starts += 2;
             ml_universe_dto
                 .get_search_part_mut()
-                .set_current_movement_source_temporary(&Square::from_umasu(0));
+                .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
                 .get_search_part_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Knight);
@@ -81,7 +81,7 @@ pub fn read_sasite(
             *starts += 2;
             ml_universe_dto
                 .get_search_part_mut()
-                .set_current_movement_source_temporary(&Square::from_umasu(0));
+                .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
                 .get_search_part_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Lance);
@@ -90,7 +90,7 @@ pub fn read_sasite(
             *starts += 2;
             ml_universe_dto
                 .get_search_part_mut()
-                .set_current_movement_source_temporary(&Square::from_umasu(0));
+                .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
                 .get_search_part_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Pawn);
@@ -327,13 +327,13 @@ pub fn read_banjo(
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 盤部
-    let mut suji = SUJI_9; //９筋から右方向へ読取
-    let mut dan = DAN_1;
+    let mut suji = FILE_9; //９筋から右方向へ読取
+    let mut dan = RANK_1;
     'ban: while 0 < (len - *starts) {
         match &line[*starts..=*starts] {
             "/" => {
                 *starts += 1;
-                suji = SUJI_9;
+                suji = FILE_9;
                 dan += 1;
             }
             "1" => {

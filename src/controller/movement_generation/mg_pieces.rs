@@ -21,6 +21,7 @@ pub fn make_movement_on_board<F1>(
             use super::super::super::model::dto::search_part::sp_position_dto::ThingsInTheSquare::*;
             match current_position.what_is_in_the_square(src_phase, &dst_square2, speed_of_light) {
                 Space => {
+                    // TODO 成れるかどうかの判定は☆（＾ｑ＾）？
                     callback_movement(
                         MLMovementDto {
                             src: src_square.clone(),
@@ -33,6 +34,7 @@ pub fn make_movement_on_board<F1>(
                     false
                 }
                 Opponent => {
+                    // TODO 成れるかどうかの判定は☆（＾ｑ＾）？
                     callback_movement(
                         MLMovementDto {
                             src: src_square.clone(),
@@ -51,64 +53,130 @@ pub fn make_movement_on_board<F1>(
         let piece = current_position.get_piece_by_square(&src_square);
         let ps = speed_of_light.get_piece_struct_vo(piece);
         if *src_phase == ps.phase() {
-            use crate::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
-            match ps.piece_type() {
-                Pawn => {
-                    MGPieceSquares::looking_for_square_from_pawn_on_board(
+            use crate::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
+            match piece {
+                Pawn1 => {
+                    MGPieceSquares::looking_for_square_from_1player_pawn_on_board(
+                        &src_phase,
                         &src_square,
                         callback_squares,
                     );
                 }
-                Lance => {
-                    MGPieceSquares::looking_for_squares_from_lance_on_board(
+                Pawn2 => {
+                    MGPieceSquares::looking_for_square_from_2player_pawn_on_board(
+                        &src_phase,
                         &src_square,
                         callback_squares,
                     );
                 }
-                Knight => {
-                    MGPieceSquares::looking_for_squares_from_knight_on_board(
+                Lance1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_lance_on_board(
+                        &src_phase,
                         &src_square,
                         callback_squares,
                     );
                 }
-                Silver => {
-                    MGPieceSquares::looking_for_squares_from_silver_on_board(
+                Lance2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_lance_on_board(
+                        &src_phase,
                         &src_square,
                         callback_squares,
                     );
                 }
-                Gold => {
-                    MGPieceSquares::looking_for_squares_from_gold_on_board(
+                Knight1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_knight_on_board(
+                        &src_phase,
                         &src_square,
                         callback_squares,
                     );
                 }
-                King => {
-                    MGPieceSquares::looking_for_squares_from_king_on_board(
+                Knight2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_knight_on_board(
+                        &src_phase,
                         &src_square,
                         callback_squares,
                     );
                 }
-                Bishop => {
-                    MGPieceSquares::looking_for_squares_from_bishop_on_board(
+                Silver1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_silver_on_board(
                         &src_square,
                         callback_squares,
                     );
                 }
-                Rook => {
-                    MGPieceSquares::looking_for_squares_from_rook_on_board(
+                Silver2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_silver_on_board(
                         &src_square,
                         callback_squares,
                     );
                 }
-                Horse => {
-                    MGPieceSquares::looking_for_squares_from_horse_on_board(
+                Gold1 | PromotedPawn1 | PromotedLance1 | PromotedKnight1 | PromotedSilver1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_gold_on_board(
                         &src_square,
                         callback_squares,
                     );
                 }
-                Dragon => {
-                    MGPieceSquares::looking_for_squares_from_dragon_on_board(
+                Gold2 | PromotedPawn2 | PromotedLance2 | PromotedKnight2 | PromotedSilver2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_gold_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                King1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_king_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                King2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_king_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Bishop1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_bishop_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Bishop2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_bishop_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Rook1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_rook_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Rook2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_rook_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Horse1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_horse_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Horse2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_horse_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Dragon1 => {
+                    MGPieceSquares::looking_for_squares_from_1player_dragon_on_board(
+                        &src_square,
+                        callback_squares,
+                    );
+                }
+                Dragon2 => {
+                    MGPieceSquares::looking_for_squares_from_2player_dragon_on_board(
                         &src_square,
                         callback_squares,
                     );

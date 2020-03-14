@@ -27,7 +27,7 @@ pub enum ThingsInTheSquare {
 pub struct SPPositionDto {
     /// 10の位を筋、1の位を段とする。
     /// 0筋、0段は未使用
-    board: [GPPieceVo; BOARD_SIZE],
+    board: [GPPieceVo; BOARD_MEMORY_AREA],
     /// 持ち駒数。持ち駒に使える、成らずの駒の部分だけ使用。
     /// 増減させたいので、u8 ではなく i8。
     pub hand: [i8; PIECE_LN],
@@ -66,9 +66,9 @@ impl Default for SPPositionDto {
                 0, 0,
             ],
             square_of_king: [
-                Square::from_umasu(0),
-                Square::from_umasu(0),
-                Square::from_umasu(0),
+                Square::from_usquare(0),
+                Square::from_usquare(0),
+                Square::from_usquare(0),
             ],
         }
     }
@@ -112,7 +112,7 @@ impl SPPositionDto {
         suji: i8,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
-        for dan in DAN_1..DAN_10 {
+        for dan in RANK_1..RANK_10 {
             let sq = Square::from_file_rank(suji, dan);
             let piece99 = self.get_piece_by_square(&sq);
             let ps100 = speed_of_light.get_piece_struct_vo(piece99);
@@ -125,11 +125,11 @@ impl SPPositionDto {
     }
     /// 升で指定して駒を取得
     pub fn get_piece_by_square(&self, sq: &Square) -> &GPPieceVo {
-        &self.board[sq.to_umasu()]
+        &self.board[sq.to_usquare()]
     }
     /// 升で指定して駒を置く
     pub fn set_piece_by_square(&mut self, sq: &Square, piece: &GPPieceVo) {
-        self.board[sq.to_umasu()] = piece.clone();
+        self.board[sq.to_usquare()] = piece.clone();
 
         // 玉の位置を覚え直します。
         use super::super::super::super::model::vo::game_part::gp_phase_vo::Phase::*;
@@ -243,8 +243,8 @@ impl SPPositionDto {
         let mut hash: u64 = 0;
 
         // 盤上の駒
-        for i_ms in MASU_0..BOARD_SIZE {
-            let i_sq = Square::from_umasu(i_ms as umasu);
+        for i_ms in NONE_SQUARE..BOARD_MEMORY_AREA {
+            let i_sq = Square::from_usquare(i_ms as usquare);
             let km = self.get_piece_by_square(&i_sq);
             let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();
             hash ^= ml_universe_dto.get_position_hash_seed().km[i_ms][num_km];

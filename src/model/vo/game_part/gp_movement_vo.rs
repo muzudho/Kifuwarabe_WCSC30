@@ -64,7 +64,7 @@ impl GPMovementVo {
 
     /// 考えた結果、指し手が考え付いていれば真。
     pub fn exists(&self) -> bool {
-        self.destination.to_umasu() != MASU_0
+        self.destination.to_usquare() != NONE_SQUARE
     }
 }
 impl fmt::Display for GPMovementVo {
@@ -79,7 +79,7 @@ impl fmt::Display for GPMovementVo {
         assert_banjo_sq(&self.destination, "Movement-display");
         let (dx, dy) = self.destination.to_file_rank();
 
-        if self.source.to_umasu() == SS_SRC_DA {
+        if self.source.to_usquare() == SS_SRC_DA {
             use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
             write!(
                 f,
@@ -115,7 +115,7 @@ impl fmt::Display for GPMovementVo {
                 if self.promote { "+" } else { "" }
             )
         } else {
-            let (sx, sy) = if self.source.to_umasu() == MASU_0 {
+            let (sx, sy) = if self.source.to_usquare() == NONE_SQUARE {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
@@ -139,8 +139,8 @@ impl fmt::Debug for GPMovementVo {
         write!(
             f,
             "GPMovementVo({}{}{}{})",
-            self.source.to_umasu(),
-            self.destination.to_umasu(),
+            self.source.to_usquare(),
+            self.destination.to_usquare(),
             self.promote,
             self.drop
         )

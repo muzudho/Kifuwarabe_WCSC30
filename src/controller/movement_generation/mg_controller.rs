@@ -194,10 +194,10 @@ pub fn get_up_potential_movement<F1>(
             for drops_hash in drops_set {
                 gets_movement_callback(
                     MLMovementDto {
-                        src: Square::from_umasu(SS_SRC_DA),  // 駒台
-                        dst: any_square.clone(),             // どの升へ行きたいか
-                        pro: false,                          // 打に成りは無し
-                        drop: num_to_piece_type(drops_hash), // 打った駒種類
+                        src: Square::from_usquare(SS_SRC_DA), // 駒台
+                        dst: any_square.clone(),              // どの升へ行きたいか
+                        pro: false,                           // 打に成りは無し
+                        drop: num_to_piece_type(drops_hash),  // 打った駒種類
                     }
                     .to_hash(speed_of_light),
                 );
@@ -345,7 +345,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
         let piece_type_da = num_to_piece_type(*num_piece_type_da);
 
         let movement_hash = MLMovementDto {
-            src: Square::from_umasu(SS_SRC_DA),
+            src: Square::from_usquare(SS_SRC_DA),
             dst: (*sq_dst).clone(),
             pro: false,
             drop: piece_type_da,
@@ -687,25 +687,25 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -
     match ps_dst.piece() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
-            if dy < DAN_3 {
+            if dy < RANK_3 {
                 return false;
             }
         }
         Lance1 | Pawn1 => {
             // ▼しし、▼ひよこ　は１段目には進めない
-            if dy < DAN_2 {
+            if dy < RANK_2 {
                 return false;
             }
         }
         Knight2 => {
             // △うさぎ　は８、９段目には進めない
-            if DAN_7 < dy {
+            if RANK_7 < dy {
                 return false;
             }
         }
         Lance2 | Pawn2 => {
             // △しし、△ひよこ　は９段目には進めない
-            if DAN_8 < dy {
+            if RANK_8 < dy {
                 return false;
             }
         }
@@ -1227,19 +1227,19 @@ pub fn lookup_drop_by_square_piece<F1>(
     match destination_sqp.piece {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
-            if dy < DAN_3 {
+            if dy < RANK_3 {
                 return;
             }
         }
         // ▼しし、▼ひよこ　は１段目には進めない
         Lance1 => {
-            if dy < DAN_2 {
+            if dy < RANK_2 {
                 return;
             }
         }
         Pawn1 => {
             // ▼ひよこ　は２歩できない
-            if dy < DAN_2
+            if dy < RANK_2
                 || current_position.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
                 return;
@@ -1247,19 +1247,19 @@ pub fn lookup_drop_by_square_piece<F1>(
         }
         Knight2 => {
             // △うさぎ　は８、９段目には進めない
-            if DAN_7 < dy {
+            if RANK_7 < dy {
                 return;
             }
         }
         // △しし、△ひよこ　は９段目には進めない
         Lance2 => {
-            if DAN_8 < dy {
+            if RANK_8 < dy {
                 return;
             }
         }
         Pawn2 => {
             // △ひよこ　は２歩できない
-            if DAN_8 < dy
+            if RANK_8 < dy
                 || current_position.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
                 return;
@@ -1705,7 +1705,7 @@ fn remake_promotion_destination_rook_bishop_silver1<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if sq_src.rank < DAN_4 && square_dst.rank < DAN_4 {
+        if sq_src.rank < RANK_4 && square_dst.rank < RANK_4 {
             result2.insert(square_dst.clone());
         }
     }
@@ -1722,7 +1722,7 @@ fn remake_promotion_destination_knight_lance_pawn1<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if square_dst.rank < DAN_4 {
+        if square_dst.rank < RANK_4 {
             result2.insert(square_dst.clone());
         }
     }
@@ -1740,7 +1740,7 @@ fn remake_promotion_destination_rook_bishop_silver2<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_6 < sq_src.rank && DAN_6 < square_dst.rank {
+        if RANK_6 < sq_src.rank && RANK_6 < square_dst.rank {
             result2.insert(square_dst.clone());
         }
     }
@@ -1757,7 +1757,7 @@ fn remake_promotion_destination_knight_lance_pawn2<S: BuildHasher>(
 ) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_6 < square_dst.rank {
+        if RANK_6 < square_dst.rank {
             result2.insert(square_dst.clone());
         }
     }
@@ -1772,7 +1772,7 @@ fn remake_promotion_destination_knight_lance_pawn2<S: BuildHasher>(
 fn remake_forbidden_destination_knight1<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if square_dst.rank < DAN_3 {
+        if square_dst.rank < RANK_3 {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -1788,7 +1788,7 @@ fn remake_forbidden_destination_knight1<S: BuildHasher>(result: &mut HashSet<Squ
 fn remake_forbidden_destination_lance_pawn1<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if square_dst.rank < DAN_2 {
+        if square_dst.rank < RANK_2 {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -1804,7 +1804,7 @@ fn remake_forbidden_destination_lance_pawn1<S: BuildHasher>(result: &mut HashSet
 fn remake_forbidden_destination_knight2<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_7 < square_dst.rank {
+        if RANK_7 < square_dst.rank {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -1820,7 +1820,7 @@ fn remake_forbidden_destination_knight2<S: BuildHasher>(result: &mut HashSet<Squ
 fn remake_forbidden_destination_lance_pawn2<S: BuildHasher>(result: &mut HashSet<Square, S>) {
     let mut result2: HashSet<Square> = HashSet::<Square>::new();
     for square_dst in result.iter() {
-        if DAN_8 < square_dst.rank {
+        if RANK_8 < square_dst.rank {
         } else {
             result2.insert(square_dst.clone());
         }
@@ -1868,25 +1868,25 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
         match km {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
-                if dy < DAN_3 {
+                if dy < RANK_3 {
                     continue;
                 }
             }
             Lance1 | Pawn1 => {
                 // ▼しし、▼ひよこ　は１段目には進めない
-                if dy < DAN_2 {
+                if dy < RANK_2 {
                     continue;
                 }
             }
             Knight2 => {
                 // △うさぎ　は８、９段目には進めない
-                if DAN_7 < dy {
+                if RANK_7 < dy {
                     continue;
                 }
             }
             Lance2 | Pawn2 => {
                 // △しし、△ひよこ　は９段目には進めない
-                if DAN_8 < dy {
+                if RANK_8 < dy {
                     continue;
                 }
             }

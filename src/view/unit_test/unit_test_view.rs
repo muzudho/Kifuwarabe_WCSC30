@@ -48,9 +48,9 @@ pub fn print_movement_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
 pub fn print_square_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
     g_writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
     for sq in sq_hashset {
-        let ms = (*sq).to_umasu();
+        let ms = (*sq).to_usquare();
         match ms {
-            MASU_0 => break,
+            NONE_SQUARE => break,
             _ => g_writeln(&format!("ms({})", ms)),
         }
     }
@@ -60,9 +60,9 @@ pub fn print_square_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
 pub fn print_square_vec(sq_vec: &[Square]) {
     g_writeln(&format!("sq_vec.len()={}", sq_vec.len()));
     for sq in sq_vec {
-        let ms = sq.to_umasu();
+        let ms = sq.to_usquare();
         match ms {
-            MASU_0 => break,
+            NONE_SQUARE => break,
             _ => g_writeln(&format!("ms({})", ms)),
         }
     }

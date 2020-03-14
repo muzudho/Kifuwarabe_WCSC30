@@ -26,8 +26,8 @@ pub struct MLMovementDto {
 impl Default for MLMovementDto {
     fn default() -> MLMovementDto {
         MLMovementDto {
-            src: Square::from_umasu(0),
-            dst: Square::from_umasu(0),
+            src: Square::from_usquare(0),
+            dst: Square::from_usquare(0),
             pro: false,
             drop: GPPieceTypeVo::KaraPieceType,
         }
@@ -36,8 +36,8 @@ impl Default for MLMovementDto {
 impl MLMovementDto {
     #[allow(dead_code)]
     pub fn clear(&mut self) {
-        self.src = Square::from_umasu(0);
-        self.dst = Square::from_umasu(0);
+        self.src = Square::from_usquare(0);
+        self.dst = Square::from_usquare(0);
         self.pro = false;
         self.drop = GPPieceTypeVo::KaraPieceType;
     }
@@ -67,7 +67,7 @@ impl MLMovementDto {
      * 考えた結果、指し手が考え付いていれば真。
      */
     pub fn exists(&self) -> bool {
-        self.dst.to_umasu() != MASU_0
+        self.dst.to_usquare() != NONE_SQUARE
     }
 }
 impl fmt::Display for MLMovementDto {
@@ -82,7 +82,7 @@ impl fmt::Display for MLMovementDto {
         assert_banjo_sq(&self.dst, "Ｓasite Ｄisplay");
         let (dx, dy) = self.dst.to_file_rank();
 
-        if self.src.to_umasu() == SS_SRC_DA {
+        if self.src.to_usquare() == SS_SRC_DA {
             use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
             write!(
                 f,
@@ -118,7 +118,7 @@ impl fmt::Display for MLMovementDto {
                 if self.pro { "+" } else { "" }
             )
         } else {
-            let (sx, sy) = if self.src.to_umasu() == MASU_0 {
+            let (sx, sy) = if self.src.to_usquare() == NONE_SQUARE {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
@@ -142,8 +142,8 @@ impl fmt::Debug for MLMovementDto {
         write!(
             f,
             "MLMovementDto({}{}{}{})",
-            self.src.to_umasu(),
-            self.dst.to_umasu(),
+            self.src.to_usquare(),
+            self.dst.to_usquare(),
             self.pro,
             self.drop
         )

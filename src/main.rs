@@ -165,13 +165,13 @@ fn parse_extend_command(
     } else if 4 < len && &line[starts..5] == "random_ms" {
         // 乱升
         let sq = controller::common_use::cu_random_move_controller::random_square();
-        g_writeln(&format!("乱升={}", sq.to_umasu()));
+        g_writeln(&format!("乱升={}", sq.to_usquare()));
     } else if 3 < len && &line[starts..4] == "teigi::conv" {
         g_writeln("teigi::convのテスト");
 
         for ms in 11..19 {
             for hash in 0..10 {
-                let sq = Square::from_umasu(ms);
+                let sq = Square::from_usquare(ms);
                 let next = push_sq_to_hash(hash, &sq);
                 let (hash_orig, sq_orig) = pop_sq_from_hash(next);
                 g_writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
@@ -179,7 +179,7 @@ fn parse_extend_command(
                     ,ms
                     ,next
                     ,hash_orig
-                    ,sq_orig.to_umasu()
+                    ,sq_orig.to_usquare()
                 ));
             }
         }

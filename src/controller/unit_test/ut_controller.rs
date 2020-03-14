@@ -47,7 +47,7 @@ pub fn unit_test(
             "piece_type={} pc={} ms_dst={}",
             piece_type,
             pc,
-            sq_dst.to_umasu()
+            sq_dst.to_usquare()
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
@@ -115,7 +115,7 @@ pub fn unit_test(
         //insert_da_piece_type_by_sq_km      ( ms_dst, pc, &ml_universe_dto, &mut da_piece_type_hashset );
         if let Some(sq_src) = mv_src_hashset.iter().next() {
             ss.src = (*sq_src).clone();
-            g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
+            g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_usquare()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
             ss.drop = GPPieceTypeVo::KaraPieceType;
@@ -123,7 +123,7 @@ pub fn unit_test(
         /*
         for sq_src in mv_src_hashset {
             ss.src = sq_src.clone();
-            g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_umasu()));
+            g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_usquare()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
             ss.drop = GPPieceTypeVo::KaraPieceType;
@@ -140,12 +140,12 @@ pub fn unit_test(
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
-            let sq_dst = Square::from_umasu(79);
+            let sq_dst = Square::from_usquare(79);
             g_writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type,
                 pc,
-                sq_dst.to_umasu()
+                sq_dst.to_usquare()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
@@ -184,12 +184,12 @@ pub fn unit_test(
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
-            let sq_dst = Square::from_umasu(68);
+            let sq_dst = Square::from_usquare(68);
             g_writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type,
                 pc,
-                sq_dst.to_umasu()
+                sq_dst.to_usquare()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
@@ -228,12 +228,12 @@ pub fn unit_test(
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
-            let sq_dst = Square::from_umasu(77);
+            let sq_dst = Square::from_usquare(77);
             g_writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type,
                 pc,
-                sq_dst.to_umasu()
+                sq_dst.to_usquare()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
@@ -272,12 +272,12 @@ pub fn unit_test(
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::First, piece_type);
             let pc = ps.piece(); // ▼ら
-            let sq_dst = Square::from_umasu(58);
+            let sq_dst = Square::from_usquare(58);
             g_writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type,
                 pc,
-                sq_dst.to_umasu()
+                sq_dst.to_usquare()
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
             let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();

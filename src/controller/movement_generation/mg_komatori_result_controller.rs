@@ -49,10 +49,10 @@ impl fmt::Display for KomatoriResult {
         write!(
             f,
             "KmTori:{}{}->{}",
-            self.sq_attacker.to_umasu(),
+            self.sq_attacker.to_usquare(),
             self.km_attacker,
             // if ps_attacker.is_slider() { "-->" } else { "->" },
-            self.sq_target.to_umasu()
+            self.sq_target.to_usquare()
         )
     }
 }
@@ -98,7 +98,7 @@ impl KomatoriResult {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> KomatoriResultResult {
         // (1)
-        if self.sq_attacker.to_umasu() == ss.dst.to_umasu() {
+        if self.sq_attacker.to_usquare() == ss.dst.to_usquare() {
             return KomatoriResultResult::NoneAttacker;
         }
 
@@ -116,9 +116,9 @@ impl KomatoriResult {
             // 合い駒判定
             if
             // これから動かす駒は、狙われている駒ではないとする
-            ss.src.to_umasu() != self.sq_target.to_umasu()
+            ss.src.to_usquare() != self.sq_target.to_usquare()
                 // あるいは打か
-                || ss.src.to_umasu() == SS_SRC_DA
+                || ss.src.to_usquare() == SS_SRC_DA
             {
                 // 利きの線分上に、駒を置いたか？
                 if intersect_point_on_line_segment(&p_dst, &p_atk, &p_tgt) {
@@ -150,7 +150,7 @@ impl KomatoriResult {
             }
         } else {
             // (3-2) 狙われている駒を、とりあえず動かす
-            if self.sq_target.to_umasu() == ss.src.to_umasu() {
+            if self.sq_target.to_usquare() == ss.src.to_usquare() {
                 return KomatoriResultResult::NoneMoved;
             }
         }
@@ -179,13 +179,13 @@ pub fn lookup_catching_king_on_board(
         &format!(
             "(119)Ｌookup_banjo_catch phase={} sq_target={}",
             phase,
-            sq_target.to_umasu()
+            sq_target.to_usquare()
         ),
     );
 
     let mut hash = HashSet::new();
 
-    if sq_target.to_umasu() == MASU_0 {
+    if sq_target.to_usquare() == NONE_SQUARE {
         return hash;
     }
 
@@ -221,7 +221,7 @@ pub fn lookup_catching_king_on_board(
                 &ss.src,
                 &format!(
                     "(123)Ｌookup_banjo_catch ss.src /  sq_target={} km_dst={} ss={}",
-                    sq_target.to_umasu(),
+                    sq_target.to_usquare(),
                     km_dst.clone(),
                     ss
                 ),

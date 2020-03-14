@@ -108,19 +108,19 @@ pub fn pop_dir8_from_hash(hash: u64) -> (u64, Dir8) {
  ******************/
 
 pub fn p_in_ban(p: &Point) -> bool {
-    (SUJI_0 < p.x && p.x < SUJI_10) && (DAN_0 < p.y && p.y < DAN_10)
+    (FILE_0 < p.x && p.x < FILE_10) && (RANK_0 < p.y && p.y < RANK_10)
 }
 /// ハッシュ値を作る
 pub fn push_sq_to_hash(hash: u64, sq: &Square) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    (hash << 7) + sq.to_umasu() as u64
+    (hash << 7) + sq.to_usquare() as u64
 }
 /// ハッシュ値から作る
 pub fn pop_sq_from_hash(hash: u64) -> (u64, Square) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let sq_num = Square::from_umasu((hash & 0b111_1111) as umasu);
+    let sq_num = Square::from_usquare((hash & 0b111_1111) as usquare);
     (hash >> 7, sq_num)
 }
 
@@ -147,7 +147,7 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
 pub fn kaiten180_sq_by_sq_phase(sq: &Square, phase: &Phase) -> Square {
     use super::super::super::model::vo::game_part::gp_phase_vo::Phase::*;
     match *phase {
-        First => Square::from_umasu(BAN_MAX - sq.to_umasu() + BAN_MIN),
+        First => Square::from_usquare(BAN_MAX - sq.to_usquare() + BAN_MIN),
         _ => (*sq).clone(),
     }
 }

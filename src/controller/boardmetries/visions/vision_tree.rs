@@ -18,7 +18,7 @@ pub struct VisionTree {
 impl VisionTree {
     pub fn new() -> VisionTree {
         VisionTree {
-            sq_ai_r: Square::from_umasu(0),
+            sq_ai_r: Square::from_usquare(0),
             ss_tume_hashset: HashSet::new(),
         }
     }

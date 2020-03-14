@@ -7,7 +7,7 @@ use super::super::super::model::vo::game_part::gp_square_vo::Square;
 /// 打はテストできない
 ///
 pub fn assert_banjo_sq(sq: &Square, hint: &str) {
-    let ms = sq.to_umasu();
+    let ms = sq.to_usquare();
     debug_assert!(
         (10 < ms && ms < 20)
             || (20 < ms && ms < 30)

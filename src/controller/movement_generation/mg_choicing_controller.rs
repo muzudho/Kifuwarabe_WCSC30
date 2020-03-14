@@ -48,7 +48,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
 ) {
     // 自玉の位置
     let sq_r = search_part.get_king_sq(&Person::Friend).clone();
-    // g_writeln(&format!("info string My raion {}.", sq_r.to_umasu()));
+    // g_writeln(&format!("info string My raion {}.", sq_r.to_usquare()));
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> = lookup_catching_king_on_board(
@@ -145,7 +145,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         // g_writeln( &s1 );
 
         // 狙われている方の玉の位置
-        let sq_r_new = if potential_movement.source.to_umasu() == sq_r.to_umasu() {
+        let sq_r_new = if potential_movement.source.to_usquare() == sq_r.to_usquare() {
             potential_movement.destination.clone() // 狙われていた方の玉が動いた先
         } else {
             sq_r.clone() // 動いていない、狙われていた方の玉の居場所
@@ -180,10 +180,10 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             potential_movement,
             attackers.len(),
             ml_universe_dto.get_search_part().get_phase(&Person::Friend),
-            sq_r_new.to_umasu()
+            sq_r_new.to_usquare()
         ));
         for sq_atk in attackers.iter() {
-            g_writeln(&format!("info ms_atk={}.", sq_atk.to_umasu()));
+            g_writeln(&format!("info ms_atk={}.", sq_atk.to_usquare()));
         }
 
         // 手を戻す

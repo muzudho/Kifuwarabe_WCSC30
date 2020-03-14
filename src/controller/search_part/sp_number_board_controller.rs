@@ -8,7 +8,7 @@ pub struct NumberBoard {
      * 10の位を筋、1の位を段とする。
      * 0筋、0段は未使用
      */
-    ban: [i8; BOARD_SIZE],
+    ban: [i8; BOARD_MEMORY_AREA],
 }
 impl Default for NumberBoard {
     fn default() -> NumberBoard {
@@ -33,12 +33,12 @@ impl NumberBoard {
         ];
     }
     pub fn add_count_by_square(&mut self, sq: &Square, su: i8) {
-        self.ban[sq.to_umasu()] += su
+        self.ban[sq.to_usquare()] += su
     }
     pub fn get_number_by_square(&self, sq: &Square) -> i8 {
-        self.ban[sq.to_umasu()]
+        self.ban[sq.to_usquare()]
     }
     pub fn set_number_by_square(&mut self, sq: &Square, su: i8) {
-        self.ban[sq.to_umasu()] = su
+        self.ban[sq.to_usquare()] = su
     }
 }
