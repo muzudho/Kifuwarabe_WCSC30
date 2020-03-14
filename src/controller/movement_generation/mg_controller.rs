@@ -22,6 +22,7 @@ use super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
 use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::mg_square::MGSquares;
+use crate::controller::movement_generation::mg_pieces::make_movement_on_board;
 // use crate::model::dto::main_loop::ml_universe_dto::g_writeln;
 use crate::model::dto::main_loop::ml_universe_dto::MLUniverseDto;
 use std::collections::HashSet;
@@ -38,9 +39,13 @@ pub fn generate_movement(
     // g_writeln("info depth 75001");
 
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_up_potential_movement(&universe.get_search_part(), &speed_of_light, |movement| {
-        movement_set.insert(movement);
-    });
+    get_up_potential_movement(
+        &universe.get_search_part(),
+        &speed_of_light,
+        &mut |movement| {
+            &movement_set.insert(movement);
+        },
+    );
 
     // TODO これは　うそ☆（＾～＾）２手以上読んでいるとき、利きの再計算をやってるとフリーズするときがあるぜ☆（＾～＾）
     // g_writeln("info depth 75002");
@@ -73,13 +78,22 @@ pub fn generate_movement(
 pub fn get_up_potential_movement<F1>(
     sp_earth_dto: &SPEarthDto,
     speed_of_light: &MLSpeedOfLightVo,
-    mut gets_movement_callback: F1,
+    gets_movement_callback: &mut F1,
 ) where
     F1: FnMut(u64),
 {
     // +----------------+
     // | 盤上の駒の移動 |
     // +----------------+
+    //*
+    make_movement_on_board(
+        &sp_earth_dto.get_phase(&Person::Friend),
+        &sp_earth_dto.get_current_position(),
+        &speed_of_light,
+        gets_movement_callback,
+    );
+    // */
+    /*
     MGSquares::for_all(&mut |any_square| {
         let source_of_sqp = GPSquareAndPieceVo::new(
             &any_square,
@@ -141,6 +155,7 @@ pub fn get_up_potential_movement<F1>(
             }
         }
     });
+    */
 
     // +----+
     // | 打 |
@@ -412,7 +427,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -438,7 +454,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -451,7 +468,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 北
@@ -476,7 +494,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -489,7 +508,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 北西
@@ -514,7 +534,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -540,7 +561,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -566,7 +588,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -579,7 +602,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 南
@@ -604,7 +628,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -617,7 +642,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 南東
@@ -642,7 +668,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -817,7 +844,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -846,7 +874,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -859,7 +888,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 北
@@ -887,7 +917,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -900,7 +931,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 北西
@@ -928,7 +960,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -957,7 +990,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -986,7 +1020,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -999,7 +1034,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 南
@@ -1027,7 +1063,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1040,7 +1077,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 南東
@@ -1068,7 +1106,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1316,7 +1355,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1342,7 +1382,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1355,7 +1396,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                         speed_of_light,
                         result,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 北
@@ -1380,7 +1422,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1393,7 +1436,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                         speed_of_light,
                         result,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 北西
@@ -1418,7 +1462,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1444,7 +1489,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1470,7 +1516,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1483,7 +1530,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                         speed_of_light,
                         result,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 南
@@ -1508,7 +1556,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1521,7 +1570,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                         speed_of_light,
                         result,
                         next_square,
-                    )
+                    );
+                    true
                 });
             }
             // 南東
@@ -1535,7 +1585,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 } else {
                     // 南東
@@ -1546,7 +1597,8 @@ pub fn make_destination_by_square_piece<S: BuildHasher>(
                             speed_of_light,
                             result,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
             }
@@ -1889,7 +1941,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -1916,7 +1969,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -1928,7 +1982,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             current_position,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
                 // 北
@@ -1951,7 +2006,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -1963,7 +2019,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             current_position,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
                 // 北西
@@ -1989,7 +2046,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2013,7 +2071,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2040,7 +2099,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2052,7 +2112,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             current_position,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
                 // 南
@@ -2075,7 +2136,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2087,7 +2149,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             current_position,
                             &mut lookups_the_square,
                             next_square,
-                        )
+                        );
+                        true
                     });
                 }
                 // 南東
@@ -2113,7 +2176,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2250,7 +2314,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2279,7 +2344,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                     current_position,
                                     &mut lookups_the_square,
                                     next_square,
-                                )
+                                );
+                                true
                             },
                         );
                     }
@@ -2294,7 +2360,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         },
                     );
                 }
@@ -2321,7 +2388,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2335,7 +2403,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         },
                     );
                 }
@@ -2364,7 +2433,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                     current_position,
                                     &mut lookups_the_square,
                                     next_square,
-                                )
+                                );
+                                true
                             },
                         );
                     }
@@ -2392,7 +2462,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2421,7 +2492,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                     current_position,
                                     &mut lookups_the_square,
                                     next_square,
-                                )
+                                );
+                                true
                             },
                         );
                     }
@@ -2436,7 +2508,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         },
                     );
                 }
@@ -2463,7 +2536,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         });
                     }
                 }
@@ -2477,7 +2551,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                 current_position,
                                 &mut lookups_the_square,
                                 next_square,
-                            )
+                            );
+                            true
                         },
                     );
                 }
@@ -2506,7 +2581,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                                     current_position,
                                     &mut lookups_the_square,
                                     next_square,
-                                )
+                                );
+                                true
                             },
                         );
                     }

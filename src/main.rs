@@ -155,7 +155,7 @@ fn parse_extend_command(
         get_up_potential_movement(
             &ml_universe_dto.get_search_part(),
             &speed_of_light,
-            |movement_hash| {
+            &mut |movement_hash| {
                 ss_potential_hashset.insert(movement_hash);
             },
         );
