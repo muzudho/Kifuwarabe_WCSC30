@@ -9,7 +9,7 @@ use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStruct
 use super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::controller::movement_generation::mg_square::MGSquares;
+use crate::controller::movement_generation::mg_square::MGSquaresLv2;
 use std::collections::HashSet;
 
 /// 指定局面の利き升調べ。一から再計算☆（＾～＾）
@@ -35,7 +35,7 @@ pub fn recalculate_control_count(
         let ps_dst = GPPieceStructVo::from_piece(any_piece);
 
         // 移動先の升☆（＾～＾）
-        MGSquares::for_all(&mut |any_square| {
+        MGSquaresLv2::for_all(&mut |any_square| {
             assert_banjo_sq(&any_square, "think 利き調べ");
 
             // 移動元の升
