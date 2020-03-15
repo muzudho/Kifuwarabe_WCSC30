@@ -13,6 +13,7 @@ pub enum Promotability {
 
 /// 駒が動ける升☆（＾～＾）
 pub struct MGPieceSquares {}
+// TODO 敵陣から出るときの成りは☆（＾～＾）？
 impl MGPieceSquares {
     /// 盤上の歩から動けるマスを見ます。
     pub fn looking_for_square_from_1player_pawn_on_board<F1>(
@@ -23,11 +24,7 @@ impl MGPieceSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         MGSquares::north_of(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段に移動することはできません。
-            if MGPieceSquares::is_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_pawn_lance(friend, &dst_square, callback_destination)
         });
     }
     pub fn looking_for_square_from_2player_pawn_on_board<F1>(
@@ -38,11 +35,7 @@ impl MGPieceSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         MGSquares::south_of(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段に移動することはできません。
-            if MGPieceSquares::is_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_pawn_lance(friend, &dst_square, callback_destination)
         });
     }
 
@@ -55,11 +48,7 @@ impl MGPieceSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         MGSquares::looking_north_from(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段に移動することはできません。
-            if MGPieceSquares::is_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_pawn_lance(friend, &dst_square, callback_destination)
         });
     }
     pub fn looking_for_squares_from_2player_lance_on_board<F1>(
@@ -70,11 +59,7 @@ impl MGPieceSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         MGSquares::looking_south_from(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段に移動することはできません。
-            if MGPieceSquares::is_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_pawn_lance(friend, &dst_square, callback_destination)
         });
     }
 
@@ -87,18 +72,10 @@ impl MGPieceSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         MGSquares::north_west_keima_of(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
-            if MGPieceSquares::is_second_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_knight(friend, &dst_square, callback_destination)
         });
         MGSquares::north_east_keima_of(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
-            if MGPieceSquares::is_second_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_knight(friend, &dst_square, callback_destination)
         });
     }
     pub fn looking_for_squares_from_2player_knight_on_board<F1>(
@@ -109,64 +86,58 @@ impl MGPieceSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         MGSquares::south_east_keima_of(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
-            if MGPieceSquares::is_second_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_knight(friend, &dst_square, callback_destination)
         });
         MGSquares::south_west_keima_of(source, &mut |dst_square| {
-            // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
-            if MGPieceSquares::is_second_farthest_rank_from_friend(friend, &dst_square) {
-                return true;
-            };
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_knight(friend, &dst_square, callback_destination)
         });
     }
 
     /// 盤上の銀から動けるマスを見ます。
     pub fn looking_for_squares_from_1player_silver_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_destination: &mut F1,
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
         MGSquares::north_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_silver(friend, &source, &dst_square, callback_destination)
         });
         MGSquares::north_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_silver(friend, &source, &dst_square, callback_destination)
         });
         MGSquares::north_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_silver(friend, &source, &dst_square, callback_destination)
         });
         MGSquares::south_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_silver(friend, &source, &dst_square, callback_destination)
         });
         MGSquares::south_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+            Promoting::case_of_silver(friend, &source, &dst_square, callback_destination)
         });
     }
     pub fn looking_for_squares_from_2player_silver_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_destination: &mut F1,
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::south_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_east_of(source, &mut |destination| {
+            Promoting::case_of_silver(friend, &source, &destination, callback_destination)
         });
-        MGSquares::south_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_of(source, &mut |destination| {
+            Promoting::case_of_silver(friend, &source, &destination, callback_destination)
         });
-        MGSquares::south_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_west_of(source, &mut |destination| {
+            Promoting::case_of_silver(friend, &source, &destination, callback_destination)
         });
-        MGSquares::north_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_east_of(source, &mut |destination| {
+            Promoting::case_of_silver(friend, &source, &destination, callback_destination)
         });
-        MGSquares::north_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_west_of(source, &mut |destination| {
+            Promoting::case_of_silver(friend, &source, &destination, callback_destination)
         });
     }
 
@@ -177,23 +148,23 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::north_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
     pub fn looking_for_squares_from_2player_gold_on_board<F1>(
@@ -202,23 +173,23 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::south_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
 
@@ -229,29 +200,29 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::north_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
     pub fn looking_for_squares_from_2player_king_on_board<F1>(
@@ -260,109 +231,113 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::south_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
 
     /// 盤上の角から動けるマスを見ます。
     pub fn looking_for_squares_from_1player_bishop_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_destination: &mut F1,
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::looking_north_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_west_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_north_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_east_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_south_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_west_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_south_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_east_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
     }
     pub fn looking_for_squares_from_2player_bishop_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_destination: &mut F1,
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::looking_south_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_east_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_south_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_west_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_north_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_east_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_north_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_west_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
     }
 
     /// 盤上の飛から動けるマスを見ます。
     pub fn looking_for_squares_from_1player_rook_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_destination: &mut F1,
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::looking_north_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_west_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_east_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_south_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
     }
     pub fn looking_for_squares_from_2player_rook_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_destination: &mut F1,
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::looking_south_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_east_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_west_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
-        MGSquares::looking_north_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_from(source, &mut |destination| {
+            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_destination)
         });
     }
 
@@ -373,29 +348,29 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::looking_north_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_west_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
         MGSquares::north_of(source, &mut |dst_square| {
             callback_destination(dst_square, Promotability::Deny)
         });
-        MGSquares::looking_north_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_east_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_south_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_west_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_south_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_east_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
     pub fn looking_for_squares_from_2player_horse_on_board<F1>(
@@ -404,29 +379,29 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::looking_south_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_east_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_south_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_west_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_north_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_east_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_north_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_west_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
 
@@ -437,29 +412,29 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::north_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_north_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_west_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_east_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_south_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
     pub fn looking_for_squares_from_2player_dragon_on_board<F1>(
@@ -468,40 +443,129 @@ impl MGPieceSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        MGSquares::south_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_south_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_south_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::south_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::south_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_east_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_east_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_west_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_west_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_east_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_east_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::looking_north_from(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::looking_north_from(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
-        MGSquares::north_west_of(source, &mut |dst_square| {
-            callback_destination(dst_square, Promotability::Deny)
+        MGSquares::north_west_of(source, &mut |destination| {
+            callback_destination(destination, Promotability::Deny)
         });
     }
+}
+
+/// 成れるか、成れないか☆（＾～＾）
+struct Promoting {}
+impl Promoting {
+    /// 成らずに一番奥の段に移動することはできません。
+    fn case_of_pawn_lance<F1>(friend: &Phase, destinaion: &Square, callback_next: &mut F1) -> bool
+    where
+        F1: FnMut(Square, Promotability) -> bool,
+    {
+        if Promoting::is_farthest_rank_from_friend(friend, &destinaion) {
+            // 自陣から見て一番奥の段
+            callback_next(*destinaion, Promotability::Forced)
+        } else if Promoting::is_second_third_farthest_rank_from_friend(friend, &destinaion) {
+            // 自陣から見て二番、三番目の奥の段
+            callback_next(*destinaion, Promotability::Any)
+        } else {
+            callback_next(*destinaion, Promotability::Deny)
+        }
+    }
+
+    /// 成らずに一番奥の段、奥から２番目の段に移動することはできません。
+    fn case_of_knight<F1>(friend: &Phase, destination: &Square, callback_next: &mut F1) -> bool
+    where
+        F1: FnMut(Square, Promotability) -> bool,
+    {
+        // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
+        if Promoting::is_first_second_farthest_rank_from_friend(friend, &destination) {
+            callback_next(*destination, Promotability::Forced)
+        } else if Promoting::is_third_farthest_rank_from_friend(friend, &destination) {
+            callback_next(*destination, Promotability::Any)
+        } else {
+            callback_next(*destination, Promotability::Deny)
+        }
+    }
+
+    /// TODO 自陣から見て奥から１～３段目に入るときに成れます。元位置が３段目のときは、動けば成るか選べます。
+    fn case_of_silver<F1>(
+        friend: &Phase,
+        source: &Square,
+        destination: &Square,
+        callback_next: &mut F1,
+    ) -> bool
+    where
+        F1: FnMut(Square, Promotability) -> bool,
+    {
+        if Promoting::is_third_farthest_rank_from_friend(friend, &source) {
+            callback_next(*destination, Promotability::Any)
+        } else if Promoting::is_opponent_area_rank(friend, &destination) {
+            callback_next(*destination, Promotability::Any)
+        } else {
+            callback_next(*destination, Promotability::Deny)
+        }
+    }
+
+    /// TODO 非敵陣にいるとき、敵陣で成れます。敵陣にいるとき、どこでも成れます。
+    fn case_of_bishop_rook<F1>(
+        friend: &Phase,
+        source: &Square,
+        destination: &Square,
+        callback_next: &mut F1,
+    ) -> bool
+    where
+        F1: FnMut(Square, Promotability) -> bool,
+    {
+        if Promoting::is_opponent_area_rank(friend, &source)
+            || Promoting::is_opponent_area_rank(friend, &destination)
+        {
+            callback_next(*destination, Promotability::Any)
+        } else {
+            callback_next(*destination, Promotability::Deny)
+        }
+    }
+
     /// 自陣から見て、一番遠いの段
     fn is_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
         (*friend == Phase::First && destination.rank < RANK_2)
             || (*friend == Phase::Second && RANK_8 < destination.rank)
     }
-    /// 自陣から見て、二番目に遠いの段
-    fn is_second_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
+    /// 自陣から見て、一番目、２番目に遠いの段
+    fn is_first_second_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
         (*friend == Phase::First && destination.rank < RANK_3)
             || (*friend == Phase::Second && RANK_7 < destination.rank)
+    }
+    /// 自陣から見て、二番目、三番目に遠いの段
+    fn is_second_third_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
+        (*friend == Phase::First && RANK_1 < destination.rank && destination.rank < RANK_4)
+            || (*friend == Phase::Second && RANK_6 < destination.rank && destination.rank < RANK_9)
+    }
+    /// 自陣から見て、三番目に遠いの段
+    fn is_third_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
+        (*friend == Phase::First && destination.rank == RANK_3)
+            || (*friend == Phase::Second && RANK_7 == destination.rank)
+    }
+    /// 敵陣の段
+    fn is_opponent_area_rank(friend: &Phase, destination: &Square) -> bool {
+        (*friend == Phase::First && destination.rank < RANK_4)
+            || (*friend == Phase::Second && RANK_6 < destination.rank)
     }
 }
 
