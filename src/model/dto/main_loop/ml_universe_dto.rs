@@ -3,6 +3,7 @@
 //! Main loop.
 //!
 extern crate rand;
+use crate::model::dto::search_part::sp_info::SPInfo;
 use rand::Rng;
 
 use super::super::super::super::config::*;
@@ -100,7 +101,6 @@ pub struct MLUniverseDto {
     /// 探索部
     sp_earth_dto: SPEarthDto,
 }
-
 impl Default for MLUniverseDto {
     fn default() -> Self {
         MLUniverseDto {
@@ -285,9 +285,11 @@ impl MLUniverseDto {
         }
     }
 
-    /**
-     * 表示
-     */
+    pub fn get_mut_info(&mut self) -> &mut SPInfo {
+        &mut self.sp_earth_dto.info
+    }
+
+    /// 表示
     pub fn print_number_board(
         &self,
         phase: &Phase,

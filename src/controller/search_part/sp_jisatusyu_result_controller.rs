@@ -32,7 +32,7 @@ pub fn is_jisatusyu(
     .get_number_by_square(&ss.dst);
     0 < control_count
     // g_writeln(&format!(
-    //     "info is_jisatusyu={} km_src={} phase_teban={} piece_type={} phase_aite={} ss.dst={} control_count={}"
+    //     "info string is_jisatusyu={} km_src={} phase_teban={} piece_type={} phase_aite={} ss.dst={} control_count={}"
     //     ,result ,km_src ,phase_teban ,piece_type ,phase_aite ,ss.dst ,control_count
     // ));
 }

@@ -139,12 +139,12 @@ impl KomatoriResult {
                 // スライダーのいる筋の上で動いても、逃げたことにはならないぜ☆（＾～＾）
                 match match_argangle4(&argangle4a, &argangle4b) {
                     MatchingResult::Unmatched => {
-                        g_writeln(&format!("info ss={} evaluated in slider.", ss));
+                        g_writeln(&format!("info string ss={} evaluated in slider.", ss));
                         // スライダーから逃げても、ひよこの利きに飛び込むことはあるが……☆
                         return KomatoriResultResult::NoneMoved;
                     }
                     _ => {
-                        g_writeln(&format!("info ss={} in slider attack.", ss));
+                        g_writeln(&format!("info string ss={} in slider attack.", ss));
                     }
                 }
             }

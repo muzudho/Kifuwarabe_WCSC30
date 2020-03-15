@@ -10,7 +10,9 @@ use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::*;
 use super::super::super::super::model::vo::other_part::op_ply_vo::*;
+use crate::model::dto::search_part::sp_info::SPInfo;
 
+/// ミュータブルなオブジェクト☆（＾～＾）
 pub struct SPEarthDto {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
     ply: i16,
@@ -37,6 +39,8 @@ pub struct SPEarthDto {
     pub control_count_by_piece: [NumberBoard; PIECE_LN],
     // ビジョン・ツリー
     // pub vision_tree_by_phase: [VisionTree; PHASE_LN],
+    /// 情報表示担当
+    pub info: SPInfo,
 }
 impl Default for SPEarthDto {
     fn default() -> Self {
@@ -90,6 +94,7 @@ impl Default for SPEarthDto {
                 NumberBoard::default(),
             ],
             // vision_tree_by_phase: [VisionTree::default(), VisionTree::default(), VisionTree::default()],
+            info: SPInfo::default(),
         }
     }
 }

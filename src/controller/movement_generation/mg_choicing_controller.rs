@@ -176,14 +176,14 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         // 玉が利きに飛び込んでいるか？
         let jisatusyu = !attackers.is_empty();
         g_writeln(&format!(
-            "info {} evaluated => {} attackers. offence={}->{}",
+            "info string {} evaluated => {} attackers. offence={}->{}",
             potential_movement,
             attackers.len(),
             ml_universe_dto.get_search_part().get_phase(&Person::Friend),
             sq_r_new.to_usquare()
         ));
         for sq_atk in attackers.iter() {
-            g_writeln(&format!("info ms_atk={}.", sq_atk.to_usquare()));
+            g_writeln(&format!("info string ms_atk={}.", sq_atk.to_usquare()));
         }
 
         // 手を戻す
@@ -196,11 +196,17 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             continue 'idea;
         }
 
-        g_writeln(&format!("info SOLUTED movement={}.", potential_movement));
+        g_writeln(&format!(
+            "info string SOLUTED movement={}.",
+            potential_movement
+        ));
         // 問題を全て解決していれば、入れる
         ss_hashset_pickup.insert(potential_movement.to_hash(speed_of_light));
     }
-    g_writeln(&format!("info {} solutions.", ss_hashset_pickup.len()));
+    g_writeln(&format!(
+        "info string {} solutions.",
+        ss_hashset_pickup.len()
+    ));
 
     // 空っぽにする
     ss_hashset_input.clear();

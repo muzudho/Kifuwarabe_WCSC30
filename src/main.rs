@@ -53,14 +53,14 @@ fn main() {
         // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
         match io::stdin().read_line(&mut line) {
             Ok(_n) => {}
-            Err(e) => panic!("info Failed to read line. / {}", e),
+            Err(e) => panic!("info string Failed to read line. / {}", e),
         };
 
         // 末尾の改行を除こうぜ☆（＾～＾）
         // trim すると空白も消えるぜ☆（＾～＾）
         let line: String = match line.trim().parse() {
             Ok(n) => n,
-            Err(e) => panic!("info Failed to parse. / {}", e),
+            Err(e) => panic!("info string Failed to parse. / {}", e),
         };
 
         // 文字数を調べようぜ☆（＾～＾）
@@ -102,6 +102,7 @@ fn main() {
             g_writeln(&format!("id author {}", ENGINE_AUTHOR));
             g_writeln("usiok");
         } else if 1 < len && &line[starts..2] == "go" {
+            ml_universe_dto.get_mut_info().clear();
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
             let bestmove = get_best_movement(0, 1, 0, &mut ml_universe_dto, &speed_of_light);

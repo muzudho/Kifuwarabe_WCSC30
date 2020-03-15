@@ -69,11 +69,9 @@ pub fn get_best_movement(
     if movement_set.is_empty() {
         let best_value = 0;
         let resign_move = MLMovementDto::default();
-        // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-        g_writeln(&format!(
-            "info depth {} nodes {} score cp {} currmove {}",
-            cur_depth, sum_nodes, best_value, resign_move
-        ));
+        universe
+            .get_mut_info()
+            .print(cur_depth, sum_nodes, best_value, &resign_move);
         return (resign_move, 0, sum_nodes);
     }
 
@@ -100,14 +98,12 @@ pub fn get_best_movement(
                 best_movement_hash = *movement_hash;
                 best_value = changed_value;
             }
-            // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-            g_writeln(&format!(
-                "info depth {} nodes {} score cp {} currmove {}",
+            universe.get_mut_info().print(
                 cur_depth,
                 sum_nodes,
-                best_value,
-                MLMovementDto::from_hash(best_movement_hash)
-            ));
+                best_value.into(),
+                &MLMovementDto::from_hash(best_movement_hash),
+            );
         } else {
             // 枝局面なら、更に深く進むぜ☆（＾～＾）
             let opponent_best_move = get_best_movement(
@@ -123,14 +119,12 @@ pub fn get_best_movement(
                 best_movement_hash = *movement_hash;
                 best_value = changed_value;
             }
-            // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-            g_writeln(&format!(
-                "info depth {} nodes {} score cp {} currmove {}",
+            universe.get_mut_info().print(
                 cur_depth,
                 sum_nodes,
-                best_value,
-                MLMovementDto::from_hash(best_movement_hash)
-            ));
+                best_value.into(),
+                &MLMovementDto::from_hash(best_movement_hash),
+            );
         }
         // 1手戻すぜ☆（＾～＾）
         universe
@@ -146,10 +140,9 @@ pub fn get_best_movement(
     };
 
     // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-    g_writeln(&format!(
-        "info depth {} nodes {} score cp {} currmove {}",
-        cur_depth, sum_nodes, best_value, best_movement
-    ));
+    universe
+        .get_mut_info()
+        .print(cur_depth, sum_nodes, best_value.into(), &best_movement);
 
     (best_movement, best_value, sum_nodes)
     /*
@@ -162,7 +155,7 @@ pub fn get_best_movement(
         if i == index {
             //let result : MLMovementDto = ss.clone();
             let best_movement = MLMovementDto::from_hash(ss_hash);
-            g_writeln(&format!("info solution:{}.", best_movement));
+            g_writeln(&format!("info string solution:{}.", best_movement));
             return best_movement;
         }
     }
