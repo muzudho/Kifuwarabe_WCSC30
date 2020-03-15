@@ -32,7 +32,7 @@ impl SPInfo {
         &mut self,
         cur_depth: u16,
         sum_nodes: u64,
-        best_value: i32,
+        best_value: i16,
         resign_move: &MLMovementDto,
     ) {
         // 初回か、前回より1秒以上経過していれば。
