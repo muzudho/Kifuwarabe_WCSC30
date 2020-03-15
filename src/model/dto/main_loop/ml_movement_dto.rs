@@ -67,7 +67,7 @@ impl MLMovementDto {
      * 考えた結果、指し手が考え付いていれば真。
      */
     pub fn exists(&self) -> bool {
-        self.dst.to_usquare() != NONE_SQUARE
+        self.dst.to_usquare() != SQUARE_NONE
     }
 }
 impl fmt::Display for MLMovementDto {
@@ -82,7 +82,7 @@ impl fmt::Display for MLMovementDto {
         assert_banjo_sq(&self.dst, "Ｓasite Ｄisplay");
         let (dx, dy) = self.dst.to_file_rank();
 
-        if self.src.to_usquare() == SS_SRC_DA {
+        if self.src.to_usquare() == SQUARE_DROP {
             use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
             write!(
                 f,
@@ -118,7 +118,7 @@ impl fmt::Display for MLMovementDto {
                 if self.pro { "+" } else { "" }
             )
         } else {
-            let (sx, sy) = if self.src.to_usquare() == NONE_SQUARE {
+            let (sx, sy) = if self.src.to_usquare() == SQUARE_NONE {
                 // エラー・データも表示したい
                 (0, 0)
             } else {

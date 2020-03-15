@@ -243,7 +243,7 @@ impl SPPositionDto {
         let mut hash: u64 = 0;
 
         // 盤上の駒
-        for i_ms in NONE_SQUARE..BOARD_MEMORY_AREA {
+        for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
             let i_sq = Square::from_usquare(i_ms as usquare);
             let km = self.get_piece_by_square(&i_sq);
             let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();

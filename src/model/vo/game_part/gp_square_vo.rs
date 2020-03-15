@@ -75,10 +75,10 @@ pub const RANK_10: i8 = 10;
 pub type usquare = usize;
 
 /// 升の検索等で、該当なしの場合
-pub const NONE_SQUARE: usquare = 0;
+pub const SQUARE_NONE: usquare = 0;
 
 /// 指し手。打の場合のsrc
-pub const SS_SRC_DA: usquare = 0;
+pub const SQUARE_DROP: usquare = 0;
 
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]

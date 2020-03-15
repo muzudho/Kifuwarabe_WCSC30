@@ -158,7 +158,7 @@ impl SPEarthDto {
         let cap = self.captured_piece_history[self.get_ply() as usize].clone();
 
         // 移動先の駒
-        let piece186 = if movement.source.to_usquare() == SS_SRC_DA {
+        let piece186 = if movement.source.to_usquare() == SQUARE_DROP {
             // 打なら
             let piece679 = GPPieceVo::from_phase_and_piece_type(&phase, movement.drop);
             // 自分の持ち駒を増やす
@@ -227,7 +227,7 @@ impl SPEarthDto {
 
         {
             // 動かす駒
-            let piece144 = if movement.source.to_usquare() == SS_SRC_DA {
+            let piece144 = if movement.source.to_usquare() == SQUARE_DROP {
                 // 打なら
                 // 自分の持ち駒を減らす
                 let piece734 = GPPieceVo::from_phase_and_piece_type(&phase, movement.drop);

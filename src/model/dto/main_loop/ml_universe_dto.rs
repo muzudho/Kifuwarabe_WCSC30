@@ -128,7 +128,7 @@ impl MLUniverseDto {
         // 局面ハッシュの種をリセット
 
         // 盤上の駒
-        for i_ms in NONE_SQUARE..BOARD_MEMORY_AREA {
+        for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
             for i_km in 0..PIECE_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
                 self.get_position_hash_seed_mut().km[i_ms][i_km] =

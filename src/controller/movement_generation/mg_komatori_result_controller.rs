@@ -118,7 +118,7 @@ impl KomatoriResult {
             // これから動かす駒は、狙われている駒ではないとする
             ss.src.to_usquare() != self.sq_target.to_usquare()
                 // あるいは打か
-                || ss.src.to_usquare() == SS_SRC_DA
+                || ss.src.to_usquare() == SQUARE_DROP
             {
                 // 利きの線分上に、駒を置いたか？
                 if intersect_point_on_line_segment(&p_dst, &p_atk, &p_tgt) {
@@ -185,7 +185,7 @@ pub fn lookup_catching_king_on_board(
 
     let mut hash = HashSet::new();
 
-    if sq_target.to_usquare() == NONE_SQUARE {
+    if sq_target.to_usquare() == SQUARE_NONE {
         return hash;
     }
 

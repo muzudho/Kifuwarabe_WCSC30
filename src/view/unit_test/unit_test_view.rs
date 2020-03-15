@@ -50,7 +50,7 @@ pub fn print_square_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
     for sq in sq_hashset {
         let ms = (*sq).to_usquare();
         match ms {
-            NONE_SQUARE => break,
+            SQUARE_NONE => break,
             _ => g_writeln(&format!("ms({})", ms)),
         }
     }
@@ -62,7 +62,7 @@ pub fn print_square_vec(sq_vec: &[Square]) {
     for sq in sq_vec {
         let ms = sq.to_usquare();
         match ms {
-            NONE_SQUARE => break,
+            SQUARE_NONE => break,
             _ => g_writeln(&format!("ms({})", ms)),
         }
     }
