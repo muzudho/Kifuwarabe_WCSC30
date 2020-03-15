@@ -15,6 +15,9 @@ impl MGPieceSquares {
     {
         MGSquares::north_of(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段に移動することはできません。
+            if MGPieceSquares::is_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
     }
@@ -27,6 +30,9 @@ impl MGPieceSquares {
     {
         MGSquares::south_of(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段に移動することはできません。
+            if MGPieceSquares::is_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
     }
@@ -41,6 +47,9 @@ impl MGPieceSquares {
     {
         MGSquares::looking_north_from(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段に移動することはできません。
+            if MGPieceSquares::is_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
     }
@@ -53,6 +62,9 @@ impl MGPieceSquares {
     {
         MGSquares::looking_south_from(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段に移動することはできません。
+            if MGPieceSquares::is_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
     }
@@ -67,10 +79,16 @@ impl MGPieceSquares {
     {
         MGSquares::north_west_keima_of(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
+            if MGPieceSquares::is_second_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
         MGSquares::north_east_keima_of(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
+            if MGPieceSquares::is_second_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
     }
@@ -83,10 +101,16 @@ impl MGPieceSquares {
     {
         MGSquares::south_east_keima_of(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
+            if MGPieceSquares::is_second_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
         MGSquares::south_west_keima_of(src_square, &mut |dst_square| {
             // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
+            if MGPieceSquares::is_second_farthest_rank_from_friend(src_phase, &dst_square) {
+                return true;
+            };
             callback_squares(dst_square)
         });
     }
@@ -319,6 +343,16 @@ impl MGPieceSquares {
         MGSquares::north_east_of(src_square, &mut |dst_square| callback_squares(dst_square));
         MGSquares::looking_north_from(src_square, &mut |dst_square| callback_squares(dst_square));
         MGSquares::north_west_of(src_square, &mut |dst_square| callback_squares(dst_square));
+    }
+    /// 自陣から見て、一番遠いの段
+    fn is_farthest_rank_from_friend(src_phase: &Phase, dst_square: &Square) -> bool {
+        (*src_phase == Phase::First && dst_square.rank < RANK_2)
+            || (*src_phase == Phase::Second && RANK_8 < dst_square.rank)
+    }
+    /// 自陣から見て、二番目に遠いの段
+    fn is_second_farthest_rank_from_friend(src_phase: &Phase, dst_square: &Square) -> bool {
+        (*src_phase == Phase::First && dst_square.rank < RANK_3)
+            || (*src_phase == Phase::Second && RANK_7 < dst_square.rank)
     }
 }
 
