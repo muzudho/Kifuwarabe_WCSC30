@@ -17,36 +17,58 @@ pub fn make_movement_on_board<F1>(
 {
     // 盤上の駒☆（＾～＾）
     MGSquares::for_all(&mut |src_square| {
-        let callback_squares = &mut |dst_square2| {
+        let callback_destination = &mut |dst_square2, promotability| {
             use super::super::super::model::dto::search_part::sp_position_dto::ThingsInTheSquare::*;
-            match current_position.what_is_in_the_square(src_phase, &dst_square2, speed_of_light) {
-                Space => {
-                    // TODO 成れるかどうかの判定は☆（＾ｑ＾）？
-                    callback_movement(
-                        MLMovementDto {
-                            src: src_square.clone(),
-                            dst: dst_square2.clone(),
-                            pro: false, // 成らず
-                            drop: GPPieceTypeVo::KaraPieceType,
+            use crate::controller::movement_generation::mg_square::Promotability::*;
+            let things_in_the_square =
+                current_position.what_is_in_the_square(src_phase, &dst_square2, speed_of_light);
+            match things_in_the_square {
+                Space | Opponent => {
+                    // 成れるかどうかの判定☆（＾ｑ＾）
+                    let promotion = match &promotability {
+                        Forced => true,
+                        _ => false,
+                    };
+                    match &promotability {
+                        Any => {
+                            callback_movement(
+                                MLMovementDto {
+                                    src: src_square.clone(),
+                                    dst: dst_square2.clone(),
+                                    pro: false,
+                                    drop: GPPieceTypeVo::KaraPieceType,
+                                }
+                                .to_hash(speed_of_light),
+                            );
+                            callback_movement(
+                                MLMovementDto {
+                                    src: src_square.clone(),
+                                    dst: dst_square2.clone(),
+                                    pro: true,
+                                    drop: GPPieceTypeVo::KaraPieceType,
+                                }
+                                .to_hash(speed_of_light),
+                            );
                         }
-                        .to_hash(speed_of_light),
-                    );
-                    false
-                }
-                Opponent => {
-                    // TODO 成れるかどうかの判定は☆（＾ｑ＾）？
-                    callback_movement(
-                        MLMovementDto {
-                            src: src_square.clone(),
-                            dst: dst_square2.clone(),
-                            pro: false, // 成らず
-                            drop: GPPieceTypeVo::KaraPieceType,
+                        _ => {
+                            callback_movement(
+                                MLMovementDto {
+                                    src: src_square.clone(),
+                                    dst: dst_square2.clone(),
+                                    pro: promotion,
+                                    drop: GPPieceTypeVo::KaraPieceType,
+                                }
+                                .to_hash(speed_of_light),
+                            );
                         }
-                        .to_hash(speed_of_light),
-                    );
-                    true
+                    };
                 }
-                Friend => true,
+                Friend => {}
+            };
+
+            match things_in_the_square {
+                Space => false,
+                _ => true,
             }
         };
 
@@ -59,126 +81,126 @@ pub fn make_movement_on_board<F1>(
                     MGPieceSquares::looking_for_square_from_1player_pawn_on_board(
                         &src_phase,
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Pawn2 => {
                     MGPieceSquares::looking_for_square_from_2player_pawn_on_board(
                         &src_phase,
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Lance1 => {
                     MGPieceSquares::looking_for_squares_from_1player_lance_on_board(
                         &src_phase,
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Lance2 => {
                     MGPieceSquares::looking_for_squares_from_2player_lance_on_board(
                         &src_phase,
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Knight1 => {
                     MGPieceSquares::looking_for_squares_from_1player_knight_on_board(
                         &src_phase,
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Knight2 => {
                     MGPieceSquares::looking_for_squares_from_2player_knight_on_board(
                         &src_phase,
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Silver1 => {
                     MGPieceSquares::looking_for_squares_from_1player_silver_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Silver2 => {
                     MGPieceSquares::looking_for_squares_from_2player_silver_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Gold1 | PromotedPawn1 | PromotedLance1 | PromotedKnight1 | PromotedSilver1 => {
                     MGPieceSquares::looking_for_squares_from_1player_gold_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Gold2 | PromotedPawn2 | PromotedLance2 | PromotedKnight2 | PromotedSilver2 => {
                     MGPieceSquares::looking_for_squares_from_2player_gold_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 King1 => {
                     MGPieceSquares::looking_for_squares_from_1player_king_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 King2 => {
                     MGPieceSquares::looking_for_squares_from_2player_king_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Bishop1 => {
                     MGPieceSquares::looking_for_squares_from_1player_bishop_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Bishop2 => {
                     MGPieceSquares::looking_for_squares_from_2player_bishop_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Rook1 => {
                     MGPieceSquares::looking_for_squares_from_1player_rook_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Rook2 => {
                     MGPieceSquares::looking_for_squares_from_2player_rook_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Horse1 => {
                     MGPieceSquares::looking_for_squares_from_1player_horse_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Horse2 => {
                     MGPieceSquares::looking_for_squares_from_2player_horse_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Dragon1 => {
                     MGPieceSquares::looking_for_squares_from_1player_dragon_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 Dragon2 => {
                     MGPieceSquares::looking_for_squares_from_2player_dragon_on_board(
                         &src_square,
-                        callback_squares,
+                        callback_destination,
                     );
                 }
                 _ => {}
