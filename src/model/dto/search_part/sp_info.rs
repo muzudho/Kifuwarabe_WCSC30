@@ -22,7 +22,6 @@ impl Default for SPInfo {
 impl SPInfo {
     /// ストップウォッチを初期化します。
     pub fn clear(&mut self) {
-        // とりあえず60秒前にします。
         self.stopwatch = Instant::now();
         self.previous = self.stopwatch.elapsed();
         self.first = true;
@@ -36,8 +35,8 @@ impl SPInfo {
         best_value: i32,
         resign_move: &MLMovementDto,
     ) {
-        // 初回か、前回より４秒以上経過していれば。
-        if self.first || self.previous.as_secs() + 4 < self.stopwatch.elapsed().as_secs() {
+        // 初回か、前回より1秒以上経過していれば。
+        if self.first || self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs() {
             // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
             g_writeln(&format!(
                 "info depth {} nodes {} score cp {} currmove {}",

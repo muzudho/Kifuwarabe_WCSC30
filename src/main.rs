@@ -105,9 +105,16 @@ fn main() {
             ml_universe_dto.get_mut_info().clear();
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = get_best_movement(0, 1, 0, &mut ml_universe_dto, &speed_of_light);
-            // 例： bestmove 7g7f
-            g_writeln(&format!("bestmove {}", bestmove.0));
+            let depth = 2;
+            match get_best_movement(0, depth, 0, &mut ml_universe_dto, &speed_of_light) {
+                Some(bestmove) => {
+                    // 例： bestmove 7g7f
+                    g_writeln(&format!("bestmove {}", bestmove.movement));
+                }
+                None => {
+                    g_writeln("bestmove resign");
+                }
+            }
         } else {
             parse_extend_command(&line, starts, &mut ml_universe_dto, &speed_of_light);
         }

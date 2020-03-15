@@ -15,6 +15,29 @@ use super::super::super::model::vo::game_part::gp_movement_vo::GPMovementVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::sp_evaluation_controller::*;
 
+/// 探索結果。
+pub struct SPBestmove {
+    pub movement: MLMovementDto,
+    pub changed_value: i16,
+    pub sum_nodes: u64,
+    pub captured_king: bool,
+}
+impl SPBestmove {
+    pub fn new(
+        movement1: MLMovementDto,
+        changed_value1: i16,
+        sum_nodes1: u64,
+        captured_king1: bool,
+    ) -> Self {
+        SPBestmove {
+            movement: movement1,
+            changed_value: changed_value1,
+            sum_nodes: sum_nodes1,
+            captured_king: captured_king1,
+        }
+    }
+}
+
 /// Let there be light. (光在れ)
 /// 現局面での最善手を返すぜ☆（*＾～＾*）
 ///
@@ -33,7 +56,7 @@ pub fn get_best_movement(
     mut sum_nodes: u64,
     universe: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
-) -> (MLMovementDto, i16, u64) {
+) -> Option<SPBestmove> {
     {
         // 指定局面の利き数ボード再計算。
         // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
@@ -72,13 +95,14 @@ pub fn get_best_movement(
         universe
             .get_mut_info()
             .print(cur_depth, sum_nodes, best_value, &resign_move);
-        return (resign_move, 0, sum_nodes);
+        return None;
     }
 
     // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
     let mut best_movement_hash = 0u64;
     let mut best_value = -1;
     let mut repetition_move_hash = 0u64; // 千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
+    let mut captured_king = false;
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
         let movement = GPMovementVo::from_hash(*movement_hash);
@@ -92,8 +116,16 @@ pub fn get_best_movement(
             repetition_move_hash = *movement_hash;
         } else if end_depth <= cur_depth {
             // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
-            let changed_value = SPEvaluationController::evaluate(captured_piece, speed_of_light);
+            let (changed_value, king_catch1) =
+                SPEvaluationController::evaluate(captured_piece, speed_of_light);
             sum_nodes += 1;
+
+            if king_catch1 {
+                // 王を取る手より良い手は無いので探索終了☆（＾～＾）
+                captured_king = true;
+                break;
+            }
+
             if best_value < changed_value {
                 best_movement_hash = *movement_hash;
                 best_value = changed_value;
@@ -106,25 +138,34 @@ pub fn get_best_movement(
             );
         } else {
             // 枝局面なら、更に深く進むぜ☆（＾～＾）
-            let opponent_best_move = get_best_movement(
+            match get_best_movement(
                 cur_depth + 1,
                 end_depth,
                 sum_nodes + 1,
                 universe,
                 speed_of_light,
-            );
-            let changed_value = -opponent_best_move.1;
-            sum_nodes = opponent_best_move.2;
-            if best_value < changed_value {
-                best_movement_hash = *movement_hash;
-                best_value = changed_value;
+            ) {
+                Some(opponent_best_move) => {
+                    if opponent_best_move.captured_king {
+                        // 次の手で、相手が王を捕まえているようでは、こんな手を指してはいけないぜ☆（＾～＾）
+                        return None;
+                    } else {
+                        let changed_value = -opponent_best_move.changed_value;
+                        sum_nodes = opponent_best_move.sum_nodes;
+                        if best_value < changed_value {
+                            best_movement_hash = *movement_hash;
+                            best_value = changed_value;
+                        }
+                        universe.get_mut_info().print(
+                            cur_depth,
+                            sum_nodes,
+                            best_value.into(),
+                            &MLMovementDto::from_hash(best_movement_hash),
+                        );
+                    }
+                }
+                None => {}
             }
-            universe.get_mut_info().print(
-                cur_depth,
-                sum_nodes,
-                best_value.into(),
-                &MLMovementDto::from_hash(best_movement_hash),
-            );
         }
         // 1手戻すぜ☆（＾～＾）
         universe
@@ -144,7 +185,12 @@ pub fn get_best_movement(
         .get_mut_info()
         .print(cur_depth, sum_nodes, best_value.into(), &best_movement);
 
-    (best_movement, best_value, sum_nodes)
+    Some(SPBestmove::new(
+        best_movement,
+        best_value,
+        sum_nodes,
+        captured_king,
+    ))
     /*
     // TODO 進めた局面に評価値を付けるぜ☆（＾～＾）
     // TODO 繰り返すぜ☆（＾～＾）
