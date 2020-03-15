@@ -104,7 +104,7 @@ fn main() {
         } else if 1 < len && &line[starts..2] == "go" {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let bestmove = get_best_movement(0, 0, 0, &mut ml_universe_dto, &speed_of_light);
+            let bestmove = get_best_movement(0, 1, 0, &mut ml_universe_dto, &speed_of_light);
             // 例： bestmove 7g7f
             g_writeln(&format!("bestmove {}", bestmove.0));
         } else {
