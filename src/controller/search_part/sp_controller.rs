@@ -15,7 +15,7 @@ use super::super::super::model::vo::game_part::gp_movement_vo::GPMovementVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::sp_evaluation_controller::*;
 
-/// 探索結果。
+/// 将来の結果を、現在に遡って持ってくる方向の結果。
 pub struct SPBestmove {
     pub movement: MLMovementDto,
     pub changed_value: i16,
@@ -43,21 +43,22 @@ impl SPBestmove {
     }
 }
 
-struct BestmoveState {
+/// 兄弟局面（横方向）と比較しての結果。
+struct SiblingBestmoveState {
     movement_hash: u64,
     value: i16,
     /// 相手の王を捕まえるまでのターン。0なら未確定。
-    captured_opponent_king: u16,
+    shortest_captured_opponent_king: u16,
     /// 自分の王が捕まえるまでのターン。0なら未確定。
-    my_king_has_been_caught: u16,
+    shortest_my_king_has_been_caught: u16,
 }
-impl BestmoveState {
+impl SiblingBestmoveState {
     pub fn new() -> Self {
-        BestmoveState {
+        SiblingBestmoveState {
             movement_hash: 0u64,
             value: -1,
-            captured_opponent_king: 0,
-            my_king_has_been_caught: 0,
+            shortest_captured_opponent_king: 0,
+            shortest_my_king_has_been_caught: 0,
         }
     }
 
@@ -70,26 +71,26 @@ impl BestmoveState {
     }
 
     /*
-    pub fn get_captured_opponent_king(&self) -> u16 {
+    pub fn get_shortest_captured_opponent_king(&self) -> u16 {
         self.captured_opponent_king
     }
 
-    pub fn get_my_king_has_been_caught(&self) -> u16 {
+    pub fn get_shortest_my_king_has_been_caught(&self) -> u16 {
         self.my_king_has_been_caught
     }
     */
 
     pub fn catch_opponent_king(&mut self) {
-        self.captured_opponent_king += 1;
+        self.shortest_captured_opponent_king += 1;
     }
 
     /// 自玉が相手の玉より先に取られるか☆（＾～＾）？
     pub fn is_losing(&self) -> bool {
-        0 < self.my_king_has_been_caught
-            && self.captured_opponent_king < self.my_king_has_been_caught
+        0 < self.shortest_my_king_has_been_caught
+            && self.shortest_captured_opponent_king < self.shortest_my_king_has_been_caught
     }
 
-    pub fn update(&mut self, changed_value: i16, movement_hash1: u64) {
+    pub fn update_bestmove(&mut self, changed_value: i16, movement_hash1: u64) {
         if self.is_losing() {
             // 自玉が相手の玉より先に取られる手が、良いわけ無いぜ☆（＾～＾）
             return;
@@ -101,10 +102,21 @@ impl BestmoveState {
         }
     }
 
-    pub fn swap_phase(&mut self) {
-        let temp = self.my_king_has_been_caught;
-        self.my_king_has_been_caught = self.captured_opponent_king;
-        self.captured_opponent_king = temp;
+    pub fn swap_phase(&mut self, captured_opponent_king: u16, my_king_has_been_caught: u16) {
+        // まず　先後ひっくり返して１足すぜ☆（＾～＾）
+        let my_king_has_been_caught2 = captured_opponent_king + 1;
+        let captured_opponent_king = my_king_has_been_caught + 1;
+
+        // どちらにしても、一番短いものを持ってるペアが実現するだろ☆（＾～＾）それを残そうぜ☆（＾～＾）
+        if std::cmp::min(captured_opponent_king, my_king_has_been_caught2)
+            < std::cmp::min(
+                self.shortest_captured_opponent_king,
+                self.shortest_my_king_has_been_caught,
+            )
+        {
+            self.shortest_my_king_has_been_caught = my_king_has_been_caught2;
+            self.shortest_captured_opponent_king = captured_opponent_king;
+        }
     }
 }
 
@@ -169,7 +181,7 @@ pub fn get_best_movement(
     }
 
     // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
-    let mut bestmove_state = BestmoveState::new();
+    let mut bestmove_state = SiblingBestmoveState::new();
     // 千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     let mut repetition_move_hash = 0u64;
     for movement_hash in movement_set.iter() {
@@ -189,7 +201,7 @@ pub fn get_best_movement(
                 SPEvaluationController::evaluate(captured_piece, speed_of_light);
             sum_nodes += 1;
 
-            bestmove_state.update(changed_value, *movement_hash);
+            bestmove_state.update_bestmove(changed_value, *movement_hash);
 
             universe.get_mut_info().print(
                 cur_depth,
@@ -215,7 +227,7 @@ pub fn get_best_movement(
                 Some(opponent_best_move) => {
                     let changed_value = -opponent_best_move.changed_value;
                     sum_nodes = opponent_best_move.sum_nodes;
-                    bestmove_state.update(changed_value, *movement_hash);
+                    bestmove_state.update_bestmove(changed_value, *movement_hash);
 
                     universe.get_mut_info().print(
                         cur_depth,
@@ -224,7 +236,10 @@ pub fn get_best_movement(
                         &MLMovementDto::from_hash(bestmove_state.get_movement_hash()),
                     );
 
-                    bestmove_state.swap_phase();
+                    bestmove_state.swap_phase(
+                        opponent_best_move.captured_opponent_king,
+                        opponent_best_move.my_king_has_been_caught,
+                    );
                     if bestmove_state.is_losing() {
                         // 次の手で、相手が王を捕まえているようでは、こんな手を指してはいけないぜ☆（＾～＾）
                         // 探索はさっさと終了だぜ☆（＾～＾）
@@ -259,8 +274,8 @@ pub fn get_best_movement(
         best_movement,
         bestmove_state.get_value(),
         sum_nodes,
-        bestmove_state.captured_opponent_king,
-        bestmove_state.my_king_has_been_caught,
+        bestmove_state.shortest_captured_opponent_king,
+        bestmove_state.shortest_my_king_has_been_caught,
     ))
     /*
     // TODO 進めた局面に評価値を付けるぜ☆（＾～＾）
