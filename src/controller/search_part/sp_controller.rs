@@ -20,25 +20,22 @@ pub struct SPBestmove {
     pub movement: MLMovementDto,
     pub changed_value: i16,
     pub sum_nodes: u64,
-    /// 相手の玉を捕まえた。
-    pub captured_opponent_king: u16,
-    /// 自分の玉が捕まった。
-    pub my_king_has_been_caught: u16,
+    /// らいおんきゃっち数。玉を取ったら1。
+    /// 現局面では、玉を取られた時は偶数、玉を取った時は奇数になる。
+    pub raioncatch_number: i16,
 }
 impl SPBestmove {
     pub fn new(
         movement1: MLMovementDto,
         changed_value1: i16,
         sum_nodes1: u64,
-        captured_opponent_king1: u16,
-        my_king_has_been_caught1: u16,
+        raioncatch_number1: i16,
     ) -> Self {
         SPBestmove {
             movement: movement1,
             changed_value: changed_value1,
             sum_nodes: sum_nodes1,
-            captured_opponent_king: captured_opponent_king1,
-            my_king_has_been_caught: my_king_has_been_caught1,
+            raioncatch_number: raioncatch_number1,
         }
     }
 }
@@ -47,18 +44,16 @@ impl SPBestmove {
 struct SiblingBestmoveState {
     movement_hash: u64,
     value: i16,
-    /// 相手の王を捕まえるまでのターン。0なら未確定。
-    shortest_captured_opponent_king: u16,
-    /// 自分の王が捕まえるまでのターン。0なら未確定。
-    shortest_my_king_has_been_caught: u16,
+    /// らいおんきゃっち数。玉を取ったら1。
+    /// 現局面では、玉を取られた時は偶数、玉を取った時は奇数になる。
+    raioncatch_number: i16,
 }
 impl SiblingBestmoveState {
     pub fn new() -> Self {
         SiblingBestmoveState {
             movement_hash: 0u64,
             value: -1,
-            shortest_captured_opponent_king: 0,
-            shortest_my_king_has_been_caught: 0,
+            raioncatch_number: 32767,
         }
     }
 
@@ -70,53 +65,21 @@ impl SiblingBestmoveState {
         self.value
     }
 
-    /*
-    pub fn get_shortest_captured_opponent_king(&self) -> u16 {
-        self.captured_opponent_king
+    pub fn catch_king(&mut self) {
+        self.raioncatch_number = std::cmp::min(self.raioncatch_number, 1);
     }
 
-    pub fn get_shortest_my_king_has_been_caught(&self) -> u16 {
-        self.my_king_has_been_caught
-    }
-    */
-
-    pub fn catch_opponent_king(&mut self) {
-        self.shortest_captured_opponent_king += 1;
+    pub fn catch_no_king(&mut self) {
+        self.raioncatch_number = std::cmp::min(self.raioncatch_number, 0);
     }
 
-    /// 自玉が相手の玉より先に取られるか☆（＾～＾）？
-    pub fn is_losing(&self) -> bool {
-        0 < self.shortest_my_king_has_been_caught
-            && self.shortest_captured_opponent_king < self.shortest_my_king_has_been_caught
-    }
-
-    pub fn update_bestmove(&mut self, changed_value: i16, movement_hash1: u64) {
-        if self.is_losing() {
-            // 自玉が相手の玉より先に取られる手が、良いわけ無いぜ☆（＾～＾）
-            return;
-        }
-
+    pub fn update_bestmove(&mut self, changed_value: i16, movement_hash1: u64) -> bool {
         if self.value < changed_value {
             self.movement_hash = movement_hash1;
             self.value = changed_value;
+            return true;
         }
-    }
-
-    pub fn swap_phase(&mut self, captured_opponent_king: u16, my_king_has_been_caught: u16) {
-        // まず　先後ひっくり返して１足すぜ☆（＾～＾）
-        let my_king_has_been_caught2 = captured_opponent_king + 1;
-        let captured_opponent_king = my_king_has_been_caught + 1;
-
-        // どちらにしても、一番短いものを持ってるペアが実現するだろ☆（＾～＾）それを残そうぜ☆（＾～＾）
-        if std::cmp::min(captured_opponent_king, my_king_has_been_caught2)
-            < std::cmp::min(
-                self.shortest_captured_opponent_king,
-                self.shortest_my_king_has_been_caught,
-            )
-        {
-            self.shortest_my_king_has_been_caught = my_king_has_been_caught2;
-            self.shortest_captured_opponent_king = captured_opponent_king;
-        }
+        false
     }
 }
 
@@ -174,9 +137,13 @@ pub fn get_best_movement(
     if movement_set.is_empty() {
         let best_value = 0;
         let resign_move = MLMovementDto::default();
-        universe
-            .get_mut_info()
-            .print(cur_depth, sum_nodes, best_value, &resign_move);
+        universe.get_mut_info().print(
+            cur_depth,
+            sum_nodes,
+            best_value,
+            &resign_move,
+            &format!("{} EmptyMoves", resign_move),
+        );
         return None;
     }
 
@@ -201,19 +168,21 @@ pub fn get_best_movement(
                 SPEvaluationController::evaluate(captured_piece, speed_of_light);
             sum_nodes += 1;
 
-            bestmove_state.update_bestmove(changed_value, *movement_hash);
-
-            universe.get_mut_info().print(
-                cur_depth,
-                sum_nodes,
-                bestmove_state.get_value(),
-                &MLMovementDto::from_hash(bestmove_state.get_movement_hash()),
-            );
-
             if king_catch1 {
-                // 王を取る手より良い手は無いので探索終了☆（＾～＾）
-                bestmove_state.catch_opponent_king();
-                break;
+                bestmove_state.catch_king();
+            } else {
+                bestmove_state.catch_no_king();
+            }
+
+            if bestmove_state.update_bestmove(changed_value, *movement_hash) {
+                let movement = MLMovementDto::from_hash(bestmove_state.get_movement_hash());
+                universe.get_mut_info().print(
+                    cur_depth,
+                    sum_nodes,
+                    bestmove_state.get_value(),
+                    &movement,
+                    &format!("{} EndNode", movement),
+                );
             }
         } else {
             // 枝局面なら、更に深く進むぜ☆（＾～＾）
@@ -225,25 +194,36 @@ pub fn get_best_movement(
                 speed_of_light,
             ) {
                 Some(opponent_best_move) => {
-                    let changed_value = -opponent_best_move.changed_value;
                     sum_nodes = opponent_best_move.sum_nodes;
-                    bestmove_state.update_bestmove(changed_value, *movement_hash);
 
-                    universe.get_mut_info().print(
-                        cur_depth,
-                        sum_nodes,
-                        bestmove_state.get_value(),
-                        &MLMovementDto::from_hash(bestmove_state.get_movement_hash()),
-                    );
+                    let changed_value: i16 = if opponent_best_move.raioncatch_number == 0 {
+                        // 玉を取ったり取られたりしないぜ☆（＾～＾）
+                        -opponent_best_move.changed_value
+                    } else if opponent_best_move.raioncatch_number == 1 {
+                        // 次の相手の番に玉を取られてしまうぜ☆（＾～＾）！王手回避漏れか自殺手になってしまうぜ☆（＾～＾）！
+                        // こんな手を指し手はいけないぜ☆（＾～＾）！
+                        return None;
+                    } else {
+                        bestmove_state.raioncatch_number = opponent_best_move.raioncatch_number + 1;
+                        if bestmove_state.raioncatch_number % 2 == 0 {
+                            // 相手に玉を取られる詰めろだぜ☆（＾～＾）
+                            -30000 + bestmove_state.raioncatch_number
+                        } else {
+                            // 相手の玉を取る詰めろだぜ☆（＾～＾）
+                            30000 - bestmove_state.raioncatch_number
+                        }
+                    };
 
-                    bestmove_state.swap_phase(
-                        opponent_best_move.captured_opponent_king,
-                        opponent_best_move.my_king_has_been_caught,
-                    );
-                    if bestmove_state.is_losing() {
-                        // 次の手で、相手が王を捕まえているようでは、こんな手を指してはいけないぜ☆（＾～＾）
-                        // 探索はさっさと終了だぜ☆（＾～＾）
-                        break;
+                    if bestmove_state.update_bestmove(changed_value, *movement_hash) {
+                        let movement =
+                            &MLMovementDto::from_hash(bestmove_state.get_movement_hash());
+                        universe.get_mut_info().print(
+                            cur_depth,
+                            sum_nodes,
+                            bestmove_state.get_value(),
+                            movement,
+                            &format!("{} Backward1", movement),
+                        );
                     }
                 }
                 None => {}
@@ -268,14 +248,14 @@ pub fn get_best_movement(
         sum_nodes,
         bestmove_state.get_value(),
         &best_movement,
+        &format!("{} Backward2", best_movement),
     );
 
     Some(SPBestmove::new(
         best_movement,
         bestmove_state.get_value(),
         sum_nodes,
-        bestmove_state.shortest_captured_opponent_king,
-        bestmove_state.shortest_my_king_has_been_caught,
+        bestmove_state.raioncatch_number,
     ))
     /*
     // TODO 進めた局面に評価値を付けるぜ☆（＾～＾）

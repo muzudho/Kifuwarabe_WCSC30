@@ -105,7 +105,8 @@ fn main() {
             ml_universe_dto.get_mut_info().clear();
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let depth = 2;
+            // let depth = 2;
+            let depth = 1;
             match get_best_movement(0, depth, 0, &mut ml_universe_dto, &speed_of_light) {
                 Some(bestmove) => {
                     // 例： bestmove 7g7f

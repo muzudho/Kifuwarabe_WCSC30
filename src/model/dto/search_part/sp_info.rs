@@ -33,17 +33,18 @@ impl SPInfo {
         cur_depth: u16,
         sum_nodes: u64,
         best_value: i16,
-        resign_move: &MLMovementDto,
+        cur_move: &MLMovementDto,
+        text: &str,
     ) {
         // 初回か、前回より1秒以上経過していれば。
-        if self.first || self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs() {
-            // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-            g_writeln(&format!(
-                "info depth {} nodes {} score cp {} currmove {}",
-                cur_depth, sum_nodes, best_value, resign_move
-            ));
-            self.first = false;
-            self.previous = self.stopwatch.elapsed();
-        }
+        //if self.first || self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs() {
+        // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
+        g_writeln(&format!(
+            "info depth {} nodes {} score cp {} currmove {} string {}",
+            cur_depth, sum_nodes, best_value, cur_move, text
+        ));
+        self.first = false;
+        self.previous = self.stopwatch.elapsed();
+        //}
     }
 }

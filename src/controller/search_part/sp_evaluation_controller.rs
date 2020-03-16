@@ -12,7 +12,7 @@ impl SPEvaluationController {
     pub fn evaluate(captured_piece: GPPieceVo, speed_of_light: &MLSpeedOfLightVo) -> (i16, bool) {
         let piece_struct = speed_of_light.get_piece_struct_vo(&captured_piece);
         match piece_struct.phase_piece_type().1 {
-            GPPieceTypeVo::King => (30000, true),
+            GPPieceTypeVo::King => (25000, true),
             GPPieceTypeVo::Rook => (1000, false),
             GPPieceTypeVo::Bishop => (900, false),
             GPPieceTypeVo::Gold => (600, false),
