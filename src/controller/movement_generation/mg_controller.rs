@@ -7,8 +7,8 @@ use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_direction::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
+use super::super::super::model::dto::search_part::position::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
-use super::super::super::model::dto::search_part::sp_position_dto::*;
 use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
@@ -246,7 +246,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     square_dst: &Square,
     ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -590,7 +590,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -
 // 成る前を含めない、長い利き
 fn lookup_no_promotion_source_by_piece_sliding<F1>(
     dst_piece: &GPPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     lookups_the_square: &mut F1,
     next_square: Square,
@@ -611,7 +611,7 @@ where
 /// 成る前を含めない、隣への利き
 fn lookup_no_promotion_source_by_piece_next<F1>(
     dst_piece: &GPPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     lookups_the_square: &mut F1,
     next_square: Square,
@@ -636,7 +636,7 @@ fn lookup_no_promotion_source_by_piece_next<F1>(
 pub fn lookup_before_promotion_source_by_square_piece<F1>(
     square_dst: &Square,
     ps_dst: &GPPieceStructVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -980,7 +980,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
 /// 成る前の移動元、長い利き
 fn lookup_before_promotion_source_sliding<F1>(
     source_piece: &GPPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
     next_square: Square,
@@ -1001,7 +1001,7 @@ where
 /// 成る前の移動元、 隣升への利き
 fn lookup_before_promotion_source_next<F1>(
     source_piece: &GPPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
     next_square: Square,
@@ -1027,7 +1027,7 @@ fn lookup_before_promotion_source_next<F1>(
 pub fn lookup_no_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -1372,7 +1372,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
 // 移動元升、長い利き☆（＾～＾）
 fn lookup_no_promotion_source_by_phase_sliding<F1>(
     dst_sq_piece: &GPSquareAndPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     lookups_the_square: &mut F1,
     next_square: Square,
 ) -> bool
@@ -1392,7 +1392,7 @@ where
 // 移動元升、隣☆（＾～＾）
 fn lookup_no_promotion_source_by_phase_next<F1>(
     dst_sq_piece: &GPSquareAndPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     lookup_the_square: &mut F1,
     next_square: Square,
 ) where
@@ -1412,7 +1412,7 @@ fn lookup_no_promotion_source_by_phase_next<F1>(
 pub fn lookup_before_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -1778,7 +1778,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 /// 成る前移動元升、長い利き☆（＾～＾）
 fn lookup_before_promotion_source_by_phase_sliding<F1>(
     dst_sq_and_demoted_piece: &GPSquareAndPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     lookups_the_square: &mut F1,
     next_square: Square,
 ) -> bool
@@ -1799,7 +1799,7 @@ where
 /// 成る前移動元升、 隣☆（＾～＾）
 fn lookup_before_promotion_source_by_phase_next<F1>(
     dst_sq_and_demoted_piece: &GPSquareAndPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     lookups_the_square: &mut F1,
     next_square: Square,
 ) where
@@ -1827,7 +1827,7 @@ fn lookup_before_promotion_source_by_phase_next<F1>(
 /// * `lookups_the_drops` - Piece type hash.
 pub fn lookup_drop_by_square_piece<F1>(
     destination_sqp: &GPSquareAndPieceVo,
-    current_position: &SPPositionDto,
+    current_position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_drops: F1,
 ) where

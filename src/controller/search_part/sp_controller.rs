@@ -91,6 +91,7 @@ impl SiblingBestmoveState {
 /// * `depth` - 0 なら末端局面、1 なら末端局面の1歩手前☆（＾～＾）
 /// * `universe` - (宇宙)
 /// * `speed_of_light` - (光速)
+/// * `pv` - 読み筋
 ///
 /// # Returns
 ///
@@ -101,6 +102,7 @@ pub fn get_best_movement(
     mut sum_nodes: u64,
     universe: &mut MLUniverseDto,
     speed_of_light: &MLSpeedOfLightVo,
+    pv: &str,
 ) -> Option<SPBestmove> {
     {
         // 指定局面の利き数ボード再計算。
@@ -142,7 +144,7 @@ pub fn get_best_movement(
             sum_nodes,
             best_value,
             &resign_move,
-            &format!("{} EmptyMoves", resign_move),
+            &format!("{} {} EmptyMoves", pv, resign_move),
         );
         return None;
     }
@@ -174,16 +176,15 @@ pub fn get_best_movement(
                 bestmove_state.catch_no_king();
             }
 
-            if bestmove_state.update_bestmove(changed_value, *movement_hash) {
-                let movement = MLMovementDto::from_hash(bestmove_state.get_movement_hash());
-                universe.get_mut_info().print(
-                    cur_depth,
-                    sum_nodes,
-                    bestmove_state.get_value(),
-                    &movement,
-                    &format!("{} EndNode", movement),
-                );
-            }
+            if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
+            let movement = MLMovementDto::from_hash(*movement_hash);
+            universe.get_mut_info().print(
+                cur_depth,
+                sum_nodes,
+                bestmove_state.get_value(),
+                &movement,
+                &format!("{} {} EndNode", pv, movement),
+            );
         } else {
             // 枝局面なら、更に深く進むぜ☆（＾～＾）
             match get_best_movement(
@@ -192,6 +193,7 @@ pub fn get_best_movement(
                 sum_nodes + 1,
                 universe,
                 speed_of_light,
+                &format!("{} {}", pv, MLMovementDto::from_hash(*movement_hash)),
             ) {
                 Some(opponent_best_move) => {
                     sum_nodes = opponent_best_move.sum_nodes;
@@ -214,17 +216,15 @@ pub fn get_best_movement(
                         }
                     };
 
-                    if bestmove_state.update_bestmove(changed_value, *movement_hash) {
-                        let movement =
-                            &MLMovementDto::from_hash(bestmove_state.get_movement_hash());
-                        universe.get_mut_info().print(
-                            cur_depth,
-                            sum_nodes,
-                            bestmove_state.get_value(),
-                            movement,
-                            &format!("{} Backward1", movement),
-                        );
-                    }
+                    if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
+                    let movement = &MLMovementDto::from_hash(*movement_hash);
+                    universe.get_mut_info().print(
+                        cur_depth,
+                        sum_nodes,
+                        bestmove_state.get_value(),
+                        movement,
+                        &format!("{} {} Backward1", pv, movement),
+                    );
                 }
                 None => {}
             }
@@ -248,7 +248,7 @@ pub fn get_best_movement(
         sum_nodes,
         bestmove_state.get_value(),
         &best_movement,
-        &format!("{} Backward2", best_movement),
+        &format!("{} {} Backward2", pv, best_movement),
     );
 
     Some(SPBestmove::new(

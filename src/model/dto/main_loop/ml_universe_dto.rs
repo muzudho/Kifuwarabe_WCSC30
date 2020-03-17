@@ -7,7 +7,7 @@ use crate::model::dto::search_part::sp_info::SPInfo;
 use rand::Rng;
 
 use super::super::super::super::config::*;
-use super::super::super::super::model::dto::search_part::sp_position_dto::*;
+use super::super::super::super::model::dto::search_part::position::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
@@ -21,6 +21,7 @@ use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::super::super::dto::search_part::sp_earth_dto::*;
+use crate::model::vo::other_part::op_misc_vo::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -91,7 +92,7 @@ pub struct MLUniverseDto {
     /// 局面ハッシュ種☆（＾～＾）
     position_hash_seed: PositionHashSeed,
     /// 初期局面
-    starting_position: SPPositionDto,
+    starting_position: Position,
     /// 初期局面ハッシュ
     starting_position_hash: u64,
     /// 対話モード
@@ -112,7 +113,7 @@ impl Default for MLUniverseDto {
                 // 先後
                 phase: [0; PHASE_LN],
             },
-            starting_position: SPPositionDto::default(),
+            starting_position: Position::default(),
             starting_position_hash: 0,
             dialogue_mode: false,
             vec_command: Vec::new(),
@@ -146,6 +147,12 @@ impl MLUniverseDto {
         for i_phase in 0..PHASE_LN {
             self.get_position_hash_seed_mut().phase[i_phase] =
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
+        }
+    }
+    pub fn get_position(&self, num: &KyNums) -> &Position {
+        match *num {
+            KyNums::Current => self.get_search_part().get_current_position(),
+            KyNums::Start => self.get_starting_position(),
         }
     }
     /**
@@ -189,10 +196,10 @@ impl MLUniverseDto {
         &mut self.position_hash_seed
     }
 
-    pub fn get_starting_position(&self) -> &SPPositionDto {
+    pub fn get_starting_position(&self) -> &Position {
         &self.starting_position
     }
-    pub fn get_starting_position_mut(&mut self) -> &mut SPPositionDto {
+    pub fn get_starting_position_mut(&mut self) -> &mut Position {
         &mut self.starting_position
     }
 

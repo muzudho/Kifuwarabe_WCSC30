@@ -16,7 +16,8 @@ pub mod controller;
 pub mod model;
 pub mod view;
 
-use crate::view::manual_play::mp_position_view::print_pos;
+use crate::model::vo::other_part::op_person_vo::Person;
+use crate::view::position_view::*;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use config::*;
 use controller::common_use::cu_conv_controller::*;
@@ -78,7 +79,12 @@ fn main() {
                 print_title();
             } else {
                 // 局面表示
-                let s = print_pos(&ml_universe_dto, &KyNums::Current);
+                let s = PositionView::to_string(
+                    ml_universe_dto.get_position(&KyNums::Current),
+                    ml_universe_dto.get_search_part().get_ply(),
+                    ml_universe_dto.get_search_part().get_phase(&Person::Friend),
+                    ml_universe_dto.count_same_ky(),
+                );
                 g_writeln(&s);
             }
         // 文字数の長いものからチェック
@@ -107,7 +113,8 @@ fn main() {
             // go btime 40000 wtime 50000 binc 10000 winc 10000
             // let depth = 2;
             let depth = 1;
-            match get_best_movement(0, depth, 0, &mut ml_universe_dto, &speed_of_light) {
+            let pv = "";
+            match get_best_movement(0, depth, 0, &mut ml_universe_dto, &speed_of_light, pv) {
                 Some(bestmove) => {
                     // 例： bestmove 7g7f
                     g_writeln(&format!("bestmove {}", bestmove.movement));
@@ -238,11 +245,21 @@ fn parse_extend_command(
         }
     } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示
-        let s = print_pos(&ml_universe_dto, &KyNums::Start);
+        let s = PositionView::to_string(
+            &ml_universe_dto.get_position(&KyNums::Start),
+            ml_universe_dto.get_search_part().get_ply(),
+            ml_universe_dto.get_search_part().get_phase(&Person::Friend),
+            ml_universe_dto.count_same_ky(),
+        );
         g_writeln(&s);
     } else if 2 < len && &line[starts..3] == "pos" {
         // 現局面表示
-        let s = print_pos(&ml_universe_dto, &KyNums::Current);
+        let s = PositionView::to_string(
+            &ml_universe_dto.get_position(&KyNums::Current),
+            ml_universe_dto.get_search_part().get_ply(),
+            ml_universe_dto.get_search_part().get_phase(&Person::Friend),
+            ml_universe_dto.count_same_ky(),
+        );
         g_writeln(&s);
     }
 }

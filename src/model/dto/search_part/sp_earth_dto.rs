@@ -1,7 +1,7 @@
 //! 探索部
 use super::super::super::super::controller::search_part::sp_number_board_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::super::model::dto::search_part::sp_position_dto::*;
+use super::super::super::super::model::dto::search_part::position::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
@@ -18,7 +18,7 @@ pub struct SPEarthDto {
     ply: i16,
 
     /// 現局面
-    current_position: SPPositionDto,
+    current_position: Position,
 
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hash_history: [u64; PLY_LN],
@@ -47,7 +47,7 @@ impl Default for SPEarthDto {
         SPEarthDto {
             ply: 0,
             // 現局面
-            current_position: SPPositionDto::default(),
+            current_position: Position::default(),
             position_hash_history: [0; PLY_LN],
             /// 取った駒
             captured_piece_history: [GPPieceVo::NonePiece; PLY_LN],
@@ -133,10 +133,10 @@ impl SPEarthDto {
         }
     }
 
-    pub fn get_current_position(&self) -> &SPPositionDto {
+    pub fn get_current_position(&self) -> &Position {
         &self.current_position
     }
-    pub fn get_current_position_mut(&mut self) -> &mut SPPositionDto {
+    pub fn get_current_position_mut(&mut self) -> &mut Position {
         &mut self.current_position
     }
 

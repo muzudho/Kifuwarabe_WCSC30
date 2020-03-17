@@ -6,8 +6,8 @@ use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
+use crate::model::dto::search_part::position::Position;
 use crate::model::dto::search_part::sp_earth_dto::SPEarthDto;
-use crate::model::dto::search_part::sp_position_dto::SPPositionDto;
 use crate::model::vo::game_part::gp_phase_vo::Phase;
 
 pub struct MGMovements {}
@@ -16,7 +16,7 @@ impl MGMovements {
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     pub fn make_movement_on_board<F1>(
         friend: &Phase,
-        current_position: &SPPositionDto,
+        current_position: &Position,
         speed_of_light: &MLSpeedOfLightVo,
         callback_movement: &mut F1,
     ) where
@@ -25,8 +25,8 @@ impl MGMovements {
         // 盤上の駒☆（＾～＾）
         MGSquares::for_all(&mut |source| {
             let callback_next = &mut |destination, promotability| {
-                use super::super::super::model::dto::search_part::sp_position_dto::ThingsInTheSquare::*;
-            use crate::controller::movement_generation::square::Promotability::*;
+                use super::super::super::model::dto::search_part::position::ThingsInTheSquare::*;
+                use crate::controller::movement_generation::square::Promotability::*;
                 let things_in_the_square =
                     current_position.what_is_in_the_square(friend, &destination, speed_of_light);
                 match things_in_the_square {
