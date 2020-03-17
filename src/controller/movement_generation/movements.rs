@@ -7,7 +7,7 @@ use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
 use crate::model::dto::search_part::board::Board;
-use crate::model::dto::search_part::sp_earth_dto::SPEarthDto;
+use crate::model::dto::search_part::position::Position;
 use crate::model::vo::game_part::gp_phase_vo::Phase;
 
 pub struct MGMovements {}
@@ -225,7 +225,7 @@ impl MGMovements {
     /// 持ち駒の動き。
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     pub fn make_movement_on_hand<F1>(
-        sp_earth_dto: &SPEarthDto,
+        position: &Position,
         speed_of_light: &MLSpeedOfLightVo,
         callback_movement: &mut F1,
     ) where
@@ -234,12 +234,12 @@ impl MGMovements {
         GPHandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(
-                    &sp_earth_dto.get_phase(&Person::Friend),
+                    &position.get_phase(&Person::Friend),
                     any_piece_type,
                 )
                 .piece();
 
-            if 0 < sp_earth_dto
+            if 0 < position
                 .get_current_board()
                 .get_hand(hand_piece, speed_of_light)
             {
@@ -250,7 +250,7 @@ impl MGMovements {
                     Pawn1 | Lance1 => Squares::for_from_rank2_to_rank9(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            sp_earth_dto,
+                            position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -260,7 +260,7 @@ impl MGMovements {
                     Knight1 => Squares::for_from_rank3_to_rank9(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            sp_earth_dto,
+                            position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -270,7 +270,7 @@ impl MGMovements {
                     Pawn2 | Lance2 => Squares::for_from_rank1_to_rank8(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            sp_earth_dto,
+                            position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -280,7 +280,7 @@ impl MGMovements {
                     Knight2 => Squares::for_from_rank1_to_rank7(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            sp_earth_dto,
+                            position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -290,7 +290,7 @@ impl MGMovements {
                         MGSquares::for_all(&mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                sp_earth_dto,
+                                position,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -304,20 +304,20 @@ impl MGMovements {
 
     fn make_hand<F1>(
         hand_piece: &GPPieceVo,
-        sp_earth_dto: &SPEarthDto,
+        position: &Position,
         speed_of_light: &MLSpeedOfLightVo,
         destination: &Square,
         callback_movement: &mut F1,
     ) where
         F1: FnMut(u64),
     {
-        let exists_piece = sp_earth_dto
+        let exists_piece = position
             .get_current_board()
             .get_piece_by_square(&destination);
 
         if let GPPieceVo::NonePiece = exists_piece {
             // 駒が無いところに打つ
-            let current_board = sp_earth_dto.get_current_board();
+            let current_board = position.get_current_board();
             let ps_dst = speed_of_light.get_piece_struct_vo(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             // 行先の無いところに駒を進めることの禁止☆（＾～＾）

@@ -8,7 +8,6 @@ use super::super::super::controller::movement_generation::mg_choicing_controller
 use super::super::super::controller::movement_generation::mg_direction::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::search_part::board::*;
-use super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
@@ -23,6 +22,7 @@ use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::square::Squares;
 use crate::controller::movement_generation::movements::*;
 use crate::model::dto::main_loop::ml_universe_dto::MLUniverseDto;
+use crate::model::dto::search_part::position::*;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
@@ -33,17 +33,13 @@ pub fn generate_movement(
     movement_set: &mut HashSet<u64>,
 ) {
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_up_potential_movement(
-        &universe.get_search_part(),
-        &speed_of_light,
-        &mut |movement| {
-            &movement_set.insert(movement);
-        },
-    );
+    get_up_potential_movement(&universe.get_position(), &speed_of_light, &mut |movement| {
+        &movement_set.insert(movement);
+    });
 
     if false {
         // 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
-        select_movement_except_check(movement_set, &universe.get_search_part(), &speed_of_light);
+        select_movement_except_check(movement_set, &universe.get_position(), &speed_of_light);
 
         // 自殺手は省くぜ☆（＾～＾）
         select_movement_except_suiceid(movement_set, universe, speed_of_light);
@@ -61,7 +57,7 @@ pub fn generate_movement(
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
 pub fn get_up_potential_movement<F1>(
-    sp_earth_dto: &SPEarthDto,
+    position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     callback_movement: &mut F1,
 ) where
@@ -69,13 +65,13 @@ pub fn get_up_potential_movement<F1>(
 {
     // 盤上の駒の移動。
     MGMovements::make_movement_on_board(
-        &sp_earth_dto.get_phase(&Person::Friend),
-        &sp_earth_dto.get_current_board(),
+        &position.get_phase(&Person::Friend),
+        &position.get_current_board(),
         &speed_of_light,
         callback_movement,
     );
     // 持ち駒の打。
-    MGMovements::make_movement_on_hand(sp_earth_dto, &speed_of_light, callback_movement);
+    MGMovements::make_movement_on_hand(position, &speed_of_light, callback_movement);
 }
 
 /// 1. 移動先升指定  ms_dst
@@ -85,7 +81,7 @@ pub fn get_up_potential_movement<F1>(
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
     piece_dst: GPPieceVo,
-    sp_earth_dto: &SPEarthDto,
+    position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
@@ -98,7 +94,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if sp_earth_dto
+    if position
         .get_current_board()
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
@@ -120,7 +116,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     lookup_no_promotion_source_by_square_and_piece(
         &sq_dst,
         &ps_dst,
-        &sp_earth_dto.get_current_board(),
+        &position.get_current_board(),
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -146,7 +142,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     lookup_before_promotion_source_by_square_piece(
         sq_dst,
         &ps_dst,
-        &sp_earth_dto.get_current_board(),
+        &position.get_current_board(),
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -170,7 +166,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
     piece_dst: &GPPieceVo,
-    sp_earth_dto: &SPEarthDto,
+    position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
 ) where
@@ -183,7 +179,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let (phase, _piece_type_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if sp_earth_dto
+    if position
         .get_current_board()
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
@@ -206,7 +202,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
     lookup_drop_by_square_piece(
         &GPSquareAndPieceVo::new(&sq_dst, piece_dst),
-        &sp_earth_dto.get_current_board(),
+        &position.get_current_board(),
         &speed_of_light,
         |piece_type_hash| {
             da_piece_type_hashset.insert(piece_type_hash);

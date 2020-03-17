@@ -37,7 +37,7 @@ pub fn get_ido_ss_by_km_random(
         get_movement_by_square_and_piece_on_board(
             &sq_dst,
             piece_dst.clone(),
-            &ml_universe_dto.get_search_part(),
+            &ml_universe_dto.get_position(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
@@ -46,7 +46,7 @@ pub fn get_ido_ss_by_km_random(
         get_movement_by_square_and_piece_on_drop(
             &sq_dst,
             piece_dst,
-            &ml_universe_dto.get_search_part(),
+            &ml_universe_dto.get_position(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
@@ -79,7 +79,7 @@ pub fn get_ss_by_random(
 
         // 手番の、移動した先の駒
         let ps_dst = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-            &ml_universe_dto.get_search_part().get_phase(&Person::Friend),
+            &ml_universe_dto.get_position().get_phase(&Person::Friend),
             *cu_random_move_controller::random_piece_type(),
         );
         let piece_dst = ps_dst.piece();
@@ -88,7 +88,7 @@ pub fn get_ss_by_random(
         get_movement_by_square_and_piece_on_board(
             &sq_dst,
             piece_dst.clone(),
-            &ml_universe_dto.get_search_part(),
+            &ml_universe_dto.get_position(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);
@@ -97,7 +97,7 @@ pub fn get_ss_by_random(
         get_movement_by_square_and_piece_on_drop(
             &sq_dst,
             piece_dst,
-            &ml_universe_dto.get_search_part(),
+            &ml_universe_dto.get_position(),
             &speed_of_light,
             |movement_hash| {
                 ss_hashset.insert(movement_hash);

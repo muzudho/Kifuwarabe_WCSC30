@@ -2,11 +2,11 @@
 //! 駒集合
 //!
 
-use super::super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
+use crate::model::dto::search_part::position::*;
 use std::collections::HashSet;
 
 pub struct SPPieceSetDto {
@@ -32,10 +32,10 @@ impl SPPieceSetDto {
     pub fn new_person(
         &self,
         person: &Person,
-        sp_earth_dto: &SPEarthDto,
+        position: &Position,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> SPPieceSetDto {
-        let phase0 = sp_earth_dto.get_phase(&person);
+        let phase0 = position.get_phase(&person);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         GPPieces::for_all(&mut |any_piece| {
             let ps = speed_of_light.get_piece_struct_vo(&any_piece);

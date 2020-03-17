@@ -20,7 +20,7 @@ use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
-use super::super::super::dto::search_part::sp_earth_dto::*;
+use crate::model::dto::search_part::position::*;
 use crate::model::vo::other_part::op_misc_vo::*;
 use std::fs::File;
 use std::io::Write;
@@ -54,8 +54,7 @@ lazy_static! {
 }
 
 #[allow(dead_code)]
-pub fn g_write(s: &str) {
-    println!("{}", s);
+pub fn g_log(s: &str) {
     if LOG_ENABLE {
         // write_allメソッドを使うには use std::io::Write; が必要
         if let Err(_why) = LOGFILE.lock().unwrap().write_all(s.as_bytes()) {
@@ -65,8 +64,12 @@ pub fn g_write(s: &str) {
     }
 }
 #[allow(dead_code)]
-pub fn g_writeln(s: &str) {
+pub fn g_write(s: &str) {
     println!("{}", s);
+    g_log(s)
+}
+#[allow(dead_code)]
+pub fn g_logln(s: &str) {
     if LOG_ENABLE {
         if let Err(_why) = LOGFILE
             .lock()
@@ -74,6 +77,11 @@ pub fn g_writeln(s: &str) {
             .write_all(format!("{}\n", s).as_bytes())
         {}
     }
+}
+#[allow(dead_code)]
+pub fn g_writeln(s: &str) {
+    println!("{}", s);
+    g_logln(s);
 }
 
 /// 局面ハッシュ種
@@ -100,7 +108,7 @@ pub struct MLUniverseDto {
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
     /// 探索部
-    sp_earth_dto: SPEarthDto,
+    position: Position,
 }
 impl Default for MLUniverseDto {
     fn default() -> Self {
@@ -117,7 +125,7 @@ impl Default for MLUniverseDto {
             starting_position_hash: 0,
             dialogue_mode: false,
             vec_command: Vec::new(),
-            sp_earth_dto: SPEarthDto::default(),
+            position: Position::default(),
         }
     }
 }
@@ -149,10 +157,10 @@ impl MLUniverseDto {
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }
     }
-    pub fn get_board(&self, num: &KyNums) -> &Board {
+    pub fn get_board(&self, num: &PosNums) -> &Board {
         match *num {
-            KyNums::Current => self.get_search_part().get_current_board(),
-            KyNums::Start => self.get_starting_board(),
+            PosNums::Current => self.get_position().get_current_board(),
+            PosNums::Start => self.get_starting_board(),
         }
     }
     /**
@@ -161,8 +169,8 @@ impl MLUniverseDto {
      */
     pub fn clear_all_positions(&mut self) {
         self.get_starting_board_mut().clear();
-        self.get_search_part_mut().get_current_board_mut().clear();
-        self.get_search_part_mut().set_ply(0);
+        self.get_position_mut().get_current_board_mut().clear();
+        self.get_position_mut().set_ply(0);
     }
     /// 開始局面を、現局面にコピーします
     pub fn copy_starting_position_to_current_position(&mut self) {
@@ -171,13 +179,13 @@ impl MLUniverseDto {
             let i_sq = Square::from_usquare(i_ms);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
             let piece = self.starting_board.get_piece_by_square(&i_sq);
-            self.sp_earth_dto
+            self.position
                 .get_current_board_mut()
                 .set_piece_by_square(&i_sq, piece);
         }
 
         // 持ち駒
-        self.sp_earth_dto.get_current_board_mut().hand[..PIECE_LN]
+        self.position.get_current_board_mut().hand[..PIECE_LN]
             .clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
         /*
         for i_mg in 0..PIECE_LN {
@@ -211,11 +219,11 @@ impl MLUniverseDto {
         self.starting_position_hash = val;
     }
 
-    pub fn get_search_part_mut(&mut self) -> &mut SPEarthDto {
-        &mut self.sp_earth_dto
+    pub fn get_position_mut(&mut self) -> &mut Position {
+        &mut self.position
     }
-    pub fn get_search_part(&self) -> &SPEarthDto {
-        &self.sp_earth_dto
+    pub fn get_position(&self) -> &Position {
+        &self.position
     }
 
     /* **********************
@@ -244,7 +252,7 @@ impl MLUniverseDto {
         self.get_starting_board_mut().hand[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &GPPieceStructVo) -> Person {
-        if &piece_vo.phase() == &self.sp_earth_dto.get_phase(&Person::Friend) {
+        if &piece_vo.phase() == &self.position.get_phase(&Person::Friend) {
             Person::Friend
         } else {
             Person::Opponent
@@ -259,8 +267,8 @@ impl MLUniverseDto {
             &self.get_starting_position_hash()
         ));
 
-        for ply in 0..self.get_search_part().get_ply() {
-            let hash = &self.get_search_part().get_position_hash_history()[ply as usize];
+        for ply in 0..self.get_position().get_ply() {
+            let hash = &self.get_position().get_position_hash_history()[ply as usize];
             // 64bitは10進数20桁。改行する
             s.push_str(&format!("[{:3}] {:20}\n", ply, hash));
         }
@@ -272,7 +280,7 @@ impl MLUniverseDto {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.sp_earth_dto.get_phase(&Person::Friend) {
+        if let Phase::First = self.position.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
@@ -283,7 +291,7 @@ impl MLUniverseDto {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.sp_earth_dto.get_phase(&Person::Friend) {
+        if let Phase::First = self.position.get_phase(&Person::Friend) {
             super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
         } else {
             super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
@@ -291,7 +299,7 @@ impl MLUniverseDto {
     }
 
     pub fn get_mut_info(&mut self) -> &mut SPInfo {
-        &mut self.sp_earth_dto.info
+        &mut self.position.info
     }
 
     /// 表示
@@ -303,10 +311,10 @@ impl MLUniverseDto {
     ) -> String {
         let nb = match *phase {
             Phase::None => {
-                &self.sp_earth_dto.control_count_by_piece
+                &self.position.control_count_by_piece
                     [speed_of_light.get_piece_struct_vo(pc).serial_piece_number()]
             }
-            _ => &self.sp_earth_dto.control_count_by_phase[phase_to_num(&phase)],
+            _ => &self.position.control_count_by_phase[phase_to_num(&phase)],
         };
 
         // 数盤表示
@@ -440,29 +448,28 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     // 入れた指し手の通り指すぜ☆（＾～＾）
     pub fn do_move(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
-        let ply = self.get_search_part().get_ply();
-        self.sp_earth_dto.set_current_movement(movement);
+        let ply = self.get_position().get_ply();
+        self.position.set_current_movement(movement);
         let cap;
         {
-            cap = self.sp_earth_dto.do_move(movement, speed_of_light);
+            cap = self.position.do_move(movement, speed_of_light);
         }
-        self.sp_earth_dto.set_cap(ply as usize, cap);
+        self.position.set_cap(ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash(speed_of_light);
-        self.get_search_part_mut()
-            .set_current_position_hash(ky_hash);
+        self.get_position_mut().set_current_position_hash(ky_hash);
 
-        self.get_search_part_mut().add_ply(1);
+        self.get_position_mut().add_ply(1);
     }
 
     pub fn undo_move(&mut self, speed_of_light: &MLSpeedOfLightVo) -> bool {
-        if 0 < self.get_search_part().get_ply() {
+        if 0 < self.get_position().get_ply() {
             // 棋譜から読取、手目も減る
-            self.get_search_part_mut().add_ply(-1);
+            self.get_position_mut().add_ply(-1);
             // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
-            let ss = &self.sp_earth_dto.get_move().clone();
-            self.sp_earth_dto.undo_move(/*&phase,*/ ss, speed_of_light);
+            let ss = &self.position.get_move().clone();
+            self.position.undo_move(/*&phase,*/ ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -496,13 +503,13 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
      */
     pub fn create_ky1_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = self
-            .get_search_part()
+            .get_position()
             .get_current_board()
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
         use super::super::super::vo::game_part::gp_phase_vo::Phase::*;
-        match self.sp_earth_dto.get_phase(&Person::Friend) {
+        match self.position.get_phase(&Person::Friend) {
             First => hash ^= self.get_position_hash_seed().phase[PHASE_FIRST],
             Second => hash ^= self.get_position_hash_seed().phase[PHASE_SECOND],
             _ => {}
@@ -511,24 +518,23 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         hash
     }
 
-    /**
-     * 千日手を調べるために、
-     * 現局面は、同一局面が何回目かを調べるぜ☆（＾～＾）
-     */
+    /// 千日手を調べるために、
+    /// 現局面は、同一局面が何回目かを調べるぜ☆（＾～＾）
+    /// TODO 初期局面を何に使ってるのか☆（＾～＾）？
     pub fn count_same_ky(&self) -> i8 {
-        if self.get_search_part().get_ply() < 1 {
+        if self.get_position().get_ply() < 1 {
             return 0;
         }
 
         let mut count = 0;
-        let last_ply = self.get_search_part().get_ply() - 1;
-        let new_ply = self.get_search_part().get_ply();
+        let last_ply = self.get_position().get_ply() - 1;
+        let new_ply = self.get_position().get_ply();
         // g_writeln( &format!( "Ｃount_same_ky last_ply={} new_ply={}", last_ply ,new_ply ) );
         for i_ply in 0..new_ply {
             let t = last_ply - i_ply;
             // g_writeln( &format!( "i_ply={} t={}", i_ply, t ) );
-            if self.get_search_part().get_position_hash_history()[t as usize]
-                == self.get_search_part().get_position_hash_history()[last_ply as usize]
+            if self.get_position().get_position_hash_history()[t as usize]
+                == self.get_position().get_position_hash_history()[last_ply as usize]
             {
                 count += 1;
             }
@@ -536,7 +542,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
         // 初期局面のハッシュ
         if *self.get_starting_position_hash()
-            == self.get_search_part().get_position_hash_history()[last_ply as usize]
+            == self.get_position().get_position_hash_history()[last_ply as usize]
         {
             count += 1;
         }

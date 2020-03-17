@@ -13,7 +13,7 @@ use super::super::super::super::model::vo::other_part::op_ply_vo::*;
 use crate::model::dto::search_part::sp_info::SPInfo;
 
 /// ミュータブルなオブジェクト☆（＾～＾）
-pub struct SPEarthDto {
+pub struct Position {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
     ply: i16,
 
@@ -27,6 +27,7 @@ pub struct SPEarthDto {
     pub captured_piece_history: [GPPieceVo; PLY_LN],
 
     /// 棋譜
+    /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
     pub movements_history: [GPMovementVo; PLY_LN],
 
     /// 現在の指し手を作成中。
@@ -42,9 +43,9 @@ pub struct SPEarthDto {
     /// 情報表示担当
     pub info: SPInfo,
 }
-impl Default for SPEarthDto {
+impl Default for Position {
     fn default() -> Self {
-        SPEarthDto {
+        Position {
             ply: 0,
             // 現局面
             current_board: Board::default(),
@@ -98,7 +99,7 @@ impl Default for SPEarthDto {
         }
     }
 }
-impl SPEarthDto {
+impl Position {
     pub fn add_ply(&mut self, ply1: i16) {
         self.ply += ply1
     }

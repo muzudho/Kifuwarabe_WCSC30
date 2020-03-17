@@ -6,7 +6,7 @@
 /********
  * 局面 *
  ********/
-pub enum KyNums {
+pub enum PosNums {
     // 現局面
     Current,
     // 初期局面

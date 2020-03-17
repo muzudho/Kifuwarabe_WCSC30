@@ -16,7 +16,6 @@ pub mod controller;
 pub mod model;
 pub mod view;
 
-use crate::model::vo::other_part::op_person_vo::Person;
 use crate::view::position_view::*;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use config::*;
@@ -79,12 +78,7 @@ fn main() {
                 print_title();
             } else {
                 // 局面表示
-                let s = PositionView::to_string(
-                    ml_universe_dto.get_board(&KyNums::Current),
-                    ml_universe_dto.get_search_part().get_ply(),
-                    ml_universe_dto.get_search_part().get_phase(&Person::Friend),
-                    ml_universe_dto.count_same_ky(),
-                );
+                let s = PositionView::to_string(&ml_universe_dto, &PosNums::Current);
                 g_writeln(&s);
             }
         // 文字数の長いものからチェック
@@ -169,7 +163,7 @@ fn parse_extend_command(
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
         get_up_potential_movement(
-            &ml_universe_dto.get_search_part(),
+            &ml_universe_dto.get_position(),
             &speed_of_light,
             &mut |movement_hash| {
                 ss_potential_hashset.insert(movement_hash);
@@ -205,7 +199,7 @@ fn parse_extend_command(
         g_writeln(&s);
     } else if 3 < len && &line[starts..4] == "kifu" {
         g_writeln("棋譜表示");
-        let s = ml_universe_dto.get_search_part().get_moves_history_text();
+        let s = ml_universe_dto.get_position().get_moves_history_text();
         g_writeln(&s);
     } else if 3 < len && &line[starts..4] == "rand" {
         g_writeln("3<len rand");
@@ -219,7 +213,7 @@ fn parse_extend_command(
         if !ml_universe_dto.undo_move(&speed_of_light) {
             g_writeln(&format!(
                 "ply={} を、これより戻せません",
-                ml_universe_dto.get_search_part().get_ply()
+                ml_universe_dto.get_position().get_ply()
             ));
         }
     } else if 8 < len && &line[starts..9] == "unit-test" {
@@ -237,29 +231,19 @@ fn parse_extend_command(
         // コマンド読取。棋譜に追加され、手目も増える
         if read_sasite(&line, &mut starts, len, ml_universe_dto) {
             // 手目を戻す
-            ml_universe_dto.get_search_part_mut().add_ply(-1);
+            ml_universe_dto.get_position_mut().add_ply(-1);
             // 入っている指し手の通り指すぜ☆（＾～＾）
-            let ply = ml_universe_dto.get_search_part().get_ply();
-            let ss = ml_universe_dto.get_search_part().get_moves_history()[ply as usize].clone();
+            let ply = ml_universe_dto.get_position().get_ply();
+            let ss = ml_universe_dto.get_position().get_moves_history()[ply as usize].clone();
             ml_universe_dto.do_move(&ss, speed_of_light);
         }
     } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示
-        let s = PositionView::to_string(
-            &ml_universe_dto.get_board(&KyNums::Start),
-            ml_universe_dto.get_search_part().get_ply(),
-            ml_universe_dto.get_search_part().get_phase(&Person::Friend),
-            ml_universe_dto.count_same_ky(),
-        );
+        let s = PositionView::to_string(&ml_universe_dto, &PosNums::Start);
         g_writeln(&s);
     } else if 2 < len && &line[starts..3] == "pos" {
         // 現局面表示
-        let s = PositionView::to_string(
-            &ml_universe_dto.get_board(&KyNums::Current),
-            ml_universe_dto.get_search_part().get_ply(),
-            ml_universe_dto.get_search_part().get_phase(&Person::Friend),
-            ml_universe_dto.count_same_ky(),
-        );
+        let s = PositionView::to_string(&ml_universe_dto, &PosNums::Current);
         g_writeln(&s);
     }
 }

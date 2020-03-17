@@ -35,64 +35,64 @@ pub fn read_sasite(
         "R" => {
             *starts += 2;
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Rook);
         }
         "B" => {
             *starts += 2;
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Bishop);
         }
         "G" => {
             *starts += 2;
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Gold);
         }
         "S" => {
             *starts += 2;
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Silver);
         }
         "N" => {
             *starts += 2;
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Knight);
         }
         "L" => {
             *starts += 2;
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Lance);
         }
         "P" => {
             *starts += 2;
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Pawn);
         }
         _ => {
@@ -186,10 +186,10 @@ pub fn read_sasite(
             }
 
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_source_temporary(&Square::from_file_rank(suji, dan));
             ml_universe_dto
-                .get_search_part_mut()
+                .get_position_mut()
                 .set_current_movement_drop_temporary(GPPieceTypeVo::KaraPieceType);
         }
     }
@@ -287,18 +287,18 @@ pub fn read_sasite(
 
     // 行き先。
     ml_universe_dto
-        .get_search_part_mut()
+        .get_position_mut()
         .set_current_movement_destination_temporary(&Square::from_file_rank(suji, dan));
 
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
         ml_universe_dto
-            .get_search_part_mut()
+            .get_position_mut()
             .set_current_movement_promote_temporary(true);
         *starts += 1;
     } else {
         ml_universe_dto
-            .get_search_part_mut()
+            .get_position_mut()
             .set_current_movement_promote_temporary(false);
     }
 
@@ -308,11 +308,9 @@ pub fn read_sasite(
     }
 
     // 確定。
-    ml_universe_dto
-        .get_search_part_mut()
-        .build_current_movement();
+    ml_universe_dto.get_position_mut().build_current_movement();
 
-    ml_universe_dto.get_search_part_mut().add_ply(1);
+    ml_universe_dto.get_position_mut().add_ply(1);
     true
 }
 
@@ -838,16 +836,16 @@ pub fn read_position(
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
     while read_sasite(line, &mut starts, len, ml_universe_dto) {
         // 手目を戻す
-        ml_universe_dto.get_search_part_mut().add_ply(-1);
+        ml_universe_dto.get_position_mut().add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = ml_universe_dto.get_search_part().get_ply();
+        let ply = ml_universe_dto.get_position().get_ply();
         ml_universe_dto.do_move(
-            &ml_universe_dto.get_search_part().get_moves_history()[ply as usize].clone(),
+            &ml_universe_dto.get_position().get_moves_history()[ply as usize].clone(),
             speed_of_light,
         );
 
         // 現局面表示
-        //let s1 = &ml_universe_dto.print_ky( &KyNums::Current );
+        //let s1 = &ml_universe_dto.print_ky( &PosNums::Current );
         //g_writeln( &s1 );
     }
 }

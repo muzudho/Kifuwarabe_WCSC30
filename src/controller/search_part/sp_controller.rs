@@ -157,7 +157,7 @@ pub fn get_best_movement(
         // 1手進めるぜ☆（＾～＾）
         let movement = GPMovementVo::from_hash(*movement_hash);
         let captured_piece = universe
-            .get_search_part_mut()
+            .get_position_mut()
             .do_move(&movement, speed_of_light);
 
         // 千日手かどうかを判定する☆（＾～＾）
@@ -231,7 +231,7 @@ pub fn get_best_movement(
         }
         // 1手戻すぜ☆（＾～＾）
         universe
-            .get_search_part_mut()
+            .get_position_mut()
             .undo_move(&movement, speed_of_light)
     }
 

@@ -9,13 +9,13 @@ use super::super::super::controller::movement_generation::mg_choicing_controller
 use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::dto::main_loop::ml_universe_dto::*;
-use super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::dto::search_part::position::*;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -171,7 +171,7 @@ impl KomatoriResult {
 pub fn lookup_catching_king_on_board(
     phase: &Phase,
     sq_target: &Square,
-    sp_earth_dto: &SPEarthDto,
+    position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> HashSet<u64> {
     assert_banjo_sq(
@@ -204,7 +204,7 @@ pub fn lookup_catching_king_on_board(
         get_movement_by_square_and_piece_on_board(
             &sq_target,
             km_dst.clone(),
-            &sp_earth_dto,
+            &position,
             &speed_of_light,
             |movement_hash| {
                 multiple_movements_hashset.insert(movement_hash);
