@@ -19,7 +19,7 @@ pub fn is_jisatusyu(
     // 移動元升、動かした駒の先後、駒種類、
     let km_src = ml_universe_dto
         .get_search_part()
-        .get_current_position()
+        .get_current_board()
         .get_piece_by_square(&ss.src);
     let ps_src = speed_of_light.get_piece_struct_vo(km_src);
     let (phase_teban, _piece_type) = ps_src.phase_piece_type();

@@ -24,7 +24,7 @@ pub enum ThingsInTheSquare {
 
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
-pub struct Position {
+pub struct Board {
     /// 10の位を筋、1の位を段とする。
     /// 0筋、0段は未使用
     board: [GPPieceVo; BOARD_MEMORY_AREA],
@@ -35,10 +35,10 @@ pub struct Position {
     /// [先後]
     square_of_king: [Square; PHASE_LN],
 }
-impl Default for Position {
+impl Default for Board {
     fn default() -> Self {
         use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::NonePiece;
-        Position {
+        Board {
             // 盤上
             board: [
                 NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
@@ -73,7 +73,7 @@ impl Default for Position {
         }
     }
 }
-impl Position {
+impl Board {
     pub fn clear(&mut self) {
         use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::NonePiece;
         self.board = [

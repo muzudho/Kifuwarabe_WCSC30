@@ -43,7 +43,7 @@ pub fn recalculate_control_count(
             lookup_no_promotion_source_by_square_and_piece(
                 &any_square,
                 &ps_dst,
-                &ml_universe_dto.get_search_part().get_current_position(),
+                &ml_universe_dto.get_search_part().get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -53,7 +53,7 @@ pub fn recalculate_control_count(
             lookup_before_promotion_source_by_square_piece(
                 &any_square,
                 &ps_dst,
-                &ml_universe_dto.get_search_part().get_current_position(),
+                &ml_universe_dto.get_search_part().get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);

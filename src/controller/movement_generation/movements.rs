@@ -6,7 +6,7 @@ use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
-use crate::model::dto::search_part::position::Position;
+use crate::model::dto::search_part::board::Board;
 use crate::model::dto::search_part::sp_earth_dto::SPEarthDto;
 use crate::model::vo::game_part::gp_phase_vo::Phase;
 
@@ -16,7 +16,7 @@ impl MGMovements {
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     pub fn make_movement_on_board<F1>(
         friend: &Phase,
-        current_position: &Position,
+        current_board: &Board,
         speed_of_light: &MLSpeedOfLightVo,
         callback_movement: &mut F1,
     ) where
@@ -25,10 +25,10 @@ impl MGMovements {
         // 盤上の駒☆（＾～＾）
         MGSquares::for_all(&mut |source| {
             let callback_next = &mut |destination, promotability| {
-                use super::super::super::model::dto::search_part::position::ThingsInTheSquare::*;
+                use super::super::super::model::dto::search_part::board::ThingsInTheSquare::*;
                 use crate::controller::movement_generation::square::Promotability::*;
                 let things_in_the_square =
-                    current_position.what_is_in_the_square(friend, &destination, speed_of_light);
+                    current_board.what_is_in_the_square(friend, &destination, speed_of_light);
                 match things_in_the_square {
                     Space | Opponent => {
                         // 成れるかどうかの判定☆（＾ｑ＾）
@@ -79,7 +79,7 @@ impl MGMovements {
                 }
             };
 
-            let piece = current_position.get_piece_by_square(&source);
+            let piece = current_board.get_piece_by_square(&source);
             let ps = speed_of_light.get_piece_struct_vo(piece);
             if *friend == ps.phase() {
                 use crate::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
@@ -240,7 +240,7 @@ impl MGMovements {
                 .piece();
 
             if 0 < sp_earth_dto
-                .get_current_position()
+                .get_current_board()
                 .get_hand(hand_piece, speed_of_light)
             {
                 // 駒を持っていれば
@@ -312,12 +312,12 @@ impl MGMovements {
         F1: FnMut(u64),
     {
         let exists_piece = sp_earth_dto
-            .get_current_position()
+            .get_current_board()
             .get_piece_by_square(&destination);
 
         if let GPPieceVo::NonePiece = exists_piece {
             // 駒が無いところに打つ
-            let current_position = sp_earth_dto.get_current_position();
+            let current_board = sp_earth_dto.get_current_board();
             let ps_dst = speed_of_light.get_piece_struct_vo(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             // 行先の無いところに駒を進めることの禁止☆（＾～＾）
@@ -325,7 +325,7 @@ impl MGMovements {
             match *hand_piece {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない
-                    if current_position.exists_fu_by_phase_suji(
+                    if current_board.exists_fu_by_phase_suji(
                         &ps_dst.phase(),
                         destination.file,
                         speed_of_light,

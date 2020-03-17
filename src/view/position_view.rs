@@ -1,6 +1,6 @@
 use super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::model::vo::game_part::gp_square_vo::*;
-use crate::model::dto::search_part::position::Position;
+use crate::model::dto::search_part::board::Board;
 use crate::model::vo::game_part::gp_phase_vo::Phase;
 
 pub struct PositionView {}
@@ -9,7 +9,7 @@ impl PositionView {
     ///
     /// 後手から見た盤を表示するぜ☆（＾～＾）
     /// デカルト座標の第一象限と x,y 方向が一致するメリットがあるぜ☆（＾～＾）
-    pub fn to_string(cur_pos: &Position, ply: i16, phase: Phase, same_pos_count: i8) -> String {
+    pub fn to_string(cur_pos: &Board, ply: i16, phase: Phase, same_pos_count: i8) -> String {
         // 局面表示
         format!(
             "\

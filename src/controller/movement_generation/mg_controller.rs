@@ -7,7 +7,7 @@ use super::super::super::controller::common_use::cu_conv_controller::*;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_direction::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::search_part::position::*;
+use super::super::super::model::dto::search_part::board::*;
 use super::super::super::model::dto::search_part::sp_earth_dto::*;
 use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
@@ -70,7 +70,7 @@ pub fn get_up_potential_movement<F1>(
     // 盤上の駒の移動。
     MGMovements::make_movement_on_board(
         &sp_earth_dto.get_phase(&Person::Friend),
-        &sp_earth_dto.get_current_position(),
+        &sp_earth_dto.get_current_board(),
         &speed_of_light,
         callback_movement,
     );
@@ -99,7 +99,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if sp_earth_dto
-        .get_current_position()
+        .get_current_board()
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
     {
@@ -120,7 +120,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     lookup_no_promotion_source_by_square_and_piece(
         &sq_dst,
         &ps_dst,
-        &sp_earth_dto.get_current_position(),
+        &sp_earth_dto.get_current_board(),
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -146,7 +146,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     lookup_before_promotion_source_by_square_piece(
         sq_dst,
         &ps_dst,
-        &sp_earth_dto.get_current_position(),
+        &sp_earth_dto.get_current_board(),
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -184,7 +184,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if sp_earth_dto
-        .get_current_position()
+        .get_current_board()
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
     {
@@ -206,7 +206,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
     lookup_drop_by_square_piece(
         &GPSquareAndPieceVo::new(&sq_dst, piece_dst),
-        &sp_earth_dto.get_current_position(),
+        &sp_earth_dto.get_current_board(),
         &speed_of_light,
         |piece_type_hash| {
             da_piece_type_hashset.insert(piece_type_hash);
@@ -246,7 +246,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     square_dst: &Square,
     ps_dst: &GPPieceStructVo,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -284,7 +284,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_east_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -295,7 +295,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::east_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -311,7 +311,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_north_east_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -322,7 +322,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::north_east_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -336,7 +336,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 Squares::north_east_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         ps_dst.piece(),
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -351,7 +351,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_north_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -362,7 +362,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::north_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -376,7 +376,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 Squares::north_west_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         ps_dst.piece(),
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -391,7 +391,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_north_west_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -402,7 +402,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::north_west_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -418,7 +418,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_west_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -429,7 +429,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::west_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -445,7 +445,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_south_west_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -456,7 +456,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::south_west_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -470,7 +470,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 Squares::south_west_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         ps_dst.piece(),
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -485,7 +485,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_south_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -496,7 +496,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::south_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -510,7 +510,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 Squares::south_east_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         ps_dst.piece(),
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -525,7 +525,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::looking_south_east_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -536,7 +536,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     Squares::south_east_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             ps_dst.piece(),
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -590,7 +590,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -
 // 成る前を含めない、長い利き
 fn lookup_no_promotion_source_by_piece_sliding<F1>(
     dst_piece: &GPPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     lookups_the_square: &mut F1,
     next_square: Square,
@@ -598,10 +598,10 @@ fn lookup_no_promotion_source_by_piece_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, dst_piece, speed_of_light) {
+    if current_board.has_sq_km(&next_square, dst_piece, speed_of_light) {
         // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
         lookups_the_square(next_square);
-    } else if current_position.exists_km(&next_square, speed_of_light) {
+    } else if current_board.exists_km(&next_square, speed_of_light) {
         // ループを抜けるぜ☆（＾～＾）
         return true;
     }
@@ -611,14 +611,14 @@ where
 /// 成る前を含めない、隣への利き
 fn lookup_no_promotion_source_by_piece_next<F1>(
     dst_piece: &GPPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     lookups_the_square: &mut F1,
     next_square: Square,
 ) where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, dst_piece, speed_of_light) {
+    if current_board.has_sq_km(&next_square, dst_piece, speed_of_light) {
         lookups_the_square(next_square);
     }
 }
@@ -636,7 +636,7 @@ fn lookup_no_promotion_source_by_piece_next<F1>(
 pub fn lookup_before_promotion_source_by_square_piece<F1>(
     square_dst: &Square,
     ps_dst: &GPPieceStructVo,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -698,7 +698,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::looking_east_from(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_sliding(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -709,7 +709,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::east_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -727,7 +727,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
                                 &square_dst_piece_src.piece,
-                                current_position,
+                                current_board,
                                 speed_of_light,
                                 &mut lookups_the_square,
                                 next_square,
@@ -739,7 +739,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::north_east_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -753,7 +753,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 Squares::north_east_keima_of(&square_dst_piece_src.square, &mut |next_square| {
                     lookup_before_promotion_source_next(
                         &square_dst_piece_src.piece,
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -768,7 +768,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::looking_north_from(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_sliding(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -779,7 +779,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::north_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -793,7 +793,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 Squares::north_west_keima_of(&square_dst_piece_src.square, &mut |next_square| {
                     lookup_before_promotion_source_next(
                         &square_dst_piece_src.piece,
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -810,7 +810,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
                                 &square_dst_piece_src.piece,
-                                current_position,
+                                current_board,
                                 speed_of_light,
                                 &mut lookups_the_square,
                                 next_square,
@@ -822,7 +822,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::north_west_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -838,7 +838,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::looking_west_from(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_sliding(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -849,7 +849,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::west_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -867,7 +867,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
                                 &square_dst_piece_src.piece,
-                                current_position,
+                                current_board,
                                 speed_of_light,
                                 &mut lookups_the_square,
                                 next_square,
@@ -879,7 +879,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::south_west_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -893,7 +893,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 Squares::south_west_keima_of(&square_dst_piece_src.square, &mut |next_square| {
                     lookup_before_promotion_source_next(
                         &square_dst_piece_src.piece,
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -908,7 +908,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::looking_south_from(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_sliding(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -919,7 +919,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::south_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -933,7 +933,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 Squares::south_east_keima_of(&square_dst_piece_src.square, &mut |next_square| {
                     lookup_before_promotion_source_next(
                         &square_dst_piece_src.piece,
-                        current_position,
+                        current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
@@ -950,7 +950,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
                                 &square_dst_piece_src.piece,
-                                current_position,
+                                current_board,
                                 speed_of_light,
                                 &mut lookups_the_square,
                                 next_square,
@@ -962,7 +962,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     Squares::south_east_of(&square_dst_piece_src.square, &mut |next_square| {
                         lookup_before_promotion_source_next(
                             &square_dst_piece_src.piece,
-                            current_position,
+                            current_board,
                             speed_of_light,
                             &mut lookups_the_square,
                             next_square,
@@ -980,7 +980,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
 /// 成る前の移動元、長い利き
 fn lookup_before_promotion_source_sliding<F1>(
     source_piece: &GPPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
     next_square: Square,
@@ -988,10 +988,10 @@ fn lookup_before_promotion_source_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, source_piece, speed_of_light) {
+    if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
         // 指定の駒があれば、その升は移動元になる☆ 続行☆（＾～＾）
         lookups_the_square(next_square);
-    } else if current_position.exists_km(&next_square, speed_of_light) {
+    } else if current_board.exists_km(&next_square, speed_of_light) {
         // なんか他の駒があれば終わり☆ ループを抜けるぜ☆（＾～＾）
         return true;
     }
@@ -1001,14 +1001,14 @@ where
 /// 成る前の移動元、 隣升への利き
 fn lookup_before_promotion_source_next<F1>(
     source_piece: &GPPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
     next_square: Square,
 ) where
     F1: FnMut(Square),
 {
-    if current_position.has_sq_km(&next_square, source_piece, speed_of_light) {
+    if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
         lookups_the_square(next_square);
     }
 }
@@ -1027,7 +1027,7 @@ fn lookup_before_promotion_source_next<F1>(
 pub fn lookup_no_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -1109,7 +1109,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::looking_east_from(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_sliding(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             )
@@ -1119,7 +1119,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::east_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1136,7 +1136,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
                                     &dst_sq_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1147,7 +1147,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::north_east_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1160,7 +1160,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     Squares::north_east_keima_of(&dst_sq_piece.square, &mut |next_square| {
                         lookup_no_promotion_source_by_phase_next(
                             &dst_sq_piece,
-                            current_position,
+                            current_board,
                             &mut lookups_the_square,
                             next_square,
                         );
@@ -1174,7 +1174,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::looking_north_from(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_sliding(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             )
@@ -1184,7 +1184,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::north_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1197,7 +1197,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     Squares::north_west_keima_of(&dst_sq_piece.square, &mut |next_square| {
                         lookup_no_promotion_source_by_phase_next(
                             &dst_sq_piece,
-                            current_position,
+                            current_board,
                             &mut lookups_the_square,
                             next_square,
                         );
@@ -1213,7 +1213,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
                                     &dst_sq_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1224,7 +1224,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::north_west_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1239,7 +1239,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::looking_west_from(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_sliding(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             )
@@ -1249,7 +1249,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::west_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1266,7 +1266,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
                                     &dst_sq_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1277,7 +1277,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::south_west_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1290,7 +1290,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     Squares::south_west_keima_of(&dst_sq_piece.square, &mut |next_square| {
                         lookup_no_promotion_source_by_phase_next(
                             &dst_sq_piece,
-                            current_position,
+                            current_board,
                             &mut lookups_the_square,
                             next_square,
                         );
@@ -1304,7 +1304,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::looking_south_from(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_sliding(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             )
@@ -1314,7 +1314,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::south_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1327,7 +1327,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     Squares::south_east_keima_of(&dst_sq_piece.square, &mut |next_square| {
                         lookup_no_promotion_source_by_phase_next(
                             &dst_sq_piece,
-                            current_position,
+                            current_board,
                             &mut lookups_the_square,
                             next_square,
                         );
@@ -1343,7 +1343,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
                                     &dst_sq_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1354,7 +1354,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         Squares::south_east_of(&dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1372,14 +1372,14 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
 // 移動元升、長い利き☆（＾～＾）
 fn lookup_no_promotion_source_by_phase_sliding<F1>(
     dst_sq_piece: &GPSquareAndPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     lookups_the_square: &mut F1,
     next_square: Square,
 ) -> bool
 where
     F1: FnMut(Square),
 {
-    let exists_piece = current_position.get_piece_by_square(&next_square);
+    let exists_piece = current_board.get_piece_by_square(&next_square);
     if *exists_piece == dst_sq_piece.piece {
         lookups_the_square(next_square);
     }
@@ -1392,13 +1392,13 @@ where
 // 移動元升、隣☆（＾～＾）
 fn lookup_no_promotion_source_by_phase_next<F1>(
     dst_sq_piece: &GPSquareAndPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     lookup_the_square: &mut F1,
     next_square: Square,
 ) where
     F1: FnMut(Square),
 {
-    let exists_piece = current_position.get_piece_by_square(&next_square);
+    let exists_piece = current_board.get_piece_by_square(&next_square);
     if *exists_piece == dst_sq_piece.piece {
         lookup_the_square(next_square);
     }
@@ -1412,7 +1412,7 @@ fn lookup_no_promotion_source_by_phase_next<F1>(
 pub fn lookup_before_promotion_source_by_phase_square<F1>(
     phase: &Phase,
     square_dst: &Square,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
 ) where
@@ -1481,7 +1481,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1492,7 +1492,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         Squares::east_of(&dst_sq_and_demoted_piece.square, &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1509,7 +1509,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1522,7 +1522,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 );
@@ -1538,7 +1538,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1555,7 +1555,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1566,7 +1566,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         Squares::north_of(&dst_sq_and_demoted_piece.square, &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1581,7 +1581,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1598,7 +1598,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1611,7 +1611,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 );
@@ -1629,7 +1629,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1640,7 +1640,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         Squares::west_of(&dst_sq_and_demoted_piece.square, &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1657,7 +1657,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1670,7 +1670,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 );
@@ -1686,7 +1686,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1703,7 +1703,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1714,7 +1714,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         Squares::south_of(&dst_sq_and_demoted_piece.square, &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1729,7 +1729,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
                                 &dst_sq_and_demoted_piece,
-                                current_position,
+                                current_board,
                                 &mut lookups_the_square,
                                 next_square,
                             );
@@ -1746,7 +1746,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 )
@@ -1759,7 +1759,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
                                     &dst_sq_and_demoted_piece,
-                                    current_position,
+                                    current_board,
                                     &mut lookups_the_square,
                                     next_square,
                                 );
@@ -1778,14 +1778,14 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 /// 成る前移動元升、長い利き☆（＾～＾）
 fn lookup_before_promotion_source_by_phase_sliding<F1>(
     dst_sq_and_demoted_piece: &GPSquareAndPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     lookups_the_square: &mut F1,
     next_square: Square,
 ) -> bool
 where
     F1: FnMut(Square),
 {
-    let exists_piece = current_position.get_piece_by_square(&next_square);
+    let exists_piece = current_board.get_piece_by_square(&next_square);
     // 指定した駒に一致すれば。
     if *exists_piece == dst_sq_and_demoted_piece.piece {
         lookups_the_square(next_square);
@@ -1799,13 +1799,13 @@ where
 /// 成る前移動元升、 隣☆（＾～＾）
 fn lookup_before_promotion_source_by_phase_next<F1>(
     dst_sq_and_demoted_piece: &GPSquareAndPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     lookups_the_square: &mut F1,
     next_square: Square,
 ) where
     F1: FnMut(Square),
 {
-    let exists_piece = current_position.get_piece_by_square(&next_square);
+    let exists_piece = current_board.get_piece_by_square(&next_square);
     if *exists_piece == dst_sq_and_demoted_piece.piece {
         lookups_the_square(next_square);
     }
@@ -1827,7 +1827,7 @@ fn lookup_before_promotion_source_by_phase_next<F1>(
 /// * `lookups_the_drops` - Piece type hash.
 pub fn lookup_drop_by_square_piece<F1>(
     destination_sqp: &GPSquareAndPieceVo,
-    current_position: &Position,
+    current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_drops: F1,
 ) where
@@ -1847,7 +1847,7 @@ pub fn lookup_drop_by_square_piece<F1>(
     // +------------------------+
     // | 打ちたいところは空升か |
     // +------------------------+
-    let km_banjo = current_position.get_piece_by_square(&destination_sqp.square);
+    let km_banjo = current_board.get_piece_by_square(&destination_sqp.square);
     match km_banjo {
         GPPieceVo::NonePiece => {}
         _ => {
@@ -1859,7 +1859,7 @@ pub fn lookup_drop_by_square_piece<F1>(
     // +------------------+
     // | 持っている駒か？ |
     // +------------------+
-    if current_position.get_hand(&destination_sqp.piece, speed_of_light) < 1 {
+    if current_board.get_hand(&destination_sqp.piece, speed_of_light) < 1 {
         return; // 持っていない駒は打てない
     }
 
@@ -1898,7 +1898,7 @@ pub fn lookup_drop_by_square_piece<F1>(
         Pawn1 => {
             // ▼ひよこ　は２歩できない
             if dy < RANK_2
-                || current_position.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
+                || current_board.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
                 return;
             }
@@ -1918,7 +1918,7 @@ pub fn lookup_drop_by_square_piece<F1>(
         Pawn2 => {
             // △ひよこ　は２歩できない
             if RANK_8 < dy
-                || current_position.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
+                || current_board.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
                 return;
             }

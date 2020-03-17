@@ -1,7 +1,7 @@
 //! 探索部
 use super::super::super::super::controller::search_part::sp_number_board_controller::*;
 use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::super::model::dto::search_part::position::*;
+use super::super::super::super::model::dto::search_part::board::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
@@ -18,7 +18,7 @@ pub struct SPEarthDto {
     ply: i16,
 
     /// 現局面
-    current_position: Position,
+    current_board: Board,
 
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hash_history: [u64; PLY_LN],
@@ -47,7 +47,7 @@ impl Default for SPEarthDto {
         SPEarthDto {
             ply: 0,
             // 現局面
-            current_position: Position::default(),
+            current_board: Board::default(),
             position_hash_history: [0; PLY_LN],
             /// 取った駒
             captured_piece_history: [GPPieceVo::NonePiece; PLY_LN],
@@ -133,11 +133,11 @@ impl SPEarthDto {
         }
     }
 
-    pub fn get_current_position(&self) -> &Position {
-        &self.current_position
+    pub fn get_current_board(&self) -> &Board {
+        &self.current_board
     }
-    pub fn get_current_position_mut(&mut self) -> &mut Position {
-        &mut self.current_position
+    pub fn get_current_board_mut(&mut self) -> &mut Board {
+        &mut self.current_board
     }
 
     pub fn get_position_hash_history(&self) -> &[u64; PLY_LN] {
@@ -169,7 +169,7 @@ impl SPEarthDto {
             // 自分の持ち駒を増やす
             //let mg = km_to_mg(km);
             //self.add_hand(mg,1);
-            self.current_position.add_hand(&piece679, 1, speed_of_light);
+            self.current_board.add_hand(&piece679, 1, speed_of_light);
             piece679
         } else {
             // 打で無ければ
@@ -177,26 +177,26 @@ impl SPEarthDto {
                 // 成ったなら、成る前へ
                 speed_of_light
                     .get_piece_struct_vo(
-                        self.current_position
+                        self.current_board
                             .get_piece_by_square(&movement.destination),
                     )
                     .demote()
                     .clone()
             } else {
-                self.current_position
+                self.current_board
                     .get_piece_by_square(&movement.destination)
                     .clone()
             }
         };
 
         // 移動先の駒を、取った駒（あるいは空）に戻す
-        self.current_position
+        self.current_board
             .set_piece_by_square(&movement.destination, &cap);
         match cap {
             GPPieceVo::NonePiece => {}
             _ => {
                 // 自分の持ち駒を減らす
-                self.current_position.add_hand(
+                self.current_board.add_hand(
                     speed_of_light.get_piece_struct_vo(&cap).capture(),
                     -1,
                     speed_of_light,
@@ -205,14 +205,14 @@ impl SPEarthDto {
         }
 
         // 移動元升に、動かした駒を置く
-        self.current_position
+        self.current_board
             .set_piece_by_square(&movement.source, &piece186);
     }
 
     /// らいおんの位置
     pub fn get_king_sq(&self, person: &Person) -> &Square {
         &self
-            .current_position
+            .current_board
             .get_sq_r(phase_to_num(&self.get_phase(person)))
     }
 
@@ -236,8 +236,7 @@ impl SPEarthDto {
                 // 打なら
                 // 自分の持ち駒を減らす
                 let piece734 = GPPieceVo::from_phase_and_piece_type(&phase, movement.drop);
-                self.current_position
-                    .add_hand(&piece734, -1, speed_of_light);
+                self.current_board.add_hand(&piece734, -1, speed_of_light);
                 piece734
             } else {
                 // 打で無ければ、元の升の駒を消す。
@@ -245,17 +244,17 @@ impl SPEarthDto {
                     // 成りなら
                     speed_of_light
                         .get_piece_struct_vo(
-                            self.current_position.get_piece_by_square(&movement.source),
+                            self.current_board.get_piece_by_square(&movement.source),
                         )
                         .promote()
                         .clone()
                 } else {
-                    self.current_position
+                    self.current_board
                         .get_piece_by_square(&movement.source)
                         .clone()
                 };
 
-                self.current_position
+                self.current_board
                     .set_piece_by_square(&movement.source, &GPPieceVo::NonePiece);
 
                 piece152
@@ -263,7 +262,7 @@ impl SPEarthDto {
 
             // 移動先升に駒があるかどうか
             cap = if let GPPieceVo::NonePiece = self
-                .current_position
+                .current_board
                 .get_piece_by_square(&movement.destination)
             {
                 GPPieceVo::NonePiece
@@ -272,7 +271,7 @@ impl SPEarthDto {
                 let cap764;
                 {
                     cap764 = self
-                        .current_position
+                        .current_board
                         .get_piece_by_square(&movement.destination)
                         .clone();
                 }
@@ -285,13 +284,13 @@ impl SPEarthDto {
                             .capture()
                             .clone();
                     }
-                    self.current_position.add_hand(&cap773, 1, speed_of_light);
+                    self.current_board.add_hand(&cap773, 1, speed_of_light);
                 }
                 cap764
             };
 
             // 移動先升に駒を置く
-            self.current_position
+            self.current_board
                 .set_piece_by_square(&movement.destination, &piece144);
         }
 

@@ -7,7 +7,7 @@ use crate::model::dto::search_part::sp_info::SPInfo;
 use rand::Rng;
 
 use super::super::super::super::config::*;
-use super::super::super::super::model::dto::search_part::position::*;
+use super::super::super::super::model::dto::search_part::board::*;
 use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
@@ -92,7 +92,7 @@ pub struct MLUniverseDto {
     /// 局面ハッシュ種☆（＾～＾）
     position_hash_seed: PositionHashSeed,
     /// 初期局面
-    starting_position: Position,
+    starting_board: Board,
     /// 初期局面ハッシュ
     starting_position_hash: u64,
     /// 対話モード
@@ -113,7 +113,7 @@ impl Default for MLUniverseDto {
                 // 先後
                 phase: [0; PHASE_LN],
             },
-            starting_position: Position::default(),
+            starting_board: Board::default(),
             starting_position_hash: 0,
             dialogue_mode: false,
             vec_command: Vec::new(),
@@ -149,10 +149,10 @@ impl MLUniverseDto {
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }
     }
-    pub fn get_position(&self, num: &KyNums) -> &Position {
+    pub fn get_board(&self, num: &KyNums) -> &Board {
         match *num {
-            KyNums::Current => self.get_search_part().get_current_position(),
-            KyNums::Start => self.get_starting_position(),
+            KyNums::Current => self.get_search_part().get_current_board(),
+            KyNums::Start => self.get_starting_board(),
         }
     }
     /**
@@ -160,10 +160,8 @@ impl MLUniverseDto {
      * 手目も 0 に戻します。
      */
     pub fn clear_all_positions(&mut self) {
-        self.get_starting_position_mut().clear();
-        self.get_search_part_mut()
-            .get_current_position_mut()
-            .clear();
+        self.get_starting_board_mut().clear();
+        self.get_search_part_mut().get_current_board_mut().clear();
         self.get_search_part_mut().set_ply(0);
     }
     /// 開始局面を、現局面にコピーします
@@ -172,15 +170,15 @@ impl MLUniverseDto {
         for i_ms in 0..BOARD_MEMORY_AREA {
             let i_sq = Square::from_usquare(i_ms);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-            let piece = self.starting_position.get_piece_by_square(&i_sq);
+            let piece = self.starting_board.get_piece_by_square(&i_sq);
             self.sp_earth_dto
-                .get_current_position_mut()
+                .get_current_board_mut()
                 .set_piece_by_square(&i_sq, piece);
         }
 
         // 持ち駒
-        self.sp_earth_dto.get_current_position_mut().hand[..PIECE_LN]
-            .clone_from_slice(&self.starting_position.hand[..PIECE_LN]);
+        self.sp_earth_dto.get_current_board_mut().hand[..PIECE_LN]
+            .clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
         /*
         for i_mg in 0..PIECE_LN {
             self.get_search_part_mut().get_current_position_mut().mg[i_mg] =
@@ -196,11 +194,11 @@ impl MLUniverseDto {
         &mut self.position_hash_seed
     }
 
-    pub fn get_starting_position(&self) -> &Position {
-        &self.starting_position
+    pub fn get_starting_board(&self) -> &Board {
+        &self.starting_board
     }
-    pub fn get_starting_position_mut(&mut self) -> &mut Position {
-        &mut self.starting_position
+    pub fn get_starting_board_mut(&mut self) -> &mut Board {
+        &mut self.starting_board
     }
 
     pub fn get_starting_position_hash(&self) -> &u64 {
@@ -239,11 +237,11 @@ impl MLUniverseDto {
 
     /// 初期局面の盤上に駒の位置を設定するもの
     pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: GPPieceVo) {
-        self.get_starting_position_mut()
+        self.get_starting_board_mut()
             .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
     pub fn set_starting_position_hand_piece(&mut self, km: GPPieceVo, maisu: i8) {
-        self.get_starting_position_mut().hand[km as usize] = maisu;
+        self.get_starting_board_mut().hand[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &GPPieceStructVo) -> Person {
         if &piece_vo.phase() == &self.sp_earth_dto.get_phase(&Person::Friend) {
@@ -485,9 +483,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
      * 初期局面ハッシュを作り直す
      */
     pub fn create_starting_position_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
-        let mut hash = self
-            .get_starting_position()
-            .create_hash(&self, speed_of_light);
+        let mut hash = self.get_starting_board().create_hash(&self, speed_of_light);
 
         // 手番ハッシュ（後手固定）
         hash ^= self.get_position_hash_seed().phase[PHASE_SECOND];
@@ -501,7 +497,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn create_ky1_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = self
             .get_search_part()
-            .get_current_position()
+            .get_current_board()
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ

@@ -80,7 +80,7 @@ fn main() {
             } else {
                 // 局面表示
                 let s = PositionView::to_string(
-                    ml_universe_dto.get_position(&KyNums::Current),
+                    ml_universe_dto.get_board(&KyNums::Current),
                     ml_universe_dto.get_search_part().get_ply(),
                     ml_universe_dto.get_search_part().get_phase(&Person::Friend),
                     ml_universe_dto.count_same_ky(),
@@ -246,7 +246,7 @@ fn parse_extend_command(
     } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示
         let s = PositionView::to_string(
-            &ml_universe_dto.get_position(&KyNums::Start),
+            &ml_universe_dto.get_board(&KyNums::Start),
             ml_universe_dto.get_search_part().get_ply(),
             ml_universe_dto.get_search_part().get_phase(&Person::Friend),
             ml_universe_dto.count_same_ky(),
@@ -255,7 +255,7 @@ fn parse_extend_command(
     } else if 2 < len && &line[starts..3] == "pos" {
         // 現局面表示
         let s = PositionView::to_string(
-            &ml_universe_dto.get_position(&KyNums::Current),
+            &ml_universe_dto.get_board(&KyNums::Current),
             ml_universe_dto.get_search_part().get_ply(),
             ml_universe_dto.get_search_part().get_phase(&Person::Friend),
             ml_universe_dto.count_same_ky(),
