@@ -4,8 +4,8 @@
 //! 先後付き駒
 //!
 
-use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::misc::phase::*;
+use crate::model::univ::gam::misc::piece_type::*;
 use std::fmt;
 
 ///
@@ -84,7 +84,7 @@ impl fmt::Display for Piece {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
         // ▼、△ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
-        use crate::model::univ::gam::piece::Piece::*;
+        use crate::model::univ::gam::misc::piece::Piece::*;
         match *self {
             King1 => write!(f, " ▼K "),
             Rook1 => write!(f, " ▼R "),
@@ -123,8 +123,8 @@ impl Piece {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
     pub fn from_phase_and_piece_type(phase: &Phase, piece_type: PieceType) -> Self {
-        use crate::model::univ::gam::piece::Piece::*;
-        use crate::model::univ::gam::piece_type::PieceType::*;
+        use crate::model::univ::gam::misc::piece::Piece::*;
+        use crate::model::univ::gam::misc::piece_type::PieceType::*;
         match *phase {
             Phase::First => match piece_type {
                 King => King1,

@@ -1,9 +1,9 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use crate::model::univ::gam::movement_builder::*;
-use crate::model::univ::gam::piece_type::*;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::movement_builder::*;
+use crate::model::univ::gam::misc::piece_type::*;
+use crate::model::univ::gam::misc::square::*;
 use crate::model::universe::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;

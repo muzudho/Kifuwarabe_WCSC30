@@ -8,11 +8,11 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece::*;
-use crate::model::univ::gam::piece_type::*;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::phase::*;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece::*;
+use crate::model::univ::gam::misc::piece_type::*;
+use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 
@@ -37,7 +37,7 @@ pub struct Board {
 }
 impl Default for Board {
     fn default() -> Self {
-        use crate::model::univ::gam::piece::Piece::NonePiece;
+        use crate::model::univ::gam::misc::piece::Piece::NonePiece;
         Board {
             // 盤上
             board: [
@@ -75,7 +75,7 @@ impl Default for Board {
 }
 impl Board {
     pub fn clear(&mut self) {
-        use crate::model::univ::gam::piece::Piece::NonePiece;
+        use crate::model::univ::gam::misc::piece::Piece::NonePiece;
         self.board = [
             NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
             NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
@@ -132,7 +132,7 @@ impl Board {
         self.board[sq.to_usquare()] = piece.clone();
 
         // 玉の位置を覚え直します。
-        use crate::model::univ::gam::phase::Phase::*;
+        use crate::model::univ::gam::misc::phase::Phase::*;
         match *piece {
             Piece::King1 => self.square_of_king[First as usize] = sq.clone(),
             Piece::King2 => self.square_of_king[Second as usize] = sq.clone(),

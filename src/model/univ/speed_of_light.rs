@@ -4,13 +4,13 @@
 //!
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece::Piece::*;
-use crate::model::univ::gam::piece_struct::PieceStruct;
-use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::univ::gam::piece_type::PieceType::*;
-use crate::model::univ::gam::piece_type_struct::PieceTypeStruct;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece::Piece::*;
+use crate::model::univ::gam::misc::piece_struct::PieceStruct;
+use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::model::univ::gam::misc::piece_type::PieceType::*;
+use crate::model::univ::gam::misc::piece_type_struct::PieceTypeStruct;
 
 pub struct MLSpeedOfLightVo {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
@@ -96,8 +96,12 @@ impl Default for MLSpeedOfLightVo {
             promoted_knight2: PieceStruct::from_piece(PromotedKnight2),
             promoted_lance2: PieceStruct::from_piece(PromotedLance2),
             promoted_pawn2: PieceStruct::from_piece(PromotedPawn2),
-            none_piece: PieceStruct::from_piece(crate::model::univ::gam::piece::Piece::NonePiece),
-            owari_piece: PieceStruct::from_piece(crate::model::univ::gam::piece::Piece::OwariPiece),
+            none_piece: PieceStruct::from_piece(
+                crate::model::univ::gam::misc::piece::Piece::NonePiece,
+            ),
+            owari_piece: PieceStruct::from_piece(
+                crate::model::univ::gam::misc::piece::Piece::OwariPiece,
+            ),
             king: PieceTypeStruct::from_piece_type(King),
             rook: PieceTypeStruct::from_piece_type(Rook),
             bishop: PieceTypeStruct::from_piece_type(Bishop),
@@ -113,10 +117,10 @@ impl Default for MLSpeedOfLightVo {
             promoted_lance: PieceTypeStruct::from_piece_type(PromotedLance),
             promoted_pawn: PieceTypeStruct::from_piece_type(PromotedPawn),
             none_piece_type: PieceTypeStruct::from_piece_type(
-                crate::model::univ::gam::piece_type::PieceType::KaraPieceType,
+                crate::model::univ::gam::misc::piece_type::PieceType::KaraPieceType,
             ),
             owari_piece_type: PieceTypeStruct::from_piece_type(
-                crate::model::univ::gam::piece_type::PieceType::OwariPieceType,
+                crate::model::univ::gam::misc::piece_type::PieceType::OwariPieceType,
             ),
         }
     }
@@ -159,8 +163,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight2,
             PromotedLance2 => &self.promoted_lance2,
             PromotedPawn2 => &self.promoted_pawn2,
-            crate::model::univ::gam::piece::Piece::NonePiece => &self.none_piece,
-            crate::model::univ::gam::piece::Piece::OwariPiece => &self.owari_piece,
+            crate::model::univ::gam::misc::piece::Piece::NonePiece => &self.none_piece,
+            crate::model::univ::gam::misc::piece::Piece::OwariPiece => &self.owari_piece,
         }
     }
 
@@ -170,8 +174,8 @@ impl MLSpeedOfLightVo {
         phase: &Phase,
         piece_type: PieceType,
     ) -> &PieceStruct {
-        use crate::model::univ::gam::piece::Piece::*;
-        use crate::model::univ::gam::piece_type::PieceType::*;
+        use crate::model::univ::gam::misc::piece::Piece::*;
+        use crate::model::univ::gam::misc::piece_type::PieceType::*;
         match *phase {
             Phase::First => match piece_type {
                 King => self.get_piece_struct(&King1),
@@ -213,14 +217,14 @@ impl MLSpeedOfLightVo {
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_type_struct_from_piece_type(
         &self,
-        piece_type: &crate::model::univ::gam::piece_type::PieceType,
+        piece_type: &crate::model::univ::gam::misc::piece_type::PieceType,
     ) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::model::univ::gam::piece_type::PieceType::*;
+        use crate::model::univ::gam::misc::piece_type::PieceType::*;
         match *piece_type {
             King => &self.king,
             Rook => &self.rook,
@@ -236,8 +240,10 @@ impl MLSpeedOfLightVo {
             PromotedKnight => &self.promoted_knight,
             PromotedLance => &self.promoted_lance,
             PromotedPawn => &self.promoted_pawn,
-            crate::model::univ::gam::piece_type::PieceType::KaraPieceType => &self.none_piece_type,
-            crate::model::univ::gam::piece_type::PieceType::OwariPieceType => {
+            crate::model::univ::gam::misc::piece_type::PieceType::KaraPieceType => {
+                &self.none_piece_type
+            }
+            crate::model::univ::gam::misc::piece_type::PieceType::OwariPieceType => {
                 &self.owari_piece_type
             }
         }
@@ -246,14 +252,14 @@ impl MLSpeedOfLightVo {
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_type_struct_from_piece(
         &self,
-        piece: &crate::model::univ::gam::piece::Piece,
+        piece: &crate::model::univ::gam::misc::piece::Piece,
     ) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::model::univ::gam::piece::Piece::*;
+        use crate::model::univ::gam::misc::piece::Piece::*;
         match *piece {
             King1 => &self.king,
             Rook1 => &self.rook,
@@ -283,8 +289,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight,
             PromotedLance2 => &self.promoted_lance,
             PromotedPawn2 => &self.promoted_pawn,
-            crate::model::univ::gam::piece::Piece::NonePiece => &self.none_piece_type,
-            crate::model::univ::gam::piece::Piece::OwariPiece => &self.owari_piece_type,
+            crate::model::univ::gam::misc::piece::Piece::NonePiece => &self.none_piece_type,
+            crate::model::univ::gam::misc::piece::Piece::OwariPiece => &self.owari_piece_type,
         }
     }
 }

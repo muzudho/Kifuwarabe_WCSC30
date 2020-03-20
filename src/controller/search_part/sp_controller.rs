@@ -9,8 +9,8 @@ use std::collections::HashSet;
 use super::sp_evaluation_controller::*;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::search_part::sp_control_count_controller::*;
-use crate::model::univ::gam::movement::Movement;
-use crate::model::univ::gam::movement_builder::*;
+use crate::model::univ::gam::misc::movement::Movement;
+use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 

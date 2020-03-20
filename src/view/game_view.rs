@@ -1,8 +1,8 @@
-use crate::model::univ::gam::misc::PosNums;
-use crate::model::univ::gam::person::Person;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::game::Game;
+use crate::model::univ::game::*;
 
 pub struct GameView {}
 impl GameView {

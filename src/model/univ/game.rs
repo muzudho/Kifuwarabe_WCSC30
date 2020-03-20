@@ -1,21 +1,28 @@
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::history::*;
-use crate::model::univ::gam::info::SPInfo;
-use crate::model::univ::gam::misc::PosNums;
-use crate::model::univ::gam::movement::Movement;
-use crate::model::univ::gam::person::Person;
-use crate::model::univ::gam::phase::PHASE_LN;
-use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece::MG_MAX;
-use crate::model::univ::gam::piece::PIECE_LN;
-use crate::model::univ::gam::piece_struct::PieceStruct;
+use crate::model::univ::gam::misc::info::SPInfo;
+use crate::model::univ::gam::misc::movement::Movement;
+use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::phase::PHASE_LN;
+use crate::model::univ::gam::misc::phase::*;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece::MG_MAX;
+use crate::model::univ::gam::misc::piece::PIECE_LN;
+use crate::model::univ::gam::misc::piece_struct::PieceStruct;
+use crate::model::univ::gam::misc::square::BOARD_MEMORY_AREA;
+use crate::model::univ::gam::misc::square::SQUARE_NONE;
+use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::gam::position::Position;
-use crate::model::univ::gam::square::BOARD_MEMORY_AREA;
-use crate::model::univ::gam::square::SQUARE_NONE;
-use crate::model::univ::gam::square::*;
 use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
 use rand::Rng;
+
+/// 局面
+pub enum PosNums {
+    // 現局面
+    Current,
+    // 初期局面
+    Start,
+}
 
 /// 現対局ハッシュ種
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
@@ -192,9 +199,9 @@ impl Game {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::First = self.history.get_phase(&Person::Friend) {
-            crate::model::univ::gam::region::SenteJin::to_elm()
+            crate::model::univ::gam::misc::region::SenteJin::to_elm()
         } else {
-            crate::model::univ::gam::region::GoteJin::to_elm()
+            crate::model::univ::gam::misc::region::GoteJin::to_elm()
         }
     }
 
@@ -202,9 +209,9 @@ impl Game {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::First = self.history.get_phase(&Person::Friend) {
-            crate::model::univ::gam::region::GoteJin::to_elm()
+            crate::model::univ::gam::misc::region::GoteJin::to_elm()
         } else {
-            crate::model::univ::gam::region::SenteJin::to_elm()
+            crate::model::univ::gam::misc::region::SenteJin::to_elm()
         }
     }
 
@@ -226,7 +233,7 @@ impl Game {
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use crate::model::univ::gam::phase::Phase::*;
+        use crate::model::univ::gam::misc::phase::Phase::*;
         match self.history.get_phase(&Person::Friend) {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],

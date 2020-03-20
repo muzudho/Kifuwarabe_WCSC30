@@ -27,9 +27,9 @@
 //!              Source
 //!
 //! None is 0.
-use super::super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::super::controller::common_use::cu_conv_controller::*;
-use super::super::super::super::controller::common_use::cu_geo_teigi_controller::*;
+use crate::controller::common_use::cu_asserts_controller::*;
+use crate::controller::common_use::cu_conv_controller::*;
+use crate::controller::common_use::cu_geo_teigi_controller::*;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
 use std::hash::Hash;

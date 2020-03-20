@@ -3,8 +3,8 @@
 //!
 
 use crate::controller::movement_generation::mg_direction::KM_UGOKI_LN;
-use crate::model::univ::gam::piece_direction::*;
-use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::misc::piece_direction::*;
+use crate::model::univ::gam::misc::piece_type::*;
 
 // 駒が戻る動き
 #[allow(dead_code)]

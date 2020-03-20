@@ -15,10 +15,10 @@ pub mod controller;
 pub mod model;
 pub mod view;
 
-use crate::model::univ::gam::constants::*;
-use crate::model::univ::gam::misc::*;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::square::*;
+use crate::model::univ::game::*;
 use crate::model::univ::speed_of_light::*;
+use crate::model::univ::usi::*;
 use crate::model::universe::*;
 use crate::view::game_view::*;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;

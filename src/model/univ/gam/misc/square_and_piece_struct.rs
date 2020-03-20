@@ -1,5 +1,5 @@
-use crate::model::univ::gam::piece_struct::*;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::piece_struct::*;
+use crate::model::univ::gam::misc::square::*;
 
 /// イミュータブルとして使われる想定なので、ゲッターもセッターも作らないぜ☆（＾～＾）　直接フィールドにアクセスしろだぜ☆（＾～＾）
 pub struct SquareAndPieceStruct {

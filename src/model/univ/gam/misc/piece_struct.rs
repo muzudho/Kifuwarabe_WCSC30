@@ -1,6 +1,6 @@
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece_type::PieceType;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece_type::PieceType;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
@@ -26,9 +26,9 @@ pub struct PieceStruct {
 impl PieceStruct {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
-        use crate::model::univ::gam::phase::Phase::*;
-        use crate::model::univ::gam::piece::Piece::*;
-        use crate::model::univ::gam::piece_type::PieceType::*;
+        use crate::model::univ::gam::misc::phase::Phase::*;
+        use crate::model::univ::gam::misc::piece::Piece::*;
+        use crate::model::univ::gam::misc::piece_type::PieceType::*;
         match p {
             King1 => PieceStruct {
                 piece: King1,
@@ -274,7 +274,7 @@ impl PieceStruct {
     }
 
     pub fn from_serial_piece_number(km_num: usize) -> Self {
-        use crate::model::univ::gam::piece::Piece::*;
+        use crate::model::univ::gam::misc::piece::Piece::*;
         match km_num {
             0 => PieceStruct::from_piece(King1),
             1 => PieceStruct::from_piece(Rook1),
@@ -362,7 +362,7 @@ impl PieceStruct {
 
     /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
     pub fn is_promoted(&self) -> bool {
-        use crate::model::univ::gam::piece_type::PieceType::*;
+        use crate::model::univ::gam::misc::piece_type::PieceType::*;
         match self.piece_type() {
             King => false,
             Rook => false,

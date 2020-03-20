@@ -1,5 +1,5 @@
 //! 情報表示担当☆（＾～＾）
-use crate::model::univ::gam::movement_builder::MovementBuilder;
+use crate::model::univ::gam::misc::movement_builder::MovementBuilder;
 use crate::model::universe::*;
 use std::time::{Duration, Instant};
 

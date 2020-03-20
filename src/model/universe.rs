@@ -4,11 +4,11 @@
 extern crate rand;
 
 use crate::config::*;
-use crate::model::univ::gam::movement::*;
-use crate::model::univ::gam::piece_direction::PieceDirection;
-use crate::model::univ::gam::piece_movement::*;
-use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::misc::movement::*;
+use crate::model::univ::gam::misc::piece_direction::PieceDirection;
+use crate::model::univ::gam::misc::piece_movement::*;
+use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::game::*;
 use crate::model::univ::speed_of_light::*;
 use std::fs::File;

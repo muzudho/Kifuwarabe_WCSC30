@@ -1,11 +1,11 @@
 //!
 //! USIプロトコル
 //!
-use crate::model::univ::gam::constants::*;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::speed_of_light::*;
+use crate::model::univ::usi::*;
 use crate::model::universe::*;
 
 /**
@@ -803,7 +803,7 @@ pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &MLSpe
                         _ => {} // 駒の名前か、エラーなら次へ
                     }
 
-                    use crate::model::univ::gam::piece::Piece::*;
+                    use crate::model::univ::gam::misc::piece::Piece::*;
                     let km: Piece;
                     match &line[starts..=starts] {
                         "R" => {

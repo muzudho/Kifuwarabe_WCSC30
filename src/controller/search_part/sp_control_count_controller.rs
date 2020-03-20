@@ -4,10 +4,10 @@
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_square::*;
-use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::*;
-use crate::model::univ::gam::piece_struct::PieceStruct;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::phase::*;
+use crate::model::univ::gam::misc::piece::*;
+use crate::model::univ::gam::misc::piece_struct::PieceStruct;
+use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 use std::collections::HashSet;

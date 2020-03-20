@@ -1,4 +1,4 @@
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::square::*;
 
 /**
  * 升に数が書いている将棋盤

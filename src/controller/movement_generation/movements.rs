@@ -1,13 +1,13 @@
 use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
 use crate::model::univ::gam::board::Board;
-use crate::model::univ::gam::movement_builder::*;
-use crate::model::univ::gam::person::Person;
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::*;
-use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::misc::movement_builder::*;
+use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::piece::*;
+use crate::model::univ::gam::misc::piece_type::*;
+use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::gam::position::Position;
-use crate::model::univ::gam::square::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 
@@ -83,7 +83,7 @@ impl MGMovements {
             let piece = current_board.get_piece_by_square(&source);
             let ps = speed_of_light.get_piece_struct(piece);
             if *friend == ps.phase() {
-                use crate::model::univ::gam::piece::Piece::*;
+                use crate::model::univ::gam::misc::piece::Piece::*;
                 match piece {
                     Pawn1 => {
                         NextSquares::looking_for_square_from_1player_pawn_on_board(
@@ -246,7 +246,7 @@ impl MGMovements {
                 .get_hand(hand_piece, speed_of_light)
             {
                 // 駒を持っていれば
-                use crate::model::univ::gam::piece::Piece::*;
+                use crate::model::univ::gam::misc::piece::Piece::*;
                 match *hand_piece {
                     // ▲歩、▲香 は１段目には進めない
                     Pawn1 | Lance1 => Squares::for_from_rank2_to_rank9(&mut |destination| {
@@ -321,7 +321,7 @@ impl MGMovements {
             let ps_dst = speed_of_light.get_piece_struct(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-            use crate::model::univ::gam::piece::Piece::*;
+            use crate::model::univ::gam::misc::piece::Piece::*;
             match *hand_piece {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない

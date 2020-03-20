@@ -9,18 +9,18 @@ use crate::controller::movement_generation::mg_choicing_controller::*;
 use crate::controller::movement_generation::mg_direction::*;
 use crate::controller::movement_generation::movements::*;
 use crate::model::univ::gam::board::*;
-use crate::model::univ::gam::movement_builder::*;
-use crate::model::univ::gam::person::Person;
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece_direction::*;
-use crate::model::univ::gam::piece_movement::*;
-use crate::model::univ::gam::piece_struct::PieceStruct;
-use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::misc::movement_builder::*;
+use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece_direction::*;
+use crate::model::univ::gam::misc::piece_movement::*;
+use crate::model::univ::gam::misc::piece_struct::PieceStruct;
+use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::model::univ::gam::misc::piece_type::*;
+use crate::model::univ::gam::misc::square::*;
+use crate::model::univ::gam::misc::square_and_piece::SquareAndPiece;
 use crate::model::univ::gam::position::*;
-use crate::model::univ::gam::square::*;
-use crate::model::univ::gam::square_and_piece::SquareAndPiece;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
@@ -272,7 +272,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         };
 
         // 移動先を開始地点にして、駒の位置を終了地点にする
-        use crate::model::univ::gam::piece_direction::PieceDirection::*;
+        use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
         match *p_kmdir {
             // 東
             E(b) => {
@@ -552,7 +552,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
 fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStruct) -> bool {
     let (_dx, dy) = square_dst.to_file_rank();
 
-    use crate::model::univ::gam::piece::Piece::*;
+    use crate::model::univ::gam::misc::piece::Piece::*;
     match ps_dst.piece() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
@@ -686,7 +686,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
 
         // 移動先を開始地点にして、駒の位置を終了地点にする
         // 進みたいマスから戻ったマス
-        use crate::model::univ::gam::piece_direction::PieceDirection::*;
+        use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
         match *p_kmdir {
             // 東
             E(b) => {
@@ -1042,7 +1042,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             .get_piece_struct_by_phase_and_piece_type(&phase, *piece_type)
             .piece()
             .clone();
-        use crate::model::univ::gam::piece::Piece::*;
+        use crate::model::univ::gam::misc::piece::Piece::*;
         match km {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
@@ -1097,7 +1097,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
 
             // 指定升を開始地点に、離れていくように調べていく
             // 指定先後の駒があれば追加
-            use crate::model::univ::gam::piece_direction::PieceDirection::*;
+            use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
             match *p_kmdir {
                 // 東
                 E(b) => {
@@ -1467,7 +1467,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 
             // 指定升を開始地点に、離れていくように調べていく
             // 指定先後の駒があれば追加
-            use crate::model::univ::gam::piece_direction::PieceDirection::*;
+            use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
             match *p_kmdir {
                 // 東
                 E(b) => {
@@ -1878,7 +1878,7 @@ pub fn lookup_drop_by_square_piece<F1>(
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use crate::model::univ::gam::piece::Piece::*;
+    use crate::model::univ::gam::misc::piece::Piece::*;
     match destination_sqp.piece {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない

@@ -2,8 +2,8 @@
 //! 駒種類集合
 //!
 
-use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::speed_of_light::*;
 use std::collections::HashSet;
 

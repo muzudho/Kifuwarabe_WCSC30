@@ -1,7 +1,7 @@
 //!
 //! 駒種類。
 //!
-use crate::model::univ::gam::piece_type::PieceType;
+use crate::model::univ::gam::misc::piece_type::PieceType;
 
 pub struct PieceTypeStruct {
     /// 配列のインデックス用☆（＾～＾）
@@ -19,7 +19,7 @@ pub struct PieceTypeStruct {
 }
 impl PieceTypeStruct {
     pub fn from_piece_type(piece_type: PieceType) -> Self {
-        use crate::model::univ::gam::piece_type::PieceType::*;
+        use crate::model::univ::gam::misc::piece_type::PieceType::*;
         match piece_type {
             King => PieceTypeStruct {
                 serial_piece_number: 0,

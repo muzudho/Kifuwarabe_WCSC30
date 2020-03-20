@@ -2,9 +2,9 @@
 //! 駒集合
 //!
 
-use crate::model::univ::gam::person::Person;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece::*;
+use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 use std::collections::HashSet;

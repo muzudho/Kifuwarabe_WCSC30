@@ -4,9 +4,9 @@
 extern crate rand;
 use rand::Rng;
 
-use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::univ::gam::piece_type::*;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::model::univ::gam::misc::piece_type::*;
+use crate::model::univ::gam::misc::square::*;
 
 /**
  * ランダムに真偽を返す。

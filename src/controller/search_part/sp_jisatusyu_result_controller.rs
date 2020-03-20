@@ -3,9 +3,9 @@
 //! 結果：自殺手。移動先が敵の利き
 //!
 
-use crate::model::univ::gam::movement_builder::*;
-use crate::model::univ::gam::phase::phase_to_num;
-use crate::model::univ::gam::phase::turn_phase;
+use crate::model::univ::gam::misc::movement_builder::*;
+use crate::model::univ::gam::misc::phase::phase_to_num;
+use crate::model::univ::gam::misc::phase::turn_phase;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 

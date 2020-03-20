@@ -1,4 +1,4 @@
-use crate::model::univ::gam::square::Square;
+use crate::model::univ::gam::misc::square::Square;
 
 pub struct MGSquares {}
 impl MGSquares {

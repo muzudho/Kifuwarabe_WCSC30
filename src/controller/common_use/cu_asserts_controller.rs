@@ -1,7 +1,7 @@
 //!
 //! 値チェック
 //!
-use crate::model::univ::gam::square::Square;
+use crate::model::univ::gam::misc::square::Square;
 
 ///
 /// 打はテストできない

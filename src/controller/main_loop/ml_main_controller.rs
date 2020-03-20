@@ -2,10 +2,10 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece::*;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::phase::*;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece::*;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 

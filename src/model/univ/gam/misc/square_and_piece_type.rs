@@ -1,5 +1,5 @@
-use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::model::univ::gam::misc::square::*;
 
 /// 升 × 駒種類
 pub struct SquareAndPieceType {

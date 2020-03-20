@@ -2,7 +2,7 @@
 //! 陣
 //!
 
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::square::*;
 
 /// 先手陣
 pub struct SenteJin {}

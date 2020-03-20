@@ -1,6 +1,6 @@
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::square::Square;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::square::Square;
+use crate::model::univ::gam::misc::square::*;
 
 pub enum Promotability {
     /// 成ることはできないぜ☆（＾～＾）

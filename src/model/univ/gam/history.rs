@@ -1,7 +1,7 @@
-use crate::model::univ::gam::movement::Movement;
-use crate::model::univ::gam::person::Person;
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::Piece;
+use crate::model::univ::gam::misc::movement::Movement;
+use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::piece::Piece;
 
 /// 手目数。何手目まで指せるか。
 /// 棋譜を残す配列のサイズでもある。
@@ -36,7 +36,7 @@ impl Default for History {
 impl History {
     /// 手番
     pub fn get_phase(&self, person: &Person) -> Phase {
-        use crate::model::univ::gam::person::Person::*;
+        use crate::model::univ::gam::misc::person::Person::*;
         match *person {
             None => Phase::None,
             Friend => {

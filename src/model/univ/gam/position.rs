@@ -1,11 +1,11 @@
 //! 探索部
 use crate::controller::search_part::sp_number_board_controller::*;
 use crate::model::univ::gam::board::*;
-use crate::model::univ::gam::movement_builder::*;
-use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::*;
-use crate::model::univ::gam::piece_type::*;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::movement_builder::*;
+use crate::model::univ::gam::misc::phase::*;
+use crate::model::univ::gam::misc::piece::*;
+use crate::model::univ::gam::misc::piece_type::*;
+use crate::model::univ::gam::misc::square::*;
 
 /// ミュータブルなオブジェクト☆（＾～＾）
 pub struct Position {

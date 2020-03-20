@@ -3,10 +3,10 @@
 //!
 #![allow(dead_code)]
 use crate::controller::common_use::cu_geo_teigi_controller::*;
-use crate::model::univ::gam::direction::*;
-use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece_direction::PieceDirection;
-use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::misc::direction::*;
+use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::piece_direction::PieceDirection;
+use crate::model::univ::gam::misc::square::*;
 
 /**********
  * 論理値 *
@@ -57,7 +57,7 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
  *********/
 #[allow(dead_code)]
 pub fn dir8_to_num(dir: &Dir8) -> usize {
-    use crate::model::univ::gam::direction::Dir8::*;
+    use crate::model::univ::gam::misc::direction::Dir8::*;
     match *dir {
         E => 0,
         NE => 1,
@@ -72,7 +72,7 @@ pub fn dir8_to_num(dir: &Dir8) -> usize {
 }
 #[allow(dead_code)]
 pub fn num_to_dir8(n: usize) -> Dir8 {
-    use crate::model::univ::gam::direction::Dir8::*;
+    use crate::model::univ::gam::misc::direction::Dir8::*;
     match n {
         0 => E,
         1 => NE,
@@ -145,7 +145,7 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
 pub fn kaiten180_sq_by_sq_phase(sq: &Square, phase: &Phase) -> Square {
-    use crate::model::univ::gam::phase::Phase::*;
+    use crate::model::univ::gam::misc::phase::Phase::*;
     match *phase {
         First => Square::from_usquare(BAN_MAX - sq.to_usquare() + BAN_MIN),
         _ => (*sq).clone(),
@@ -160,7 +160,7 @@ pub fn kaiten180_sq_by_sq_phase(sq: &Square, phase: &Phase) -> Square {
  * 上下反転
  */
 pub fn hanten_kmdir_joge(kmdir: &PieceDirection) -> PieceDirection {
-    use crate::model::univ::gam::piece_direction::PieceDirection::*;
+    use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
     match *kmdir {
         // 東
         E(b) => E(b),

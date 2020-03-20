@@ -1,8 +1,8 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::model::univ::gam::piece::Piece;
-use crate::model::univ::gam::piece_type::PieceType;
+use crate::model::univ::gam::misc::piece::Piece;
+use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
 
 pub struct SPEvaluationController {}
