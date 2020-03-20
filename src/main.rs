@@ -97,18 +97,45 @@ fn main() {
             // 独自コマンド☆（＾～＾）
             // ループを抜けて終了
             break;
+        } else if 15 < len && &line[starts..15] == "setoption name " {
+            // Example: setoption name USI_Ponder value true
+            if let Some(x) = line[15..].find(' ') {
+                let name = &line[15..(x + 15)];
+                // IO::writeln(&format!("Debug name=|{}|", name));
+                let value = &line[(x + 22)..];
+                // IO::writeln(&format!("Debug value=|{}|", value));
+                if name == "MaxDepth" {
+                    universe.option_max_depth = value.parse().unwrap();
+                }
+            };
         } else if 2 < len && &line[starts..3] == "usi" {
             IO::writeln(&format!("id name {}", ENGINE_NAME));
             IO::writeln(&format!("id author {}", ENGINE_AUTHOR));
+            /*
+            IO::writeln("option name BookFile type string default public.bin");
+            IO::writeln("option name UseBook type check default true");
+            IO::writeln("option name Selectivity type spin default 2 min 0 max 4");
+            IO::writeln(
+                "option name Style type combo default Normal var Solid var Normal var Risky",
+            );
+            IO::writeln("option name ResetLearning type button");
+            IO::writeln("option name LearningFile type filename default <empty>");
+            */
+            IO::writeln("option name MaxDepth type spin default 1 min 1 max 3");
             IO::writeln("usiok");
         } else if 1 < len && &line[starts..2] == "go" {
             universe.game.info.clear();
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
-            // let depth = 2;
-            let depth = 1;
             let pv = "";
-            match get_best_movement(0, depth, 0, &mut universe.game, &speed_of_light, pv) {
+            match get_best_movement(
+                0,
+                universe.option_max_depth,
+                0,
+                &mut universe.game,
+                &speed_of_light,
+                pv,
+            ) {
                 Some(bestmove) => {
                     // 例： bestmove 7g7f
                     IO::writeln(&format!("bestmove {}", bestmove.movement));

@@ -18,6 +18,8 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
+    /// 読みの最大深さ
+    pub option_max_depth: u16,
 }
 impl Default for Universe {
     fn default() -> Self {
@@ -25,6 +27,7 @@ impl Default for Universe {
             game: Game::default(),
             dialogue_mode: false,
             vec_command: Vec::new(),
+            option_max_depth: 1,
         }
     }
 }
