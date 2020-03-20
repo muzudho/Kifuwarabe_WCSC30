@@ -2,12 +2,12 @@
 //! Value object.
 //! Movement. (指し手)
 //!
-use super::gp_square_vo::*;
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
 use crate::model::dto::main_loop::ml_movement_dto::MLMovementDto;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::square::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use std::fmt;
 

@@ -1,5 +1,5 @@
 use super::gp_piece_struct_vo::*;
-use super::gp_square_vo::*;
+use crate::model::univ::gam::square::*;
 
 /// イミュータブルとして使われる想定なので、ゲッターもセッターも作らないぜ☆（＾～＾）　直接フィールドにアクセスしろだぜ☆（＾～＾）
 pub struct GPSquareAndPieceStructVo {

@@ -1,5 +1,5 @@
-use super::gp_piece_vo::GPPieceVo;
 use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece::GPPieceVo;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
@@ -26,8 +26,8 @@ pub struct GPPieceStructVo {
 impl GPPieceStructVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: GPPieceVo) -> Self {
-        use super::super::game_part::gp_piece_vo::GPPieceVo::*;
         use crate::model::univ::gam::phase::Phase::*;
+        use crate::model::univ::gam::piece::GPPieceVo::*;
         use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
         match p {
             King1 => GPPieceStructVo {
@@ -274,7 +274,7 @@ impl GPPieceStructVo {
     }
 
     pub fn from_serial_piece_number(km_num: usize) -> Self {
-        use super::super::game_part::gp_piece_vo::GPPieceVo::*;
+        use crate::model::univ::gam::piece::GPPieceVo::*;
         match km_num {
             0 => GPPieceStructVo::from_piece(King1),
             1 => GPPieceStructVo::from_piece(Rook1),

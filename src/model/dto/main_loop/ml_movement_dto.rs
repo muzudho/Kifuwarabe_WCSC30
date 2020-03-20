@@ -5,7 +5,7 @@ use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::*;
-use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::univ::gam::square::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use std::fmt;
 

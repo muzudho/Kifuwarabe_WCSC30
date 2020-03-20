@@ -84,7 +84,7 @@ impl fmt::Display for GPPieceVo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
         // ▼、△ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
-        use super::gp_piece_vo::GPPieceVo::*;
+        use crate::model::univ::gam::piece::GPPieceVo::*;
         match *self {
             King1 => write!(f, " ▼K "),
             Rook1 => write!(f, " ▼R "),
@@ -123,7 +123,7 @@ impl GPPieceVo {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
     pub fn from_phase_and_piece_type(phase: &Phase, piece_type: GPPieceTypeVo) -> Self {
-        use super::gp_piece_vo::GPPieceVo::*;
+        use crate::model::univ::gam::piece::GPPieceVo::*;
         use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
         match *phase {
             Phase::First => match piece_type {

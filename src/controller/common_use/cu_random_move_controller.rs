@@ -6,7 +6,7 @@ use rand::Rng;
 
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::*;
-use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::univ::gam::square::*;
 
 /**
  * ランダムに真偽を返す。

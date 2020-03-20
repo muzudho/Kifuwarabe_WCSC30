@@ -2,10 +2,10 @@
 //! 駒集合
 //!
 
-use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
-use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
+use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::position::*;
 use std::collections::HashSet;
 

@@ -5,10 +5,10 @@ use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_square::*;
 use crate::model::univ::gam::phase::*;
+use crate::model::univ::gam::piece::*;
+use crate::model::univ::gam::square::*;
 use crate::model::universe::*;
 use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
-use crate::model::vo::game_part::gp_piece_vo::*;
-use crate::model::vo::game_part::gp_square_vo::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use std::collections::HashSet;
 

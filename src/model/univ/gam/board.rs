@@ -9,11 +9,11 @@
 //!
 
 use crate::model::univ::gam::phase::*;
+use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
+use crate::model::univ::gam::square::*;
 use crate::model::univ::game::Game;
-use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
-use crate::model::vo::game_part::gp_piece_vo::*;
-use crate::model::vo::game_part::gp_square_vo::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 pub enum ThingsInTheSquare {
@@ -37,7 +37,7 @@ pub struct Board {
 }
 impl Default for Board {
     fn default() -> Self {
-        use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::NonePiece;
+        use crate::model::univ::gam::piece::GPPieceVo::NonePiece;
         Board {
             // 盤上
             board: [
@@ -75,7 +75,7 @@ impl Default for Board {
 }
 impl Board {
     pub fn clear(&mut self) {
-        use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::NonePiece;
+        use crate::model::univ::gam::piece::GPPieceVo::NonePiece;
         self.board = [
             NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
             NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,

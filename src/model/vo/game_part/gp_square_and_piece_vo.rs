@@ -1,5 +1,5 @@
-use super::gp_piece_vo::GPPieceVo;
-use super::gp_square_vo::*;
+use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::square::*;
 
 /// 升 × 駒
 pub struct GPSquareAndPieceVo {

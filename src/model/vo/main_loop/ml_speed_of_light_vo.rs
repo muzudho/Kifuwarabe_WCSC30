@@ -6,9 +6,9 @@
 //! マスター・テーブルみたいなもん☆（＾～＾）
 use super::super::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use super::super::game_part::gp_piece_type_struct_vo::PieceTypeStructVo;
-use super::super::game_part::gp_piece_vo::GPPieceVo;
-use super::super::game_part::gp_piece_vo::GPPieceVo::*;
 use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::GPPieceVo::*;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
 
@@ -97,10 +97,10 @@ impl Default for MLSpeedOfLightVo {
             promoted_lance2: GPPieceStructVo::from_piece(PromotedLance2),
             promoted_pawn2: GPPieceStructVo::from_piece(PromotedPawn2),
             none_piece: GPPieceStructVo::from_piece(
-                super::super::game_part::gp_piece_vo::GPPieceVo::NonePiece,
+                crate::model::univ::gam::piece::GPPieceVo::NonePiece,
             ),
             owari_piece: GPPieceStructVo::from_piece(
-                super::super::game_part::gp_piece_vo::GPPieceVo::OwariPiece,
+                crate::model::univ::gam::piece::GPPieceVo::OwariPiece,
             ),
             king: PieceTypeStructVo::from_piece_type(King),
             rook: PieceTypeStructVo::from_piece_type(Rook),
@@ -163,8 +163,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight2,
             PromotedLance2 => &self.promoted_lance2,
             PromotedPawn2 => &self.promoted_pawn2,
-            super::super::game_part::gp_piece_vo::GPPieceVo::NonePiece => &self.none_piece,
-            super::super::game_part::gp_piece_vo::GPPieceVo::OwariPiece => &self.owari_piece,
+            crate::model::univ::gam::piece::GPPieceVo::NonePiece => &self.none_piece,
+            crate::model::univ::gam::piece::GPPieceVo::OwariPiece => &self.owari_piece,
         }
     }
 
@@ -174,7 +174,7 @@ impl MLSpeedOfLightVo {
         phase: &Phase,
         piece_type: GPPieceTypeVo,
     ) -> &GPPieceStructVo {
-        use super::super::game_part::gp_piece_vo::GPPieceVo::*;
+        use crate::model::univ::gam::piece::GPPieceVo::*;
         use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
         match *phase {
             Phase::First => match piece_type {
@@ -252,14 +252,14 @@ impl MLSpeedOfLightVo {
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_type_struct_vo_from_piece(
         &self,
-        piece: &super::super::game_part::gp_piece_vo::GPPieceVo,
+        piece: &crate::model::univ::gam::piece::GPPieceVo,
     ) -> &PieceTypeStructVo {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.piece_vos[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use super::super::game_part::gp_piece_vo::GPPieceVo::*;
+        use crate::model::univ::gam::piece::GPPieceVo::*;
         match *piece {
             King1 => &self.king,
             Rook1 => &self.rook,
@@ -289,8 +289,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight,
             PromotedLance2 => &self.promoted_lance,
             PromotedPawn2 => &self.promoted_pawn,
-            super::super::game_part::gp_piece_vo::GPPieceVo::NonePiece => &self.none_piece_type,
-            super::super::game_part::gp_piece_vo::GPPieceVo::OwariPiece => &self.owari_piece_type,
+            crate::model::univ::gam::piece::GPPieceVo::NonePiece => &self.none_piece_type,
+            crate::model::univ::gam::piece::GPPieceVo::OwariPiece => &self.owari_piece_type,
         }
     }
 }

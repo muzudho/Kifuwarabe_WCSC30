@@ -3,10 +3,10 @@ use crate::controller::movement_generation::square::*;
 use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::Position;
-use crate::model::vo::game_part::gp_piece_vo::*;
-use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::univ::gam::square::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
 
@@ -82,7 +82,7 @@ impl MGMovements {
             let piece = current_board.get_piece_by_square(&source);
             let ps = speed_of_light.get_piece_struct_vo(piece);
             if *friend == ps.phase() {
-                use crate::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
+                use crate::model::univ::gam::piece::GPPieceVo::*;
                 match piece {
                     Pawn1 => {
                         NextSquares::looking_for_square_from_1player_pawn_on_board(
@@ -244,7 +244,7 @@ impl MGMovements {
                 .get_hand(hand_piece, speed_of_light)
             {
                 // 駒を持っていれば
-                use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
+                use crate::model::univ::gam::piece::GPPieceVo::*;
                 match *hand_piece {
                     // ▲歩、▲香 は１段目には進めない
                     Pawn1 | Lance1 => Squares::for_from_rank2_to_rank9(&mut |destination| {
@@ -321,7 +321,7 @@ impl MGMovements {
             let ps_dst = speed_of_light.get_piece_struct_vo(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-            use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
+            use crate::model::univ::gam::piece::GPPieceVo::*;
             match *hand_piece {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない

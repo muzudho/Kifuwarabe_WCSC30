@@ -4,7 +4,7 @@
 #![allow(dead_code)]
 use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::model::univ::gam::phase::Phase;
-use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::univ::gam::square::*;
 use crate::model::vo::other_part::op_direction_vo::*;
 use crate::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 

@@ -11,14 +11,14 @@ use crate::controller::movement_generation::movements::*;
 use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece::GPPieceVo;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::*;
+use crate::model::univ::gam::square::*;
 use crate::model::universe::*;
 use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
-use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use crate::model::vo::game_part::gp_square_and_piece_vo::GPSquareAndPieceVo;
-use crate::model::vo::game_part::gp_square_vo::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
 use crate::model::vo::other_part::op_piece_direction_vo::*;
@@ -551,7 +551,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
 fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -> bool {
     let (_dx, dy) = square_dst.to_file_rank();
 
-    use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
+    use crate::model::univ::gam::piece::GPPieceVo::*;
     match ps_dst.piece() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
@@ -1041,7 +1041,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             .get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type)
             .piece()
             .clone();
-        use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
+        use crate::model::univ::gam::piece::GPPieceVo::*;
         match km {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
@@ -1877,7 +1877,7 @@ pub fn lookup_drop_by_square_piece<F1>(
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo::*;
+    use crate::model::univ::gam::piece::GPPieceVo::*;
     match destination_sqp.piece {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない

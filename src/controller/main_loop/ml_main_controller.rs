@@ -2,11 +2,11 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
-use super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::phase::*;
+use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::*;
 use crate::model::universe::*;
 
 /// 利き数表示
