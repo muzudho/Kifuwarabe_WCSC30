@@ -157,11 +157,11 @@ impl Universe {
         {
             cap = self.game.position.do_move(movement, speed_of_light);
         }
-        self.game.position.set_cap(ply as usize, cap);
+        self.game.set_cap(ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.game.create_ky1_hash(speed_of_light);
-        self.game.position.set_current_position_hash(ky_hash);
+        self.game.set_current_position_hash(ky_hash);
 
         self.game.position.add_ply(1);
     }
@@ -172,7 +172,7 @@ impl Universe {
             self.game.position.add_ply(-1);
             // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
             let ss = &self.game.get_move().clone();
-            self.game.position.undo_move(/*&phase,*/ ss, speed_of_light);
+            self.game.undo_move(/*&phase,*/ ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {

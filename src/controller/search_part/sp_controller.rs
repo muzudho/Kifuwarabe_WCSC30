@@ -228,7 +228,7 @@ pub fn get_best_movement(
             }
         }
         // 1手戻すぜ☆（＾～＾）
-        universe.game.position.undo_move(&movement, speed_of_light)
+        universe.game.undo_move(&movement, speed_of_light)
     }
 
     let best_movement = if bestmove_state.get_movement_hash() != 0 {
