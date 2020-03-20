@@ -4,13 +4,13 @@
 extern crate rand;
 
 use crate::config::*;
+use crate::model::univ::gam::movement::*;
 use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::game::*;
-use crate::model::vo::game_part::gp_movement_vo::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 use crate::model::vo::other_part::op_piece_movement_vo::*;

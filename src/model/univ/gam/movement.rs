@@ -4,7 +4,7 @@
 //!
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
-use crate::model::dto::main_loop::ml_movement_dto::MLMovementDto;
+use crate::model::univ::gam::movement_builder::MovementBuilder;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
@@ -28,11 +28,11 @@ pub struct GPMovementVo {
 }
 impl Default for GPMovementVo {
     fn default() -> Self {
-        GPMovementVo::new(&MLMovementDto::default())
+        GPMovementVo::new(&MovementBuilder::default())
     }
 }
 impl GPMovementVo {
-    pub fn new(movement_dto: &MLMovementDto) -> Self {
+    pub fn new(movement_dto: &MovementBuilder) -> Self {
         GPMovementVo {
             source: movement_dto.src.clone(),
             destination: movement_dto.dst.clone(),

@@ -1,13 +1,13 @@
 //! 探索部
 use crate::controller::search_part::sp_number_board_controller::*;
-use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::dto::search_part::sp_info::SPInfo;
 use crate::model::univ::gam::board::*;
+use crate::model::univ::gam::movement::*;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
-use crate::model::vo::game_part::gp_movement_vo::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::*;
 use crate::model::vo::other_part::op_ply_vo::*;
@@ -31,7 +31,7 @@ pub struct Position {
     pub movements_history: [GPMovementVo; PLY_LN],
 
     /// 現在の指し手を作成中。
-    pub current_movement_builder: MLMovementDto,
+    pub current_movement_builder: MovementBuilder,
 
     /// 利きの数（先後別）
     pub control_count_by_phase: [NumberBoard; PHASE_LN],
@@ -54,7 +54,7 @@ impl Default for Position {
             captured_piece_history: [GPPieceVo::NonePiece; PLY_LN],
             movements_history: [GPMovementVo::default(); PLY_LN],
             /// 現在の指し手を作成中。
-            current_movement_builder: MLMovementDto::default(),
+            current_movement_builder: MovementBuilder::default(),
             /// 利き数（先後別）
             control_count_by_phase: [
                 NumberBoard::default(),

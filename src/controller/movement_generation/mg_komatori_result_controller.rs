@@ -7,14 +7,14 @@ use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::controller::common_use::cu_math_controller::*;
 use crate::controller::movement_generation::mg_choicing_controller::*;
 use crate::controller::movement_generation::mg_controller::*;
-use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece_struct::GPPieceStructVo;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
 use crate::model::universe::*;
-use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use std::collections::HashSet;
 use std::fmt;
@@ -94,7 +94,7 @@ impl KomatoriResult {
     /// ss : 現局面での、駒の動き手の１つ
     pub fn get_result(
         &self,
-        ss: &MLMovementDto,
+        ss: &MovementBuilder,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> KomatoriResultResult {
         // (1)

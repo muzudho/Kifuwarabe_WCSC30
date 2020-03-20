@@ -1,7 +1,7 @@
 use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
-use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::univ::gam::board::Board;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
@@ -39,7 +39,7 @@ impl MGMovements {
                         match &promotability {
                             Any => {
                                 callback_movement(
-                                    MLMovementDto {
+                                    MovementBuilder {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: false,
@@ -48,7 +48,7 @@ impl MGMovements {
                                     .to_hash(speed_of_light),
                                 );
                                 callback_movement(
-                                    MLMovementDto {
+                                    MovementBuilder {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: true,
@@ -59,7 +59,7 @@ impl MGMovements {
                             }
                             _ => {
                                 callback_movement(
-                                    MLMovementDto {
+                                    MovementBuilder {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: promotion,
@@ -336,7 +336,7 @@ impl MGMovements {
                 _ => {}
             }
             callback_movement(
-                MLMovementDto {
+                MovementBuilder {
                     src: Square::from_usquare(SQUARE_DROP), // 駒台
                     dst: destination.clone(),               // どの升へ行きたいか
                     pro: false,                             // 打に成りは無し

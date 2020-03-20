@@ -9,15 +9,15 @@ use std::collections::HashSet;
 
 use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::search_part::sp_control_count_controller::*;
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::vo::game_part::gp_movement_vo::GPMovementVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::sp_evaluation_controller::*;
+use crate::model::univ::gam::movement::GPMovementVo;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::universe::*;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。
 pub struct SPBestmove {
-    pub movement: MLMovementDto,
+    pub movement: MovementBuilder,
     pub changed_value: i16,
     pub sum_nodes: u64,
     /// らいおんきゃっち数。玉を取ったら1。
@@ -26,7 +26,7 @@ pub struct SPBestmove {
 }
 impl SPBestmove {
     pub fn new(
-        movement1: MLMovementDto,
+        movement1: MovementBuilder,
         changed_value1: i16,
         sum_nodes1: u64,
         raioncatch_number1: i16,
@@ -138,7 +138,7 @@ pub fn get_best_movement(
     // 指せる手が無ければ投了☆（＾～＾）
     if movement_set.is_empty() {
         let best_value = 0;
-        let resign_move = MLMovementDto::default();
+        let resign_move = MovementBuilder::default();
         universe.game.get_mut_info().print(
             cur_depth,
             sum_nodes,
@@ -175,7 +175,7 @@ pub fn get_best_movement(
             }
 
             if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
-            let movement = MLMovementDto::from_hash(*movement_hash);
+            let movement = MovementBuilder::from_hash(*movement_hash);
             universe.game.get_mut_info().print(
                 cur_depth,
                 sum_nodes,
@@ -191,7 +191,7 @@ pub fn get_best_movement(
                 sum_nodes + 1,
                 universe,
                 speed_of_light,
-                &format!("{} {}", pv, MLMovementDto::from_hash(*movement_hash)),
+                &format!("{} {}", pv, MovementBuilder::from_hash(*movement_hash)),
             ) {
                 Some(opponent_best_move) => {
                     sum_nodes = opponent_best_move.sum_nodes;
@@ -215,7 +215,7 @@ pub fn get_best_movement(
                     };
 
                     if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
-                    let movement = &MLMovementDto::from_hash(*movement_hash);
+                    let movement = &MovementBuilder::from_hash(*movement_hash);
                     universe.game.get_mut_info().print(
                         cur_depth,
                         sum_nodes,
@@ -232,10 +232,10 @@ pub fn get_best_movement(
     }
 
     let best_movement = if bestmove_state.get_movement_hash() != 0 {
-        MLMovementDto::from_hash(bestmove_state.get_movement_hash())
+        MovementBuilder::from_hash(bestmove_state.get_movement_hash())
     } else {
         // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-        MLMovementDto::from_hash(repetition_move_hash)
+        MovementBuilder::from_hash(repetition_move_hash)
     };
 
     // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）

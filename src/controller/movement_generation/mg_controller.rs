@@ -8,17 +8,17 @@ use crate::controller::common_use::cu_conv_controller::*;
 use crate::controller::movement_generation::mg_choicing_controller::*;
 use crate::controller::movement_generation::mg_direction::*;
 use crate::controller::movement_generation::movements::*;
-use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::univ::gam::board::*;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece_struct::GPPieceStructVo;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::square_and_piece::GPSquareAndPieceVo;
 use crate::model::universe::*;
-use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
-use crate::model::vo::game_part::gp_square_and_piece_vo::GPSquareAndPieceVo;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
 use crate::model::vo::other_part::op_piece_direction_vo::*;
@@ -103,7 +103,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     }
 
     // ハッシュを作るのに使う
-    let mut ss_hash_builder = MLMovementDto::default();
+    let mut ss_hash_builder = MovementBuilder::default();
 
     ss_hash_builder.dst = (*sq_dst).clone();
 
@@ -188,7 +188,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     }
 
     // ハッシュを作るのに使う
-    let mut ss_hash_builder = MLMovementDto::default();
+    let mut ss_hash_builder = MovementBuilder::default();
 
     ss_hash_builder.dst = (*sq_dst).clone();
 
@@ -212,7 +212,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     for num_piece_type_da in da_piece_type_hashset.iter() {
         let piece_type_da = num_to_piece_type(*num_piece_type_da);
 
-        let movement_hash = MLMovementDto {
+        let movement_hash = MovementBuilder {
             src: Square::from_usquare(SQUARE_DROP),
             dst: (*sq_dst).clone(),
             pro: false,

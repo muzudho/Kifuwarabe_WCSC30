@@ -7,12 +7,12 @@ use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::controller::common_use::cu_math_controller::*;
 use crate::controller::common_use::cu_random_move_controller;
 use crate::controller::movement_generation::mg_controller::*;
-use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::gam::square_and_piece::*;
 use crate::model::universe::*;
-use crate::model::vo::game_part::gp_square_and_piece_vo::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
 use crate::view::unit_test::unit_test_view::print_piece_type_hashset;
@@ -90,7 +90,7 @@ pub fn unit_test(
         // 移動先の升、および　不成駒／成駒
         let sq_dst = cu_random_move_controller::random_square();
         let pro_dst = cu_random_move_controller::random_bool();
-        let mut ss = MLMovementDto::default();
+        let mut ss = MovementBuilder::default();
         // 移動可能な元升
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
         //let mut da_piece_type_hashset : HashSet<usize> = HashSet::new();

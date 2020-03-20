@@ -9,11 +9,11 @@ use crate::model::univ::gam::square::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use std::fmt;
 
-/// 指し手
+/// Movement. (指し手)
 /// 棋譜にも使うので、取った駒の情報を記憶しておくんだぜ☆（＾～＾）
 ///
 #[derive(Clone)]
-pub struct MLMovementDto {
+pub struct MovementBuilder {
     // 移動元升。打った場合は 0。
     pub src: Square,
     // 移動先升。これが 0 なら投了とするぜ☆（＾～＾）
@@ -23,9 +23,9 @@ pub struct MLMovementDto {
     // 打の場合、打った駒種類
     pub drop: GPPieceTypeVo,
 }
-impl Default for MLMovementDto {
-    fn default() -> MLMovementDto {
-        MLMovementDto {
+impl Default for MovementBuilder {
+    fn default() -> MovementBuilder {
+        MovementBuilder {
             src: Square::from_usquare(0),
             dst: Square::from_usquare(0),
             pro: false,
@@ -33,7 +33,7 @@ impl Default for MLMovementDto {
         }
     }
 }
-impl MLMovementDto {
+impl MovementBuilder {
     #[allow(dead_code)]
     pub fn clear(&mut self) {
         self.src = Square::from_usquare(0);
@@ -49,13 +49,13 @@ impl MLMovementDto {
         hash = push_sq_to_hash(hash, &self.dst);
         push_sq_to_hash(hash, &self.src)
     }
-    pub fn from_hash(hash: u64) -> MLMovementDto {
+    pub fn from_hash(hash: u64) -> MovementBuilder {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
         let (hash, src52) = pop_sq_from_hash(hash);
         let (hash, dst53) = pop_sq_from_hash(hash);
         let (hash, pro54) = pop_bool_from_hash(hash);
         let (_hash, drop55) = pop_piece_type_from_hash(hash);
-        MLMovementDto {
+        MovementBuilder {
             src: src52,
             dst: dst53,
             pro: pro54,
@@ -70,7 +70,7 @@ impl MLMovementDto {
         self.dst.to_usquare() != SQUARE_NONE
     }
 }
-impl fmt::Display for MLMovementDto {
+impl fmt::Display for MovementBuilder {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 手が何もない、ぐらいの意味だが、
         // その手を指す場合、投了表示
@@ -137,7 +137,7 @@ impl fmt::Display for MLMovementDto {
         }
     }
 }
-impl fmt::Debug for MLMovementDto {
+impl fmt::Debug for MovementBuilder {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,

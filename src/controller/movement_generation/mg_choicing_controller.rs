@@ -9,11 +9,11 @@ use rand::Rng;
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_komatori_result_controller::*;
-use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::movement::*;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
 use crate::model::universe::*;
-use crate::model::vo::game_part::gp_movement_vo::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
 use std::collections::HashSet;
@@ -22,7 +22,7 @@ use std::hash::BuildHasher;
 /// ハッシュセットから、指し手を１つ選ぶぜ☆（＾～＾）
 pub fn choice_1movement_from_hashset<S: BuildHasher>(
     movement_hashset: &HashSet<u64, S>,
-) -> MLMovementDto {
+) -> MovementBuilder {
     let index = if movement_hashset.is_empty() {
         0
     } else {
@@ -35,7 +35,7 @@ pub fn choice_1movement_from_hashset<S: BuildHasher>(
             break;
         }
     }
-    MLMovementDto::from_hash(ss_choice_hash)
+    MovementBuilder::from_hash(ss_choice_hash)
 }
 
 /**
@@ -77,7 +77,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
 
         // 指せる手から、王手が消えている手だけ、選び抜くぜ☆（＾～＾）
         'idea: for hash_potential_movement in ss_hashset_input.iter() {
-            let potential_movement = MLMovementDto::from_hash(*hash_potential_movement);
+            let potential_movement = MovementBuilder::from_hash(*hash_potential_movement);
             for komatori_result_hash in komatori_result_hashset.iter() {
                 let komatori_result = KomatoriResult::from_hash(*komatori_result_hash);
 

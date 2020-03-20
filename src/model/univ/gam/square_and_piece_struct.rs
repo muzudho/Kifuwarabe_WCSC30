@@ -1,4 +1,4 @@
-use super::gp_piece_struct_vo::*;
+use crate::model::univ::gam::piece_struct::*;
 use crate::model::univ::gam::square::*;
 
 /// イミュータブルとして使われる想定なので、ゲッターもセッターも作らないぜ☆（＾～＾）　直接フィールドにアクセスしろだぜ☆（＾～＾）

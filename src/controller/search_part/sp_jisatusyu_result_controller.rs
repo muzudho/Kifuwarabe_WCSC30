@@ -3,7 +3,7 @@
 //! 結果：自殺手。移動先が敵の利き
 //!
 
-use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::phase_to_num;
 use crate::model::univ::gam::phase::turn_phase;
 use crate::model::universe::*;
@@ -13,7 +13,7 @@ use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 /// TODO 利きを再計算したい
 pub fn is_jisatusyu(
     ml_universe_dto: &Universe,
-    ss: &MLMovementDto,
+    ss: &MovementBuilder,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> bool {
     // 移動元升、動かした駒の先後、駒種類、

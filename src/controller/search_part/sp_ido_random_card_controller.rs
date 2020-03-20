@@ -8,9 +8,9 @@ use super::super::super::controller::common_use::cu_random_move_controller;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::search_part::sp_jisatusyu_result_controller::*;
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
+use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::piece::GPPieceVo;
 use crate::model::universe::*;
 use std::collections::HashSet;
@@ -24,7 +24,7 @@ pub fn get_ido_ss_by_km_random(
     ml_universe_dto: &Universe,
     piece_dst: &GPPieceVo,
     speed_of_light: &MLSpeedOfLightVo,
-) -> MLMovementDto {
+) -> MovementBuilder {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -59,7 +59,7 @@ pub fn get_ido_ss_by_km_random(
         }
     }
     // 投了
-    MLMovementDto::default()
+    MovementBuilder::default()
 }
 
 /**
@@ -68,7 +68,7 @@ pub fn get_ido_ss_by_km_random(
 pub fn get_ss_by_random(
     ml_universe_dto: &Universe,
     speed_of_light: &MLSpeedOfLightVo,
-) -> MLMovementDto {
+) -> MovementBuilder {
     let mut ss_hashset = HashSet::new();
 
     // 数回リトライ
@@ -115,5 +115,5 @@ pub fn get_ss_by_random(
         }
     }
     // 投了
-    MLMovementDto::default()
+    MovementBuilder::default()
 }

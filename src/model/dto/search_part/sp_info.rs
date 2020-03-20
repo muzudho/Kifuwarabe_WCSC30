@@ -1,5 +1,5 @@
 //! 情報表示担当☆（＾～＾）
-use crate::model::dto::main_loop::ml_movement_dto::MLMovementDto;
+use crate::model::univ::gam::movement_builder::MovementBuilder;
 use crate::model::universe::*;
 use std::time::{Duration, Instant};
 
@@ -33,7 +33,7 @@ impl SPInfo {
         cur_depth: u16,
         sum_nodes: u64,
         best_value: i16,
-        cur_move: &MLMovementDto,
+        cur_move: &MovementBuilder,
         text: &str,
     ) {
         // 初回か、前回より1秒以上経過していれば。
