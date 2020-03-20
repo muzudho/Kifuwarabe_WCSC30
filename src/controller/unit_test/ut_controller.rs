@@ -8,13 +8,13 @@ use crate::controller::common_use::cu_math_controller::*;
 use crate::controller::common_use::cu_random_move_controller;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::model::univ::gam::movement_builder::*;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::gam::square_and_piece::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::other_part::op_person_vo::Person;
 use crate::view::unit_test::unit_test_view::print_piece_type_hashset;
 use crate::view::unit_test::unit_test_view::print_square_hashset;
 use std::collections::HashSet;
@@ -37,7 +37,7 @@ pub fn unit_test(
         // 駒の移動元升
         g_writeln("駒の移動元升");
         let piece_type = cu_random_move_controller::random_piece_type();
-        let ps = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
+        let ps = speed_of_light.get_piece_struct_by_phase_and_piece_type(
             &ml_universe_dto.game.history.get_phase(&Person::Friend),
             *piece_type,
         );
@@ -83,7 +83,7 @@ pub fn unit_test(
         *starts += 4;
         // 移動後の駒
         let piece_type = cu_random_move_controller::random_piece_type();
-        let ps = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
+        let ps = speed_of_light.get_piece_struct_by_phase_and_piece_type(
             &ml_universe_dto.game.history.get_phase(&Person::Friend),
             *piece_type,
         );
@@ -137,8 +137,8 @@ pub fn unit_test(
         {
             g_writeln("利きテスト1");
             let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
-            let ps = speed_of_light
-                .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
+            let ps =
+                speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_usquare(79);
             g_writeln(&format!(
@@ -181,8 +181,8 @@ pub fn unit_test(
         {
             g_writeln("利きテスト2");
             let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
-            let ps = speed_of_light
-                .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
+            let ps =
+                speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_usquare(68);
             g_writeln(&format!(
@@ -225,8 +225,8 @@ pub fn unit_test(
         {
             g_writeln("利きテスト3");
             let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
-            let ps = speed_of_light
-                .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
+            let ps =
+                speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
             let sq_dst = Square::from_usquare(77);
             g_writeln(&format!(
@@ -269,8 +269,8 @@ pub fn unit_test(
         {
             g_writeln("利きテスト2");
             let piece_type = PieceType::King; // らいおん
-            let ps = speed_of_light
-                .get_piece_struct_vo_by_phase_and_piece_type(&Phase::First, piece_type);
+            let ps =
+                speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::First, piece_type);
             let pc = ps.piece(); // ▼ら
             let sq_dst = Square::from_usquare(58);
             g_writeln(&format!(

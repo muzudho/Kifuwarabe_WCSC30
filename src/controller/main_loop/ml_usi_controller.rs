@@ -1,12 +1,12 @@
 //!
 //! USIプロトコル
 //!
+use crate::model::univ::gam::constants::*;
 use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::other_part::op_constants_vo::*;
 
 /**
  * 指し手読取

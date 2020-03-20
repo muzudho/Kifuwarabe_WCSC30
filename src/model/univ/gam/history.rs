@@ -1,8 +1,15 @@
 use crate::model::univ::gam::movement::Movement;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece::Piece;
-use crate::model::vo::other_part::op_person_vo::Person;
-use crate::model::vo::other_part::op_ply_vo::PLY_LN;
+
+/// 手目数。何手目まで指せるか。
+/// 棋譜を残す配列のサイズでもある。
+/// 大会ルールで 320手が上限なので、終端子として投了を１個入れておけるように +1 する。
+pub const PLY_LN: usize = 321;
+
+/// 同一局面何回で千日手
+pub const SENNTITE_NUM: i8 = 4;
 
 pub struct History {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
@@ -29,7 +36,7 @@ impl Default for History {
 impl History {
     /// 手番
     pub fn get_phase(&self, person: &Person) -> Phase {
-        use super::super::super::super::model::vo::other_part::op_person_vo::Person::*;
+        use crate::model::univ::gam::person::Person::*;
         match *person {
             None => Phase::None,
             Friend => {

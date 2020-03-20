@@ -14,7 +14,7 @@ use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::game::Game;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::univ::speed_of_light::*;
 
 pub enum ThingsInTheSquare {
     Space,
@@ -198,7 +198,7 @@ impl Board {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
         speed_of_light
-            .get_piece_struct_vo(self.get_piece_by_square(sq))
+            .get_piece_struct(self.get_piece_by_square(sq))
             .phase()
             == *ph
     }

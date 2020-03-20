@@ -2,7 +2,7 @@
 //! 思考部だぜ☆（＾～＾）
 //!
 
-use super::super::super::super::model::vo::other_part::op_square_vo::*;
+// use super::super::super::super::model::vo::other_part::square::*;
 use std::collections::HashSet;
 
 /**

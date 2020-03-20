@@ -5,12 +5,12 @@ extern crate rand;
 
 use crate::config::*;
 use crate::model::univ::gam::movement::*;
+use crate::model::univ::gam::piece_direction::PieceDirection;
+use crate::model::univ::gam::piece_movement::*;
 use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::game::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::other_part::op_piece_direction_vo::PieceDirection;
-use crate::model::vo::other_part::op_piece_movement_vo::*;
+use crate::model::univ::speed_of_light::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -123,7 +123,7 @@ impl Universe {
     }
     pub fn print_kmugoki_dir(&self, piece_type: PieceType, speed_of_light: &MLSpeedOfLightVo) {
         for kmdir in KM_UGOKI.back[speed_of_light
-            .get_piece_type_struct_vo_from_piece_type(&piece_type)
+            .get_piece_type_struct_from_piece_type(&piece_type)
             .serial_piece_number]
             .iter()
         {

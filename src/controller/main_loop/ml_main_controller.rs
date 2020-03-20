@@ -2,11 +2,11 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 
 /// 利き数表示

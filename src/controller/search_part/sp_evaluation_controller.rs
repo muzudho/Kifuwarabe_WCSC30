@@ -3,7 +3,7 @@
 //!
 use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece_type::PieceType;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
+use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
 
 pub struct SPEvaluationController {}
 impl SPEvaluationController {

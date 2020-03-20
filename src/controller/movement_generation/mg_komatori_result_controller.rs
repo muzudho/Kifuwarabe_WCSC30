@@ -14,8 +14,8 @@ use crate::model::univ::gam::piece_struct::PieceStruct;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -103,7 +103,7 @@ impl KomatoriResult {
         }
 
         // (2-1)
-        let ps_attacker1 = speed_of_light.get_piece_type_struct_vo_from_piece(&self.km_attacker);
+        let ps_attacker1 = speed_of_light.get_piece_type_struct_from_piece(&self.km_attacker);
         if ps_attacker1.slider {
             assert_banjo_sq(&ss.dst, "(205b2)Ｇet_result");
             assert_banjo_sq(&self.sq_attacker, "(205b3)Ｇet_result");
@@ -194,7 +194,7 @@ pub fn lookup_catching_king_on_board(
     for piece_type_dst in PIECE_TYPE_ARRAY.iter() {
         // 移動した後の相手の駒
         let ps_dst =
-            speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type_dst);
+            speed_of_light.get_piece_struct_by_phase_and_piece_type(&phase, *piece_type_dst);
         let km_dst = ps_dst.piece();
         //let km_dst = phase_piece_type_to_km( &phase, random_piece_type() );
         // 指定マスに移動できるか

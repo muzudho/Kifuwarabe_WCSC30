@@ -3,8 +3,7 @@
 //!
 
 extern crate rand;
-// use rand::Rng;
-use crate::model::vo::other_part::op_ply_vo::SENNTITE_NUM;
+use crate::model::univ::gam::history::SENNTITE_NUM;
 use std::collections::HashSet;
 
 use super::sp_evaluation_controller::*;
@@ -12,8 +11,8 @@ use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::search_part::sp_control_count_controller::*;
 use crate::model::univ::gam::movement::Movement;
 use crate::model::univ::gam::movement_builder::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。
 pub struct SPBestmove {

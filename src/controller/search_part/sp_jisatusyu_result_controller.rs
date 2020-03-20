@@ -6,8 +6,8 @@
 use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::phase_to_num;
 use crate::model::univ::gam::phase::turn_phase;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい

@@ -8,10 +8,10 @@ use super::super::super::controller::common_use::cu_random_move_controller;
 use super::super::super::controller::movement_generation::mg_choicing_controller::*;
 use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::search_part::sp_jisatusyu_result_controller::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::model::univ::gam::movement_builder::*;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::piece::Piece;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 use std::collections::HashSet;
 
@@ -78,7 +78,7 @@ pub fn get_ss_by_random(
         assert_banjo_sq(&sq_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
-        let ps_dst = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
+        let ps_dst = speed_of_light.get_piece_struct_by_phase_and_piece_type(
             &ml_universe_dto.game.history.get_phase(&Person::Friend),
             *cu_random_move_controller::random_piece_type(),
         );

@@ -12,10 +12,10 @@ use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_komatori_result_controller::*;
 use crate::model::univ::gam::movement::*;
 use crate::model::univ::gam::movement_builder::*;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::other_part::op_person_vo::Person;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 

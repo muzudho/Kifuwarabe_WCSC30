@@ -4,7 +4,7 @@
 //! 先後なしの駒と空白
 //!
 
-use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
+use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
@@ -170,7 +170,7 @@ pub fn push_piece_type_to_hash(
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
     (hash << 4)
         + speed_of_light
-            .get_piece_type_struct_vo_from_piece_type(&piece_type)
+            .get_piece_type_struct_from_piece_type(&piece_type)
             .serial_piece_number as u64
 }
 

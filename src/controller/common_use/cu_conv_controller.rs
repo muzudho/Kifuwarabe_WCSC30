@@ -3,10 +3,10 @@
 //!
 #![allow(dead_code)]
 use crate::controller::common_use::cu_geo_teigi_controller::*;
+use crate::model::univ::gam::direction::*;
 use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece_direction::PieceDirection;
 use crate::model::univ::gam::square::*;
-use crate::model::vo::other_part::op_direction_vo::*;
-use crate::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 
 /**********
  * 論理値 *
@@ -57,7 +57,7 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
  *********/
 #[allow(dead_code)]
 pub fn dir8_to_num(dir: &Dir8) -> usize {
-    use super::super::super::model::vo::other_part::op_direction_vo::Dir8::*;
+    use crate::model::univ::gam::direction::Dir8::*;
     match *dir {
         E => 0,
         NE => 1,
@@ -72,7 +72,7 @@ pub fn dir8_to_num(dir: &Dir8) -> usize {
 }
 #[allow(dead_code)]
 pub fn num_to_dir8(n: usize) -> Dir8 {
-    use super::super::super::model::vo::other_part::op_direction_vo::Dir8::*;
+    use crate::model::univ::gam::direction::Dir8::*;
     match n {
         0 => E,
         1 => NE,
@@ -160,7 +160,7 @@ pub fn kaiten180_sq_by_sq_phase(sq: &Square, phase: &Phase) -> Square {
  * 上下反転
  */
 pub fn hanten_kmdir_joge(kmdir: &PieceDirection) -> PieceDirection {
-    use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection::*;
+    use crate::model::univ::gam::piece_direction::PieceDirection::*;
     match *kmdir {
         // 東
         E(b) => E(b),

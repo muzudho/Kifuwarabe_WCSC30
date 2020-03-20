@@ -1,8 +1,8 @@
+use crate::model::univ::gam::misc::PosNums;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::game::Game;
-use crate::model::vo::other_part::op_misc_vo::PosNums;
-use crate::model::vo::other_part::op_person_vo::Person;
 
 pub struct GameView {}
 impl GameView {

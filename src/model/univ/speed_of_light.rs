@@ -127,7 +127,7 @@ impl MLSpeedOfLightVo {
     pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
-        // &self.piece_vos[(*piece).clone() as usize]
+        // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
         match *piece {
@@ -165,7 +165,7 @@ impl MLSpeedOfLightVo {
     }
 
     /// 先後＆駒種類→先後付き駒
-    pub fn get_piece_struct_vo_by_phase_and_piece_type(
+    pub fn get_piece_struct_by_phase_and_piece_type(
         &self,
         phase: &Phase,
         piece_type: PieceType,
@@ -211,13 +211,13 @@ impl MLSpeedOfLightVo {
         }
     }
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_type_struct_vo_from_piece_type(
+    pub fn get_piece_type_struct_from_piece_type(
         &self,
         piece_type: &crate::model::univ::gam::piece_type::PieceType,
     ) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
-        // &self.piece_vos[(*piece).clone() as usize]
+        // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
         use crate::model::univ::gam::piece_type::PieceType::*;
@@ -244,13 +244,13 @@ impl MLSpeedOfLightVo {
     }
 
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_type_struct_vo_from_piece(
+    pub fn get_piece_type_struct_from_piece(
         &self,
         piece: &crate::model::univ::gam::piece::Piece,
     ) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
-        // &self.piece_vos[(*piece).clone() as usize]
+        // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
         use crate::model::univ::gam::piece::Piece::*;

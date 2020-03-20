@@ -1,7 +1,9 @@
 use crate::model::dto::search_part::sp_info::SPInfo;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::history::*;
+use crate::model::univ::gam::misc::PosNums;
 use crate::model::univ::gam::movement::Movement;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::phase::PHASE_LN;
 use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::Piece;
@@ -12,9 +14,7 @@ use crate::model::univ::gam::position::Position;
 use crate::model::univ::gam::square::BOARD_MEMORY_AREA;
 use crate::model::univ::gam::square::SQUARE_NONE;
 use crate::model::univ::gam::square::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
-use crate::model::vo::other_part::op_misc_vo::PosNums;
-use crate::model::vo::other_part::op_person_vo::Person;
+use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
 use rand::Rng;
 
 /// 現対局ハッシュ種
@@ -167,8 +167,8 @@ impl Game {
         self.starting_board.hand[km as usize] = maisu;
     }
 
-    pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStruct) -> Person {
-        if &piece_vo.phase() == &self.history.get_phase(&Person::Friend) {
+    pub fn get_person_by_piece_struct(&self, piece_struct: &PieceStruct) -> Person {
+        if &piece_struct.phase() == &self.history.get_phase(&Person::Friend) {
             Person::Friend
         } else {
             Person::Opponent
@@ -192,9 +192,9 @@ impl Game {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::First = self.history.get_phase(&Person::Friend) {
-            crate::model::vo::other_part::op_region_vo::SenteJin::to_elm()
+            crate::model::univ::gam::region::SenteJin::to_elm()
         } else {
-            crate::model::vo::other_part::op_region_vo::GoteJin::to_elm()
+            crate::model::univ::gam::region::GoteJin::to_elm()
         }
     }
 
@@ -202,9 +202,9 @@ impl Game {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::First = self.history.get_phase(&Person::Friend) {
-            crate::model::vo::other_part::op_region_vo::GoteJin::to_elm()
+            crate::model::univ::gam::region::GoteJin::to_elm()
         } else {
-            crate::model::vo::other_part::op_region_vo::SenteJin::to_elm()
+            crate::model::univ::gam::region::SenteJin::to_elm()
         }
     }
 

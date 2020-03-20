@@ -4,7 +4,7 @@
 
 use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::univ::speed_of_light::*;
 use std::collections::HashSet;
 
 pub struct SPPieceTypeSetDto {
@@ -19,7 +19,7 @@ impl SPPieceTypeSetDto {
         for piece_type in PIECE_TYPE_ARRAY.iter() {
             num_syugo1.insert(
                 speed_of_light
-                    .get_piece_type_struct_vo_from_piece_type(piece_type)
+                    .get_piece_type_struct_from_piece_type(piece_type)
                     .serial_piece_number,
             );
         }
@@ -30,7 +30,7 @@ impl SPPieceTypeSetDto {
     pub fn remove(&mut self, piece_type: PieceType, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo.remove(
             &speed_of_light
-                .get_piece_type_struct_vo_from_piece_type(&piece_type)
+                .get_piece_type_struct_from_piece_type(&piece_type)
                 .serial_piece_number,
         );
     }

@@ -2,14 +2,14 @@ use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::movement_builder::*;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::Position;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::game::Game;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::other_part::op_person_vo::Person;
+use crate::model::univ::speed_of_light::*;
 
 pub struct MGMovements {}
 impl MGMovements {
@@ -234,7 +234,7 @@ impl MGMovements {
     {
         GPHandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = speed_of_light
-                .get_piece_struct_vo_by_phase_and_piece_type(
+                .get_piece_struct_by_phase_and_piece_type(
                     &game.history.get_phase(&Person::Friend),
                     any_piece_type,
                 )
@@ -342,7 +342,7 @@ impl MGMovements {
                     pro: false,                             // 打に成りは無し
                     drop: num_to_piece_type(
                         speed_of_light
-                            .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
+                            .get_piece_type_struct_from_piece_type(&piece_type_dst)
                             .serial_piece_number,
                     ), // 打った駒種類
                 }

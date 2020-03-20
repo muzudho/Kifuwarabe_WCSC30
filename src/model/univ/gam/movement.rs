@@ -8,7 +8,7 @@ use crate::model::univ::gam::movement_builder::MovementBuilder;
 use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
+use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
 use std::fmt;
 
 /// Movement. (指し手)

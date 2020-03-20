@@ -5,18 +5,20 @@ extern crate rand;
 #[macro_use]
 extern crate lazy_static;
 
-/**
- * Rust言語の mod や ソース置き場の説明
- *      「Rust のモジュールシステム」
- *      https://qiita.com/skitaoka/items/753a519d720a1ccebb0d
- */
+// Rust言語の mod や ソース置き場の説明
+//     「Rust のモジュールシステム」
+//      https://qiita.com/skitaoka/items/753a519d720a1ccebb0d
+//
 // use したい モジュールは、最初に読み取られる　この main.rs ファイルに並べる
 pub mod config;
 pub mod controller;
 pub mod model;
 pub mod view;
 
+use crate::model::univ::gam::constants::*;
+use crate::model::univ::gam::misc::*;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 use crate::view::game_view::*;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;
@@ -26,9 +28,6 @@ use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_controller::*;
 use controller::search_part::sp_controller::*;
 use controller::unit_test::ut_controller::*;
-use model::vo::main_loop::ml_speed_of_light_vo::*;
-use model::vo::other_part::op_constants_vo::*;
-use model::vo::other_part::op_misc_vo::*;
 use rand::Rng;
 use std::collections::HashSet;
 use std::io;

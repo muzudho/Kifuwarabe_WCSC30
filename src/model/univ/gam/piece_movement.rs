@@ -2,8 +2,8 @@
 //! 駒の動き
 //!
 
-use super::op_piece_direction_vo::*;
 use crate::controller::movement_generation::mg_direction::KM_UGOKI_LN;
+use crate::model::univ::gam::piece_direction::*;
 use crate::model::univ::gam::piece_type::*;
 
 // 駒が戻る動き

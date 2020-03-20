@@ -8,8 +8,8 @@ use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_struct::PieceStruct;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use std::collections::HashSet;
 
 /// 指定局面の利き升調べ。一から再計算☆（＾～＾）

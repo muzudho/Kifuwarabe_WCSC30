@@ -2,11 +2,11 @@
 //! 駒集合
 //!
 
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::super::model::vo::other_part::op_person_vo::Person;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::game::Game;
+use crate::model::univ::speed_of_light::*;
 use std::collections::HashSet;
 
 pub struct SPPieceSetDto {

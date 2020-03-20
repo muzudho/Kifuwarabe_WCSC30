@@ -10,8 +10,11 @@ use crate::controller::movement_generation::mg_direction::*;
 use crate::controller::movement_generation::movements::*;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::movement_builder::*;
+use crate::model::univ::gam::person::Person;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece::Piece;
+use crate::model::univ::gam::piece_direction::*;
+use crate::model::univ::gam::piece_movement::*;
 use crate::model::univ::gam::piece_struct::PieceStruct;
 use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
@@ -19,11 +22,8 @@ use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::gam::square_and_piece::SquareAndPiece;
 use crate::model::univ::game::Game;
+use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::vo::other_part::op_person_vo::Person;
-use crate::model::vo::other_part::op_piece_direction_vo::*;
-use crate::model::vo::other_part::op_piece_movement_vo::*;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
@@ -176,8 +176,8 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
-    let piece_vo_dst = speed_of_light.get_piece_struct(piece_dst);
-    let (phase, _piece_type_dst) = piece_vo_dst.phase_piece_type();
+    let ps_dst = speed_of_light.get_piece_struct(piece_dst);
+    let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if position
@@ -257,7 +257,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     }
 
     let piece_type_num = speed_of_light
-        .get_piece_type_struct_vo_from_piece_type(&ps_dst.piece_type())
+        .get_piece_type_struct_from_piece_type(&ps_dst.piece_type())
         .serial_piece_number;
 
     MGDirection::for_all(&mut |i_dir| {
@@ -272,7 +272,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         };
 
         // 移動先を開始地点にして、駒の位置を終了地点にする
-        use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection::*;
+        use crate::model::univ::gam::piece_direction::PieceDirection::*;
         match *p_kmdir {
             // 東
             E(b) => {
@@ -665,12 +665,12 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
         .get_piece_struct(ps_dst.demote())
         .piece_type();
     let piece_src = speed_of_light
-        .get_piece_struct_vo_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
+        .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
         .piece();
     let square_dst_piece_src = SquareAndPiece::new(square_dst, piece_src);
 
     let piece_type_narumae_num = speed_of_light
-        .get_piece_type_struct_vo_from_piece(ps_dst.demote())
+        .get_piece_type_struct_from_piece(ps_dst.demote())
         .serial_piece_number;
 
     MGDirection::for_all(&mut |i_dir| {
@@ -686,7 +686,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
 
         // 移動先を開始地点にして、駒の位置を終了地点にする
         // 進みたいマスから戻ったマス
-        use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection::*;
+        use crate::model::univ::gam::piece_direction::PieceDirection::*;
         match *p_kmdir {
             // 東
             E(b) => {
@@ -1039,7 +1039,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
     for piece_type in PIECE_TYPE_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
         let km = speed_of_light
-            .get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type)
+            .get_piece_struct_by_phase_and_piece_type(&phase, *piece_type)
             .piece()
             .clone();
         use crate::model::univ::gam::piece::Piece::*;
@@ -1077,7 +1077,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
         );
 
         let piece_type_num = speed_of_light
-            .get_piece_type_struct_vo_from_piece_type(piece_type)
+            .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
         MGDirection::for_all(&mut |i_dir| {
             // 指定の駒種類の、全ての逆向きに動ける方向
@@ -1097,7 +1097,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
 
             // 指定升を開始地点に、離れていくように調べていく
             // 指定先後の駒があれば追加
-            use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection::*;
+            use crate::model::univ::gam::piece_direction::PieceDirection::*;
             match *p_kmdir {
                 // 東
                 E(b) => {
@@ -1420,7 +1420,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
     // 駒種類
     for piece_type in PIECE_TYPE_ARRAY.iter() {
         let km_src = speed_of_light
-            .get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type)
+            .get_piece_struct_by_phase_and_piece_type(&phase, *piece_type)
             .piece();
 
         // +--------------------+
@@ -1446,7 +1446,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
         // 成り駒に、行先の無いところは無いぜ☆
 
         let piece_type_num = speed_of_light
-            .get_piece_type_struct_vo_from_piece_type(piece_type)
+            .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
         MGDirection::for_all(&mut |i_dir| {
             // 指定の駒種類の、全ての逆向きに動ける方向
@@ -1467,7 +1467,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 
             // 指定升を開始地点に、離れていくように調べていく
             // 指定先後の駒があれば追加
-            use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection::*;
+            use crate::model::univ::gam::piece_direction::PieceDirection::*;
             match *p_kmdir {
                 // 東
                 E(b) => {
@@ -1835,7 +1835,7 @@ pub fn lookup_drop_by_square_piece<F1>(
     let ps_dst = speed_of_light.get_piece_struct(&destination_sqp.piece);
     let piece_type_dst = ps_dst.piece_type();
     if !speed_of_light
-        .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
+        .get_piece_type_struct_from_piece_type(&piece_type_dst)
         .can_drop
     {
         return; // 打って出てくることがない駒なら終了
@@ -1925,7 +1925,7 @@ pub fn lookup_drop_by_square_piece<F1>(
 
     lookups_the_drops(
         speed_of_light
-            .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)
+            .get_piece_type_struct_from_piece_type(&piece_type_dst)
             .serial_piece_number,
     );
 }
