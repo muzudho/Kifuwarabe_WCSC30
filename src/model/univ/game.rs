@@ -1,5 +1,7 @@
 use crate::model::dto::search_part::sp_info::SPInfo;
 use crate::model::univ::gam::board::Board;
+use crate::model::univ::gam::history::*;
+use crate::model::univ::gam::movement::Movement;
 use crate::model::univ::gam::phase::PHASE_LN;
 use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::Piece;
@@ -17,6 +19,8 @@ use crate::model::vo::other_part::op_person_vo::Person;
 use rand::Rng;
 
 pub struct Game {
+    /// 棋譜
+    pub history: History,
     /// 初期局面ハッシュ
     pub starting_position_hash: u64,
     /// 初期局面
@@ -29,6 +33,7 @@ pub struct Game {
 impl Default for Game {
     fn default() -> Game {
         Game {
+            history: History::default(),
             starting_position_hash: 0,
             starting_board: Board::default(),
             position_hash_seed: PositionHashSeed {
@@ -68,6 +73,27 @@ impl Game {
             self.position_hash_seed.phase[i_phase] =
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }
+    }
+
+    /// 棋譜の作成
+    pub fn set_current_movement(&mut self, movement: &Movement) {
+        self.history.movements[self.position.get_ply() as usize] = movement.clone()
+    }
+    pub fn build_current_movement(&mut self) {
+        self.history.movements[self.position.get_ply() as usize] =
+            Movement::new(&self.position.current_movement_builder)
+    }
+    pub fn get_move(&self) -> &Movement {
+        &self.history.movements[self.position.get_ply() as usize]
+    }
+    /// 棋譜☆（＾～＾）
+    pub fn get_moves_history_text(&self) -> String {
+        let mut s = String::new();
+        for ply in 0..self.position.get_ply() {
+            let movement = &self.history.movements[ply as usize];
+            s.push_str(&format!("[{}] {}", ply, movement));
+        }
+        s
     }
 
     pub fn get_board(&self, num: &PosNums) -> &Board {

@@ -1,4 +1,5 @@
 pub mod board;
+pub mod history;
 pub mod movement;
 pub mod movement_builder;
 pub mod phase;

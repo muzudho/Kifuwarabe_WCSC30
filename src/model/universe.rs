@@ -152,7 +152,7 @@ impl Universe {
     pub fn do_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.game.position.get_ply();
-        self.game.position.set_current_movement(movement);
+        self.game.set_current_movement(movement);
         let cap;
         {
             cap = self.game.position.do_move(movement, speed_of_light);
@@ -171,7 +171,7 @@ impl Universe {
             // 棋譜から読取、手目も減る
             self.game.position.add_ply(-1);
             // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
-            let ss = &self.game.position.get_move().clone();
+            let ss = &self.game.get_move().clone();
             self.game.position.undo_move(/*&phase,*/ ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true

@@ -199,7 +199,7 @@ fn parse_extend_command(
         g_writeln(&s);
     } else if 3 < len && &line[starts..4] == "kifu" {
         g_writeln("棋譜表示");
-        let s = universe.game.position.get_moves_history_text();
+        let s = universe.game.get_moves_history_text();
         g_writeln(&s);
     } else if 3 < len && &line[starts..4] == "rand" {
         g_writeln("3<len rand");
@@ -234,7 +234,7 @@ fn parse_extend_command(
             universe.game.position.add_ply(-1);
             // 入っている指し手の通り指すぜ☆（＾～＾）
             let ply = universe.game.position.get_ply();
-            let ss = universe.game.position.get_moves_history()[ply as usize].clone();
+            let ss = universe.game.history.movements[ply as usize].clone();
             universe.do_move(&ss, speed_of_light);
         }
     } else if 3 < len && &line[starts..4] == "pos0" {

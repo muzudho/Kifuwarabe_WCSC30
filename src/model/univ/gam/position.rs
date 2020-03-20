@@ -26,10 +26,6 @@ pub struct Position {
     /// 取った駒
     pub captured_piece_history: [Piece; PLY_LN],
 
-    /// 棋譜
-    /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
-    pub movements_history: [Movement; PLY_LN],
-
     /// 現在の指し手を作成中。
     pub current_movement_builder: MovementBuilder,
 
@@ -52,7 +48,6 @@ impl Default for Position {
             position_hash_history: [0; PLY_LN],
             /// 取った駒
             captured_piece_history: [Piece::NonePiece; PLY_LN],
-            movements_history: [Movement::default(); PLY_LN],
             /// 現在の指し手を作成中。
             current_movement_builder: MovementBuilder::default(),
             /// 利き数（先後別）
@@ -294,18 +289,6 @@ impl Position {
         cap
     }
 
-    pub fn get_moves_history(&self) -> &[Movement; PLY_LN] {
-        &self.movements_history
-    }
-
-    /// 棋譜の作成
-    pub fn set_current_movement(&mut self, movement: &Movement) {
-        self.movements_history[self.get_ply() as usize] = movement.clone()
-    }
-    pub fn build_current_movement(&mut self) {
-        self.movements_history[self.get_ply() as usize] =
-            Movement::new(&self.current_movement_builder)
-    }
     pub fn set_current_movement_source_temporary(&mut self, src: &Square) {
         self.current_movement_builder.src = src.clone()
     }
@@ -320,19 +303,6 @@ impl Position {
     }
     pub fn set_cap(&mut self, ply1: usize, km: Piece) {
         self.captured_piece_history[ply1] = km
-    }
-    pub fn get_move(&self) -> &Movement {
-        &self.movements_history[self.get_ply() as usize]
-    }
-
-    /// 棋譜☆（＾～＾）
-    pub fn get_moves_history_text(&self) -> String {
-        let mut s = String::new();
-        for ply in 0..self.get_ply() {
-            let movement = &self.movements_history[ply as usize];
-            s.push_str(&format!("[{}] {}", ply, movement));
-        }
-        s
     }
 
     /*
