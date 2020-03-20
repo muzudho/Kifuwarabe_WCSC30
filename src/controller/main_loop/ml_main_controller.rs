@@ -2,12 +2,12 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
 use super::super::super::model::vo::game_part::gp_phase_vo::*;
 use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::universe::*;
 
 /// 利き数表示
 pub fn cmd_kikisu(ml_universe_dto: &MLUniverseDto, speed_of_light: &MLSpeedOfLightVo) {

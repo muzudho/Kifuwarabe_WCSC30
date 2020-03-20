@@ -1,6 +1,6 @@
 //! 情報表示担当☆（＾～＾）
 use crate::model::dto::main_loop::ml_movement_dto::MLMovementDto;
-use crate::model::dto::main_loop::ml_universe_dto::g_writeln;
+use crate::model::universe::*;
 use std::time::{Duration, Instant};
 
 pub struct SPInfo {

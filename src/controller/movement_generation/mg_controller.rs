@@ -21,8 +21,8 @@ use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
 use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::square::Squares;
 use crate::controller::movement_generation::movements::*;
-use crate::model::dto::main_loop::ml_universe_dto::MLUniverseDto;
 use crate::model::dto::search_part::position::*;
+use crate::model::universe::*;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）

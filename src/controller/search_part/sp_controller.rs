@@ -10,10 +10,10 @@ use std::collections::HashSet;
 use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::search_part::sp_control_count_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_movement_vo::GPMovementVo;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::sp_evaluation_controller::*;
+use crate::model::universe::*;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。
 pub struct SPBestmove {

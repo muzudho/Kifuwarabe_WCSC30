@@ -16,6 +16,7 @@ pub mod controller;
 pub mod model;
 pub mod view;
 
+use crate::model::universe::*;
 use crate::view::position_view::*;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use config::*;
@@ -24,7 +25,6 @@ use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_controller::*;
 use controller::search_part::sp_controller::*;
 use controller::unit_test::ut_controller::*;
-use model::dto::main_loop::ml_universe_dto::*;
 use model::vo::game_part::gp_square_vo::*;
 use model::vo::main_loop::ml_speed_of_light_vo::*;
 use model::vo::other_part::op_constants_vo::*;

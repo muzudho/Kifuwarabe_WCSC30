@@ -1,27 +1,26 @@
 //!
 //! Data transfer object.
-//! Main loop.
 //!
 extern crate rand;
 use crate::model::dto::search_part::sp_info::SPInfo;
 use rand::Rng;
 
-use super::super::super::super::config::*;
-use super::super::super::super::model::dto::search_part::board::*;
-use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
-use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
-use super::super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
-use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
-use super::super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
-use super::super::super::super::model::vo::other_part::op_piece_movement_vo::*;
+use crate::config::*;
+use crate::model::dto::search_part::board::*;
 use crate::model::dto::search_part::position::*;
+use crate::model::vo::game_part::gp_movement_vo::*;
+use crate::model::vo::game_part::gp_phase_vo::*;
+use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
+use crate::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
+use crate::model::vo::game_part::gp_piece_type_vo::*;
+use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use crate::model::vo::game_part::gp_piece_vo::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_misc_vo::*;
+use crate::model::vo::other_part::op_person_vo::Person;
+use crate::model::vo::other_part::op_piece_direction_vo::PieceDirection;
+use crate::model::vo::other_part::op_piece_movement_vo::*;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -281,9 +280,9 @@ impl MLUniverseDto {
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::First = self.position.get_phase(&Person::Friend) {
-            super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
+            crate::model::vo::other_part::op_region_vo::SenteJin::to_elm()
         } else {
-            super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
+            crate::model::vo::other_part::op_region_vo::GoteJin::to_elm()
         }
     }
     /**
@@ -292,9 +291,9 @@ impl MLUniverseDto {
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::First = self.position.get_phase(&Person::Friend) {
-            super::super::super::vo::other_part::op_region_vo::GoteJin::to_elm()
+            crate::model::vo::other_part::op_region_vo::GoteJin::to_elm()
         } else {
-            super::super::super::vo::other_part::op_region_vo::SenteJin::to_elm()
+            crate::model::vo::other_part::op_region_vo::SenteJin::to_elm()
         }
     }
 
@@ -508,7 +507,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use super::super::super::vo::game_part::gp_phase_vo::Phase::*;
+        use crate::model::vo::game_part::gp_phase_vo::Phase::*;
         match self.position.get_phase(&Person::Friend) {
             First => hash ^= self.get_position_hash_seed().phase[PHASE_FIRST],
             Second => hash ^= self.get_position_hash_seed().phase[PHASE_SECOND],

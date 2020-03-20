@@ -1,15 +1,12 @@
 use super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::model::vo::game_part::gp_square_vo::*;
-use crate::model::dto::main_loop::ml_universe_dto::MLUniverseDto;
+use crate::model::universe::MLUniverseDto;
 use crate::model::vo::other_part::op_misc_vo::PosNums;
 use crate::model::vo::other_part::op_person_vo::Person;
 
 pub struct PositionView {}
 impl PositionView {
     /// 表示
-    ///
-    /// 後手から見た盤を表示するぜ☆（＾～＾）
-    /// デカルト座標の第一象限と x,y 方向が一致するメリットがあるぜ☆（＾～＾）
     pub fn to_string(universe: &MLUniverseDto, pos_nums: &PosNums) -> String {
         let board = universe.get_board(pos_nums);
         let ply = universe.get_position().get_ply();

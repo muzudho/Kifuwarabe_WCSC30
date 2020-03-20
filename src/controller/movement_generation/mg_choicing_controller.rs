@@ -10,12 +10,12 @@ use super::super::super::controller::common_use::cu_asserts_controller::*;
 use super::super::super::controller::movement_generation::mg_controller::*;
 use super::super::super::controller::movement_generation::mg_komatori_result_controller::*;
 use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::main_loop::ml_universe_dto::*;
 use super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::model::dto::search_part::position::*;
+use crate::model::universe::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
