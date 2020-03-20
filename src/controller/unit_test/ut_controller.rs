@@ -25,7 +25,7 @@ pub fn unit_test(
     line: &str,
     starts: &mut usize,
     len: usize,
-    ml_universe_dto: &mut MLUniverseDto,
+    ml_universe_dto: &mut Universe,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // いろいろな動作テスト

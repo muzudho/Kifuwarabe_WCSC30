@@ -14,7 +14,7 @@ use super::super::super::model::vo::game_part::gp_movement_vo::*;
 use super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
-use crate::model::dto::search_part::position::*;
+use crate::model::univ::gam::position::*;
 use crate::model::universe::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -116,7 +116,7 @@ pub fn select_movement_except_check<S: BuildHasher>(
  */
 pub fn select_movement_except_suiceid<S: BuildHasher>(
     ss_hashset_input: &mut HashSet<u64, S>,
-    ml_universe_dto: &mut MLUniverseDto,
+    ml_universe_dto: &mut Universe,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 残すのはここに退避する☆（＾～＾）

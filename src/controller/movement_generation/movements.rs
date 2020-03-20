@@ -6,8 +6,8 @@ use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
-use crate::model::dto::search_part::board::Board;
-use crate::model::dto::search_part::position::Position;
+use crate::model::univ::gam::board::Board;
+use crate::model::univ::gam::position::Position;
 use crate::model::vo::game_part::gp_phase_vo::Phase;
 
 pub struct MGMovements {}
@@ -25,8 +25,8 @@ impl MGMovements {
         // 盤上の駒☆（＾～＾）
         MGSquares::for_all(&mut |source| {
             let callback_next = &mut |destination, promotability| {
-                use super::super::super::model::dto::search_part::board::ThingsInTheSquare::*;
                 use crate::controller::movement_generation::square::Promotability::*;
+                use crate::model::univ::gam::board::ThingsInTheSquare::*;
                 let things_in_the_square =
                     current_board.what_is_in_the_square(friend, &destination, speed_of_light);
                 match things_in_the_square {

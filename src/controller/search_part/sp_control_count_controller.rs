@@ -16,7 +16,7 @@ use std::collections::HashSet;
 ///
 /// 用途：自殺手防止他
 pub fn recalculate_control_count(
-    ml_universe_dto: &mut MLUniverseDto,
+    ml_universe_dto: &mut Universe,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // ゼロ・リセット

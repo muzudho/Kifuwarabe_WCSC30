@@ -100,7 +100,7 @@ pub fn get_best_movement(
     cur_depth: u16,
     end_depth: u16,
     mut sum_nodes: u64,
-    universe: &mut MLUniverseDto,
+    universe: &mut Universe,
     speed_of_light: &MLSpeedOfLightVo,
     pv: &str,
 ) -> Option<SPBestmove> {

@@ -2,33 +2,33 @@
 //! 現局面を使った指し手生成
 //!
 
-use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::common_use::cu_conv_controller::*;
-use super::super::super::controller::movement_generation::mg_choicing_controller::*;
-use super::super::super::controller::movement_generation::mg_direction::*;
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::dto::search_part::board::*;
-use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
-use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
-use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
-use super::super::super::model::vo::game_part::gp_square_and_piece_vo::GPSquareAndPieceVo;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::model::vo::other_part::op_person_vo::Person;
-use super::super::super::model::vo::other_part::op_piece_direction_vo::*;
-use super::super::super::model::vo::other_part::op_piece_movement_vo::*;
 use super::square::Squares;
+use crate::controller::common_use::cu_asserts_controller::*;
+use crate::controller::common_use::cu_conv_controller::*;
+use crate::controller::movement_generation::mg_choicing_controller::*;
+use crate::controller::movement_generation::mg_direction::*;
 use crate::controller::movement_generation::movements::*;
-use crate::model::dto::search_part::position::*;
+use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::board::*;
+use crate::model::univ::gam::position::*;
 use crate::model::universe::*;
+use crate::model::vo::game_part::gp_phase_vo::Phase;
+use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
+use crate::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
+use crate::model::vo::game_part::gp_piece_type_vo::*;
+use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use crate::model::vo::game_part::gp_square_and_piece_vo::GPSquareAndPieceVo;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::vo::other_part::op_person_vo::Person;
+use crate::model::vo::other_part::op_piece_direction_vo::*;
+use crate::model::vo::other_part::op_piece_movement_vo::*;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
 /// 利きがどのように変わるかも返して欲しいぜ☆（＾～＾）
 pub fn generate_movement(
-    universe: &mut MLUniverseDto,
+    universe: &mut Universe,
     speed_of_light: &MLSpeedOfLightVo,
     movement_set: &mut HashSet<u64>,
 ) {

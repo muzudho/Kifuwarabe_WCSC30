@@ -1,16 +1,16 @@
 //! 探索部
-use super::super::super::super::controller::search_part::sp_number_board_controller::*;
-use super::super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::super::model::dto::search_part::board::*;
-use super::super::super::super::model::vo::game_part::gp_movement_vo::*;
-use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
-use super::super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::super::model::vo::other_part::op_person_vo::*;
-use super::super::super::super::model::vo::other_part::op_ply_vo::*;
+use crate::controller::search_part::sp_number_board_controller::*;
+use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::dto::search_part::sp_info::SPInfo;
+use crate::model::univ::gam::board::*;
+use crate::model::vo::game_part::gp_movement_vo::*;
+use crate::model::vo::game_part::gp_phase_vo::*;
+use crate::model::vo::game_part::gp_piece_type_vo::*;
+use crate::model::vo::game_part::gp_piece_vo::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::vo::other_part::op_person_vo::*;
+use crate::model::vo::other_part::op_ply_vo::*;
 
 /// ミュータブルなオブジェクト☆（＾～＾）
 pub struct Position {

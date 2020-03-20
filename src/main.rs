@@ -38,7 +38,7 @@ fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
     let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::default();
     // 宇宙
-    let mut ml_universe_dto: MLUniverseDto = MLUniverseDto::default();
+    let mut ml_universe_dto: Universe = Universe::default();
     ml_universe_dto.big_bang();
 
     // [Ctrl]+[C] で強制終了
@@ -127,7 +127,7 @@ fn main() {
 fn parse_extend_command(
     line: &str,
     mut starts: usize,
-    ml_universe_dto: &mut MLUniverseDto,
+    ml_universe_dto: &mut Universe,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 文字数を調べようぜ☆（＾～＾）

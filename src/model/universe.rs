@@ -6,8 +6,9 @@ use crate::model::dto::search_part::sp_info::SPInfo;
 use rand::Rng;
 
 use crate::config::*;
-use crate::model::dto::search_part::board::*;
-use crate::model::dto::search_part::position::*;
+use crate::model::univ::gam::board::*;
+use crate::model::univ::gam::position::*;
+use crate::model::univ::game::*;
 use crate::model::vo::game_part::gp_movement_vo::*;
 use crate::model::vo::game_part::gp_phase_vo::*;
 use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
@@ -95,40 +96,23 @@ pub struct PositionHashSeed {
 }
 
 /// アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）
-pub struct MLUniverseDto {
-    /// 局面ハッシュ種☆（＾～＾）
-    position_hash_seed: PositionHashSeed,
-    /// 初期局面
-    starting_board: Board,
-    /// 初期局面ハッシュ
-    starting_position_hash: u64,
+pub struct Universe {
+    pub game: Game,
     /// 対話モード
     pub dialogue_mode: bool,
     /// コマンドを溜めておくバッファー
     pub vec_command: Vec<String>,
-    /// 探索部
-    position: Position,
 }
-impl Default for MLUniverseDto {
+impl Default for Universe {
     fn default() -> Self {
-        MLUniverseDto {
-            position_hash_seed: PositionHashSeed {
-                // 盤上の駒
-                km: [[0; PIECE_LN]; BOARD_MEMORY_AREA],
-                // 持ち駒
-                mg: [[0; MG_MAX]; PIECE_LN],
-                // 先後
-                phase: [0; PHASE_LN],
-            },
-            starting_board: Board::default(),
-            starting_position_hash: 0,
+        Universe {
+            game: Game::default(),
             dialogue_mode: false,
             vec_command: Vec::new(),
-            position: Position::default(),
         }
     }
 }
-impl MLUniverseDto {
+impl Universe {
     /**
      * 宇宙誕生
      */
@@ -139,27 +123,27 @@ impl MLUniverseDto {
         for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
             for i_km in 0..PIECE_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.get_position_hash_seed_mut().km[i_ms][i_km] =
+                self.game.position_hash_seed.km[i_ms][i_km] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 持ち駒
         for i_km in 0..PIECE_LN {
             for i_mg in 0..MG_MAX {
-                self.get_position_hash_seed_mut().mg[i_km][i_mg] =
+                self.game.position_hash_seed.mg[i_km][i_mg] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 先後
         for i_phase in 0..PHASE_LN {
-            self.get_position_hash_seed_mut().phase[i_phase] =
+            self.game.position_hash_seed.phase[i_phase] =
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }
     }
     pub fn get_board(&self, num: &PosNums) -> &Board {
         match *num {
             PosNums::Current => self.get_position().get_current_board(),
-            PosNums::Start => self.get_starting_board(),
+            PosNums::Start => &self.game.starting_board,
         }
     }
     /**
@@ -167,7 +151,7 @@ impl MLUniverseDto {
      * 手目も 0 に戻します。
      */
     pub fn clear_all_positions(&mut self) {
-        self.get_starting_board_mut().clear();
+        self.game.starting_board.clear();
         self.get_position_mut().get_current_board_mut().clear();
         self.get_position_mut().set_ply(0);
     }
@@ -177,15 +161,16 @@ impl MLUniverseDto {
         for i_ms in 0..BOARD_MEMORY_AREA {
             let i_sq = Square::from_usquare(i_ms);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-            let piece = self.starting_board.get_piece_by_square(&i_sq);
-            self.position
+            let piece = self.game.starting_board.get_piece_by_square(&i_sq);
+            self.game
+                .position
                 .get_current_board_mut()
                 .set_piece_by_square(&i_sq, piece);
         }
 
         // 持ち駒
-        self.position.get_current_board_mut().hand[..PIECE_LN]
-            .clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
+        self.game.position.get_current_board_mut().hand[..PIECE_LN]
+            .clone_from_slice(&self.game.starting_board.hand[..PIECE_LN]);
         /*
         for i_mg in 0..PIECE_LN {
             self.get_search_part_mut().get_current_position_mut().mg[i_mg] =
@@ -194,35 +179,11 @@ impl MLUniverseDto {
         */
     }
 
-    pub fn get_position_hash_seed(&self) -> &PositionHashSeed {
-        &self.position_hash_seed
-    }
-    pub fn get_position_hash_seed_mut(&mut self) -> &mut PositionHashSeed {
-        &mut self.position_hash_seed
-    }
-
-    pub fn get_starting_board(&self) -> &Board {
-        &self.starting_board
-    }
-    pub fn get_starting_board_mut(&mut self) -> &mut Board {
-        &mut self.starting_board
-    }
-
-    pub fn get_starting_position_hash(&self) -> &u64 {
-        &self.starting_position_hash
-    }
-    pub fn get_starting_position_hash_mut(&mut self) -> &mut u64 {
-        &mut self.starting_position_hash
-    }
-    pub fn set_starting_position_hash(&mut self, val: u64) {
-        self.starting_position_hash = val;
-    }
-
     pub fn get_position_mut(&mut self) -> &mut Position {
-        &mut self.position
+        &mut self.game.position
     }
     pub fn get_position(&self) -> &Position {
-        &self.position
+        &self.game.position
     }
 
     /* **********************
@@ -244,14 +205,15 @@ impl MLUniverseDto {
 
     /// 初期局面の盤上に駒の位置を設定するもの
     pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: GPPieceVo) {
-        self.get_starting_board_mut()
+        self.game
+            .starting_board
             .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
     pub fn set_starting_position_hand_piece(&mut self, km: GPPieceVo, maisu: i8) {
-        self.get_starting_board_mut().hand[km as usize] = maisu;
+        self.game.starting_board.hand[km as usize] = maisu;
     }
     pub fn get_person_by_piece_vo(&self, piece_vo: &GPPieceStructVo) -> Person {
-        if &piece_vo.phase() == &self.position.get_phase(&Person::Friend) {
+        if &piece_vo.phase() == &self.game.position.get_phase(&Person::Friend) {
             Person::Friend
         } else {
             Person::Opponent
@@ -261,10 +223,7 @@ impl MLUniverseDto {
     /// 局面ハッシュ。
     pub fn get_all_position_hash_text(&self) -> String {
         let mut s = String::new();
-        s.push_str(&format!(
-            "[ini] {:20}\n",
-            &self.get_starting_position_hash()
-        ));
+        s.push_str(&format!("[ini] {:20}\n", &self.game.starting_position_hash));
 
         for ply in 0..self.get_position().get_ply() {
             let hash = &self.get_position().get_position_hash_history()[ply as usize];
@@ -279,7 +238,7 @@ impl MLUniverseDto {
      */
     #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.position.get_phase(&Person::Friend) {
+        if let Phase::First = self.game.position.get_phase(&Person::Friend) {
             crate::model::vo::other_part::op_region_vo::SenteJin::to_elm()
         } else {
             crate::model::vo::other_part::op_region_vo::GoteJin::to_elm()
@@ -290,7 +249,7 @@ impl MLUniverseDto {
      */
     #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.position.get_phase(&Person::Friend) {
+        if let Phase::First = self.game.position.get_phase(&Person::Friend) {
             crate::model::vo::other_part::op_region_vo::GoteJin::to_elm()
         } else {
             crate::model::vo::other_part::op_region_vo::SenteJin::to_elm()
@@ -298,7 +257,7 @@ impl MLUniverseDto {
     }
 
     pub fn get_mut_info(&mut self) -> &mut SPInfo {
-        &mut self.position.info
+        &mut self.game.position.info
     }
 
     /// 表示
@@ -310,10 +269,10 @@ impl MLUniverseDto {
     ) -> String {
         let nb = match *phase {
             Phase::None => {
-                &self.position.control_count_by_piece
+                &self.game.position.control_count_by_piece
                     [speed_of_light.get_piece_struct_vo(pc).serial_piece_number()]
             }
-            _ => &self.position.control_count_by_phase[phase_to_num(&phase)],
+            _ => &self.game.position.control_count_by_phase[phase_to_num(&phase)],
         };
 
         // 数盤表示
@@ -448,12 +407,12 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     pub fn do_move(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.get_position().get_ply();
-        self.position.set_current_movement(movement);
+        self.game.position.set_current_movement(movement);
         let cap;
         {
-            cap = self.position.do_move(movement, speed_of_light);
+            cap = self.game.position.do_move(movement, speed_of_light);
         }
-        self.position.set_cap(ply as usize, cap);
+        self.game.position.set_cap(ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash(speed_of_light);
@@ -467,8 +426,8 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
             // 棋譜から読取、手目も減る
             self.get_position_mut().add_ply(-1);
             // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
-            let ss = &self.position.get_move().clone();
-            self.position.undo_move(/*&phase,*/ ss, speed_of_light);
+            let ss = &self.game.position.get_move().clone();
+            self.game.position.undo_move(/*&phase,*/ ss, speed_of_light);
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {
@@ -489,10 +448,10 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
      * 初期局面ハッシュを作り直す
      */
     pub fn create_starting_position_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
-        let mut hash = self.get_starting_board().create_hash(&self, speed_of_light);
+        let mut hash = self.game.starting_board.create_hash(&self, speed_of_light);
 
         // 手番ハッシュ（後手固定）
-        hash ^= self.get_position_hash_seed().phase[PHASE_SECOND];
+        hash ^= self.game.position_hash_seed.phase[PHASE_SECOND];
 
         hash
     }
@@ -508,9 +467,9 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
 
         // 手番ハッシュ
         use crate::model::vo::game_part::gp_phase_vo::Phase::*;
-        match self.position.get_phase(&Person::Friend) {
-            First => hash ^= self.get_position_hash_seed().phase[PHASE_FIRST],
-            Second => hash ^= self.get_position_hash_seed().phase[PHASE_SECOND],
+        match self.game.position.get_phase(&Person::Friend) {
+            First => hash ^= self.game.position_hash_seed.phase[PHASE_FIRST],
+            Second => hash ^= self.game.position_hash_seed.phase[PHASE_SECOND],
             _ => {}
         }
 
@@ -540,7 +499,7 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         }
 
         // 初期局面のハッシュ
-        if *self.get_starting_position_hash()
+        if self.game.starting_position_hash
             == self.get_position().get_position_hash_history()[last_ply as usize]
         {
             count += 1;
