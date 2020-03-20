@@ -238,7 +238,7 @@ impl Board {
             let i_sq = Square::from_usquare(i_ms as usquare);
             let km = self.get_piece_by_square(&i_sq);
             let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();
-            hash ^= game.position_hash_seed.km[i_ms][num_km];
+            hash ^= game.hash_seed.km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
@@ -256,7 +256,7 @@ impl Board {
                 MG_MAX
             );
 
-            hash ^= game.position_hash_seed.mg[num_km][maisu as usize];
+            hash ^= game.hash_seed.mg[num_km][maisu as usize];
         });
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）

@@ -12,11 +12,21 @@ use crate::model::univ::gam::position::Position;
 use crate::model::univ::gam::square::BOARD_MEMORY_AREA;
 use crate::model::univ::gam::square::SQUARE_NONE;
 use crate::model::univ::gam::square::*;
-use crate::model::universe::PositionHashSeed;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use crate::model::vo::other_part::op_misc_vo::PosNums;
 use crate::model::vo::other_part::op_person_vo::Person;
 use rand::Rng;
+
+/// 現対局ハッシュ種
+/// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
+pub struct GameHashSeed {
+    // 盤上の駒
+    pub km: [[u64; PIECE_LN]; BOARD_MEMORY_AREA],
+    // 持ち駒
+    pub mg: [[u64; MG_MAX]; PIECE_LN],
+    // 先後
+    pub phase: [u64; PHASE_LN],
+}
 
 pub struct Game {
     /// 棋譜
@@ -25,10 +35,12 @@ pub struct Game {
     pub starting_position_hash: u64,
     /// 初期局面
     pub starting_board: Board,
-    /// 現局面ハッシュ種☆（＾～＾）
-    pub position_hash_seed: PositionHashSeed,
-    /// 探索部
+    /// 現対局ハッシュ種☆（＾～＾）
+    pub hash_seed: GameHashSeed,
+    /// 現局面
     pub position: Position,
+    /// 情報表示担当
+    pub info: SPInfo,
 }
 impl Default for Game {
     fn default() -> Game {
@@ -36,7 +48,7 @@ impl Default for Game {
             history: History::default(),
             starting_position_hash: 0,
             starting_board: Board::default(),
-            position_hash_seed: PositionHashSeed {
+            hash_seed: GameHashSeed {
                 // 盤上の駒
                 km: [[0; PIECE_LN]; BOARD_MEMORY_AREA],
                 // 持ち駒
@@ -45,6 +57,7 @@ impl Default for Game {
                 phase: [0; PHASE_LN],
             },
             position: Position::default(),
+            info: SPInfo::default(),
         }
     }
 }
@@ -57,20 +70,20 @@ impl Game {
         for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
             for i_km in 0..PIECE_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.position_hash_seed.km[i_ms][i_km] =
+                self.hash_seed.km[i_ms][i_km] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 持ち駒
         for i_km in 0..PIECE_LN {
             for i_mg in 0..MG_MAX {
-                self.position_hash_seed.mg[i_km][i_mg] =
+                self.hash_seed.mg[i_km][i_mg] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 先後
         for i_phase in 0..PHASE_LN {
-            self.position_hash_seed.phase[i_phase] =
+            self.hash_seed.phase[i_phase] =
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }
     }
@@ -196,7 +209,7 @@ impl Game {
     }
 
     pub fn get_mut_info(&mut self) -> &mut SPInfo {
-        &mut self.position.info
+        &mut self.info
     }
 
     /// 初期局面ハッシュを作り直す
@@ -204,7 +217,7 @@ impl Game {
         let mut hash = self.starting_board.create_hash(&self, speed_of_light);
 
         // 手番ハッシュ（後手固定）
-        hash ^= self.position_hash_seed.phase[PHASE_SECOND];
+        hash ^= self.hash_seed.phase[PHASE_SECOND];
 
         hash
     }
@@ -219,8 +232,8 @@ impl Game {
         // 手番ハッシュ
         use crate::model::univ::gam::phase::Phase::*;
         match self.history.get_phase(&Person::Friend) {
-            First => hash ^= self.position_hash_seed.phase[PHASE_FIRST],
-            Second => hash ^= self.position_hash_seed.phase[PHASE_SECOND],
+            First => hash ^= self.hash_seed.phase[PHASE_FIRST],
+            Second => hash ^= self.hash_seed.phase[PHASE_SECOND],
             _ => {}
         }
 

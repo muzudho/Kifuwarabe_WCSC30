@@ -5,11 +5,8 @@ extern crate rand;
 
 use crate::config::*;
 use crate::model::univ::gam::movement::*;
-use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
-use crate::model::univ::gam::square::*;
 use crate::model::univ::game::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_piece_direction_vo::PieceDirection;
@@ -74,17 +71,6 @@ pub fn g_logln(s: &str) {
 pub fn g_writeln(s: &str) {
     println!("{}", s);
     g_logln(s);
-}
-
-/// 局面ハッシュ種
-/// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
-pub struct PositionHashSeed {
-    // 盤上の駒
-    pub km: [[u64; PIECE_LN]; BOARD_MEMORY_AREA],
-    // 持ち駒
-    pub mg: [[u64; MG_MAX]; PIECE_LN],
-    // 先後
-    pub phase: [u64; PHASE_LN],
 }
 
 /// アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）

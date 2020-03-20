@@ -1,6 +1,5 @@
 //! 探索部
 use crate::controller::search_part::sp_number_board_controller::*;
-use crate::model::dto::search_part::sp_info::SPInfo;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::*;
@@ -21,10 +20,6 @@ pub struct Position {
 
     /// 利きの数（先後付き駒別）
     pub control_count_by_piece: [NumberBoard; PIECE_LN],
-    // ビジョン・ツリー
-    // pub vision_tree_by_phase: [VisionTree; PHASE_LN],
-    /// 情報表示担当
-    pub info: SPInfo,
 }
 impl Default for Position {
     fn default() -> Self {
@@ -72,8 +67,6 @@ impl Default for Position {
                 NumberBoard::default(),
                 NumberBoard::default(),
             ],
-            // vision_tree_by_phase: [VisionTree::default(), VisionTree::default(), VisionTree::default()],
-            info: SPInfo::default(),
         }
     }
 }
