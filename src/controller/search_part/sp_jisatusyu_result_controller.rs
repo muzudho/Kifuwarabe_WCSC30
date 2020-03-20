@@ -3,11 +3,11 @@
 //! 結果：自殺手。移動先が敵の利き
 //!
 
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::phase::phase_to_num;
+use crate::model::univ::gam::phase::turn_phase;
 use crate::model::universe::*;
-use crate::model::vo::game_part::gp_phase_vo::phase_to_num;
-use crate::model::vo::game_part::gp_phase_vo::turn_phase;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 動かした先が、敵の利きに飛び込んでいれば、自殺手
 /// TODO 利きを再計算したい

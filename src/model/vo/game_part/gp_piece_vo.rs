@@ -4,8 +4,8 @@
 //! 先後付き駒
 //!
 
-use super::gp_phase_vo::*;
-use super::gp_piece_type_vo::*;
+use crate::model::univ::gam::phase::*;
+use crate::model::univ::gam::piece_type::*;
 use std::fmt;
 
 ///
@@ -123,8 +123,8 @@ impl GPPieceVo {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
     pub fn from_phase_and_piece_type(phase: &Phase, piece_type: GPPieceTypeVo) -> Self {
-        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
         use super::gp_piece_vo::GPPieceVo::*;
+        use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
         match *phase {
             Phase::First => match piece_type {
                 King => King1,

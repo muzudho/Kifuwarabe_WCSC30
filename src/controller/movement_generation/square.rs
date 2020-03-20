@@ -1,6 +1,6 @@
-use super::super::super::model::vo::game_part::gp_square_vo::Square;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use crate::model::vo::game_part::gp_phase_vo::Phase;
+use crate::model::univ::gam::phase::Phase;
+use crate::model::vo::game_part::gp_square_vo::Square;
+use crate::model::vo::game_part::gp_square_vo::*;
 
 pub enum Promotability {
     /// 成ることはできないぜ☆（＾～＾）

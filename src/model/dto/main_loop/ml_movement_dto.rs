@@ -1,12 +1,12 @@
 //!
 //! USIプロトコル
 //!
-use super::super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::super::controller::common_use::cu_conv_controller::*;
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
+use crate::controller::common_use::cu_asserts_controller::*;
+use crate::controller::common_use::cu_conv_controller::*;
+use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use std::fmt;
 
 /// 指し手
@@ -83,7 +83,7 @@ impl fmt::Display for MLMovementDto {
         let (dx, dy) = self.dst.to_file_rank();
 
         if self.src.to_usquare() == SQUARE_DROP {
-            use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+            use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
             write!(
                 f,
                 "{}*{}{}{}",

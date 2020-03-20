@@ -1,12 +1,12 @@
 //!
 //! USIプロトコル
 //!
-use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::model::vo::other_part::op_constants_vo::*;
+use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::universe::*;
+use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::vo::other_part::op_constants_vo::*;
 
 /**
  * 指し手読取

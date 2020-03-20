@@ -1,15 +1,15 @@
 //!
 //! 利き数
 //!
-use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::movement_generation::mg_controller::*;
-use super::super::super::model::vo::game_part::gp_phase_vo::*;
-use super::super::super::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
-use super::super::super::model::vo::game_part::gp_piece_vo::*;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::controller::common_use::cu_asserts_controller::*;
+use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_square::*;
+use crate::model::univ::gam::phase::*;
 use crate::model::universe::*;
+use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
+use crate::model::vo::game_part::gp_piece_vo::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use std::collections::HashSet;
 
 /// 指定局面の利き升調べ。一から再計算☆（＾～＾）

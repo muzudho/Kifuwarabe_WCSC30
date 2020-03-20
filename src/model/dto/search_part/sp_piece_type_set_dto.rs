@@ -2,9 +2,9 @@
 //! 駒種類集合
 //!
 
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use std::collections::HashSet;
 
 pub struct SPPieceTypeSetDto {

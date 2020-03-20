@@ -1,10 +1,10 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
+use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::piece_type::*;
 use crate::model::universe::*;
+use crate::model::vo::game_part::gp_square_vo::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 

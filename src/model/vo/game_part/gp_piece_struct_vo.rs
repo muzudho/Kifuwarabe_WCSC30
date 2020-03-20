@@ -1,6 +1,6 @@
-use super::gp_phase_vo::Phase;
-use super::gp_piece_type_vo::GPPieceTypeVo;
 use super::gp_piece_vo::GPPieceVo;
+use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
@@ -26,9 +26,9 @@ pub struct GPPieceStructVo {
 impl GPPieceStructVo {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: GPPieceVo) -> Self {
-        use super::super::game_part::gp_phase_vo::Phase::*;
         use super::super::game_part::gp_piece_vo::GPPieceVo::*;
-        use super::gp_piece_type_vo::GPPieceTypeVo::*;
+        use crate::model::univ::gam::phase::Phase::*;
+        use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
         match p {
             King1 => GPPieceStructVo {
                 piece: King1,
@@ -362,7 +362,7 @@ impl GPPieceStructVo {
 
     /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
     pub fn is_promoted(&self) -> bool {
-        use super::super::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+        use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
         match self.piece_type() {
             King => false,
             Rook => false,

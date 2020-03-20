@@ -1,7 +1,7 @@
 //!
 //! 駒種類。
 //!
-use super::gp_piece_type_vo::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 
 pub struct PieceTypeStructVo {
     /// 配列のインデックス用☆（＾～＾）
@@ -19,7 +19,7 @@ pub struct PieceTypeStructVo {
 }
 impl PieceTypeStructVo {
     pub fn from_piece_type(piece_type: GPPieceTypeVo) -> Self {
-        use super::gp_piece_type_vo::GPPieceTypeVo::*;
+        use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
         match piece_type {
             King => PieceTypeStructVo {
                 serial_piece_number: 0,

@@ -4,7 +4,7 @@
 //! 先後なしの駒と空白
 //!
 
-use super::super::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
@@ -140,7 +140,7 @@ impl GPHandPieces {
 
 /// 数値の駒種類化
 pub fn num_to_piece_type(n: usize) -> GPPieceTypeVo {
-    use super::super::super::vo::game_part::gp_piece_type_vo::GPPieceTypeVo::*;
+    use GPPieceTypeVo::*;
     match n {
         0 => King,
         1 => Rook,

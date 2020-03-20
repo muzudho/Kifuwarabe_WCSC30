@@ -2,11 +2,11 @@
 //! 変換
 //!
 #![allow(dead_code)]
-use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
-use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::model::vo::other_part::op_direction_vo::*;
-use super::super::super::model::vo::other_part::op_piece_direction_vo::PieceDirection;
+use crate::controller::common_use::cu_geo_teigi_controller::*;
+use crate::model::univ::gam::phase::Phase;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::other_part::op_direction_vo::*;
+use crate::model::vo::other_part::op_piece_direction_vo::PieceDirection;
 
 /**********
  * 論理値 *
@@ -145,7 +145,7 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
 pub fn kaiten180_sq_by_sq_phase(sq: &Square, phase: &Phase) -> Square {
-    use super::super::super::model::vo::game_part::gp_phase_vo::Phase::*;
+    use crate::model::univ::gam::phase::Phase::*;
     match *phase {
         First => Square::from_usquare(BAN_MAX - sq.to_usquare() + BAN_MIN),
         _ => (*sq).clone(),

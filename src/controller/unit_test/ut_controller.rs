@@ -3,18 +3,18 @@
 //!
 //! unit-test コマンドで実行しろだぜ☆（＾～＾）
 //!
-use super::super::super::controller::common_use::cu_geo_teigi_controller::*;
-use super::super::super::controller::common_use::cu_math_controller::*;
-use super::super::super::controller::common_use::cu_random_move_controller;
-use super::super::super::controller::movement_generation::mg_controller::*;
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::vo::game_part::gp_phase_vo::Phase;
-use super::super::super::model::vo::game_part::gp_piece_type_vo::GPPieceTypeVo;
-use super::super::super::model::vo::game_part::gp_square_and_piece_vo::*;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::model::vo::other_part::op_person_vo::Person;
+use crate::controller::common_use::cu_geo_teigi_controller::*;
+use crate::controller::common_use::cu_math_controller::*;
+use crate::controller::common_use::cu_random_move_controller;
+use crate::controller::movement_generation::mg_controller::*;
+use crate::model::dto::main_loop::ml_movement_dto::*;
+use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 use crate::model::universe::*;
+use crate::model::vo::game_part::gp_square_and_piece_vo::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::vo::other_part::op_person_vo::Person;
 use crate::view::unit_test::unit_test_view::print_piece_type_hashset;
 use crate::view::unit_test::unit_test_view::print_square_hashset;
 use std::collections::HashSet;

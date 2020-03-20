@@ -1,14 +1,14 @@
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::model::vo::game_part::gp_piece_vo::*;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::controller::movement_generation::mg_square::*;
 use crate::controller::movement_generation::square::*;
+use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::univ::gam::board::Board;
+use crate::model::univ::gam::phase::Phase;
+use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::Position;
-use crate::model::vo::game_part::gp_phase_vo::Phase;
+use crate::model::vo::game_part::gp_piece_vo::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::vo::other_part::op_person_vo::Person;
 
 pub struct MGMovements {}
 impl MGMovements {

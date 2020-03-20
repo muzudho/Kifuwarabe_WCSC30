@@ -8,13 +8,13 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use super::super::super::super::model::vo::game_part::gp_phase_vo::*;
-use super::super::super::super::model::vo::game_part::gp_piece_type_vo::*;
-use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
-use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
-use super::super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::univ::gam::phase::*;
+use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::game::Game;
+use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
+use crate::model::vo::game_part::gp_piece_vo::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 pub enum ThingsInTheSquare {
     Space,
@@ -132,7 +132,7 @@ impl Board {
         self.board[sq.to_usquare()] = piece.clone();
 
         // 玉の位置を覚え直します。
-        use super::super::super::super::model::vo::game_part::gp_phase_vo::Phase::*;
+        use crate::model::univ::gam::phase::Phase::*;
         match *piece {
             GPPieceVo::King1 => self.square_of_king[First as usize] = sq.clone(),
             GPPieceVo::King2 => self.square_of_king[Second as usize] = sq.clone(),

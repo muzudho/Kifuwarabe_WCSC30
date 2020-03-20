@@ -3,19 +3,19 @@
 //!
 
 extern crate rand;
-use crate::model::vo::game_part::gp_phase_vo::phase_to_num;
+use crate::model::univ::gam::phase::phase_to_num;
 use rand::Rng;
 
-use super::super::super::controller::common_use::cu_asserts_controller::*;
-use super::super::super::controller::movement_generation::mg_controller::*;
-use super::super::super::controller::movement_generation::mg_komatori_result_controller::*;
-use super::super::super::model::dto::main_loop::ml_movement_dto::*;
-use super::super::super::model::vo::game_part::gp_movement_vo::*;
-use super::super::super::model::vo::game_part::gp_square_vo::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use super::super::super::model::vo::other_part::op_person_vo::Person;
+use crate::controller::common_use::cu_asserts_controller::*;
+use crate::controller::movement_generation::mg_controller::*;
+use crate::controller::movement_generation::mg_komatori_result_controller::*;
+use crate::model::dto::main_loop::ml_movement_dto::*;
 use crate::model::univ::gam::position::*;
 use crate::model::universe::*;
+use crate::model::vo::game_part::gp_movement_vo::*;
+use crate::model::vo::game_part::gp_square_vo::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
+use crate::model::vo::other_part::op_person_vo::Person;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 

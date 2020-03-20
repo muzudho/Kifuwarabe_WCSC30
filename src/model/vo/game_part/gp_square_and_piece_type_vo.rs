@@ -1,5 +1,5 @@
-use super::gp_piece_type_vo::GPPieceTypeVo;
 use super::gp_square_vo::*;
+use crate::model::univ::gam::piece_type::GPPieceTypeVo;
 
 /// 升 × 駒種類
 pub struct GPSquareAndPieceTypeVo {

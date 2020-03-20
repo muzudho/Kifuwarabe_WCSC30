@@ -1,9 +1,9 @@
 use crate::model::dto::search_part::sp_info::SPInfo;
 use crate::model::univ::gam::board::Board;
+use crate::model::univ::gam::phase::PHASE_LN;
+use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::position::Position;
 use crate::model::universe::PositionHashSeed;
-use crate::model::vo::game_part::gp_phase_vo::PHASE_LN;
-use crate::model::vo::game_part::gp_phase_vo::*;
 use crate::model::vo::game_part::gp_piece_struct_vo::GPPieceStructVo;
 use crate::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use crate::model::vo::game_part::gp_piece_vo::MG_MAX;
@@ -181,7 +181,7 @@ impl Game {
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use crate::model::vo::game_part::gp_phase_vo::Phase::*;
+        use crate::model::univ::gam::phase::Phase::*;
         match self.position.get_phase(&Person::Friend) {
             First => hash ^= self.position_hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.position_hash_seed.phase[PHASE_SECOND],
