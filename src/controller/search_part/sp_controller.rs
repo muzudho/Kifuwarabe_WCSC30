@@ -43,7 +43,7 @@ impl SPBestmove {
 /// 兄弟局面（横方向）と比較しての結果。
 struct SiblingBestmoveState {
     movement_hash: u64,
-    value: i16,
+    pub value: i16,
     /// らいおんきゃっち数。玉を取ったら1。
     /// 現局面では、玉を取られた時は偶数、玉を取った時は奇数になる。
     raioncatch_number: i16,
@@ -59,10 +59,6 @@ impl SiblingBestmoveState {
 
     pub fn get_movement_hash(&self) -> u64 {
         self.movement_hash
-    }
-
-    pub fn get_value(&self) -> i16 {
-        self.value
     }
 
     pub fn catch_king(&mut self) {
@@ -139,7 +135,7 @@ pub fn get_best_movement(
     if movement_set.is_empty() {
         let best_value = 0;
         let resign_move = MovementBuilder::default();
-        universe.game.get_mut_info().print(
+        universe.game.info.print(
             cur_depth,
             sum_nodes,
             best_value,
@@ -176,10 +172,10 @@ pub fn get_best_movement(
 
             if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
             let movement = MovementBuilder::from_hash(*movement_hash);
-            universe.game.get_mut_info().print(
+            universe.game.info.print(
                 cur_depth,
                 sum_nodes,
-                bestmove_state.get_value(),
+                bestmove_state.value,
                 &movement,
                 &format!("{} {} EndNode", pv, movement),
             );
@@ -216,10 +212,10 @@ pub fn get_best_movement(
 
                     if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
                     let movement = &MovementBuilder::from_hash(*movement_hash);
-                    universe.game.get_mut_info().print(
+                    universe.game.info.print(
                         cur_depth,
                         sum_nodes,
-                        bestmove_state.get_value(),
+                        bestmove_state.value,
                         movement,
                         &format!("{} {} Backward1", pv, movement),
                     );
@@ -239,17 +235,17 @@ pub fn get_best_movement(
     };
 
     // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-    universe.game.get_mut_info().print(
+    universe.game.info.print(
         cur_depth,
         sum_nodes,
-        bestmove_state.get_value(),
+        bestmove_state.value,
         &best_movement,
         &format!("{} {} Backward2", pv, best_movement),
     );
 
     Some(SPBestmove::new(
         best_movement,
-        bestmove_state.get_value(),
+        bestmove_state.value,
         sum_nodes,
         bestmove_state.raioncatch_number,
     ))

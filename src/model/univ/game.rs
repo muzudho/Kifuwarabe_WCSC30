@@ -90,19 +90,19 @@ impl Game {
 
     /// 棋譜の作成
     pub fn set_current_movement(&mut self, movement: &Movement) {
-        self.history.movements[self.history.get_ply() as usize] = movement.clone()
+        self.history.movements[self.history.ply as usize] = movement.clone()
     }
     pub fn build_current_movement(&mut self) {
-        self.history.movements[self.history.get_ply() as usize] =
+        self.history.movements[self.history.ply as usize] =
             Movement::new(&self.position.current_movement_builder)
     }
     pub fn get_move(&self) -> &Movement {
-        &self.history.movements[self.history.get_ply() as usize]
+        &self.history.movements[self.history.ply as usize]
     }
     /// 棋譜☆（＾～＾）
     pub fn get_moves_history_text(&self) -> String {
         let mut s = String::new();
-        for ply in 0..self.history.get_ply() {
+        for ply in 0..self.history.ply {
             let movement = &self.history.movements[ply as usize];
             s.push_str(&format!("[{}] {}", ply, movement));
         }
@@ -110,10 +110,10 @@ impl Game {
     }
 
     pub fn get_current_position_hash(&mut self) -> u64 {
-        self.history.position_hashs[self.history.get_ply() as usize]
+        self.history.position_hashs[self.history.ply as usize]
     }
     pub fn set_current_position_hash(&mut self, hash: u64) {
-        self.history.position_hashs[self.history.get_ply() as usize] = hash;
+        self.history.position_hashs[self.history.ply as usize] = hash;
     }
     pub fn set_cap(&mut self, ply1: usize, km: Piece) {
         self.history.captured_pieces[ply1] = km
@@ -121,7 +121,7 @@ impl Game {
 
     pub fn get_board(&self, num: &PosNums) -> &Board {
         match *num {
-            PosNums::Current => self.position.get_current_board(),
+            PosNums::Current => &self.position.current_board,
             PosNums::Start => &self.starting_board,
         }
     }
@@ -130,8 +130,8 @@ impl Game {
     /// 手目も 0 に戻します。
     pub fn clear_all_positions(&mut self) {
         self.starting_board.clear();
-        self.position.get_current_board_mut().clear();
-        self.history.set_ply(0);
+        self.position.current_board.clear();
+        self.history.ply = 0;
     }
 
     /// 開始局面を、現局面にコピーします
@@ -142,12 +142,12 @@ impl Game {
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
             let piece = self.starting_board.get_piece_by_square(&i_sq);
             self.position
-                .get_current_board_mut()
+                .current_board
                 .set_piece_by_square(&i_sq, piece);
         }
 
         // 持ち駒
-        self.position.get_current_board_mut().hand[..PIECE_LN]
+        self.position.current_board.hand[..PIECE_LN]
             .clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
         /*
         for i_mg in 0..PIECE_LN {
@@ -180,7 +180,7 @@ impl Game {
         let mut s = String::new();
         s.push_str(&format!("[ini] {:20}\n", &self.starting_position_hash));
 
-        for ply in 0..self.history.get_ply() {
+        for ply in 0..self.history.ply {
             let hash = &self.history.position_hashs[ply as usize];
             // 64bitは10進数20桁。改行する
             s.push_str(&format!("[{:3}] {:20}\n", ply, hash));
@@ -208,10 +208,6 @@ impl Game {
         }
     }
 
-    pub fn get_mut_info(&mut self) -> &mut SPInfo {
-        &mut self.info
-    }
-
     /// 初期局面ハッシュを作り直す
     pub fn create_starting_position_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = self.starting_board.create_hash(&self, speed_of_light);
@@ -226,7 +222,7 @@ impl Game {
     pub fn create_ky1_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = self
             .position
-            .get_current_board()
+            .current_board
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
@@ -244,13 +240,13 @@ impl Game {
     /// 現局面は、同一局面が何回目かを調べるぜ☆（＾～＾）
     /// TODO 初期局面を何に使ってるのか☆（＾～＾）？
     pub fn count_same_ky(&self) -> i8 {
-        if self.history.get_ply() < 1 {
+        if self.history.ply < 1 {
             return 0;
         }
 
         let mut count = 0;
-        let last_ply = self.history.get_ply() - 1;
-        let new_ply = self.history.get_ply();
+        let last_ply = self.history.ply - 1;
+        let new_ply = self.history.ply;
         // g_writeln( &format!( "Ｃount_same_ky last_ply={} new_ply={}", last_ply ,new_ply ) );
         for i_ply in 0..new_ply {
             let t = last_ply - i_ply;
@@ -303,7 +299,7 @@ impl Game {
                 let piece152 = if movement.promote {
                     // 成りなら
                     speed_of_light
-                        .get_piece_struct_vo(
+                        .get_piece_struct(
                             self.position
                                 .current_board
                                 .get_piece_by_square(&movement.source),
@@ -345,10 +341,7 @@ impl Game {
                 {
                     let cap773;
                     {
-                        cap773 = speed_of_light
-                            .get_piece_struct_vo(&cap764)
-                            .capture()
-                            .clone();
+                        cap773 = speed_of_light.get_piece_struct(&cap764).capture().clone();
                     }
                     self.position
                         .current_board
@@ -370,7 +363,7 @@ impl Game {
     /// 手目のカウントが増えたりはしないぜ☆（＾～＾）
     pub fn undo_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
         let phase = self.history.get_phase(&Person::Friend);
-        let cap = self.history.captured_pieces[self.history.get_ply() as usize].clone();
+        let cap = self.history.captured_pieces[self.history.ply as usize].clone();
 
         // 移動先の駒
         let piece186 = if movement.source.to_usquare() == SQUARE_DROP {
@@ -388,7 +381,7 @@ impl Game {
             if movement.promote {
                 // 成ったなら、成る前へ
                 speed_of_light
-                    .get_piece_struct_vo(
+                    .get_piece_struct(
                         self.position
                             .current_board
                             .get_piece_by_square(&movement.destination),
@@ -412,7 +405,7 @@ impl Game {
             _ => {
                 // 自分の持ち駒を減らす
                 self.position.current_board.add_hand(
-                    speed_of_light.get_piece_struct_vo(&cap).capture(),
+                    speed_of_light.get_piece_struct(&cap).capture(),
                     -1,
                     speed_of_light,
                 );
@@ -435,7 +428,7 @@ impl Game {
         let nb = match *phase {
             Phase::None => {
                 &self.position.control_count_by_piece
-                    [speed_of_light.get_piece_struct_vo(pc).serial_piece_number()]
+                    [speed_of_light.get_piece_struct(pc).serial_piece_number()]
             }
             _ => &self.position.control_count_by_phase[phase_to_num(&phase)],
         };

@@ -27,15 +27,6 @@ impl Default for History {
     }
 }
 impl History {
-    pub fn add_ply(&mut self, ply1: i16) {
-        self.ply += ply1
-    }
-    pub fn get_ply(&self) -> i16 {
-        self.ply
-    }
-    pub fn set_ply(&mut self, ply1: i16) {
-        self.ply = ply1
-    }
     /// 手番
     pub fn get_phase(&self, person: &Person) -> Phase {
         use super::super::super::super::model::vo::other_part::op_person_vo::Person::*;

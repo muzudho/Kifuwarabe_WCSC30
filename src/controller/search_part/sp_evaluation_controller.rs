@@ -10,7 +10,7 @@ impl SPEvaluationController {
     /// 取った駒は相手の駒に決まってるぜ☆（＾～＾）
     /// ライオンを取ったら勝ちだぜ☆（＾～＾）
     pub fn evaluate(captured_piece: Piece, speed_of_light: &MLSpeedOfLightVo) -> (i16, bool) {
-        let piece_struct = speed_of_light.get_piece_struct_vo(&captured_piece);
+        let piece_struct = speed_of_light.get_piece_struct(&captured_piece);
         match piece_struct.phase_piece_type().1 {
             PieceType::King => (25000, true),
             PieceType::Rook => (1000, false),

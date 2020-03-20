@@ -9,7 +9,7 @@ impl GameView {
     /// 表示
     pub fn to_string(game: &Game, pos_nums: &PosNums) -> String {
         let board = game.get_board(pos_nums);
-        let ply = game.history.get_ply();
+        let ply = game.history.ply;
         let phase = game.history.get_phase(&Person::Friend);
         let same_pos_count = game.count_same_ky();
 

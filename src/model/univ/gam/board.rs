@@ -115,7 +115,7 @@ impl Board {
         for dan in RANK_1..RANK_10 {
             let sq = Square::from_file_rank(suji, dan);
             let piece99 = self.get_piece_by_square(&sq);
-            let ps100 = speed_of_light.get_piece_struct_vo(piece99);
+            let ps100 = speed_of_light.get_piece_struct(piece99);
             let (phase_piece, piece_type) = ps100.phase_piece_type();
             if phase_piece == phase && piece_type == PieceType::Pawn {
                 return true;
@@ -143,14 +143,10 @@ impl Board {
      * 持ち駒の枚数を加算
      */
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &MLSpeedOfLightVo) {
-        self.hand[speed_of_light
-            .get_piece_struct_vo(hand)
-            .serial_piece_number()] += maisu;
+        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number()] += maisu;
     }
     pub fn get_hand(&self, hand: &Piece, speed_of_light: &MLSpeedOfLightVo) -> i8 {
-        self.hand[speed_of_light
-            .get_piece_struct_vo(hand)
-            .serial_piece_number()]
+        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number()]
     }
 
     /// 升には何がありますか？
@@ -161,7 +157,7 @@ impl Board {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
-        let piece_struct = speed_of_light.get_piece_struct_vo(self.get_piece_by_square(&sq));
+        let piece_struct = speed_of_light.get_piece_struct(self.get_piece_by_square(&sq));
         if *piece_struct.piece() == Piece::NonePiece {
             return ThingsInTheSquare::Space;
         }
@@ -175,21 +171,21 @@ impl Board {
     /// 指定の升に駒があれば真
     pub fn exists_km(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> bool {
         !speed_of_light
-            .get_piece_struct_vo(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.get_piece_struct_vo(&Piece::NonePiece))
+            .get_piece_struct(self.get_piece_by_square(&sq))
+            .equals_piece(&speed_of_light.get_piece_struct(&Piece::NonePiece))
     }
 
     /// 指定の升に指定の駒があれば真
     pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &MLSpeedOfLightVo) -> bool {
         speed_of_light
-            .get_piece_struct_vo(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.get_piece_struct_vo(piece))
+            .get_piece_struct(self.get_piece_by_square(&sq))
+            .equals_piece(&speed_of_light.get_piece_struct(piece))
     }
 
     /// 指定の升にある駒の先後
     pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Phase {
         speed_of_light
-            .get_piece_struct_vo(self.get_piece_by_square(sq))
+            .get_piece_struct(self.get_piece_by_square(sq))
             .phase()
     }
 
@@ -217,10 +213,10 @@ impl Board {
     ) -> bool {
         let km_src = self.get_piece_by_square(&sq_src);
 
-        let ps_src = speed_of_light.get_piece_struct_vo(km_src);
+        let ps_src = speed_of_light.get_piece_struct(km_src);
         let km_dst = self.get_piece_by_square(&sq_dst);
 
-        let ps_dst = speed_of_light.get_piece_struct_vo(km_dst);
+        let ps_dst = speed_of_light.get_piece_struct(km_dst);
         // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
         let pro_dst = ps_dst.is_promoted();
         let pro_src = ps_src.is_promoted();
@@ -237,14 +233,14 @@ impl Board {
         for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
             let i_sq = Square::from_usquare(i_ms as usquare);
             let km = self.get_piece_by_square(&i_sq);
-            let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();
+            let num_km = speed_of_light.get_piece_struct(km).serial_piece_number();
             hash ^= game.hash_seed.km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
         GPPieces::for_all(&mut |any_piece| {
             let num_km = speed_of_light
-                .get_piece_struct_vo(&any_piece)
+                .get_piece_struct(&any_piece)
                 .serial_piece_number();
 
             let maisu = self.get_hand(&any_piece, &speed_of_light);

@@ -20,9 +20,9 @@ pub fn is_jisatusyu(
     let km_src = ml_universe_dto
         .game
         .position
-        .get_current_board()
+        .current_board
         .get_piece_by_square(&ss.src);
-    let ps_src = speed_of_light.get_piece_struct_vo(km_src);
+    let ps_src = speed_of_light.get_piece_struct(km_src);
     let (phase_teban, _piece_type) = ps_src.phase_piece_type();
     // 相手番の先後
     let phase_aite = turn_phase(&phase_teban);

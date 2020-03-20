@@ -40,7 +40,7 @@ pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpe
             lookup_no_promotion_source_by_square_and_piece(
                 &any_square,
                 &ps_dst,
-                &universe.game.position.get_current_board(),
+                &universe.game.position.current_board,
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -50,7 +50,7 @@ pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpe
             lookup_before_promotion_source_by_square_piece(
                 &any_square,
                 &ps_dst,
-                &universe.game.position.get_current_board(),
+                &universe.game.position.current_board,
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);

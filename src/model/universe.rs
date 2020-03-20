@@ -137,7 +137,7 @@ impl Universe {
     // 入れた指し手の通り指すぜ☆（＾～＾）
     pub fn do_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
-        let ply = self.game.history.get_ply();
+        let ply = self.game.history.ply;
         self.game.set_current_movement(movement);
         let cap;
         {
@@ -149,13 +149,13 @@ impl Universe {
         let ky_hash = self.game.create_ky1_hash(speed_of_light);
         self.game.set_current_position_hash(ky_hash);
 
-        self.game.history.add_ply(1);
+        self.game.history.ply += 1;
     }
 
     pub fn undo_move(&mut self, speed_of_light: &MLSpeedOfLightVo) -> bool {
-        if 0 < self.game.history.get_ply() {
+        if 0 < self.game.history.ply {
             // 棋譜から読取、手目も減る
-            self.game.history.add_ply(-1);
+            self.game.history.ply -= 1;
             // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
             let ss = &self.game.get_move().clone();
             self.game.undo_move(/*&phase,*/ ss, speed_of_light);

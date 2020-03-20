@@ -102,7 +102,7 @@ fn main() {
             g_writeln(&format!("id author {}", ENGINE_AUTHOR));
             g_writeln("usiok");
         } else if 1 < len && &line[starts..2] == "go" {
-            universe.game.get_mut_info().clear();
+            universe.game.info.clear();
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
             // let depth = 2;
@@ -209,7 +209,7 @@ fn parse_extend_command(
         if !universe.undo_move(&speed_of_light) {
             g_writeln(&format!(
                 "ply={} を、これより戻せません",
-                universe.game.history.get_ply()
+                universe.game.history.ply
             ));
         }
     } else if 8 < len && &line[starts..9] == "unit-test" {
@@ -227,9 +227,9 @@ fn parse_extend_command(
         // コマンド読取。棋譜に追加され、手目も増える
         if read_sasite(&line, &mut starts, len, universe) {
             // 手目を戻す
-            universe.game.history.add_ply(-1);
+            universe.game.history.ply -= 1;
             // 入っている指し手の通り指すぜ☆（＾～＾）
-            let ply = universe.game.history.get_ply();
+            let ply = universe.game.history.ply;
             let ss = universe.game.history.movements[ply as usize].clone();
             universe.do_move(&ss, speed_of_light);
         }

@@ -81,7 +81,7 @@ impl MGMovements {
             };
 
             let piece = current_board.get_piece_by_square(&source);
-            let ps = speed_of_light.get_piece_struct_vo(piece);
+            let ps = speed_of_light.get_piece_struct(piece);
             if *friend == ps.phase() {
                 use crate::model::univ::gam::piece::Piece::*;
                 match piece {
@@ -242,7 +242,7 @@ impl MGMovements {
 
             if 0 < game
                 .position
-                .get_current_board()
+                .current_board
                 .get_hand(hand_piece, speed_of_light)
             {
                 // 駒を持っていれば
@@ -313,14 +313,12 @@ impl MGMovements {
     ) where
         F1: FnMut(u64),
     {
-        let exists_piece = position
-            .get_current_board()
-            .get_piece_by_square(&destination);
+        let exists_piece = position.current_board.get_piece_by_square(&destination);
 
         if let Piece::NonePiece = exists_piece {
             // 駒が無いところに打つ
-            let current_board = position.get_current_board();
-            let ps_dst = speed_of_light.get_piece_struct_vo(hand_piece);
+            let current_board = &position.current_board;
+            let ps_dst = speed_of_light.get_piece_struct(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             // 行先の無いところに駒を進めることの禁止☆（＾～＾）
             use crate::model::univ::gam::piece::Piece::*;

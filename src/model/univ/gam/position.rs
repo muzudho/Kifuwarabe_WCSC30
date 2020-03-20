@@ -71,13 +71,6 @@ impl Default for Position {
     }
 }
 impl Position {
-    pub fn get_current_board(&self) -> &Board {
-        &self.current_board
-    }
-    pub fn get_current_board_mut(&mut self) -> &mut Board {
-        &mut self.current_board
-    }
-
     pub fn set_current_movement_source_temporary(&mut self, src: &Square) {
         self.current_movement_builder.src = src.clone()
     }

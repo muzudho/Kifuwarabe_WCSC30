@@ -124,7 +124,7 @@ impl Default for MLSpeedOfLightVo {
 
 impl MLSpeedOfLightVo {
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_struct_vo(&self, piece: &Piece) -> &PieceStruct {
+    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.piece_vos[(*piece).clone() as usize]
@@ -174,40 +174,40 @@ impl MLSpeedOfLightVo {
         use crate::model::univ::gam::piece_type::PieceType::*;
         match *phase {
             Phase::First => match piece_type {
-                King => self.get_piece_struct_vo(&King1),
-                Rook => self.get_piece_struct_vo(&Rook1),
-                Bishop => self.get_piece_struct_vo(&Bishop1),
-                Gold => self.get_piece_struct_vo(&Gold1),
-                Silver => self.get_piece_struct_vo(&Silver1),
-                Knight => self.get_piece_struct_vo(&Knight1),
-                Lance => self.get_piece_struct_vo(&Lance1),
-                Pawn => self.get_piece_struct_vo(&Pawn1),
-                Dragon => self.get_piece_struct_vo(&Dragon1),
-                Horse => self.get_piece_struct_vo(&Horse1),
-                PromotedSilver => self.get_piece_struct_vo(&PromotedSilver1),
-                PromotedKnight => self.get_piece_struct_vo(&PromotedKnight1),
-                PromotedLance => self.get_piece_struct_vo(&PromotedLance1),
-                PromotedPawn => self.get_piece_struct_vo(&PromotedPawn1),
-                _ => self.get_piece_struct_vo(&Piece::OwariPiece),
+                King => self.get_piece_struct(&King1),
+                Rook => self.get_piece_struct(&Rook1),
+                Bishop => self.get_piece_struct(&Bishop1),
+                Gold => self.get_piece_struct(&Gold1),
+                Silver => self.get_piece_struct(&Silver1),
+                Knight => self.get_piece_struct(&Knight1),
+                Lance => self.get_piece_struct(&Lance1),
+                Pawn => self.get_piece_struct(&Pawn1),
+                Dragon => self.get_piece_struct(&Dragon1),
+                Horse => self.get_piece_struct(&Horse1),
+                PromotedSilver => self.get_piece_struct(&PromotedSilver1),
+                PromotedKnight => self.get_piece_struct(&PromotedKnight1),
+                PromotedLance => self.get_piece_struct(&PromotedLance1),
+                PromotedPawn => self.get_piece_struct(&PromotedPawn1),
+                _ => self.get_piece_struct(&Piece::OwariPiece),
             },
             Phase::Second => match piece_type {
-                King => self.get_piece_struct_vo(&King2),
-                Rook => self.get_piece_struct_vo(&Rook2),
-                Bishop => self.get_piece_struct_vo(&Bishop2),
-                Gold => self.get_piece_struct_vo(&Gold2),
-                Silver => self.get_piece_struct_vo(&Silver2),
-                Knight => self.get_piece_struct_vo(&Knight2),
-                Lance => self.get_piece_struct_vo(&Lance2),
-                Pawn => self.get_piece_struct_vo(&Pawn2),
-                Dragon => self.get_piece_struct_vo(&Dragon2),
-                Horse => self.get_piece_struct_vo(&Horse2),
-                PromotedSilver => self.get_piece_struct_vo(&PromotedSilver2),
-                PromotedKnight => self.get_piece_struct_vo(&PromotedKnight2),
-                PromotedLance => self.get_piece_struct_vo(&PromotedLance2),
-                PromotedPawn => self.get_piece_struct_vo(&PromotedPawn2),
-                _ => self.get_piece_struct_vo(&Piece::OwariPiece),
+                King => self.get_piece_struct(&King2),
+                Rook => self.get_piece_struct(&Rook2),
+                Bishop => self.get_piece_struct(&Bishop2),
+                Gold => self.get_piece_struct(&Gold2),
+                Silver => self.get_piece_struct(&Silver2),
+                Knight => self.get_piece_struct(&Knight2),
+                Lance => self.get_piece_struct(&Lance2),
+                Pawn => self.get_piece_struct(&Pawn2),
+                Dragon => self.get_piece_struct(&Dragon2),
+                Horse => self.get_piece_struct(&Horse2),
+                PromotedSilver => self.get_piece_struct(&PromotedSilver2),
+                PromotedKnight => self.get_piece_struct(&PromotedKnight2),
+                PromotedLance => self.get_piece_struct(&PromotedLance2),
+                PromotedPawn => self.get_piece_struct(&PromotedPawn2),
+                _ => self.get_piece_struct(&Piece::OwariPiece),
             },
-            Phase::None => self.get_piece_struct_vo(&Piece::OwariPiece),
+            Phase::None => self.get_piece_struct(&Piece::OwariPiece),
         }
     }
     /// 駒の属性を参照するぜ☆（＾～＾）

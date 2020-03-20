@@ -67,7 +67,7 @@ impl KomatoriResult {
         hash = push_sq_to_hash(hash, &self.sq_target);
         hash = push_sq_to_hash(hash, &self.sq_attacker);
         speed_of_light
-            .get_piece_struct_vo(&self.km_attacker)
+            .get_piece_struct(&self.km_attacker)
             .add_hash(hash)
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {

@@ -67,7 +67,7 @@ pub fn get_up_potential_movement<F1>(
     // 盤上の駒の移動。
     MGMovements::make_movement_on_board(
         &game.history.get_phase(&Person::Friend),
-        &game.position.get_current_board(),
+        &game.position.current_board,
         &speed_of_light,
         callback_movement,
     );
@@ -91,12 +91,12 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
-    let ps_dst = speed_of_light.get_piece_struct_vo(&piece_dst);
+    let ps_dst = speed_of_light.get_piece_struct(&piece_dst);
     let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if position
-        .get_current_board()
+        .current_board
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
     {
@@ -117,7 +117,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     lookup_no_promotion_source_by_square_and_piece(
         &sq_dst,
         &ps_dst,
-        &position.get_current_board(),
+        &position.current_board,
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -143,7 +143,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     lookup_before_promotion_source_by_square_piece(
         sq_dst,
         &ps_dst,
-        &position.get_current_board(),
+        &position.current_board,
         &speed_of_light,
         |square| {
             mv_src_hashset.insert(square);
@@ -176,12 +176,12 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
-    let piece_vo_dst = speed_of_light.get_piece_struct_vo(piece_dst);
+    let piece_vo_dst = speed_of_light.get_piece_struct(piece_dst);
     let (phase, _piece_type_dst) = piece_vo_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if position
-        .get_current_board()
+        .current_board
         .get_phase_by_sq(&sq_dst, speed_of_light)
         == *phase
     {
@@ -203,7 +203,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
     lookup_drop_by_square_piece(
         &SquareAndPiece::new(&sq_dst, piece_dst),
-        &position.get_current_board(),
+        &position.current_board,
         &speed_of_light,
         |piece_type_hash| {
             da_piece_type_hashset.insert(piece_type_hash);
@@ -662,7 +662,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
     let piece_type_src = speed_of_light
-        .get_piece_struct_vo(ps_dst.demote())
+        .get_piece_struct(ps_dst.demote())
         .piece_type();
     let piece_src = speed_of_light
         .get_piece_struct_vo_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
@@ -1426,7 +1426,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
         // +--------------------+
         // | 移動前は非成駒か？ |
         // +--------------------+
-        let ps_src = speed_of_light.get_piece_struct_vo(km_src);
+        let ps_src = speed_of_light.get_piece_struct(km_src);
         if ps_src.is_promoted() {
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
@@ -1832,7 +1832,7 @@ pub fn lookup_drop_by_square_piece<F1>(
 {
     assert_banjo_sq(&destination_sqp.square, "make_drop_by_square_piece");
 
-    let ps_dst = speed_of_light.get_piece_struct_vo(&destination_sqp.piece);
+    let ps_dst = speed_of_light.get_piece_struct(&destination_sqp.piece);
     let piece_type_dst = ps_dst.piece_type();
     if !speed_of_light
         .get_piece_type_struct_vo_from_piece_type(&piece_type_dst)

@@ -126,7 +126,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
     let sq_r = ml_universe_dto
         .game
         .position
-        .get_current_board()
+        .current_board
         .get_sq_r(phase_to_num(
             &ml_universe_dto.game.history.get_phase(&Person::Friend),
         ))
@@ -158,7 +158,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         lookup_no_promotion_source_by_phase_square(
             &ml_universe_dto.game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                                // 指定の升
-            &ml_universe_dto.game.position.get_current_board(),
+            &ml_universe_dto.game.position.current_board,
             &speed_of_light,
             |square| {
                 attackers.insert(square);
@@ -167,7 +167,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         lookup_before_promotion_source_by_phase_square(
             &ml_universe_dto.game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
             &sq_r_new,                                                // 指定の升
-            &ml_universe_dto.game.position.get_current_board(),
+            &ml_universe_dto.game.position.current_board,
             &speed_of_light,
             |square| {
                 attackers.insert(square);
