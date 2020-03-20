@@ -38,7 +38,7 @@ pub fn unit_test(
         g_writeln("駒の移動元升");
         let piece_type = cu_random_move_controller::random_piece_type();
         let ps = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-            &ml_universe_dto.get_position().get_phase(&Person::Friend),
+            &ml_universe_dto.game.position.get_phase(&Person::Friend),
             *piece_type,
         );
         let pc = ps.piece();
@@ -54,7 +54,7 @@ pub fn unit_test(
         lookup_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
-            &ml_universe_dto.get_position().get_current_board(),
+            &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -63,7 +63,7 @@ pub fn unit_test(
         lookup_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &ml_universe_dto.get_position().get_current_board(),
+            &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -71,7 +71,7 @@ pub fn unit_test(
         );
         lookup_drop_by_square_piece(
             &GPSquareAndPieceVo::new(&sq_dst, pc),
-            &ml_universe_dto.get_position().get_current_board(),
+            &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |piece_type_hash| {
                 da_piece_type_hashset.insert(piece_type_hash);
@@ -84,7 +84,7 @@ pub fn unit_test(
         // 移動後の駒
         let piece_type = cu_random_move_controller::random_piece_type();
         let ps = speed_of_light.get_piece_struct_vo_by_phase_and_piece_type(
-            &ml_universe_dto.get_position().get_phase(&Person::Friend),
+            &ml_universe_dto.game.position.get_phase(&Person::Friend),
             *piece_type,
         );
         // 移動先の升、および　不成駒／成駒
@@ -97,7 +97,7 @@ pub fn unit_test(
         lookup_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
-            &ml_universe_dto.get_position().get_current_board(),
+            &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -106,7 +106,7 @@ pub fn unit_test(
         lookup_before_promotion_source_by_square_piece(
             &sq_dst,
             &ps,
-            &ml_universe_dto.get_position().get_current_board(),
+            &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |square| {
                 mv_src_hashset.insert(square);
@@ -152,7 +152,7 @@ pub fn unit_test(
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -161,7 +161,7 @@ pub fn unit_test(
             lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -169,7 +169,7 @@ pub fn unit_test(
             );
             lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -196,7 +196,7 @@ pub fn unit_test(
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -205,7 +205,7 @@ pub fn unit_test(
             lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -213,7 +213,7 @@ pub fn unit_test(
             );
             lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -240,7 +240,7 @@ pub fn unit_test(
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -249,7 +249,7 @@ pub fn unit_test(
             lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -257,7 +257,7 @@ pub fn unit_test(
             );
             lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);
@@ -284,7 +284,7 @@ pub fn unit_test(
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -293,7 +293,7 @@ pub fn unit_test(
             lookup_before_promotion_source_by_square_piece(
                 &sq_dst,
                 &ps,
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -301,7 +301,7 @@ pub fn unit_test(
             );
             lookup_drop_by_square_piece(
                 &GPSquareAndPieceVo::new(&sq_dst, pc),
-                &ml_universe_dto.get_position().get_current_board(),
+                &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {
                     da_piece_type_hashset.insert(piece_type_hash);

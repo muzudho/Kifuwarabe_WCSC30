@@ -14,7 +14,7 @@ use super::super::super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::super::super::model::vo::game_part::gp_piece_vo::*;
 use super::super::super::super::model::vo::game_part::gp_square_vo::*;
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
-use crate::model::universe::*;
+use crate::model::univ::game::Game;
 
 pub enum ThingsInTheSquare {
     Space,
@@ -235,7 +235,7 @@ impl Board {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_hash(&self, universe: &Universe, speed_of_light: &MLSpeedOfLightVo) -> u64 {
+    pub fn create_hash(&self, game: &Game, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒
@@ -243,7 +243,7 @@ impl Board {
             let i_sq = Square::from_usquare(i_ms as usquare);
             let km = self.get_piece_by_square(&i_sq);
             let num_km = speed_of_light.get_piece_struct_vo(km).serial_piece_number();
-            hash ^= universe.game.position_hash_seed.km[i_ms][num_km];
+            hash ^= game.position_hash_seed.km[i_ms][num_km];
         }
 
         // 持ち駒ハッシュ
@@ -261,7 +261,7 @@ impl Board {
                 MG_MAX
             );
 
-            hash ^= universe.game.position_hash_seed.mg[num_km][maisu as usize];
+            hash ^= game.position_hash_seed.mg[num_km][maisu as usize];
         });
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）

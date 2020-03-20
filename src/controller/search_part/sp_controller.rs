@@ -139,7 +139,7 @@ pub fn get_best_movement(
     if movement_set.is_empty() {
         let best_value = 0;
         let resign_move = MLMovementDto::default();
-        universe.get_mut_info().print(
+        universe.game.get_mut_info().print(
             cur_depth,
             sum_nodes,
             best_value,
@@ -156,12 +156,10 @@ pub fn get_best_movement(
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
         let movement = GPMovementVo::from_hash(*movement_hash);
-        let captured_piece = universe
-            .get_position_mut()
-            .do_move(&movement, speed_of_light);
+        let captured_piece = universe.game.position.do_move(&movement, speed_of_light);
 
         // 千日手かどうかを判定する☆（＾～＾）
-        if SENNTITE_NUM <= universe.count_same_ky() {
+        if SENNTITE_NUM <= universe.game.count_same_ky() {
             // 千日手なら、この手は戻そうぜ☆（＾～＾）
             repetition_move_hash = *movement_hash;
         } else if end_depth <= cur_depth {
@@ -178,7 +176,7 @@ pub fn get_best_movement(
 
             if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
             let movement = MLMovementDto::from_hash(*movement_hash);
-            universe.get_mut_info().print(
+            universe.game.get_mut_info().print(
                 cur_depth,
                 sum_nodes,
                 bestmove_state.get_value(),
@@ -218,7 +216,7 @@ pub fn get_best_movement(
 
                     if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
                     let movement = &MLMovementDto::from_hash(*movement_hash);
-                    universe.get_mut_info().print(
+                    universe.game.get_mut_info().print(
                         cur_depth,
                         sum_nodes,
                         bestmove_state.get_value(),
@@ -230,9 +228,7 @@ pub fn get_best_movement(
             }
         }
         // 1手戻すぜ☆（＾～＾）
-        universe
-            .get_position_mut()
-            .undo_move(&movement, speed_of_light)
+        universe.game.position.undo_move(&movement, speed_of_light)
     }
 
     let best_movement = if bestmove_state.get_movement_hash() != 0 {
@@ -243,7 +239,7 @@ pub fn get_best_movement(
     };
 
     // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-    universe.get_mut_info().print(
+    universe.game.get_mut_info().print(
         cur_depth,
         sum_nodes,
         bestmove_state.get_value(),

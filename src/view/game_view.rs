@@ -1,17 +1,17 @@
 use super::super::model::vo::game_part::gp_piece_vo::GPPieceVo;
 use super::super::model::vo::game_part::gp_square_vo::*;
-use crate::model::universe::Universe;
+use crate::model::univ::game::Game;
 use crate::model::vo::other_part::op_misc_vo::PosNums;
 use crate::model::vo::other_part::op_person_vo::Person;
 
-pub struct PositionView {}
-impl PositionView {
+pub struct GameView {}
+impl GameView {
     /// 表示
-    pub fn to_string(universe: &Universe, pos_nums: &PosNums) -> String {
-        let board = universe.get_board(pos_nums);
-        let ply = universe.get_position().get_ply();
-        let phase = universe.get_position().get_phase(&Person::Friend);
-        let same_pos_count = universe.count_same_ky();
+    pub fn to_string(game: &Game, pos_nums: &PosNums) -> String {
+        let board = game.get_board(pos_nums);
+        let ply = game.position.get_ply();
+        let phase = game.position.get_phase(&Person::Friend);
+        let same_pos_count = game.count_same_ky();
 
         // 局面表示
         format!(

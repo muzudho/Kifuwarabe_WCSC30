@@ -15,19 +15,16 @@ use std::collections::HashSet;
 /// 指定局面の利き升調べ。一から再計算☆（＾～＾）
 ///
 /// 用途：自殺手防止他
-pub fn recalculate_control_count(
-    ml_universe_dto: &mut Universe,
-    speed_of_light: &MLSpeedOfLightVo,
-) {
+pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) {
     // ゼロ・リセット
     GPPieces::for_all(&mut |any_piece| {
-        ml_universe_dto.get_position_mut().control_count_by_piece
+        universe.game.position.control_count_by_piece
             [GPPieceStructVo::from_piece(any_piece).serial_piece_number()]
         .clear();
     });
 
     for phase in PHASE_ARRAY.iter() {
-        ml_universe_dto.get_position_mut().control_count_by_phase[phase_to_num(phase)].clear();
+        universe.game.position.control_count_by_phase[phase_to_num(phase)].clear();
     }
 
     // カウント
@@ -43,7 +40,7 @@ pub fn recalculate_control_count(
             lookup_no_promotion_source_by_square_and_piece(
                 &any_square,
                 &ps_dst,
-                &ml_universe_dto.get_position().get_current_board(),
+                &universe.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -53,7 +50,7 @@ pub fn recalculate_control_count(
             lookup_before_promotion_source_by_square_piece(
                 &any_square,
                 &ps_dst,
-                &ml_universe_dto.get_position().get_current_board(),
+                &universe.game.position.get_current_board(),
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -63,13 +60,12 @@ pub fn recalculate_control_count(
             let control_count = mv_src_hashset.len();
 
             // 駒別
-            ml_universe_dto.get_position_mut().control_count_by_piece[ps_dst.serial_piece_number()]
+            universe.game.position.control_count_by_piece[ps_dst.serial_piece_number()]
                 .add_count_by_square(&any_square, control_count as i8);
 
             // 先後別
-            ml_universe_dto.get_position_mut().control_count_by_phase
-                [phase_to_num(&ps_dst.phase())]
-            .add_count_by_square(&any_square, control_count as i8);
+            universe.game.position.control_count_by_phase[phase_to_num(&ps_dst.phase())]
+                .add_count_by_square(&any_square, control_count as i8);
         });
     });
 }

@@ -33,13 +33,13 @@ pub fn generate_movement(
     movement_set: &mut HashSet<u64>,
 ) {
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_up_potential_movement(&universe.get_position(), &speed_of_light, &mut |movement| {
+    get_up_potential_movement(&universe.game.position, &speed_of_light, &mut |movement| {
         &movement_set.insert(movement);
     });
 
     if false {
         // 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
-        select_movement_except_check(movement_set, &universe.get_position(), &speed_of_light);
+        select_movement_except_check(movement_set, &universe.game.position, &speed_of_light);
 
         // 自殺手は省くぜ☆（＾～＾）
         select_movement_except_suiceid(movement_set, universe, speed_of_light);

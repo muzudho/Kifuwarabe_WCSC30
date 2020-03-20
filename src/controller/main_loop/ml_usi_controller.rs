@@ -15,12 +15,7 @@ use crate::model::universe::*;
  * 読み取った指し手は、棋譜に入れる。
  * 現在の手目のところに入れ、手目のカウントアップも行う。
  */
-pub fn read_sasite(
-    line: &str,
-    starts: &mut usize,
-    len: usize,
-    ml_universe_dto: &mut Universe,
-) -> bool {
+pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Universe) -> bool {
     // 4文字か5文字あるはず。
     if (len - *starts) < 4 {
         // 指し手読取終了時にここを通るぜ☆（＾～＾）
@@ -34,65 +29,79 @@ pub fn read_sasite(
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Rook);
         }
         "B" => {
             *starts += 2;
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Bishop);
         }
         "G" => {
             *starts += 2;
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Gold);
         }
         "S" => {
             *starts += 2;
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Silver);
         }
         "N" => {
             *starts += 2;
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Knight);
         }
         "L" => {
             *starts += 2;
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Lance);
         }
         "P" => {
             *starts += 2;
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_usquare(0));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::Pawn);
         }
         _ => {
@@ -185,11 +194,13 @@ pub fn read_sasite(
                 }
             }
 
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_source_temporary(&Square::from_file_rank(suji, dan));
-            ml_universe_dto
-                .get_position_mut()
+            universe
+                .game
+                .position
                 .set_current_movement_drop_temporary(GPPieceTypeVo::KaraPieceType);
         }
     }
@@ -286,19 +297,22 @@ pub fn read_sasite(
     }
 
     // 行き先。
-    ml_universe_dto
-        .get_position_mut()
+    universe
+        .game
+        .position
         .set_current_movement_destination_temporary(&Square::from_file_rank(suji, dan));
 
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
-        ml_universe_dto
-            .get_position_mut()
+        universe
+            .game
+            .position
             .set_current_movement_promote_temporary(true);
         *starts += 1;
     } else {
-        ml_universe_dto
-            .get_position_mut()
+        universe
+            .game
+            .position
             .set_current_movement_promote_temporary(false);
     }
 
@@ -308,9 +322,9 @@ pub fn read_sasite(
     }
 
     // 確定。
-    ml_universe_dto.get_position_mut().build_current_movement();
+    universe.game.position.build_current_movement();
 
-    ml_universe_dto.get_position_mut().add_ply(1);
+    universe.game.position.add_ply(1);
     true
 }
 
@@ -336,145 +350,201 @@ pub fn read_banjo(
             }
             "1" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
             }
             "2" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
             }
             "3" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                 suji -= 1;
             }
             "4" => {
                 *starts += 1;
                 for _i_kara in 0..4 {
-                    universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                    universe
+                        .game
+                        .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "5" => {
                 *starts += 1;
                 for _i_kara in 0..5 {
-                    universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                    universe
+                        .game
+                        .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "6" => {
                 *starts += 1;
                 for _i_kara in 0..6 {
-                    universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                    universe
+                        .game
+                        .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "7" => {
                 *starts += 1;
                 for _i_kara in 0..7 {
-                    universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                    universe
+                        .game
+                        .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "8" => {
                 *starts += 1;
                 for _i_kara in 0..8 {
-                    universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                    universe
+                        .game
+                        .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "9" => {
                 *starts += 1;
                 for _i_kara in 0..9 {
-                    universe.set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
+                    universe
+                        .game
+                        .set_piece_to_starting_position(suji, dan, GPPieceVo::NonePiece);
                     suji -= 1;
                 }
             }
             "K" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::King1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::King1);
                 suji -= 1;
             }
             "R" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Rook1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Rook1);
                 suji -= 1;
             }
             "B" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Bishop1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Bishop1);
                 suji -= 1;
             }
             "G" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Gold1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Gold1);
                 suji -= 1;
             }
             "S" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Silver1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Silver1);
                 suji -= 1;
             }
             "N" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Knight1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Knight1);
                 suji -= 1;
             }
             "L" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Lance1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Lance1);
                 suji -= 1;
             }
             "P" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Pawn1);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Pawn1);
                 suji -= 1;
             }
             "k" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::King2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::King2);
                 suji -= 1;
             }
             "r" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Rook2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Rook2);
                 suji -= 1;
             }
             "b" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Bishop2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Bishop2);
                 suji -= 1;
             }
             "g" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Gold2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Gold2);
                 suji -= 1;
             }
             "s" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Silver2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Silver2);
                 suji -= 1;
             }
             "n" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Knight2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Knight2);
                 suji -= 1;
             }
             "l" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Lance2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Lance2);
                 suji -= 1;
             }
             "p" => {
                 *starts += 1;
-                universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Pawn2);
+                universe
+                    .game
+                    .set_piece_to_starting_position(suji, dan, GPPieceVo::Pawn2);
                 suji -= 1;
             }
             "+" => {
@@ -482,17 +552,21 @@ pub fn read_banjo(
                 match &line[*starts..=*starts] {
                     "R" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Dragon1);
+                        universe
+                            .game
+                            .set_piece_to_starting_position(suji, dan, GPPieceVo::Dragon1);
                         suji -= 1;
                     }
                     "B" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Horse1);
+                        universe
+                            .game
+                            .set_piece_to_starting_position(suji, dan, GPPieceVo::Horse1);
                         suji -= 1;
                     }
                     "S" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedSilver1,
@@ -501,7 +575,7 @@ pub fn read_banjo(
                     }
                     "N" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedKnight1,
@@ -510,7 +584,7 @@ pub fn read_banjo(
                     }
                     "L" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedLance1,
@@ -519,7 +593,7 @@ pub fn read_banjo(
                     }
                     "P" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedPawn1,
@@ -528,17 +602,21 @@ pub fn read_banjo(
                     }
                     "r" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Dragon2);
+                        universe
+                            .game
+                            .set_piece_to_starting_position(suji, dan, GPPieceVo::Dragon2);
                         suji -= 1;
                     }
                     "b" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(suji, dan, GPPieceVo::Horse2);
+                        universe
+                            .game
+                            .set_piece_to_starting_position(suji, dan, GPPieceVo::Horse2);
                         suji -= 1;
                     }
                     "s" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedSilver2,
@@ -547,7 +625,7 @@ pub fn read_banjo(
                     }
                     "n" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedKnight2,
@@ -556,7 +634,7 @@ pub fn read_banjo(
                     }
                     "l" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedLance2,
@@ -565,7 +643,7 @@ pub fn read_banjo(
                     }
                     "p" => {
                         *starts += 1;
-                        universe.set_piece_to_starting_position(
+                        universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
                             GPPieceVo::PromotedPawn2,
@@ -585,25 +663,21 @@ pub fn read_banjo(
     }
 
     // 初期局面ハッシュを作り直す
-    let ky_hash = universe.create_starting_position_hash(speed_of_light);
+    let ky_hash = universe.game.create_starting_position_hash(speed_of_light);
     universe.game.starting_position_hash = ky_hash;
 }
 
 /**
  * position コマンド読取
  */
-pub fn read_position(
-    line: &str,
-    ml_universe_dto: &mut Universe,
-    speed_of_light: &MLSpeedOfLightVo,
-) {
+pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) {
     let mut starts = 0;
 
     // 全体の長さ
     let len = line.chars().count();
 
     // 局面をクリアー。手目も 0 に戻します。
-    ml_universe_dto.clear_all_positions();
+    universe.game.clear_all_positions();
 
     if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
         // 'position startpos' を読み飛ばし
@@ -614,7 +688,7 @@ pub fn read_position(
             &STARTPOS.to_string(),
             &mut local_starts,
             STARTPOS_LN,
-            ml_universe_dto,
+            universe,
             speed_of_light,
         );
 
@@ -624,7 +698,7 @@ pub fn read_position(
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_banjo(line, &mut starts, len, ml_universe_dto, speed_of_light);
+        read_banjo(line, &mut starts, len, universe, speed_of_light);
 
         if 0 < (len - starts) && &line[starts..=starts] == " " {
             starts += 1;
@@ -793,7 +867,7 @@ pub fn read_position(
                         } // 持駒部 正常終了
                     }
 
-                    ml_universe_dto.set_starting_position_hand_piece(km, maisu);
+                    universe.game.set_starting_position_hand_piece(km, maisu);
                 } //if
             } //loop
         } //else
@@ -815,16 +889,16 @@ pub fn read_position(
     }
 
     // 初期局面を、現局面にコピーします
-    ml_universe_dto.copy_starting_position_to_current_position();
+    universe.game.copy_starting_position_to_current_position();
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
-    while read_sasite(line, &mut starts, len, ml_universe_dto) {
+    while read_sasite(line, &mut starts, len, universe) {
         // 手目を戻す
-        ml_universe_dto.get_position_mut().add_ply(-1);
+        universe.game.position.add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = ml_universe_dto.get_position().get_ply();
-        ml_universe_dto.do_move(
-            &ml_universe_dto.get_position().get_moves_history()[ply as usize].clone(),
+        let ply = universe.game.position.get_ply();
+        universe.do_move(
+            &universe.game.position.get_moves_history()[ply as usize].clone(),
             speed_of_light,
         );
 
