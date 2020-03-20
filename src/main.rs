@@ -186,15 +186,16 @@ fn parse_extend_command(
         // 乱駒種類
         let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
         IO::writeln(&format!("乱駒種類={}", &piece_type));
-    } else if 5 < len && &line[starts..6] == "sasite" {
+    } else if 6 < len && &line[starts..7] == "genmove" {
+        // Generation move.
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
         get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
             ss_potential_hashset.insert(movement_hash);
         });
-        IO::writeln("----指し手生成 ここから----");
+        IO::writeln("----指し手生成(合法手とは限らない) ここから----");
         print_movement_hashset(&ss_potential_hashset);
-        IO::writeln("----指し手生成 ここまで----");
+        IO::writeln("----指し手生成(合法手とは限らない) ここまで----");
     } else if 4 < len && &line[starts..5] == "random_ms" {
         // 乱升
         let sq = controller::common_use::cu_random_move_controller::random_square();
