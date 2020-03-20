@@ -6,7 +6,7 @@ use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece::*;
-use crate::model::univ::gam::position::*;
+use crate::model::univ::game::Game;
 use std::collections::HashSet;
 
 pub struct SPPieceSetDto {
@@ -26,16 +26,14 @@ impl SPPieceSetDto {
             num_syugo: num_syugo1,
         }
     }
-    /**
-     * 自分相手
-     */
+    /// 自分相手
     pub fn new_person(
         &self,
         person: &Person,
-        position: &Position,
+        game: &Game,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> SPPieceSetDto {
-        let phase0 = position.get_phase(&person);
+        let phase0 = game.history.get_phase(&person);
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         GPPieces::for_all(&mut |any_piece| {
             let ps = speed_of_light.get_piece_struct_vo(&any_piece);

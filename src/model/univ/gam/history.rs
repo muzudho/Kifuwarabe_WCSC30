@@ -1,8 +1,12 @@
 use crate::model::univ::gam::movement::Movement;
+use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::piece::Piece;
+use crate::model::vo::other_part::op_person_vo::Person;
 use crate::model::vo::other_part::op_ply_vo::PLY_LN;
 
 pub struct History {
+    /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
+    pub ply: i16,
     /// 棋譜
     /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
     pub movements: [Movement; PLY_LN],
@@ -14,6 +18,7 @@ pub struct History {
 impl Default for History {
     fn default() -> History {
         History {
+            ply: 0,
             movements: [Movement::default(); PLY_LN],
             position_hashs: [0; PLY_LN],
             /// 取った駒
@@ -22,9 +27,36 @@ impl Default for History {
     }
 }
 impl History {
-    /*
-    pub fn get_moves_history(&self) -> &[Movement; PLY_LN] {
-        &self.movements
+    pub fn add_ply(&mut self, ply1: i16) {
+        self.ply += ply1
     }
-    */
+    pub fn get_ply(&self) -> i16 {
+        self.ply
+    }
+    pub fn set_ply(&mut self, ply1: i16) {
+        self.ply = ply1
+    }
+    /// 手番
+    pub fn get_phase(&self, person: &Person) -> Phase {
+        use super::super::super::super::model::vo::other_part::op_person_vo::Person::*;
+        match *person {
+            None => Phase::None,
+            Friend => {
+                // 手番
+                if self.ply % 2 == 0 {
+                    Phase::First
+                } else {
+                    Phase::Second
+                }
+            }
+            Opponent => {
+                // 相手番
+                if self.ply % 2 == 0 {
+                    Phase::Second
+                } else {
+                    Phase::First
+                }
+            }
+        }
+    }
 }

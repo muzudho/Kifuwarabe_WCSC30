@@ -4,6 +4,7 @@
 
 extern crate rand;
 use crate::model::univ::gam::phase::phase_to_num;
+use crate::model::univ::game::Game;
 use rand::Rng;
 
 use crate::controller::common_use::cu_asserts_controller::*;
@@ -11,7 +12,6 @@ use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_komatori_result_controller::*;
 use crate::model::univ::gam::movement::*;
 use crate::model::univ::gam::movement_builder::*;
-use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
 use crate::model::universe::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -43,18 +43,18 @@ pub fn choice_1movement_from_hashset<S: BuildHasher>(
  */
 pub fn select_movement_except_check<S: BuildHasher>(
     ss_hashset_input: &mut HashSet<u64, S>,
-    position: &Position,
+    game: &Game,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 自玉の位置
-    let sq_r = position.get_king_sq(&Person::Friend).clone();
+    let sq_r = game.get_king_sq(&Person::Friend).clone();
     // g_writeln(&format!("info string My raion {}.", sq_r.to_usquare()));
 
     // 王手の一覧を取得
     let komatori_result_hashset: HashSet<u64> = lookup_catching_king_on_board(
-        &position.get_phase(&Person::Opponent),
+        &game.history.get_phase(&Person::Opponent),
         &sq_r,
-        &position,
+        &game.position,
         &speed_of_light,
     );
     if !komatori_result_hashset.is_empty() {
@@ -128,7 +128,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         .position
         .get_current_board()
         .get_sq_r(phase_to_num(
-            &ml_universe_dto.game.position.get_phase(&Person::Friend),
+            &ml_universe_dto.game.history.get_phase(&Person::Friend),
         ))
         .clone();
 
@@ -156,8 +156,8 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
         lookup_no_promotion_source_by_phase_square(
-            &ml_universe_dto.game.position.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                                 // 指定の升
+            &ml_universe_dto.game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                                // 指定の升
             &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |square| {
@@ -165,8 +165,8 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             },
         );
         lookup_before_promotion_source_by_phase_square(
-            &ml_universe_dto.game.position.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                                 // 指定の升
+            &ml_universe_dto.game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                                // 指定の升
             &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |square| {
@@ -180,7 +180,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             "info string {} evaluated => {} attackers. offence={}->{}",
             potential_movement,
             attackers.len(),
-            ml_universe_dto.game.position.get_phase(&Person::Friend),
+            ml_universe_dto.game.history.get_phase(&Person::Friend),
             sq_r_new.to_usquare()
         ));
         for sq_atk in attackers.iter() {

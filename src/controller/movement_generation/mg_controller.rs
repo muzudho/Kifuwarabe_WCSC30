@@ -18,6 +18,7 @@ use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::gam::square_and_piece::SquareAndPiece;
+use crate::model::univ::game::Game;
 use crate::model::universe::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
@@ -33,13 +34,13 @@ pub fn generate_movement(
     movement_set: &mut HashSet<u64>,
 ) {
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_up_potential_movement(&universe.game.position, &speed_of_light, &mut |movement| {
+    get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement| {
         &movement_set.insert(movement);
     });
 
     if false {
         // 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
-        select_movement_except_check(movement_set, &universe.game.position, &speed_of_light);
+        select_movement_except_check(movement_set, &universe.game, &speed_of_light);
 
         // 自殺手は省くぜ☆（＾～＾）
         select_movement_except_suiceid(movement_set, universe, speed_of_light);
@@ -57,7 +58,7 @@ pub fn generate_movement(
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
 pub fn get_up_potential_movement<F1>(
-    position: &Position,
+    game: &Game,
     speed_of_light: &MLSpeedOfLightVo,
     callback_movement: &mut F1,
 ) where
@@ -65,13 +66,13 @@ pub fn get_up_potential_movement<F1>(
 {
     // 盤上の駒の移動。
     MGMovements::make_movement_on_board(
-        &position.get_phase(&Person::Friend),
-        &position.get_current_board(),
+        &game.history.get_phase(&Person::Friend),
+        &game.position.get_current_board(),
         &speed_of_light,
         callback_movement,
     );
     // 持ち駒の打。
-    MGMovements::make_movement_on_hand(position, &speed_of_light, callback_movement);
+    MGMovements::make_movement_on_hand(game, &speed_of_light, callback_movement);
 }
 
 /// 1. 移動先升指定  ms_dst

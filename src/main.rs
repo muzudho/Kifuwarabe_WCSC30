@@ -162,13 +162,9 @@ fn parse_extend_command(
     } else if 5 < len && &line[starts..6] == "sasite" {
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
-        get_up_potential_movement(
-            &universe.game.position,
-            &speed_of_light,
-            &mut |movement_hash| {
-                ss_potential_hashset.insert(movement_hash);
-            },
-        );
+        get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
+            ss_potential_hashset.insert(movement_hash);
+        });
         g_writeln("----指し手生成 ここから----");
         print_movement_hashset(&ss_potential_hashset);
         g_writeln("----指し手生成 ここまで----");
@@ -213,7 +209,7 @@ fn parse_extend_command(
         if !universe.undo_move(&speed_of_light) {
             g_writeln(&format!(
                 "ply={} を、これより戻せません",
-                universe.game.position.get_ply()
+                universe.game.history.get_ply()
             ));
         }
     } else if 8 < len && &line[starts..9] == "unit-test" {
@@ -231,9 +227,9 @@ fn parse_extend_command(
         // コマンド読取。棋譜に追加され、手目も増える
         if read_sasite(&line, &mut starts, len, universe) {
             // 手目を戻す
-            universe.game.position.add_ply(-1);
+            universe.game.history.add_ply(-1);
             // 入っている指し手の通り指すぜ☆（＾～＾）
-            let ply = universe.game.position.get_ply();
+            let ply = universe.game.history.get_ply();
             let ss = universe.game.history.movements[ply as usize].clone();
             universe.do_move(&ss, speed_of_light);
         }

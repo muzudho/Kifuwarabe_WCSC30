@@ -7,6 +7,7 @@ use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::Position;
 use crate::model::univ::gam::square::*;
+use crate::model::univ::game::Game;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
 
@@ -225,7 +226,7 @@ impl MGMovements {
     /// 持ち駒の動き。
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     pub fn make_movement_on_hand<F1>(
-        position: &Position,
+        game: &Game,
         speed_of_light: &MLSpeedOfLightVo,
         callback_movement: &mut F1,
     ) where
@@ -234,12 +235,13 @@ impl MGMovements {
         GPHandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(
-                    &position.get_phase(&Person::Friend),
+                    &game.history.get_phase(&Person::Friend),
                     any_piece_type,
                 )
                 .piece();
 
-            if 0 < position
+            if 0 < game
+                .position
                 .get_current_board()
                 .get_hand(hand_piece, speed_of_light)
             {
@@ -250,7 +252,7 @@ impl MGMovements {
                     Pawn1 | Lance1 => Squares::for_from_rank2_to_rank9(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            position,
+                            &game.position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -260,7 +262,7 @@ impl MGMovements {
                     Knight1 => Squares::for_from_rank3_to_rank9(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            position,
+                            &game.position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -270,7 +272,7 @@ impl MGMovements {
                     Pawn2 | Lance2 => Squares::for_from_rank1_to_rank8(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            position,
+                            &game.position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -280,7 +282,7 @@ impl MGMovements {
                     Knight2 => Squares::for_from_rank1_to_rank7(&mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            position,
+                            &game.position,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -290,7 +292,7 @@ impl MGMovements {
                         MGSquares::for_all(&mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                position,
+                                &game.position,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,

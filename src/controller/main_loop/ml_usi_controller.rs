@@ -324,7 +324,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     // 確定。
     universe.game.build_current_movement();
 
-    universe.game.position.add_ply(1);
+    universe.game.history.add_ply(1);
     true
 }
 
@@ -894,9 +894,9 @@ pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &MLSpe
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
     while read_sasite(line, &mut starts, len, universe) {
         // 手目を戻す
-        universe.game.position.add_ply(-1);
+        universe.game.history.add_ply(-1);
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = universe.game.position.get_ply();
+        let ply = universe.game.history.get_ply();
         universe.do_move(
             &universe.game.history.movements[ply as usize].clone(),
             speed_of_light,

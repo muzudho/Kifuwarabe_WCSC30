@@ -156,7 +156,7 @@ pub fn get_best_movement(
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
         let movement = Movement::from_hash(*movement_hash);
-        let captured_piece = universe.game.position.do_move(&movement, speed_of_light);
+        let captured_piece = universe.game.do_move(&movement, speed_of_light);
 
         // 千日手かどうかを判定する☆（＾～＾）
         if SENNTITE_NUM <= universe.game.count_same_ky() {
