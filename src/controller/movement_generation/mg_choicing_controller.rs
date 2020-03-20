@@ -14,7 +14,6 @@ use crate::model::univ::gam::misc::phase::phase_to_num;
 use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
-use crate::model::universe::*;
 use rand::Rng;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -116,20 +115,17 @@ pub fn select_movement_except_check<S: BuildHasher>(
  */
 pub fn select_movement_except_suiceid<S: BuildHasher>(
     ss_hashset_input: &mut HashSet<u64, S>,
-    ml_universe_dto: &mut Universe,
+    game: &mut Game,
     speed_of_light: &MLSpeedOfLightVo,
 ) {
     // 残すのはここに退避する☆（＾～＾）
     let mut ss_hashset_pickup: HashSet<u64> = HashSet::new();
 
     // 自玉の位置
-    let sq_r = ml_universe_dto
-        .game
+    let sq_r = game
         .position
         .current_board
-        .get_sq_r(phase_to_num(
-            &ml_universe_dto.game.history.get_phase(&Person::Friend),
-        ))
+        .get_sq_r(phase_to_num(&game.history.get_phase(&Person::Friend)))
         .clone();
 
     // 王手回避カードを発行する
@@ -140,7 +136,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         let potential_movement = Movement::from_hash(*hash_potential_movement);
 
         // その手を指してみる
-        ml_universe_dto.do_move(&potential_movement, speed_of_light);
+        game.do_move1(&potential_movement, speed_of_light);
         // // 現局面表示
         // let s1 = &ml_universe_dto.print_ky( &PosNums::Current );
         // g_writeln( &s1 );
@@ -156,18 +152,18 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         // 有り得る移動元が入る☆（＾～＾）
         let mut attackers: HashSet<Square> = HashSet::<Square>::new();
         lookup_no_promotion_source_by_phase_square(
-            &ml_universe_dto.game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                                // 指定の升
-            &ml_universe_dto.game.position.current_board,
+            &game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                // 指定の升
+            &game.position.current_board,
             &speed_of_light,
             |square| {
                 attackers.insert(square);
             },
         );
         lookup_before_promotion_source_by_phase_square(
-            &ml_universe_dto.game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
-            &sq_r_new,                                                // 指定の升
-            &ml_universe_dto.game.position.current_board,
+            &game.history.get_phase(&Person::Friend), // 指定の升に駒を動かそうとしている手番
+            &sq_r_new,                                // 指定の升
+            &game.position.current_board,
             &speed_of_light,
             |square| {
                 attackers.insert(square);
@@ -180,7 +176,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             "info string {} evaluated => {} attackers. offence={}->{}",
             potential_movement,
             attackers.len(),
-            ml_universe_dto.game.history.get_phase(&Person::Friend),
+            game.history.get_phase(&Person::Friend),
             sq_r_new.to_usquare()
         ));
         for sq_atk in attackers.iter() {
@@ -188,7 +184,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         }
 
         // 手を戻す
-        ml_universe_dto.undo_move(speed_of_light);
+        game.undo_move1(speed_of_light);
         // // 現局面表示
         // let s2 = &ml_universe_dto.print_ky( &PosNums::Current );
         // g_writeln( &s2 );

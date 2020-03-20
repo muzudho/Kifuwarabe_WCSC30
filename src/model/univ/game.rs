@@ -281,11 +281,29 @@ impl Game {
             .get_sq_r(phase_to_num(&self.history.get_phase(person)))
     }
 
+    // 入れた指し手の通り指すぜ☆（＾～＾）
+    pub fn do_move1(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
+        // もう入っているかも知れないが、棋譜に入れる☆
+        let ply = self.history.ply;
+        self.set_current_movement(movement);
+        let cap;
+        {
+            cap = self.do_move2(movement, speed_of_light);
+        }
+        self.set_cap(ply as usize, cap);
+
+        // 局面ハッシュを作り直す
+        let ky_hash = self.create_ky1_hash(speed_of_light);
+        self.set_current_position_hash(ky_hash);
+
+        self.history.ply += 1;
+    }
+
     /// 指し手の通りに、盤上の駒配置を動かすぜ☆（＾～＾）
     /// 手目のカウントが増えたりはしないぜ☆（＾～＾）
     ///
     /// return : 取った駒
-    pub fn do_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) -> Piece {
+    pub fn do_move2(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) -> Piece {
         let phase = self.history.get_phase(&Person::Friend);
 
         // 取った駒
@@ -366,9 +384,23 @@ impl Game {
         cap
     }
 
+    pub fn undo_move1(&mut self, speed_of_light: &MLSpeedOfLightVo) -> bool {
+        if 0 < self.history.ply {
+            // 棋譜から読取、手目も減る
+            self.history.ply -= 1;
+            // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
+            let ss = &self.get_move().clone();
+            self.undo_move2(/*&phase,*/ ss, speed_of_light);
+            // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
+            true
+        } else {
+            false
+        }
+    }
+
     /// 指し手の　進む戻る　を逆さにして、盤上の駒配置を動かすぜ☆（＾～＾）
     /// 手目のカウントが増えたりはしないぜ☆（＾～＾）
-    pub fn undo_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn undo_move2(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
         let phase = self.history.get_phase(&Person::Friend);
         let cap = self.history.captured_pieces[self.history.ply as usize].clone();
 

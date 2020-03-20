@@ -898,7 +898,7 @@ pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &MLSpe
         universe.game.history.ply -= 1;
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let ply = universe.game.history.ply;
-        universe.do_move(
+        universe.game.do_move1(
             &universe.game.history.movements[ply as usize].clone(),
             speed_of_light,
         );

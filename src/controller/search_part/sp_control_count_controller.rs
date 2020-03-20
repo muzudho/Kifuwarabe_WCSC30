@@ -8,23 +8,23 @@ use crate::model::univ::gam::misc::phase::*;
 use crate::model::univ::gam::misc::piece::*;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::square::*;
+use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
-use crate::model::universe::*;
 use std::collections::HashSet;
 
 /// 指定局面の利き升調べ。一から再計算☆（＾～＾）
 ///
 /// 用途：自殺手防止他
-pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) {
+pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLightVo) {
     // ゼロ・リセット
     GPPieces::for_all(&mut |any_piece| {
-        universe.game.position.control_count_by_piece
+        game.position.control_count_by_piece
             [PieceStruct::from_piece(any_piece).serial_piece_number()]
         .clear();
     });
 
     for phase in PHASE_ARRAY.iter() {
-        universe.game.position.control_count_by_phase[phase_to_num(phase)].clear();
+        game.position.control_count_by_phase[phase_to_num(phase)].clear();
     }
 
     // カウント
@@ -40,7 +40,7 @@ pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpe
             lookup_no_promotion_source_by_square_and_piece(
                 &any_square,
                 &ps_dst,
-                &universe.game.position.current_board,
+                &game.position.current_board,
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -50,7 +50,7 @@ pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpe
             lookup_before_promotion_source_by_square_piece(
                 &any_square,
                 &ps_dst,
-                &universe.game.position.current_board,
+                &game.position.current_board,
                 &speed_of_light,
                 |square| {
                     mv_src_hashset.insert(square);
@@ -60,11 +60,11 @@ pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpe
             let control_count = mv_src_hashset.len();
 
             // 駒別
-            universe.game.position.control_count_by_piece[ps_dst.serial_piece_number()]
+            game.position.control_count_by_piece[ps_dst.serial_piece_number()]
                 .add_count_by_square(&any_square, control_count as i8);
 
             // 先後別
-            universe.game.position.control_count_by_phase[phase_to_num(&ps_dst.phase())]
+            game.position.control_count_by_phase[phase_to_num(&ps_dst.phase())]
                 .add_count_by_square(&any_square, control_count as i8);
         });
     });

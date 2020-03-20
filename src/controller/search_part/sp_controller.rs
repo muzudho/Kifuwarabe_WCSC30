@@ -4,6 +4,7 @@
 
 extern crate rand;
 use crate::model::univ::gam::history::SENNTITE_NUM;
+use crate::model::univ::game::Game;
 use std::collections::HashSet;
 
 use super::sp_evaluation_controller::*;
@@ -12,7 +13,6 @@ use crate::controller::search_part::sp_control_count_controller::*;
 use crate::model::univ::gam::misc::movement::Movement;
 use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::speed_of_light::*;
-use crate::model::universe::*;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。
 pub struct SPBestmove {
@@ -95,7 +95,7 @@ pub fn get_best_movement(
     cur_depth: u16,
     end_depth: u16,
     mut sum_nodes: u64,
-    universe: &mut Universe,
+    game: &mut Game,
     speed_of_light: &MLSpeedOfLightVo,
     pv: &str,
 ) -> Option<SPBestmove> {
@@ -103,7 +103,7 @@ pub fn get_best_movement(
         // 指定局面の利き数ボード再計算。
         // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
         // 相手の利き升調べ（自殺手、特に王手放置回避漏れ　防止のため）
-        recalculate_control_count(universe, speed_of_light);
+        recalculate_control_count(game, speed_of_light);
     }
     // TODO 利きの差分更新をしたいぜ☆（＾～＾）
     //
@@ -128,13 +128,13 @@ pub fn get_best_movement(
     let mut movement_set = HashSet::<u64>::new();
 
     // TODO do_ss とか局面を動かすところで、フリーズしている？
-    generate_movement(universe, speed_of_light, &mut movement_set);
+    generate_movement(game, speed_of_light, &mut movement_set);
 
     // 指せる手が無ければ投了☆（＾～＾）
     if movement_set.is_empty() {
         let best_value = 0;
         let resign_move = MovementBuilder::default();
-        universe.game.info.print(
+        game.info.print(
             cur_depth,
             sum_nodes,
             best_value,
@@ -151,10 +151,10 @@ pub fn get_best_movement(
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
         let movement = Movement::from_hash(*movement_hash);
-        let captured_piece = universe.game.do_move(&movement, speed_of_light);
+        let captured_piece = game.do_move2(&movement, speed_of_light);
 
         // 千日手かどうかを判定する☆（＾～＾）
-        if SENNTITE_NUM <= universe.game.count_same_ky() {
+        if SENNTITE_NUM <= game.count_same_ky() {
             // 千日手なら、この手は戻そうぜ☆（＾～＾）
             repetition_move_hash = *movement_hash;
         } else if end_depth <= cur_depth {
@@ -171,7 +171,7 @@ pub fn get_best_movement(
 
             if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
             let movement = MovementBuilder::from_hash(*movement_hash);
-            universe.game.info.print(
+            game.info.print(
                 cur_depth,
                 sum_nodes,
                 bestmove_state.value,
@@ -184,7 +184,7 @@ pub fn get_best_movement(
                 cur_depth + 1,
                 end_depth,
                 sum_nodes + 1,
-                universe,
+                game,
                 speed_of_light,
                 &format!("{} {}", pv, MovementBuilder::from_hash(*movement_hash)),
             ) {
@@ -211,7 +211,7 @@ pub fn get_best_movement(
 
                     if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
                     let movement = &MovementBuilder::from_hash(*movement_hash);
-                    universe.game.info.print(
+                    game.info.print(
                         cur_depth,
                         sum_nodes,
                         bestmove_state.value,
@@ -223,7 +223,7 @@ pub fn get_best_movement(
             }
         }
         // 1手戻すぜ☆（＾～＾）
-        universe.game.undo_move(&movement, speed_of_light)
+        game.undo_move2(&movement, speed_of_light)
     }
 
     let best_movement = if bestmove_state.get_movement_hash() != 0 {
@@ -234,7 +234,7 @@ pub fn get_best_movement(
     };
 
     // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-    universe.game.info.print(
+    game.info.print(
         cur_depth,
         sum_nodes,
         bestmove_state.value,

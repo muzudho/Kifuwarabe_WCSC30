@@ -23,27 +23,26 @@ use crate::model::univ::gam::misc::square_and_piece::SquareAndPiece;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
-use crate::model::universe::*;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
 /// 利きがどのように変わるかも返して欲しいぜ☆（＾～＾）
 pub fn generate_movement(
-    universe: &mut Universe,
+    game: &mut Game,
     speed_of_light: &MLSpeedOfLightVo,
     movement_set: &mut HashSet<u64>,
 ) {
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement| {
+    get_up_potential_movement(&game, &speed_of_light, &mut |movement| {
         &movement_set.insert(movement);
     });
 
     if false {
         // 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
-        select_movement_except_check(movement_set, &universe.game, &speed_of_light);
+        select_movement_except_check(movement_set, &game, &speed_of_light);
 
         // 自殺手は省くぜ☆（＾～＾）
-        select_movement_except_suiceid(movement_set, universe, speed_of_light);
+        select_movement_except_suiceid(movement_set, game, speed_of_light);
     }
 }
 
