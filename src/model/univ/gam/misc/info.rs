@@ -1,6 +1,6 @@
 //! 情報表示担当☆（＾～＾）
+use crate::controller::io::*;
 use crate::model::univ::gam::misc::movement_builder::MovementBuilder;
-use crate::model::universe::*;
 use std::time::{Duration, Instant};
 
 pub struct SPInfo {
@@ -39,7 +39,7 @@ impl SPInfo {
         // 初回か、前回より1秒以上経過していれば。
         if self.first || self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs() {
             // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-            g_writeln(&format!(
+            IO::writeln(&format!(
                 "info depth {} nodes {} score cp {} currmove {} string {}",
                 cur_depth, sum_nodes, best_value, cur_move, text
             ));

@@ -1,10 +1,10 @@
-use crate::model::universe::*;
+use crate::controller::io::*;
 
 // 対話モードのタイトル画面
 pub fn print_title() {
     // 横幅は 半角79文字使えるぜ☆（＾～＾）
     // 80文字目を使うと、次の行が改行で空行になってしまう☆（＾～＾）
-    g_writeln(
+    IO::writeln(
         &"\
 +--------- --------- --------- --------- --------- --------- --------- -------+
 | KifuWarabe Shogi 2020                                                       |

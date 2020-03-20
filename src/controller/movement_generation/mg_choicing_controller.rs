@@ -3,19 +3,19 @@
 //!
 
 extern crate rand;
-use crate::model::univ::gam::misc::phase::phase_to_num;
-use crate::model::univ::game::Game;
-use rand::Rng;
-
 use crate::controller::common_use::cu_asserts_controller::*;
+use crate::controller::io::*;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_komatori_result_controller::*;
 use crate::model::univ::gam::misc::movement::*;
 use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::phase::phase_to_num;
 use crate::model::univ::gam::misc::square::*;
+use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
+use rand::Rng;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
@@ -176,7 +176,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
 
         // 玉が利きに飛び込んでいるか？
         let jisatusyu = !attackers.is_empty();
-        g_writeln(&format!(
+        IO::writeln(&format!(
             "info string {} evaluated => {} attackers. offence={}->{}",
             potential_movement,
             attackers.len(),
@@ -184,7 +184,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             sq_r_new.to_usquare()
         ));
         for sq_atk in attackers.iter() {
-            g_writeln(&format!("info string ms_atk={}.", sq_atk.to_usquare()));
+            IO::writeln(&format!("info string ms_atk={}.", sq_atk.to_usquare()));
         }
 
         // 手を戻す
@@ -197,14 +197,14 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
             continue 'idea;
         }
 
-        g_writeln(&format!(
+        IO::writeln(&format!(
             "info string SOLUTED movement={}.",
             potential_movement
         ));
         // 問題を全て解決していれば、入れる
         ss_hashset_pickup.insert(potential_movement.to_hash(speed_of_light));
     }
-    g_writeln(&format!(
+    IO::writeln(&format!(
         "info string {} solutions.",
         ss_hashset_pickup.len()
     ));

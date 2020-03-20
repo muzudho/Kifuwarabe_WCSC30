@@ -5,6 +5,7 @@ use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
 use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::controller::common_use::cu_math_controller::*;
+use crate::controller::io::*;
 use crate::controller::movement_generation::mg_choicing_controller::*;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::model::univ::gam::misc::movement_builder::*;
@@ -15,7 +16,6 @@ use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::speed_of_light::*;
-use crate::model::universe::*;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -139,12 +139,12 @@ impl KomatoriResult {
                 // スライダーのいる筋の上で動いても、逃げたことにはならないぜ☆（＾～＾）
                 match match_argangle4(&argangle4a, &argangle4b) {
                     MatchingResult::Unmatched => {
-                        g_writeln(&format!("info string ss={} evaluated in slider.", ss));
+                        IO::writeln(&format!("info string ss={} evaluated in slider.", ss));
                         // スライダーから逃げても、ひよこの利きに飛び込むことはあるが……☆
                         return KomatoriResultResult::NoneMoved;
                     }
                     _ => {
-                        g_writeln(&format!("info string ss={} in slider attack.", ss));
+                        IO::writeln(&format!("info string ss={} in slider attack.", ss));
                     }
                 }
             }

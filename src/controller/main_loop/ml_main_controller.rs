@@ -2,6 +2,7 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
+use crate::controller::io::*;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::phase::*;
 use crate::model::univ::gam::misc::piece::Piece;
@@ -12,18 +13,18 @@ use crate::model::universe::*;
 /// 利き数表示
 pub fn cmd_kikisu(universe: &Universe, speed_of_light: &MLSpeedOfLightVo) {
     GPPieces::for_all(&mut |any_piece| {
-        g_writeln(&format!("利き数：{}", any_piece));
+        IO::writeln(&format!("利き数：{}", any_piece));
         let s = universe
             .game
             .print_number_board(&Phase::None, &any_piece, speed_of_light);
-        g_writeln(&s);
+        IO::writeln(&s);
     });
 
     for phase in PHASE_ARRAY.iter() {
-        g_writeln(&format!("利き数：{}", phase));
+        IO::writeln(&format!("利き数：{}", phase));
         let s = universe
             .game
             .print_number_board(&phase, &Piece::OwariPiece, speed_of_light);
-        g_writeln(&s);
+        IO::writeln(&s);
     }
 }

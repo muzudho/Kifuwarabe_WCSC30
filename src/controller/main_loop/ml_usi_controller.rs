@@ -1,6 +1,7 @@
 //!
 //! USIプロトコル
 //!
+use crate::controller::io::*;
 use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::square::*;
@@ -146,7 +147,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
                     *starts += 1;
                 }
                 _ => {
-                    g_writeln(&format!("(1) '{}' だった。", &line[*starts..=*starts]));
+                    IO::writeln(&format!("(1) '{}' だった。", &line[*starts..=*starts]));
                     return false;
                 }
             }
@@ -189,7 +190,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
                     *starts += 1;
                 }
                 _ => {
-                    g_writeln(&format!("(2) '{}' だった。", &line[*starts..=*starts]));
+                    IO::writeln(&format!("(2) '{}' だった。", &line[*starts..=*starts]));
                     return false;
                 }
             }
@@ -248,7 +249,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             *starts += 1;
         }
         _ => {
-            g_writeln(&format!("(3) '{}' だった。", &line[*starts..=*starts]));
+            IO::writeln(&format!("(3) '{}' だった。", &line[*starts..=*starts]));
             return false;
         }
     }
@@ -291,7 +292,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             *starts += 1;
         }
         _ => {
-            g_writeln(&format!("(4) '{}' だった。", &line[*starts..=*starts]));
+            IO::writeln(&format!("(4) '{}' だった。", &line[*starts..=*starts]));
             return false;
         }
     }
@@ -651,7 +652,7 @@ pub fn read_banjo(
                         suji -= 1;
                     }
                     _ => {
-                        g_writeln(&format!("盤部(0) '{}' だった。", &line[*starts..=*starts]));
+                        IO::writeln(&format!("盤部(0) '{}' だった。", &line[*starts..=*starts]));
                         break 'ban;
                     }
                 }
@@ -760,7 +761,7 @@ pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &MLSpe
                                     starts += 2;
                                 }
                                 _ => {
-                                    g_writeln(&format!(
+                                    IO::writeln(&format!(
                                         "持駒部(0) '{}' だった。",
                                         &line[starts..(starts + 2)]
                                     ));
@@ -876,7 +877,7 @@ pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &MLSpe
             starts += 3;
         }
     } else {
-        g_writeln("'position startpos' でも、'position sfen ' でも始まらなかった。");
+        IO::writeln("'position startpos' でも、'position sfen ' でも始まらなかった。");
         return;
     }
 

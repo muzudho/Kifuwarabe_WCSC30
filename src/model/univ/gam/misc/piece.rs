@@ -15,61 +15,61 @@ use std::fmt;
 // Copy: 配列の要素の初期化のために利用。
 #[derive(Copy, Clone, PartialEq)]
 pub enum Piece {
-    // ▼玉
+    // ▲玉
     King1,
-    // ▼きりん
+    // ▲きりん
     Rook1,
-    // ▼ぞう
+    // ▲ぞう
     Bishop1,
-    // ▼いぬ
+    // ▲いぬ
     Gold1,
-    // ▼ねこ
+    // ▲ねこ
     Silver1,
-    // ▼うさぎ
+    // ▲うさぎ
     Knight1,
-    // ▼いのしし
+    // ▲いのしし
     Lance1,
-    // ▼ひよこ
+    // ▲ひよこ
     Pawn1,
-    // ▼ぱわーあっぷきりん
+    // ▲ぱわーあっぷきりん
     Dragon1,
-    // ▼ぱわーあっぷぞう
+    // ▲ぱわーあっぷぞう
     Horse1,
-    // ▼ぱわーあっぷねこ
+    // ▲ぱわーあっぷねこ
     PromotedSilver1,
-    // ▼ぱわーあっぷうさぎ
+    // ▲ぱわーあっぷうさぎ
     PromotedKnight1,
-    // ▼ぱわーあっぷいのしし
+    // ▲ぱわーあっぷいのしし
     PromotedLance1,
-    // ▼ぱわーあっぷひよこ
+    // ▲ぱわーあっぷひよこ
     PromotedPawn1,
-    // △ライオン
+    // ▽ライオン
     King2,
-    // △キリン
+    // ▽キリン
     Rook2,
-    // △ゾウ
+    // ▽ゾウ
     Bishop2,
-    // △イヌ
+    // ▽イヌ
     Gold2,
-    // △ネコ
+    // ▽ネコ
     Silver2,
-    // △ウサギ
+    // ▽ウサギ
     Knight2,
-    // △イノシシ
+    // ▽イノシシ
     Lance2,
-    // △ヒヨコ
+    // ▽ヒヨコ
     Pawn2,
-    // △パワーアップキリン
+    // ▽パワーアップキリン
     Dragon2,
-    // △パワーアップゾウ
+    // ▽パワーアップゾウ
     Horse2,
-    // △パワーアップネコ
+    // ▽パワーアップネコ
     PromotedSilver2,
-    // △パワーアップウサギ
+    // ▽パワーアップウサギ
     PromotedKnight2,
-    // △パワーアップイノシシ
+    // ▽パワーアップイノシシ
     PromotedLance2,
-    // △パワーアップヒヨコ
+    // ▽パワーアップヒヨコ
     PromotedPawn2,
     // 空マス
     NonePiece,
@@ -83,37 +83,37 @@ pub const PIECE_LN: usize = 30;
 impl fmt::Display for Piece {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
-        // ▼、△ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
+        // ▲、▽ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
         use crate::model::univ::gam::misc::piece::Piece::*;
         match *self {
-            King1 => write!(f, " ▼K "),
-            Rook1 => write!(f, " ▼R "),
-            Bishop1 => write!(f, " ▼B "),
-            Gold1 => write!(f, " ▼G "),
-            Silver1 => write!(f, " ▼S "),
-            Knight1 => write!(f, " ▼N "),
-            Lance1 => write!(f, " ▼L "),
-            Pawn1 => write!(f, " ▼P "),
-            Dragon1 => write!(f, " ▼PR"),
-            Horse1 => write!(f, " ▼PB"),
-            PromotedSilver1 => write!(f, " ▼PS"),
-            PromotedKnight1 => write!(f, " ▼PN"),
-            PromotedLance1 => write!(f, " ▼PL"),
-            PromotedPawn1 => write!(f, " ▼PP"),
-            King2 => write!(f, " △k "),
-            Rook2 => write!(f, " △r "),
-            Bishop2 => write!(f, " △b "),
-            Gold2 => write!(f, " △g "),
-            Silver2 => write!(f, " △s "),
-            Knight2 => write!(f, " △n "),
-            Lance2 => write!(f, " △l "),
-            Pawn2 => write!(f, " △p "),
-            Dragon2 => write!(f, " △pr"),
-            Horse2 => write!(f, " △pb"),
-            PromotedSilver2 => write!(f, " △ps"),
-            PromotedKnight2 => write!(f, " △pn"),
-            PromotedLance2 => write!(f, " △pl"),
-            PromotedPawn2 => write!(f, " △pp"),
+            King1 => write!(f, " ▲K "),
+            Rook1 => write!(f, " ▲R "),
+            Bishop1 => write!(f, " ▲B "),
+            Gold1 => write!(f, " ▲G "),
+            Silver1 => write!(f, " ▲S "),
+            Knight1 => write!(f, " ▲N "),
+            Lance1 => write!(f, " ▲L "),
+            Pawn1 => write!(f, " ▲P "),
+            Dragon1 => write!(f, " ▲PR"),
+            Horse1 => write!(f, " ▲PB"),
+            PromotedSilver1 => write!(f, " ▲PS"),
+            PromotedKnight1 => write!(f, " ▲PN"),
+            PromotedLance1 => write!(f, " ▲PL"),
+            PromotedPawn1 => write!(f, " ▲PP"),
+            King2 => write!(f, " ▽k "),
+            Rook2 => write!(f, " ▽r "),
+            Bishop2 => write!(f, " ▽b "),
+            Gold2 => write!(f, " ▽g "),
+            Silver2 => write!(f, " ▽s "),
+            Knight2 => write!(f, " ▽n "),
+            Lance2 => write!(f, " ▽l "),
+            Pawn2 => write!(f, " ▽p "),
+            Dragon2 => write!(f, " ▽pr"),
+            Horse2 => write!(f, " ▽pb"),
+            PromotedSilver2 => write!(f, " ▽ps"),
+            PromotedKnight2 => write!(f, " ▽pn"),
+            PromotedLance2 => write!(f, " ▽pl"),
+            PromotedPawn2 => write!(f, " ▽pp"),
             NonePiece => write!(f, "    "),
             OwariPiece => write!(f, " ×× "),
         }

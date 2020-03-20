@@ -24,6 +24,7 @@ use crate::view::game_view::*;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use config::*;
 use controller::common_use::cu_conv_controller::*;
+use controller::io::*;
 use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_controller::*;
 use controller::search_part::sp_controller::*;
@@ -67,7 +68,7 @@ fn main() {
         let starts = 0;
 
         if len == 0 {
-            g_writeln("len==0");
+            IO::writeln("len==0");
             if !&universe.dialogue_mode {
                 // 空打ち１回目なら、対話モードへ☆（＾～＾）
                 universe.dialogue_mode = true;
@@ -78,7 +79,7 @@ fn main() {
             } else {
                 // 局面表示
                 let s = GameView::to_string(&universe.game, &PosNums::Current);
-                g_writeln(&s);
+                IO::writeln(&s);
             }
         // 文字数の長いものからチェック
         } else if 9 < len && &line[starts..10] == "usinewgame" {
@@ -91,15 +92,15 @@ fn main() {
                 &speed_of_light,
             );
         } else if 6 < len && &line[starts..7] == "isready" {
-            g_writeln("readyok");
+            IO::writeln("readyok");
         } else if 3 < len && &line[starts..4] == "quit" {
             // 独自コマンド☆（＾～＾）
             // ループを抜けて終了
             break;
         } else if 2 < len && &line[starts..3] == "usi" {
-            g_writeln(&format!("id name {}", ENGINE_NAME));
-            g_writeln(&format!("id author {}", ENGINE_AUTHOR));
-            g_writeln("usiok");
+            IO::writeln(&format!("id name {}", ENGINE_NAME));
+            IO::writeln(&format!("id author {}", ENGINE_AUTHOR));
+            IO::writeln("usiok");
         } else if 1 < len && &line[starts..2] == "go" {
             universe.game.info.clear();
             // 思考開始と、bestmoveコマンドの返却
@@ -110,10 +111,10 @@ fn main() {
             match get_best_movement(0, depth, 0, &mut universe, &speed_of_light, pv) {
                 Some(bestmove) => {
                     // 例： bestmove 7g7f
-                    g_writeln(&format!("bestmove {}", bestmove.movement));
+                    IO::writeln(&format!("bestmove {}", bestmove.movement));
                 }
                 None => {
-                    g_writeln("bestmove resign");
+                    IO::writeln("bestmove resign");
                 }
             }
         } else {
@@ -133,14 +134,14 @@ fn parse_extend_command(
     let len = line.chars().count();
     if line.starts_with("kmugokidir") {
         //}else if 9<len && &line[0..10] == "kmugokidir" {
-        g_writeln("9<len kmugokidir");
+        IO::writeln("9<len kmugokidir");
         // 駒の動きの移動元として有りえる方角
         let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
-        g_writeln(&format!("{}のムーブ元", &piece_type));
+        IO::writeln(&format!("{}のムーブ元", &piece_type));
         universe.print_kmugoki_dir(*piece_type, speed_of_light);
-        g_writeln(""); //改行
+        IO::writeln(""); //改行
     } else if 6 < len && &line[starts..7] == "kmugoki" {
-        g_writeln("6<len kmugoki");
+        IO::writeln("6<len kmugoki");
         // 駒の動きを出力
         universe.print_kmugoki(&speed_of_light);
     } else if 5 < len && &line[starts..6] == "hirate" {
@@ -154,32 +155,32 @@ fn parse_extend_command(
         // 利き数表示
         controller::main_loop::ml_main_controller::cmd_kikisu(&universe, &speed_of_light);
     } else if 5 < len && &line[starts..6] == "random_piece_type" {
-        g_writeln("5<len random_piece_type");
+        IO::writeln("5<len random_piece_type");
         // 乱駒種類
         let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
-        g_writeln(&format!("乱駒種類={}", &piece_type));
+        IO::writeln(&format!("乱駒種類={}", &piece_type));
     } else if 5 < len && &line[starts..6] == "sasite" {
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
         get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
             ss_potential_hashset.insert(movement_hash);
         });
-        g_writeln("----指し手生成 ここから----");
+        IO::writeln("----指し手生成 ここから----");
         print_movement_hashset(&ss_potential_hashset);
-        g_writeln("----指し手生成 ここまで----");
+        IO::writeln("----指し手生成 ここまで----");
     } else if 4 < len && &line[starts..5] == "random_ms" {
         // 乱升
         let sq = controller::common_use::cu_random_move_controller::random_square();
-        g_writeln(&format!("乱升={}", sq.to_usquare()));
+        IO::writeln(&format!("乱升={}", sq.to_usquare()));
     } else if 3 < len && &line[starts..4] == "teigi::conv" {
-        g_writeln("teigi::convのテスト");
+        IO::writeln("teigi::convのテスト");
 
         for ms in 11..19 {
             for hash in 0..10 {
                 let sq = Square::from_usquare(ms);
                 let next = push_sq_to_hash(hash, &sq);
                 let (hash_orig, sq_orig) = pop_sq_from_hash(next);
-                g_writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
+                IO::writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
                     ,hash
                     ,ms
                     ,next
@@ -189,24 +190,24 @@ fn parse_extend_command(
             }
         }
     } else if 3 < len && &line[starts..4] == "hash" {
-        g_writeln("局面ハッシュ表示");
+        IO::writeln("局面ハッシュ表示");
         let s = universe.game.get_all_position_hash_text();
-        g_writeln(&s);
+        IO::writeln(&s);
     } else if 3 < len && &line[starts..4] == "kifu" {
-        g_writeln("棋譜表示");
+        IO::writeln("棋譜表示");
         let s = universe.game.get_moves_history_text();
-        g_writeln(&s);
+        IO::writeln(&s);
     } else if 3 < len && &line[starts..4] == "rand" {
-        g_writeln("3<len rand");
+        IO::writeln("3<len rand");
         // 乱数の試し
         let secret_number = rand::thread_rng().gen_range(1, 101); //1~100
-        g_writeln(&format!("乱数={}", secret_number));
+        IO::writeln(&format!("乱数={}", secret_number));
     } else if 3 < len && &line[starts..4] == "same" {
         let count = universe.game.count_same_ky();
-        g_writeln(&format!("同一局面調べ count={}", count));
+        IO::writeln(&format!("同一局面調べ count={}", count));
     } else if 3 < len && &line[starts..4] == "undo" {
         if !universe.undo_move(&speed_of_light) {
-            g_writeln(&format!(
+            IO::writeln(&format!(
                 "ply={} を、これより戻せません",
                 universe.game.history.ply
             ));
@@ -218,9 +219,9 @@ fn parse_extend_command(
             starts += 1;
         }
         // いろいろな動作テスト
-        g_writeln(&format!("unit-test starts={} len={}", starts, len));
+        IO::writeln(&format!("unit-test starts={} len={}", starts, len));
         unit_test(&line, &mut starts, len, universe, &speed_of_light);
-    //g_writeln( &ml_universe_dto.pop_command() );
+    //IO::writeln( &ml_universe_dto.pop_command() );
     } else if 2 < len && &line[starts..3] == "do " {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える
@@ -235,10 +236,10 @@ fn parse_extend_command(
     } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示
         let s = GameView::to_string(&universe.game, &PosNums::Start);
-        g_writeln(&s);
+        IO::writeln(&s);
     } else if 2 < len && &line[starts..3] == "pos" {
         // 現局面表示
         let s = GameView::to_string(&universe.game, &PosNums::Current);
-        g_writeln(&s);
+        IO::writeln(&s);
     }
 }

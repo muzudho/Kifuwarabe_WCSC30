@@ -555,25 +555,25 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStruct) -> bo
     use crate::model::univ::gam::misc::piece::Piece::*;
     match ps_dst.piece() {
         Knight1 => {
-            // ▼うさぎ　は１、２段目には進めない
+            // ▲うさぎ　は１、２段目には進めない
             if dy < RANK_3 {
                 return false;
             }
         }
         Lance1 | Pawn1 => {
-            // ▼しし、▼ひよこ　は１段目には進めない
+            // ▲しし、▲ひよこ　は１段目には進めない
             if dy < RANK_2 {
                 return false;
             }
         }
         Knight2 => {
-            // △うさぎ　は８、９段目には進めない
+            // ▽うさぎ　は８、９段目には進めない
             if RANK_7 < dy {
                 return false;
             }
         }
         Lance2 | Pawn2 => {
-            // △しし、△ひよこ　は９段目には進めない
+            // ▽しし、▽ひよこ　は９段目には進めない
             if RANK_8 < dy {
                 return false;
             }
@@ -1045,25 +1045,25 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
         use crate::model::univ::gam::misc::piece::Piece::*;
         match km {
             Knight1 => {
-                // ▼うさぎ　は１、２段目には進めない
+                // ▲うさぎ　は１、２段目には進めない
                 if dy < RANK_3 {
                     continue;
                 }
             }
             Lance1 | Pawn1 => {
-                // ▼しし、▼ひよこ　は１段目には進めない
+                // ▲しし、▲ひよこ　は１段目には進めない
                 if dy < RANK_2 {
                     continue;
                 }
             }
             Knight2 => {
-                // △うさぎ　は８、９段目には進めない
+                // ▽うさぎ　は８、９段目には進めない
                 if RANK_7 < dy {
                     continue;
                 }
             }
             Lance2 | Pawn2 => {
-                // △しし、△ひよこ　は９段目には進めない
+                // ▽しし、▽ひよこ　は９段目には進めない
                 if RANK_8 < dy {
                     continue;
                 }
@@ -1881,19 +1881,19 @@ pub fn lookup_drop_by_square_piece<F1>(
     use crate::model::univ::gam::misc::piece::Piece::*;
     match destination_sqp.piece {
         Knight1 => {
-            // ▼うさぎ　は１、２段目には進めない
+            // ▲うさぎ　は１、２段目には進めない
             if dy < RANK_3 {
                 return;
             }
         }
-        // ▼しし、▼ひよこ　は１段目には進めない
+        // ▲しし、▲ひよこ　は１段目には進めない
         Lance1 => {
             if dy < RANK_2 {
                 return;
             }
         }
         Pawn1 => {
-            // ▼ひよこ　は２歩できない
+            // ▲ひよこ　は２歩できない
             if dy < RANK_2
                 || current_board.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
@@ -1901,19 +1901,19 @@ pub fn lookup_drop_by_square_piece<F1>(
             }
         }
         Knight2 => {
-            // △うさぎ　は８、９段目には進めない
+            // ▽うさぎ　は８、９段目には進めない
             if RANK_7 < dy {
                 return;
             }
         }
-        // △しし、△ひよこ　は９段目には進めない
+        // ▽しし、▽ひよこ　は９段目には進めない
         Lance2 => {
             if RANK_8 < dy {
                 return;
             }
         }
         Pawn2 => {
-            // △ひよこ　は２歩できない
+            // ▽ひよこ　は２歩できない
             if RANK_8 < dy
                 || current_board.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
             {
