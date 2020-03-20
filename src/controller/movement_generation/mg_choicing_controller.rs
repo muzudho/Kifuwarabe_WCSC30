@@ -136,7 +136,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         let potential_movement = Movement::from_hash(*hash_potential_movement);
 
         // その手を指してみる
-        game.do_move1(&potential_movement, speed_of_light);
+        game.do_move(&potential_movement, speed_of_light);
         // // 現局面表示
         // let s1 = &ml_universe_dto.print_ky( &PosNums::Current );
         // g_writeln( &s1 );
@@ -184,7 +184,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
         }
 
         // 手を戻す
-        game.undo_move1(speed_of_light);
+        game.undo_move(speed_of_light);
         // // 現局面表示
         // let s2 = &ml_universe_dto.print_ky( &PosNums::Current );
         // g_writeln( &s2 );

@@ -151,7 +151,7 @@ pub fn get_best_movement(
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
         let movement = Movement::from_hash(*movement_hash);
-        let captured_piece = game.do_move2(&movement, speed_of_light);
+        let captured_piece = game.do_move(&movement, speed_of_light);
 
         // 千日手かどうかを判定する☆（＾～＾）
         if SENNTITE_NUM <= game.count_same_ky() {
@@ -223,7 +223,7 @@ pub fn get_best_movement(
             }
         }
         // 1手戻すぜ☆（＾～＾）
-        game.undo_move2(&movement, speed_of_light)
+        game.undo_move(speed_of_light);
     }
 
     let best_movement = if bestmove_state.get_movement_hash() != 0 {

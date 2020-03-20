@@ -206,7 +206,7 @@ fn parse_extend_command(
         let count = universe.game.count_same_ky();
         IO::writeln(&format!("同一局面調べ count={}", count));
     } else if 3 < len && &line[starts..4] == "undo" {
-        if !universe.game.undo_move1(&speed_of_light) {
+        if !universe.game.undo_move(&speed_of_light) {
             IO::writeln(&format!(
                 "ply={} を、これより戻せません",
                 universe.game.history.ply
@@ -231,7 +231,7 @@ fn parse_extend_command(
             // 入っている指し手の通り指すぜ☆（＾～＾）
             let ply = universe.game.history.ply;
             let ss = universe.game.history.movements[ply as usize].clone();
-            universe.game.do_move1(&ss, speed_of_light);
+            universe.game.do_move(&ss, speed_of_light);
         }
     } else if 3 < len && &line[starts..4] == "pos0" {
         // 初期局面表示
