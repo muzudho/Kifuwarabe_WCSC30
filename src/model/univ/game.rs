@@ -1,6 +1,6 @@
-use crate::model::dto::search_part::sp_info::SPInfo;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::history::*;
+use crate::model::univ::gam::info::SPInfo;
 use crate::model::univ::gam::misc::PosNums;
 use crate::model::univ::gam::movement::Movement;
 use crate::model::univ::gam::person::Person;

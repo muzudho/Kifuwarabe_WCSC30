@@ -13,9 +13,7 @@ pub struct SPPieceSetDto {
     num_syugo: HashSet<usize>,
 }
 impl SPPieceSetDto {
-    /**
-     * 全ての元を含む
-     */
+    /// 全ての元を含む
     pub fn new_all(speed_of_light: &MLSpeedOfLightVo) -> SPPieceSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         GPPieces::for_all(&mut |any_piece| {
