@@ -1,4 +1,4 @@
-use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::game::Game;
 use crate::model::vo::other_part::op_misc_vo::PosNums;
@@ -121,21 +121,21 @@ R x{81:2}   b2 |{63}|{64}|{65}|{66}|{67}|{68}|{69}|{70}|{71}|   r x{88:2}
             board.get_piece_by_square(&Square::from_usquare(81)),
             board.get_piece_by_square(&Square::from_usquare(91)),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            board.hand[GPPieceVo::Rook1 as usize],
-            board.hand[GPPieceVo::Bishop1 as usize],
-            board.hand[GPPieceVo::Gold1 as usize],
-            board.hand[GPPieceVo::Silver1 as usize],
-            board.hand[GPPieceVo::Knight1 as usize],
-            board.hand[GPPieceVo::Lance1 as usize],
-            board.hand[GPPieceVo::Pawn1 as usize],
+            board.hand[Piece::Rook1 as usize],
+            board.hand[Piece::Bishop1 as usize],
+            board.hand[Piece::Gold1 as usize],
+            board.hand[Piece::Silver1 as usize],
+            board.hand[Piece::Knight1 as usize],
+            board.hand[Piece::Lance1 as usize],
+            board.hand[Piece::Pawn1 as usize],
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            board.hand[GPPieceVo::Rook2 as usize],
-            board.hand[GPPieceVo::Bishop2 as usize],
-            board.hand[GPPieceVo::Gold2 as usize],
-            board.hand[GPPieceVo::Silver2 as usize],
-            board.hand[GPPieceVo::Knight2 as usize],
-            board.hand[GPPieceVo::Lance2 as usize],
-            board.hand[GPPieceVo::Pawn2 as usize],
+            board.hand[Piece::Rook2 as usize],
+            board.hand[Piece::Bishop2 as usize],
+            board.hand[Piece::Gold2 as usize],
+            board.hand[Piece::Silver2 as usize],
+            board.hand[Piece::Knight2 as usize],
+            board.hand[Piece::Lance2 as usize],
+            board.hand[Piece::Pawn2 as usize],
             ply,
             phase,
             same_pos_count

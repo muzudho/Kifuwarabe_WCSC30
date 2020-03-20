@@ -4,7 +4,7 @@
 extern crate rand;
 use rand::Rng;
 
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
 
@@ -27,6 +27,6 @@ pub fn random_square() -> Square {
 /**
  * ランダムに 駒の種類を返す
  */
-pub fn random_piece_type() -> &'static GPPieceTypeVo {
+pub fn random_piece_type() -> &'static PieceType {
     &PIECE_TYPE_ARRAY[rand::thread_rng().gen_range(0, KMS_ARRAY_LN)]
 }

@@ -9,8 +9,8 @@ use crate::controller::movement_generation::mg_choicing_controller::*;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::GPPieceVo;
-use crate::model::univ::gam::piece_struct::GPPieceStructVo;
+use crate::model::univ::gam::piece::Piece;
+use crate::model::univ::gam::piece_struct::PieceStruct;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
@@ -37,7 +37,7 @@ pub enum KomatoriResultResult {
 /// 結果：駒取り
 pub struct KomatoriResult {
     // 要因：王手をしてきている駒（１つ）
-    km_attacker: GPPieceVo,
+    km_attacker: Piece,
     // 要因：アタッカーが居る升
     sq_attacker: Square,
     // 要因：狙われている駒が居る升
@@ -72,7 +72,7 @@ impl KomatoriResult {
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, km_atk) = GPPieceStructVo::from_hash(hash);
+        let (hash, km_atk) = PieceStruct::from_hash(hash);
         let (hash, sq_atk) = pop_sq_from_hash(hash);
         let (_hash, sq_tgt) = pop_sq_from_hash(hash);
         KomatoriResult {

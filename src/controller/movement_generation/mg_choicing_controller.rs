@@ -137,7 +137,7 @@ pub fn select_movement_except_suiceid<S: BuildHasher>(
 
     // 指せる手から、王手が消えている手だけ、選び抜くぜ☆（＾～＾）
     'idea: for hash_potential_movement in ss_hashset_input.iter() {
-        let potential_movement = GPMovementVo::from_hash(*hash_potential_movement);
+        let potential_movement = Movement::from_hash(*hash_potential_movement);
 
         // その手を指してみる
         ml_universe_dto.do_move(&potential_movement, speed_of_light);

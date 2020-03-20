@@ -43,7 +43,7 @@ impl MGMovements {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: false,
-                                        drop: GPPieceTypeVo::KaraPieceType,
+                                        drop: PieceType::KaraPieceType,
                                     }
                                     .to_hash(speed_of_light),
                                 );
@@ -52,7 +52,7 @@ impl MGMovements {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: true,
-                                        drop: GPPieceTypeVo::KaraPieceType,
+                                        drop: PieceType::KaraPieceType,
                                     }
                                     .to_hash(speed_of_light),
                                 );
@@ -63,7 +63,7 @@ impl MGMovements {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: promotion,
-                                        drop: GPPieceTypeVo::KaraPieceType,
+                                        drop: PieceType::KaraPieceType,
                                     }
                                     .to_hash(speed_of_light),
                                 );
@@ -82,7 +82,7 @@ impl MGMovements {
             let piece = current_board.get_piece_by_square(&source);
             let ps = speed_of_light.get_piece_struct_vo(piece);
             if *friend == ps.phase() {
-                use crate::model::univ::gam::piece::GPPieceVo::*;
+                use crate::model::univ::gam::piece::Piece::*;
                 match piece {
                     Pawn1 => {
                         NextSquares::looking_for_square_from_1player_pawn_on_board(
@@ -244,7 +244,7 @@ impl MGMovements {
                 .get_hand(hand_piece, speed_of_light)
             {
                 // 駒を持っていれば
-                use crate::model::univ::gam::piece::GPPieceVo::*;
+                use crate::model::univ::gam::piece::Piece::*;
                 match *hand_piece {
                     // ▲歩、▲香 は１段目には進めない
                     Pawn1 | Lance1 => Squares::for_from_rank2_to_rank9(&mut |destination| {
@@ -303,7 +303,7 @@ impl MGMovements {
     }
 
     fn make_hand<F1>(
-        hand_piece: &GPPieceVo,
+        hand_piece: &Piece,
         position: &Position,
         speed_of_light: &MLSpeedOfLightVo,
         destination: &Square,
@@ -315,13 +315,13 @@ impl MGMovements {
             .get_current_board()
             .get_piece_by_square(&destination);
 
-        if let GPPieceVo::NonePiece = exists_piece {
+        if let Piece::NonePiece = exists_piece {
             // 駒が無いところに打つ
             let current_board = position.get_current_board();
             let ps_dst = speed_of_light.get_piece_struct_vo(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-            use crate::model::univ::gam::piece::GPPieceVo::*;
+            use crate::model::univ::gam::piece::Piece::*;
             match *hand_piece {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない

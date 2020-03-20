@@ -4,7 +4,7 @@
 
 use super::super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::super::model::vo::other_part::op_person_vo::Person;
-use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::position::*;
 use std::collections::HashSet;
@@ -48,7 +48,7 @@ impl SPPieceSetDto {
             num_syugo: num_syugo1,
         }
     }
-    pub fn remove(&mut self, piece: &GPPieceVo, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn remove(&mut self, piece: &Piece, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo.remove(
             &speed_of_light
                 .get_piece_struct_vo(piece)

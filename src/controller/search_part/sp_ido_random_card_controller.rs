@@ -11,7 +11,7 @@ use super::super::super::controller::search_part::sp_jisatusyu_result_controller
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::super::super::model::vo::other_part::op_person_vo::Person;
 use crate::model::univ::gam::movement_builder::*;
-use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::Piece;
 use crate::model::universe::*;
 use std::collections::HashSet;
 
@@ -22,7 +22,7 @@ use std::collections::HashSet;
  */
 pub fn get_ido_ss_by_km_random(
     ml_universe_dto: &Universe,
-    piece_dst: &GPPieceVo,
+    piece_dst: &Piece,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> MovementBuilder {
     let mut ss_hashset = HashSet::new();

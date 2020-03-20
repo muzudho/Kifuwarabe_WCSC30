@@ -6,7 +6,7 @@ use crate::controller::movement_generation::mg_controller::*;
 use crate::controller::movement_generation::mg_square::*;
 use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::*;
-use crate::model::univ::gam::piece_struct::GPPieceStructVo;
+use crate::model::univ::gam::piece_struct::PieceStruct;
 use crate::model::univ::gam::square::*;
 use crate::model::universe::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
@@ -19,7 +19,7 @@ pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpe
     // ゼロ・リセット
     GPPieces::for_all(&mut |any_piece| {
         universe.game.position.control_count_by_piece
-            [GPPieceStructVo::from_piece(any_piece).serial_piece_number()]
+            [PieceStruct::from_piece(any_piece).serial_piece_number()]
         .clear();
     });
 
@@ -29,7 +29,7 @@ pub fn recalculate_control_count(universe: &mut Universe, speed_of_light: &MLSpe
 
     // カウント
     GPPieces::for_all(&mut |any_piece| {
-        let ps_dst = GPPieceStructVo::from_piece(any_piece);
+        let ps_dst = PieceStruct::from_piece(any_piece);
 
         // 移動先の升☆（＾～＾）
         MGSquares::for_all(&mut |any_square| {

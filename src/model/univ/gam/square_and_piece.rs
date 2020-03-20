@@ -1,14 +1,14 @@
-use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::square::*;
 
 /// 升 × 駒
-pub struct GPSquareAndPieceVo {
+pub struct SquareAndPiece {
     pub square: Square,
-    pub piece: GPPieceVo,
+    pub piece: Piece,
 }
-impl GPSquareAndPieceVo {
-    pub fn new(square1: &Square, piece1: &GPPieceVo) -> Self {
-        GPSquareAndPieceVo {
+impl SquareAndPiece {
+    pub fn new(square1: &Square, piece1: &Piece) -> Self {
+        SquareAndPiece {
             square: square1.clone(),
             piece: piece1.clone(),
         }

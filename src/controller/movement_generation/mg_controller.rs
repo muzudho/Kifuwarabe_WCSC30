@@ -11,13 +11,13 @@ use crate::controller::movement_generation::movements::*;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::GPPieceVo;
-use crate::model::univ::gam::piece_struct::GPPieceStructVo;
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece::Piece;
+use crate::model::univ::gam::piece_struct::PieceStruct;
+use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::position::*;
 use crate::model::univ::gam::square::*;
-use crate::model::univ::gam::square_and_piece::GPSquareAndPieceVo;
+use crate::model::univ::gam::square_and_piece::SquareAndPiece;
 use crate::model::universe::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::vo::other_part::op_person_vo::Person;
@@ -80,7 +80,7 @@ pub fn get_up_potential_movement<F1>(
 /// 盤上の駒の移動の最初の１つ。打を除く
 pub fn get_movement_by_square_and_piece_on_board<F1>(
     sq_dst: &Square,
-    piece_dst: GPPieceVo,
+    piece_dst: Piece,
     position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
@@ -131,7 +131,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成らず
         ss_hash_builder.pro = false;
-        ss_hash_builder.drop = GPPieceTypeVo::KaraPieceType;
+        ss_hash_builder.drop = PieceType::KaraPieceType;
         gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 
@@ -154,7 +154,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成り
         ss_hash_builder.pro = true;
-        ss_hash_builder.drop = GPPieceTypeVo::KaraPieceType;
+        ss_hash_builder.drop = PieceType::KaraPieceType;
         gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 }
@@ -165,7 +165,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 /// 2. 移動先駒指定  piece_dst
 pub fn get_movement_by_square_and_piece_on_drop<F1>(
     sq_dst: &Square,
-    piece_dst: &GPPieceVo,
+    piece_dst: &Piece,
     position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
     mut gets_movement: F1,
@@ -201,7 +201,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 
     let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
     lookup_drop_by_square_piece(
-        &GPSquareAndPieceVo::new(&sq_dst, piece_dst),
+        &SquareAndPiece::new(&sq_dst, piece_dst),
         &position.get_current_board(),
         &speed_of_light,
         |piece_type_hash| {
@@ -241,7 +241,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 /// TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
 pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
+    ps_dst: &PieceStruct,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
@@ -548,10 +548,10 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
 }
 
 /// この駒には行き先があります。
-fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -> bool {
+fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStruct) -> bool {
     let (_dx, dy) = square_dst.to_file_rank();
 
-    use crate::model::univ::gam::piece::GPPieceVo::*;
+    use crate::model::univ::gam::piece::Piece::*;
     match ps_dst.piece() {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない
@@ -585,7 +585,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &GPPieceStructVo) -
 
 // 成る前を含めない、長い利き
 fn lookup_no_promotion_source_by_piece_sliding<F1>(
-    dst_piece: &GPPieceVo,
+    dst_piece: &Piece,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     lookups_the_square: &mut F1,
@@ -606,7 +606,7 @@ where
 
 /// 成る前を含めない、隣への利き
 fn lookup_no_promotion_source_by_piece_next<F1>(
-    dst_piece: &GPPieceVo,
+    dst_piece: &Piece,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     lookups_the_square: &mut F1,
@@ -631,7 +631,7 @@ fn lookup_no_promotion_source_by_piece_next<F1>(
 /// 成り　の動きでその結果になるような、元の升を返す☆（＾～＾）
 pub fn lookup_before_promotion_source_by_square_piece<F1>(
     square_dst: &Square,
-    ps_dst: &GPPieceStructVo,
+    ps_dst: &PieceStruct,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
@@ -666,7 +666,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     let piece_src = speed_of_light
         .get_piece_struct_vo_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
         .piece();
-    let square_dst_piece_src = GPSquareAndPieceVo::new(square_dst, piece_src);
+    let square_dst_piece_src = SquareAndPiece::new(square_dst, piece_src);
 
     let piece_type_narumae_num = speed_of_light
         .get_piece_type_struct_vo_from_piece(ps_dst.demote())
@@ -975,7 +975,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
 
 /// 成る前の移動元、長い利き
 fn lookup_before_promotion_source_sliding<F1>(
-    source_piece: &GPPieceVo,
+    source_piece: &Piece,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
@@ -996,7 +996,7 @@ where
 
 /// 成る前の移動元、 隣升への利き
 fn lookup_before_promotion_source_next<F1>(
-    source_piece: &GPPieceVo,
+    source_piece: &Piece,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_square: F1,
@@ -1041,7 +1041,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             .get_piece_struct_vo_by_phase_and_piece_type(&phase, *piece_type)
             .piece()
             .clone();
-        use crate::model::univ::gam::piece::GPPieceVo::*;
+        use crate::model::univ::gam::piece::Piece::*;
         match km {
             Knight1 => {
                 // ▼うさぎ　は１、２段目には進めない
@@ -1070,9 +1070,9 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             _ => {}
         }
 
-        let dst_sq_piece = GPSquareAndPieceVo::new(
+        let dst_sq_piece = SquareAndPiece::new(
             square_dst,
-            &GPPieceVo::from_phase_and_piece_type(phase, *piece_type),
+            &Piece::from_phase_and_piece_type(phase, *piece_type),
         );
 
         let piece_type_num = speed_of_light
@@ -1367,7 +1367,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
 
 // 移動元升、長い利き☆（＾～＾）
 fn lookup_no_promotion_source_by_phase_sliding<F1>(
-    dst_sq_piece: &GPSquareAndPieceVo,
+    dst_sq_piece: &SquareAndPiece,
     current_board: &Board,
     lookups_the_square: &mut F1,
     next_square: Square,
@@ -1380,14 +1380,14 @@ where
         lookups_the_square(next_square);
     }
     // End of sliding.
-    if *exists_piece != GPPieceVo::NonePiece {
+    if *exists_piece != Piece::NonePiece {
         return true;
     }
     false
 }
 // 移動元升、隣☆（＾～＾）
 fn lookup_no_promotion_source_by_phase_next<F1>(
-    dst_sq_piece: &GPSquareAndPieceVo,
+    dst_sq_piece: &SquareAndPiece,
     current_board: &Board,
     lookup_the_square: &mut F1,
     next_square: Square,
@@ -1431,14 +1431,14 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
         }
 
         let prokm_src = ps_src.promote();
-        if let GPPieceVo::NonePiece = prokm_src {
+        if let Piece::NonePiece = prokm_src {
             // 成れない駒は、成る動きを考えなくていいぜ☆（＾～＾）
             continue;
         }
 
-        let dst_sq_and_demoted_piece = GPSquareAndPieceVo::new(
+        let dst_sq_and_demoted_piece = SquareAndPiece::new(
             square_dst,
-            &GPPieceVo::from_phase_and_piece_type(phase, *piece_type),
+            &Piece::from_phase_and_piece_type(phase, *piece_type),
         );
 
         // 成れる駒は、成る前の駒の動きも調べる
@@ -1773,7 +1773,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 
 /// 成る前移動元升、長い利き☆（＾～＾）
 fn lookup_before_promotion_source_by_phase_sliding<F1>(
-    dst_sq_and_demoted_piece: &GPSquareAndPieceVo,
+    dst_sq_and_demoted_piece: &SquareAndPiece,
     current_board: &Board,
     lookups_the_square: &mut F1,
     next_square: Square,
@@ -1787,14 +1787,14 @@ where
         lookups_the_square(next_square);
     }
     // End of sliding.
-    if *exists_piece != GPPieceVo::NonePiece {
+    if *exists_piece != Piece::NonePiece {
         return true;
     }
     false
 }
 /// 成る前移動元升、 隣☆（＾～＾）
 fn lookup_before_promotion_source_by_phase_next<F1>(
-    dst_sq_and_demoted_piece: &GPSquareAndPieceVo,
+    dst_sq_and_demoted_piece: &SquareAndPiece,
     current_board: &Board,
     lookups_the_square: &mut F1,
     next_square: Square,
@@ -1822,7 +1822,7 @@ fn lookup_before_promotion_source_by_phase_next<F1>(
 ///
 /// * `lookups_the_drops` - Piece type hash.
 pub fn lookup_drop_by_square_piece<F1>(
-    destination_sqp: &GPSquareAndPieceVo,
+    destination_sqp: &SquareAndPiece,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     mut lookups_the_drops: F1,
@@ -1845,7 +1845,7 @@ pub fn lookup_drop_by_square_piece<F1>(
     // +------------------------+
     let km_banjo = current_board.get_piece_by_square(&destination_sqp.square);
     match km_banjo {
-        GPPieceVo::NonePiece => {}
+        Piece::NonePiece => {}
         _ => {
             return;
         } // 駒があるところに打つ手は終了
@@ -1877,7 +1877,7 @@ pub fn lookup_drop_by_square_piece<F1>(
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use crate::model::univ::gam::piece::GPPieceVo::*;
+    use crate::model::univ::gam::piece::Piece::*;
     match destination_sqp.piece {
         Knight1 => {
             // ▼うさぎ　は１、２段目には進めない

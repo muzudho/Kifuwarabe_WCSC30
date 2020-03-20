@@ -9,7 +9,7 @@ use crate::controller::common_use::cu_random_move_controller;
 use crate::controller::movement_generation::mg_controller::*;
 use crate::model::univ::gam::movement_builder::*;
 use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::gam::square_and_piece::*;
 use crate::model::universe::*;
@@ -70,7 +70,7 @@ pub fn unit_test(
             },
         );
         lookup_drop_by_square_piece(
-            &GPSquareAndPieceVo::new(&sq_dst, pc),
+            &SquareAndPiece::new(&sq_dst, pc),
             &ml_universe_dto.game.position.get_current_board(),
             &speed_of_light,
             |piece_type_hash| {
@@ -118,7 +118,7 @@ pub fn unit_test(
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_usquare()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = GPPieceTypeVo::KaraPieceType;
+            ss.drop = PieceType::KaraPieceType;
         }
         /*
         for sq_src in mv_src_hashset {
@@ -126,7 +126,7 @@ pub fn unit_test(
             g_writeln(&format!("移動可能な駒がある升={}", sq_src.to_usquare()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = GPPieceTypeVo::KaraPieceType;
+            ss.drop = PieceType::KaraPieceType;
             break;
         }
         */
@@ -136,7 +136,7 @@ pub fn unit_test(
         // 駒の移動元升
         {
             g_writeln("利きテスト1");
-            let piece_type = GPPieceTypeVo::PromotedPawn; // ぱわーあっぷひよこ
+            let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
@@ -168,7 +168,7 @@ pub fn unit_test(
                 },
             );
             lookup_drop_by_square_piece(
-                &GPSquareAndPieceVo::new(&sq_dst, pc),
+                &SquareAndPiece::new(&sq_dst, pc),
                 &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {
@@ -180,7 +180,7 @@ pub fn unit_test(
         }
         {
             g_writeln("利きテスト2");
-            let piece_type = GPPieceTypeVo::PromotedPawn; // ぱわーあっぷひよこ
+            let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
@@ -212,7 +212,7 @@ pub fn unit_test(
                 },
             );
             lookup_drop_by_square_piece(
-                &GPSquareAndPieceVo::new(&sq_dst, pc),
+                &SquareAndPiece::new(&sq_dst, pc),
                 &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {
@@ -224,7 +224,7 @@ pub fn unit_test(
         }
         {
             g_writeln("利きテスト3");
-            let piece_type = GPPieceTypeVo::PromotedPawn; // ぱわーあっぷひよこ
+            let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = ps.piece(); // △ph
@@ -256,7 +256,7 @@ pub fn unit_test(
                 },
             );
             lookup_drop_by_square_piece(
-                &GPSquareAndPieceVo::new(&sq_dst, pc),
+                &SquareAndPiece::new(&sq_dst, pc),
                 &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {
@@ -268,7 +268,7 @@ pub fn unit_test(
         }
         {
             g_writeln("利きテスト2");
-            let piece_type = GPPieceTypeVo::King; // らいおん
+            let piece_type = PieceType::King; // らいおん
             let ps = speed_of_light
                 .get_piece_struct_vo_by_phase_and_piece_type(&Phase::First, piece_type);
             let pc = ps.piece(); // ▼ら
@@ -300,7 +300,7 @@ pub fn unit_test(
                 },
             );
             lookup_drop_by_square_piece(
-                &GPSquareAndPieceVo::new(&sq_dst, pc),
+                &SquareAndPiece::new(&sq_dst, pc),
                 &ml_universe_dto.game.position.get_current_board(),
                 &speed_of_light,
                 |piece_type_hash| {

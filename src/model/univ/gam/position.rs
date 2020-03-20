@@ -24,11 +24,11 @@ pub struct Position {
     pub position_hash_history: [u64; PLY_LN],
 
     /// 取った駒
-    pub captured_piece_history: [GPPieceVo; PLY_LN],
+    pub captured_piece_history: [Piece; PLY_LN],
 
     /// 棋譜
     /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
-    pub movements_history: [GPMovementVo; PLY_LN],
+    pub movements_history: [Movement; PLY_LN],
 
     /// 現在の指し手を作成中。
     pub current_movement_builder: MovementBuilder,
@@ -51,8 +51,8 @@ impl Default for Position {
             current_board: Board::default(),
             position_hash_history: [0; PLY_LN],
             /// 取った駒
-            captured_piece_history: [GPPieceVo::NonePiece; PLY_LN],
-            movements_history: [GPMovementVo::default(); PLY_LN],
+            captured_piece_history: [Piece::NonePiece; PLY_LN],
+            movements_history: [Movement::default(); PLY_LN],
             /// 現在の指し手を作成中。
             current_movement_builder: MovementBuilder::default(),
             /// 利き数（先後別）
@@ -159,14 +159,14 @@ impl Position {
      * 指し手の　進む戻る　を逆さにして、盤上の駒配置を動かすぜ☆（＾～＾）
      * 手目のカウントが増えたりはしないぜ☆（＾～＾）
      */
-    pub fn undo_move(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn undo_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
         let phase = self.get_phase(&Person::Friend);
         let cap = self.captured_piece_history[self.get_ply() as usize].clone();
 
         // 移動先の駒
         let piece186 = if movement.source.to_usquare() == SQUARE_DROP {
             // 打なら
-            let piece679 = GPPieceVo::from_phase_and_piece_type(&phase, movement.drop);
+            let piece679 = Piece::from_phase_and_piece_type(&phase, movement.drop);
             // 自分の持ち駒を増やす
             //let mg = km_to_mg(km);
             //self.add_hand(mg,1);
@@ -194,7 +194,7 @@ impl Position {
         self.current_board
             .set_piece_by_square(&movement.destination, &cap);
         match cap {
-            GPPieceVo::NonePiece => {}
+            Piece::NonePiece => {}
             _ => {
                 // 自分の持ち駒を減らす
                 self.current_board.add_hand(
@@ -221,11 +221,7 @@ impl Position {
     /// 手目のカウントが増えたりはしないぜ☆（＾～＾）
     ///
     /// return : 取った駒
-    pub fn do_move(
-        &mut self,
-        movement: &GPMovementVo,
-        speed_of_light: &MLSpeedOfLightVo,
-    ) -> GPPieceVo {
+    pub fn do_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) -> Piece {
         let phase = self.get_phase(&Person::Friend);
 
         // 取った駒
@@ -236,7 +232,7 @@ impl Position {
             let piece144 = if movement.source.to_usquare() == SQUARE_DROP {
                 // 打なら
                 // 自分の持ち駒を減らす
-                let piece734 = GPPieceVo::from_phase_and_piece_type(&phase, movement.drop);
+                let piece734 = Piece::from_phase_and_piece_type(&phase, movement.drop);
                 self.current_board.add_hand(&piece734, -1, speed_of_light);
                 piece734
             } else {
@@ -256,17 +252,17 @@ impl Position {
                 };
 
                 self.current_board
-                    .set_piece_by_square(&movement.source, &GPPieceVo::NonePiece);
+                    .set_piece_by_square(&movement.source, &Piece::NonePiece);
 
                 piece152
             };
 
             // 移動先升に駒があるかどうか
-            cap = if let GPPieceVo::NonePiece = self
+            cap = if let Piece::NonePiece = self
                 .current_board
                 .get_piece_by_square(&movement.destination)
             {
-                GPPieceVo::NonePiece
+                Piece::NonePiece
             } else {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let cap764;
@@ -298,17 +294,17 @@ impl Position {
         cap
     }
 
-    pub fn get_moves_history(&self) -> &[GPMovementVo; PLY_LN] {
+    pub fn get_moves_history(&self) -> &[Movement; PLY_LN] {
         &self.movements_history
     }
 
     /// 棋譜の作成
-    pub fn set_current_movement(&mut self, movement: &GPMovementVo) {
+    pub fn set_current_movement(&mut self, movement: &Movement) {
         self.movements_history[self.get_ply() as usize] = movement.clone()
     }
     pub fn build_current_movement(&mut self) {
         self.movements_history[self.get_ply() as usize] =
-            GPMovementVo::new(&self.current_movement_builder)
+            Movement::new(&self.current_movement_builder)
     }
     pub fn set_current_movement_source_temporary(&mut self, src: &Square) {
         self.current_movement_builder.src = src.clone()
@@ -319,13 +315,13 @@ impl Position {
     pub fn set_current_movement_promote_temporary(&mut self, pro: bool) {
         self.current_movement_builder.pro = pro
     }
-    pub fn set_current_movement_drop_temporary(&mut self, piece_type: GPPieceTypeVo) {
+    pub fn set_current_movement_drop_temporary(&mut self, piece_type: PieceType) {
         self.current_movement_builder.drop = piece_type
     }
-    pub fn set_cap(&mut self, ply1: usize, km: GPPieceVo) {
+    pub fn set_cap(&mut self, ply1: usize, km: Piece) {
         self.captured_piece_history[ply1] = km
     }
-    pub fn get_move(&self) -> &GPMovementVo {
+    pub fn get_move(&self) -> &Movement {
         &self.movements_history[self.get_ply() as usize]
     }
 

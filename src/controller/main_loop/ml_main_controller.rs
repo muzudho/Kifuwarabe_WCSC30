@@ -5,7 +5,7 @@
 use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use crate::model::univ::gam::phase::Phase;
 use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece::*;
 use crate::model::universe::*;
 
@@ -23,7 +23,7 @@ pub fn cmd_kikisu(universe: &Universe, speed_of_light: &MLSpeedOfLightVo) {
         g_writeln(&format!("利き数：{}", phase));
         let s = universe
             .game
-            .print_number_board(&phase, &GPPieceVo::OwariPiece, speed_of_light);
+            .print_number_board(&phase, &Piece::OwariPiece, speed_of_light);
         g_writeln(&s);
     }
 }

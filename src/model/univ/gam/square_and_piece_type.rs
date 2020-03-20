@@ -1,14 +1,14 @@
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::square::*;
 
 /// 升 × 駒種類
-pub struct GPSquareAndPieceTypeVo {
+pub struct SquareAndPieceType {
     pub square: Square,
-    pub piece_type: GPPieceTypeVo,
+    pub piece_type: PieceType,
 }
-impl GPSquareAndPieceTypeVo {
-    pub fn new(square1: &Square, piece_type1: &GPPieceTypeVo) -> Self {
-        GPSquareAndPieceTypeVo {
+impl SquareAndPieceType {
+    pub fn new(square1: &Square, piece_type1: &PieceType) -> Self {
+        SquareAndPieceType {
             square: square1.clone(),
             piece_type: piece_type1.clone(),
         }

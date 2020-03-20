@@ -5,122 +5,118 @@
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
 use crate::model::univ::gam::phase::Phase;
-use crate::model::univ::gam::piece::GPPieceVo;
-use crate::model::univ::gam::piece::GPPieceVo::*;
-use crate::model::univ::gam::piece_struct::GPPieceStructVo;
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
-use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
-use crate::model::univ::gam::piece_type_struct::PieceTypeStructVo;
+use crate::model::univ::gam::piece::Piece;
+use crate::model::univ::gam::piece::Piece::*;
+use crate::model::univ::gam::piece_struct::PieceStruct;
+use crate::model::univ::gam::piece_type::PieceType;
+use crate::model::univ::gam::piece_type::PieceType::*;
+use crate::model::univ::gam::piece_type_struct::PieceTypeStruct;
 
 pub struct MLSpeedOfLightVo {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
     /// イミュータブルなのだから、直接参照してもいい☆（＾～＾）
     /// 先後付きの駒☆（＾～＾）
-    pub king1: GPPieceStructVo,
-    pub rook1: GPPieceStructVo,
-    pub bishop1: GPPieceStructVo,
-    pub gold1: GPPieceStructVo,
-    pub silver1: GPPieceStructVo,
-    pub knight1: GPPieceStructVo,
-    pub lance1: GPPieceStructVo,
-    pub pawn1: GPPieceStructVo,
-    pub promoted_rook1: GPPieceStructVo,
-    pub promoted_bishop1: GPPieceStructVo,
-    pub promoted_silver1: GPPieceStructVo,
-    pub promoted_knight1: GPPieceStructVo,
-    pub promoted_lance1: GPPieceStructVo,
-    pub promoted_pawn1: GPPieceStructVo,
-    pub king2: GPPieceStructVo,
-    pub rook2: GPPieceStructVo,
-    pub bishop2: GPPieceStructVo,
-    pub gold2: GPPieceStructVo,
-    pub silver2: GPPieceStructVo,
-    pub knight2: GPPieceStructVo,
-    pub lance2: GPPieceStructVo,
-    pub pawn2: GPPieceStructVo,
-    pub promoted_rook2: GPPieceStructVo,
-    pub promoted_bishop2: GPPieceStructVo,
-    pub promoted_silver2: GPPieceStructVo,
-    pub promoted_knight2: GPPieceStructVo,
-    pub promoted_lance2: GPPieceStructVo,
-    pub promoted_pawn2: GPPieceStructVo,
-    pub none_piece: GPPieceStructVo,
-    pub owari_piece: GPPieceStructVo,
+    pub king1: PieceStruct,
+    pub rook1: PieceStruct,
+    pub bishop1: PieceStruct,
+    pub gold1: PieceStruct,
+    pub silver1: PieceStruct,
+    pub knight1: PieceStruct,
+    pub lance1: PieceStruct,
+    pub pawn1: PieceStruct,
+    pub promoted_rook1: PieceStruct,
+    pub promoted_bishop1: PieceStruct,
+    pub promoted_silver1: PieceStruct,
+    pub promoted_knight1: PieceStruct,
+    pub promoted_lance1: PieceStruct,
+    pub promoted_pawn1: PieceStruct,
+    pub king2: PieceStruct,
+    pub rook2: PieceStruct,
+    pub bishop2: PieceStruct,
+    pub gold2: PieceStruct,
+    pub silver2: PieceStruct,
+    pub knight2: PieceStruct,
+    pub lance2: PieceStruct,
+    pub pawn2: PieceStruct,
+    pub promoted_rook2: PieceStruct,
+    pub promoted_bishop2: PieceStruct,
+    pub promoted_silver2: PieceStruct,
+    pub promoted_knight2: PieceStruct,
+    pub promoted_lance2: PieceStruct,
+    pub promoted_pawn2: PieceStruct,
+    pub none_piece: PieceStruct,
+    pub owari_piece: PieceStruct,
 
     /// 駒種類☆（＾～＾）
-    pub king: PieceTypeStructVo,
-    pub rook: PieceTypeStructVo,
-    pub bishop: PieceTypeStructVo,
-    pub gold: PieceTypeStructVo,
-    pub silver: PieceTypeStructVo,
-    pub knight: PieceTypeStructVo,
-    pub lance: PieceTypeStructVo,
-    pub pawn: PieceTypeStructVo,
-    pub promoted_rook: PieceTypeStructVo,
-    pub promoted_bishop: PieceTypeStructVo,
-    pub promoted_silver: PieceTypeStructVo,
-    pub promoted_knight: PieceTypeStructVo,
-    pub promoted_lance: PieceTypeStructVo,
-    pub promoted_pawn: PieceTypeStructVo,
-    pub none_piece_type: PieceTypeStructVo,
-    pub owari_piece_type: PieceTypeStructVo,
+    pub king: PieceTypeStruct,
+    pub rook: PieceTypeStruct,
+    pub bishop: PieceTypeStruct,
+    pub gold: PieceTypeStruct,
+    pub silver: PieceTypeStruct,
+    pub knight: PieceTypeStruct,
+    pub lance: PieceTypeStruct,
+    pub pawn: PieceTypeStruct,
+    pub promoted_rook: PieceTypeStruct,
+    pub promoted_bishop: PieceTypeStruct,
+    pub promoted_silver: PieceTypeStruct,
+    pub promoted_knight: PieceTypeStruct,
+    pub promoted_lance: PieceTypeStruct,
+    pub promoted_pawn: PieceTypeStruct,
+    pub none_piece_type: PieceTypeStruct,
+    pub owari_piece_type: PieceTypeStruct,
 }
 impl Default for MLSpeedOfLightVo {
     fn default() -> Self {
         MLSpeedOfLightVo {
-            king1: GPPieceStructVo::from_piece(King1),
-            rook1: GPPieceStructVo::from_piece(Rook1),
-            bishop1: GPPieceStructVo::from_piece(Bishop1),
-            gold1: GPPieceStructVo::from_piece(Gold1),
-            silver1: GPPieceStructVo::from_piece(Silver1),
-            knight1: GPPieceStructVo::from_piece(Knight1),
-            lance1: GPPieceStructVo::from_piece(Lance1),
-            pawn1: GPPieceStructVo::from_piece(Pawn1),
-            promoted_rook1: GPPieceStructVo::from_piece(Dragon1),
-            promoted_bishop1: GPPieceStructVo::from_piece(Horse1),
-            promoted_silver1: GPPieceStructVo::from_piece(PromotedSilver1),
-            promoted_knight1: GPPieceStructVo::from_piece(PromotedKnight1),
-            promoted_lance1: GPPieceStructVo::from_piece(PromotedLance1),
-            promoted_pawn1: GPPieceStructVo::from_piece(PromotedPawn1),
-            king2: GPPieceStructVo::from_piece(King2),
-            rook2: GPPieceStructVo::from_piece(Rook2),
-            bishop2: GPPieceStructVo::from_piece(Bishop2),
-            gold2: GPPieceStructVo::from_piece(Gold2),
-            silver2: GPPieceStructVo::from_piece(Silver2),
-            knight2: GPPieceStructVo::from_piece(Knight2),
-            lance2: GPPieceStructVo::from_piece(Lance2),
-            pawn2: GPPieceStructVo::from_piece(Pawn2),
-            promoted_rook2: GPPieceStructVo::from_piece(Dragon2),
-            promoted_bishop2: GPPieceStructVo::from_piece(Horse2),
-            promoted_silver2: GPPieceStructVo::from_piece(PromotedSilver2),
-            promoted_knight2: GPPieceStructVo::from_piece(PromotedKnight2),
-            promoted_lance2: GPPieceStructVo::from_piece(PromotedLance2),
-            promoted_pawn2: GPPieceStructVo::from_piece(PromotedPawn2),
-            none_piece: GPPieceStructVo::from_piece(
-                crate::model::univ::gam::piece::GPPieceVo::NonePiece,
+            king1: PieceStruct::from_piece(King1),
+            rook1: PieceStruct::from_piece(Rook1),
+            bishop1: PieceStruct::from_piece(Bishop1),
+            gold1: PieceStruct::from_piece(Gold1),
+            silver1: PieceStruct::from_piece(Silver1),
+            knight1: PieceStruct::from_piece(Knight1),
+            lance1: PieceStruct::from_piece(Lance1),
+            pawn1: PieceStruct::from_piece(Pawn1),
+            promoted_rook1: PieceStruct::from_piece(Dragon1),
+            promoted_bishop1: PieceStruct::from_piece(Horse1),
+            promoted_silver1: PieceStruct::from_piece(PromotedSilver1),
+            promoted_knight1: PieceStruct::from_piece(PromotedKnight1),
+            promoted_lance1: PieceStruct::from_piece(PromotedLance1),
+            promoted_pawn1: PieceStruct::from_piece(PromotedPawn1),
+            king2: PieceStruct::from_piece(King2),
+            rook2: PieceStruct::from_piece(Rook2),
+            bishop2: PieceStruct::from_piece(Bishop2),
+            gold2: PieceStruct::from_piece(Gold2),
+            silver2: PieceStruct::from_piece(Silver2),
+            knight2: PieceStruct::from_piece(Knight2),
+            lance2: PieceStruct::from_piece(Lance2),
+            pawn2: PieceStruct::from_piece(Pawn2),
+            promoted_rook2: PieceStruct::from_piece(Dragon2),
+            promoted_bishop2: PieceStruct::from_piece(Horse2),
+            promoted_silver2: PieceStruct::from_piece(PromotedSilver2),
+            promoted_knight2: PieceStruct::from_piece(PromotedKnight2),
+            promoted_lance2: PieceStruct::from_piece(PromotedLance2),
+            promoted_pawn2: PieceStruct::from_piece(PromotedPawn2),
+            none_piece: PieceStruct::from_piece(crate::model::univ::gam::piece::Piece::NonePiece),
+            owari_piece: PieceStruct::from_piece(crate::model::univ::gam::piece::Piece::OwariPiece),
+            king: PieceTypeStruct::from_piece_type(King),
+            rook: PieceTypeStruct::from_piece_type(Rook),
+            bishop: PieceTypeStruct::from_piece_type(Bishop),
+            gold: PieceTypeStruct::from_piece_type(Gold),
+            silver: PieceTypeStruct::from_piece_type(Silver),
+            knight: PieceTypeStruct::from_piece_type(Knight),
+            lance: PieceTypeStruct::from_piece_type(Lance),
+            pawn: PieceTypeStruct::from_piece_type(Pawn),
+            promoted_rook: PieceTypeStruct::from_piece_type(Dragon),
+            promoted_bishop: PieceTypeStruct::from_piece_type(Horse),
+            promoted_silver: PieceTypeStruct::from_piece_type(PromotedSilver),
+            promoted_knight: PieceTypeStruct::from_piece_type(PromotedKnight),
+            promoted_lance: PieceTypeStruct::from_piece_type(PromotedLance),
+            promoted_pawn: PieceTypeStruct::from_piece_type(PromotedPawn),
+            none_piece_type: PieceTypeStruct::from_piece_type(
+                crate::model::univ::gam::piece_type::PieceType::KaraPieceType,
             ),
-            owari_piece: GPPieceStructVo::from_piece(
-                crate::model::univ::gam::piece::GPPieceVo::OwariPiece,
-            ),
-            king: PieceTypeStructVo::from_piece_type(King),
-            rook: PieceTypeStructVo::from_piece_type(Rook),
-            bishop: PieceTypeStructVo::from_piece_type(Bishop),
-            gold: PieceTypeStructVo::from_piece_type(Gold),
-            silver: PieceTypeStructVo::from_piece_type(Silver),
-            knight: PieceTypeStructVo::from_piece_type(Knight),
-            lance: PieceTypeStructVo::from_piece_type(Lance),
-            pawn: PieceTypeStructVo::from_piece_type(Pawn),
-            promoted_rook: PieceTypeStructVo::from_piece_type(Dragon),
-            promoted_bishop: PieceTypeStructVo::from_piece_type(Horse),
-            promoted_silver: PieceTypeStructVo::from_piece_type(PromotedSilver),
-            promoted_knight: PieceTypeStructVo::from_piece_type(PromotedKnight),
-            promoted_lance: PieceTypeStructVo::from_piece_type(PromotedLance),
-            promoted_pawn: PieceTypeStructVo::from_piece_type(PromotedPawn),
-            none_piece_type: PieceTypeStructVo::from_piece_type(
-                crate::model::univ::gam::piece_type::GPPieceTypeVo::KaraPieceType,
-            ),
-            owari_piece_type: PieceTypeStructVo::from_piece_type(
-                crate::model::univ::gam::piece_type::GPPieceTypeVo::OwariPieceType,
+            owari_piece_type: PieceTypeStruct::from_piece_type(
+                crate::model::univ::gam::piece_type::PieceType::OwariPieceType,
             ),
         }
     }
@@ -128,7 +124,7 @@ impl Default for MLSpeedOfLightVo {
 
 impl MLSpeedOfLightVo {
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_struct_vo(&self, piece: &GPPieceVo) -> &GPPieceStructVo {
+    pub fn get_piece_struct_vo(&self, piece: &Piece) -> &PieceStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.piece_vos[(*piece).clone() as usize]
@@ -163,8 +159,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight2,
             PromotedLance2 => &self.promoted_lance2,
             PromotedPawn2 => &self.promoted_pawn2,
-            crate::model::univ::gam::piece::GPPieceVo::NonePiece => &self.none_piece,
-            crate::model::univ::gam::piece::GPPieceVo::OwariPiece => &self.owari_piece,
+            crate::model::univ::gam::piece::Piece::NonePiece => &self.none_piece,
+            crate::model::univ::gam::piece::Piece::OwariPiece => &self.owari_piece,
         }
     }
 
@@ -172,10 +168,10 @@ impl MLSpeedOfLightVo {
     pub fn get_piece_struct_vo_by_phase_and_piece_type(
         &self,
         phase: &Phase,
-        piece_type: GPPieceTypeVo,
-    ) -> &GPPieceStructVo {
-        use crate::model::univ::gam::piece::GPPieceVo::*;
-        use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
+        piece_type: PieceType,
+    ) -> &PieceStruct {
+        use crate::model::univ::gam::piece::Piece::*;
+        use crate::model::univ::gam::piece_type::PieceType::*;
         match *phase {
             Phase::First => match piece_type {
                 King => self.get_piece_struct_vo(&King1),
@@ -192,7 +188,7 @@ impl MLSpeedOfLightVo {
                 PromotedKnight => self.get_piece_struct_vo(&PromotedKnight1),
                 PromotedLance => self.get_piece_struct_vo(&PromotedLance1),
                 PromotedPawn => self.get_piece_struct_vo(&PromotedPawn1),
-                _ => self.get_piece_struct_vo(&GPPieceVo::OwariPiece),
+                _ => self.get_piece_struct_vo(&Piece::OwariPiece),
             },
             Phase::Second => match piece_type {
                 King => self.get_piece_struct_vo(&King2),
@@ -209,22 +205,22 @@ impl MLSpeedOfLightVo {
                 PromotedKnight => self.get_piece_struct_vo(&PromotedKnight2),
                 PromotedLance => self.get_piece_struct_vo(&PromotedLance2),
                 PromotedPawn => self.get_piece_struct_vo(&PromotedPawn2),
-                _ => self.get_piece_struct_vo(&GPPieceVo::OwariPiece),
+                _ => self.get_piece_struct_vo(&Piece::OwariPiece),
             },
-            Phase::None => self.get_piece_struct_vo(&GPPieceVo::OwariPiece),
+            Phase::None => self.get_piece_struct_vo(&Piece::OwariPiece),
         }
     }
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_type_struct_vo_from_piece_type(
         &self,
-        piece_type: &crate::model::univ::gam::piece_type::GPPieceTypeVo,
-    ) -> &PieceTypeStructVo {
+        piece_type: &crate::model::univ::gam::piece_type::PieceType,
+    ) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.piece_vos[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
+        use crate::model::univ::gam::piece_type::PieceType::*;
         match *piece_type {
             King => &self.king,
             Rook => &self.rook,
@@ -240,10 +236,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight => &self.promoted_knight,
             PromotedLance => &self.promoted_lance,
             PromotedPawn => &self.promoted_pawn,
-            crate::model::univ::gam::piece_type::GPPieceTypeVo::KaraPieceType => {
-                &self.none_piece_type
-            }
-            crate::model::univ::gam::piece_type::GPPieceTypeVo::OwariPieceType => {
+            crate::model::univ::gam::piece_type::PieceType::KaraPieceType => &self.none_piece_type,
+            crate::model::univ::gam::piece_type::PieceType::OwariPieceType => {
                 &self.owari_piece_type
             }
         }
@@ -252,14 +246,14 @@ impl MLSpeedOfLightVo {
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_type_struct_vo_from_piece(
         &self,
-        piece: &crate::model::univ::gam::piece::GPPieceVo,
-    ) -> &PieceTypeStructVo {
+        piece: &crate::model::univ::gam::piece::Piece,
+    ) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.piece_vos[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::model::univ::gam::piece::GPPieceVo::*;
+        use crate::model::univ::gam::piece::Piece::*;
         match *piece {
             King1 => &self.king,
             Rook1 => &self.rook,
@@ -289,8 +283,8 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight,
             PromotedLance2 => &self.promoted_lance,
             PromotedPawn2 => &self.promoted_pawn,
-            crate::model::univ::gam::piece::GPPieceVo::NonePiece => &self.none_piece_type,
-            crate::model::univ::gam::piece::GPPieceVo::OwariPiece => &self.owari_piece_type,
+            crate::model::univ::gam::piece::Piece::NonePiece => &self.none_piece_type,
+            crate::model::univ::gam::piece::Piece::OwariPiece => &self.owari_piece_type,
         }
     }
 }

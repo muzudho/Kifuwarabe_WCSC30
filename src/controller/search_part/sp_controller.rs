@@ -7,13 +7,13 @@ extern crate rand;
 use crate::model::vo::other_part::op_ply_vo::SENNTITE_NUM;
 use std::collections::HashSet;
 
-use super::super::super::controller::movement_generation::mg_controller::*;
-use super::super::super::controller::search_part::sp_control_count_controller::*;
-use super::super::super::model::vo::main_loop::ml_speed_of_light_vo::*;
 use super::sp_evaluation_controller::*;
-use crate::model::univ::gam::movement::GPMovementVo;
+use crate::controller::movement_generation::mg_controller::*;
+use crate::controller::search_part::sp_control_count_controller::*;
+use crate::model::univ::gam::movement::Movement;
 use crate::model::univ::gam::movement_builder::*;
 use crate::model::universe::*;
+use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。
 pub struct SPBestmove {
@@ -155,7 +155,7 @@ pub fn get_best_movement(
     let mut repetition_move_hash = 0u64;
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
-        let movement = GPMovementVo::from_hash(*movement_hash);
+        let movement = Movement::from_hash(*movement_hash);
         let captured_piece = universe.game.position.do_move(&movement, speed_of_light);
 
         // 千日手かどうかを判定する☆（＾～＾）

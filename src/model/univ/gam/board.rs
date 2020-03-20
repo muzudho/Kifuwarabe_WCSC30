@@ -9,7 +9,7 @@
 //!
 
 use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece::*;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
@@ -27,7 +27,7 @@ pub enum ThingsInTheSquare {
 pub struct Board {
     /// 10の位を筋、1の位を段とする。
     /// 0筋、0段は未使用
-    board: [GPPieceVo; BOARD_MEMORY_AREA],
+    board: [Piece; BOARD_MEMORY_AREA],
     /// 持ち駒数。持ち駒に使える、成らずの駒の部分だけ使用。
     /// 増減させたいので、u8 ではなく i8。
     pub hand: [i8; PIECE_LN],
@@ -37,7 +37,7 @@ pub struct Board {
 }
 impl Default for Board {
     fn default() -> Self {
-        use crate::model::univ::gam::piece::GPPieceVo::NonePiece;
+        use crate::model::univ::gam::piece::Piece::NonePiece;
         Board {
             // 盤上
             board: [
@@ -75,7 +75,7 @@ impl Default for Board {
 }
 impl Board {
     pub fn clear(&mut self) {
-        use crate::model::univ::gam::piece::GPPieceVo::NonePiece;
+        use crate::model::univ::gam::piece::Piece::NonePiece;
         self.board = [
             NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
             NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
@@ -117,37 +117,37 @@ impl Board {
             let piece99 = self.get_piece_by_square(&sq);
             let ps100 = speed_of_light.get_piece_struct_vo(piece99);
             let (phase_piece, piece_type) = ps100.phase_piece_type();
-            if phase_piece == phase && piece_type == GPPieceTypeVo::Pawn {
+            if phase_piece == phase && piece_type == PieceType::Pawn {
                 return true;
             }
         }
         false
     }
     /// 升で指定して駒を取得
-    pub fn get_piece_by_square(&self, sq: &Square) -> &GPPieceVo {
+    pub fn get_piece_by_square(&self, sq: &Square) -> &Piece {
         &self.board[sq.to_usquare()]
     }
     /// 升で指定して駒を置く
-    pub fn set_piece_by_square(&mut self, sq: &Square, piece: &GPPieceVo) {
+    pub fn set_piece_by_square(&mut self, sq: &Square, piece: &Piece) {
         self.board[sq.to_usquare()] = piece.clone();
 
         // 玉の位置を覚え直します。
         use crate::model::univ::gam::phase::Phase::*;
         match *piece {
-            GPPieceVo::King1 => self.square_of_king[First as usize] = sq.clone(),
-            GPPieceVo::King2 => self.square_of_king[Second as usize] = sq.clone(),
+            Piece::King1 => self.square_of_king[First as usize] = sq.clone(),
+            Piece::King2 => self.square_of_king[Second as usize] = sq.clone(),
             _ => {}
         }
     }
     /**
      * 持ち駒の枚数を加算
      */
-    pub fn add_hand(&mut self, hand: &GPPieceVo, maisu: i8, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &MLSpeedOfLightVo) {
         self.hand[speed_of_light
             .get_piece_struct_vo(hand)
             .serial_piece_number()] += maisu;
     }
-    pub fn get_hand(&self, hand: &GPPieceVo, speed_of_light: &MLSpeedOfLightVo) -> i8 {
+    pub fn get_hand(&self, hand: &Piece, speed_of_light: &MLSpeedOfLightVo) -> i8 {
         self.hand[speed_of_light
             .get_piece_struct_vo(hand)
             .serial_piece_number()]
@@ -162,7 +162,7 @@ impl Board {
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
         let piece_struct = speed_of_light.get_piece_struct_vo(self.get_piece_by_square(&sq));
-        if *piece_struct.piece() == GPPieceVo::NonePiece {
+        if *piece_struct.piece() == Piece::NonePiece {
             return ThingsInTheSquare::Space;
         }
 
@@ -176,16 +176,11 @@ impl Board {
     pub fn exists_km(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> bool {
         !speed_of_light
             .get_piece_struct_vo(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.get_piece_struct_vo(&GPPieceVo::NonePiece))
+            .equals_piece(&speed_of_light.get_piece_struct_vo(&Piece::NonePiece))
     }
 
     /// 指定の升に指定の駒があれば真
-    pub fn has_sq_km(
-        &self,
-        sq: &Square,
-        piece: &GPPieceVo,
-        speed_of_light: &MLSpeedOfLightVo,
-    ) -> bool {
+    pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &MLSpeedOfLightVo) -> bool {
         speed_of_light
             .get_piece_struct_vo(self.get_piece_by_square(&sq))
             .equals_piece(&speed_of_light.get_piece_struct_vo(piece))

@@ -2,7 +2,7 @@
 //! 駒種類集合
 //!
 
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::*;
 use std::collections::HashSet;
@@ -27,7 +27,7 @@ impl SPPieceTypeSetDto {
             num_syugo: num_syugo1,
         }
     }
-    pub fn remove(&mut self, piece_type: GPPieceTypeVo, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn remove(&mut self, piece_type: PieceType, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo.remove(
             &speed_of_light
                 .get_piece_type_struct_vo_from_piece_type(&piece_type)

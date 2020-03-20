@@ -3,7 +3,7 @@
 //!
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
 use crate::model::vo::main_loop::ml_speed_of_light_vo::MLSpeedOfLightVo;
@@ -21,7 +21,7 @@ pub struct MovementBuilder {
     // 移動後に成るなら真
     pub pro: bool,
     // 打の場合、打った駒種類
-    pub drop: GPPieceTypeVo,
+    pub drop: PieceType,
 }
 impl Default for MovementBuilder {
     fn default() -> MovementBuilder {
@@ -29,7 +29,7 @@ impl Default for MovementBuilder {
             src: Square::from_usquare(0),
             dst: Square::from_usquare(0),
             pro: false,
-            drop: GPPieceTypeVo::KaraPieceType,
+            drop: PieceType::KaraPieceType,
         }
     }
 }
@@ -39,7 +39,7 @@ impl MovementBuilder {
         self.src = Square::from_usquare(0);
         self.dst = Square::from_usquare(0);
         self.pro = false;
-        self.drop = GPPieceTypeVo::KaraPieceType;
+        self.drop = PieceType::KaraPieceType;
     }
     pub fn to_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = 0;
@@ -83,7 +83,7 @@ impl fmt::Display for MovementBuilder {
         let (dx, dy) = self.dst.to_file_rank();
 
         if self.src.to_usquare() == SQUARE_DROP {
-            use crate::model::univ::gam::piece_type::GPPieceTypeVo::*;
+            use crate::model::univ::gam::piece_type::PieceType::*;
             write!(
                 f,
                 "{}*{}{}{}",

@@ -7,7 +7,7 @@ use crate::config::*;
 use crate::model::univ::gam::movement::*;
 use crate::model::univ::gam::phase::*;
 use crate::model::univ::gam::piece::*;
-use crate::model::univ::gam::piece_type::GPPieceTypeVo;
+use crate::model::univ::gam::piece_type::PieceType;
 use crate::model::univ::gam::piece_type::*;
 use crate::model::univ::gam::square::*;
 use crate::model::univ::game::*;
@@ -135,7 +135,7 @@ impl Universe {
             g_writeln(""); //改行
         }
     }
-    pub fn print_kmugoki_dir(&self, piece_type: GPPieceTypeVo, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn print_kmugoki_dir(&self, piece_type: PieceType, speed_of_light: &MLSpeedOfLightVo) {
         for kmdir in KM_UGOKI.back[speed_of_light
             .get_piece_type_struct_vo_from_piece_type(&piece_type)
             .serial_piece_number]
@@ -149,7 +149,7 @@ impl Universe {
     }
 
     // 入れた指し手の通り指すぜ☆（＾～＾）
-    pub fn do_move(&mut self, movement: &GPMovementVo, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn do_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.game.position.get_ply();
         self.game.position.set_current_movement(movement);

@@ -2,10 +2,10 @@ use crate::model::dto::search_part::sp_info::SPInfo;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::phase::PHASE_LN;
 use crate::model::univ::gam::phase::*;
-use crate::model::univ::gam::piece::GPPieceVo;
+use crate::model::univ::gam::piece::Piece;
 use crate::model::univ::gam::piece::MG_MAX;
 use crate::model::univ::gam::piece::PIECE_LN;
-use crate::model::univ::gam::piece_struct::GPPieceStructVo;
+use crate::model::univ::gam::piece_struct::PieceStruct;
 use crate::model::univ::gam::position::Position;
 use crate::model::univ::gam::square::BOARD_MEMORY_AREA;
 use crate::model::univ::gam::square::SQUARE_NONE;
@@ -109,16 +109,16 @@ impl Game {
     }
 
     /// 初期局面の盤上に駒の位置を設定するもの
-    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: GPPieceVo) {
+    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: Piece) {
         self.starting_board
             .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
     }
 
-    pub fn set_starting_position_hand_piece(&mut self, km: GPPieceVo, maisu: i8) {
+    pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {
         self.starting_board.hand[km as usize] = maisu;
     }
 
-    pub fn get_person_by_piece_vo(&self, piece_vo: &GPPieceStructVo) -> Person {
+    pub fn get_person_by_piece_vo(&self, piece_vo: &PieceStruct) -> Person {
         if &piece_vo.phase() == &self.position.get_phase(&Person::Friend) {
             Person::Friend
         } else {
@@ -227,7 +227,7 @@ impl Game {
     pub fn print_number_board(
         &self,
         phase: &Phase,
-        pc: &GPPieceVo,
+        pc: &Piece,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> String {
         let nb = match *phase {
