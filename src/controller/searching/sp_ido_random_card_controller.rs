@@ -31,7 +31,7 @@ pub fn get_ido_ss_by_km_random(
     for _i_retry in 0..1_000_000 {
         // 移動したい先の升
         let sq_dst = cu_random_move_controller::random_square();
-        assert_banjo_sq(&sq_dst, "get_ido_ss_by_km_random");
+        assert_in_board(&sq_dst, "get_ido_ss_by_km_random");
 
         ss_hashset.clear();
         get_movement_by_square_and_piece_on_board(
@@ -75,7 +75,7 @@ pub fn get_ss_by_random(
     'random: for _i_retry in 0..1_000_000 {
         // 移動したい先の升
         let sq_dst = cu_random_move_controller::random_square();
-        assert_banjo_sq(&sq_dst, "Ｇet_ss_by_random");
+        assert_in_board(&sq_dst, "Ｇet_ss_by_random");
 
         // 手番の、移動した先の駒
         let ps_dst = speed_of_light.get_piece_struct_by_phase_and_piece_type(

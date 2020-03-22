@@ -772,19 +772,6 @@ impl Squares {
         }
     }
 
-    /// 北東隣☆（＾～＾）
-    pub fn north_east_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if FILE_0 < start.get_file() - 1 && RANK_0 < start.get_rank() - 1 {
-            callback(Square::from_file_rank(
-                start.get_file() - 1,
-                start.get_rank() - 1,
-            ));
-        }
-    }
-
     /// 北北東隣☆（＾～＾）
     pub fn north_east_keima_of<F1>(start: &Square, callback: &mut F1)
     where
@@ -807,32 +794,6 @@ impl Squares {
             callback(Square::from_file_rank(
                 start.get_file() + 1,
                 start.get_rank() - 2,
-            ));
-        }
-    }
-
-    /// 北西隣☆（＾～＾）
-    pub fn north_west_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if start.get_file() + 1 < FILE_10 && RANK_0 < start.get_rank() - 1 {
-            callback(Square::from_file_rank(
-                start.get_file() + 1,
-                start.get_rank() - 1,
-            ));
-        }
-    }
-
-    /// 南東隣☆（＾～＾）
-    pub fn south_east_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if FILE_0 < start.get_file() - 1 && start.get_rank() + 1 < RANK_10 {
-            callback(Square::from_file_rank(
-                start.get_file() - 1,
-                start.get_rank() + 1,
             ));
         }
     }
@@ -862,32 +823,14 @@ impl Squares {
         }
     }
 
-    /// 南西隣☆（＾～＾）
-    pub fn south_west_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if start.get_file() + 1 < FILE_10 && start.get_rank() + 1 < RANK_10 {
-            callback(Square::from_file_rank(
-                start.get_file() + 1,
-                start.get_rank() + 1,
-            ));
-        }
-    }
-
     /// 北隣☆（＾～＾）
     pub fn north_of<F1>(start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
-        if RANK_0 < start.get_rank() - 1 {
-            callback(Square::from_isquare(start.address - 1));
-            /*
-            callback(Square::from_file_rank(
-                start.get_file(),
-                start.get_rank() - 1,
-            ));
-            */
+        let next = start.address - 1;
+        if next % 10 != 0 {
+            callback(Square::from_isquare(next));
         }
     }
     /// 南隣☆（＾～＾）
@@ -895,14 +838,9 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.get_rank() + 1 < RANK_10 {
-            callback(Square::from_isquare(start.address + 1));
-            /*
-            callback(Square::from_file_rank(
-                start.get_file(),
-                start.get_rank() + 1,
-            ));
-            */
+        let next = start.address + 1;
+        if next % 10 != 0 {
+            callback(Square::from_isquare(next));
         }
     }
 
@@ -911,14 +849,9 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if FILE_0 < start.get_file() - 1 {
-            callback(Square::from_isquare(start.address - 10));
-            /*
-            callback(Square::from_file_rank(
-                start.get_file() - 1,
-                start.get_rank(),
-            ));
-            */
+        let next = start.address - 10;
+        if next / 10 % 10 != 0 {
+            callback(Square::from_isquare(next));
         }
     }
 
@@ -927,14 +860,53 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.get_file() + 1 < RANK_10 {
-            callback(Square::from_isquare(start.address + 10));
-            /*
-            callback(Square::from_file_rank(
-                start.get_file() + 1,
-                start.get_rank(),
-            ));
-            */
+        let next = start.address + 10;
+        if next / 10 % 10 != 0 {
+            callback(Square::from_isquare(next));
+        }
+    }
+
+    /// 北東隣☆（＾～＾）
+    pub fn north_east_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let next = start.address;
+        if next % 10 != 0 && next / 10 % 10 != 0 {
+            callback(Square::from_isquare(next));
+        }
+    }
+
+    /// 南東隣☆（＾～＾）
+    pub fn south_east_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let next = start.address + 9;
+        if next % 10 != 0 && next / 10 % 10 != 0 {
+            callback(Square::from_isquare(next));
+        }
+    }
+
+    /// 南西隣☆（＾～＾）
+    pub fn south_west_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let next = start.address + 11;
+        if next % 10 != 0 && next / 10 % 10 != 0 {
+            callback(Square::from_isquare(next));
+        }
+    }
+
+    /// 北西隣☆（＾～＾）
+    pub fn north_west_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let next = start.address + 9;
+        if next % 10 != 0 && next / 10 % 10 != 0 {
+            callback(Square::from_isquare(next));
         }
     }
 }

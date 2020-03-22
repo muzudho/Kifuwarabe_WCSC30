@@ -52,7 +52,8 @@ pub const BAN_MAX: isquare = 99;
 // pub const BOARD_HEIGHT: i8 = 9;
 // 正方形という前提☆（＾～＾）
 pub const BOARD_DIAGONAL_LENGTH: isquare = 9;
-pub const BOARD_MEMORY_AREA: isquare = 100;
+// 枠も使う☆（＾～＾）
+pub const BOARD_MEMORY_AREA: isquare = 111;
 // 1辺の長さ
 //pub const BAN_LINE :usize = 10;
 
@@ -73,6 +74,13 @@ pub const RANK_7: i8 = 7;
 pub const RANK_8: i8 = 8; //うさぎの打てる段の上限
 pub const RANK_9: i8 = 9;
 pub const RANK_10: i8 = 10;
+
+/*
+pub const NORTH1: isquare = -1;
+pub const SOUTH1: isquare = 1;
+pub const EAST1: isquare = -1;
+pub const WEST1: isquare = 1;
+*/
 
 /// 升の検索等で、該当なしの場合
 pub const SQUARE_NONE: isquare = 0;
@@ -129,7 +137,7 @@ impl Square {
 
     /// x, y に名称変更したもの☆（＾～＾）
     pub fn to_point(&self) -> Point {
-        assert_banjo_sq(&self, "(203b)sq_to_p");
+        assert_in_board(&self, "(203b)sq_to_p");
         Point {
             x: self.get_file(),
             y: self.get_rank(),

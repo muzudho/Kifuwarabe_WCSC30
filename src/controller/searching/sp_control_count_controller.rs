@@ -33,7 +33,7 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
 
         // 移動先の升☆（＾～＾）
         MGSquares::for_all(&mut |any_square| {
-            assert_banjo_sq(&any_square, "think 利き調べ");
+            assert_in_board(&any_square, "think 利き調べ");
 
             // 移動元の升
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();

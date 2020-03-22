@@ -86,7 +86,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 ) where
     F1: FnMut(u64),
 {
-    assert_banjo_sq(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
+    assert_in_board(&sq_dst, "Ｉnsert_ss_by_ms_km_on_banjo");
 
     // 手番の先後、駒種類
     let ps_dst = speed_of_light.get_piece_struct(&piece_dst);
@@ -123,7 +123,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         },
     );
     for sq_src in &mv_src_hashset {
-        assert_banjo_sq(
+        assert_in_board(
             &sq_src,
             "make_no_promotion_source_by_square_and_piece(成らず)",
         );
@@ -149,7 +149,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         },
     );
     for sq_src in &mv_src_hashset {
-        assert_banjo_sq(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
+        assert_in_board(&sq_src, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
 
         ss_hash_builder.src = sq_src.clone();
         // 成り
@@ -172,7 +172,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 ) where
     F1: FnMut(u64),
 {
-    assert_banjo_sq(&sq_dst, "get_movement_by_square_and_piece_on_drop");
+    assert_in_board(&sq_dst, "get_movement_by_square_and_piece_on_drop");
 
     // 手番の先後、駒種類
     let ps_dst = speed_of_light.get_piece_struct(piece_dst);
@@ -249,7 +249,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
 ) where
     F1: FnMut(Square),
 {
-    assert_banjo_sq(&square_dst, "make_no_promotion_source_by_square_and_piece");
+    assert_in_board(&square_dst, "make_no_promotion_source_by_square_and_piece");
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     if !this_piece_has_a_destination(square_dst, ps_dst) {
@@ -639,7 +639,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
 ) where
     F1: FnMut(Square),
 {
-    assert_banjo_sq(&square_dst, "make_before_promotion_source_by_square_piece");
+    assert_in_board(&square_dst, "make_before_promotion_source_by_square_piece");
 
     // +--------------------+
     // | 移動後は成り駒か？ |
@@ -1030,7 +1030,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
 ) where
     F1: FnMut(Square),
 {
-    assert_banjo_sq(&square_dst, "make_no_promotion_source_by_phase_square");
+    assert_in_board(&square_dst, "make_no_promotion_source_by_phase_square");
 
     // 移動先の筋、段
     let (_dx, dy) = square_dst.to_file_rank();
@@ -1415,7 +1415,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 ) where
     F1: FnMut(Square),
 {
-    assert_banjo_sq(&square_dst, "make_before_promotion_source_by_phase_square");
+    assert_in_board(&square_dst, "make_before_promotion_source_by_phase_square");
 
     // 駒種類
     for piece_type in PIECE_TYPE_ARRAY.iter() {
@@ -1830,7 +1830,7 @@ pub fn lookup_drop_by_square_piece<F1>(
 ) where
     F1: FnMut(usize),
 {
-    assert_banjo_sq(&destination_sqp.square, "make_drop_by_square_piece");
+    assert_in_board(&destination_sqp.square, "make_drop_by_square_piece");
 
     let ps_dst = speed_of_light.get_piece_struct(&destination_sqp.piece);
     let piece_type_dst = ps_dst.piece_type();
@@ -1871,7 +1871,7 @@ pub fn lookup_drop_by_square_piece<F1>(
      */
     let sq = kaiten180_sq_by_sq_phase(&destination_sqp.square, &ps_dst.phase());
 
-    assert_banjo_sq(&sq, "Ｉnsert_da_piece_type_by_ms_km＜その２＞");
+    assert_in_board(&sq, "Ｉnsert_da_piece_type_by_ms_km＜その２＞");
     //let (_x,y) = ms_to_suji_dan(ms);
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
