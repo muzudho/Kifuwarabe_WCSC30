@@ -1,4 +1,4 @@
-use crate::controller::search_part::sp_number_board_controller::NumberBoard;
+use crate::controller::searching::sp_number_board_controller::NumberBoard;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::history::*;
 use crate::model::univ::gam::misc::info::SPInfo;
@@ -159,7 +159,7 @@ impl Game {
             .clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
         /*
         for i_mg in 0..PIECE_LN {
-            self.get_search_part_mut().get_current_position_mut().mg[i_mg] =
+            self.get_searching_mut().get_current_position_mut().mg[i_mg] =
                 self.get_starting_position().mg[i_mg];
         }
         */
@@ -382,23 +382,24 @@ impl Game {
         if 0 < self.history.ply {
             // 棋譜から読取、手目も減る
             self.history.ply -= 1;
-            // let phase = self.sp_earth_dto.get_phase(&Person::Friend);
             let movement = &self.get_move().clone();
             {
                 let phase = self.history.get_phase(&Person::Friend);
+                // 取った駒が有ったか。
                 let cap_o: Option<Piece> = self.history.captured_pieces[self.history.ply as usize];
-                // 移動先の駒
-                let piece186_o: Option<Piece> = if movement.source.to_usquare() == SQUARE_DROP {
+                // 動いた駒
+                let old_source391_o: Option<Piece> = if movement.source.to_usquare() == SQUARE_DROP
+                {
                     // 打なら
                     if let Some(drp) = movement.drop {
-                        let piece679 = Piece::from_phase_and_piece_type(&phase, drp);
+                        let drop394 = Piece::from_phase_and_piece_type(&phase, drp);
                         // 自分の持ち駒を増やす
                         //let mg = km_to_mg(km);
                         //self.add_hand(mg,1);
                         self.position
                             .current_board
-                            .add_hand(&piece679, 1, speed_of_light);
-                        Some(piece679)
+                            .add_hand(&drop394, 1, speed_of_light);
+                        Some(drop394)
                     } else {
                         panic!("打なのに駒を指定していないぜ☆（＾～＾）！")
                     }
@@ -406,12 +407,12 @@ impl Game {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
-                        if let Some(piece411) = self
+                        if let Some(source409) = self
                             .position
                             .current_board
                             .get_piece_by_square(&movement.destination)
                         {
-                            Some(speed_of_light.get_piece_struct(&piece411).demoted)
+                            Some(speed_of_light.get_piece_struct(&source409).demoted)
                         } else {
                             panic!("成ったのに移動先に駒が無いぜ☆（＾～＾）！")
                         }
@@ -423,12 +424,13 @@ impl Game {
                     }
                 };
 
+                // 移動先の駒を、取った駒（あるいは空）に戻す
+                self.position
+                    .current_board
+                    .set_piece_by_square(&movement.destination, cap_o);
+
                 if let Some(cap) = cap_o {
                     let captured = speed_of_light.get_piece_struct(&cap).captured;
-                    // 移動先の駒を、取った駒（あるいは空）に戻す
-                    self.position
-                        .current_board
-                        .set_piece_by_square(&movement.destination, cap_o);
                     // 自分の持ち駒を減らす
                     self.position
                         .current_board
@@ -437,7 +439,7 @@ impl Game {
                 // 移動元升に、動かした駒を置く
                 self.position
                     .current_board
-                    .set_piece_by_square(&movement.source, piece186_o);
+                    .set_piece_by_square(&movement.source, old_source391_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true

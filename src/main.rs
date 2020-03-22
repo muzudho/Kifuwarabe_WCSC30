@@ -27,7 +27,7 @@ use controller::common_use::cu_conv_controller::*;
 use controller::io::*;
 use controller::main_loop::ml_usi_controller::*;
 use controller::movement_generation::mg_controller::*;
-use controller::search_part::sp_controller::*;
+use controller::searching::tree::*;
 use controller::unit_test::ut_controller::*;
 use rand::Rng;
 use std::collections::HashSet;
@@ -130,7 +130,7 @@ fn main() {
             let pv = "";
             match get_best_movement(
                 0,
-                universe.option_max_depth,
+                universe.option_max_depth - 1,
                 0,
                 &mut universe.game,
                 &speed_of_light,

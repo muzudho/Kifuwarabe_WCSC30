@@ -1,5 +1,5 @@
 //! 探索部
-use crate::controller::search_part::sp_number_board_controller::*;
+use crate::controller::searching::sp_number_board_controller::*;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::phase::*;
