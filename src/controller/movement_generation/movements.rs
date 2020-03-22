@@ -86,14 +86,14 @@ impl MGMovements {
                     use crate::model::univ::gam::misc::piece::Piece::*;
                     match piece {
                         Pawn1 => {
-                            NextSquares::looking_for_square_from_1player_pawn_on_board(
+                            NextSquares::looking_for_square_from_pawn_on_board(
                                 &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
                         Pawn2 => {
-                            NextSquares::looking_for_square_from_2player_pawn_on_board(
+                            NextSquares::looking_for_square_from_pawn_on_board(
                                 &Phase::Second,
                                 &source,
                                 callback_next,
@@ -144,6 +144,7 @@ impl MGMovements {
                         Gold1 | PromotedPawn1 | PromotedLance1 | PromotedKnight1
                         | PromotedSilver1 => {
                             NextSquares::looking_for_squares_from_1player_gold_on_board(
+                                &Phase::First,
                                 &source,
                                 callback_next,
                             );
@@ -151,18 +152,21 @@ impl MGMovements {
                         Gold2 | PromotedPawn2 | PromotedLance2 | PromotedKnight2
                         | PromotedSilver2 => {
                             NextSquares::looking_for_squares_from_2player_gold_on_board(
+                                &Phase::Second,
                                 &source,
                                 callback_next,
                             );
                         }
                         King1 => {
                             NextSquares::looking_for_squares_from_1player_king_on_board(
+                                &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
                         King2 => {
                             NextSquares::looking_for_squares_from_2player_king_on_board(
+                                &Phase::Second,
                                 &source,
                                 callback_next,
                             );
@@ -197,12 +201,14 @@ impl MGMovements {
                         }
                         Horse1 => {
                             NextSquares::looking_for_squares_from_1player_horse_on_board(
+                                &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
                         Horse2 => {
                             NextSquares::looking_for_squares_from_2player_horse_on_board(
+                                &Phase::Second,
                                 &source,
                                 callback_next,
                             );

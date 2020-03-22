@@ -16,25 +16,14 @@ pub enum Promotability {
 pub struct NextSquares {}
 impl NextSquares {
     /// 盤上の歩から動けるマスを見ます。
-    pub fn looking_for_square_from_1player_pawn_on_board<F1>(
+    pub fn looking_for_square_from_pawn_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_of(source, &mut |dst_square| {
-            Promoting::case_of_pawn_lance(friend, &dst_square, callback_next)
-        });
-    }
-    pub fn looking_for_square_from_2player_pawn_on_board<F1>(
-        friend: &Phase,
-        source: &Square,
-        callback_next: &mut F1,
-    ) where
-        F1: FnMut(Square, Promotability) -> bool,
-    {
-        Squares::south_of(source, &mut |dst_square| {
+        Squares::north_of(friend, source, &mut |dst_square| {
             Promoting::case_of_pawn_lance(friend, &dst_square, callback_next)
         });
     }
@@ -104,7 +93,7 @@ impl NextSquares {
         Squares::north_west_of(source, &mut |dst_square| {
             Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
         });
-        Squares::north_of(source, &mut |dst_square| {
+        Squares::north_of(friend, source, &mut |dst_square| {
             Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
         });
         Squares::north_east_of(source, &mut |dst_square| {
@@ -127,7 +116,7 @@ impl NextSquares {
         Squares::south_east_of(source, &mut |destination| {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
         });
-        Squares::south_of(source, &mut |destination| {
+        Squares::north_of(friend, source, &mut |destination| {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
         });
         Squares::south_west_of(source, &mut |destination| {
@@ -143,6 +132,7 @@ impl NextSquares {
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
     pub fn looking_for_squares_from_1player_gold_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -151,7 +141,7 @@ impl NextSquares {
         Squares::north_west_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::north_of(source, &mut |destination| {
+        Squares::north_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_east_of(source, &mut |destination| {
@@ -163,11 +153,12 @@ impl NextSquares {
         Squares::east_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(source, &mut |destination| {
+        Squares::south_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
     }
     pub fn looking_for_squares_from_2player_gold_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -176,7 +167,7 @@ impl NextSquares {
         Squares::south_east_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(source, &mut |destination| {
+        Squares::north_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::south_west_of(source, &mut |destination| {
@@ -188,13 +179,14 @@ impl NextSquares {
         Squares::west_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::north_of(source, &mut |destination| {
+        Squares::south_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
     }
 
     /// 盤上の玉から動けるマスを見ます。
     pub fn looking_for_squares_from_1player_king_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -203,7 +195,7 @@ impl NextSquares {
         Squares::north_west_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::north_of(source, &mut |destination| {
+        Squares::north_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_east_of(source, &mut |destination| {
@@ -218,7 +210,7 @@ impl NextSquares {
         Squares::south_west_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(source, &mut |destination| {
+        Squares::south_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::south_east_of(source, &mut |destination| {
@@ -226,6 +218,7 @@ impl NextSquares {
         });
     }
     pub fn looking_for_squares_from_2player_king_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -234,7 +227,7 @@ impl NextSquares {
         Squares::south_east_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(source, &mut |destination| {
+        Squares::north_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::south_west_of(source, &mut |destination| {
@@ -249,7 +242,7 @@ impl NextSquares {
         Squares::north_east_of(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::north_of(source, &mut |destination| {
+        Squares::south_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_west_of(source, &mut |destination| {
@@ -343,6 +336,7 @@ impl NextSquares {
 
     /// 盤上の馬から動けるマスを見ます。
     pub fn looking_for_squares_from_1player_horse_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -351,7 +345,7 @@ impl NextSquares {
         Squares::looking_north_west_from(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::north_of(source, &mut |dst_square| {
+        Squares::north_of(friend, source, &mut |dst_square| {
             callback_next(dst_square, Promotability::Deny)
         });
         Squares::looking_north_east_from(source, &mut |destination| {
@@ -366,7 +360,7 @@ impl NextSquares {
         Squares::looking_south_west_from(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(source, &mut |destination| {
+        Squares::south_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::looking_south_east_from(source, &mut |destination| {
@@ -374,6 +368,7 @@ impl NextSquares {
         });
     }
     pub fn looking_for_squares_from_2player_horse_on_board<F1>(
+        friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -382,7 +377,7 @@ impl NextSquares {
         Squares::looking_south_east_from(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(source, &mut |destination| {
+        Squares::north_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::looking_south_west_from(source, &mut |destination| {
@@ -397,7 +392,7 @@ impl NextSquares {
         Squares::looking_north_east_from(source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::north_of(source, &mut |destination| {
+        Squares::south_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::looking_north_west_from(source, &mut |destination| {
@@ -575,6 +570,13 @@ impl Promoting {
 
 pub struct Squares {}
 impl Squares {
+    fn rotate(phase: &Phase, square: isquare) -> isquare {
+        if *phase == Phase::Second {
+            -square
+        } else {
+            square
+        }
+    }
     /// 2段目～9段目 全升☆（＾～＾）
     pub fn for_from_rank2_to_rank9<F1>(callback: &mut F1)
     where
@@ -774,22 +776,22 @@ impl Squares {
     }
 
     /// 北隣☆（＾～＾）
-    pub fn north_of<F1>(start: &Square, callback: &mut F1)
+    pub fn north_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
-        let next = start.address - 1;
+        let next = start.address + Squares::rotate(phase, -1);
         if next % 10 != 0 {
             assert_in_board(next, "北隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
     /// 南隣☆（＾～＾）
-    pub fn south_of<F1>(start: &Square, callback: &mut F1)
+    pub fn south_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
-        let next = start.address + 1;
+        let next = start.address + Squares::rotate(phase, 1);
         if next % 10 != 0 {
             assert_in_board(next, "南隣☆（＾～＾）");
             callback(Square::from_isquare(next));
