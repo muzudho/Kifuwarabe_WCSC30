@@ -71,15 +71,12 @@ pub enum Piece {
     PromotedLance2,
     // ▽パワーアップヒヨコ
     PromotedPawn2,
-    // 空マス
-    NonePiece,
-    // 要素数より1小さい数。該当なしや、エラー値用としても兼用する
-    OwariPiece,
 }
 
 // 持ち駒の駒のうち、最大の枚数は歩の 18。
 pub const MG_MAX: usize = 18;
 pub const PIECE_LN: usize = 30;
+pub static PIECE_WHITE_SPACE: &str = "    ";
 impl fmt::Display for Piece {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
@@ -114,8 +111,8 @@ impl fmt::Display for Piece {
             PromotedKnight2 => write!(f, " ▽pn"),
             PromotedLance2 => write!(f, " ▽pl"),
             PromotedPawn2 => write!(f, " ▽pp"),
-            NonePiece => write!(f, "    "),
-            OwariPiece => write!(f, " ×× "),
+            // NonePiece => write!(f, "    "),
+            // OwariPiece => write!(f, " ×× "),
         }
     }
 }
@@ -141,7 +138,6 @@ impl Piece {
                 PromotedKnight => PromotedKnight1,
                 PromotedLance => PromotedLance1,
                 PromotedPawn => PromotedPawn1,
-                _ => Piece::OwariPiece,
             },
             Phase::Second => match piece_type {
                 King => King2,
@@ -158,9 +154,7 @@ impl Piece {
                 PromotedKnight => PromotedKnight2,
                 PromotedLance => PromotedLance2,
                 PromotedPawn => PromotedPawn2,
-                _ => Piece::OwariPiece,
             },
-            Phase::None => Piece::OwariPiece,
         }
     }
 }

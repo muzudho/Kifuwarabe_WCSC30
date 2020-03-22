@@ -768,16 +768,6 @@ impl Squares {
         }
     }
 
-    /// 東隣☆（＾～＾）
-    pub fn east_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if FILE_0 < start.file - 1 {
-            callback(Square::from_file_rank(start.file - 1, start.rank));
-        }
-    }
-
     /// 北隣☆（＾～＾）
     pub fn north_of<F1>(start: &Square, callback: &mut F1)
     where
@@ -876,7 +866,17 @@ impl Squares {
         }
     }
 
-    /// 西☆（＾～＾）
+    /// 東隣☆（＾～＾）
+    pub fn east_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        if FILE_0 < start.file - 1 {
+            callback(Square::from_file_rank(start.file - 1, start.rank));
+        }
+    }
+
+    /// 西隣☆（＾～＾）
     pub fn west_of<F1>(start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,

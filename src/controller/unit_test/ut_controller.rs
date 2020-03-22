@@ -119,7 +119,7 @@ pub fn unit_test(
             IO::writeln(&format!("移動可能な駒がある升={}", sq_src.to_usquare()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = PieceType::KaraPieceType;
+            ss.drop = None;
         }
         /*
         for sq_src in mv_src_hashset {
@@ -127,7 +127,7 @@ pub fn unit_test(
             IO::writeln(&format!("移動可能な駒がある升={}", sq_src.to_usquare()));
             ss.dst = sq_dst;
             ss.pro = pro_dst;
-            ss.drop = PieceType::KaraPieceType;
+            ss.drop = None;
             break;
         }
         */

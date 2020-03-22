@@ -17,23 +17,28 @@ pub fn is_jisatusyu(
     speed_of_light: &MLSpeedOfLightVo,
 ) -> bool {
     // 移動元升、動かした駒の先後、駒種類、
-    let km_src = ml_universe_dto
+    if let Some(km_src) = ml_universe_dto
         .game
         .position
         .current_board
-        .get_piece_by_square(&ss.src);
-    let ps_src = speed_of_light.get_piece_struct(km_src);
-    let (phase_teban, _piece_type) = ps_src.phase_piece_type();
-    // 相手番の先後
-    let phase_aite = turn_phase(&phase_teban);
+        .get_piece_by_square(&ss.src)
+    {
+        let ps_src = speed_of_light.get_piece_struct(&km_src);
+        let (phase_teban, _piece_type) = ps_src.phase_piece_type();
+        // 相手番の先後
+        let phase_aite = turn_phase(&phase_teban);
 
-    // 升の利き数だが、指した後で再計算が要るはず
-    let control_count = ml_universe_dto.game.position.control_count_by_phase
-        [phase_to_num(&phase_aite)]
-    .get_number_by_square(&ss.dst);
-    0 < control_count
+        // 升の利き数だが、指した後で再計算が要るはず
+        let control_count = ml_universe_dto.game.position.control_count_by_phase
+            [phase_to_num(&phase_aite)]
+        .get_number_by_square(&ss.dst);
+        0 < control_count
     // g_writeln(&format!(
     //     "info string is_jisatusyu={} km_src={} phase_teban={} piece_type={} phase_aite={} ss.dst={} control_count={}"
     //     ,result ,km_src ,phase_teban ,piece_type ,phase_aite ,ss.dst ,control_count
     // ));
+    } else {
+        // 自殺手でもない☆（＾～＾）手でもないが☆（＾～＾）
+        false
+    }
 }

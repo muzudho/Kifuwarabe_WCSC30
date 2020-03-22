@@ -37,7 +37,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::Rook);
+                .set_current_movement_drop_temporary(Some(PieceType::Rook));
         }
         "B" => {
             *starts += 2;
@@ -48,7 +48,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::Bishop);
+                .set_current_movement_drop_temporary(Some(PieceType::Bishop));
         }
         "G" => {
             *starts += 2;
@@ -59,7 +59,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::Gold);
+                .set_current_movement_drop_temporary(Some(PieceType::Gold));
         }
         "S" => {
             *starts += 2;
@@ -70,7 +70,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::Silver);
+                .set_current_movement_drop_temporary(Some(PieceType::Silver));
         }
         "N" => {
             *starts += 2;
@@ -81,7 +81,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::Knight);
+                .set_current_movement_drop_temporary(Some(PieceType::Knight));
         }
         "L" => {
             *starts += 2;
@@ -92,7 +92,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::Lance);
+                .set_current_movement_drop_temporary(Some(PieceType::Lance));
         }
         "P" => {
             *starts += 2;
@@ -103,7 +103,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::Pawn);
+                .set_current_movement_drop_temporary(Some(PieceType::Pawn));
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
@@ -202,7 +202,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_drop_temporary(PieceType::KaraPieceType);
+                .set_current_movement_drop_temporary(None);
         }
     }
 
@@ -353,33 +353,33 @@ pub fn read_banjo(
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                    .set_piece_to_starting_position(suji, dan, None);
                 suji -= 1;
             }
             "2" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                    .set_piece_to_starting_position(suji, dan, None);
                 suji -= 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                    .set_piece_to_starting_position(suji, dan, None);
                 suji -= 1;
             }
             "3" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                    .set_piece_to_starting_position(suji, dan, None);
                 suji -= 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                    .set_piece_to_starting_position(suji, dan, None);
                 suji -= 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                    .set_piece_to_starting_position(suji, dan, None);
                 suji -= 1;
             }
             "4" => {
@@ -387,7 +387,7 @@ pub fn read_banjo(
                 for _i_kara in 0..4 {
                     universe
                         .game
-                        .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                        .set_piece_to_starting_position(suji, dan, None);
                     suji -= 1;
                 }
             }
@@ -396,7 +396,7 @@ pub fn read_banjo(
                 for _i_kara in 0..5 {
                     universe
                         .game
-                        .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                        .set_piece_to_starting_position(suji, dan, None);
                     suji -= 1;
                 }
             }
@@ -405,7 +405,7 @@ pub fn read_banjo(
                 for _i_kara in 0..6 {
                     universe
                         .game
-                        .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                        .set_piece_to_starting_position(suji, dan, None);
                     suji -= 1;
                 }
             }
@@ -414,7 +414,7 @@ pub fn read_banjo(
                 for _i_kara in 0..7 {
                     universe
                         .game
-                        .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                        .set_piece_to_starting_position(suji, dan, None);
                     suji -= 1;
                 }
             }
@@ -423,7 +423,7 @@ pub fn read_banjo(
                 for _i_kara in 0..8 {
                     universe
                         .game
-                        .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                        .set_piece_to_starting_position(suji, dan, None);
                     suji -= 1;
                 }
             }
@@ -432,7 +432,7 @@ pub fn read_banjo(
                 for _i_kara in 0..9 {
                     universe
                         .game
-                        .set_piece_to_starting_position(suji, dan, Piece::NonePiece);
+                        .set_piece_to_starting_position(suji, dan, None);
                     suji -= 1;
                 }
             }
@@ -440,112 +440,112 @@ pub fn read_banjo(
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::King1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::King1));
                 suji -= 1;
             }
             "R" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Rook1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Rook1));
                 suji -= 1;
             }
             "B" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Bishop1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Bishop1));
                 suji -= 1;
             }
             "G" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Gold1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Gold1));
                 suji -= 1;
             }
             "S" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Silver1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Silver1));
                 suji -= 1;
             }
             "N" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Knight1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Knight1));
                 suji -= 1;
             }
             "L" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Lance1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Lance1));
                 suji -= 1;
             }
             "P" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Pawn1);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Pawn1));
                 suji -= 1;
             }
             "k" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::King2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::King2));
                 suji -= 1;
             }
             "r" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Rook2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Rook2));
                 suji -= 1;
             }
             "b" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Bishop2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Bishop2));
                 suji -= 1;
             }
             "g" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Gold2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Gold2));
                 suji -= 1;
             }
             "s" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Silver2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Silver2));
                 suji -= 1;
             }
             "n" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Knight2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Knight2));
                 suji -= 1;
             }
             "l" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Lance2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Lance2));
                 suji -= 1;
             }
             "p" => {
                 *starts += 1;
                 universe
                     .game
-                    .set_piece_to_starting_position(suji, dan, Piece::Pawn2);
+                    .set_piece_to_starting_position(suji, dan, Some(Piece::Pawn2));
                 suji -= 1;
             }
             "+" => {
@@ -553,16 +553,20 @@ pub fn read_banjo(
                 match &line[*starts..=*starts] {
                     "R" => {
                         *starts += 1;
-                        universe
-                            .game
-                            .set_piece_to_starting_position(suji, dan, Piece::Dragon1);
+                        universe.game.set_piece_to_starting_position(
+                            suji,
+                            dan,
+                            Some(Piece::Dragon1),
+                        );
                         suji -= 1;
                     }
                     "B" => {
                         *starts += 1;
-                        universe
-                            .game
-                            .set_piece_to_starting_position(suji, dan, Piece::Horse1);
+                        universe.game.set_piece_to_starting_position(
+                            suji,
+                            dan,
+                            Some(Piece::Horse1),
+                        );
                         suji -= 1;
                     }
                     "S" => {
@@ -570,7 +574,7 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedSilver1,
+                            Some(Piece::PromotedSilver1),
                         );
                         suji -= 1;
                     }
@@ -579,7 +583,7 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedKnight1,
+                            Some(Piece::PromotedKnight1),
                         );
                         suji -= 1;
                     }
@@ -588,7 +592,7 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedLance1,
+                            Some(Piece::PromotedLance1),
                         );
                         suji -= 1;
                     }
@@ -597,22 +601,26 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedPawn1,
+                            Some(Piece::PromotedPawn1),
                         );
                         suji -= 1;
                     }
                     "r" => {
                         *starts += 1;
-                        universe
-                            .game
-                            .set_piece_to_starting_position(suji, dan, Piece::Dragon2);
+                        universe.game.set_piece_to_starting_position(
+                            suji,
+                            dan,
+                            Some(Piece::Dragon2),
+                        );
                         suji -= 1;
                     }
                     "b" => {
                         *starts += 1;
-                        universe
-                            .game
-                            .set_piece_to_starting_position(suji, dan, Piece::Horse2);
+                        universe.game.set_piece_to_starting_position(
+                            suji,
+                            dan,
+                            Some(Piece::Horse2),
+                        );
                         suji -= 1;
                     }
                     "s" => {
@@ -620,7 +628,7 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedSilver2,
+                            Some(Piece::PromotedSilver2),
                         );
                         suji -= 1;
                     }
@@ -629,7 +637,7 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedKnight2,
+                            Some(Piece::PromotedKnight2),
                         );
                         suji -= 1;
                     }
@@ -638,7 +646,7 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedLance2,
+                            Some(Piece::PromotedLance2),
                         );
                         suji -= 1;
                     }
@@ -647,7 +655,7 @@ pub fn read_banjo(
                         universe.game.set_piece_to_starting_position(
                             suji,
                             dan,
-                            Piece::PromotedPawn2,
+                            Some(Piece::PromotedPawn2),
                         );
                         suji -= 1;
                     }

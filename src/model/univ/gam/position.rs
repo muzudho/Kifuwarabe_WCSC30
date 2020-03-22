@@ -29,11 +29,7 @@ impl Default for Position {
             /// 現在の指し手を作成中。
             current_movement_builder: MovementBuilder::default(),
             /// 利き数（先後別）
-            control_count_by_phase: [
-                NumberBoard::default(),
-                NumberBoard::default(),
-                NumberBoard::default(),
-            ],
+            control_count_by_phase: [NumberBoard::default(), NumberBoard::default()],
             // 利き数（駒別なので３０個ある）
             control_count_by_piece: [
                 NumberBoard::default(),
@@ -80,15 +76,7 @@ impl Position {
     pub fn set_current_movement_promote_temporary(&mut self, pro: bool) {
         self.current_movement_builder.pro = pro
     }
-    pub fn set_current_movement_drop_temporary(&mut self, piece_type: PieceType) {
+    pub fn set_current_movement_drop_temporary(&mut self, piece_type: Option<PieceType>) {
         self.current_movement_builder.drop = piece_type
     }
-
-    /*
-    /// 相手の　玉　の位置を覚えます。
-    pub fn memory_opponent_king(&mut self, phase: &Phase, opponent_phase: &Phase) {
-        self.vision_tree_by_phase[phase_to_num(phase)]
-            .set_ai_r(&self.current_position.get_sq_r(phase_to_num(opponent_phase)));
-    }
-    */
 }

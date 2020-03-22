@@ -1,3 +1,4 @@
+use crate::controller::search_part::sp_number_board_controller::NumberBoard;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::history::*;
 use crate::model::univ::gam::misc::info::SPInfo;
@@ -122,8 +123,8 @@ impl Game {
     pub fn set_current_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    pub fn set_cap(&mut self, ply1: usize, km: Piece) {
-        self.history.captured_pieces[ply1] = km
+    pub fn set_cap(&mut self, ply1: usize, pc: Option<Piece>) {
+        self.history.captured_pieces[ply1] = pc
     }
 
     pub fn get_board(&self, num: &PosNums) -> &Board {
@@ -165,9 +166,9 @@ impl Game {
     }
 
     /// 初期局面の盤上に駒の位置を設定するもの
-    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, piece: Piece) {
+    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, pc: Option<Piece>) {
         self.starting_board
-            .set_piece_by_square(&Square::from_file_rank(suji, dan), &piece);
+            .set_piece_by_square(&Square::from_file_rank(suji, dan), pc);
     }
 
     pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {
@@ -237,7 +238,6 @@ impl Game {
         match self.history.get_phase(&Person::Friend) {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],
-            _ => {}
         }
 
         hash
@@ -286,36 +286,45 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(&mut self, movement: &Movement, speed_of_light: &MLSpeedOfLightVo) -> Piece {
+    pub fn do_move(
+        &mut self,
+        movement: &Movement,
+        speed_of_light: &MLSpeedOfLightVo,
+    ) -> Option<Piece> {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.history.ply;
         self.set_current_movement(movement);
         let phase = self.history.get_phase(&Person::Friend);
 
         // 取った駒
-        let cap;
+        let cap: Option<Piece>;
         {
             // 動かす駒
-            let piece144 = if movement.source.to_usquare() == SQUARE_DROP {
+            let piece144_o: Option<Piece> = if movement.source.to_usquare() == SQUARE_DROP {
                 // 打なら
                 // 自分の持ち駒を減らす
-                let piece734 = Piece::from_phase_and_piece_type(&phase, movement.drop);
-                self.position
-                    .current_board
-                    .add_hand(&piece734, -1, speed_of_light);
-                piece734
+                if let Some(drp) = movement.drop {
+                    let piece734 = Piece::from_phase_and_piece_type(&phase, drp);
+                    self.position
+                        .current_board
+                        .add_hand(&piece734, -1, speed_of_light);
+                    Some(piece734)
+                } else {
+                    panic!("打なのに駒を指定してないぜ☆（＾～＾）");
+                }
             } else {
-                // 打で無ければ、元の升の駒を消す。
+                // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152 = if movement.promote {
                     // 成りなら
-                    speed_of_light
-                        .get_piece_struct(
-                            self.position
-                                .current_board
-                                .get_piece_by_square(&movement.source),
-                        )
-                        .promote()
-                        .clone()
+                    if let Some(pc) = self
+                        .position
+                        .current_board
+                        .get_piece_by_square(&movement.source)
+                    {
+                        Some(speed_of_light.get_piece_struct(&pc).promote())
+                    } else {
+                        panic!("成ったのに、元の升に駒がなかった☆（＾～＾）");
+                    }
                 } else {
                     self.position
                         .current_board
@@ -325,45 +334,41 @@ impl Game {
 
                 self.position
                     .current_board
-                    .set_piece_by_square(&movement.source, &Piece::NonePiece);
+                    .set_piece_by_square(&movement.source, None);
 
                 piece152
             };
 
             // 移動先升に駒があるかどうか
-            cap = if let Piece::NonePiece = self
+            cap = if let Some(_) = self
                 .position
                 .current_board
                 .get_piece_by_square(&movement.destination)
             {
-                Piece::NonePiece
-            } else {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                let cap764;
-                {
-                    cap764 = self
-                        .position
-                        .current_board
-                        .get_piece_by_square(&movement.destination)
-                        .clone();
-                }
-
-                {
-                    let cap773;
-                    {
-                        cap773 = speed_of_light.get_piece_struct(&cap764).capture().clone();
-                    }
+                let cap_o764 = {
                     self.position
                         .current_board
-                        .add_hand(&cap773, 1, speed_of_light);
-                }
-                cap764
+                        .get_piece_by_square(&movement.destination)
+                };
+
+                if let Some(cap764) = cap_o764 {
+                    let cap_o773 = { speed_of_light.get_piece_struct(&cap764).capture() };
+                    if let Some(cap773) = cap_o773 {
+                        self.position
+                            .current_board
+                            .add_hand(&cap773, 1, speed_of_light);
+                    }
+                };
+                cap_o764
+            } else {
+                None
             };
 
             // 移動先升に駒を置く
             self.position
                 .current_board
-                .set_piece_by_square(&movement.destination, &piece144);
+                .set_piece_by_square(&movement.destination, piece144_o);
         }
         self.set_cap(ply as usize, cap);
 
@@ -383,30 +388,35 @@ impl Game {
             let movement = &self.get_move().clone();
             {
                 let phase = self.history.get_phase(&Person::Friend);
-                let cap = self.history.captured_pieces[self.history.ply as usize].clone();
+                let cap_o: Option<Piece> = self.history.captured_pieces[self.history.ply as usize];
                 // 移動先の駒
-                let piece186 = if movement.source.to_usquare() == SQUARE_DROP {
+                let piece186_o: Option<Piece> = if movement.source.to_usquare() == SQUARE_DROP {
                     // 打なら
-                    let piece679 = Piece::from_phase_and_piece_type(&phase, movement.drop);
-                    // 自分の持ち駒を増やす
-                    //let mg = km_to_mg(km);
-                    //self.add_hand(mg,1);
-                    self.position
-                        .current_board
-                        .add_hand(&piece679, 1, speed_of_light);
-                    piece679
+                    if let Some(drp) = movement.drop {
+                        let piece679 = Piece::from_phase_and_piece_type(&phase, drp);
+                        // 自分の持ち駒を増やす
+                        //let mg = km_to_mg(km);
+                        //self.add_hand(mg,1);
+                        self.position
+                            .current_board
+                            .add_hand(&piece679, 1, speed_of_light);
+                        Some(piece679)
+                    } else {
+                        panic!("打なのに駒を指定していないぜ☆（＾～＾）！")
+                    }
                 } else {
-                    // 打で無ければ
+                    // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
-                        speed_of_light
-                            .get_piece_struct(
-                                self.position
-                                    .current_board
-                                    .get_piece_by_square(&movement.destination),
-                            )
-                            .demote()
-                            .clone()
+                        if let Some(piece411) = self
+                            .position
+                            .current_board
+                            .get_piece_by_square(&movement.destination)
+                        {
+                            Some(speed_of_light.get_piece_struct(&piece411).demote())
+                        } else {
+                            panic!("成ったのに移動先に駒が無いぜ☆（＾～＾）！")
+                        }
                     } else {
                         self.position
                             .current_board
@@ -414,25 +424,25 @@ impl Game {
                             .clone()
                     }
                 };
-                // 移動先の駒を、取った駒（あるいは空）に戻す
-                self.position
-                    .current_board
-                    .set_piece_by_square(&movement.destination, &cap);
-                match cap {
-                    Piece::NonePiece => {}
-                    _ => {
+
+                if let Some(cap) = cap_o {
+                    if let Some(captured) = speed_of_light.get_piece_struct(&cap).capture() {
+                        // 移動先の駒を、取った駒（あるいは空）に戻す
+                        self.position
+                            .current_board
+                            .set_piece_by_square(&movement.destination, cap_o);
                         // 自分の持ち駒を減らす
-                        self.position.current_board.add_hand(
-                            speed_of_light.get_piece_struct(&cap).capture(),
-                            -1,
-                            speed_of_light,
-                        );
+                        self.position
+                            .current_board
+                            .add_hand(&captured, -1, speed_of_light);
+                    } else {
+                        panic!("取った駒は、駒台に置けない駒だぜ☆（＾～＾）！")
                     }
                 }
                 // 移動元升に、動かした駒を置く
                 self.position
                     .current_board
-                    .set_piece_by_square(&movement.source, &piece186);
+                    .set_piece_by_square(&movement.source, piece186_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
@@ -441,21 +451,19 @@ impl Game {
         }
     }
 
-    /// 表示
-    pub fn print_number_board(
+    pub fn get_number_board_by_phase(&self, phase: &Phase) -> &NumberBoard {
+        &self.position.control_count_by_phase[phase_to_num(&phase)]
+    }
+    pub fn get_number_board_by_piece(
         &self,
-        phase: &Phase,
         pc: &Piece,
         speed_of_light: &MLSpeedOfLightVo,
-    ) -> String {
-        let nb = match *phase {
-            Phase::None => {
-                &self.position.control_count_by_piece
-                    [speed_of_light.get_piece_struct(pc).serial_piece_number()]
-            }
-            _ => &self.position.control_count_by_phase[phase_to_num(&phase)],
-        };
-
+    ) -> &NumberBoard {
+        &self.position.control_count_by_piece
+            [speed_of_light.get_piece_struct(pc).serial_piece_number()]
+    }
+    /// 表示
+    pub fn print_number_board(&self, nb: &NumberBoard) -> String {
         // 数盤表示
         format!(
             "    +----+----+----+----+----+----+----+----+----+
@@ -563,33 +571,3 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
         )
     }
 }
-/*
-   pub fn get_starting_position_hash(&self) -> &u64 {
-       &self.starting_position_hash
-   }
-   pub fn get_starting_position_hash_mut(&mut self) -> &mut u64 {
-       &mut self.starting_position_hash
-   }
-   pub fn set_starting_position_hash(&mut self, val: u64) {
-       self.starting_position_hash = val;
-   }
-    pub fn get_starting_board(&self) -> &Board {
-        &self.starting_board
-    }
-    pub fn get_starting_board_mut(&mut self) -> &mut Board {
-        &mut self.starting_board
-    }
-    pub fn get_position_hash_seed(&self) -> &PositionHashSeed {
-        &self.position_hash_seed
-    }
-    pub fn get_position_hash_seed_mut(&mut self) -> &mut PositionHashSeed {
-        &mut self.position_hash_seed
-    }
-
-    pub fn get_position_mut(&mut self) -> &mut Position {
-        &mut self.game.position
-    }
-    pub fn get_position(&self) -> &Position {
-        &self.game.position
-    }
-*/

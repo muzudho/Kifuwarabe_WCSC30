@@ -12,7 +12,6 @@ use std::fmt;
 ///
 /// #[derive(PartialEq)]
 pub enum Person {
-    None,
     Friend,
     Opponent,
 }
@@ -20,7 +19,6 @@ impl fmt::Display for Person {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use self::Person::*;
         match *self {
-            None => write!(f, "Xx"),
             Friend => write!(f, "Fr"),
             Opponent => write!(f, "Op"),
         }
@@ -30,7 +28,6 @@ impl fmt::Display for Person {
 pub fn turn_person(person: &Person) -> Person {
     use self::Person::*;
     match *person {
-        None => None,
         Friend => Opponent,
         Opponent => Friend,
     }

@@ -72,13 +72,17 @@ impl KomatoriResult {
     }
     pub fn from_hash(hash: u64) -> KomatoriResult {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-        let (hash, km_atk) = PieceStruct::from_hash(hash);
-        let (hash, sq_atk) = pop_sq_from_hash(hash);
-        let (_hash, sq_tgt) = pop_sq_from_hash(hash);
-        KomatoriResult {
-            km_attacker: km_atk.piece().clone(),
-            sq_attacker: sq_atk,
-            sq_target: sq_tgt,
+        let (hash, ps_atk_o) = PieceStruct::from_hash(hash);
+        if let Some(ps_atk) = ps_atk_o {
+            let (hash, sq_atk) = pop_sq_from_hash(hash);
+            let (_hash, sq_tgt) = pop_sq_from_hash(hash);
+            KomatoriResult {
+                km_attacker: ps_atk.piece().clone(),
+                sq_attacker: sq_atk,
+                sq_target: sq_tgt,
+            }
+        } else {
+            panic!("アタックされているのに、アタッカー駒がない☆（＾～＾）！")
         }
     }
     ///

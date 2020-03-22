@@ -24,7 +24,7 @@ pub struct Movement {
     // 移動後に成るなら真
     pub promote: bool,
     // 打の場合、打った駒種類
-    pub drop: PieceType,
+    pub drop: Option<PieceType>,
 }
 impl Default for Movement {
     fn default() -> Self {
@@ -84,31 +84,19 @@ impl fmt::Display for Movement {
             write!(
                 f,
                 "{}*{}{}{}",
-                match self.drop {
-                    Rook => {
-                        "R"
+                if let Some(drp) = self.drop {
+                    match drp {
+                        Rook => "R",
+                        Bishop => "B",
+                        Gold => "G",
+                        Silver => "S",
+                        Knight => "N",
+                        Lance => "L",
+                        Pawn => "P",
+                        _ => "?",
                     }
-                    Bishop => {
-                        "B"
-                    }
-                    Gold => {
-                        "G"
-                    }
-                    Silver => {
-                        "S"
-                    }
-                    Knight => {
-                        "N"
-                    }
-                    Lance => {
-                        "L"
-                    }
-                    Pawn => {
-                        "P"
-                    }
-                    _ => {
-                        "?"
-                    }
+                } else {
+                    "?"
                 },
                 dx,
                 num_to_lower_case(dy),
@@ -142,7 +130,11 @@ impl fmt::Debug for Movement {
             self.source.to_usquare(),
             self.destination.to_usquare(),
             self.promote,
-            self.drop
+            if let Some(drp) = self.drop {
+                format!("{}", drp)
+            } else {
+                "-".to_string()
+            }
         )
     }
 }

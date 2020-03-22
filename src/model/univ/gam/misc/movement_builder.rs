@@ -21,7 +21,7 @@ pub struct MovementBuilder {
     // 移動後に成るなら真
     pub pro: bool,
     // 打の場合、打った駒種類
-    pub drop: PieceType,
+    pub drop: Option<PieceType>,
 }
 impl Default for MovementBuilder {
     fn default() -> MovementBuilder {
@@ -29,7 +29,7 @@ impl Default for MovementBuilder {
             src: Square::from_usquare(0),
             dst: Square::from_usquare(0),
             pro: false,
-            drop: PieceType::KaraPieceType,
+            drop: None,
         }
     }
 }
@@ -39,7 +39,7 @@ impl MovementBuilder {
         self.src = Square::from_usquare(0);
         self.dst = Square::from_usquare(0);
         self.pro = false;
-        self.drop = PieceType::KaraPieceType;
+        self.drop = None;
     }
     pub fn to_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
         let mut hash = 0;
@@ -87,31 +87,19 @@ impl fmt::Display for MovementBuilder {
             write!(
                 f,
                 "{}*{}{}{}",
-                match self.drop {
-                    Rook => {
-                        "R"
+                if let Some(drp) = self.drop {
+                    match drp {
+                        Rook => "R",
+                        Bishop => "B",
+                        Gold => "G",
+                        Silver => "S",
+                        Knight => "N",
+                        Lance => "L",
+                        Pawn => "P",
+                        _ => "?",
                     }
-                    Bishop => {
-                        "B"
-                    }
-                    Gold => {
-                        "G"
-                    }
-                    Silver => {
-                        "S"
-                    }
-                    Knight => {
-                        "N"
-                    }
-                    Lance => {
-                        "L"
-                    }
-                    Pawn => {
-                        "P"
-                    }
-                    _ => {
-                        "?"
-                    }
+                } else {
+                    "?"
                 },
                 dx,
                 num_to_lower_case(dy),
@@ -145,7 +133,11 @@ impl fmt::Debug for MovementBuilder {
             self.src.to_usquare(),
             self.dst.to_usquare(),
             self.pro,
-            self.drop
+            if let Some(drp) = self.drop {
+                format!("{}", drp)
+            } else {
+                "-".to_string()
+            }
         )
     }
 }

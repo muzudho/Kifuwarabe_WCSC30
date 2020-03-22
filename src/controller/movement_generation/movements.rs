@@ -44,7 +44,7 @@ impl MGMovements {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: false,
-                                        drop: PieceType::KaraPieceType,
+                                        drop: None,
                                     }
                                     .to_hash(speed_of_light),
                                 );
@@ -53,7 +53,7 @@ impl MGMovements {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: true,
-                                        drop: PieceType::KaraPieceType,
+                                        drop: None,
                                     }
                                     .to_hash(speed_of_light),
                                 );
@@ -64,7 +64,7 @@ impl MGMovements {
                                         src: source.clone(),
                                         dst: destination.clone(),
                                         pro: promotion,
-                                        drop: PieceType::KaraPieceType,
+                                        drop: None,
                                     }
                                     .to_hash(speed_of_light),
                                 );
@@ -80,144 +80,146 @@ impl MGMovements {
                 }
             };
 
-            let piece = current_board.get_piece_by_square(&source);
-            let ps = speed_of_light.get_piece_struct(piece);
-            if *friend == ps.phase() {
-                use crate::model::univ::gam::misc::piece::Piece::*;
-                match piece {
-                    Pawn1 => {
-                        NextSquares::looking_for_square_from_1player_pawn_on_board(
-                            &Phase::First,
-                            &source,
-                            callback_next,
-                        );
+            if let Some(piece) = current_board.get_piece_by_square(&source) {
+                let ps = speed_of_light.get_piece_struct(&piece);
+                if *friend == ps.phase() {
+                    use crate::model::univ::gam::misc::piece::Piece::*;
+                    match piece {
+                        Pawn1 => {
+                            NextSquares::looking_for_square_from_1player_pawn_on_board(
+                                &Phase::First,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Pawn2 => {
+                            NextSquares::looking_for_square_from_2player_pawn_on_board(
+                                &Phase::Second,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Lance1 => {
+                            NextSquares::looking_for_squares_from_1player_lance_on_board(
+                                &Phase::First,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Lance2 => {
+                            NextSquares::looking_for_squares_from_2player_lance_on_board(
+                                &Phase::Second,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Knight1 => {
+                            NextSquares::looking_for_squares_from_1player_knight_on_board(
+                                &Phase::First,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Knight2 => {
+                            NextSquares::looking_for_squares_from_2player_knight_on_board(
+                                &Phase::Second,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Silver1 => {
+                            NextSquares::looking_for_squares_from_1player_silver_on_board(
+                                &Phase::First,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Silver2 => {
+                            NextSquares::looking_for_squares_from_2player_silver_on_board(
+                                &Phase::Second,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Gold1 | PromotedPawn1 | PromotedLance1 | PromotedKnight1
+                        | PromotedSilver1 => {
+                            NextSquares::looking_for_squares_from_1player_gold_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Gold2 | PromotedPawn2 | PromotedLance2 | PromotedKnight2
+                        | PromotedSilver2 => {
+                            NextSquares::looking_for_squares_from_2player_gold_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        King1 => {
+                            NextSquares::looking_for_squares_from_1player_king_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        King2 => {
+                            NextSquares::looking_for_squares_from_2player_king_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Bishop1 => {
+                            NextSquares::looking_for_squares_from_1player_bishop_on_board(
+                                &Phase::First,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Bishop2 => {
+                            NextSquares::looking_for_squares_from_2player_bishop_on_board(
+                                &Phase::Second,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Rook1 => {
+                            NextSquares::looking_for_squares_from_1player_rook_on_board(
+                                &Phase::First,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Rook2 => {
+                            NextSquares::looking_for_squares_from_2player_rook_on_board(
+                                &Phase::Second,
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Horse1 => {
+                            NextSquares::looking_for_squares_from_1player_horse_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Horse2 => {
+                            NextSquares::looking_for_squares_from_2player_horse_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Dragon1 => {
+                            NextSquares::looking_for_squares_from_1player_dragon_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
+                        Dragon2 => {
+                            NextSquares::looking_for_squares_from_2player_dragon_on_board(
+                                &source,
+                                callback_next,
+                            );
+                        }
                     }
-                    Pawn2 => {
-                        NextSquares::looking_for_square_from_2player_pawn_on_board(
-                            &Phase::Second,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Lance1 => {
-                        NextSquares::looking_for_squares_from_1player_lance_on_board(
-                            &Phase::First,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Lance2 => {
-                        NextSquares::looking_for_squares_from_2player_lance_on_board(
-                            &Phase::Second,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Knight1 => {
-                        NextSquares::looking_for_squares_from_1player_knight_on_board(
-                            &Phase::First,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Knight2 => {
-                        NextSquares::looking_for_squares_from_2player_knight_on_board(
-                            &Phase::Second,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Silver1 => {
-                        NextSquares::looking_for_squares_from_1player_silver_on_board(
-                            &Phase::First,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Silver2 => {
-                        NextSquares::looking_for_squares_from_2player_silver_on_board(
-                            &Phase::Second,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Gold1 | PromotedPawn1 | PromotedLance1 | PromotedKnight1 | PromotedSilver1 => {
-                        NextSquares::looking_for_squares_from_1player_gold_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Gold2 | PromotedPawn2 | PromotedLance2 | PromotedKnight2 | PromotedSilver2 => {
-                        NextSquares::looking_for_squares_from_2player_gold_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    King1 => {
-                        NextSquares::looking_for_squares_from_1player_king_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    King2 => {
-                        NextSquares::looking_for_squares_from_2player_king_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Bishop1 => {
-                        NextSquares::looking_for_squares_from_1player_bishop_on_board(
-                            &Phase::First,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Bishop2 => {
-                        NextSquares::looking_for_squares_from_2player_bishop_on_board(
-                            &Phase::Second,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Rook1 => {
-                        NextSquares::looking_for_squares_from_1player_rook_on_board(
-                            &Phase::First,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Rook2 => {
-                        NextSquares::looking_for_squares_from_2player_rook_on_board(
-                            &Phase::Second,
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Horse1 => {
-                        NextSquares::looking_for_squares_from_1player_horse_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Horse2 => {
-                        NextSquares::looking_for_squares_from_2player_horse_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Dragon1 => {
-                        NextSquares::looking_for_squares_from_1player_dragon_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    Dragon2 => {
-                        NextSquares::looking_for_squares_from_2player_dragon_on_board(
-                            &source,
-                            callback_next,
-                        );
-                    }
-                    _ => {}
                 }
             }
         });
@@ -313,9 +315,7 @@ impl MGMovements {
     ) where
         F1: FnMut(u64),
     {
-        let exists_piece = position.current_board.get_piece_by_square(&destination);
-
-        if let Piece::NonePiece = exists_piece {
+        if let None = position.current_board.get_piece_by_square(&destination) {
             // 駒が無いところに打つ
             let current_board = &position.current_board;
             let ps_dst = speed_of_light.get_piece_struct(hand_piece);

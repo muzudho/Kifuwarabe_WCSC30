@@ -44,8 +44,6 @@ pub struct MLSpeedOfLightVo {
     pub promoted_knight2: PieceStruct,
     pub promoted_lance2: PieceStruct,
     pub promoted_pawn2: PieceStruct,
-    pub none_piece: PieceStruct,
-    pub owari_piece: PieceStruct,
 
     /// 駒種類☆（＾～＾）
     pub king: PieceTypeStruct,
@@ -62,8 +60,6 @@ pub struct MLSpeedOfLightVo {
     pub promoted_knight: PieceTypeStruct,
     pub promoted_lance: PieceTypeStruct,
     pub promoted_pawn: PieceTypeStruct,
-    pub none_piece_type: PieceTypeStruct,
-    pub owari_piece_type: PieceTypeStruct,
 }
 impl Default for MLSpeedOfLightVo {
     fn default() -> Self {
@@ -96,12 +92,6 @@ impl Default for MLSpeedOfLightVo {
             promoted_knight2: PieceStruct::from_piece(PromotedKnight2),
             promoted_lance2: PieceStruct::from_piece(PromotedLance2),
             promoted_pawn2: PieceStruct::from_piece(PromotedPawn2),
-            none_piece: PieceStruct::from_piece(
-                crate::model::univ::gam::misc::piece::Piece::NonePiece,
-            ),
-            owari_piece: PieceStruct::from_piece(
-                crate::model::univ::gam::misc::piece::Piece::OwariPiece,
-            ),
             king: PieceTypeStruct::from_piece_type(King),
             rook: PieceTypeStruct::from_piece_type(Rook),
             bishop: PieceTypeStruct::from_piece_type(Bishop),
@@ -116,12 +106,6 @@ impl Default for MLSpeedOfLightVo {
             promoted_knight: PieceTypeStruct::from_piece_type(PromotedKnight),
             promoted_lance: PieceTypeStruct::from_piece_type(PromotedLance),
             promoted_pawn: PieceTypeStruct::from_piece_type(PromotedPawn),
-            none_piece_type: PieceTypeStruct::from_piece_type(
-                crate::model::univ::gam::misc::piece_type::PieceType::KaraPieceType,
-            ),
-            owari_piece_type: PieceTypeStruct::from_piece_type(
-                crate::model::univ::gam::misc::piece_type::PieceType::OwariPieceType,
-            ),
         }
     }
 }
@@ -163,8 +147,6 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight2,
             PromotedLance2 => &self.promoted_lance2,
             PromotedPawn2 => &self.promoted_pawn2,
-            crate::model::univ::gam::misc::piece::Piece::NonePiece => &self.none_piece,
-            crate::model::univ::gam::misc::piece::Piece::OwariPiece => &self.owari_piece,
         }
     }
 
@@ -192,7 +174,6 @@ impl MLSpeedOfLightVo {
                 PromotedKnight => self.get_piece_struct(&PromotedKnight1),
                 PromotedLance => self.get_piece_struct(&PromotedLance1),
                 PromotedPawn => self.get_piece_struct(&PromotedPawn1),
-                _ => self.get_piece_struct(&Piece::OwariPiece),
             },
             Phase::Second => match piece_type {
                 King => self.get_piece_struct(&King2),
@@ -209,9 +190,7 @@ impl MLSpeedOfLightVo {
                 PromotedKnight => self.get_piece_struct(&PromotedKnight2),
                 PromotedLance => self.get_piece_struct(&PromotedLance2),
                 PromotedPawn => self.get_piece_struct(&PromotedPawn2),
-                _ => self.get_piece_struct(&Piece::OwariPiece),
             },
-            Phase::None => self.get_piece_struct(&Piece::OwariPiece),
         }
     }
     /// 駒の属性を参照するぜ☆（＾～＾）
@@ -240,12 +219,6 @@ impl MLSpeedOfLightVo {
             PromotedKnight => &self.promoted_knight,
             PromotedLance => &self.promoted_lance,
             PromotedPawn => &self.promoted_pawn,
-            crate::model::univ::gam::misc::piece_type::PieceType::KaraPieceType => {
-                &self.none_piece_type
-            }
-            crate::model::univ::gam::misc::piece_type::PieceType::OwariPieceType => {
-                &self.owari_piece_type
-            }
         }
     }
 
@@ -289,8 +262,6 @@ impl MLSpeedOfLightVo {
             PromotedKnight2 => &self.promoted_knight,
             PromotedLance2 => &self.promoted_lance,
             PromotedPawn2 => &self.promoted_pawn,
-            crate::model::univ::gam::misc::piece::Piece::NonePiece => &self.none_piece_type,
-            crate::model::univ::gam::misc::piece::Piece::OwariPiece => &self.owari_piece_type,
         }
     }
 }

@@ -3,6 +3,8 @@
 //!
 use crate::model::univ::gam::misc::piece_type::PieceType;
 
+pub const NONE_SERIAL_PIECE_TYPE_NUMBER: u64 = 14;
+
 pub struct PieceTypeStruct {
     /// 配列のインデックス用☆（＾～＾）
     pub serial_piece_number: usize,
@@ -101,18 +103,6 @@ impl PieceTypeStruct {
             },
             PromotedPawn => PieceTypeStruct {
                 serial_piece_number: 13,
-                can_promote: false,
-                can_drop: false,
-                slider: false,
-            },
-            KaraPieceType => PieceTypeStruct {
-                serial_piece_number: 14,
-                can_promote: false,
-                can_drop: false,
-                slider: false,
-            },
-            OwariPieceType => PieceTypeStruct {
-                serial_piece_number: 15,
                 can_promote: false,
                 can_drop: false,
                 slider: false,

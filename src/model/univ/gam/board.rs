@@ -27,7 +27,7 @@ pub enum ThingsInTheSquare {
 pub struct Board {
     /// 10の位を筋、1の位を段とする。
     /// 0筋、0段は未使用
-    board: [Piece; BOARD_MEMORY_AREA],
+    board: [Option<Piece>; BOARD_MEMORY_AREA],
     /// 持ち駒数。持ち駒に使える、成らずの駒の部分だけ使用。
     /// 増減させたいので、u8 ではなく i8。
     pub hand: [i8; PIECE_LN],
@@ -37,25 +37,17 @@ pub struct Board {
 }
 impl Default for Board {
     fn default() -> Self {
-        use crate::model::univ::gam::misc::piece::Piece::NonePiece;
         Board {
             // 盤上
             board: [
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-                NonePiece, NonePiece,
+                None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None,
             ],
             // 持ち駒数
             hand: [
@@ -65,31 +57,21 @@ impl Default for Board {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
             ],
-            square_of_king: [
-                Square::from_usquare(0),
-                Square::from_usquare(0),
-                Square::from_usquare(0),
-            ],
+            square_of_king: [Square::from_usquare(0), Square::from_usquare(0)],
         }
     }
 }
 impl Board {
     pub fn clear(&mut self) {
-        use crate::model::univ::gam::misc::piece::Piece::NonePiece;
         self.board = [
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece, NonePiece,
-            NonePiece, NonePiece, NonePiece, NonePiece,
+            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None,
         ];
         self.hand = [
             // ▲ら,▲き,▲ぞ,▲い,▲ね,▲う,▲し,▲ひ,▲ぱき,▲ぱぞ,▲ぱね,▲ぱう,▲ぱし,▲ぱひ,
@@ -114,29 +96,34 @@ impl Board {
     ) -> bool {
         for dan in RANK_1..RANK_10 {
             let sq = Square::from_file_rank(suji, dan);
-            let piece99 = self.get_piece_by_square(&sq);
-            let ps100 = speed_of_light.get_piece_struct(piece99);
-            let (phase_piece, piece_type) = ps100.phase_piece_type();
-            if phase_piece == phase && piece_type == PieceType::Pawn {
-                return true;
+            if let Some(piece99) = self.get_piece_by_square(&sq) {
+                let ps100 = speed_of_light.get_piece_struct(&piece99);
+                let (phase_piece, piece_type) = ps100.phase_piece_type();
+                if phase_piece == phase && piece_type == PieceType::Pawn {
+                    return true;
+                }
             }
         }
         false
     }
     /// 升で指定して駒を取得
-    pub fn get_piece_by_square(&self, sq: &Square) -> &Piece {
-        &self.board[sq.to_usquare()]
+    pub fn get_piece_by_square(&self, sq: &Square) -> Option<Piece> {
+        self.board[sq.to_usquare()]
     }
     /// 升で指定して駒を置く
-    pub fn set_piece_by_square(&mut self, sq: &Square, piece: &Piece) {
-        self.board[sq.to_usquare()] = piece.clone();
+    pub fn set_piece_by_square(&mut self, sq: &Square, piece_o: Option<Piece>) {
+        if let Some(piece) = piece_o {
+            self.board[sq.to_usquare()] = piece_o;
 
-        // 玉の位置を覚え直します。
-        use crate::model::univ::gam::misc::phase::Phase::*;
-        match *piece {
-            Piece::King1 => self.square_of_king[First as usize] = sq.clone(),
-            Piece::King2 => self.square_of_king[Second as usize] = sq.clone(),
-            _ => {}
+            // 玉の位置を覚え直します。
+            use crate::model::univ::gam::misc::phase::Phase::*;
+            match piece {
+                Piece::King1 => self.square_of_king[First as usize] = sq.clone(),
+                Piece::King2 => self.square_of_king[Second as usize] = sq.clone(),
+                _ => {}
+            }
+        } else {
+            self.board[sq.to_usquare()] = None;
         }
     }
     /**
@@ -157,36 +144,41 @@ impl Board {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
-        let piece_struct = speed_of_light.get_piece_struct(self.get_piece_by_square(&sq));
-        if *piece_struct.piece() == Piece::NonePiece {
-            return ThingsInTheSquare::Space;
+        if let Some(piece) = self.get_piece_by_square(&sq) {
+            let piece_struct = speed_of_light.get_piece_struct(&piece);
+            if piece_struct.phase() == *ph {
+                return ThingsInTheSquare::Friend;
+            }
+            ThingsInTheSquare::Opponent
+        } else {
+            ThingsInTheSquare::Space
         }
-
-        if piece_struct.phase() == *ph {
-            return ThingsInTheSquare::Friend;
-        }
-
-        return ThingsInTheSquare::Opponent;
     }
     /// 指定の升に駒があれば真
-    pub fn exists_km(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> bool {
-        !speed_of_light
-            .get_piece_struct(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.get_piece_struct(&Piece::NonePiece))
+    pub fn exists_km(&self, sq: &Square) -> bool {
+        if let Some(_piece) = self.get_piece_by_square(&sq) {
+            true
+        } else {
+            false
+        }
     }
 
     /// 指定の升に指定の駒があれば真
     pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &MLSpeedOfLightVo) -> bool {
-        speed_of_light
-            .get_piece_struct(self.get_piece_by_square(&sq))
-            .equals_piece(&speed_of_light.get_piece_struct(piece))
+        if let Some(piece2) = self.get_piece_by_square(&sq) {
+            return speed_of_light
+                .get_piece_struct(&piece)
+                .equals_piece(&speed_of_light.get_piece_struct(&piece2));
+        }
+        false
     }
 
     /// 指定の升にある駒の先後
-    pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Phase {
-        speed_of_light
-            .get_piece_struct(self.get_piece_by_square(sq))
-            .phase()
+    pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Option<Phase> {
+        if let Some(piece) = self.get_piece_by_square(sq) {
+            return Some(speed_of_light.get_piece_struct(&piece).phase());
+        }
+        None
     }
 
     /*
@@ -211,18 +203,24 @@ impl Board {
         sq_dst: &Square,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
-        let km_src = self.get_piece_by_square(&sq_src);
+        if let Some(km_src) = self.get_piece_by_square(&sq_src) {
+            let ps_src = speed_of_light.get_piece_struct(&km_src);
+            let pro_src = ps_src.is_promoted();
 
-        let ps_src = speed_of_light.get_piece_struct(km_src);
-        let km_dst = self.get_piece_by_square(&sq_dst);
-
-        let ps_dst = speed_of_light.get_piece_struct(km_dst);
-        // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
-        let pro_dst = ps_dst.is_promoted();
-        let pro_src = ps_src.is_promoted();
-
-        // 成り
-        pro_dst && !pro_src
+            if let Some(km_dst) = self.get_piece_by_square(&sq_dst) {
+                let ps_dst = speed_of_light.get_piece_struct(&km_dst);
+                // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
+                let pro_dst = ps_dst.is_promoted();
+                // 成り
+                pro_dst && !pro_src
+            } else {
+                // 空升には成れない☆（＾～＾）
+                false
+            }
+        } else {
+            // 空升は成れない☆（＾～＾）
+            false
+        }
     }
 
     /// 局面ハッシュを作り直す
@@ -232,9 +230,10 @@ impl Board {
         // 盤上の駒
         for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
             let i_sq = Square::from_usquare(i_ms as usquare);
-            let km = self.get_piece_by_square(&i_sq);
-            let num_km = speed_of_light.get_piece_struct(km).serial_piece_number();
-            hash ^= game.hash_seed.km[i_ms][num_km];
+            if let Some(km) = self.get_piece_by_square(&i_sq) {
+                let num_km = speed_of_light.get_piece_struct(&km).serial_piece_number();
+                hash ^= game.hash_seed.km[i_ms][num_km];
+            }
         }
 
         // 持ち駒ハッシュ

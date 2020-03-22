@@ -20,7 +20,7 @@ pub struct History {
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hashs: [u64; PLY_LN],
     /// 取った駒
-    pub captured_pieces: [Piece; PLY_LN],
+    pub captured_pieces: [Option<Piece>; PLY_LN],
 }
 impl Default for History {
     fn default() -> History {
@@ -29,7 +29,7 @@ impl Default for History {
             movements: [Movement::default(); PLY_LN],
             position_hashs: [0; PLY_LN],
             /// 取った駒
-            captured_pieces: [Piece::NonePiece; PLY_LN],
+            captured_pieces: [None; PLY_LN],
         }
     }
 }
@@ -38,7 +38,7 @@ impl History {
     pub fn get_phase(&self, person: &Person) -> Phase {
         use crate::model::univ::gam::misc::person::Person::*;
         match *person {
-            None => Phase::None,
+            // None => Phase::None,
             Friend => {
                 // 手番
                 if self.ply % 2 == 0 {

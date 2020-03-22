@@ -16,7 +16,6 @@ use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_direction::*;
 use crate::model::univ::gam::misc::piece_movement::*;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
-use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::gam::misc::square_and_piece::SquareAndPiece;
@@ -94,12 +93,13 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
     let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if position
+    if let Some(phase2) = position
         .current_board
         .get_phase_by_sq(&sq_dst, speed_of_light)
-        == *phase
     {
-        return;
+        if phase2 == *phase {
+            return;
+        }
     }
 
     // ハッシュを作るのに使う
@@ -131,7 +131,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成らず
         ss_hash_builder.pro = false;
-        ss_hash_builder.drop = PieceType::KaraPieceType;
+        ss_hash_builder.drop = None;
         gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 
@@ -154,7 +154,7 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
         ss_hash_builder.src = sq_src.clone();
         // 成り
         ss_hash_builder.pro = true;
-        ss_hash_builder.drop = PieceType::KaraPieceType;
+        ss_hash_builder.drop = None;
         gets_movement(ss_hash_builder.to_hash(speed_of_light));
     }
 }
@@ -179,12 +179,13 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
-    if position
+    if let Some(phase2) = position
         .current_board
         .get_phase_by_sq(&sq_dst, speed_of_light)
-        == *phase
     {
-        return;
+        if phase2 == *phase {
+            return;
+        }
     }
 
     // ハッシュを作るのに使う
@@ -210,13 +211,13 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
     );
     // 打
     for num_piece_type_da in da_piece_type_hashset.iter() {
-        let piece_type_da = num_to_piece_type(*num_piece_type_da);
+        let drop_piece_type_o = num_to_piece_type(*num_piece_type_da);
 
         let movement_hash = MovementBuilder {
             src: Square::from_usquare(SQUARE_DROP),
             dst: (*sq_dst).clone(),
             pro: false,
-            drop: piece_type_da,
+            drop: drop_piece_type_o,
         }
         .to_hash(speed_of_light);
 
@@ -597,7 +598,7 @@ where
     if current_board.has_sq_km(&next_square, dst_piece, speed_of_light) {
         // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
         lookups_the_square(next_square);
-    } else if current_board.exists_km(&next_square, speed_of_light) {
+    } else if current_board.exists_km(&next_square) {
         // ループを抜けるぜ☆（＾～＾）
         return true;
     }
@@ -661,7 +662,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
     let piece_type_src = speed_of_light
-        .get_piece_struct(ps_dst.demote())
+        .get_piece_struct(&ps_dst.demote())
         .piece_type();
     let piece_src = speed_of_light
         .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
@@ -669,7 +670,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     let square_dst_piece_src = SquareAndPiece::new(square_dst, piece_src);
 
     let piece_type_narumae_num = speed_of_light
-        .get_piece_type_struct_from_piece(ps_dst.demote())
+        .get_piece_type_struct_from_piece(&ps_dst.demote())
         .serial_piece_number;
 
     MGDirection::for_all(&mut |i_dir| {
@@ -987,7 +988,7 @@ where
     if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
         // 指定の駒があれば、その升は移動元になる☆ 続行☆（＾～＾）
         lookups_the_square(next_square);
-    } else if current_board.exists_km(&next_square, speed_of_light) {
+    } else if current_board.exists_km(&next_square) {
         // なんか他の駒があれば終わり☆ ループを抜けるぜ☆（＾～＾）
         return true;
     }
@@ -1375,15 +1376,15 @@ fn lookup_no_promotion_source_by_phase_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    let exists_piece = current_board.get_piece_by_square(&next_square);
-    if *exists_piece == dst_sq_piece.piece {
-        lookups_the_square(next_square);
+    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+        if piece == dst_sq_piece.piece {
+            lookups_the_square(next_square);
+        }
+        false
+    } else {
+        // End of sliding.
+        true
     }
-    // End of sliding.
-    if *exists_piece != Piece::NonePiece {
-        return true;
-    }
-    false
 }
 // 移動元升、隣☆（＾～＾）
 fn lookup_no_promotion_source_by_phase_next<F1>(
@@ -1394,9 +1395,10 @@ fn lookup_no_promotion_source_by_phase_next<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let exists_piece = current_board.get_piece_by_square(&next_square);
-    if *exists_piece == dst_sq_piece.piece {
-        lookup_the_square(next_square);
+    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+        if piece == dst_sq_piece.piece {
+            lookup_the_square(next_square);
+        }
     }
 }
 
@@ -1430,8 +1432,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
             continue; // 成る前に成駒なら、成りの動きをしていない
         }
 
-        let prokm_src = ps_src.promote();
-        if let Piece::NonePiece = prokm_src {
+        if !ps_src.is_promotable() {
             // 成れない駒は、成る動きを考えなくていいぜ☆（＾～＾）
             continue;
         }
@@ -1781,16 +1782,16 @@ fn lookup_before_promotion_source_by_phase_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    let exists_piece = current_board.get_piece_by_square(&next_square);
-    // 指定した駒に一致すれば。
-    if *exists_piece == dst_sq_and_demoted_piece.piece {
-        lookups_the_square(next_square);
-    }
-    // End of sliding.
-    if *exists_piece != Piece::NonePiece {
+    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+        // 指定した駒に一致すれば。
+        if piece == dst_sq_and_demoted_piece.piece {
+            lookups_the_square(next_square);
+        }
+        false
+    } else {
+        // End of sliding.
         return true;
     }
-    false
 }
 /// 成る前移動元升、 隣☆（＾～＾）
 fn lookup_before_promotion_source_by_phase_next<F1>(
@@ -1801,9 +1802,10 @@ fn lookup_before_promotion_source_by_phase_next<F1>(
 ) where
     F1: FnMut(Square),
 {
-    let exists_piece = current_board.get_piece_by_square(&next_square);
-    if *exists_piece == dst_sq_and_demoted_piece.piece {
-        lookups_the_square(next_square);
+    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+        if piece == dst_sq_and_demoted_piece.piece {
+            lookups_the_square(next_square);
+        }
     }
 }
 
@@ -1843,12 +1845,9 @@ pub fn lookup_drop_by_square_piece<F1>(
     // +------------------------+
     // | 打ちたいところは空升か |
     // +------------------------+
-    let km_banjo = current_board.get_piece_by_square(&destination_sqp.square);
-    match km_banjo {
-        Piece::NonePiece => {}
-        _ => {
-            return;
-        } // 駒があるところに打つ手は終了
+    if let Some(_piece_on_board) = current_board.get_piece_by_square(&destination_sqp.square) {
+        // 駒があるところに打つ手は終了
+        return;
     }
     // 駒が無いところに打つ
 

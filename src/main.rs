@@ -159,7 +159,44 @@ fn parse_extend_command(
 ) {
     // 文字数を調べようぜ☆（＾～＾）
     let len = line.chars().count();
-    if line.starts_with("kmugokidir") {
+    // C
+    if 6 < len && &line[starts..7] == "contnum" {
+        // 利き数表示
+        controller::main_loop::ml_main_controller::cmd_kikisu(&universe, &speed_of_light);
+    // D
+    } else if 2 < len && &line[starts..3] == "do " {
+        starts += 3;
+        // コマンド読取。棋譜に追加され、手目も増える
+        if read_sasite(&line, &mut starts, len, universe) {
+            // 手目を戻す
+            universe.game.history.ply -= 1;
+            // 入っている指し手の通り指すぜ☆（＾～＾）
+            let ply = universe.game.history.ply;
+            let ss = universe.game.history.movements[ply as usize].clone();
+            universe.game.do_move(&ss, speed_of_light);
+        }
+    // G
+    } else if 6 < len && &line[starts..7] == "genmove" {
+        // Generation move.
+        // FIXME 合法手とは限らない
+        let mut ss_potential_hashset = HashSet::<u64>::new();
+        get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
+            ss_potential_hashset.insert(movement_hash);
+        });
+        IO::writeln("----指し手生成(合法手とは限らない) ここから----");
+        print_movement_hashset(&ss_potential_hashset);
+        IO::writeln("----指し手生成(合法手とは限らない) ここまで----");
+    // H
+    } else if 7 < len && &line[starts..8] == "how-much" {
+        // Example: how-much 7g7f
+        let bestmove = &line[9..];
+        IO::writeln(&format!("Debug   | bestmove=|{}|", bestmove));
+    } else if 3 < len && &line[starts..4] == "hash" {
+        IO::writeln("局面ハッシュ表示");
+        let s = universe.game.get_all_position_hash_text();
+        IO::writeln(&s);
+    // K
+    } else if line.starts_with("kmugokidir") {
         //}else if 9<len && &line[0..10] == "kmugokidir" {
         IO::writeln("9<len kmugokidir");
         // 駒の動きの移動元として有りえる方角
@@ -171,35 +208,47 @@ fn parse_extend_command(
         IO::writeln("6<len kmugoki");
         // 駒の動きを出力
         universe.print_kmugoki(&speed_of_light);
-    } else if 5 < len && &line[starts..6] == "hirate" {
+    } else if 3 < len && &line[starts..4] == "kifu" {
+        IO::writeln("棋譜表示");
+        let s = universe.game.get_moves_history_text();
+        IO::writeln(&s);
+    // P
+    } else if 3 < len && &line[starts..4] == "pos0" {
+        // 初期局面表示
+        let s = GameView::to_string(&universe.game, &PosNums::Start);
+        IO::writeln(&s);
+    } else if 2 < len && &line[starts..3] == "pos" {
+        // 現局面表示
+        let s = GameView::to_string(&universe.game, &PosNums::Current);
+        IO::writeln(&s);
+    // S
+    } else if 7 < len && &line[starts..8] == "startpos" {
         // 平手初期局面
         controller::main_loop::ml_usi_controller::read_position(
             &POS_1.to_string(),
             universe,
             &speed_of_light,
         );
-    } else if 5 < len && &line[starts..6] == "kikisu" {
-        // 利き数表示
-        controller::main_loop::ml_main_controller::cmd_kikisu(&universe, &speed_of_light);
+    // R
     } else if 5 < len && &line[starts..6] == "random_piece_type" {
         IO::writeln("5<len random_piece_type");
         // 乱駒種類
         let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
         IO::writeln(&format!("乱駒種類={}", &piece_type));
-    } else if 6 < len && &line[starts..7] == "genmove" {
-        // Generation move.
-        // FIXME 合法手とは限らない
-        let mut ss_potential_hashset = HashSet::<u64>::new();
-        get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
-            ss_potential_hashset.insert(movement_hash);
-        });
-        IO::writeln("----指し手生成(合法手とは限らない) ここから----");
-        print_movement_hashset(&ss_potential_hashset);
-        IO::writeln("----指し手生成(合法手とは限らない) ここまで----");
     } else if 4 < len && &line[starts..5] == "random_ms" {
         // 乱升
         let sq = controller::common_use::cu_random_move_controller::random_square();
         IO::writeln(&format!("乱升={}", sq.to_usquare()));
+    } else if 3 < len && &line[starts..4] == "rand" {
+        IO::writeln("3<len rand");
+        // 乱数の試し
+        let secret_number = rand::thread_rng().gen_range(1, 101); //1~100
+        IO::writeln(&format!("乱数={}", secret_number));
+    // S
+    } else if 3 < len && &line[starts..4] == "same" {
+        let count = universe.game.count_same_ky();
+        IO::writeln(&format!("同一局面調べ count={}", count));
+    // T
     } else if 3 < len && &line[starts..4] == "teigi::conv" {
         IO::writeln("teigi::convのテスト");
 
@@ -217,22 +266,7 @@ fn parse_extend_command(
                 ));
             }
         }
-    } else if 3 < len && &line[starts..4] == "hash" {
-        IO::writeln("局面ハッシュ表示");
-        let s = universe.game.get_all_position_hash_text();
-        IO::writeln(&s);
-    } else if 3 < len && &line[starts..4] == "kifu" {
-        IO::writeln("棋譜表示");
-        let s = universe.game.get_moves_history_text();
-        IO::writeln(&s);
-    } else if 3 < len && &line[starts..4] == "rand" {
-        IO::writeln("3<len rand");
-        // 乱数の試し
-        let secret_number = rand::thread_rng().gen_range(1, 101); //1~100
-        IO::writeln(&format!("乱数={}", secret_number));
-    } else if 3 < len && &line[starts..4] == "same" {
-        let count = universe.game.count_same_ky();
-        IO::writeln(&format!("同一局面調べ count={}", count));
+    // U
     } else if 3 < len && &line[starts..4] == "undo" {
         if !universe.game.undo_move(&speed_of_light) {
             IO::writeln(&format!(
@@ -249,25 +283,6 @@ fn parse_extend_command(
         // いろいろな動作テスト
         IO::writeln(&format!("unit-test starts={} len={}", starts, len));
         unit_test(&line, &mut starts, len, universe, &speed_of_light);
-    //IO::writeln( &ml_universe_dto.pop_command() );
-    } else if 2 < len && &line[starts..3] == "do " {
-        starts += 3;
-        // コマンド読取。棋譜に追加され、手目も増える
-        if read_sasite(&line, &mut starts, len, universe) {
-            // 手目を戻す
-            universe.game.history.ply -= 1;
-            // 入っている指し手の通り指すぜ☆（＾～＾）
-            let ply = universe.game.history.ply;
-            let ss = universe.game.history.movements[ply as usize].clone();
-            universe.game.do_move(&ss, speed_of_light);
-        }
-    } else if 3 < len && &line[starts..4] == "pos0" {
-        // 初期局面表示
-        let s = GameView::to_string(&universe.game, &PosNums::Start);
-        IO::writeln(&s);
-    } else if 2 < len && &line[starts..3] == "pos" {
-        // 現局面表示
-        let s = GameView::to_string(&universe.game, &PosNums::Current);
-        IO::writeln(&s);
+        //IO::writeln( &ml_universe_dto.pop_command() );
     }
 }

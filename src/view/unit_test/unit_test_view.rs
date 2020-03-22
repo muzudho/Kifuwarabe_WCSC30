@@ -75,9 +75,11 @@ pub fn print_piece_type_hashset<S: BuildHasher>(num_piece_type_hashset: &HashSet
         num_piece_type_hashset.len()
     ));
     for num_piece_type in num_piece_type_hashset {
-        IO::writeln(&format!(
-            "piece_type({})",
-            num_to_piece_type(*num_piece_type)
-        ));
+        let display = if let Some(piece_type) = num_to_piece_type(*num_piece_type) {
+            format!("{}", piece_type)
+        } else {
+            PIECE_TYPE_WHITE_SPACE.to_string()
+        };
+        IO::writeln(&format!("piece_type({})", display));
     }
 }

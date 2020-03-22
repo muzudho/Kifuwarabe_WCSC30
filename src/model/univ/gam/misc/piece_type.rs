@@ -4,10 +4,13 @@
 //! 先後なしの駒と空白
 //!
 
+use crate::model::univ::gam::misc::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
 use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
+pub static PIECE_TYPE_WHITE_SPACE: &str = "  ";
+
 /// USIでCopyするので、Copyが要る。
 #[derive(Copy, Clone, PartialEq)]
 pub enum PieceType {
@@ -39,10 +42,6 @@ pub enum PieceType {
     PromotedLance,
     // ぱわーあっぷひよこ
     PromotedPawn,
-    // 空マス
-    KaraPieceType,
-    // 要素数より1小さい数。エラー値用に使っても可
-    OwariPieceType,
 }
 impl fmt::Display for PieceType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -63,8 +62,6 @@ impl fmt::Display for PieceType {
             PromotedKnight => write!(f, "PU"),
             PromotedLance => write!(f, "PS"),
             PromotedPawn => write!(f, "PH"),
-            KaraPieceType => write!(f, "　"),
-            OwariPieceType => write!(f, "×"),
         }
     }
 }
@@ -139,44 +136,47 @@ impl GPHandPieces {
 }
 
 /// 数値の駒種類化
-pub fn num_to_piece_type(n: usize) -> PieceType {
+pub fn num_to_piece_type(n: usize) -> Option<PieceType> {
     use PieceType::*;
     match n {
-        0 => King,
-        1 => Rook,
-        2 => Bishop,
-        3 => Gold,
-        4 => Silver,
-        5 => Knight,
-        6 => Lance,
-        7 => Pawn,
-        8 => Dragon,
-        9 => Horse,
-        10 => PromotedSilver,
-        11 => PromotedKnight,
-        12 => PromotedLance,
-        13 => PromotedPawn,
-        14 => KaraPieceType,
-        _ => OwariPieceType,
+        0 => Some(King),
+        1 => Some(Rook),
+        2 => Some(Bishop),
+        3 => Some(Gold),
+        4 => Some(Silver),
+        5 => Some(Knight),
+        6 => Some(Lance),
+        7 => Some(Pawn),
+        8 => Some(Dragon),
+        9 => Some(Horse),
+        10 => Some(PromotedSilver),
+        11 => Some(PromotedKnight),
+        12 => Some(PromotedLance),
+        13 => Some(PromotedPawn),
+        _ => None,
     }
 }
 
 /// ハッシュ値を作る
 pub fn push_piece_type_to_hash(
     hash: u64,
-    piece_type: PieceType,
+    piece_type_o: Option<PieceType>,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> u64 {
-    // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
-    (hash << 4)
-        + speed_of_light
+    let num = if let Some(piece_type) = piece_type_o {
+        // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
+        speed_of_light
             .get_piece_type_struct_from_piece_type(&piece_type)
             .serial_piece_number as u64
+    } else {
+        NONE_SERIAL_PIECE_TYPE_NUMBER
+    };
+    (hash << 4) + num
 }
 
 /// ハッシュ値から作る
-pub fn pop_piece_type_from_hash(hash: u64) -> (u64, PieceType) {
+pub fn pop_piece_type_from_hash(hash: u64) -> (u64, Option<PieceType>) {
     // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
-    let piece_type_num = num_to_piece_type((hash & 0b1111) as usize);
-    (hash >> 4, piece_type_num)
+    let piece_type = num_to_piece_type((hash & 0b1111) as usize);
+    (hash >> 4, piece_type)
 }
