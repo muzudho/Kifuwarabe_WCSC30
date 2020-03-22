@@ -353,12 +353,10 @@ impl Game {
                 };
 
                 if let Some(cap764) = cap_o764 {
-                    let cap_o773 = { speed_of_light.get_piece_struct(&cap764).capture() };
-                    if let Some(cap773) = cap_o773 {
-                        self.position
-                            .current_board
-                            .add_hand(&cap773, 1, speed_of_light);
-                    }
+                    let cap773 = speed_of_light.get_piece_struct(&cap764).captured;
+                    self.position
+                        .current_board
+                        .add_hand(&cap773, 1, speed_of_light);
                 };
                 cap_o764
             } else {
@@ -426,18 +424,15 @@ impl Game {
                 };
 
                 if let Some(cap) = cap_o {
-                    if let Some(captured) = speed_of_light.get_piece_struct(&cap).capture() {
-                        // 移動先の駒を、取った駒（あるいは空）に戻す
-                        self.position
-                            .current_board
-                            .set_piece_by_square(&movement.destination, cap_o);
-                        // 自分の持ち駒を減らす
-                        self.position
-                            .current_board
-                            .add_hand(&captured, -1, speed_of_light);
-                    } else {
-                        panic!("取った駒は、駒台に置けない駒だぜ☆（＾～＾）！")
-                    }
+                    let captured = speed_of_light.get_piece_struct(&cap).captured;
+                    // 移動先の駒を、取った駒（あるいは空）に戻す
+                    self.position
+                        .current_board
+                        .set_piece_by_square(&movement.destination, cap_o);
+                    // 自分の持ち駒を減らす
+                    self.position
+                        .current_board
+                        .add_hand(&captured, -1, speed_of_light);
                 }
                 // 移動元升に、動かした駒を置く
                 self.position
