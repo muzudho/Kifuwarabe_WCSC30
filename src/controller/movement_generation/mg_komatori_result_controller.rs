@@ -77,7 +77,7 @@ impl KomatoriResult {
             let (hash, sq_atk) = pop_sq_from_hash(hash);
             let (_hash, sq_tgt) = pop_sq_from_hash(hash);
             KomatoriResult {
-                km_attacker: ps_atk.piece().clone(),
+                km_attacker: ps_atk.piece,
                 sq_attacker: sq_atk,
                 sq_target: sq_tgt,
             }
@@ -199,7 +199,7 @@ pub fn lookup_catching_king_on_board(
         // 移動した後の相手の駒
         let ps_dst =
             speed_of_light.get_piece_struct_by_phase_and_piece_type(&phase, *piece_type_dst);
-        let km_dst = ps_dst.piece();
+        let km_dst = &ps_dst.piece;
         //let km_dst = phase_piece_type_to_km( &phase, random_piece_type() );
         // 指定マスに移動できるか
         // 打は除く

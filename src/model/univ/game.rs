@@ -321,7 +321,7 @@ impl Game {
                         .current_board
                         .get_piece_by_square(&movement.source)
                     {
-                        Some(speed_of_light.get_piece_struct(&pc).promote())
+                        Some(speed_of_light.get_piece_struct(&pc).promoted)
                     } else {
                         panic!("成ったのに、元の升に駒がなかった☆（＾～＾）");
                     }
@@ -411,7 +411,7 @@ impl Game {
                             .current_board
                             .get_piece_by_square(&movement.destination)
                         {
-                            Some(speed_of_light.get_piece_struct(&piece411).demote())
+                            Some(speed_of_light.get_piece_struct(&piece411).demoted)
                         } else {
                             panic!("成ったのに移動先に駒が無いぜ☆（＾～＾）！")
                         }
@@ -455,7 +455,7 @@ impl Game {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> &NumberBoard {
         &self.position.control_count_by_piece
-            [speed_of_light.get_piece_struct(pc).serial_piece_number()]
+            [speed_of_light.get_piece_struct(pc).serial_piece_number]
     }
     /// 表示
     pub fn print_number_board(&self, nb: &NumberBoard) -> String {

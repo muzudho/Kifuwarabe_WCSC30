@@ -90,14 +90,14 @@ pub fn get_movement_by_square_and_piece_on_board<F1>(
 
     // 手番の先後、駒種類
     let ps_dst = speed_of_light.get_piece_struct(&piece_dst);
-    let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
+    let (phase1, _piece_type_dst) = &ps_dst.phase_piece_type;
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if let Some(phase2) = position
         .current_board
         .get_phase_by_sq(&sq_dst, speed_of_light)
     {
-        if phase2 == *phase {
+        if phase2 == *phase1 {
             return;
         }
     }
@@ -176,14 +176,14 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
 
     // 手番の先後、駒種類
     let ps_dst = speed_of_light.get_piece_struct(piece_dst);
-    let (phase, _piece_type_dst) = ps_dst.phase_piece_type();
+    let (phase1, _piece_type_dst) = &ps_dst.phase_piece_type;
 
     // 移動先に自駒があれば、指し手は何もない。終わり。
     if let Some(phase2) = position
         .current_board
         .get_phase_by_sq(&sq_dst, speed_of_light)
     {
-        if phase2 == *phase {
+        if phase2 == *phase1 {
             return;
         }
     }
@@ -280,7 +280,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長東
                     Squares::looking_east_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -291,7 +291,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 東
                     Squares::east_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -307,7 +307,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長北東
                     Squares::looking_north_east_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -318,7 +318,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 北東
                     Squares::north_east_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -332,7 +332,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 // 北北東
                 Squares::north_east_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
-                        ps_dst.piece(),
+                        &ps_dst.piece,
                         current_board,
                         speed_of_light,
                         &mut lookups_the_square,
@@ -347,7 +347,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長北
                     Squares::looking_north_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -358,7 +358,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 北
                     Squares::north_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -372,7 +372,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 // 北北西
                 Squares::north_west_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
-                        ps_dst.piece(),
+                        &ps_dst.piece,
                         current_board,
                         speed_of_light,
                         &mut lookups_the_square,
@@ -387,7 +387,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長北西
                     Squares::looking_north_west_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -398,7 +398,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 北西
                     Squares::north_west_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -414,7 +414,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長西
                     Squares::looking_west_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -425,7 +425,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 西
                     Squares::west_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -441,7 +441,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長南西
                     Squares::looking_south_west_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -452,7 +452,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 南西
                     Squares::south_west_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -466,7 +466,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 // 南南西
                 Squares::south_west_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
-                        ps_dst.piece(),
+                        &ps_dst.piece,
                         current_board,
                         speed_of_light,
                         &mut lookups_the_square,
@@ -481,7 +481,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長南
                     Squares::looking_south_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -492,7 +492,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 南
                     Squares::south_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -506,7 +506,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 // 南南東
                 Squares::south_east_keima_of(square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
-                        ps_dst.piece(),
+                        &ps_dst.piece,
                         current_board,
                         speed_of_light,
                         &mut lookups_the_square,
@@ -521,7 +521,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 長南東
                     Squares::looking_south_east_from(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -532,7 +532,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     // 南東
                     Squares::south_east_of(square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
-                            ps_dst.piece(),
+                            &ps_dst.piece,
                             current_board,
                             speed_of_light,
                             &mut lookups_the_square,
@@ -553,7 +553,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStruct) -> bo
     let (_dx, dy) = square_dst.to_file_rank();
 
     use crate::model::univ::gam::misc::piece::Piece::*;
-    match ps_dst.piece() {
+    match &ps_dst.piece {
         Knight1 => {
             // ▲うさぎ　は１、２段目には進めない
             if dy < RANK_3 {
@@ -662,15 +662,15 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
     let piece_type_src = speed_of_light
-        .get_piece_struct(&ps_dst.demote())
+        .get_piece_struct(&ps_dst.demoted)
         .piece_type();
-    let piece_src = speed_of_light
+    let piece_src = &speed_of_light
         .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
-        .piece();
+        .piece;
     let square_dst_piece_src = SquareAndPiece::new(square_dst, piece_src);
 
     let piece_type_narumae_num = speed_of_light
-        .get_piece_type_struct_from_piece(&ps_dst.demote())
+        .get_piece_type_struct_from_piece(&ps_dst.demoted)
         .serial_piece_number;
 
     MGDirection::for_all(&mut |i_dir| {
@@ -1038,10 +1038,9 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
     // 駒種類
     for piece_type in PIECE_TYPE_ARRAY.iter() {
         // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-        let km = speed_of_light
+        let km = &speed_of_light
             .get_piece_struct_by_phase_and_piece_type(&phase, *piece_type)
-            .piece()
-            .clone();
+            .piece;
         use crate::model::univ::gam::misc::piece::Piece::*;
         match km {
             Knight1 => {
@@ -1420,9 +1419,9 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 
     // 駒種類
     for piece_type in PIECE_TYPE_ARRAY.iter() {
-        let km_src = speed_of_light
+        let km_src = &speed_of_light
             .get_piece_struct_by_phase_and_piece_type(&phase, *piece_type)
-            .piece();
+            .piece;
 
         // +--------------------+
         // | 移動前は非成駒か？ |

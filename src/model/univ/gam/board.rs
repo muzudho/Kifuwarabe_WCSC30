@@ -98,8 +98,8 @@ impl Board {
             let sq = Square::from_file_rank(suji, dan);
             if let Some(piece99) = self.get_piece_by_square(&sq) {
                 let ps100 = speed_of_light.get_piece_struct(&piece99);
-                let (phase_piece, piece_type) = ps100.phase_piece_type();
-                if phase_piece == phase && piece_type == PieceType::Pawn {
+                let (phase_piece, piece_type) = &ps100.phase_piece_type;
+                if phase_piece == phase && *piece_type == PieceType::Pawn {
                     return true;
                 }
             }
@@ -130,10 +130,10 @@ impl Board {
      * 持ち駒の枚数を加算
      */
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &MLSpeedOfLightVo) {
-        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number()] += maisu;
+        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number] += maisu;
     }
     pub fn get_hand(&self, hand: &Piece, speed_of_light: &MLSpeedOfLightVo) -> i8 {
-        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number()]
+        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number]
     }
 
     /// 升には何がありますか？
@@ -231,7 +231,7 @@ impl Board {
         for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
             let i_sq = Square::from_usquare(i_ms as usquare);
             if let Some(km) = self.get_piece_by_square(&i_sq) {
-                let num_km = speed_of_light.get_piece_struct(&km).serial_piece_number();
+                let num_km = speed_of_light.get_piece_struct(&km).serial_piece_number;
                 hash ^= game.hash_seed.km[i_ms][num_km];
             }
         }
@@ -240,7 +240,7 @@ impl Board {
         GPPieces::for_all(&mut |any_piece| {
             let num_km = speed_of_light
                 .get_piece_struct(&any_piece)
-                .serial_piece_number();
+                .serial_piece_number;
 
             let maisu = self.get_hand(&any_piece, &speed_of_light);
             debug_assert!(

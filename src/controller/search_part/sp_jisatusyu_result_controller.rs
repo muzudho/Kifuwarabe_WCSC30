@@ -24,13 +24,13 @@ pub fn is_jisatusyu(
         .get_piece_by_square(&ss.src)
     {
         let ps_src = speed_of_light.get_piece_struct(&km_src);
-        let (phase_teban, _piece_type) = ps_src.phase_piece_type();
+        let (friend, _piece_type) = &ps_src.phase_piece_type;
         // 相手番の先後
-        let phase_aite = turn_phase(&phase_teban);
+        let opponent = turn_phase(&friend);
 
         // 升の利き数だが、指した後で再計算が要るはず
         let control_count = ml_universe_dto.game.position.control_count_by_phase
-            [phase_to_num(&phase_aite)]
+            [phase_to_num(&opponent)]
         .get_number_by_square(&ss.dst);
         0 < control_count
     // g_writeln(&format!(

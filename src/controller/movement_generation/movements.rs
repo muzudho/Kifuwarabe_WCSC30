@@ -235,12 +235,12 @@ impl MGMovements {
         F1: FnMut(u64),
     {
         GPHandPieces::for_all(&mut |any_piece_type| {
-            let hand_piece = speed_of_light
+            let hand_piece = &speed_of_light
                 .get_piece_struct_by_phase_and_piece_type(
                     &game.history.get_phase(&Person::Friend),
                     any_piece_type,
                 )
-                .piece();
+                .piece;
 
             if 0 < game
                 .position

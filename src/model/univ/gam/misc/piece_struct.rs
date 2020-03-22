@@ -6,22 +6,22 @@ use crate::model::univ::gam::misc::piece_type::PieceType;
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
 #[derive(Clone)]
 pub struct PieceStruct {
-    piece: Piece,
+    pub piece: Piece,
     /// 先後、駒種類。
-    phase_piece_type: (Phase, PieceType),
+    pub phase_piece_type: (Phase, PieceType),
 
     /// 駒→成駒　（成れない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    promoted: Piece,
+    pub promoted: Piece,
 
     /// 成駒→駒　（成っていない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    demoted: Piece,
+    pub demoted: Piece,
 
     /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
     pub captured: Piece,
 
     /// 先後付き駒の配列のインデックス
-    serial_piece_number: usize,
+    pub serial_piece_number: usize,
 }
 impl PieceStruct {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
@@ -299,14 +299,6 @@ impl PieceStruct {
         (hash >> 5, ps_o)
     }
 
-    pub fn piece(&self) -> &Piece {
-        &self.piece
-    }
-
-    pub fn phase_piece_type(&self) -> (&Phase, PieceType) {
-        (&self.phase_piece_type.0, self.phase_piece_type.1)
-    }
-
     pub fn phase(&self) -> Phase {
         self.phase_piece_type.0.clone()
     }
@@ -315,27 +307,15 @@ impl PieceStruct {
         self.phase_piece_type.1
     }
 
-    pub fn promote(&self) -> Piece {
-        self.promoted
-    }
-
-    pub fn demote(&self) -> Piece {
-        self.demoted
-    }
-
     // 降格できるか。
     pub fn can_demote(&self) -> bool {
         // 降格後の駒が、今の駒と異なっていれば、降格できるぜ☆（＾～＾）
         self.piece != self.demoted
     }
 
-    pub fn serial_piece_number(&self) -> usize {
-        self.serial_piece_number
-    }
-
     /// 駒の一致比較
     pub fn equals_piece(&self, b: &PieceStruct) -> bool {
-        self.serial_piece_number() == b.serial_piece_number()
+        self.serial_piece_number == b.serial_piece_number
     }
 
     /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
@@ -360,12 +340,12 @@ impl PieceStruct {
     }
 
     pub fn is_promotable(&self) -> bool {
-        *self.piece() != self.promoted
+        self.piece != self.promoted
     }
 
     /// ハッシュ値を作る
     pub fn add_hash(&self, hash: u64) -> u64 {
         // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-        (hash << 5) + self.serial_piece_number() as u64
+        (hash << 5) + self.serial_piece_number as u64
     }
 }

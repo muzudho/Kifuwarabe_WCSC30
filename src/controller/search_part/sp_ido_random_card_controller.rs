@@ -82,7 +82,7 @@ pub fn get_ss_by_random(
             &ml_universe_dto.game.history.get_phase(&Person::Friend),
             *cu_random_move_controller::random_piece_type(),
         );
-        let piece_dst = ps_dst.piece();
+        let piece_dst = &ps_dst.piece;
 
         ss_hashset.clear();
         get_movement_by_square_and_piece_on_board(

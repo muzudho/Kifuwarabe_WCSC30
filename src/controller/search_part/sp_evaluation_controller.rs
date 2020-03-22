@@ -15,7 +15,7 @@ impl SPEvaluationController {
     ) -> (i16, bool) {
         if let Some(captured_piece) = captured_piece_o {
             let piece_struct = speed_of_light.get_piece_struct(&captured_piece);
-            match piece_struct.phase_piece_type().1 {
+            match piece_struct.phase_piece_type.1 {
                 PieceType::King => (25000, true),
                 PieceType::Rook => (1000, false),
                 PieceType::Bishop => (900, false),

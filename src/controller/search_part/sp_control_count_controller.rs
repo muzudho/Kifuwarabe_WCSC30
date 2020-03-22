@@ -19,8 +19,8 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
     // ゼロ・リセット
     GPPieces::for_all(&mut |any_piece| {
         game.position.control_count_by_piece
-            [PieceStruct::from_piece(any_piece).serial_piece_number()]
-        .clear();
+            [PieceStruct::from_piece(any_piece).serial_piece_number]
+            .clear();
     });
 
     for phase in PHASE_ARRAY.iter() {
@@ -60,7 +60,7 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
             let control_count = mv_src_hashset.len();
 
             // 駒別
-            game.position.control_count_by_piece[ps_dst.serial_piece_number()]
+            game.position.control_count_by_piece[ps_dst.serial_piece_number]
                 .add_count_by_square(&any_square, control_count as i8);
 
             // 先後別

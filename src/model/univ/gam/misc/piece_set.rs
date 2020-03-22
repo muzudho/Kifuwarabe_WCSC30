@@ -18,7 +18,7 @@ impl SPPieceSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         GPPieces::for_all(&mut |any_piece| {
             let ps = speed_of_light.get_piece_struct(&any_piece);
-            num_syugo1.insert(ps.serial_piece_number());
+            num_syugo1.insert(ps.serial_piece_number);
         });
         SPPieceSetDto {
             num_syugo: num_syugo1,
@@ -35,9 +35,9 @@ impl SPPieceSetDto {
         let mut num_syugo1: HashSet<usize> = HashSet::new();
         GPPieces::for_all(&mut |any_piece| {
             let ps = speed_of_light.get_piece_struct(&any_piece);
-            let (phase1, _piece_type) = ps.phase_piece_type();
-            if phase0 == *phase1 {
-                num_syugo1.insert(ps.serial_piece_number());
+            let (phase2, _piece_type) = &ps.phase_piece_type;
+            if phase0 == *phase2 {
+                num_syugo1.insert(ps.serial_piece_number);
             }
         });
         SPPieceSetDto {
@@ -46,6 +46,6 @@ impl SPPieceSetDto {
     }
     pub fn remove(&mut self, piece: &Piece, speed_of_light: &MLSpeedOfLightVo) {
         self.num_syugo
-            .remove(&speed_of_light.get_piece_struct(piece).serial_piece_number());
+            .remove(&speed_of_light.get_piece_struct(piece).serial_piece_number);
     }
 }

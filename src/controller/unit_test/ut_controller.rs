@@ -42,7 +42,7 @@ pub fn unit_test(
             &ml_universe_dto.game.history.get_phase(&Person::Friend),
             *piece_type,
         );
-        let pc = ps.piece();
+        let pc = &ps.piece;
         let sq_dst = cu_random_move_controller::random_square();
         IO::writeln(&format!(
             "piece_type={} pc={} ms_dst={}",
@@ -140,7 +140,7 @@ pub fn unit_test(
             let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
-            let pc = ps.piece(); // ▽ph
+            let pc = &ps.piece; // ▽ph
             let sq_dst = Square::from_usquare(79);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
@@ -184,7 +184,7 @@ pub fn unit_test(
             let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
-            let pc = ps.piece(); // ▽ph
+            let pc = &ps.piece; // ▽ph
             let sq_dst = Square::from_usquare(68);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
@@ -228,7 +228,7 @@ pub fn unit_test(
             let piece_type = PieceType::PromotedPawn; // ぱわーあっぷひよこ
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
-            let pc = ps.piece(); // ▽ph
+            let pc = &ps.piece; // ▽ph
             let sq_dst = Square::from_usquare(77);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
@@ -272,7 +272,7 @@ pub fn unit_test(
             let piece_type = PieceType::King; // らいおん
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::First, piece_type);
-            let pc = ps.piece(); // ▲ら
+            let pc = &ps.piece; // ▲ら
             let sq_dst = Square::from_usquare(58);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
