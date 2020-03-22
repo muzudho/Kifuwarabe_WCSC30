@@ -327,7 +327,7 @@ impl MGMovements {
                     // ひよこ　は２歩できない
                     if current_board.exists_fu_by_phase_suji(
                         &ps_dst.phase(),
-                        destination.file,
+                        destination.file(),
                         speed_of_light,
                     ) {
                         return;

@@ -83,23 +83,28 @@ pub const SQUARE_DROP: usquare = 0;
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Square {
-    /// イミュータブルとして使えだぜ☆（＾～＾）それならアクセッサは要らないぜ☆（＾～＾）
-    /// 行番号。いわゆる段。上から 1, 2, 3 ...
-    pub rank: i8,
-    /// 列番号。いわゆる筋。右から 1, 2, 3 ...
-    pub file: i8,
+    /// Square is shogi coordinate. file*10+rank.
+    ///
+    ///           North
+    ///   91 81 71 61 51 41 31 21 11
+    ///   92 82 72 62 52 42 32 22 12
+    /// W 93 83 73 63 53 43 33 23 13 E
+    /// E 94 84 74 64 54 44 34 24 14 A
+    /// S 95 85 75 65 55 45 35 25 15 S
+    /// T 96 86 76 66 56 46 36 26 16 T
+    ///   97 87 77 67 57 47 37 27 17
+    ///   98 88 78 68 58 48 38 28 18
+    ///   99 89 79 69 59 49 39 29 19
+    ///           Source
+    pub address: i8,
 }
 impl Square {
     pub fn from_usquare(sq: usquare) -> Self {
-        Square {
-            rank: (sq % 10) as i8,
-            file: (sq / 10) as i8,
-        }
+        Square { address: sq as i8 }
     }
     pub fn from_file_rank(file1: i8, rank1: i8) -> Self {
         Square {
-            rank: rank1,
-            file: file1,
+            address: file1 * 10 + rank1,
         }
     }
     pub fn from_point(p: &Point) -> Self {
@@ -108,20 +113,36 @@ impl Square {
         Square::from_usquare((p.x * 10 + p.y) as usquare)
     }
 
+    /*
+    pub fn add(val:i8){
+        se
+    }
+    */
+
+    /// 列番号。いわゆる筋。右から 1, 2, 3 ...
+    pub fn file(&self) -> i8 {
+        self.address / 10
+    }
+
+    /// 行番号。いわゆる段。上から 1, 2, 3 ...
+    pub fn rank(&self) -> i8 {
+        self.address % 10
+    }
+
     pub fn to_usquare(&self) -> usquare {
-        (self.file * 10 + self.rank) as usquare
+        self.address as usquare
     }
 
     pub fn to_file_rank(&self) -> (i8, i8) {
-        (self.file, self.rank)
+        (self.file(), self.rank())
     }
 
     /// x, y に名称変更したもの☆（＾～＾）
     pub fn to_point(&self) -> Point {
         assert_banjo_sq(&self, "(203b)sq_to_p");
         Point {
-            x: self.file,
-            y: self.rank,
+            x: self.file(),
+            y: self.rank(),
         }
     }
 }
