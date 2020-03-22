@@ -1,5 +1,5 @@
 use crate::controller::movement_generation::mg_square::*;
-use crate::controller::movement_generation::square::*;
+use crate::controller::movement_generation::squares::*;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::person::Person;
@@ -26,7 +26,7 @@ impl MGMovements {
         // 盤上の駒☆（＾～＾）
         MGSquares::for_all(&mut |source| {
             let callback_next = &mut |destination, promotability| {
-                use crate::controller::movement_generation::square::Promotability::*;
+                use crate::controller::movement_generation::squares::Promotability::*;
                 use crate::model::univ::gam::board::ThingsInTheSquare::*;
                 let things_in_the_square =
                     current_board.what_is_in_the_square(friend, &destination, speed_of_light);
@@ -327,7 +327,7 @@ impl MGMovements {
                     // ひよこ　は２歩できない
                     if current_board.exists_fu_by_phase_suji(
                         &ps_dst.phase(),
-                        destination.file(),
+                        destination.get_file(),
                         speed_of_light,
                     ) {
                         return;
@@ -337,7 +337,7 @@ impl MGMovements {
             }
             callback_movement(
                 MovementBuilder {
-                    src: Square::from_usquare(SQUARE_DROP), // 駒台
+                    src: Square::from_isquare(SQUARE_DROP), // 駒台
                     dst: destination.clone(),               // どの升へ行きたいか
                     pro: false,                             // 打に成りは無し
                     drop: num_to_piece_type(

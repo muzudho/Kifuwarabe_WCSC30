@@ -29,7 +29,7 @@ pub enum PosNums {
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
 pub struct GameHashSeed {
     // 盤上の駒
-    pub km: [[u64; PIECE_LN]; BOARD_MEMORY_AREA],
+    pub km: [[u64; PIECE_LN]; BOARD_MEMORY_AREA as usize],
     // 持ち駒
     pub mg: [[u64; MG_MAX]; PIECE_LN],
     // 先後
@@ -58,7 +58,7 @@ impl Default for Game {
             starting_board: Board::default(),
             hash_seed: GameHashSeed {
                 // 盤上の駒
-                km: [[0; PIECE_LN]; BOARD_MEMORY_AREA],
+                km: [[0; PIECE_LN]; BOARD_MEMORY_AREA as usize],
                 // 持ち駒
                 mg: [[0; MG_MAX]; PIECE_LN],
                 // 先後
@@ -75,10 +75,10 @@ impl Game {
         // 局面ハッシュの種をリセット
 
         // 盤上の駒
-        for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
+        for i_square in SQUARE_NONE..BOARD_MEMORY_AREA {
             for i_km in 0..PIECE_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.hash_seed.km[i_ms][i_km] =
+                self.hash_seed.km[i_square as usize][i_km] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
@@ -145,8 +145,8 @@ impl Game {
     /// 開始局面を、現局面にコピーします
     pub fn copy_starting_position_to_current_position(&mut self) {
         // 盤上の駒。
-        for i_ms in 0..BOARD_MEMORY_AREA {
-            let i_sq = Square::from_usquare(i_ms);
+        for i_adr in 0..BOARD_MEMORY_AREA {
+            let i_sq = Square::from_isquare(i_adr as isquare);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
             let piece = self.starting_board.get_piece_by_square(&i_sq);
             self.position
@@ -300,7 +300,7 @@ impl Game {
         let cap: Option<Piece>;
         {
             // 動かす駒
-            let piece144_o: Option<Piece> = if movement.source.to_usquare() == SQUARE_DROP {
+            let piece144_o: Option<Piece> = if movement.source.address == SQUARE_DROP {
                 // 打なら
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
@@ -388,8 +388,7 @@ impl Game {
                 // 取った駒が有ったか。
                 let cap_o: Option<Piece> = self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let old_source391_o: Option<Piece> = if movement.source.to_usquare() == SQUARE_DROP
-                {
+                let old_source391_o: Option<Piece> = if movement.source.address == SQUARE_DROP {
                     // 打なら
                     if let Some(drp) = movement.drop {
                         let drop394 = Piece::from_phase_and_piece_type(&phase, drp);
@@ -484,87 +483,87 @@ a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
     +----+----+----+----+----+----+----+----+----+
        1    2    3    4    5    6    7    8    9\
 ",
-            nb.get_number_by_square(&Square::from_usquare(19)),
-            nb.get_number_by_square(&Square::from_usquare(29)),
-            nb.get_number_by_square(&Square::from_usquare(39)),
-            nb.get_number_by_square(&Square::from_usquare(49)),
-            nb.get_number_by_square(&Square::from_usquare(59)),
-            nb.get_number_by_square(&Square::from_usquare(69)),
-            nb.get_number_by_square(&Square::from_usquare(79)),
-            nb.get_number_by_square(&Square::from_usquare(89)),
-            nb.get_number_by_square(&Square::from_usquare(99)),
-            nb.get_number_by_square(&Square::from_usquare(18)),
-            nb.get_number_by_square(&Square::from_usquare(28)),
-            nb.get_number_by_square(&Square::from_usquare(38)),
-            nb.get_number_by_square(&Square::from_usquare(48)),
-            nb.get_number_by_square(&Square::from_usquare(58)),
-            nb.get_number_by_square(&Square::from_usquare(68)),
-            nb.get_number_by_square(&Square::from_usquare(78)),
-            nb.get_number_by_square(&Square::from_usquare(88)),
-            nb.get_number_by_square(&Square::from_usquare(98)),
-            nb.get_number_by_square(&Square::from_usquare(17)),
-            nb.get_number_by_square(&Square::from_usquare(27)),
-            nb.get_number_by_square(&Square::from_usquare(37)),
-            nb.get_number_by_square(&Square::from_usquare(47)),
-            nb.get_number_by_square(&Square::from_usquare(57)),
-            nb.get_number_by_square(&Square::from_usquare(67)),
-            nb.get_number_by_square(&Square::from_usquare(77)),
-            nb.get_number_by_square(&Square::from_usquare(87)),
-            nb.get_number_by_square(&Square::from_usquare(97)),
-            nb.get_number_by_square(&Square::from_usquare(16)),
-            nb.get_number_by_square(&Square::from_usquare(26)),
-            nb.get_number_by_square(&Square::from_usquare(36)),
-            nb.get_number_by_square(&Square::from_usquare(46)),
-            nb.get_number_by_square(&Square::from_usquare(56)),
-            nb.get_number_by_square(&Square::from_usquare(66)),
-            nb.get_number_by_square(&Square::from_usquare(76)),
-            nb.get_number_by_square(&Square::from_usquare(86)),
-            nb.get_number_by_square(&Square::from_usquare(96)),
-            nb.get_number_by_square(&Square::from_usquare(15)),
-            nb.get_number_by_square(&Square::from_usquare(25)),
-            nb.get_number_by_square(&Square::from_usquare(35)),
-            nb.get_number_by_square(&Square::from_usquare(45)),
-            nb.get_number_by_square(&Square::from_usquare(55)),
-            nb.get_number_by_square(&Square::from_usquare(65)),
-            nb.get_number_by_square(&Square::from_usquare(75)),
-            nb.get_number_by_square(&Square::from_usquare(85)),
-            nb.get_number_by_square(&Square::from_usquare(95)),
-            nb.get_number_by_square(&Square::from_usquare(14)),
-            nb.get_number_by_square(&Square::from_usquare(24)),
-            nb.get_number_by_square(&Square::from_usquare(34)),
-            nb.get_number_by_square(&Square::from_usquare(44)),
-            nb.get_number_by_square(&Square::from_usquare(54)),
-            nb.get_number_by_square(&Square::from_usquare(64)),
-            nb.get_number_by_square(&Square::from_usquare(74)),
-            nb.get_number_by_square(&Square::from_usquare(84)),
-            nb.get_number_by_square(&Square::from_usquare(94)),
-            nb.get_number_by_square(&Square::from_usquare(13)),
-            nb.get_number_by_square(&Square::from_usquare(23)),
-            nb.get_number_by_square(&Square::from_usquare(33)),
-            nb.get_number_by_square(&Square::from_usquare(43)),
-            nb.get_number_by_square(&Square::from_usquare(53)),
-            nb.get_number_by_square(&Square::from_usquare(63)),
-            nb.get_number_by_square(&Square::from_usquare(73)),
-            nb.get_number_by_square(&Square::from_usquare(83)),
-            nb.get_number_by_square(&Square::from_usquare(93)),
-            nb.get_number_by_square(&Square::from_usquare(12)),
-            nb.get_number_by_square(&Square::from_usquare(22)),
-            nb.get_number_by_square(&Square::from_usquare(32)),
-            nb.get_number_by_square(&Square::from_usquare(42)),
-            nb.get_number_by_square(&Square::from_usquare(52)),
-            nb.get_number_by_square(&Square::from_usquare(62)),
-            nb.get_number_by_square(&Square::from_usquare(72)),
-            nb.get_number_by_square(&Square::from_usquare(82)),
-            nb.get_number_by_square(&Square::from_usquare(92)),
-            nb.get_number_by_square(&Square::from_usquare(11)),
-            nb.get_number_by_square(&Square::from_usquare(21)),
-            nb.get_number_by_square(&Square::from_usquare(31)),
-            nb.get_number_by_square(&Square::from_usquare(41)),
-            nb.get_number_by_square(&Square::from_usquare(51)),
-            nb.get_number_by_square(&Square::from_usquare(61)),
-            nb.get_number_by_square(&Square::from_usquare(71)),
-            nb.get_number_by_square(&Square::from_usquare(81)),
-            nb.get_number_by_square(&Square::from_usquare(91)),
+            nb.get_number_by_square(&Square::from_isquare(19)),
+            nb.get_number_by_square(&Square::from_isquare(29)),
+            nb.get_number_by_square(&Square::from_isquare(39)),
+            nb.get_number_by_square(&Square::from_isquare(49)),
+            nb.get_number_by_square(&Square::from_isquare(59)),
+            nb.get_number_by_square(&Square::from_isquare(69)),
+            nb.get_number_by_square(&Square::from_isquare(79)),
+            nb.get_number_by_square(&Square::from_isquare(89)),
+            nb.get_number_by_square(&Square::from_isquare(99)),
+            nb.get_number_by_square(&Square::from_isquare(18)),
+            nb.get_number_by_square(&Square::from_isquare(28)),
+            nb.get_number_by_square(&Square::from_isquare(38)),
+            nb.get_number_by_square(&Square::from_isquare(48)),
+            nb.get_number_by_square(&Square::from_isquare(58)),
+            nb.get_number_by_square(&Square::from_isquare(68)),
+            nb.get_number_by_square(&Square::from_isquare(78)),
+            nb.get_number_by_square(&Square::from_isquare(88)),
+            nb.get_number_by_square(&Square::from_isquare(98)),
+            nb.get_number_by_square(&Square::from_isquare(17)),
+            nb.get_number_by_square(&Square::from_isquare(27)),
+            nb.get_number_by_square(&Square::from_isquare(37)),
+            nb.get_number_by_square(&Square::from_isquare(47)),
+            nb.get_number_by_square(&Square::from_isquare(57)),
+            nb.get_number_by_square(&Square::from_isquare(67)),
+            nb.get_number_by_square(&Square::from_isquare(77)),
+            nb.get_number_by_square(&Square::from_isquare(87)),
+            nb.get_number_by_square(&Square::from_isquare(97)),
+            nb.get_number_by_square(&Square::from_isquare(16)),
+            nb.get_number_by_square(&Square::from_isquare(26)),
+            nb.get_number_by_square(&Square::from_isquare(36)),
+            nb.get_number_by_square(&Square::from_isquare(46)),
+            nb.get_number_by_square(&Square::from_isquare(56)),
+            nb.get_number_by_square(&Square::from_isquare(66)),
+            nb.get_number_by_square(&Square::from_isquare(76)),
+            nb.get_number_by_square(&Square::from_isquare(86)),
+            nb.get_number_by_square(&Square::from_isquare(96)),
+            nb.get_number_by_square(&Square::from_isquare(15)),
+            nb.get_number_by_square(&Square::from_isquare(25)),
+            nb.get_number_by_square(&Square::from_isquare(35)),
+            nb.get_number_by_square(&Square::from_isquare(45)),
+            nb.get_number_by_square(&Square::from_isquare(55)),
+            nb.get_number_by_square(&Square::from_isquare(65)),
+            nb.get_number_by_square(&Square::from_isquare(75)),
+            nb.get_number_by_square(&Square::from_isquare(85)),
+            nb.get_number_by_square(&Square::from_isquare(95)),
+            nb.get_number_by_square(&Square::from_isquare(14)),
+            nb.get_number_by_square(&Square::from_isquare(24)),
+            nb.get_number_by_square(&Square::from_isquare(34)),
+            nb.get_number_by_square(&Square::from_isquare(44)),
+            nb.get_number_by_square(&Square::from_isquare(54)),
+            nb.get_number_by_square(&Square::from_isquare(64)),
+            nb.get_number_by_square(&Square::from_isquare(74)),
+            nb.get_number_by_square(&Square::from_isquare(84)),
+            nb.get_number_by_square(&Square::from_isquare(94)),
+            nb.get_number_by_square(&Square::from_isquare(13)),
+            nb.get_number_by_square(&Square::from_isquare(23)),
+            nb.get_number_by_square(&Square::from_isquare(33)),
+            nb.get_number_by_square(&Square::from_isquare(43)),
+            nb.get_number_by_square(&Square::from_isquare(53)),
+            nb.get_number_by_square(&Square::from_isquare(63)),
+            nb.get_number_by_square(&Square::from_isquare(73)),
+            nb.get_number_by_square(&Square::from_isquare(83)),
+            nb.get_number_by_square(&Square::from_isquare(93)),
+            nb.get_number_by_square(&Square::from_isquare(12)),
+            nb.get_number_by_square(&Square::from_isquare(22)),
+            nb.get_number_by_square(&Square::from_isquare(32)),
+            nb.get_number_by_square(&Square::from_isquare(42)),
+            nb.get_number_by_square(&Square::from_isquare(52)),
+            nb.get_number_by_square(&Square::from_isquare(62)),
+            nb.get_number_by_square(&Square::from_isquare(72)),
+            nb.get_number_by_square(&Square::from_isquare(82)),
+            nb.get_number_by_square(&Square::from_isquare(92)),
+            nb.get_number_by_square(&Square::from_isquare(11)),
+            nb.get_number_by_square(&Square::from_isquare(21)),
+            nb.get_number_by_square(&Square::from_isquare(31)),
+            nb.get_number_by_square(&Square::from_isquare(41)),
+            nb.get_number_by_square(&Square::from_isquare(51)),
+            nb.get_number_by_square(&Square::from_isquare(61)),
+            nb.get_number_by_square(&Square::from_isquare(71)),
+            nb.get_number_by_square(&Square::from_isquare(81)),
+            nb.get_number_by_square(&Square::from_isquare(91)),
         )
     }
 }

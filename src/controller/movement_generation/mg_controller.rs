@@ -2,7 +2,7 @@
 //! 現局面を使った指し手生成
 //!
 
-use super::square::Squares;
+use super::squares::Squares;
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
 use crate::controller::movement_generation::mg_choicing_controller::*;
@@ -214,7 +214,7 @@ pub fn get_movement_by_square_and_piece_on_drop<F1>(
         let drop_piece_type_o = num_to_piece_type(*num_piece_type_da);
 
         let movement_hash = MovementBuilder {
-            src: Square::from_usquare(SQUARE_DROP),
+            src: Square::from_isquare(SQUARE_DROP),
             dst: (*sq_dst).clone(),
             pro: false,
             drop: drop_piece_type_o,

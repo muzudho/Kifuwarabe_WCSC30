@@ -237,8 +237,8 @@ fn parse_extend_command(
         IO::writeln(&format!("乱駒種類={}", &piece_type));
     } else if 4 < len && &line[starts..5] == "random_ms" {
         // 乱升
-        let sq = controller::common_use::cu_random_move_controller::random_square();
-        IO::writeln(&format!("乱升={}", sq.to_usquare()));
+        let square = controller::common_use::cu_random_move_controller::random_square();
+        IO::writeln(&format!("乱升={}", square.address));
     } else if 3 < len && &line[starts..4] == "rand" {
         IO::writeln("3<len rand");
         // 乱数の試し
@@ -254,15 +254,15 @@ fn parse_extend_command(
 
         for ms in 11..19 {
             for hash in 0..10 {
-                let sq = Square::from_usquare(ms);
+                let sq = Square::from_isquare(ms);
                 let next = push_sq_to_hash(hash, &sq);
-                let (hash_orig, sq_orig) = pop_sq_from_hash(next);
+                let (hash_orig, square_orig) = pop_sq_from_hash(next);
                 IO::writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
                     ,hash
                     ,ms
                     ,next
                     ,hash_orig
-                    ,sq_orig.to_usquare()
+                    ,square_orig.address
                 ));
             }
         }

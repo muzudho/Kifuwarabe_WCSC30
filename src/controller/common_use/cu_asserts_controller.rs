@@ -6,20 +6,20 @@ use crate::model::univ::gam::misc::square::Square;
 ///
 /// 打はテストできない
 ///
-pub fn assert_banjo_sq(sq: &Square, hint: &str) {
-    let ms = sq.to_usquare();
+pub fn assert_banjo_sq(square: &Square, hint: &str) {
+    let adr = square.address;
     debug_assert!(
-        (10 < ms && ms < 20)
-            || (20 < ms && ms < 30)
-            || (30 < ms && ms < 40)
-            || (40 < ms && ms < 50)
-            || (50 < ms && ms < 60)
-            || (60 < ms && ms < 70)
-            || (70 < ms && ms < 80)
-            || (80 < ms && ms < 90)
-            || (90 < ms && ms < 100),
+        (10 < adr && adr < 20)
+            || (20 < adr && adr < 30)
+            || (30 < adr && adr < 40)
+            || (40 < adr && adr < 50)
+            || (50 < adr && adr < 60)
+            || (60 < adr && adr < 70)
+            || (70 < adr && adr < 80)
+            || (80 < adr && adr < 90)
+            || (90 < adr && adr < 100),
         "ms={} {}",
-        ms,
+        adr,
         hint
     );
 }

@@ -47,11 +47,11 @@ pub fn print_movement_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
 /// 升を表示
 pub fn print_square_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
     IO::writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
-    for sq in sq_hashset {
-        let ms = (*sq).to_usquare();
-        match ms {
+    for square in sq_hashset {
+        let adr = (*square).address;
+        match adr {
             SQUARE_NONE => break,
-            _ => IO::writeln(&format!("ms({})", ms)),
+            _ => IO::writeln(&format!("adr({})", adr)),
         }
     }
 }
@@ -59,11 +59,11 @@ pub fn print_square_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
 /// 升を表示
 pub fn print_square_vec(sq_vec: &[Square]) {
     IO::writeln(&format!("sq_vec.len()={}", sq_vec.len()));
-    for sq in sq_vec {
-        let ms = sq.to_usquare();
-        match ms {
+    for square in sq_vec {
+        let adr = square.address;
+        match adr {
             SQUARE_NONE => break,
-            _ => IO::writeln(&format!("ms({})", ms)),
+            _ => IO::writeln(&format!("adr({})", adr)),
         }
     }
 }

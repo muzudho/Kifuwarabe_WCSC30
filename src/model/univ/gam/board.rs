@@ -27,7 +27,7 @@ pub enum ThingsInTheSquare {
 pub struct Board {
     /// 10の位を筋、1の位を段とする。
     /// 0筋、0段は未使用
-    board: [Option<Piece>; BOARD_MEMORY_AREA],
+    board: [Option<Piece>; BOARD_MEMORY_AREA as usize],
     /// 持ち駒数。持ち駒に使える、成らずの駒の部分だけ使用。
     /// 増減させたいので、u8 ではなく i8。
     pub hand: [i8; PIECE_LN],
@@ -57,7 +57,7 @@ impl Default for Board {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
             ],
-            square_of_king: [Square::from_usquare(0), Square::from_usquare(0)],
+            square_of_king: [Square::from_isquare(0), Square::from_isquare(0)],
         }
     }
 }
@@ -108,12 +108,12 @@ impl Board {
     }
     /// 升で指定して駒を取得
     pub fn get_piece_by_square(&self, sq: &Square) -> Option<Piece> {
-        self.board[sq.to_usquare()]
+        self.board[sq.address as usize]
     }
     /// 升で指定して駒を置く
     pub fn set_piece_by_square(&mut self, sq: &Square, piece_o: Option<Piece>) {
         if let Some(piece) = piece_o {
-            self.board[sq.to_usquare()] = piece_o;
+            self.board[sq.address as usize] = piece_o;
 
             // 玉の位置を覚え直します。
             use crate::model::univ::gam::misc::phase::Phase::*;
@@ -123,7 +123,7 @@ impl Board {
                 _ => {}
             }
         } else {
-            self.board[sq.to_usquare()] = None;
+            self.board[sq.address as usize] = None;
         }
     }
     /**
@@ -228,11 +228,11 @@ impl Board {
         let mut hash: u64 = 0;
 
         // 盤上の駒
-        for i_ms in SQUARE_NONE..BOARD_MEMORY_AREA {
-            let i_sq = Square::from_usquare(i_ms as usquare);
+        for i_address in SQUARE_NONE..BOARD_MEMORY_AREA {
+            let i_sq = Square::from_isquare(i_address as isquare);
             if let Some(km) = self.get_piece_by_square(&i_sq) {
                 let num_km = speed_of_light.get_piece_struct(&km).serial_piece_number;
-                hash ^= game.hash_seed.km[i_ms][num_km];
+                hash ^= game.hash_seed.km[i_address as usize][num_km];
             }
         }
 

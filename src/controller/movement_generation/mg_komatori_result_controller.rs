@@ -49,10 +49,10 @@ impl fmt::Display for KomatoriResult {
         write!(
             f,
             "KmTori:{}{}->{}",
-            self.sq_attacker.to_usquare(),
+            self.sq_attacker.address,
             self.km_attacker,
             // if ps_attacker.is_slider() { "-->" } else { "->" },
-            self.sq_target.to_usquare()
+            self.sq_target.address
         )
     }
 }
@@ -102,7 +102,7 @@ impl KomatoriResult {
         speed_of_light: &MLSpeedOfLightVo,
     ) -> KomatoriResultResult {
         // (1)
-        if self.sq_attacker.to_usquare() == ss.dst.to_usquare() {
+        if self.sq_attacker.address == ss.dst.address {
             return KomatoriResultResult::NoneAttacker;
         }
 
@@ -120,9 +120,9 @@ impl KomatoriResult {
             // 合い駒判定
             if
             // これから動かす駒は、狙われている駒ではないとする
-            ss.src.to_usquare() != self.sq_target.to_usquare()
+            ss.src.address != self.sq_target.address
                 // あるいは打か
-                || ss.src.to_usquare() == SQUARE_DROP
+                || ss.src.address == SQUARE_DROP
             {
                 // 利きの線分上に、駒を置いたか？
                 if intersect_point_on_line_segment(&p_dst, &p_atk, &p_tgt) {
@@ -154,7 +154,7 @@ impl KomatoriResult {
             }
         } else {
             // (3-2) 狙われている駒を、とりあえず動かす
-            if self.sq_target.to_usquare() == ss.src.to_usquare() {
+            if self.sq_target.address == ss.src.address {
                 return KomatoriResultResult::NoneMoved;
             }
         }
@@ -182,14 +182,13 @@ pub fn lookup_catching_king_on_board(
         &sq_target,
         &format!(
             "(119)Ｌookup_banjo_catch phase={} sq_target={}",
-            phase,
-            sq_target.to_usquare()
+            phase, sq_target.address
         ),
     );
 
     let mut hash = HashSet::new();
 
-    if sq_target.to_usquare() == SQUARE_NONE {
+    if sq_target.address == SQUARE_NONE {
         return hash;
     }
 
@@ -225,7 +224,7 @@ pub fn lookup_catching_king_on_board(
                 &ss.src,
                 &format!(
                     "(123)Ｌookup_banjo_catch ss.src /  sq_target={} km_dst={} ss={}",
-                    sq_target.to_usquare(),
+                    sq_target.address,
                     km_dst.clone(),
                     ss
                 ),

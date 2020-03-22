@@ -543,30 +543,32 @@ impl Promoting {
 
     /// 自陣から見て、一番遠いの段
     fn is_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.rank() < RANK_2)
-            || (*friend == Phase::Second && RANK_8 < destination.rank())
+        (*friend == Phase::First && destination.get_rank() < RANK_2)
+            || (*friend == Phase::Second && RANK_8 < destination.get_rank())
     }
     /// 自陣から見て、一番目、２番目に遠いの段
     fn is_first_second_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.rank() < RANK_3)
-            || (*friend == Phase::Second && RANK_7 < destination.rank())
+        (*friend == Phase::First && destination.get_rank() < RANK_3)
+            || (*friend == Phase::Second && RANK_7 < destination.get_rank())
     }
     /// 自陣から見て、二番目、三番目に遠いの段
     fn is_second_third_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && RANK_1 < destination.rank() && destination.rank() < RANK_4)
+        (*friend == Phase::First
+            && RANK_1 < destination.get_rank()
+            && destination.get_rank() < RANK_4)
             || (*friend == Phase::Second
-                && RANK_6 < destination.rank()
-                && destination.rank() < RANK_9)
+                && RANK_6 < destination.get_rank()
+                && destination.get_rank() < RANK_9)
     }
     /// 自陣から見て、三番目に遠いの段
     fn is_third_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.rank() == RANK_3)
-            || (*friend == Phase::Second && RANK_7 == destination.rank())
+        (*friend == Phase::First && destination.get_rank() == RANK_3)
+            || (*friend == Phase::Second && RANK_7 == destination.get_rank())
     }
     /// 敵陣の段
     fn is_opponent_area_rank(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.rank() < RANK_4)
-            || (*friend == Phase::Second && RANK_6 < destination.rank())
+        (*friend == Phase::First && destination.get_rank() < RANK_4)
+            || (*friend == Phase::Second && RANK_6 < destination.get_rank())
     }
 }
 
@@ -624,10 +626,10 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.file() - 1;
+        let mut i_file = start.get_file() - 1;
         loop {
             if FILE_0 < i_file {
-                if callback(Square::from_file_rank(i_file, start.rank())) {
+                if callback(Square::from_file_rank(i_file, start.get_rank())) {
                     break;
                 }
             } else {
@@ -642,10 +644,10 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_rank = start.rank() - 1;
+        let mut i_rank = start.get_rank() - 1;
         loop {
             if RANK_0 < i_rank {
-                if callback(Square::from_file_rank(start.file(), i_rank)) {
+                if callback(Square::from_file_rank(start.get_file(), i_rank)) {
                     break;
                 }
             } else {
@@ -660,8 +662,8 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.file() - 1;
-        let mut i_rank = start.rank() - 1;
+        let mut i_file = start.get_file() - 1;
+        let mut i_rank = start.get_rank() - 1;
         loop {
             if FILE_0 < i_file && RANK_0 < i_rank {
                 if callback(Square::from_file_rank(i_file, i_rank)) {
@@ -680,8 +682,8 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.file() + 1;
-        let mut i_rank = start.rank() - 1;
+        let mut i_file = start.get_file() + 1;
+        let mut i_rank = start.get_rank() - 1;
         loop {
             if i_file < FILE_10 && RANK_0 < i_rank {
                 if callback(Square::from_file_rank(i_file, i_rank)) {
@@ -700,10 +702,10 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_rank = start.rank() + 1;
+        let mut i_rank = start.get_rank() + 1;
         loop {
             if i_rank < RANK_10 {
-                if callback(Square::from_file_rank(start.file(), i_rank)) {
+                if callback(Square::from_file_rank(start.get_file(), i_rank)) {
                     break;
                 }
             } else {
@@ -718,8 +720,8 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.file() - 1;
-        let mut i_rank = start.rank() + 1;
+        let mut i_file = start.get_file() - 1;
+        let mut i_rank = start.get_rank() + 1;
         loop {
             if FILE_0 < i_file && i_rank < RANK_10 {
                 if callback(Square::from_file_rank(i_file, i_rank)) {
@@ -737,8 +739,8 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.file() + 1;
-        let mut i_rank = start.rank() + 1;
+        let mut i_file = start.get_file() + 1;
+        let mut i_rank = start.get_rank() + 1;
         loop {
             if i_file < RANK_10 && i_rank < RANK_10 {
                 if callback(Square::from_file_rank(i_file, i_rank)) {
@@ -757,10 +759,10 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.file() + 1;
+        let mut i_file = start.get_file() + 1;
         loop {
             if i_file < FILE_10 {
-                if callback(Square::from_file_rank(i_file, start.rank())) {
+                if callback(Square::from_file_rank(i_file, start.get_rank())) {
                     break;
                 }
             } else {
@@ -775,8 +777,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if FILE_0 < start.file() - 1 && RANK_0 < start.rank() - 1 {
-            callback(Square::from_file_rank(start.file() - 1, start.rank() - 1));
+        if FILE_0 < start.get_file() - 1 && RANK_0 < start.get_rank() - 1 {
+            callback(Square::from_file_rank(
+                start.get_file() - 1,
+                start.get_rank() - 1,
+            ));
         }
     }
 
@@ -785,8 +790,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if FILE_0 < start.file() - 1 && RANK_0 < start.rank() - 2 {
-            callback(Square::from_file_rank(start.file() - 1, start.rank() - 2));
+        if FILE_0 < start.get_file() - 1 && RANK_0 < start.get_rank() - 2 {
+            callback(Square::from_file_rank(
+                start.get_file() - 1,
+                start.get_rank() - 2,
+            ));
         }
     }
 
@@ -795,8 +803,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.file() + 1 < FILE_10 && RANK_0 < start.rank() - 2 {
-            callback(Square::from_file_rank(start.file() + 1, start.rank() - 2));
+        if start.get_file() + 1 < FILE_10 && RANK_0 < start.get_rank() - 2 {
+            callback(Square::from_file_rank(
+                start.get_file() + 1,
+                start.get_rank() - 2,
+            ));
         }
     }
 
@@ -805,8 +816,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.file() + 1 < FILE_10 && RANK_0 < start.rank() - 1 {
-            callback(Square::from_file_rank(start.file() + 1, start.rank() - 1));
+        if start.get_file() + 1 < FILE_10 && RANK_0 < start.get_rank() - 1 {
+            callback(Square::from_file_rank(
+                start.get_file() + 1,
+                start.get_rank() - 1,
+            ));
         }
     }
 
@@ -815,8 +829,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if FILE_0 < start.file() - 1 && start.rank() + 1 < RANK_10 {
-            callback(Square::from_file_rank(start.file() - 1, start.rank() + 1));
+        if FILE_0 < start.get_file() - 1 && start.get_rank() + 1 < RANK_10 {
+            callback(Square::from_file_rank(
+                start.get_file() - 1,
+                start.get_rank() + 1,
+            ));
         }
     }
 
@@ -825,8 +842,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if FILE_0 < start.file() - 1 && start.rank() + 2 < RANK_10 {
-            callback(Square::from_file_rank(start.file() - 1, start.rank() + 2));
+        if FILE_0 < start.get_file() - 1 && start.get_rank() + 2 < RANK_10 {
+            callback(Square::from_file_rank(
+                start.get_file() - 1,
+                start.get_rank() + 2,
+            ));
         }
     }
     /// 南南西隣☆（＾～＾）
@@ -834,8 +854,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.file() + 1 < FILE_10 && start.rank() + 2 < RANK_10 {
-            callback(Square::from_file_rank(start.file() + 1, start.rank() + 2));
+        if start.get_file() + 1 < FILE_10 && start.get_rank() + 2 < RANK_10 {
+            callback(Square::from_file_rank(
+                start.get_file() + 1,
+                start.get_rank() + 2,
+            ));
         }
     }
 
@@ -844,8 +867,11 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.file() + 1 < FILE_10 && start.rank() + 1 < RANK_10 {
-            callback(Square::from_file_rank(start.file() + 1, start.rank() + 1));
+        if start.get_file() + 1 < FILE_10 && start.get_rank() + 1 < RANK_10 {
+            callback(Square::from_file_rank(
+                start.get_file() + 1,
+                start.get_rank() + 1,
+            ));
         }
     }
 
@@ -854,8 +880,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if RANK_0 < start.rank() - 1 {
-            callback(Square::from_file_rank(start.file(), start.rank() - 1));
+        if RANK_0 < start.get_rank() - 1 {
+            callback(Square::from_isquare(start.address - 1));
+            /*
+            callback(Square::from_file_rank(
+                start.get_file(),
+                start.get_rank() - 1,
+            ));
+            */
         }
     }
     /// 南隣☆（＾～＾）
@@ -863,8 +895,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.rank() + 1 < RANK_10 {
-            callback(Square::from_file_rank(start.file(), start.rank() + 1));
+        if start.get_rank() + 1 < RANK_10 {
+            callback(Square::from_isquare(start.address + 1));
+            /*
+            callback(Square::from_file_rank(
+                start.get_file(),
+                start.get_rank() + 1,
+            ));
+            */
         }
     }
 
@@ -873,8 +911,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if FILE_0 < start.file() - 1 {
-            callback(Square::from_file_rank(start.file() - 1, start.rank()));
+        if FILE_0 < start.get_file() - 1 {
+            callback(Square::from_isquare(start.address - 10));
+            /*
+            callback(Square::from_file_rank(
+                start.get_file() - 1,
+                start.get_rank(),
+            ));
+            */
         }
     }
 
@@ -883,8 +927,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        if start.file() + 1 < RANK_10 {
-            callback(Square::from_file_rank(start.file() + 1, start.rank()));
+        if start.get_file() + 1 < RANK_10 {
+            callback(Square::from_isquare(start.address + 10));
+            /*
+            callback(Square::from_file_rank(
+                start.get_file() + 1,
+                start.get_rank(),
+            ));
+            */
         }
     }
 }

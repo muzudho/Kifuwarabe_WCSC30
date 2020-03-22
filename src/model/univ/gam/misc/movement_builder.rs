@@ -26,8 +26,8 @@ pub struct MovementBuilder {
 impl Default for MovementBuilder {
     fn default() -> MovementBuilder {
         MovementBuilder {
-            src: Square::from_usquare(0),
-            dst: Square::from_usquare(0),
+            src: Square::from_isquare(0),
+            dst: Square::from_isquare(0),
             pro: false,
             drop: None,
         }
@@ -36,8 +36,8 @@ impl Default for MovementBuilder {
 impl MovementBuilder {
     #[allow(dead_code)]
     pub fn clear(&mut self) {
-        self.src = Square::from_usquare(0);
-        self.dst = Square::from_usquare(0);
+        self.src = Square::from_isquare(0);
+        self.dst = Square::from_isquare(0);
         self.pro = false;
         self.drop = None;
     }
@@ -67,7 +67,7 @@ impl MovementBuilder {
      * 考えた結果、指し手が考え付いていれば真。
      */
     pub fn exists(&self) -> bool {
-        self.dst.to_usquare() != SQUARE_NONE
+        self.dst.address != SQUARE_NONE
     }
 }
 impl fmt::Display for MovementBuilder {
@@ -82,7 +82,7 @@ impl fmt::Display for MovementBuilder {
         assert_banjo_sq(&self.dst, "Ｓasite Ｄisplay");
         let (dx, dy) = self.dst.to_file_rank();
 
-        if self.src.to_usquare() == SQUARE_DROP {
+        if self.src.address == SQUARE_DROP {
             use crate::model::univ::gam::misc::piece_type::PieceType::*;
             write!(
                 f,
@@ -106,7 +106,7 @@ impl fmt::Display for MovementBuilder {
                 if self.pro { "+" } else { "" }
             )
         } else {
-            let (sx, sy) = if self.src.to_usquare() == SQUARE_NONE {
+            let (sx, sy) = if self.src.address == SQUARE_NONE {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
@@ -130,8 +130,8 @@ impl fmt::Debug for MovementBuilder {
         write!(
             f,
             "MLMovementDto({}{}{}{})",
-            self.src.to_usquare(),
-            self.dst.to_usquare(),
+            self.src.address,
+            self.dst.address,
             self.pro,
             if let Some(drp) = self.drop {
                 format!("{}", drp)

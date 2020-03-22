@@ -111,16 +111,16 @@ pub fn p_in_ban(p: &Point) -> bool {
     (FILE_0 < p.x && p.x < FILE_10) && (RANK_0 < p.y && p.y < RANK_10)
 }
 /// ハッシュ値を作る
-pub fn push_sq_to_hash(hash: u64, sq: &Square) -> u64 {
+pub fn push_sq_to_hash(hash: u64, square: &Square) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    (hash << 7) + sq.to_usquare() as u64
+    (hash << 7) + square.address as u64
 }
 /// ハッシュ値から作る
 pub fn pop_sq_from_hash(hash: u64) -> (u64, Square) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let sq_num = Square::from_usquare((hash & 0b111_1111) as usquare);
+    let sq_num = Square::from_isquare((hash & 0b111_1111) as isquare);
     (hash >> 7, sq_num)
 }
 
@@ -144,11 +144,11 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
 /****************************************************
  * 先手であれば、後手のように番号を振った座標に変換 *
  ****************************************************/
-pub fn kaiten180_sq_by_sq_phase(sq: &Square, phase: &Phase) -> Square {
+pub fn kaiten180_sq_by_sq_phase(square: &Square, phase: &Phase) -> Square {
     use crate::model::univ::gam::misc::phase::Phase::*;
     match *phase {
-        First => Square::from_usquare(BAN_MAX - sq.to_usquare() + BAN_MIN),
-        _ => (*sq).clone(),
+        First => Square::from_isquare(BAN_MAX - square.address + BAN_MIN),
+        _ => (*square).clone(),
     }
 }
 

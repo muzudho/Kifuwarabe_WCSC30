@@ -64,7 +64,7 @@ impl Movement {
 
     /// 考えた結果、指し手が考え付いていれば真。
     pub fn exists(&self) -> bool {
-        self.destination.to_usquare() != SQUARE_NONE
+        self.destination.address != SQUARE_NONE
     }
 }
 impl fmt::Display for Movement {
@@ -79,7 +79,7 @@ impl fmt::Display for Movement {
         assert_banjo_sq(&self.destination, "Movement-display");
         let (dx, dy) = self.destination.to_file_rank();
 
-        if self.source.to_usquare() == SQUARE_DROP {
+        if self.source.address == SQUARE_DROP {
             use crate::model::univ::gam::misc::piece_type::PieceType::*;
             write!(
                 f,
@@ -103,7 +103,7 @@ impl fmt::Display for Movement {
                 if self.promote { "+" } else { "" }
             )
         } else {
-            let (sx, sy) = if self.source.to_usquare() == SQUARE_NONE {
+            let (sx, sy) = if self.source.address == SQUARE_NONE {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
@@ -127,8 +127,8 @@ impl fmt::Debug for Movement {
         write!(
             f,
             "GPMovementVo({}{}{}{})",
-            self.source.to_usquare(),
-            self.destination.to_usquare(),
+            self.source.address,
+            self.destination.address,
             self.promote,
             if let Some(drp) = self.drop {
                 format!("{}", drp)
