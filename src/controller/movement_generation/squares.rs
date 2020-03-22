@@ -1,3 +1,4 @@
+use crate::controller::common_use::cu_asserts_controller::assert_in_board;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::square::Square;
 use crate::model::univ::gam::misc::square::*;
@@ -772,57 +773,6 @@ impl Squares {
         }
     }
 
-    /// 北北東隣☆（＾～＾）
-    pub fn north_east_keima_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if FILE_0 < start.get_file() - 1 && RANK_0 < start.get_rank() - 2 {
-            callback(Square::from_file_rank(
-                start.get_file() - 1,
-                start.get_rank() - 2,
-            ));
-        }
-    }
-
-    /// 北北西隣☆（＾～＾）
-    pub fn north_west_keima_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if start.get_file() + 1 < FILE_10 && RANK_0 < start.get_rank() - 2 {
-            callback(Square::from_file_rank(
-                start.get_file() + 1,
-                start.get_rank() - 2,
-            ));
-        }
-    }
-
-    /// 南南東隣☆（＾～＾）
-    pub fn south_east_keima_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if FILE_0 < start.get_file() - 1 && start.get_rank() + 2 < RANK_10 {
-            callback(Square::from_file_rank(
-                start.get_file() - 1,
-                start.get_rank() + 2,
-            ));
-        }
-    }
-    /// 南南西隣☆（＾～＾）
-    pub fn south_west_keima_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        if start.get_file() + 1 < FILE_10 && start.get_rank() + 2 < RANK_10 {
-            callback(Square::from_file_rank(
-                start.get_file() + 1,
-                start.get_rank() + 2,
-            ));
-        }
-    }
-
     /// 北隣☆（＾～＾）
     pub fn north_of<F1>(start: &Square, callback: &mut F1)
     where
@@ -830,6 +780,7 @@ impl Squares {
     {
         let next = start.address - 1;
         if next % 10 != 0 {
+            assert_in_board(next, "北隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
@@ -840,6 +791,7 @@ impl Squares {
     {
         let next = start.address + 1;
         if next % 10 != 0 {
+            assert_in_board(next, "南隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
@@ -851,6 +803,7 @@ impl Squares {
     {
         let next = start.address - 10;
         if next / 10 % 10 != 0 {
+            assert_in_board(next, "東隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
@@ -862,6 +815,7 @@ impl Squares {
     {
         let next = start.address + 10;
         if next / 10 % 10 != 0 {
+            assert_in_board(next, "西隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
@@ -873,6 +827,7 @@ impl Squares {
     {
         let next = start.address;
         if next % 10 != 0 && next / 10 % 10 != 0 {
+            assert_in_board(next, "北東隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
@@ -884,6 +839,7 @@ impl Squares {
     {
         let next = start.address + 9;
         if next % 10 != 0 && next / 10 % 10 != 0 {
+            assert_in_board(next, "南東隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
@@ -895,6 +851,7 @@ impl Squares {
     {
         let next = start.address + 11;
         if next % 10 != 0 && next / 10 % 10 != 0 {
+            assert_in_board(next, "南西隣☆（＾～＾）");
             callback(Square::from_isquare(next));
         }
     }
@@ -906,7 +863,94 @@ impl Squares {
     {
         let next = start.address + 9;
         if next % 10 != 0 && next / 10 % 10 != 0 {
+            assert_in_board(next, "北西隣☆（＾～＾）");
             callback(Square::from_isquare(next));
+        }
+    }
+
+    /// 北北東隣☆（＾～＾）
+    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
+    pub fn north_east_keima_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let mut next = start.address - 10;
+        if next / 10 % 10 != 0 {
+            assert_in_board(next, "東隣☆（＾～＾）");
+            next -= 1;
+            if next % 10 != 0 {
+                assert_in_board(next, "北東隣☆（＾～＾）");
+                next -= 1;
+                if next % 10 != 0 {
+                    assert_in_board(
+                        next,
+                        &format!("start=|{}| 北北東隣☆（＾～＾）", start.address),
+                    );
+                    callback(Square::from_isquare(next));
+                }
+            }
+        }
+    }
+
+    /// 北北西隣☆（＾～＾）
+    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
+    pub fn north_west_keima_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let mut next = start.address + 10;
+        if next / 10 % 10 != 0 {
+            assert_in_board(next, "西隣☆（＾～＾）");
+            next -= 1;
+            if next % 10 != 0 {
+                assert_in_board(next, "北西隣☆（＾～＾）");
+                next -= 1;
+                if next % 10 != 0 {
+                    assert_in_board(next, "北北西隣☆（＾～＾）");
+                    callback(Square::from_isquare(next));
+                }
+            }
+        }
+    }
+
+    /// 南南東隣☆（＾～＾）
+    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
+    pub fn south_east_keima_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let mut next = start.address - 10;
+        if next / 10 % 10 != 0 {
+            assert_in_board(next, "東隣☆（＾～＾）");
+            next += 1;
+            if next % 10 != 0 {
+                assert_in_board(next, "南東隣☆（＾～＾）");
+                next += 1;
+                if next % 10 != 0 {
+                    assert_in_board(next, "南南東隣☆（＾～＾）");
+                    callback(Square::from_isquare(next));
+                }
+            }
+        }
+    }
+    /// 南南西隣☆（＾～＾）
+    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
+    pub fn south_west_keima_of<F1>(start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let mut next = start.address + 10;
+        if next / 10 % 10 != 0 {
+            assert_in_board(next, "西隣☆（＾～＾）");
+            next += 1;
+            if next % 10 != 0 {
+                assert_in_board(next, "南西隣☆（＾～＾）");
+                next += 1;
+                if next % 10 != 0 {
+                    assert_in_board(next, "南南西隣☆（＾～＾）");
+                    callback(Square::from_isquare(next));
+                }
+            }
         }
     }
 }

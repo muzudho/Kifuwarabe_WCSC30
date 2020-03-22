@@ -137,7 +137,7 @@ impl Square {
 
     /// x, y に名称変更したもの☆（＾～＾）
     pub fn to_point(&self) -> Point {
-        assert_in_board(&self, "(203b)sq_to_p");
+        assert_in_board(self.address, "(203b)sq_to_p");
         Point {
             x: self.get_file(),
             y: self.get_rank(),

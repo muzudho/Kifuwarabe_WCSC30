@@ -1,13 +1,12 @@
 //!
 //! 値チェック
 //!
-use crate::model::univ::gam::misc::square::Square;
+use crate::model::univ::gam::misc::square::isquare;
 
 ///
 /// 打はテストできない
 ///
-pub fn assert_in_board(square: &Square, hint: &str) {
-    let adr = square.address;
+pub fn assert_in_board(adr: isquare, hint: &str) {
     debug_assert!(
         (10 < adr && adr < 20)
             || (20 < adr && adr < 30)
