@@ -199,7 +199,7 @@ impl NextSquares {
         Squares::looking_east_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
-        Squares::looking_south_from(friend, source, &mut |destination| {
+        Squares::looking_north_from(&friend.turn(), source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
     }
@@ -267,7 +267,7 @@ impl NextSquares {
             source,
             &mut |destination| callback_next(destination, Promotability::Deny),
         );
-        Squares::looking_south_from(friend, source, &mut |destination| {
+        Squares::looking_north_from(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_east_of(UpsideDown::Flip, friend, source, &mut |destination| {
@@ -408,15 +408,6 @@ impl Squares {
         }
     }
 
-    /*
-    fn downside_up(upside_down: &UpsideDown, address: isquare) -> isquare {
-        match upside_down {
-            UpsideDown::Flip => address / 10 * 10 - (10 - (address % 10)) - 10,
-            UpsideDown::Origin => address,
-        }
-    }
-    */
-
     fn has_jumped_out_horizontally(address: i8) -> bool {
         address / 10 % 10 == 0
     }
@@ -476,24 +467,9 @@ impl Squares {
             }
         }
     }
-    /// 東隣の升から東へ☆（＾～＾）
-    /// 西隣の升から西へ にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    pub fn looking_east_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address;
-        loop {
-            next += Squares::rotate(phase, -10);
-            if Squares::has_jumped_out_horizontally(next) {
-                break;
-            } else if callback(Square::from_address(next)) {
-                break;
-            }
-        }
-    }
 
     /// 北隣の升から北へ☆（＾～＾）
+    /// 南隣の升から南へ にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn looking_north_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -508,15 +484,16 @@ impl Squares {
             }
         }
     }
-    /// 南隣の升から南へ☆（＾～＾）
-    pub fn looking_south_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
+    /// 東隣の升から東へ☆（＾～＾）
+    /// 西隣の升から西へ にしたかったら phase.turn() しろだぜ☆（＾～＾）
+    pub fn looking_east_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
         let mut next = start.address;
         loop {
-            next += Squares::rotate(phase, 1);
-            if Squares::has_jumped_out_vertically(next) {
+            next += Squares::rotate(phase, -10);
+            if Squares::has_jumped_out_horizontally(next) {
                 break;
             } else if callback(Square::from_address(next)) {
                 break;
@@ -570,19 +547,6 @@ impl Squares {
             callback(Square::from_address(next));
         }
     }
-    /*
-    /// 南隣☆（＾～＾）
-    pub fn south_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let next = start.address + Squares::rotate(phase, 1);
-        if !Squares::has_jumped_out_vertically(next) {
-            assert_in_board(next, "南隣☆（＾～＾）");
-            callback(Square::from_address(next));
-        }
-    }
-    */
 
     /// 東隣☆（＾～＾） 西隣もついでに作れだぜ☆（＾～＾）
     pub fn east_of<F1>(mirror: Mirror, phase: &Phase, start: &Square, callback: &mut F1)
@@ -630,20 +594,6 @@ impl Squares {
             callback(Square::from_address(next));
         }
     }
-    /*
-    /// 南東隣☆（＾～＾）
-    /// 北西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    pub fn south_east_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let next = start.address + Squares::rotate(phase, -9);
-        if !Squares::has_jumped_out_of_the_board(next) {
-            assert_in_board(next, "南東隣☆（＾～＾）");
-            callback(Square::from_address(next));
-        }
-    }
-    */
 
     /// 北北東隣☆（＾～＾）
     /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
