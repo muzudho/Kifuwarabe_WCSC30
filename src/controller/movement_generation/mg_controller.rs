@@ -314,6 +314,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 if b {
                     // 長北東
                     Squares::looking_north_east_from(
+                        UpsideDown::Origin,
                         &Phase::First,
                         square_dst,
                         &mut |next_square| {
@@ -412,7 +413,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             NW(b) => {
                 if b {
                     // 長北西
-                    Squares::looking_south_east_from(
+                    Squares::looking_north_east_from(
+                        UpsideDown::Flip,
                         &Phase::First.turn(),
                         square_dst,
                         &mut |next_square| {
@@ -485,6 +487,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                 if b {
                     // 長南西
                     Squares::looking_north_east_from(
+                        UpsideDown::Origin,
                         &Phase::First.turn(),
                         square_dst,
                         &mut |next_square| {
@@ -587,7 +590,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             SE(b) => {
                 if b {
                     // 長南東
-                    Squares::looking_south_east_from(
+                    Squares::looking_north_east_from(
+                        UpsideDown::Flip,
                         &Phase::First,
                         square_dst,
                         &mut |next_square| {
@@ -809,6 +813,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長北東
                     Squares::looking_north_east_from(
+                        UpsideDown::Origin,
                         &Phase::First,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
@@ -915,7 +920,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             NW(b) => {
                 if b {
                     // 長北西
-                    Squares::looking_south_east_from(
+                    Squares::looking_north_east_from(
+                        UpsideDown::Flip,
                         &Phase::First.turn(),
                         &square_dst_piece_src.square,
                         &mut |next_square| {
@@ -988,6 +994,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長南西
                     Squares::looking_north_east_from(
+                        UpsideDown::Origin,
                         &Phase::First.turn(),
                         &square_dst_piece_src.square,
                         &mut |next_square| {
@@ -1094,7 +1101,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             SE(b) => {
                 if b {
                     // 長南東
-                    Squares::looking_south_east_from(
+                    Squares::looking_north_east_from(
+                        UpsideDown::Flip,
                         &Phase::First,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
@@ -1298,6 +1306,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北東
                         Squares::looking_north_east_from(
+                            UpsideDown::Origin,
                             &Phase::First,
                             &dst_sq_piece.square,
                             &mut |next_square| {
@@ -1398,7 +1407,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 NW(b) => {
                     if b {
                         // 長北西
-                        Squares::looking_south_east_from(
+                        Squares::looking_north_east_from(
+                            UpsideDown::Flip,
                             &Phase::First.turn(),
                             &dst_sq_piece.square,
                             &mut |next_square| {
@@ -1467,6 +1477,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南西
                         Squares::looking_north_east_from(
+                            UpsideDown::Origin,
                             &Phase::First.turn(),
                             &dst_sq_piece.square,
                             &mut |next_square| {
@@ -1567,7 +1578,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 SE(b) => {
                     if b {
                         // 長南東
-                        Squares::looking_south_east_from(
+                        Squares::looking_north_east_from(
+                            UpsideDown::Flip,
                             &Phase::First,
                             &dst_sq_piece.square,
                             &mut |next_square| {
@@ -1749,6 +1761,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北東
                         Squares::looking_north_east_from(
+                            UpsideDown::Origin,
                             &Phase::First,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
@@ -1849,7 +1862,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 NW(b) => {
                     if b {
                         // 長北西
-                        Squares::looking_south_east_from(
+                        Squares::looking_north_east_from(
+                            UpsideDown::Flip,
                             &Phase::First.turn(),
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
@@ -1918,6 +1932,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南西
                         Squares::looking_north_east_from(
+                            UpsideDown::Origin,
                             &Phase::First.turn(),
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
@@ -2018,7 +2033,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 SE(b) => {
                     if b {
                         // 長南東
-                        Squares::looking_south_east_from(
+                        Squares::looking_north_east_from(
+                            UpsideDown::Flip,
                             &Phase::First,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
