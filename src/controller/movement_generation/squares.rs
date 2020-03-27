@@ -63,7 +63,7 @@ impl NextSquares {
         Squares::north_west_keima_of(source, &mut |dst_square| {
             Promoting::case_of_knight(friend, &dst_square, callback_next)
         });
-        Squares::north_east_keima_of(source, &mut |dst_square| {
+        Squares::north_east_keima_of(friend, source, &mut |dst_square| {
             Promoting::case_of_knight(friend, &dst_square, callback_next)
         });
     }
@@ -77,7 +77,7 @@ impl NextSquares {
         Squares::south_east_keima_of(source, &mut |dst_square| {
             Promoting::case_of_knight(friend, &dst_square, callback_next)
         });
-        Squares::south_west_keima_of(source, &mut |dst_square| {
+        Squares::north_east_keima_of(friend, source, &mut |dst_square| {
             Promoting::case_of_knight(friend, &dst_square, callback_next)
         });
     }
@@ -872,22 +872,42 @@ impl Squares {
 
     /// 北北東隣☆（＾～＾）
     /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
-    pub fn north_east_keima_of<F1>(start: &Square, callback: &mut F1)
+    pub fn north_east_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut next = start.address - 10;
+        let mut next = start.address + Squares::rotate(phase, -10);
         if next / 10 % 10 != 0 {
             assert_in_board(next, "東隣☆（＾～＾）");
-            next -= 1;
+            next += Squares::rotate(phase, -1);
             if next % 10 != 0 {
                 assert_in_board(next, "北東隣☆（＾～＾）");
-                next -= 1;
+                next += Squares::rotate(phase, -1);
                 if next % 10 != 0 {
                     assert_in_board(
                         next,
                         &format!("start=|{}| 北北東隣☆（＾～＾）", start.address),
                     );
+                    callback(Square::from_isquare(next));
+                }
+            }
+        }
+    }
+    /// 南南西隣☆（＾～＾）
+    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
+    pub fn south_west_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let mut next = start.address + Squares::rotate(phase, 10);
+        if next / 10 % 10 != 0 {
+            assert_in_board(next, "西隣☆（＾～＾）");
+            next += Squares::rotate(phase, 1);
+            if next % 10 != 0 {
+                assert_in_board(next, "南西隣☆（＾～＾）");
+                next += Squares::rotate(phase, 1);
+                if next % 10 != 0 {
+                    assert_in_board(next, "南南西隣☆（＾～＾）");
                     callback(Square::from_isquare(next));
                 }
             }
@@ -930,26 +950,6 @@ impl Squares {
                 next += 1;
                 if next % 10 != 0 {
                     assert_in_board(next, "南南東隣☆（＾～＾）");
-                    callback(Square::from_isquare(next));
-                }
-            }
-        }
-    }
-    /// 南南西隣☆（＾～＾）
-    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
-    pub fn south_west_keima_of<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address + 10;
-        if next / 10 % 10 != 0 {
-            assert_in_board(next, "西隣☆（＾～＾）");
-            next += 1;
-            if next % 10 != 0 {
-                assert_in_board(next, "南西隣☆（＾～＾）");
-                next += 1;
-                if next % 10 != 0 {
-                    assert_in_board(next, "南南西隣☆（＾～＾）");
                     callback(Square::from_isquare(next));
                 }
             }
