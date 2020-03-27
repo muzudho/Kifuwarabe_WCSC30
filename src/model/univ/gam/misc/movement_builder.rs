@@ -26,8 +26,8 @@ pub struct MovementBuilder {
 impl Default for MovementBuilder {
     fn default() -> MovementBuilder {
         MovementBuilder {
-            src: Square::from_isquare(0),
-            dst: Square::from_isquare(0),
+            src: Square::from_address(0),
+            dst: Square::from_address(0),
             pro: false,
             drop: None,
         }
@@ -36,8 +36,8 @@ impl Default for MovementBuilder {
 impl MovementBuilder {
     #[allow(dead_code)]
     pub fn clear(&mut self) {
-        self.src = Square::from_isquare(0);
-        self.dst = Square::from_isquare(0);
+        self.src = Square::from_address(0);
+        self.dst = Square::from_address(0);
         self.pro = false;
         self.drop = None;
     }

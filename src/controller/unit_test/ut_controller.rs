@@ -139,7 +139,7 @@ pub fn unit_test(
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = &ps.piece; // ▽ph
-            let sq_dst = Square::from_isquare(79);
+            let sq_dst = Square::from_address(79);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type, pc, sq_dst.address
@@ -181,7 +181,7 @@ pub fn unit_test(
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = &ps.piece; // ▽ph
-            let sq_dst = Square::from_isquare(68);
+            let sq_dst = Square::from_address(68);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type, pc, sq_dst.address
@@ -223,7 +223,7 @@ pub fn unit_test(
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::Second, piece_type);
             let pc = &ps.piece; // ▽ph
-            let sq_dst = Square::from_isquare(77);
+            let sq_dst = Square::from_address(77);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type, pc, sq_dst.address
@@ -265,7 +265,7 @@ pub fn unit_test(
             let ps =
                 speed_of_light.get_piece_struct_by_phase_and_piece_type(&Phase::First, piece_type);
             let pc = &ps.piece; // ▲ら
-            let sq_dst = Square::from_isquare(58);
+            let sq_dst = Square::from_address(58);
             IO::writeln(&format!(
                 "piece_type={} pc={} ms_dst={}",
                 piece_type, pc, sq_dst.address

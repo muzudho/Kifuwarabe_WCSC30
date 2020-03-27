@@ -57,7 +57,7 @@ impl Default for Board {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
             ],
-            square_of_king: [Square::from_isquare(0), Square::from_isquare(0)],
+            square_of_king: [Square::from_address(0), Square::from_address(0)],
         }
     }
 }
@@ -229,7 +229,7 @@ impl Board {
 
         // 盤上の駒
         for i_address in SQUARE_NONE..BOARD_MEMORY_AREA {
-            let i_sq = Square::from_isquare(i_address as isquare);
+            let i_sq = Square::from_address(i_address as isquare);
             if let Some(km) = self.get_piece_by_square(&i_sq) {
                 let num_km = speed_of_light.get_piece_struct(&km).serial_piece_number;
                 hash ^= game.hash_seed.km[i_address as usize][num_km];

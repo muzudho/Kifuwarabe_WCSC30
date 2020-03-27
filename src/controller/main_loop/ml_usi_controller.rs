@@ -33,7 +33,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_source_temporary(&Square::from_isquare(0));
+                .set_current_movement_source_temporary(&Square::from_address(0));
             universe
                 .game
                 .position
@@ -44,7 +44,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_source_temporary(&Square::from_isquare(0));
+                .set_current_movement_source_temporary(&Square::from_address(0));
             universe
                 .game
                 .position
@@ -55,7 +55,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_source_temporary(&Square::from_isquare(0));
+                .set_current_movement_source_temporary(&Square::from_address(0));
             universe
                 .game
                 .position
@@ -66,7 +66,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_source_temporary(&Square::from_isquare(0));
+                .set_current_movement_source_temporary(&Square::from_address(0));
             universe
                 .game
                 .position
@@ -77,7 +77,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_source_temporary(&Square::from_isquare(0));
+                .set_current_movement_source_temporary(&Square::from_address(0));
             universe
                 .game
                 .position
@@ -88,7 +88,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_source_temporary(&Square::from_isquare(0));
+                .set_current_movement_source_temporary(&Square::from_address(0));
             universe
                 .game
                 .position
@@ -99,7 +99,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             universe
                 .game
                 .position
-                .set_current_movement_source_temporary(&Square::from_isquare(0));
+                .set_current_movement_source_temporary(&Square::from_address(0));
             universe
                 .game
                 .position

@@ -107,7 +107,7 @@ pub struct Square {
     pub address: isquare,
 }
 impl Square {
-    pub fn from_isquare(square: isquare) -> Self {
+    pub fn from_address(square: isquare) -> Self {
         Square { address: square }
     }
     pub fn from_file_rank(file1: i8, rank1: i8) -> Self {
@@ -118,7 +118,7 @@ impl Square {
     pub fn from_point(p: &Point) -> Self {
         debug_assert!(p_in_ban(&p), "(204b)from_point x={},y={}", p.x, p.y);
 
-        Square::from_isquare((p.x * 10 + p.y) as isquare)
+        Square::from_address((p.x * 10 + p.y) as isquare)
     }
 
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...

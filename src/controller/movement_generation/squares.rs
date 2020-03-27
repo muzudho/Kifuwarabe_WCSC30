@@ -36,7 +36,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_north_from(source, &mut |dst_square| {
+        Squares::looking_north_from(friend, source, &mut |dst_square| {
             Promoting::case_of_pawn_lance(friend, &dst_square, callback_next)
         });
     }
@@ -47,7 +47,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_south_from(source, &mut |dst_square| {
+        Squares::looking_north_from(friend, source, &mut |dst_square| {
             Promoting::case_of_pawn_lance(friend, &dst_square, callback_next)
         });
     }
@@ -300,7 +300,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_north_from(source, &mut |destination| {
+        Squares::looking_north_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
         Squares::looking_west_from(friend, source, &mut |destination| {
@@ -309,7 +309,7 @@ impl NextSquares {
         Squares::looking_east_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
-        Squares::looking_south_from(source, &mut |destination| {
+        Squares::looking_south_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
     }
@@ -320,7 +320,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_south_from(source, &mut |destination| {
+        Squares::looking_north_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
         Squares::looking_west_from(friend, source, &mut |destination| {
@@ -329,7 +329,7 @@ impl NextSquares {
         Squares::looking_east_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
-        Squares::looking_north_from(source, &mut |destination| {
+        Squares::looking_south_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
     }
@@ -411,7 +411,7 @@ impl NextSquares {
         Squares::north_west_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::looking_north_from(source, &mut |destination| {
+        Squares::looking_north_from(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_east_of(friend, source, &mut |destination| {
@@ -426,7 +426,7 @@ impl NextSquares {
         Squares::south_west_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::looking_south_from(source, &mut |destination| {
+        Squares::looking_south_from(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::south_east_of(friend, source, &mut |destination| {
@@ -443,7 +443,7 @@ impl NextSquares {
         Squares::north_west_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::looking_south_from(source, &mut |destination| {
+        Squares::looking_north_from(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_east_of(friend, source, &mut |destination| {
@@ -458,7 +458,7 @@ impl NextSquares {
         Squares::south_west_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::looking_north_from(source, &mut |destination| {
+        Squares::looking_south_from(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::south_east_of(friend, source, &mut |destination| {
@@ -579,6 +579,19 @@ impl Squares {
             square
         }
     }
+
+    fn has_jumped_out_horizontally(address: i8) -> bool {
+        address % 10 == 0
+    }
+
+    fn has_jumped_out_vertically(address: i8) -> bool {
+        address / 10 % 10 == 0
+    }
+
+    fn has_jumped_out_of_the_board(address: i8) -> bool {
+        address / 10 % 10 == 0 || address % 10 == 0
+    }
+
     /// 2段目～9段目 全升☆（＾～＾）
     pub fn for_from_rank2_to_rank9<F1>(callback: &mut F1)
     where
@@ -631,16 +644,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.get_file() + Squares::rotate(phase, -1);
+        let mut next = start.address;
         loop {
-            if i_file % 10 != 0 {
-                if callback(Square::from_file_rank(i_file, start.get_rank())) {
-                    break;
-                }
-            } else {
+            next += Squares::rotate(phase, -10);
+            if Squares::has_jumped_out_vertically(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
                 break;
             }
-            i_file += Squares::rotate(phase, -1);
         }
     }
     /// 西隣の升から西へ☆（＾～＾）
@@ -648,34 +659,45 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.get_file() + Squares::rotate(phase, 1);
+        let mut next = start.address;
         loop {
-            if i_file % 10 != 0 {
-                if callback(Square::from_file_rank(i_file, start.get_rank())) {
-                    break;
-                }
-            } else {
+            next += Squares::rotate(phase, 10);
+            if Squares::has_jumped_out_vertically(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
                 break;
             }
-            i_file += Squares::rotate(phase, 1);
         }
     }
 
     /// 北隣の升から北へ☆（＾～＾）
-    pub fn looking_north_from<F1>(start: &Square, callback: &mut F1)
+    pub fn looking_north_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_rank = start.get_rank() - 1;
+        let mut next = start.address;
         loop {
-            if RANK_0 < i_rank {
-                if callback(Square::from_file_rank(start.get_file(), i_rank)) {
-                    break;
-                }
-            } else {
+            next += Squares::rotate(phase, -1);
+            if Squares::has_jumped_out_horizontally(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
                 break;
             }
-            i_rank -= 1;
+        }
+    }
+    /// 南隣の升から南へ☆（＾～＾）
+    pub fn looking_south_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        let mut next = start.address;
+        loop {
+            next += Squares::rotate(phase, 1);
+            if Squares::has_jumped_out_horizontally(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
+                break;
+            }
         }
     }
 
@@ -684,18 +706,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.get_file() - 1;
-        let mut i_rank = start.get_rank() - 1;
+        let mut next = start.address;
         loop {
-            if FILE_0 < i_file && RANK_0 < i_rank {
-                if callback(Square::from_file_rank(i_file, i_rank)) {
-                    break;
-                }
-            } else {
+            next += -11;
+            if Squares::has_jumped_out_of_the_board(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
                 break;
             }
-            i_file -= 1;
-            i_rank -= 1;
         }
     }
 
@@ -704,36 +722,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.get_file() + 1;
-        let mut i_rank = start.get_rank() - 1;
+        let mut next = start.address;
         loop {
-            if i_file < FILE_10 && RANK_0 < i_rank {
-                if callback(Square::from_file_rank(i_file, i_rank)) {
-                    break;
-                }
-            } else {
+            next += 9;
+            if Squares::has_jumped_out_of_the_board(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
                 break;
             }
-            i_file += 1;
-            i_rank -= 1;
-        }
-    }
-
-    /// 南隣の升から南へ☆（＾～＾）
-    pub fn looking_south_from<F1>(start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut i_rank = start.get_rank() + 1;
-        loop {
-            if i_rank < RANK_10 {
-                if callback(Square::from_file_rank(start.get_file(), i_rank)) {
-                    break;
-                }
-            } else {
-                break;
-            }
-            i_rank += 1;
         }
     }
 
@@ -742,18 +738,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.get_file() - 1;
-        let mut i_rank = start.get_rank() + 1;
+        let mut next = start.address;
         loop {
-            if FILE_0 < i_file && i_rank < RANK_10 {
-                if callback(Square::from_file_rank(i_file, i_rank)) {
-                    break;
-                }
-            } else {
+            next -= 9;
+            if Squares::has_jumped_out_of_the_board(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
                 break;
             }
-            i_file -= 1;
-            i_rank += 1;
         }
     }
     /// 南西隣の升から南西へ☆（＾～＾）
@@ -761,18 +753,14 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let mut i_file = start.get_file() + 1;
-        let mut i_rank = start.get_rank() + 1;
+        let mut next = start.get_file();
         loop {
-            if i_file < RANK_10 && i_rank < RANK_10 {
-                if callback(Square::from_file_rank(i_file, i_rank)) {
-                    break;
-                }
-            } else {
+            next += 11;
+            if Squares::has_jumped_out_of_the_board(next) {
+                break;
+            } else if callback(Square::from_address(next)) {
                 break;
             }
-            i_file += 1;
-            i_rank += 1;
         }
     }
 
@@ -782,9 +770,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, -1);
-        if next % 10 != 0 {
+        if !Squares::has_jumped_out_vertically(next) {
             assert_in_board(next, "北隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
     /// 南隣☆（＾～＾）
@@ -793,9 +781,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, 1);
-        if next % 10 != 0 {
+        if !Squares::has_jumped_out_vertically(next) {
             assert_in_board(next, "南隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
 
@@ -805,9 +793,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, -10);
-        if next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_horizontally(next) {
             assert_in_board(next, "東隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
 
@@ -817,9 +805,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, 10);
-        if next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_horizontally(next) {
             assert_in_board(next, "西隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
 
@@ -829,9 +817,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, -11);
-        if next % 10 != 0 && next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board(next, "北東隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
     /// 南西隣☆（＾～＾）
@@ -840,9 +828,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, 11);
-        if next % 10 != 0 && next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board(next, "南西隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
 
@@ -852,9 +840,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, -9);
-        if next % 10 != 0 && next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board(next, "南東隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
     /// 北西隣☆（＾～＾）
@@ -863,9 +851,9 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let next = start.address + Squares::rotate(phase, 9);
-        if next % 10 != 0 && next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board(next, "北西隣☆（＾～＾）");
-            callback(Square::from_isquare(next));
+            callback(Square::from_address(next));
         }
     }
 
@@ -876,18 +864,18 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let mut next = start.address + Squares::rotate(phase, -10);
-        if next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_vertically(next) {
             assert_in_board(next, "東隣☆（＾～＾）");
             next += Squares::rotate(phase, -1);
-            if next % 10 != 0 {
+            if !Squares::has_jumped_out_horizontally(next) {
                 assert_in_board(next, "北東隣☆（＾～＾）");
                 next += Squares::rotate(phase, -1);
-                if next % 10 != 0 {
+                if !Squares::has_jumped_out_horizontally(next) {
                     assert_in_board(
                         next,
                         &format!("start=|{}| 北北東隣☆（＾～＾）", start.address),
                     );
-                    callback(Square::from_isquare(next));
+                    callback(Square::from_address(next));
                 }
             }
         }
@@ -899,15 +887,15 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let mut next = start.address + Squares::rotate(phase, 10);
-        if next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_vertically(next) {
             assert_in_board(next, "西隣☆（＾～＾）");
             next += Squares::rotate(phase, 1);
-            if next % 10 != 0 {
+            if !Squares::has_jumped_out_horizontally(next) {
                 assert_in_board(next, "南西隣☆（＾～＾）");
                 next += Squares::rotate(phase, 1);
-                if next % 10 != 0 {
+                if !Squares::has_jumped_out_horizontally(next) {
                     assert_in_board(next, "南南西隣☆（＾～＾）");
-                    callback(Square::from_isquare(next));
+                    callback(Square::from_address(next));
                 }
             }
         }
@@ -920,15 +908,15 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let mut next = start.address + Squares::rotate(phase, 10);
-        if next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_vertically(next) {
             assert_in_board(next, "西隣☆（＾～＾）");
             next += Squares::rotate(phase, -1);
-            if next % 10 != 0 {
+            if !Squares::has_jumped_out_horizontally(next) {
                 assert_in_board(next, "北西隣☆（＾～＾）");
                 next += Squares::rotate(phase, -1);
-                if next % 10 != 0 {
+                if !Squares::has_jumped_out_horizontally(next) {
                     assert_in_board(next, "北北西隣☆（＾～＾）");
-                    callback(Square::from_isquare(next));
+                    callback(Square::from_address(next));
                 }
             }
         }
@@ -940,15 +928,15 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         let mut next = start.address + Squares::rotate(phase, -10);
-        if next / 10 % 10 != 0 {
+        if !Squares::has_jumped_out_vertically(next) {
             assert_in_board(next, "東隣☆（＾～＾）");
             next += Squares::rotate(phase, 1);
-            if next % 10 != 0 {
+            if !Squares::has_jumped_out_horizontally(next) {
                 assert_in_board(next, "南東隣☆（＾～＾）");
                 next += Squares::rotate(phase, 1);
-                if next % 10 != 0 {
+                if !Squares::has_jumped_out_horizontally(next) {
                     assert_in_board(next, "南南東隣☆（＾～＾）");
-                    callback(Square::from_isquare(next));
+                    callback(Square::from_address(next));
                 }
             }
         }

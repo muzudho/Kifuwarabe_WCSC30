@@ -345,7 +345,7 @@ impl MGMovements {
             }
             callback_movement(
                 MovementBuilder {
-                    src: Square::from_isquare(SQUARE_DROP), // 駒台
+                    src: Square::from_address(SQUARE_DROP), // 駒台
                     dst: destination.clone(),               // どの升へ行きたいか
                     pro: false,                             // 打に成りは無し
                     drop: num_to_piece_type(

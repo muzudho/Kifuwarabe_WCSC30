@@ -254,7 +254,7 @@ fn parse_extend_command(
 
         for ms in 11..19 {
             for hash in 0..10 {
-                let sq = Square::from_isquare(ms);
+                let sq = Square::from_address(ms);
                 let next = push_sq_to_hash(hash, &sq);
                 let (hash_orig, square_orig) = pop_sq_from_hash(next);
                 IO::writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
