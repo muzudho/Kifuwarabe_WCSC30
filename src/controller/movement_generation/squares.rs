@@ -827,7 +827,7 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let next = start.address;
+        let next = start.address - 11;
         if next % 10 != 0 && next / 10 % 10 != 0 {
             assert_in_board(next, "北東隣☆（＾～＾）");
             callback(Square::from_isquare(next));
