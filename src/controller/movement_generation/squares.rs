@@ -49,15 +49,15 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
+        Squares::north_east_keima_of(UpsideDown::Origin, friend, source, &mut |dst_square| {
+            Promoting::case_of_knight(friend, &dst_square, callback_next)
+        });
         Squares::north_east_keima_of(
             UpsideDown::Flip,
             &friend.turn(),
             source,
             &mut |dst_square| Promoting::case_of_knight(friend, &dst_square, callback_next),
         );
-        Squares::north_east_keima_of(UpsideDown::Origin, friend, source, &mut |dst_square| {
-            Promoting::case_of_knight(friend, &dst_square, callback_next)
-        });
     }
 
     /// 盤上の銀から動けるマスを見ます。
@@ -68,6 +68,12 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
+        Squares::north_of(friend, source, &mut |dst_square| {
+            Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
+        });
+        Squares::north_east_of(UpsideDown::Origin, friend, source, &mut |dst_square| {
+            Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
+        });
         Squares::north_east_of(
             UpsideDown::Flip,
             &friend.turn(),
@@ -76,12 +82,6 @@ impl NextSquares {
                 Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
             },
         );
-        Squares::north_of(friend, source, &mut |dst_square| {
-            Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
-        });
-        Squares::north_east_of(UpsideDown::Origin, friend, source, &mut |dst_square| {
-            Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
-        });
         Squares::north_east_of(
             UpsideDown::Origin,
             &friend.turn(),
@@ -103,22 +103,22 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_east_of(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
         Squares::north_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_east_of(UpsideDown::Origin, friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
+        Squares::north_east_of(
+            UpsideDown::Flip,
+            &friend.turn(),
+            source,
+            &mut |destination| callback_next(destination, Promotability::Deny),
+        );
         Squares::east_of(Mirror::Both, friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(friend, source, &mut |destination| {
+        Squares::north_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
     }
@@ -152,7 +152,7 @@ impl NextSquares {
             source,
             &mut |destination| callback_next(destination, Promotability::Deny),
         );
-        Squares::south_of(friend, source, &mut |destination| {
+        Squares::north_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_east_of(UpsideDown::Flip, friend, source, &mut |destination| {
@@ -227,7 +227,7 @@ impl NextSquares {
         Squares::looking_north_east_from(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_of(friend, source, &mut |destination| {
+        Squares::north_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::looking_south_east_from(friend, source, &mut |destination| {
@@ -408,12 +408,14 @@ impl Squares {
         }
     }
 
+    /*
     fn downside_up(upside_down: &UpsideDown, address: isquare) -> isquare {
         match upside_down {
             UpsideDown::Flip => address / 10 * 10 - (10 - (address % 10)) - 10,
             UpsideDown::Origin => address,
         }
     }
+    */
 
     fn has_jumped_out_horizontally(address: i8) -> bool {
         address / 10 % 10 == 0
@@ -557,6 +559,7 @@ impl Squares {
     }
 
     /// 北隣☆（＾～＾）
+    /// 南隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn north_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -567,6 +570,7 @@ impl Squares {
             callback(Square::from_address(next));
         }
     }
+    /*
     /// 南隣☆（＾～＾）
     pub fn south_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
@@ -578,6 +582,7 @@ impl Squares {
             callback(Square::from_address(next));
         }
     }
+    */
 
     /// 東隣☆（＾～＾） 西隣もついでに作れだぜ☆（＾～＾）
     pub fn east_of<F1>(mirror: Mirror, phase: &Phase, start: &Square, callback: &mut F1)
