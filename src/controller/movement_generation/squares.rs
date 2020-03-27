@@ -65,7 +65,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_west_of(friend, source, &mut |dst_square| {
+        Squares::south_east_of(&friend.turn(), source, &mut |dst_square| {
             Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
         });
         Squares::north_of(friend, source, &mut |dst_square| {
@@ -74,7 +74,7 @@ impl NextSquares {
         Squares::north_east_of(friend, source, &mut |dst_square| {
             Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
         });
-        Squares::south_west_of(friend, source, &mut |dst_square| {
+        Squares::north_east_of(&friend.turn(), source, &mut |dst_square| {
             Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
         });
         Squares::south_east_of(friend, source, &mut |dst_square| {
@@ -90,7 +90,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_west_of(friend, source, &mut |destination| {
+        Squares::south_east_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_of(friend, source, &mut |destination| {
@@ -115,7 +115,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_west_of(friend, source, &mut |destination| {
+        Squares::south_east_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_of(friend, source, &mut |destination| {
@@ -127,7 +127,7 @@ impl NextSquares {
         Squares::east_of(Mirror::Both, friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_west_of(friend, source, &mut |destination| {
+        Squares::north_east_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::south_of(friend, source, &mut |destination| {
@@ -221,7 +221,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_west_of(friend, source, &mut |destination| {
+        Squares::south_east_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::looking_north_from(friend, source, &mut |destination| {
@@ -236,7 +236,7 @@ impl NextSquares {
         Squares::looking_east_from(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::south_west_of(friend, source, &mut |destination| {
+        Squares::north_east_of(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::looking_south_from(friend, source, &mut |destination| {
@@ -605,6 +605,7 @@ impl Squares {
     }
 
     /// 北東隣☆（＾～＾）
+    /// 南西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn north_east_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -615,19 +616,9 @@ impl Squares {
             callback(Square::from_address(next));
         }
     }
-    /// 南西隣☆（＾～＾）
-    pub fn south_west_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let next = start.address + Squares::rotate(phase, 11);
-        if !Squares::has_jumped_out_of_the_board(next) {
-            assert_in_board(next, "南西隣☆（＾～＾）");
-            callback(Square::from_address(next));
-        }
-    }
 
     /// 南東隣☆（＾～＾）
+    /// 北西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn south_east_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -638,20 +629,10 @@ impl Squares {
             callback(Square::from_address(next));
         }
     }
-    /// 北西隣☆（＾～＾）
-    pub fn north_west_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let next = start.address + Squares::rotate(phase, 9);
-        if !Squares::has_jumped_out_of_the_board(next) {
-            assert_in_board(next, "北西隣☆（＾～＾）");
-            callback(Square::from_address(next));
-        }
-    }
 
     /// 北北東隣☆（＾～＾）
     /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
+    /// 南南西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn north_east_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -673,49 +654,7 @@ impl Squares {
             }
         }
     }
-    /// 南南西隣☆（＾～＾）
-    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
-    pub fn south_west_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address + Squares::rotate(phase, 10);
-        if !Squares::has_jumped_out_horizontally(next) {
-            assert_in_board(next, "西隣swk☆（＾～＾）");
-            next += Squares::rotate(phase, 1);
-            if !Squares::has_jumped_out_vertically(next) {
-                assert_in_board(next, "南西隣☆（＾～＾）");
-                next += Squares::rotate(phase, 1);
-                if !Squares::has_jumped_out_vertically(next) {
-                    assert_in_board(next, "南南西隣☆（＾～＾）");
-                    callback(Square::from_address(next));
-                }
-            }
-        }
-    }
 
-    /*
-    /// 北北西隣☆（＾～＾）
-    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
-    pub fn north_west_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address + Squares::rotate(phase, 10);
-        if !Squares::has_jumped_out_horizontally(next) {
-            assert_in_board(next, "西隣nwk☆（＾～＾）");
-            next += Squares::rotate(phase, -1);
-            if !Squares::has_jumped_out_vertically(next) {
-                assert_in_board(next, "北西隣☆（＾～＾）");
-                next += Squares::rotate(phase, -1);
-                if !Squares::has_jumped_out_vertically(next) {
-                    assert_in_board(next, "北北西隣☆（＾～＾）");
-                    callback(Square::from_address(next));
-                }
-            }
-        }
-    }
-    */
     /// 南南東隣☆（＾～＾）
     /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
     /// 北北西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
