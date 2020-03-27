@@ -342,16 +342,21 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             }
             NNE => {
                 // 北北東
-                Squares::north_east_keima_of(&Phase::First, square_dst, &mut |next_square| {
-                    lookup_no_promotion_source_by_piece_next(
-                        &ps_dst.piece,
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    );
-                    true
-                });
+                Squares::north_east_keima_of(
+                    UpsideDown::Origin,
+                    &Phase::First,
+                    square_dst,
+                    &mut |next_square| {
+                        lookup_no_promotion_source_by_piece_next(
+                            &ps_dst.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    },
+                );
             }
             // 北
             N(b) => {
@@ -382,7 +387,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             }
             NNW => {
                 // 北北西
-                Squares::south_east_keima_of(
+                Squares::north_east_keima_of(
+                    UpsideDown::Flip,
                     &Phase::First.turn(),
                     square_dst,
                     &mut |next_square| {
@@ -498,6 +504,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             SSW => {
                 // 南南西
                 Squares::north_east_keima_of(
+                    UpsideDown::Origin,
                     &Phase::First.turn(),
                     square_dst,
                     &mut |next_square| {
@@ -541,16 +548,21 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             }
             SSE => {
                 // 南南東
-                Squares::south_east_keima_of(&Phase::First, square_dst, &mut |next_square| {
-                    lookup_no_promotion_source_by_piece_next(
-                        &ps_dst.piece,
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    );
-                    true
-                });
+                Squares::north_east_keima_of(
+                    UpsideDown::Flip,
+                    &Phase::First,
+                    square_dst,
+                    &mut |next_square| {
+                        lookup_no_promotion_source_by_piece_next(
+                            &ps_dst.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    },
+                );
             }
             // 南東
             SE(b) => {
@@ -806,6 +818,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             NNE => {
                 // 北北東
                 Squares::north_east_keima_of(
+                    UpsideDown::Origin,
                     &Phase::First,
                     &square_dst_piece_src.square,
                     &mut |next_square| {
@@ -857,7 +870,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             }
             NNW => {
                 // 北北西
-                Squares::south_east_keima_of(
+                Squares::north_east_keima_of(
+                    UpsideDown::Flip,
                     &Phase::First.turn(),
                     &square_dst_piece_src.square,
                     &mut |next_square| {
@@ -981,6 +995,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             SSW => {
                 // 南南西
                 Squares::north_east_keima_of(
+                    UpsideDown::Origin,
                     &Phase::First.turn(),
                     &square_dst_piece_src.square,
                     &mut |next_square| {
@@ -1032,7 +1047,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             }
             SSE => {
                 // 南南東
-                Squares::south_east_keima_of(
+                Squares::north_east_keima_of(
+                    UpsideDown::Flip,
                     &Phase::First,
                     &square_dst_piece_src.square,
                     &mut |next_square| {
@@ -1285,6 +1301,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 NNE => {
                     // 北北東
                     Squares::north_east_keima_of(
+                        UpsideDown::Origin,
                         &Phase::First,
                         &dst_sq_piece.square,
                         &mut |next_square| {
@@ -1333,7 +1350,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 }
                 NNW => {
                     // 北北西
-                    Squares::south_east_keima_of(
+                    Squares::north_east_keima_of(
+                        UpsideDown::Flip,
                         &Phase::First.turn(),
                         &dst_sq_piece.square,
                         &mut |next_square| {
@@ -1450,6 +1468,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 SSW => {
                     // 南南西
                     Squares::north_east_keima_of(
+                        UpsideDown::Origin,
                         &Phase::First.turn(),
                         &dst_sq_piece.square,
                         &mut |next_square| {
@@ -1498,7 +1517,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 }
                 SSE => {
                     // 南南東
-                    Squares::south_east_keima_of(
+                    Squares::north_east_keima_of(
+                        UpsideDown::Flip,
                         &Phase::First,
                         &dst_sq_piece.square,
                         &mut |next_square| {
@@ -1728,6 +1748,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 NNE => {
                     // 北北東
                     Squares::north_east_keima_of(
+                        UpsideDown::Origin,
                         &Phase::First,
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {
@@ -1776,7 +1797,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 }
                 NNW => {
                     // 北北西
-                    Squares::south_east_keima_of(
+                    Squares::north_east_keima_of(
+                        UpsideDown::Flip,
                         &Phase::First.turn(),
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {
@@ -1893,6 +1915,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 SSW => {
                     // 南南西
                     Squares::north_east_keima_of(
+                        UpsideDown::Origin,
                         &Phase::First.turn(),
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {
@@ -1941,7 +1964,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 }
                 SSE => {
                     // 南南東
-                    Squares::south_east_keima_of(
+                    Squares::north_east_keima_of(
+                        UpsideDown::Flip,
                         &Phase::First,
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {

@@ -49,10 +49,13 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::south_east_keima_of(&friend.turn(), source, &mut |dst_square| {
-            Promoting::case_of_knight(friend, &dst_square, callback_next)
-        });
-        Squares::north_east_keima_of(friend, source, &mut |dst_square| {
+        Squares::north_east_keima_of(
+            UpsideDown::Flip,
+            &friend.turn(),
+            source,
+            &mut |dst_square| Promoting::case_of_knight(friend, &dst_square, callback_next),
+        );
+        Squares::north_east_keima_of(UpsideDown::Origin, friend, source, &mut |dst_square| {
             Promoting::case_of_knight(friend, &dst_square, callback_next)
         });
     }
@@ -358,6 +361,11 @@ pub enum Mirror {
     Both,
 }
 
+pub enum UpsideDown {
+    Origin,
+    Flip,
+}
+
 pub struct Squares {}
 impl Squares {
     fn rotate(phase: &Phase, square: isquare) -> isquare {
@@ -365,6 +373,20 @@ impl Squares {
             -square
         } else {
             square
+        }
+    }
+
+    fn upside_down(upside_down: &UpsideDown, address: isquare) -> isquare {
+        match upside_down {
+            UpsideDown::Flip => address / 10 * 10 - (10 - (address % 10)) + 10,
+            UpsideDown::Origin => address,
+        }
+    }
+
+    fn downside_up(upside_down: &UpsideDown, address: isquare) -> isquare {
+        match upside_down {
+            UpsideDown::Flip => address / 10 * 10 - (10 - (address % 10)) - 10,
+            UpsideDown::Origin => address,
         }
     }
 
@@ -591,44 +613,29 @@ impl Squares {
     /// 北北東隣☆（＾～＾）
     /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
     /// 南南西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    pub fn north_east_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
+    /// 南南東隣 にしたかったら upside_down しろだぜ☆（＾～＾）
+    /// 北北西隣 にしたかったら upside_down して、 phase.turn() しろだぜ☆（＾～＾）
+    pub fn north_east_keima_of<F1>(
+        upside_down: UpsideDown,
+        phase: &Phase,
+        start: &Square,
+        callback: &mut F1,
+    ) where
         F1: FnMut(Square) -> bool,
     {
-        let mut next = start.address + Squares::rotate(phase, -10);
+        let mut next =
+            start.address + Squares::rotate(phase, Squares::upside_down(&upside_down, -10));
         if !Squares::has_jumped_out_horizontally(next) {
             assert_in_board(next, "東隣☆（＾～＾）");
-            next += Squares::rotate(phase, -1);
+            next += Squares::rotate(phase, Squares::upside_down(&upside_down, -1));
             if !Squares::has_jumped_out_vertically(next) {
                 assert_in_board(next, "北東隣☆（＾～＾）");
-                next += Squares::rotate(phase, -1);
+                next += Squares::rotate(phase, Squares::upside_down(&upside_down, -1));
                 if !Squares::has_jumped_out_vertically(next) {
                     assert_in_board(
                         next,
                         &format!("start=|{}| 北北東隣☆（＾～＾）", start.address),
                     );
-                    callback(Square::from_address(next));
-                }
-            }
-        }
-    }
-
-    /// 南南東隣☆（＾～＾）
-    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
-    /// 北北西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    pub fn south_east_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address + Squares::rotate(phase, -10);
-        if !Squares::has_jumped_out_horizontally(next) {
-            assert_in_board(next, "東隣☆（＾～＾）");
-            next += Squares::rotate(phase, 1);
-            if !Squares::has_jumped_out_vertically(next) {
-                assert_in_board(next, "南東隣☆（＾～＾）");
-                next += Squares::rotate(phase, 1);
-                if !Squares::has_jumped_out_vertically(next) {
-                    assert_in_board(next, "南南東隣☆（＾～＾）");
                     callback(Square::from_address(next));
                 }
             }
