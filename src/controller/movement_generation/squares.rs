@@ -146,13 +146,13 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_north_west_from(friend, source, &mut |destination| {
+        Squares::looking_south_east_from(&friend.turn(), source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
         Squares::looking_north_east_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
-        Squares::looking_south_west_from(friend, source, &mut |destination| {
+        Squares::looking_north_east_from(&friend.turn(), source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
         Squares::looking_south_east_from(friend, source, &mut |destination| {
@@ -171,7 +171,7 @@ impl NextSquares {
         Squares::looking_north_from(friend, source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
-        Squares::looking_west_from(friend, source, &mut |destination| {
+        Squares::looking_east_from(&friend.turn(), source, &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         });
         Squares::looking_east_from(friend, source, &mut |destination| {
@@ -190,7 +190,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_north_west_from(friend, source, &mut |destination| {
+        Squares::looking_south_east_from(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::north_of(friend, source, &mut |dst_square| {
@@ -202,7 +202,7 @@ impl NextSquares {
         Squares::east_of(Mirror::Both, friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::looking_south_west_from(friend, source, &mut |destination| {
+        Squares::looking_north_east_from(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::south_of(friend, source, &mut |destination| {
@@ -230,7 +230,7 @@ impl NextSquares {
         Squares::north_east_of(friend, source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
-        Squares::looking_west_from(friend, source, &mut |destination| {
+        Squares::looking_east_from(&friend.turn(), source, &mut |destination| {
             callback_next(destination, Promotability::Deny)
         });
         Squares::looking_east_from(friend, source, &mut |destination| {
@@ -428,6 +428,7 @@ impl Squares {
         }
     }
     /// 東隣の升から東へ☆（＾～＾）
+    /// 西隣の升から西へ にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn looking_east_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -435,21 +436,6 @@ impl Squares {
         let mut next = start.address;
         loop {
             next += Squares::rotate(phase, -10);
-            if Squares::has_jumped_out_horizontally(next) {
-                break;
-            } else if callback(Square::from_address(next)) {
-                break;
-            }
-        }
-    }
-    /// 西隣の升から西へ☆（＾～＾）
-    pub fn looking_west_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address;
-        loop {
-            next += Squares::rotate(phase, 10);
             if Squares::has_jumped_out_horizontally(next) {
                 break;
             } else if callback(Square::from_address(next)) {
@@ -490,6 +476,7 @@ impl Squares {
     }
 
     /// 北東隣の升から北東へ☆（＾～＾）
+    /// 南東隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn looking_north_east_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -504,38 +491,9 @@ impl Squares {
             }
         }
     }
-    /// 南西隣の升から南西へ☆（＾～＾）
-    pub fn looking_south_west_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.get_file();
-        loop {
-            next += Squares::rotate(phase, 11);
-            if Squares::has_jumped_out_of_the_board(next) {
-                break;
-            } else if callback(Square::from_address(next)) {
-                break;
-            }
-        }
-    }
 
-    /// 北西隣の升から北西へ☆（＾～＾）
-    pub fn looking_north_west_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address;
-        loop {
-            next += Squares::rotate(phase, 9);
-            if Squares::has_jumped_out_of_the_board(next) {
-                break;
-            } else if callback(Square::from_address(next)) {
-                break;
-            }
-        }
-    }
     /// 南東隣の升から南東へ☆（＾～＾）
+    /// 北西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn looking_south_east_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
