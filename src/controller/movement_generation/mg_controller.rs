@@ -2,7 +2,7 @@
 //! 現局面を使った指し手生成
 //!
 
-use super::squares::Squares;
+use super::squares::*;
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
 use crate::controller::movement_generation::mg_choicing_controller::*;
@@ -292,16 +292,21 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 東
-                    Squares::east_of(&Phase::First, square_dst, &mut |next_square| {
-                        lookup_no_promotion_source_by_piece_next(
-                            &ps_dst.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    });
+                    Squares::east_of(
+                        Mirror::Origin,
+                        &Phase::First,
+                        square_dst,
+                        &mut |next_square| {
+                            lookup_no_promotion_source_by_piece_next(
+                                &ps_dst.piece,
+                                current_board,
+                                speed_of_light,
+                                &mut lookups_the_square,
+                                next_square,
+                            );
+                            true
+                        },
+                    );
                 }
             }
             // 北東
@@ -434,16 +439,21 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 西
-                    Squares::west_of(&Phase::First, square_dst, &mut |next_square| {
-                        lookup_no_promotion_source_by_piece_next(
-                            &ps_dst.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    });
+                    Squares::east_of(
+                        Mirror::Mirror,
+                        &Phase::First,
+                        square_dst,
+                        &mut |next_square| {
+                            lookup_no_promotion_source_by_piece_next(
+                                &ps_dst.piece,
+                                current_board,
+                                speed_of_light,
+                                &mut lookups_the_square,
+                                next_square,
+                            );
+                            true
+                        },
+                    );
                 }
             }
             // 南西
@@ -730,6 +740,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 東
                     Squares::east_of(
+                        Mirror::Origin,
                         &Phase::First,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
@@ -903,7 +914,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     );
                 } else {
                     // 西
-                    Squares::west_of(
+                    Squares::east_of(
+                        Mirror::Mirror,
                         &Phase::First,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
@@ -1209,15 +1221,20 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 東
-                        Squares::east_of(&Phase::First, &dst_sq_piece.square, &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        });
+                        Squares::east_of(
+                            Mirror::Origin,
+                            &Phase::First,
+                            &dst_sq_piece.square,
+                            &mut |next_square| {
+                                lookup_no_promotion_source_by_phase_next(
+                                    &dst_sq_piece,
+                                    current_board,
+                                    &mut lookups_the_square,
+                                    next_square,
+                                );
+                                true
+                            },
+                        );
                     }
                 }
                 // 北東
@@ -1369,15 +1386,20 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 西
-                        Squares::west_of(&Phase::First, &dst_sq_piece.square, &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        });
+                        Squares::east_of(
+                            Mirror::Mirror,
+                            &Phase::First,
+                            &dst_sq_piece.square,
+                            &mut |next_square| {
+                                lookup_no_promotion_source_by_phase_next(
+                                    &dst_sq_piece,
+                                    current_board,
+                                    &mut lookups_the_square,
+                                    next_square,
+                                );
+                                true
+                            },
+                        );
                     }
                 }
                 // 南西
@@ -1643,6 +1665,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 東
                         Squares::east_of(
+                            Mirror::Origin,
                             &Phase::First,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
@@ -1806,7 +1829,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 西
-                        Squares::west_of(
+                        Squares::east_of(
+                            Mirror::Mirror,
                             &Phase::First,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {

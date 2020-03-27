@@ -172,28 +172,28 @@ impl MGMovements {
                             );
                         }
                         Bishop1 => {
-                            NextSquares::looking_for_squares_from_1player_bishop_on_board(
+                            NextSquares::looking_for_squares_from_bishop_on_board(
                                 &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
                         Bishop2 => {
-                            NextSquares::looking_for_squares_from_2player_bishop_on_board(
+                            NextSquares::looking_for_squares_from_bishop_on_board(
                                 &Phase::Second,
                                 &source,
                                 callback_next,
                             );
                         }
                         Rook1 => {
-                            NextSquares::looking_for_squares_from_1player_rook_on_board(
+                            NextSquares::looking_for_squares_from_rook_on_board(
                                 &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
                         Rook2 => {
-                            NextSquares::looking_for_squares_from_2player_rook_on_board(
+                            NextSquares::looking_for_squares_from_rook_on_board(
                                 &Phase::Second,
                                 &source,
                                 callback_next,
@@ -214,14 +214,14 @@ impl MGMovements {
                             );
                         }
                         Dragon1 => {
-                            NextSquares::looking_for_squares_from_1player_dragon_on_board(
+                            NextSquares::looking_for_squares_from_dragon_on_board(
                                 &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
                         Dragon2 => {
-                            NextSquares::looking_for_squares_from_2player_dragon_on_board(
+                            NextSquares::looking_for_squares_from_dragon_on_board(
                                 &Phase::Second,
                                 &source,
                                 callback_next,
