@@ -49,7 +49,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_west_keima_of(friend, source, &mut |dst_square| {
+        Squares::south_east_keima_of(&friend.turn(), source, &mut |dst_square| {
             Promoting::case_of_knight(friend, &dst_square, callback_next)
         });
         Squares::north_east_keima_of(friend, source, &mut |dst_square| {
@@ -353,6 +353,7 @@ impl Promoting {
 
 pub enum Mirror {
     Origin,
+    /// East から West へ反転。
     Mirror,
     Both,
 }
@@ -693,6 +694,7 @@ impl Squares {
         }
     }
 
+    /*
     /// 北北西隣☆（＾～＾）
     /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
     pub fn north_west_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
@@ -713,8 +715,10 @@ impl Squares {
             }
         }
     }
+    */
     /// 南南東隣☆（＾～＾）
     /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
+    /// 北北西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
     pub fn south_east_keima_of<F1>(phase: &Phase, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,

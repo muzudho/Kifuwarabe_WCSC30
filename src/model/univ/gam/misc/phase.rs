@@ -28,6 +28,15 @@ impl fmt::Display for Phase {
         }
     }
 }
+impl Phase {
+    pub fn turn(&self) -> Phase {
+        use self::Phase::*;
+        match self {
+            First => Second,
+            Second => First,
+        }
+    }
+}
 
 pub const PHASE_ARRAY_LN: usize = 2;
 pub const PHASE_ARRAY: [Phase; PHASE_ARRAY_LN] = [Phase::First, Phase::Second];
@@ -37,12 +46,5 @@ pub fn phase_to_num(phase: &Phase) -> usize {
     match *phase {
         First => PHASE_FIRST,
         Second => PHASE_SECOND,
-    }
-}
-pub fn turn_phase(phase: &Phase) -> Phase {
-    use self::Phase::*;
-    match *phase {
-        First => Second,
-        Second => First,
     }
 }

@@ -5,7 +5,6 @@
 
 use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::phase::phase_to_num;
-use crate::model::univ::gam::misc::phase::turn_phase;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 
@@ -26,7 +25,7 @@ pub fn is_jisatusyu(
         let ps_src = speed_of_light.get_piece_struct(&km_src);
         let (friend, _piece_type) = &ps_src.phase_piece_type;
         // 相手番の先後
-        let opponent = turn_phase(&friend);
+        let opponent = friend.turn();
 
         // 升の利き数だが、指した後で再計算が要るはず
         let control_count = ml_universe_dto.game.position.control_count_by_phase
