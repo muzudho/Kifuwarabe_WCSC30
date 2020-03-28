@@ -62,31 +62,14 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_of(friend, source, &mut |dst_square| {
+        let func1 = &mut |dst_square| {
             Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
-        });
-        Squares::north_east_of(UpsideDown::Origin, friend, source, &mut |dst_square| {
-            Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
-        });
-        Squares::north_east_of(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |dst_square| {
-                Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
-            },
-        );
-        Squares::north_east_of(
-            UpsideDown::Origin,
-            &friend.turn(),
-            source,
-            &mut |dst_square| {
-                Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
-            },
-        );
-        Squares::north_east_of(UpsideDown::Flip, friend, source, &mut |dst_square| {
-            Promoting::case_of_silver(friend, &source, &dst_square, callback_next)
-        });
+        };
+        Squares::north_of(friend, source, func1);
+        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
+        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
+        Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
+        Squares::north_east_of(UpsideDown::Flip, friend, source, func1);
     }
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
@@ -97,24 +80,12 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_of(friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(UpsideDown::Origin, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
-        Squares::east_of(Mirror::Both, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_of(&friend.turn(), source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
+        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
+        Squares::north_of(friend, source, func1);
+        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
+        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
+        Squares::east_of(Mirror::Both, friend, source, func1);
+        Squares::north_of(&friend.turn(), source, func1);
     }
 
     /// 盤上の玉から動けるマスを見ます。
@@ -125,33 +96,14 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_east_of(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
-        Squares::north_of(friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(UpsideDown::Origin, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::east_of(Mirror::Both, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(
-            UpsideDown::Origin,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
-        Squares::north_of(&friend.turn(), source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(UpsideDown::Flip, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
+        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
+        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
+        Squares::north_of(friend, source, func1);
+        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
+        Squares::east_of(Mirror::Both, friend, source, func1);
+        Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
+        Squares::north_of(&friend.turn(), source, func1);
+        Squares::north_east_of(UpsideDown::Flip, friend, source, func1);
     }
 
     /// 盤上の角から動けるマスを見ます。
@@ -162,28 +114,13 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_north_east_from(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |destination| {
-                Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-            },
-        );
-        Squares::looking_north_east_from(UpsideDown::Origin, friend, source, &mut |destination| {
+        let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-        });
-        Squares::looking_north_east_from(
-            UpsideDown::Origin,
-            &friend.turn(),
-            source,
-            &mut |destination| {
-                Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-            },
-        );
-        Squares::looking_north_east_from(UpsideDown::Flip, friend, source, &mut |destination| {
-            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-        });
+        };
+        Squares::looking_north_east_from(UpsideDown::Flip, &friend.turn(), source, func1);
+        Squares::looking_north_east_from(UpsideDown::Origin, friend, source, func1);
+        Squares::looking_north_east_from(UpsideDown::Origin, &friend.turn(), source, func1);
+        Squares::looking_north_east_from(UpsideDown::Flip, friend, source, func1);
     }
 
     /// 盤上の飛から動けるマスを見ます。
@@ -194,18 +131,13 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_north_from(friend, source, &mut |destination| {
+        let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-        });
-        Squares::looking_east_from(&friend.turn(), source, &mut |destination| {
-            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-        });
-        Squares::looking_east_from(friend, source, &mut |destination| {
-            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-        });
-        Squares::looking_north_from(&friend.turn(), source, &mut |destination| {
-            Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
-        });
+        };
+        Squares::looking_north_from(friend, source, func1);
+        Squares::looking_east_from(&friend.turn(), source, func1);
+        Squares::looking_east_from(friend, source, func1);
+        Squares::looking_north_from(&friend.turn(), source, func1);
     }
 
     /// 盤上の馬から動けるマスを見ます。
@@ -216,33 +148,14 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::looking_north_east_from(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
-        Squares::north_of(friend, source, &mut |dst_square| {
-            callback_next(dst_square, Promotability::Deny)
-        });
-        Squares::looking_north_east_from(UpsideDown::Origin, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::east_of(Mirror::Both, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::looking_north_east_from(
-            UpsideDown::Origin,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
-        Squares::north_of(&friend.turn(), source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::looking_north_east_from(UpsideDown::Flip, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
+        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
+        Squares::looking_north_east_from(UpsideDown::Flip, &friend.turn(), source, func1);
+        Squares::north_of(friend, source, func1);
+        Squares::looking_north_east_from(UpsideDown::Origin, friend, source, func1);
+        Squares::east_of(Mirror::Both, friend, source, func1);
+        Squares::looking_north_east_from(UpsideDown::Origin, &friend.turn(), source, func1);
+        Squares::north_of(&friend.turn(), source, func1);
+        Squares::looking_north_east_from(UpsideDown::Flip, friend, source, func1);
     }
 
     /// 盤上の竜から動けるマスを見ます。
@@ -253,36 +166,15 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_east_of(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
-        Squares::looking_north_from(friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(UpsideDown::Origin, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::looking_east_from(&friend.turn(), source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::looking_east_from(friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(
-            UpsideDown::Origin,
-            &friend.turn(),
-            source,
-            &mut |destination| callback_next(destination, Promotability::Deny),
-        );
-        Squares::looking_north_from(&friend.turn(), source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
-        Squares::north_east_of(UpsideDown::Flip, friend, source, &mut |destination| {
-            callback_next(destination, Promotability::Deny)
-        });
+        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
+        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
+        Squares::looking_north_from(friend, source, func1);
+        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
+        Squares::looking_east_from(&friend.turn(), source, func1);
+        Squares::looking_east_from(friend, source, func1);
+        Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
+        Squares::looking_north_from(&friend.turn(), source, func1);
+        Squares::north_east_of(UpsideDown::Flip, friend, source, func1);
     }
 }
 
