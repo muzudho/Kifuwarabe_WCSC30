@@ -79,7 +79,7 @@ impl fmt::Display for MovementBuilder {
         }
 
         // 投了を弾いたあと、診断☆（＾～＾）
-        assert_in_board(self.dst.address, "Ｓasite Ｄisplay1");
+        assert_in_board_as_absolute(self.dst.address, "Ｓasite Ｄisplay1");
         let (dx, dy) = self.dst.to_file_rank();
 
         if self.src.address == SQUARE_DROP {
@@ -110,7 +110,7 @@ impl fmt::Display for MovementBuilder {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
-                assert_in_board(self.src.address, "Ｓasite Ｄisplay＜その２＞");
+                assert_in_board_as_absolute(self.src.address, "Ｓasite Ｄisplay＜その２＞");
                 self.src.to_file_rank()
             };
             write!(

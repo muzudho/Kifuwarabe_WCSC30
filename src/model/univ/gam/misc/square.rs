@@ -108,12 +108,15 @@ pub struct Square {
 }
 impl Square {
     pub fn from_address(address1: isquare) -> Self {
-        assert_in_board_with_frame(address1, &format!("square::from_address({})", address1));
+        assert_in_board_with_frame_as_absolute(
+            address1,
+            &format!("square::from_address({})", address1),
+        );
         Square { address: address1 }
     }
     pub fn from_file_rank(file: i8, rank: i8) -> Self {
         let adr = file * 10 + rank;
-        assert_in_board_with_frame(
+        assert_in_board_with_frame_as_absolute(
             adr,
             &format!("{} = square::from_file_rank({}, {})", adr, file, rank),
         );
@@ -141,7 +144,7 @@ impl Square {
 
     /// x, y に名称変更したもの☆（＾～＾）
     pub fn to_point(&self) -> Point {
-        assert_in_board(self.address, "(203b)sq_to_p");
+        assert_in_board_as_absolute(self.address, "(203b)sq_to_p");
         Point {
             x: self.get_file(),
             y: self.get_rank(),

@@ -34,12 +34,32 @@ use std::collections::HashSet;
 use std::io;
 use view::title_screen::ts_view::*;
 
+/*
+fn test_rel_rot90(adr: i8) -> i8 {
+    let result = (adr.abs() % 10 - 1) * 10 + (10 - ((adr / 10).abs() % 10));
+    if 0 < adr {
+        -result
+    } else {
+        result
+    }
+}
+*/
+
 fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
     let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::default();
     // 宇宙
     let mut universe: Universe = Universe::default();
     universe.big_bang();
+
+    /*
+    println!("Debug   | -40={} expect=-4", test_rel_rot90(-40));
+    println!("Debug   | - 4={} expect=40", test_rel_rot90(-4));
+    println!("Debug   |  40={} expect= 4", test_rel_rot90(40));
+    println!("Debug   |   4={} expect=-40", test_rel_rot90(4));
+    println!("Debug   | -10={} expect=-1", test_rel_rot90(-10));
+    println!("Debug   |  10={} expect=1", test_rel_rot90(10));
+    */
 
     // [Ctrl]+[C] で強制終了
     loop {

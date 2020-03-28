@@ -109,9 +109,9 @@ impl KomatoriResult {
         // (2-1)
         let ps_attacker1 = speed_of_light.get_piece_type_struct_from_piece(&self.km_attacker);
         if ps_attacker1.slider {
-            assert_in_board(ss.dst.address, "(205b2)Ｇet_result");
-            assert_in_board(self.sq_attacker.address, "(205b3)Ｇet_result");
-            assert_in_board(self.sq_target.address, "(205b4)Ｇet_result");
+            assert_in_board_as_absolute(ss.dst.address, "(205b2)Ｇet_result");
+            assert_in_board_as_absolute(self.sq_attacker.address, "(205b3)Ｇet_result");
+            assert_in_board_as_absolute(self.sq_target.address, "(205b4)Ｇet_result");
 
             let p_dst = ss.dst.to_point();
             let p_atk = self.sq_attacker.to_point();
@@ -132,7 +132,7 @@ impl KomatoriResult {
             } else {
                 // 狙われている駒を動かす場合
 
-                assert_in_board(ss.src.address, "(205b1)Ｇet_result");
+                assert_in_board_as_absolute(ss.src.address, "(205b1)Ｇet_result");
                 let p_src = ss.src.to_point();
 
                 // スライダー駒との角度
@@ -178,7 +178,7 @@ pub fn lookup_catching_king_on_board(
     position: &Position,
     speed_of_light: &MLSpeedOfLightVo,
 ) -> HashSet<u64> {
-    assert_in_board(
+    assert_in_board_as_absolute(
         sq_target.address,
         &format!(
             "(119)Ｌookup_banjo_catch phase={} sq_target={}",
@@ -220,7 +220,7 @@ pub fn lookup_catching_king_on_board(
 
         let ss = choice_1movement_from_hashset(&multiple_movements_hashset);
         if ss.exists() {
-            assert_in_board(
+            assert_in_board_as_absolute(
                 ss.src.address,
                 &format!(
                     "(123)Ｌookup_banjo_catch ss.src /  sq_target={} km_dst={} ss={}",

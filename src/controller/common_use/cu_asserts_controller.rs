@@ -6,7 +6,7 @@ use crate::model::univ::gam::misc::square::isquare;
 ///
 /// 打はテストできない
 ///
-pub fn assert_in_board(adr: isquare, hint: &str) {
+pub fn assert_in_board_as_absolute(adr: isquare, hint: &str) {
     debug_assert!(
         (10 < adr && adr < 20)
             || (20 < adr && adr < 30)
@@ -17,7 +17,7 @@ pub fn assert_in_board(adr: isquare, hint: &str) {
             || (70 < adr && adr < 80)
             || (80 < adr && adr < 90)
             || (90 < adr && adr < 100),
-        "adr=|{}| hint={}",
+        "abs-adr=|{}| hint={}",
         adr,
         hint
     );
@@ -26,6 +26,13 @@ pub fn assert_in_board(adr: isquare, hint: &str) {
 ///
 /// 打はテストできない
 ///
-pub fn assert_in_board_with_frame(adr: isquare, hint: &str) {
-    debug_assert!((-1 < adr && adr < 111), "adr=|{}| hint={}", adr, hint);
+pub fn assert_in_board_with_frame_as_absolute(adr: isquare, hint: &str) {
+    debug_assert!((-1 < adr && adr < 111), "abs-adr=|{}| hint={}", adr, hint);
+}
+
+///
+/// 打はテストできない
+///
+pub fn assert_in_board_as_relative(adr: isquare, hint: &str) {
+    debug_assert!(-89 < adr && adr < 89, "rel-adr=|{}| hint={}", adr, hint);
 }

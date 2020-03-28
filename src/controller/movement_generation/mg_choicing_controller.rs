@@ -80,7 +80,10 @@ pub fn select_movement_except_check<S: BuildHasher>(
             for komatori_result_hash in komatori_result_hashset.iter() {
                 let komatori_result = KomatoriResult::from_hash(*komatori_result_hash);
 
-                assert_in_board(potential_movement.dst.address, "(206)Ｓearch_gohoshu_hash");
+                assert_in_board_as_absolute(
+                    potential_movement.dst.address,
+                    "(206)Ｓearch_gohoshu_hash",
+                );
                 match komatori_result.get_result(&potential_movement, speed_of_light) {
                     KomatoriResultResult::NoneAttacker
                     | KomatoriResultResult::NoneAigoma
