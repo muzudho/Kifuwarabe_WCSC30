@@ -22,3 +22,10 @@ pub fn assert_in_board(adr: isquare, hint: &str) {
         hint
     );
 }
+
+///
+/// 打はテストできない
+///
+pub fn assert_in_board_with_frame(adr: isquare, hint: &str) {
+    debug_assert!((-1 < adr && adr < 111), "adr=|{}| hint={}", adr, hint);
+}

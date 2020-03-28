@@ -1,4 +1,5 @@
 use crate::controller::common_use::cu_asserts_controller::assert_in_board;
+use crate::controller::common_use::cu_asserts_controller::assert_in_board_with_frame;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::square::Square;
 use crate::model::univ::gam::misc::square::*;
@@ -295,9 +296,16 @@ pub enum UpsideDown {
 
 pub struct Squares {}
 impl Squares {
-    fn rotate(phase: &Phase, square: isquare) -> isquare {
+    fn rotate_relative(phase: &Phase, square: isquare) -> isquare {
         if *phase == Phase::Second {
             -square
+        } else {
+            square
+        }
+    }
+    fn rotate_absolute(phase: &Phase, square: isquare) -> isquare {
+        if *phase == Phase::Second {
+            110 - square
         } else {
             square
         }
@@ -323,49 +331,39 @@ impl Squares {
     }
 
     /// 2段目～9段目 全升☆（＾～＾）
-    pub fn for_from_rank2_to_rank9<F1>(callback: &mut F1)
+    /// 1段目～8段目 全升☆ がほしければ phase.turn() しろだぜ☆（＾～＾）
+    pub fn for_from_rank2_to_rank9<F1>(phase: &Phase, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
-        for rank_src in RANK_2..RANK_10 {
-            for file_src in (FILE_1..FILE_10).rev() {
-                callback(Square::from_file_rank(file_src, rank_src));
+        for rank in RANK_2..RANK_10 {
+            for file in (FILE_1..FILE_10).rev() {
+                let adr1 = Square::from_file_rank(file, rank).address;
+                let adr2 = Squares::rotate_absolute(phase, adr1);
+                assert_in_board_with_frame(
+                    adr2,
+                    &format!(
+                        "square::for_from_rank2_to_rank9(). rank={}, file={}, adr1={}, adr2={}.",
+                        rank, file, adr1, adr2
+                    ),
+                );
+                callback(Square::from_address(adr2));
             }
         }
     }
 
     /// 3段目～9段目 全升☆（＾～＾）
-    pub fn for_from_rank3_to_rank9<F1>(callback: &mut F1)
+    /// 1段目～7段目 全升☆ がほしければ phase.turn() しろだぜ☆（＾～＾）
+    pub fn for_from_rank3_to_rank9<F1>(phase: &Phase, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
-        for rank_src in RANK_3..RANK_10 {
-            for file_src in (FILE_1..FILE_10).rev() {
-                callback(Square::from_file_rank(file_src, rank_src));
-            }
-        }
-    }
-
-    /// 1段目～8段目 全升☆（＾～＾）
-    pub fn for_from_rank1_to_rank8<F1>(callback: &mut F1)
-    where
-        F1: FnMut(Square),
-    {
-        for rank_src in RANK_1..RANK_9 {
-            for file_src in (FILE_1..FILE_10).rev() {
-                callback(Square::from_file_rank(file_src, rank_src));
-            }
-        }
-    }
-
-    /// 1段目～7段目 全升☆（＾～＾）
-    pub fn for_from_rank1_to_rank7<F1>(callback: &mut F1)
-    where
-        F1: FnMut(Square),
-    {
-        for rank_src in RANK_1..RANK_8 {
-            for file_src in (FILE_1..FILE_10).rev() {
-                callback(Square::from_file_rank(file_src, rank_src));
+        for rank in RANK_3..RANK_10 {
+            for file in (FILE_1..FILE_10).rev() {
+                callback(Square::from_address(Squares::rotate_absolute(
+                    phase,
+                    Square::from_file_rank(file, rank).address,
+                )));
             }
         }
     }
@@ -378,7 +376,7 @@ impl Squares {
     {
         let mut next = start.address;
         loop {
-            next += Squares::rotate(phase, -1);
+            next += Squares::rotate_relative(phase, -1);
             if Squares::has_jumped_out_vertically(next) {
                 break;
             } else if callback(Square::from_address(next)) {
@@ -394,7 +392,7 @@ impl Squares {
     {
         let mut next = start.address;
         loop {
-            next += Squares::rotate(phase, -10);
+            next += Squares::rotate_relative(phase, -10);
             if Squares::has_jumped_out_horizontally(next) {
                 break;
             } else if callback(Square::from_address(next)) {
@@ -417,7 +415,7 @@ impl Squares {
     {
         let mut next = start.address;
         loop {
-            next += Squares::rotate(phase, Squares::upside_down(&upside_down, -11));
+            next += Squares::rotate_relative(phase, Squares::upside_down(&upside_down, -11));
             if Squares::has_jumped_out_of_the_board(next) {
                 break;
             } else if callback(Square::from_address(next)) {
@@ -432,7 +430,7 @@ impl Squares {
     where
         F1: FnMut(Square) -> bool,
     {
-        let next = start.address + Squares::rotate(phase, -1);
+        let next = start.address + Squares::rotate_relative(phase, -1);
         if !Squares::has_jumped_out_vertically(next) {
             assert_in_board(next, "北隣☆（＾～＾）");
             callback(Square::from_address(next));
@@ -447,7 +445,7 @@ impl Squares {
         match mirror {
             Mirror::Origin | Mirror::Both => {
                 // 東隣☆（＾～＾）
-                let next = start.address + Squares::rotate(phase, -10);
+                let next = start.address + Squares::rotate_relative(phase, -10);
                 if !Squares::has_jumped_out_horizontally(next) {
                     assert_in_board(next, "東隣☆（＾～＾）");
                     callback(Square::from_address(next));
@@ -459,7 +457,7 @@ impl Squares {
         match mirror {
             Mirror::Mirror | Mirror::Both => {
                 // 西隣☆（＾～＾）
-                let next = start.address + Squares::rotate(phase, 10);
+                let next = start.address + Squares::rotate_relative(phase, 10);
                 if !Squares::has_jumped_out_horizontally(next) {
                     assert_in_board(next, "西隣w☆（＾～＾）");
                     callback(Square::from_address(next));
@@ -479,7 +477,8 @@ impl Squares {
     ) where
         F1: FnMut(Square) -> bool,
     {
-        let next = start.address + Squares::rotate(phase, Squares::upside_down(&upside_down, -11));
+        let next = start.address
+            + Squares::rotate_relative(phase, Squares::upside_down(&upside_down, -11));
         if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board(next, "北東隣☆（＾～＾）");
             callback(Square::from_address(next));
@@ -499,14 +498,14 @@ impl Squares {
     ) where
         F1: FnMut(Square) -> bool,
     {
-        let mut next =
-            start.address + Squares::rotate(phase, Squares::upside_down(&upside_down, -10));
+        let mut next = start.address
+            + Squares::rotate_relative(phase, Squares::upside_down(&upside_down, -10));
         if !Squares::has_jumped_out_horizontally(next) {
             assert_in_board(next, "東隣☆（＾～＾）");
-            next += Squares::rotate(phase, Squares::upside_down(&upside_down, -1));
+            next += Squares::rotate_relative(phase, Squares::upside_down(&upside_down, -1));
             if !Squares::has_jumped_out_vertically(next) {
                 assert_in_board(next, "北東隣☆（＾～＾）");
-                next += Squares::rotate(phase, Squares::upside_down(&upside_down, -1));
+                next += Squares::rotate_relative(phase, Squares::upside_down(&upside_down, -1));
                 if !Squares::has_jumped_out_vertically(next) {
                     assert_in_board(
                         next,

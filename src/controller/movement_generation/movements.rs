@@ -259,45 +259,53 @@ impl MGMovements {
                 use crate::model::univ::gam::misc::piece::Piece::*;
                 match *hand_piece {
                     // ▲歩、▲香 は１段目には進めない
-                    Pawn1 | Lance1 => Squares::for_from_rank2_to_rank9(&mut |destination| {
-                        MGMovements::make_hand(
-                            &hand_piece,
-                            &game.position,
-                            speed_of_light,
-                            &destination,
-                            callback_movement,
-                        );
-                    }),
+                    Pawn1 | Lance1 => {
+                        Squares::for_from_rank2_to_rank9(&Phase::First, &mut |destination| {
+                            MGMovements::make_hand(
+                                &hand_piece,
+                                &game.position,
+                                speed_of_light,
+                                &destination,
+                                callback_movement,
+                            );
+                        })
+                    }
                     // ▲桂 は１、２段目には進めない
-                    Knight1 => Squares::for_from_rank3_to_rank9(&mut |destination| {
-                        MGMovements::make_hand(
-                            &hand_piece,
-                            &game.position,
-                            speed_of_light,
-                            &destination,
-                            callback_movement,
-                        );
-                    }),
+                    Knight1 => {
+                        Squares::for_from_rank3_to_rank9(&Phase::First, &mut |destination| {
+                            MGMovements::make_hand(
+                                &hand_piece,
+                                &game.position,
+                                speed_of_light,
+                                &destination,
+                                callback_movement,
+                            );
+                        })
+                    }
                     // ▽歩、▽香 は９段目には進めない
-                    Pawn2 | Lance2 => Squares::for_from_rank1_to_rank8(&mut |destination| {
-                        MGMovements::make_hand(
-                            &hand_piece,
-                            &game.position,
-                            speed_of_light,
-                            &destination,
-                            callback_movement,
-                        );
-                    }),
+                    Pawn2 | Lance2 => {
+                        Squares::for_from_rank2_to_rank9(&Phase::Second, &mut |destination| {
+                            MGMovements::make_hand(
+                                &hand_piece,
+                                &game.position,
+                                speed_of_light,
+                                &destination,
+                                callback_movement,
+                            );
+                        })
+                    }
                     // ▲桂 は８、９段目には進めない
-                    Knight2 => Squares::for_from_rank1_to_rank7(&mut |destination| {
-                        MGMovements::make_hand(
-                            &hand_piece,
-                            &game.position,
-                            speed_of_light,
-                            &destination,
-                            callback_movement,
-                        );
-                    }),
+                    Knight2 => {
+                        Squares::for_from_rank3_to_rank9(&Phase::Second, &mut |destination| {
+                            MGMovements::make_hand(
+                                &hand_piece,
+                                &game.position,
+                                speed_of_light,
+                                &destination,
+                                callback_movement,
+                            );
+                        })
+                    }
                     _ => {
                         MGSquares::for_all(&mut |destination| {
                             MGMovements::make_hand(

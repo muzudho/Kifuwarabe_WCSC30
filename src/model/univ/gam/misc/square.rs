@@ -107,13 +107,17 @@ pub struct Square {
     pub address: isquare,
 }
 impl Square {
-    pub fn from_address(square: isquare) -> Self {
-        Square { address: square }
+    pub fn from_address(address1: isquare) -> Self {
+        assert_in_board_with_frame(address1, &format!("square::from_address({})", address1));
+        Square { address: address1 }
     }
-    pub fn from_file_rank(file1: i8, rank1: i8) -> Self {
-        Square {
-            address: file1 * 10 + rank1,
-        }
+    pub fn from_file_rank(file: i8, rank: i8) -> Self {
+        let adr = file * 10 + rank;
+        assert_in_board_with_frame(
+            adr,
+            &format!("{} = square::from_file_rank({}, {})", adr, file, rank),
+        );
+        Square { address: adr }
     }
     pub fn from_point(p: &Point) -> Self {
         debug_assert!(p_in_ban(&p), "(204b)from_point x={},y={}", p.x, p.y);
