@@ -49,15 +49,9 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability) -> bool,
     {
-        Squares::north_east_keima_of(UpsideDown::Origin, friend, source, &mut |dst_square| {
-            Promoting::case_of_knight(friend, &dst_square, callback_next)
-        });
-        Squares::north_east_keima_of(
-            UpsideDown::Flip,
-            &friend.turn(),
-            source,
-            &mut |dst_square| Promoting::case_of_knight(friend, &dst_square, callback_next),
-        );
+        let func = &mut |dst_square| Promoting::case_of_knight(friend, &dst_square, callback_next);
+        Squares::north_east_keima_of(UpsideDown::Origin, friend, source, func);
+        Squares::north_east_keima_of(UpsideDown::Flip, &friend.turn(), source, func);
     }
 
     /// 盤上の銀から動けるマスを見ます。
@@ -539,22 +533,6 @@ impl Squares {
             }
         }
     }
-    /*
-    pub fn looking_south_east_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address;
-        loop {
-            next += Squares::rotate(phase, -9);
-            if Squares::has_jumped_out_of_the_board(next) {
-                break;
-            } else if callback(Square::from_address(next)) {
-                break;
-            }
-        }
-    }
-    */
 
     /// 北隣☆（＾～＾）
     /// 南隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
