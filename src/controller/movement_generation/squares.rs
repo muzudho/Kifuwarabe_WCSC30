@@ -48,7 +48,7 @@ impl NextSquares {
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
-        Squares::looking_north_from(friend, source, func1);
+        Squares::looking_east_from(Counterclockwise::Rotate90, friend, source, func1);
     }
 
     /// 盤上の桂から動けるマスを見ます。
@@ -187,10 +187,10 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_east_from(&friend.turn(), source, func1);
-        Squares::looking_east_from(friend, source, func1);
-        Squares::looking_north_from(friend, source, func1);
-        Squares::looking_north_from(&friend.turn(), source, func1);
+        Squares::looking_east_from(Counterclockwise::Origin, &friend.turn(), source, func1);
+        Squares::looking_east_from(Counterclockwise::Origin, friend, source, func1);
+        Squares::looking_east_from(Counterclockwise::Rotate90, friend, source, func1);
+        Squares::looking_east_from(Counterclockwise::Rotate90, &friend.turn(), source, func1);
     }
 
     /// 盤上の馬から動けるマスを見ます。
@@ -242,10 +242,10 @@ impl NextSquares {
         Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
         Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
         Squares::north_east_of(UpsideDown::Flip, friend, source, func1);
-        Squares::looking_east_from(&friend.turn(), source, func1);
-        Squares::looking_east_from(friend, source, func1);
-        Squares::looking_north_from(friend, source, func1);
-        Squares::looking_north_from(&friend.turn(), source, func1);
+        Squares::looking_east_from(Counterclockwise::Origin, &friend.turn(), source, func1);
+        Squares::looking_east_from(Counterclockwise::Origin, friend, source, func1);
+        Squares::looking_east_from(Counterclockwise::Rotate90, friend, source, func1);
+        Squares::looking_east_from(Counterclockwise::Rotate90, &friend.turn(), source, func1);
     }
 }
 
@@ -468,32 +468,26 @@ impl Squares {
         }
     }
 
-    /// 北隣の升から北へ☆（＾～＾）
-    /// 南隣の升から南へ にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    pub fn looking_north_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address;
-        loop {
-            next += Squares::rotate180_as_relative(phase, -1);
-            if Squares::has_jumped_out_horizontally(&Counterclockwise::Rotate90, next) {
-                break;
-            } else if callback(Square::from_address(next)) {
-                break;
-            }
-        }
-    }
     /// 東隣の升から東へ☆（＾～＾）
     /// 西隣の升から西へ にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    pub fn looking_east_from<F1>(phase: &Phase, start: &Square, callback: &mut F1)
-    where
+    /// 北隣の升から北へ にしたかったら 時計回りに９０°回転しろだぜ☆（＾～＾）
+    /// 南隣の升から南へ にしたかったら 時計回りに９０°回転して、 phase.turn() しろだぜ☆（＾～＾）
+    pub fn looking_east_from<F1>(
+        counterclockwise: Counterclockwise,
+        phase: &Phase,
+        start: &Square,
+        callback: &mut F1,
+    ) where
         F1: FnMut(Square) -> bool,
     {
         let mut next = start.address;
         loop {
-            next += Squares::rotate180_as_relative(phase, -10);
-            if Squares::has_jumped_out_horizontally(&Counterclockwise::Origin, next) {
+            next += Squares::rotate90_counterclockwise_as_relative(
+                &counterclockwise,
+                &UpsideDown::Origin,
+                Squares::rotate180_as_relative(phase, -10),
+            );
+            if Squares::has_jumped_out_horizontally(&counterclockwise, next) {
                 break;
             } else if callback(Square::from_address(next)) {
                 break;
@@ -545,6 +539,7 @@ impl Squares {
                     rel_rot180,
                 );
                 let next = rot90rel + start.address;
+                /*
                 IO::logln(&format!(
                     "東隣 {} rel_east={} {}{}next={} + S{}",
                     phase,
@@ -560,6 +555,7 @@ impl Squares {
                     next,
                     start.address,
                 ));
+                */
                 if !Squares::has_jumped_out_horizontally(&counterclockwise, next) {
                     assert_in_board_as_absolute(
                         next,
