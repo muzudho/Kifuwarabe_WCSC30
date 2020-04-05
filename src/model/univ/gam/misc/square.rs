@@ -32,6 +32,7 @@ use crate::controller::common_use::cu_conv_controller::*;
 use crate::controller::common_use::cu_geo_teigi_controller::*;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
+use std::fmt;
 use std::hash::Hash;
 
 //
@@ -88,6 +89,155 @@ pub const SQUARE_NONE: isquare = 0;
 /// 指し手。打の場合のsrc
 pub const SQUARE_DROP: isquare = 0;
 
+/// 相対升。
+pub struct RelativeSquare {
+    /// xより y寄りなら真。
+    pub co: bool,
+    pub orthant: u8,
+    pub address: isquare,
+}
+impl RelativeSquare {
+    /// 反時計回りに90°回転時
+    pub fn from_file_and_rank(file: i8, rank: i8) -> Self {
+        // Decision tree.
+        let co1 = file.abs() < rank.abs();
+        let orthant1 = if file < 0 {
+            if rank < 0 {
+                3
+            } else {
+                2
+            }
+        } else {
+            if rank < 0 {
+                4
+            } else {
+                1
+            }
+        };
+        RelativeSquare {
+            co: co1,
+            orthant: orthant1,
+            address: 10 * file + rank,
+        }
+    }
+
+    pub fn rotation_90_countercrockwise(&self) -> Self {
+        let new_adr = if !self.co {
+            if self.orthant % 2 == 1 {
+                // 1ort, 3ort
+                println!("1ort, 3ort");
+                -1 * self.get_sign()
+                    * (10 * RelativeSquare::completion11(self.get_abs_y())
+                        + RelativeSquare::completion(self.get_abs_x()))
+            } else {
+                // 2ort, 4ort
+                println!("2ort, 4ort");
+                self.get_sign()
+                    * (10 * self.get_abs_x() + RelativeSquare::completion11(self.get_abs_y()))
+            }
+        } else {
+            if self.orthant % 2 == 1 {
+                // co1ort, co3ort
+                println!("co1ort, co3ort");
+                -1 * self.get_sign()
+                    * (10 * self.get_abs_x() + RelativeSquare::completion11(self.get_abs_y()))
+            } else {
+                // co2ort, co4ort
+                println!("co2ort, co4ort");
+                self.get_sign()
+                    * (10 * RelativeSquare::completion(self.get_abs_y())
+                        + RelativeSquare::completion11(self.get_abs_x()))
+            }
+        };
+        RelativeSquare {
+            co: !self.co,
+            orthant: (self.orthant) % 4 + 1,
+            address: new_adr,
+        }
+    }
+
+    pub fn rotation_45_countercrockwise(&self) -> Self {
+        let new_adr = if !self.co {
+            if self.orthant % 2 == 1 {
+                // 1ort, 3ort
+                println!("1ort, 3ort");
+                self.get_sign() * (10 * (self.get_abs_x() - self.get_abs_y()) + self.get_abs_x())
+            } else {
+                // 2ort, 4ort
+                println!("2ort, 4ort");
+                self.get_sign()
+                    * (10 * (self.get_abs_x() + 1) + self.get_abs_x()
+                        - RelativeSquare::completion9(self.get_abs_y()))
+            }
+        } else {
+            if self.orthant % 2 == 1 {
+                // co1ort, co3ort
+                println!("co1ort, co3ort");
+                -1 * self.get_sign()
+                    * (10 * (self.get_abs_y() - self.get_abs_x() - 1)
+                        + RelativeSquare::completion(self.get_abs_y()))
+            } else {
+                // co2ort, co4ort
+                println!("co2ort, co4ort");
+                self.get_sign()
+                    * (10 * RelativeSquare::completion9(self.get_abs_y())
+                        + self.get_abs_x()
+                        + self.get_abs_y()
+                        + 1)
+            }
+        };
+        let (new_co, new_orthant) = match (self.co, self.orthant) {
+            (false, 1) => (true, 1),
+            (true, 1) => (true, 2),
+            (true, 2) => (false, 2),
+            (false, 2) => (false, 3),
+            (false, 3) => (true, 3),
+            (true, 3) => (true, 4),
+            (true, 4) => (false, 4),
+            (false, 4) => (false, 1),
+            _ => panic!("co={},orthant={}", self.co, self.orthant),
+        };
+        RelativeSquare {
+            co: new_co,
+            orthant: new_orthant,
+            address: new_adr,
+        }
+    }
+
+    fn completion9(abn: i8) -> i8 {
+        9 - abn
+    }
+    fn completion(abn: i8) -> i8 {
+        10 - abn
+    }
+    fn completion11(abn: i8) -> i8 {
+        (11 - abn).abs() % 10
+    }
+    fn get_sign(&self) -> i8 {
+        self.address / self.address.abs()
+    }
+    fn get_abs_x(&self) -> i8 {
+        (self.address / 10).abs() % 10
+    }
+    fn get_abs_y(&self) -> i8 {
+        self.address.abs() % 10
+    }
+}
+
+impl fmt::Debug for RelativeSquare {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "({}{}ort,{})",
+            if self.co { "co" } else { "" },
+            self.orthant,
+            self.address
+        )
+    }
+}
+
+/// Square(升).
+///
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Square {

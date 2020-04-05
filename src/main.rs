@@ -35,6 +35,50 @@ use std::io;
 use view::title_screen::ts_view::*;
 
 /*
+fn half_dict1_orthant(adr: i8) -> i8 {
+    let sign = adr / adr.abs();
+    let x = (adr / 10).abs() % 10;
+    let y = adr.abs() % 10;
+    let n = 10 * (x.abs() - y.abs()) + x.abs();
+    sign * n
+}
+fn half_co_dict1_orthant(adr: i8) -> i8 {
+    let sign = adr / adr.abs();
+    let x = (adr / 10).abs() % 10;
+    let y = adr.abs() % 10;
+    let n = -(10 * (y.abs() - x.abs() - 1) + (10 - y.abs()));
+    sign * n
+}
+fn half_co_dict2_orthant(adr: i8) -> i8 {
+    let sign = adr / adr.abs();
+    let x = (adr / 10).abs() % 10;
+    let y = adr.abs() % 10;
+    let n = 10 * (9 - y.abs()) + (x.abs() + y.abs() + 1);
+    sign * n
+}
+fn half_dict2_orthant(adr: i8) -> i8 {
+    let sign = adr / adr.abs();
+    let x = (adr / 10).abs() % 10;
+    let y = adr.abs() % 10;
+    let n = 10 * (x.abs() - y.abs() + 10) + x.abs();
+    sign * n
+}
+*/
+/*
+fn dict1_orthant(x: i8, y: i8) -> i8 {
+    10 * x.abs() + y.abs()
+}
+fn dict2_orthant(x: i8, y: i8) -> i8 {
+    -(10 * (x.abs() - 1) + (10 - y.abs()))
+}
+fn dict3_orthant(x: i8, y: i8) -> i8 {
+    -(10 * x.abs() + y.abs())
+}
+fn dict4_orthant(x: i8, y: i8) -> i8 {
+    10 * (x.abs() - 1) + (10 - y.abs())
+}
+*/
+/*
 fn test_rel_rot90(adr: i8) -> i8 {
     let result = (adr.abs() % 10 - 1) * 10 + (10 - ((adr / 10).abs() % 10));
     if 0 < adr {
@@ -52,6 +96,77 @@ fn main() {
     let mut universe: Universe = Universe::default();
     universe.big_bang();
 
+    // テスト
+    /*
+    let mut rsq = RelativeSquare::from_file_and_rank(4, 2);
+    println!("Debug   | (4x,2y) -> {:?} expect=(1ort, 42)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (1ort, 42) -> {:?} expect=(co1ort, 24)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co1ort, 24) -> {:?} expect=(co2ort, -16)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co2ort, -16) -> {:?} expect=(2ort, -38)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (2ort, -38) -> {:?} expect=(3ort, -42)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (3ort, -42) -> {:?} expect=(co3ort, -24)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co3ort, -24) -> {:?} expect=(co4ort, 16)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co4ort, 16) -> {:?} expect=(4ort, 38)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (4ort, 38) -> {:?} expect=(1ort, 42)", rsq);
+    */
+    /*
+    let mut rsq = RelativeSquare::from_file_and_rank(3, 1);
+    println!("Debug   | (3x,1y) -> {:?} expect=(1ort, 31)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (1ort, 31) -> {:?} expect=(co2ort, -7)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co2ort, -7) -> {:?} expect=(3ort, -31)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (3ort, -31) -> {:?} expect=(co4ort, 7)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co4ort, 7) -> {:?} expect=(1ort, 31)", rsq);
+
+    rsq = RelativeSquare::from_file_and_rank(2, 3);
+    println!("Debug   | (2x,3y) -> {:?} expect=(co1ort, 23)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co1ort, 23) -> {:?} expect=(2ort, -28)", rsq);
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (2ort, -28) -> {:?} expect=(co3ort, -23)", rsq);
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co3ort, -23) -> {:?} expect=(4ort, 28)", rsq);
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (4ort, 28) -> {:?} expect=(co1ort, 23)", rsq);
+    */
+    /*
+    println!("Debug   | I(-21)={} expect=-12", half_dict1_orthant(-21));
+    println!(
+        "Debug   | co-I(-12)={} expect=8",
+        half_co_dict1_orthant(-12)
+    );
+    println!(
+        "Debug   | co-II(18)={} expect=20",
+        half_co_dict2_orthant(18)
+    );
+    println!("Debug   | II(-19)={} expect=-21", half_dict2_orthant(-19));
+    */
+    /*
+    println!("Debug   | dict1(0,4)={} expect=4", dict1_orthant(0, 4));
+    println!("Debug   | dict2(0,4)={} expect=4", dict2_orthant(0, 4));
+    println!("Debug   | dict3(0,-4)={} expect=-4", dict3_orthant(0, -4));
+    println!("Debug   | dict4(0,-4)={} expect=-4", dict4_orthant(0, -4));
+    println!("Debug   | dict1(4,0)={} expect=40", dict1_orthant(4, 0));
+    println!("Debug   | dict4(4,0)={} expect=40", dict4_orthant(4, 0));
+    println!("Debug   | dict2(-4,0)={} expect=-40", dict2_orthant(-4, 0));
+    println!("Debug   | dict3(-4,0)={} expect=-40", dict3_orthant(-4, 0));
+    */
     /*
     println!("Debug   | -40={} expect=-4", test_rel_rot90(-40));
     println!("Debug   | - 4={} expect=40", test_rel_rot90(-4));
