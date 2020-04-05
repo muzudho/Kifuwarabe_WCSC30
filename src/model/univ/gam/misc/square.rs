@@ -102,7 +102,8 @@ pub enum Rotation {
     C315,
 }
 impl Rotation {
-    pub fn rotate135clockwise(&mut self) -> Self {
+    /// 時計回り(Clockwise)☆（＾～＾）
+    pub fn rotate135cw(&self) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match self {
             C0 => C225,
@@ -115,7 +116,8 @@ impl Rotation {
             C315 => C180,
         }
     }
-    pub fn rotate90clockwise(&mut self) -> Self {
+    /// 時計回り(Clockwise)☆（＾～＾）
+    pub fn rotate90cw(&self) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match self {
             C0 => C270,
@@ -128,7 +130,8 @@ impl Rotation {
             C315 => C225,
         }
     }
-    pub fn rotate45clockwise(&mut self) -> Self {
+    /// 時計回り(Clockwise)☆（＾～＾）
+    pub fn rotate45cw(&self) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match self {
             C0 => C315,
@@ -141,7 +144,8 @@ impl Rotation {
             C315 => C270,
         }
     }
-    pub fn rotate45counterclockwise(&mut self) -> Self {
+    /// 反時計回り(Counterclockwise)☆（＾～＾）
+    pub fn rotate45ccw(&self) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match self {
             C0 => C45,
@@ -154,7 +158,8 @@ impl Rotation {
             C315 => C0,
         }
     }
-    pub fn rotate90counterclockwise(&mut self) -> Self {
+    /// 反時計回り(Counterclockwise)☆（＾～＾）
+    pub fn rotate90ccw(&self) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match self {
             C0 => C90,
@@ -167,7 +172,8 @@ impl Rotation {
             C315 => C45,
         }
     }
-    pub fn rotate135counterclockwise(&mut self) -> Self {
+    /// 反時計回り(Counterclockwise)☆（＾～＾）
+    pub fn rotate135ccw(&self) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match self {
             C0 => C135,
@@ -180,7 +186,8 @@ impl Rotation {
             C315 => C90,
         }
     }
-    pub fn rotate180counterclockwise(&mut self) -> Self {
+    /// 点対称☆（＾～＾）
+    pub fn rotate180(&self) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match self {
             C0 => C180,
@@ -203,20 +210,61 @@ pub struct RelativeSquare {
     pub address: isquare,
 }
 impl RelativeSquare {
+    /// 符号は 象限からでしか復元できないぜ☆（*＾～＾*）
+    pub fn from_relative_address(orthant: u8, adr: i8) -> Self {
+        match orthant {
+            1 => RelativeSquare::from_file_and_rank(
+                RelativeSquare::abs_x(adr),
+                RelativeSquare::abs_y(adr),
+            ),
+            2 => RelativeSquare::from_file_and_rank(
+                -RelativeSquare::abs_x(adr) - 1,
+                RelativeSquare::completion(RelativeSquare::abs_y(adr)),
+            ),
+            3 => RelativeSquare::from_file_and_rank(
+                -RelativeSquare::abs_x(adr),
+                -RelativeSquare::abs_y(adr),
+            ),
+            4 => RelativeSquare::from_file_and_rank(
+                RelativeSquare::abs_x(adr) + 1,
+                -RelativeSquare::completion(RelativeSquare::abs_y(adr)),
+            ),
+            _ => panic!("ない象限☆（＾～＾）orthant={}", orthant),
+        }
+    }
+
     pub fn from_file_and_rank(file: i8, rank: i8) -> Self {
         // Decision tree.
-        let co1 = file.abs() < rank.abs();
-        let orthant1 = if file < 0 {
-            if rank < 0 {
-                3
+        let (orthant1, co1) = if file < 0 {
+            // 相対番地盤の半分より東側☆（＾～＾） II, III 象限のどちらかは確定☆（＾～＾）
+            if 0 < rank {
+                // 相対番地盤の半分より南東側☆（＾～＾） II 象限に確定☆（＾～＾）
+                // 対角線は co の方☆（＾～＾）
+                (2, file.abs() <= rank.abs())
             } else {
-                2
+                // x=0, y=0の境界線上も含むぜ☆（＾～＾）III 象限に確定☆（＾～＾）
+                // 対角線は co じゃない方☆（＾～＾）
+                (3, file.abs() < rank.abs())
+            }
+        } else if 0 < file {
+            // 相対番地盤の半分より西側☆（＾～＾） I, IV 象限のどちらかは確定☆（＾～＾）
+            if rank < 0 {
+                // 相対番地盤の半分より北西側☆（＾～＾） IV 象限に確定☆（＾～＾）
+                // 対角線は co の方☆（＾～＾）
+                (4, file.abs() <= rank.abs())
+            } else {
+                // x=0, y=0の境界線上も含むぜ☆（＾～＾） I 象限に確定☆（＾～＾）
+                // 対角線は co じゃない方☆（＾～＾）
+                (1, file.abs() < rank.abs())
             }
         } else {
+            // x=0の垂直の境界線上☆（＾～＾） I, III 象限のどちらかの co は確定☆（＾～＾）
             if rank < 0 {
-                4
+                (3, true)
+            } else if 0 < rank {
+                (1, true)
             } else {
-                1
+                panic!("真ん中は取り扱い不可☆（＾～＾）");
             }
         };
         RelativeSquare {
@@ -236,24 +284,45 @@ impl RelativeSquare {
             },
             C45 => self.rotation_45_countercrockwise(),
             C90 => self.rotation_90_countercrockwise(),
-            C135 => self
-                .rotation_90_countercrockwise()
-                .rotation_45_countercrockwise(),
-            C180 => self.rotation_180_countercrockwise(),
-            C225 => self
-                .rotation_180_countercrockwise()
-                .rotation_45_countercrockwise(),
-            C270 => self
-                .rotation_180_countercrockwise()
-                .rotation_90_countercrockwise(),
-            C315 => self
-                .rotation_180_countercrockwise()
-                .rotation_90_countercrockwise()
-                .rotation_45_countercrockwise(),
+            C135 => {
+                let r90 = self.rotation_90_countercrockwise();
+                println!("> r90={:?}", r90);
+                let r90_45 = r90.rotation_45_countercrockwise();
+                println!("> r90_45={:?}", r90_45);
+                r90_45
+            }
+            C180 => self.rotation_180(),
+            C225 => {
+                /*
+                let r180 = self.rotation_180();
+                println!("> r180={:?}", r180);
+                let r180_45 = r180.rotation_45_countercrockwise();
+                println!("> r180+45={:?}", r180_45);
+                r180_45
+                */
+                self.rotation_180().rotation_45_countercrockwise()
+            }
+            C270 => self.rotation_180().rotation_90_countercrockwise(),
+            C315 => {
+                //*
+                let r180 = self.rotation_180();
+                println!("> r180={:?}", r180);
+                let r180_90 = r180.rotation_90_countercrockwise();
+                println!("> r180+90={:?}", r180_90);
+                let r180_90_45 = r180_90.rotation_45_countercrockwise();
+                println!("> r180+90+45={:?}", r180_90_45);
+                r180_90_45
+                // */
+                /*
+                self.rotation_180()
+                    .rotation_90_countercrockwise()
+                    .rotation_45_countercrockwise()
+                */
+            }
         }
     }
 
-    pub fn rotation_180_countercrockwise(&self) -> Self {
+    pub fn rotation_180(&self) -> Self {
         RelativeSquare {
             co: self.co,
             orthant: (self.orthant + 1) % 4 + 1,
@@ -265,46 +334,58 @@ impl RelativeSquare {
         let new_adr = if !self.co {
             if self.orthant % 2 == 1 {
                 // 1ort, 3ort
-                println!("1ort, 3ort");
+                // println!("1ort, 3ort");
                 -1 * self.get_sign()
                     * (10 * RelativeSquare::completion11(self.get_abs_y())
                         + RelativeSquare::completion(self.get_abs_x()))
             } else {
                 // 2ort, 4ort
-                println!("2ort, 4ort");
+                // println!("2ort, 4ort");
                 self.get_sign()
                     * (10 * self.get_abs_x() + RelativeSquare::completion11(self.get_abs_y()))
             }
         } else {
             if self.orthant % 2 == 1 {
                 // co1ort, co3ort
-                println!("co1ort, co3ort");
+                // println!("co1ort, co3ort");
                 -1 * self.get_sign()
                     * (10 * self.get_abs_x() + RelativeSquare::completion11(self.get_abs_y()))
             } else {
                 // co2ort, co4ort
-                println!("co2ort, co4ort");
+                // println!("co2ort, co4ort");
                 self.get_sign()
                     * (10 * RelativeSquare::completion(self.get_abs_y())
                         + RelativeSquare::completion11(self.get_abs_x()))
             }
         };
+
+        // 90°回転後に 0 rank なら、 II 象限ではなく III 象限だし、 IV 象限ではなく I 象限だぜ☆（＾～＾）
+        // 1 象限足せばいい☆（＾～＾）
+        let new_orthant = if RelativeSquare::abs_y(new_adr) == 0 {
+            (self.orthant + 1) % 4 + 1
+        } else {
+            (self.orthant) % 4 + 1
+        };
+
+        RelativeSquare::from_relative_address(new_orthant, new_adr)
+        /*
         RelativeSquare {
             co: !self.co,
             orthant: (self.orthant) % 4 + 1,
             address: new_adr,
         }
+        */
     }
 
     pub fn rotation_45_countercrockwise(&self) -> Self {
         let new_adr = if !self.co {
             if self.orthant % 2 == 1 {
                 // 1ort, 3ort
-                println!("1ort, 3ort");
+                // println!("1ort, 3ort");
                 self.get_sign() * (10 * (self.get_abs_x() - self.get_abs_y()) + self.get_abs_x())
             } else {
                 // 2ort, 4ort
-                println!("2ort, 4ort");
+                // println!("2ort, 4ort");
                 self.get_sign()
                     * (10 * (self.get_abs_x() + 1) + self.get_abs_x()
                         - RelativeSquare::completion9(self.get_abs_y()))
@@ -312,13 +393,13 @@ impl RelativeSquare {
         } else {
             if self.orthant % 2 == 1 {
                 // co1ort, co3ort
-                println!("co1ort, co3ort");
+                // println!("co1ort, co3ort");
                 -1 * self.get_sign()
                     * (10 * (self.get_abs_y() - self.get_abs_x() - 1)
                         + RelativeSquare::completion(self.get_abs_y()))
             } else {
                 // co2ort, co4ort
-                println!("co2ort, co4ort");
+                // println!("co2ort, co4ort");
                 self.get_sign()
                     * (10 * RelativeSquare::completion9(self.get_abs_y())
                         + self.get_abs_x()
@@ -326,6 +407,27 @@ impl RelativeSquare {
                         + 1)
             }
         };
+        let mut new_orthant = match (self.co, self.orthant) {
+            (false, 1) => 1,
+            (true, 1) => 2,
+            (true, 2) => 2,
+            (false, 2) => 3,
+            (false, 3) => 3,
+            (true, 3) => 4,
+            (true, 4) => 4,
+            (false, 4) => 1,
+            _ => panic!("orthant fail 345."),
+            //_ => panic!("co={},orthant={}", self.co, self.orthant),
+        };
+
+        // 45°回転後に 0 rank なら、 II 象限ではなく III 象限だし、 IV 象限ではなく I 象限だぜ☆（＾～＾）
+        // 1 象限足せばいい☆（＾～＾）
+        if RelativeSquare::abs_y(new_adr) == 0 {
+            new_orthant = new_orthant % 4 + 1;
+        };
+
+        RelativeSquare::from_relative_address(new_orthant, new_adr)
+        /*
         let (new_co, new_orthant) = match (self.co, self.orthant) {
             (false, 1) => (true, 1),
             (true, 1) => (true, 2),
@@ -335,13 +437,15 @@ impl RelativeSquare {
             (true, 3) => (true, 4),
             (true, 4) => (false, 4),
             (false, 4) => (false, 1),
-            _ => panic!("co={},orthant={}", self.co, self.orthant),
+            _ => panic!("orthant fail 345."),
+            //_ => panic!("co={},orthant={}", self.co, self.orthant),
         };
         RelativeSquare {
             co: new_co,
             orthant: new_orthant,
             address: new_adr,
         }
+        */
     }
 
     fn completion9(abn: i8) -> i8 {
@@ -351,17 +455,34 @@ impl RelativeSquare {
         10 - abn
     }
     fn completion11(abn: i8) -> i8 {
-        (11 - abn).abs() % 10
+        // (11 - abn).abs() % 10
+        11 - abn
     }
     fn get_sign(&self) -> i8 {
         self.address / self.address.abs()
     }
     fn get_abs_x(&self) -> i8 {
-        (self.address / 10).abs() % 10
+        RelativeSquare::abs_x(self.address)
     }
     fn get_abs_y(&self) -> i8 {
-        self.address.abs() % 10
+        RelativeSquare::abs_y(self.address)
     }
+    fn abs_x(adr: i8) -> i8 {
+        (adr / 10).abs() % 10
+    }
+    fn abs_y(adr: i8) -> i8 {
+        adr.abs() % 10
+    }
+    /*
+    fn rel_x(adr: i8) -> i8 {
+        let sign = adr / adr.abs();
+        sign * RelativeSquare::abs_x(adr)
+    }
+    fn rel_y(adr: i8) -> i8 {
+        let sign = adr / adr.abs();
+        sign * RelativeSquare::abs_y(adr)
+    }
+    */
 }
 
 impl fmt::Debug for RelativeSquare {

@@ -97,84 +97,7 @@ fn main() {
     universe.big_bang();
 
     // テスト
-    /*
-    let mut rsq = RelativeSquare::from_file_and_rank(4, 2);
-    println!("Debug   | (4x,2y) -> {:?} expect=(1ort, 42)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (1ort, 42) -> {:?} expect=(co1ort, 24)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co1ort, 24) -> {:?} expect=(co2ort, -16)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co2ort, -16) -> {:?} expect=(2ort, -38)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (2ort, -38) -> {:?} expect=(3ort, -42)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (3ort, -42) -> {:?} expect=(co3ort, -24)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co3ort, -24) -> {:?} expect=(co4ort, 16)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co4ort, 16) -> {:?} expect=(4ort, 38)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (4ort, 38) -> {:?} expect=(1ort, 42)", rsq);
-    */
-    /*
-    let mut rsq = RelativeSquare::from_file_and_rank(3, 1);
-    println!("Debug   | (3x,1y) -> {:?} expect=(1ort, 31)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (1ort, 31) -> {:?} expect=(co2ort, -7)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co2ort, -7) -> {:?} expect=(3ort, -31)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (3ort, -31) -> {:?} expect=(co4ort, 7)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co4ort, 7) -> {:?} expect=(1ort, 31)", rsq);
-
-    rsq = RelativeSquare::from_file_and_rank(2, 3);
-    println!("Debug   | (2x,3y) -> {:?} expect=(co1ort, 23)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co1ort, 23) -> {:?} expect=(2ort, -28)", rsq);
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (2ort, -28) -> {:?} expect=(co3ort, -23)", rsq);
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co3ort, -23) -> {:?} expect=(4ort, 28)", rsq);
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (4ort, 28) -> {:?} expect=(co1ort, 23)", rsq);
-    */
-    /*
-    println!("Debug   | I(-21)={} expect=-12", half_dict1_orthant(-21));
-    println!(
-        "Debug   | co-I(-12)={} expect=8",
-        half_co_dict1_orthant(-12)
-    );
-    println!(
-        "Debug   | co-II(18)={} expect=20",
-        half_co_dict2_orthant(18)
-    );
-    println!("Debug   | II(-19)={} expect=-21", half_dict2_orthant(-19));
-    */
-    /*
-    println!("Debug   | dict1(0,4)={} expect=4", dict1_orthant(0, 4));
-    println!("Debug   | dict2(0,4)={} expect=4", dict2_orthant(0, 4));
-    println!("Debug   | dict3(0,-4)={} expect=-4", dict3_orthant(0, -4));
-    println!("Debug   | dict4(0,-4)={} expect=-4", dict4_orthant(0, -4));
-    println!("Debug   | dict1(4,0)={} expect=40", dict1_orthant(4, 0));
-    println!("Debug   | dict4(4,0)={} expect=40", dict4_orthant(4, 0));
-    println!("Debug   | dict2(-4,0)={} expect=-40", dict2_orthant(-4, 0));
-    println!("Debug   | dict3(-4,0)={} expect=-40", dict3_orthant(-4, 0));
-    */
-    /*
-    println!("Debug   | -40={} expect=-4", test_rel_rot90(-40));
-    println!("Debug   | - 4={} expect=40", test_rel_rot90(-4));
-    println!("Debug   |  40={} expect= 4", test_rel_rot90(40));
-    println!("Debug   |   4={} expect=-40", test_rel_rot90(4));
-    println!("Debug   | -10={} expect=-1", test_rel_rot90(-10));
-    println!("Debug   |  10={} expect=1", test_rel_rot90(10));
-    */
+    test_rotation();
 
     // [Ctrl]+[C] で強制終了
     loop {
@@ -420,4 +343,132 @@ fn parse_extend_command(
         unit_test(&line, &mut starts, len, universe, &speed_of_light);
         //IO::writeln( &ml_universe_dto.pop_command() );
     }
+}
+
+fn test_rot(test_name: &str, rsq: &RelativeSquare, expected: &str) {
+    debug_assert!(
+        format!("{:?}", rsq) == expected,
+        format!("{}: actual={:?} | expected={}", test_name, rsq, expected)
+    );
+}
+
+fn test_rotation() {
+    // 象限のテスト
+    {
+        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
+        test_rot("b1", &rsq, "(co3ort,-1)");
+        rsq = RelativeSquare::from_file_and_rank(1, -1);
+        test_rot("b2", &rsq, "(co4ort,9)");
+        rsq = RelativeSquare::from_file_and_rank(1, 0);
+        test_rot("b3", &rsq, "(1ort,10)");
+        rsq = RelativeSquare::from_file_and_rank(1, 1);
+        test_rot("b4", &rsq, "(1ort,11)");
+        rsq = RelativeSquare::from_file_and_rank(0, 1);
+        test_rot("b5", &rsq, "(co1ort,1)");
+        rsq = RelativeSquare::from_file_and_rank(-1, 1);
+        test_rot("b6", &rsq, "(co2ort,-9)");
+        rsq = RelativeSquare::from_file_and_rank(-1, 0);
+        test_rot("b7", &rsq, "(3ort,-10)");
+        rsq = RelativeSquare::from_file_and_rank(-1, -1);
+        test_rot("b8", &rsq, "(3ort,-11)");
+    }
+    // 45°回転のテスト
+    {
+        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
+        test_rot("a1", &rsq, "(co3ort,-1)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a2", &rsq, "(co4ort,9)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a3", &rsq, "(1ort,10)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a4", &rsq, "(1ort,11)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a5", &rsq, "(co1ort,1)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a6", &rsq, "(co2ort,-9)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a7", &rsq, "(3ort,-10)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a8", &rsq, "(3ort,-11)");
+        rsq = rsq.rotation_45_countercrockwise();
+        test_rot("a9", &rsq, "(co3ort,-1)");
+    }
+    /*
+    let mut rsq = RelativeSquare::from_file_and_rank(4, 2);
+    println!("Debug   | (4x,2y) -> {:?} expect=(1ort, 42)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (1ort, 42) -> {:?} expect=(co1ort, 24)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co1ort, 24) -> {:?} expect=(co2ort, -16)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co2ort, -16) -> {:?} expect=(2ort, -38)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (2ort, -38) -> {:?} expect=(3ort, -42)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (3ort, -42) -> {:?} expect=(co3ort, -24)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co3ort, -24) -> {:?} expect=(co4ort, 16)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (co4ort, 16) -> {:?} expect=(4ort, 38)", rsq);
+    rsq = rsq.rotation_45_countercrockwise();
+    println!("Debug   | (4ort, 38) -> {:?} expect=(1ort, 42)", rsq);
+    */
+    /*
+    let mut rsq = RelativeSquare::from_file_and_rank(3, 1);
+    println!("Debug   | (3x,1y) -> {:?} expect=(1ort, 31)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (1ort, 31) -> {:?} expect=(co2ort, -7)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co2ort, -7) -> {:?} expect=(3ort, -31)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (3ort, -31) -> {:?} expect=(co4ort, 7)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co4ort, 7) -> {:?} expect=(1ort, 31)", rsq);
+
+    rsq = RelativeSquare::from_file_and_rank(2, 3);
+    println!("Debug   | (2x,3y) -> {:?} expect=(co1ort, 23)", rsq);
+
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co1ort, 23) -> {:?} expect=(2ort, -28)", rsq);
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (2ort, -28) -> {:?} expect=(co3ort, -23)", rsq);
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (co3ort, -23) -> {:?} expect=(4ort, 28)", rsq);
+    rsq = rsq.rotation_90_countercrockwise();
+    println!("Debug   | (4ort, 28) -> {:?} expect=(co1ort, 23)", rsq);
+    */
+    /*
+    println!("Debug   | I(-21)={} expect=-12", half_dict1_orthant(-21));
+    println!(
+        "Debug   | co-I(-12)={} expect=8",
+        half_co_dict1_orthant(-12)
+    );
+    println!(
+        "Debug   | co-II(18)={} expect=20",
+        half_co_dict2_orthant(18)
+    );
+    println!("Debug   | II(-19)={} expect=-21", half_dict2_orthant(-19));
+    */
+    /*
+    println!("Debug   | dict1(0,4)={} expect=4", dict1_orthant(0, 4));
+    println!("Debug   | dict2(0,4)={} expect=4", dict2_orthant(0, 4));
+    println!("Debug   | dict3(0,-4)={} expect=-4", dict3_orthant(0, -4));
+    println!("Debug   | dict4(0,-4)={} expect=-4", dict4_orthant(0, -4));
+    println!("Debug   | dict1(4,0)={} expect=40", dict1_orthant(4, 0));
+    println!("Debug   | dict4(4,0)={} expect=40", dict4_orthant(4, 0));
+    println!("Debug   | dict2(-4,0)={} expect=-40", dict2_orthant(-4, 0));
+    println!("Debug   | dict3(-4,0)={} expect=-40", dict3_orthant(-4, 0));
+    */
+    /*
+    println!("Debug   | -40={} expect=-4", test_rel_rot90(-40));
+    println!("Debug   | - 4={} expect=40", test_rel_rot90(-4));
+    println!("Debug   |  40={} expect= 4", test_rel_rot90(40));
+    println!("Debug   |   4={} expect=-40", test_rel_rot90(4));
+    println!("Debug   | -10={} expect=-1", test_rel_rot90(-10));
+    println!("Debug   |  10={} expect=1", test_rel_rot90(10));
+    */
 }

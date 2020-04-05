@@ -84,20 +84,16 @@ impl NextSquares {
             Rotation::C180
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
+        println!("銀1={:?}", rotation);
         Squares::next_of(&rotation, source, func1);
-        /*
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            friend,
-            source,
-            func1,
-        );
-        */
-        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
-        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
-        Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
-        Squares::north_east_of(UpsideDown::Flip, friend, source, func1);
+        println!("銀2={:?}", rotation.rotate45ccw());
+        Squares::next_of(&rotation.rotate45ccw(), source, func1);
+        println!("銀3={:?}", rotation.rotate90ccw().rotate45ccw());
+        Squares::next_of(&rotation.rotate90ccw().rotate45ccw(), source, func1);
+        println!("銀4={:?}", rotation.rotate90cw().rotate45cw());
+        Squares::next_of(&rotation.rotate90cw().rotate45cw(), source, func1);
+        println!("銀5={:?}", rotation.rotate45cw());
+        Squares::next_of(&rotation.rotate45cw(), source, func1);
     }
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
@@ -109,13 +105,6 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::east_of(
-            Counterclockwise::Origin,
-            Mirror::Both,
-            friend,
-            source,
-            func1,
-        );
         let rotation = if *friend == Phase::First {
             Rotation::C0
         } else {
@@ -123,34 +112,11 @@ impl NextSquares {
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
-        /*
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            &friend.turn(),
-            source,
-            func1,
-        );
-        */
-
-        let rotation = if *friend == Phase::First {
-            Rotation::C0
-        } else {
-            Rotation::C180
-        };
-        // 回転しなければ北隣だぜ☆（＾～＾）
-        Squares::next_of(&rotation, source, func1);
-        /*
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            friend,
-            source,
-            func1,
-        );
-        */
-        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
-        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
+        Squares::next_of(&rotation.rotate45ccw(), source, func1);
+        Squares::next_of(&rotation.rotate90ccw(), source, func1);
+        Squares::next_of(&rotation.rotate180(), source, func1);
+        Squares::next_of(&rotation.rotate90cw(), source, func1);
+        Squares::next_of(&rotation.rotate45cw(), source, func1);
     }
 
     /// 盤上の玉から動けるマスを見ます。
@@ -162,13 +128,6 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::east_of(
-            Counterclockwise::Origin,
-            Mirror::Both,
-            friend,
-            source,
-            func1,
-        );
 
         let rotation = if *friend == Phase::First {
             Rotation::C0
@@ -177,26 +136,13 @@ impl NextSquares {
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
-        /*
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            friend,
-            source,
-            func1,
-        );
-        */
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            &friend.turn(),
-            source,
-            func1,
-        );
-        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
-        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
-        Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
-        Squares::north_east_of(UpsideDown::Flip, friend, source, func1);
+        Squares::next_of(&rotation.rotate45ccw(), source, func1);
+        Squares::next_of(&rotation.rotate90ccw(), source, func1);
+        Squares::next_of(&rotation.rotate90ccw().rotate45ccw(), source, func1);
+        Squares::next_of(&rotation.rotate180(), source, func1);
+        Squares::next_of(&rotation.rotate90cw().rotate45cw(), source, func1);
+        Squares::next_of(&rotation.rotate90cw(), source, func1);
+        Squares::next_of(&rotation.rotate45cw(), source, func1);
     }
 
     /// 盤上の角から動けるマスを見ます。
@@ -242,13 +188,6 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::east_of(
-            Counterclockwise::Origin,
-            Mirror::Both,
-            friend,
-            source,
-            func1,
-        );
         let rotation = if *friend == Phase::First {
             Rotation::C0
         } else {
@@ -256,22 +195,9 @@ impl NextSquares {
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
-        /*
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            friend,
-            source,
-            func1,
-        );
-        */
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            &friend.turn(),
-            source,
-            func1,
-        );
+        Squares::next_of(&rotation.rotate90ccw(), source, func1);
+        Squares::next_of(&rotation.rotate180(), source, func1);
+        Squares::next_of(&rotation.rotate90cw(), source, func1);
         Squares::looking_north_east_from(UpsideDown::Flip, &friend.turn(), source, func1);
         Squares::looking_north_east_from(UpsideDown::Origin, friend, source, func1);
         Squares::looking_north_east_from(UpsideDown::Origin, &friend.turn(), source, func1);
@@ -573,17 +499,24 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         // 北隣＋回転☆（＾～＾）
-        let next = start.address
-            + RelativeSquare::from_file_and_rank(0, -1)
-                .rotate_countercrockwise(rotation)
-                .address;
+        println!("start={}", start.address);
+        println!("north={:?}", RelativeSquare::from_file_and_rank(0, -1));
+        let rel = RelativeSquare::from_file_and_rank(0, -1)
+            .rotate_countercrockwise(rotation)
+            .address;
+        println!("rot={:?} {}", rotation, rel);
+        let next = start.address + rel;
+        println!("next={}", next);
         if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board_as_absolute(
                 next,
+                "北隣＋回転☆（＾～＾）",
+                /*
                 &format!(
                     "北隣＋回転☆（＾～＾） start.address={} rotation={:?} next={}",
                     start.address, rotation, next
                 ),
+                */
             );
             callback(Square::from_address(next));
         }
