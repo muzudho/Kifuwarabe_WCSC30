@@ -28,6 +28,15 @@ impl NextSquares {
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
+
+        let rotation = if *friend == Phase::First {
+            Rotation::C0
+        } else {
+            Rotation::C180
+        };
+        // ほっとけば北隣だぜ☆（＾～＾）
+        Squares::next_of(&rotation, source, func1);
+        /*
         // 西隣を反時計回りに９０°回せば北だぜ☆（＾～＾）
         Squares::east_of(
             Counterclockwise::Rotate90,
@@ -36,6 +45,7 @@ impl NextSquares {
             source,
             func1,
         );
+        */
     }
 
     /// 盤上の香から動けるマスを見ます。
@@ -518,6 +528,27 @@ impl Squares {
         }
     }
 
+    /// 北隣☆（＾～＾） 回転もできるぜ☆（＾～＾）
+    pub fn next_of<F1>(rotation: &Rotation, start: &Square, callback: &mut F1)
+    where
+        F1: FnMut(Square) -> bool,
+    {
+        // 北隣＋回転☆（＾～＾）
+        let next = start.address
+            + RelativeSquare::from_file_and_rank(0, -1)
+                .rotate_countercrockwise(rotation)
+                .address;
+        if !Squares::has_jumped_out_of_the_board(next) {
+            assert_in_board_as_absolute(
+                next,
+                &format!(
+                    "北隣＋回転☆（＾～＾） start.address={} rotation={:?} next={}",
+                    start.address, rotation, next
+                ),
+            );
+            callback(Square::from_address(next));
+        }
+    }
     /// 東隣☆（＾～＾） 西隣もついでに作れだぜ☆（＾～＾）
     pub fn east_of<F1>(
         counterclockwise: Counterclockwise,

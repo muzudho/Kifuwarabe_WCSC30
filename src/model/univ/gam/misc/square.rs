@@ -89,6 +89,112 @@ pub const SQUARE_NONE: isquare = 0;
 /// 指し手。打の場合のsrc
 pub const SQUARE_DROP: isquare = 0;
 
+#[derive(Debug)]
+pub enum Rotation {
+    C0,
+    // 45° counterclockwise rotation
+    C45,
+    C90,
+    C135,
+    C180,
+    C225,
+    C270,
+    C315,
+}
+impl Rotation {
+    pub fn rotate135clockwise(&mut self) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match self {
+            C0 => C225,
+            C45 => C270,
+            C90 => C315,
+            C135 => C0,
+            C180 => C45,
+            C225 => C90,
+            C270 => C135,
+            C315 => C180,
+        }
+    }
+    pub fn rotate90clockwise(&mut self) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match self {
+            C0 => C270,
+            C45 => C315,
+            C90 => C0,
+            C135 => C45,
+            C180 => C90,
+            C225 => C135,
+            C270 => C180,
+            C315 => C225,
+        }
+    }
+    pub fn rotate45clockwise(&mut self) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match self {
+            C0 => C315,
+            C45 => C0,
+            C90 => C45,
+            C135 => C90,
+            C180 => C135,
+            C225 => C180,
+            C270 => C225,
+            C315 => C270,
+        }
+    }
+    pub fn rotate45counterclockwise(&mut self) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match self {
+            C0 => C45,
+            C45 => C90,
+            C90 => C135,
+            C135 => C180,
+            C180 => C225,
+            C225 => C270,
+            C270 => C315,
+            C315 => C0,
+        }
+    }
+    pub fn rotate90counterclockwise(&mut self) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match self {
+            C0 => C90,
+            C45 => C135,
+            C90 => C180,
+            C135 => C225,
+            C180 => C270,
+            C225 => C315,
+            C270 => C0,
+            C315 => C45,
+        }
+    }
+    pub fn rotate135counterclockwise(&mut self) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match self {
+            C0 => C135,
+            C45 => C180,
+            C90 => C225,
+            C135 => C270,
+            C180 => C315,
+            C225 => C0,
+            C270 => C45,
+            C315 => C90,
+        }
+    }
+    pub fn rotate180counterclockwise(&mut self) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match self {
+            C0 => C180,
+            C45 => C225,
+            C90 => C270,
+            C135 => C315,
+            C180 => C0,
+            C225 => C45,
+            C270 => C90,
+            C315 => C135,
+        }
+    }
+}
+
 /// 相対升。
 pub struct RelativeSquare {
     /// xより y寄りなら真。
@@ -97,7 +203,6 @@ pub struct RelativeSquare {
     pub address: isquare,
 }
 impl RelativeSquare {
-    /// 反時計回りに90°回転時
     pub fn from_file_and_rank(file: i8, rank: i8) -> Self {
         // Decision tree.
         let co1 = file.abs() < rank.abs();
@@ -118,6 +223,41 @@ impl RelativeSquare {
             co: co1,
             orthant: orthant1,
             address: 10 * file + rank,
+        }
+    }
+
+    pub fn rotate_countercrockwise(&self, rot: &Rotation) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match rot {
+            C0 => RelativeSquare {
+                co: self.co,
+                orthant: self.orthant,
+                address: self.address,
+            },
+            C45 => self.rotation_45_countercrockwise(),
+            C90 => self.rotation_90_countercrockwise(),
+            C135 => self
+                .rotation_90_countercrockwise()
+                .rotation_45_countercrockwise(),
+            C180 => self.rotation_180_countercrockwise(),
+            C225 => self
+                .rotation_180_countercrockwise()
+                .rotation_45_countercrockwise(),
+            C270 => self
+                .rotation_180_countercrockwise()
+                .rotation_90_countercrockwise(),
+            C315 => self
+                .rotation_180_countercrockwise()
+                .rotation_90_countercrockwise()
+                .rotation_45_countercrockwise(),
+        }
+    }
+
+    pub fn rotation_180_countercrockwise(&self) -> Self {
+        RelativeSquare {
+            co: self.co,
+            orthant: (self.orthant + 1) % 4 + 1,
+            address: -self.address,
         }
     }
 
