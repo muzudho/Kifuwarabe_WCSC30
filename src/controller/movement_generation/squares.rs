@@ -34,18 +34,9 @@ impl NextSquares {
         } else {
             Rotation::C180
         };
-        // ほっとけば北隣だぜ☆（＾～＾）
+
+        // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
-        /*
-        // 西隣を反時計回りに９０°回せば北だぜ☆（＾～＾）
-        Squares::east_of(
-            Counterclockwise::Rotate90,
-            Mirror::Origin,
-            friend,
-            source,
-            func1,
-        );
-        */
     }
 
     /// 盤上の香から動けるマスを見ます。
@@ -86,6 +77,15 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
         };
+
+        let rotation = if *friend == Phase::First {
+            Rotation::C0
+        } else {
+            Rotation::C180
+        };
+        // 回転しなければ北隣だぜ☆（＾～＾）
+        Squares::next_of(&rotation, source, func1);
+        /*
         Squares::east_of(
             Counterclockwise::Rotate90,
             Mirror::Origin,
@@ -93,6 +93,7 @@ impl NextSquares {
             source,
             func1,
         );
+        */
         Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
         Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
         Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
@@ -115,6 +116,14 @@ impl NextSquares {
             source,
             func1,
         );
+        let rotation = if *friend == Phase::First {
+            Rotation::C0
+        } else {
+            Rotation::C180
+        };
+        // 回転しなければ北隣だぜ☆（＾～＾）
+        Squares::next_of(&rotation, source, func1);
+        /*
         Squares::east_of(
             Counterclockwise::Rotate90,
             Mirror::Origin,
@@ -122,6 +131,16 @@ impl NextSquares {
             source,
             func1,
         );
+        */
+
+        let rotation = if *friend == Phase::First {
+            Rotation::C0
+        } else {
+            Rotation::C180
+        };
+        // 回転しなければ北隣だぜ☆（＾～＾）
+        Squares::next_of(&rotation, source, func1);
+        /*
         Squares::east_of(
             Counterclockwise::Rotate90,
             Mirror::Origin,
@@ -129,6 +148,7 @@ impl NextSquares {
             source,
             func1,
         );
+        */
         Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
         Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
     }
@@ -149,6 +169,15 @@ impl NextSquares {
             source,
             func1,
         );
+
+        let rotation = if *friend == Phase::First {
+            Rotation::C0
+        } else {
+            Rotation::C180
+        };
+        // 回転しなければ北隣だぜ☆（＾～＾）
+        Squares::next_of(&rotation, source, func1);
+        /*
         Squares::east_of(
             Counterclockwise::Rotate90,
             Mirror::Origin,
@@ -156,6 +185,7 @@ impl NextSquares {
             source,
             func1,
         );
+        */
         Squares::east_of(
             Counterclockwise::Rotate90,
             Mirror::Origin,
@@ -219,6 +249,14 @@ impl NextSquares {
             source,
             func1,
         );
+        let rotation = if *friend == Phase::First {
+            Rotation::C0
+        } else {
+            Rotation::C180
+        };
+        // 回転しなければ北隣だぜ☆（＾～＾）
+        Squares::next_of(&rotation, source, func1);
+        /*
         Squares::east_of(
             Counterclockwise::Rotate90,
             Mirror::Origin,
@@ -226,6 +264,7 @@ impl NextSquares {
             source,
             func1,
         );
+        */
         Squares::east_of(
             Counterclockwise::Rotate90,
             Mirror::Origin,
