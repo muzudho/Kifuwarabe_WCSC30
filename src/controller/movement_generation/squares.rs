@@ -503,7 +503,7 @@ impl Squares {
         println!("north={:?}", RelativeSquare::from_file_and_rank(0, -1));
         let rel = RelativeSquare::from_file_and_rank(0, -1)
             .rotate_countercrockwise(rotation)
-            .address;
+            .get_address();
         println!("rot={:?} {}", rotation, rel);
         let next = start.address + rel;
         println!("next={}", next);

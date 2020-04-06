@@ -211,7 +211,7 @@ pub struct Orthant {
 }
 impl Orthant {
     /// angle - 45 or 90.
-    fn from_file_and_rank(angle: i8, file: i8, rank: i8) -> Self {
+    pub fn from_file_and_rank(angle: i8, file: i8, rank: i8) -> Self {
         if angle == 45 {
             // TODO 45°回転時のケースでコーディングしてるが、90°回転時はまた違う☆（＾～＾）
             // Decision tree.
@@ -266,24 +266,23 @@ impl Orthant {
                 }
             }
         } else {
-            // TODO WIP.
             // 90°回転のときは境界線は両面に属するが、片面に揃えておくぜ☆（＾～＾）
             // Decision tree.
             if file < 0 {
                 // 相対番地盤の半分より東側☆（＾～＾） II, III 象限のどちらかは確定☆（＾～＾）
                 if 0 < rank {
                     // 相対番地盤の半分より南東側☆（＾～＾） II 象限に確定☆（＾～＾）
-                    // 対角線は co の方☆（＾～＾）
+                    // 対角線は co じゃない方☆（＾～＾）
                     Orthant {
                         orthant: 2,
-                        co: file.abs() <= rank.abs(),
+                        co: file.abs() < rank.abs(),
                     }
                 } else {
                     // y=0の境界線上も含むぜ☆（＾～＾）III 象限に確定☆（＾～＾）
-                    // 対角線は co じゃない方☆（＾～＾）
+                    // 対角線は co の方☆（＾～＾）
                     Orthant {
                         orthant: 3,
-                        co: file.abs() < rank.abs(),
+                        co: file.abs() <= rank.abs(),
                     }
                 }
             } else if 0 < file {
@@ -296,7 +295,7 @@ impl Orthant {
                         co: file.abs() < rank.abs(),
                     }
                 } else {
-                    // y=0の境界線上も含むぜ☆（＾～＾） I 象限に確定☆（＾～＾）
+                    // I 象限に確定☆（＾～＾）
                     // 対角線は co の方☆（＾～＾）
                     Orthant {
                         orthant: 1,
@@ -322,13 +321,18 @@ impl Orthant {
         }
     }
 }
+impl fmt::Debug for Orthant {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}{}ort", if self.co { "co" } else { "" }, self.orthant)
+    }
+}
 
 /// 相対升。
+/// file, rank から 相対番地は作れますが、相対番地から file, rank を作ることはできません。
+/// そこから、 file, rank で持ちます。
 pub struct RelativeSquare {
-    /// xより y寄りなら真。
-    pub co: bool,
-    pub orthant: u8,
-    pub address: isquare,
+    pub file: i8,
+    pub rank: i8,
 }
 impl RelativeSquare {
     /// 符号は 象限からでしか復元できないぜ☆（*＾～＾*）
@@ -354,58 +358,23 @@ impl RelativeSquare {
         }
     }
 
-    pub fn from_file_and_rank(file: i8, rank: i8) -> Self {
-        // TODO 45°回転時のケースでコーディングしてるが、90°回転時はまた違う☆（＾～＾）
-        // Decision tree.
-        let orthant_co = Orthant::from_file_and_rank(45, file, rank);
-        /*
-        let (orthant1, co1) = if file < 0 {
-            // 相対番地盤の半分より東側☆（＾～＾） II, III 象限のどちらかは確定☆（＾～＾）
-            if 0 < rank {
-                // 相対番地盤の半分より南東側☆（＾～＾） II 象限に確定☆（＾～＾）
-                // 対角線は co の方☆（＾～＾）
-                (2, file.abs() <= rank.abs())
-            } else {
-                // x=0, y=0の境界線上も含むぜ☆（＾～＾）III 象限に確定☆（＾～＾）
-                // 対角線は co じゃない方☆（＾～＾）
-                (3, file.abs() < rank.abs())
-            }
-        } else if 0 < file {
-            // 相対番地盤の半分より西側☆（＾～＾） I, IV 象限のどちらかは確定☆（＾～＾）
-            if rank < 0 {
-                // 相対番地盤の半分より北西側☆（＾～＾） IV 象限に確定☆（＾～＾）
-                // 対角線は co の方☆（＾～＾）
-                (4, file.abs() <= rank.abs())
-            } else {
-                // x=0, y=0の境界線上も含むぜ☆（＾～＾） I 象限に確定☆（＾～＾）
-                // 対角線は co じゃない方☆（＾～＾）
-                (1, file.abs() < rank.abs())
-            }
-        } else {
-            // x=0の垂直の境界線上☆（＾～＾） I, III 象限のどちらかの co は確定☆（＾～＾）
-            if rank < 0 {
-                (3, true)
-            } else if 0 < rank {
-                (1, true)
-            } else {
-                panic!("真ん中は取り扱い不可☆（＾～＾）");
-            }
-        };
-        */
+    pub fn from_file_and_rank(file1: i8, rank1: i8) -> Self {
         RelativeSquare {
-            co: orthant_co.co,
-            orthant: orthant_co.orthant,
-            address: 10 * file + rank,
+            file: file1,
+            rank: rank1,
         }
+    }
+
+    pub fn get_address(&self) -> isquare {
+        10 * self.file + self.rank
     }
 
     pub fn rotate_countercrockwise(&self, rot: &Rotation) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         match rot {
             C0 => RelativeSquare {
-                co: self.co,
-                orthant: self.orthant,
-                address: self.address,
+                file: self.file,
+                rank: self.rank,
             },
             C45 => self.rotation_45_countercrockwise(),
             C90 => self.rotation_90_countercrockwise(),
@@ -449,17 +418,17 @@ impl RelativeSquare {
 
     pub fn rotation_180(&self) -> Self {
         RelativeSquare {
-            co: self.co,
-            orthant: (self.orthant + 1) % 4 + 1,
-            address: -self.address,
+            file: -self.file,
+            rank: -self.rank,
         }
     }
 
     pub fn rotation_90_countercrockwise(&self) -> Self {
         // file=0の垂直線上、rank=0の水平線上、対角線の境界線上がどの象限に属するかは
         // 90°回転時と、45°回転時では仕組みが違うので注意しろだぜ☆（＾～＾）
-        let new_adr = if !self.co {
-            if self.orthant % 2 == 1 {
+        let orthant_co = Orthant::from_file_and_rank(90, self.file, self.rank);
+        let new_adr = if !orthant_co.co {
+            if orthant_co.orthant % 2 == 1 {
                 // 1ort, 3ort
                 // println!("1ort, 3ort");
                 -1 * self.get_sign()
@@ -472,7 +441,7 @@ impl RelativeSquare {
                     * (10 * self.get_abs_x() + RelativeSquare::completion11(self.get_abs_y()))
             }
         } else {
-            if self.orthant % 2 == 1 {
+            if orthant_co.orthant % 2 == 1 {
                 // co1ort, co3ort
                 // println!("co1ort, co3ort");
                 -1 * self.get_sign()
@@ -500,7 +469,7 @@ impl RelativeSquare {
                 4
             }
         } else {
-            (self.orthant) % 4 + 1
+            (orthant_co.orthant) % 4 + 1
         };
         // let new_orthant = (self.orthant) % 4 + 1;
 
@@ -517,8 +486,9 @@ impl RelativeSquare {
     pub fn rotation_45_countercrockwise(&self) -> Self {
         // file=0の垂直線上、rank=0の水平線上、対角線の境界線上がどの象限に属するかは
         // 90°回転時と、45°回転時では仕組みが違うので注意しろだぜ☆（＾～＾）
-        let new_adr = if !self.co {
-            if self.orthant % 2 == 1 {
+        let orthant_co = Orthant::from_file_and_rank(45, self.file, self.rank);
+        let new_adr = if !orthant_co.co {
+            if orthant_co.orthant % 2 == 1 {
                 // 1ort, 3ort
                 // println!("1ort, 3ort");
                 self.get_sign() * (10 * (self.get_abs_x() - self.get_abs_y()) + self.get_abs_x())
@@ -530,7 +500,7 @@ impl RelativeSquare {
                         - RelativeSquare::completion9(self.get_abs_y()))
             }
         } else {
-            if self.orthant % 2 == 1 {
+            if orthant_co.orthant % 2 == 1 {
                 // co1ort, co3ort
                 // println!("co1ort, co3ort");
                 -1 * self.get_sign()
@@ -546,7 +516,9 @@ impl RelativeSquare {
                         + 1)
             }
         };
-        let mut new_orthant = match (self.co, self.orthant) {
+
+        // TODO new_orthant 廃止☆（＾～＾）？
+        let mut new_orthant = match (orthant_co.co, orthant_co.orthant) {
             (false, 1) => 1,
             (true, 1) => 2,
             (true, 2) => 2,
@@ -598,13 +570,28 @@ impl RelativeSquare {
         11 - abn
     }
     fn get_sign(&self) -> i8 {
-        self.address / self.address.abs()
+        if 0 <= self.file && 0 <= self.rank {
+            // x 軸と y 軸の両方がプラスなら文句なしにプラスだぜ☆（＾～＾）
+            // ど真ん中はプラスとしておこうぜ☆（＾～＾）
+            1
+        } else if self.file < 0 && self.rank < 0 {
+            // x 軸と y 軸の両方がマイナスなら文句なしにマイナスだぜ☆（＾～＾）
+            -1
+        } else if self.file < 0 && self.rank < 0 {
+            // 境界線を含まない第IV象限はプラスだぜ☆（＾～＾）
+            1
+        } else {
+            // 境界線を含まない第II象限はマイナスだぜ☆（＾～＾）
+            -1
+        }
     }
     fn get_abs_x(&self) -> i8 {
-        RelativeSquare::abs_x(self.address)
+        self.file.abs()
+        // RelativeSquare::abs_x(self.address)
     }
     fn get_abs_y(&self) -> i8 {
-        RelativeSquare::abs_y(self.address)
+        self.rank.abs()
+        // RelativeSquare::abs_y(self.address)
     }
     fn abs_x(adr: i8) -> i8 {
         (adr / 10).abs() % 10
@@ -624,14 +611,15 @@ impl RelativeSquare {
     */
 }
 
+/// 回転してみるまで象限は分からないので、出せるのは筋、段、相対番地だけだぜ☆（＾～＾）
 impl fmt::Debug for RelativeSquare {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "({}{}ort,{})",
-            if self.co { "co" } else { "" },
-            self.orthant,
-            self.address
+            "({}x {}y {}adr)",
+            self.file,
+            self.rank,
+            self.get_address()
         )
     }
 }

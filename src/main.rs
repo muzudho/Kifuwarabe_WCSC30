@@ -345,7 +345,13 @@ fn parse_extend_command(
     }
 }
 
-fn test_rot(test_name: &str, rsq: &RelativeSquare, expected: &str) {
+fn test_ort(test_name: &str, ort: &Orthant, expected: &str) {
+    debug_assert!(
+        format!("{:?}", ort) == expected,
+        format!("{}: actual={:?} | expected={}", test_name, ort, expected)
+    );
+}
+fn test_rsq(test_name: &str, rsq: &RelativeSquare, expected: &str) {
     debug_assert!(
         format!("{:?}", rsq) == expected,
         format!("{}: actual={:?} | expected={}", test_name, rsq, expected)
@@ -353,71 +359,109 @@ fn test_rot(test_name: &str, rsq: &RelativeSquare, expected: &str) {
 }
 
 fn test_rotation() {
-    // 象限のテスト
+    // 90°回転時の象限のテスト
+    {
+        let mut ort = Orthant::from_file_and_rank(90, 0, -1);
+        test_ort("e1", &ort, "co4ort");
+        ort = Orthant::from_file_and_rank(90, 1, -1);
+        test_ort("e2", &ort, "4ort");
+        ort = Orthant::from_file_and_rank(90, 1, 0);
+        test_ort("e3", &ort, "1ort");
+        ort = Orthant::from_file_and_rank(90, 1, 1);
+        test_ort("e4", &ort, "co1ort");
+        ort = Orthant::from_file_and_rank(90, 0, 1);
+        test_ort("e5", &ort, "co2ort");
+        ort = Orthant::from_file_and_rank(90, -1, 1);
+        test_ort("e6", &ort, "2ort");
+        ort = Orthant::from_file_and_rank(90, -1, 0);
+        test_ort("e7", &ort, "3ort");
+        ort = Orthant::from_file_and_rank(90, -1, -1);
+        test_ort("e8", &ort, "co3ort");
+    }
+    // 45°回転時の象限のテスト
+    {
+        let mut ort = Orthant::from_file_and_rank(45, 0, -1);
+        test_ort("f1", &ort, "co3ort");
+        ort = Orthant::from_file_and_rank(45, 1, -1);
+        test_ort("f2", &ort, "co4ort");
+        ort = Orthant::from_file_and_rank(45, 1, 0);
+        test_ort("f3", &ort, "1ort");
+        ort = Orthant::from_file_and_rank(45, 1, 1);
+        test_ort("f4", &ort, "1ort");
+        ort = Orthant::from_file_and_rank(45, 0, 1);
+        test_ort("f5", &ort, "co1ort");
+        ort = Orthant::from_file_and_rank(45, -1, 1);
+        test_ort("f6", &ort, "co2ort");
+        ort = Orthant::from_file_and_rank(45, -1, 0);
+        test_ort("f7", &ort, "3ort");
+        ort = Orthant::from_file_and_rank(45, -1, -1);
+        test_ort("f8", &ort, "3ort");
+    }
+    // 相対番地のテスト
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rot("b1", &rsq, "(co3ort,-1)");
+        test_rsq("b1", &rsq, "(0x -1y -1adr)");
         rsq = RelativeSquare::from_file_and_rank(1, -1);
-        test_rot("b2", &rsq, "(co4ort,9)");
+        test_rsq("b2", &rsq, "(1x -1y 9adr)");
         rsq = RelativeSquare::from_file_and_rank(1, 0);
-        test_rot("b3", &rsq, "(1ort,10)");
+        test_rsq("b3", &rsq, "(1x 0y 10adr)");
         rsq = RelativeSquare::from_file_and_rank(1, 1);
-        test_rot("b4", &rsq, "(1ort,11)");
+        test_rsq("b4", &rsq, "(1x 1y 11adr)");
         rsq = RelativeSquare::from_file_and_rank(0, 1);
-        test_rot("b5", &rsq, "(co1ort,1)");
+        test_rsq("b5", &rsq, "(0x 1y 1adr)");
         rsq = RelativeSquare::from_file_and_rank(-1, 1);
-        test_rot("b6", &rsq, "(co2ort,-9)");
+        test_rsq("b6", &rsq, "(-1x 1y -9adr)");
         rsq = RelativeSquare::from_file_and_rank(-1, 0);
-        test_rot("b7", &rsq, "(3ort,-10)");
+        test_rsq("b7", &rsq, "(-1x 0y -10adr)");
         rsq = RelativeSquare::from_file_and_rank(-1, -1);
-        test_rot("b8", &rsq, "(3ort,-11)");
+        test_rsq("b8", &rsq, "(-1x -1y -11adr)");
     }
     // 45°回転のテスト
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rot("a1", &rsq, "(co3ort,-1)");
+        test_rsq("a1", &rsq, "(0x -1y -1adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a2", &rsq, "(co4ort,9)");
+        test_rsq("a2", &rsq, "(1x -1y 9adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a3", &rsq, "(1ort,10)");
+        test_rsq("a3", &rsq, "(1x 0y 10adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a4", &rsq, "(1ort,11)");
+        test_rsq("a4", &rsq, "(1x 1y 11adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a5", &rsq, "(co1ort,1)");
+        test_rsq("a5", &rsq, "(0x 1y 1adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a6", &rsq, "(co2ort,-9)");
+        test_rsq("a6", &rsq, "(-1x 1y -9adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a7", &rsq, "(3ort,-10)");
+        test_rsq("a7", &rsq, "(-1x 0y -10adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a8", &rsq, "(3ort,-11)");
+        test_rsq("a8", &rsq, "(-1x -1y -11adr)");
         rsq = rsq.rotation_45_countercrockwise();
-        test_rot("a9", &rsq, "(co3ort,-1)");
+        test_rsq("a9", &rsq, "(0x -1y -1adr)");
     }
     // 90°回転のテスト＜その１＞
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rot("c1", &rsq, "(co3ort,-1)");
+        test_rsq("c1", &rsq, "(0x -1y -1adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("c2", &rsq, "(1ort,10)");
+        test_rsq("c2", &rsq, "(1x 0y 10adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("c3", &rsq, "(co1ort,1)");
+        test_rsq("c3", &rsq, "(0x 1y 1adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("c4", &rsq, "(3ort,-10)");
+        test_rsq("c4", &rsq, "(-1x 0y -10adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("c5", &rsq, "(co3ort,-1)");
+        test_rsq("c5", &rsq, "(0x -1y -1adr)");
     }
     // 90°回転のテスト＜その２＞
     {
         let mut rsq = RelativeSquare::from_file_and_rank(1, -1);
-        test_rot("d1", &rsq, "(co4ort,9)");
+        test_rsq("d1", &rsq, "(1x -1y 9adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("d2", &rsq, "(1ort,11)");
+        test_rsq("d2", &rsq, "(1x 1y 11adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("d3", &rsq, "(co2ort,-9)");
+        test_rsq("d3", &rsq, "(-1x 1y -9adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("d4", &rsq, "(3ort,-11)");
+        test_rsq("d4", &rsq, "(-1x -1y -11adr)");
         rsq = rsq.rotation_90_countercrockwise();
-        test_rot("d5", &rsq, "(co4ort,9)");
+        test_rsq("d5", &rsq, "(1x -1y 9adr)");
     }
     /*
     let mut rsq = RelativeSquare::from_file_and_rank(4, 2);
