@@ -393,6 +393,32 @@ fn test_rotation() {
         rsq = rsq.rotation_45_countercrockwise();
         test_rot("a9", &rsq, "(co3ort,-1)");
     }
+    // 90°回転のテスト＜その１＞
+    {
+        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
+        test_rot("c1", &rsq, "(co3ort,-1)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("c2", &rsq, "(1ort,10)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("c3", &rsq, "(co1ort,1)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("c4", &rsq, "(3ort,-10)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("c5", &rsq, "(co3ort,-1)");
+    }
+    // 90°回転のテスト＜その２＞
+    {
+        let mut rsq = RelativeSquare::from_file_and_rank(1, -1);
+        test_rot("d1", &rsq, "(co4ort,9)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("d2", &rsq, "(1ort,11)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("d3", &rsq, "(co2ort,-9)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("d4", &rsq, "(3ort,-11)");
+        rsq = rsq.rotation_90_countercrockwise();
+        test_rot("d5", &rsq, "(co4ort,9)");
+    }
     /*
     let mut rsq = RelativeSquare::from_file_and_rank(4, 2);
     println!("Debug   | (4x,2y) -> {:?} expect=(1ort, 42)", rsq);

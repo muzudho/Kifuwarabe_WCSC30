@@ -202,6 +202,127 @@ impl Rotation {
     }
 }
 
+/// 象限は、回転角度によって境界線上がどちらの象限に属するか変わります。
+/// 回転の直前に調べます。
+pub struct Orthant {
+    /// xより y寄りなら真。
+    pub orthant: u8,
+    pub co: bool,
+}
+impl Orthant {
+    /// angle - 45 or 90.
+    fn from_file_and_rank(angle: i8, file: i8, rank: i8) -> Self {
+        if angle == 45 {
+            // TODO 45°回転時のケースでコーディングしてるが、90°回転時はまた違う☆（＾～＾）
+            // Decision tree.
+            if file < 0 {
+                // 相対番地盤の半分より東側☆（＾～＾） II, III 象限のどちらかは確定☆（＾～＾）
+                if 0 < rank {
+                    // 相対番地盤の半分より南東側☆（＾～＾） II 象限に確定☆（＾～＾）
+                    // 対角線は co の方☆（＾～＾）
+                    Orthant {
+                        orthant: 2,
+                        co: file.abs() <= rank.abs(),
+                    }
+                } else {
+                    // x=0, y=0の境界線上も含むぜ☆（＾～＾）III 象限に確定☆（＾～＾）
+                    // 対角線は co じゃない方☆（＾～＾）
+                    Orthant {
+                        orthant: 3,
+                        co: file.abs() < rank.abs(),
+                    }
+                }
+            } else if 0 < file {
+                // 相対番地盤の半分より西側☆（＾～＾） I, IV 象限のどちらかは確定☆（＾～＾）
+                if rank < 0 {
+                    // 相対番地盤の半分より北西側☆（＾～＾） IV 象限に確定☆（＾～＾）
+                    // 対角線は co の方☆（＾～＾）
+                    Orthant {
+                        orthant: 4,
+                        co: file.abs() <= rank.abs(),
+                    }
+                } else {
+                    // x=0, y=0の境界線上も含むぜ☆（＾～＾） I 象限に確定☆（＾～＾）
+                    // 対角線は co じゃない方☆（＾～＾）
+                    Orthant {
+                        orthant: 1,
+                        co: file.abs() < rank.abs(),
+                    }
+                }
+            } else {
+                // x=0の垂直の境界線上☆（＾～＾） I, III 象限のどちらかの co は確定☆（＾～＾）
+                if rank < 0 {
+                    Orthant {
+                        orthant: 3,
+                        co: true,
+                    }
+                } else if 0 < rank {
+                    Orthant {
+                        orthant: 1,
+                        co: true,
+                    }
+                } else {
+                    panic!("真ん中は取り扱い不可☆（＾～＾）");
+                }
+            }
+        } else {
+            // TODO WIP.
+            // 90°回転のときは境界線は両面に属するが、片面に揃えておくぜ☆（＾～＾）
+            // Decision tree.
+            if file < 0 {
+                // 相対番地盤の半分より東側☆（＾～＾） II, III 象限のどちらかは確定☆（＾～＾）
+                if 0 < rank {
+                    // 相対番地盤の半分より南東側☆（＾～＾） II 象限に確定☆（＾～＾）
+                    // 対角線は co の方☆（＾～＾）
+                    Orthant {
+                        orthant: 2,
+                        co: file.abs() <= rank.abs(),
+                    }
+                } else {
+                    // y=0の境界線上も含むぜ☆（＾～＾）III 象限に確定☆（＾～＾）
+                    // 対角線は co じゃない方☆（＾～＾）
+                    Orthant {
+                        orthant: 3,
+                        co: file.abs() < rank.abs(),
+                    }
+                }
+            } else if 0 < file {
+                // 相対番地盤の半分より西側☆（＾～＾） I, IV 象限のどちらかは確定☆（＾～＾）
+                if rank < 0 {
+                    // 相対番地盤の半分より北西側☆（＾～＾） IV 象限に確定☆（＾～＾）
+                    // 対角線は co じゃない方☆（＾～＾）
+                    Orthant {
+                        orthant: 4,
+                        co: file.abs() < rank.abs(),
+                    }
+                } else {
+                    // y=0の境界線上も含むぜ☆（＾～＾） I 象限に確定☆（＾～＾）
+                    // 対角線は co の方☆（＾～＾）
+                    Orthant {
+                        orthant: 1,
+                        co: file.abs() <= rank.abs(),
+                    }
+                }
+            } else {
+                // x=0の垂直の境界線上☆（＾～＾） II, IV 象限のどちらかの co は確定☆（＾～＾）
+                if rank < 0 {
+                    Orthant {
+                        orthant: 4,
+                        co: true,
+                    }
+                } else if 0 < rank {
+                    Orthant {
+                        orthant: 2,
+                        co: true,
+                    }
+                } else {
+                    panic!("真ん中は取り扱い不可☆（＾～＾）");
+                }
+            }
+        }
+    }
+}
+
 /// 相対升。
 pub struct RelativeSquare {
     /// xより y寄りなら真。
@@ -234,7 +355,10 @@ impl RelativeSquare {
     }
 
     pub fn from_file_and_rank(file: i8, rank: i8) -> Self {
+        // TODO 45°回転時のケースでコーディングしてるが、90°回転時はまた違う☆（＾～＾）
         // Decision tree.
+        let orthant_co = Orthant::from_file_and_rank(45, file, rank);
+        /*
         let (orthant1, co1) = if file < 0 {
             // 相対番地盤の半分より東側☆（＾～＾） II, III 象限のどちらかは確定☆（＾～＾）
             if 0 < rank {
@@ -267,9 +391,10 @@ impl RelativeSquare {
                 panic!("真ん中は取り扱い不可☆（＾～＾）");
             }
         };
+        */
         RelativeSquare {
-            co: co1,
-            orthant: orthant1,
+            co: orthant_co.co,
+            orthant: orthant_co.orthant,
             address: 10 * file + rank,
         }
     }
@@ -331,6 +456,8 @@ impl RelativeSquare {
     }
 
     pub fn rotation_90_countercrockwise(&self) -> Self {
+        // file=0の垂直線上、rank=0の水平線上、対角線の境界線上がどの象限に属するかは
+        // 90°回転時と、45°回転時では仕組みが違うので注意しろだぜ☆（＾～＾）
         let new_adr = if !self.co {
             if self.orthant % 2 == 1 {
                 // 1ort, 3ort
@@ -359,13 +486,23 @@ impl RelativeSquare {
             }
         };
 
-        // 90°回転後に 0 rank なら、 II 象限ではなく III 象限だし、 IV 象限ではなく I 象限だぜ☆（＾～＾）
-        // 1 象限足せばいい☆（＾～＾）
+        // とりあえず、境界線上をどちらの領域として扱うかは決めてしまおうぜ☆（＾～＾）
         let new_orthant = if RelativeSquare::abs_y(new_adr) == 0 {
-            (self.orthant + 1) % 4 + 1
+            if 0 < RelativeSquare::abs_x(new_adr) {
+                1
+            } else {
+                3
+            }
+        } else if RelativeSquare::abs_x(new_adr) == 0 {
+            if 0 < RelativeSquare::abs_y(new_adr) {
+                2
+            } else {
+                4
+            }
         } else {
             (self.orthant) % 4 + 1
         };
+        // let new_orthant = (self.orthant) % 4 + 1;
 
         RelativeSquare::from_relative_address(new_orthant, new_adr)
         /*
@@ -378,6 +515,8 @@ impl RelativeSquare {
     }
 
     pub fn rotation_45_countercrockwise(&self) -> Self {
+        // file=0の垂直線上、rank=0の水平線上、対角線の境界線上がどの象限に属するかは
+        // 90°回転時と、45°回転時では仕組みが違うので注意しろだぜ☆（＾～＾）
         let new_adr = if !self.co {
             if self.orthant % 2 == 1 {
                 // 1ort, 3ort
