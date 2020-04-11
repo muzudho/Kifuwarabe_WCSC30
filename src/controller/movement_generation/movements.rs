@@ -157,16 +157,8 @@ impl MGMovements {
                                 callback_next,
                             );
                         }
-                        King1 => {
+                        King1 | King2 => {
                             NextSquares::looking_for_squares_from_king_on_board(
-                                &Phase::First,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        King2 => {
-                            NextSquares::looking_for_squares_from_king_on_board(
-                                &Phase::Second,
                                 &source,
                                 callback_next,
                             );
@@ -199,27 +191,13 @@ impl MGMovements {
                                 callback_next,
                             );
                         }
-                        Horse1 => {
+                        Horse1 | Horse2 => {
                             NextSquares::looking_for_squares_from_horse_on_board(
-                                &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
-                        Horse2 => {
-                            NextSquares::looking_for_squares_from_horse_on_board(
-                                &Phase::Second,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Dragon1 => {
-                            NextSquares::looking_for_squares_from_dragon_on_board(
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Dragon2 => {
+                        Dragon1 | Dragon2 => {
                             NextSquares::looking_for_squares_from_dragon_on_board(
                                 &source,
                                 callback_next,

@@ -83,15 +83,15 @@ impl NextSquares {
             Rotation::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
-        println!("銀1={:?}", rotation);
+        // println!("銀1={:?}", rotation);
         Squares::next_of(&rotation, source, func1);
-        println!("銀2={:?}", rotation.rotate45ccw());
+        // println!("銀2={:?}", rotation.rotate45ccw());
         Squares::next_of(&rotation.rotate45ccw(), source, func1);
-        println!("銀3={:?}", rotation.rotate90ccw().rotate45ccw());
+        // println!("銀3={:?}", rotation.rotate90ccw().rotate45ccw());
         Squares::next_of(&rotation.rotate90ccw().rotate45ccw(), source, func1);
-        println!("銀4={:?}", rotation.rotate90cw().rotate45cw());
+        // println!("銀4={:?}", rotation.rotate90cw().rotate45cw());
         Squares::next_of(&rotation.rotate90cw().rotate45cw(), source, func1);
-        println!("銀5={:?}", rotation.rotate45cw());
+        // println!("銀5={:?}", rotation.rotate45cw());
         Squares::next_of(&rotation.rotate45cw(), source, func1);
     }
 
@@ -119,29 +119,20 @@ impl NextSquares {
     }
 
     /// 盤上の玉から動けるマスを見ます。
-    pub fn looking_for_squares_from_king_on_board<F1>(
-        friend: &Phase,
-        source: &Square,
-        callback_next: &mut F1,
-    ) where
+    pub fn looking_for_squares_from_king_on_board<F1>(source: &Square, callback_next: &mut F1)
+    where
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-
-        let rotation = if *friend == Phase::First {
-            Rotation::Ccw270
-        } else {
-            Rotation::Ccw90
-        };
         // 回転しなければ北隣だぜ☆（＾～＾）
-        Squares::next_of(&rotation, source, func1);
-        Squares::next_of(&rotation.rotate45ccw(), source, func1);
-        Squares::next_of(&rotation.rotate90ccw(), source, func1);
-        Squares::next_of(&rotation.rotate90ccw().rotate45ccw(), source, func1);
-        Squares::next_of(&rotation.rotate180(), source, func1);
-        Squares::next_of(&rotation.rotate90cw().rotate45cw(), source, func1);
-        Squares::next_of(&rotation.rotate90cw(), source, func1);
-        Squares::next_of(&rotation.rotate45cw(), source, func1);
+        Squares::next_of(&Rotation::Ccw0, source, func1);
+        Squares::next_of(&Rotation::Ccw45, source, func1);
+        Squares::next_of(&Rotation::Ccw90, source, func1);
+        Squares::next_of(&Rotation::Ccw135, source, func1);
+        Squares::next_of(&Rotation::Ccw180, source, func1);
+        Squares::next_of(&Rotation::Ccw225, source, func1);
+        Squares::next_of(&Rotation::Ccw270, source, func1);
+        Squares::next_of(&Rotation::Ccw315, source, func1);
     }
 
     /// 盤上の角から動けるマスを見ます。
@@ -179,24 +170,15 @@ impl NextSquares {
     }
 
     /// 盤上の馬から動けるマスを見ます。
-    pub fn looking_for_squares_from_horse_on_board<F1>(
-        friend: &Phase,
-        source: &Square,
-        callback_next: &mut F1,
-    ) where
+    pub fn looking_for_squares_from_horse_on_board<F1>(source: &Square, callback_next: &mut F1)
+    where
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        let rotation = if *friend == Phase::First {
-            Rotation::Ccw270
-        } else {
-            Rotation::Ccw90
-        };
-        // 回転しなければ北隣だぜ☆（＾～＾）
-        Squares::next_of(&rotation, source, func1);
-        Squares::next_of(&rotation.rotate90ccw(), source, func1);
-        Squares::next_of(&rotation.rotate180(), source, func1);
-        Squares::next_of(&rotation.rotate90cw(), source, func1);
+        Squares::next_of(&Rotation::Ccw45, source, func1);
+        Squares::next_of(&Rotation::Ccw135, source, func1);
+        Squares::next_of(&Rotation::Ccw225, source, func1);
+        Squares::next_of(&Rotation::Ccw315, source, func1);
         Squares::looking_next_from(&Rotation::Ccw45, source, func1);
         Squares::looking_next_from(&Rotation::Ccw135, source, func1);
         Squares::looking_next_from(&Rotation::Ccw225, source, func1);
