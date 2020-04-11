@@ -33,7 +33,6 @@ impl NextSquares {
             Angle::Ccw90
         };
 
-        // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&angle, source, func1);
     }
 
@@ -89,7 +88,6 @@ impl NextSquares {
         } else {
             Angle::Ccw90
         };
-        // 回転しなければ北隣だぜ☆（＾～＾）
         // println!("銀1={:?}", angle);
         Squares::next_of(&angle, source, func1);
         // println!("銀2={:?}", angle.rotate45ccw());
@@ -116,7 +114,6 @@ impl NextSquares {
         } else {
             Angle::Ccw90
         };
-        // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&angle, source, func1);
         Squares::next_of(&angle.rotate45ccw(), source, func1);
         Squares::next_of(&angle.rotate90ccw(), source, func1);
@@ -131,7 +128,6 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&Angle::Ccw0, source, func1);
         Squares::next_of(&Angle::Ccw45, source, func1);
         Squares::next_of(&Angle::Ccw90, source, func1);
