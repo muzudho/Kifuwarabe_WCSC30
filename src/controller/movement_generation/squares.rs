@@ -29,9 +29,9 @@ impl NextSquares {
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
 
         let rotation = if *friend == Phase::First {
-            Rotation::Ccw270
+            Angle::Ccw270
         } else {
-            Rotation::Ccw90
+            Angle::Ccw90
         };
 
         // 回転しなければ北隣だぜ☆（＾～＾）
@@ -48,7 +48,7 @@ impl NextSquares {
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
-        Squares::looking_next_from(&Rotation::Ccw270, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, source, func1);
     }
 
     /// 盤上の桂から動けるマスを見ます。
@@ -78,9 +78,9 @@ impl NextSquares {
         };
 
         let rotation = if *friend == Phase::First {
-            Rotation::Ccw270
+            Angle::Ccw270
         } else {
-            Rotation::Ccw90
+            Angle::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         // println!("銀1={:?}", rotation);
@@ -105,9 +105,9 @@ impl NextSquares {
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
         let rotation = if *friend == Phase::First {
-            Rotation::Ccw270
+            Angle::Ccw270
         } else {
-            Rotation::Ccw90
+            Angle::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
@@ -125,14 +125,14 @@ impl NextSquares {
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
         // 回転しなければ北隣だぜ☆（＾～＾）
-        Squares::next_of(&Rotation::Ccw0, source, func1);
-        Squares::next_of(&Rotation::Ccw45, source, func1);
-        Squares::next_of(&Rotation::Ccw90, source, func1);
-        Squares::next_of(&Rotation::Ccw135, source, func1);
-        Squares::next_of(&Rotation::Ccw180, source, func1);
-        Squares::next_of(&Rotation::Ccw225, source, func1);
-        Squares::next_of(&Rotation::Ccw270, source, func1);
-        Squares::next_of(&Rotation::Ccw315, source, func1);
+        Squares::next_of(&Angle::Ccw0, source, func1);
+        Squares::next_of(&Angle::Ccw45, source, func1);
+        Squares::next_of(&Angle::Ccw90, source, func1);
+        Squares::next_of(&Angle::Ccw135, source, func1);
+        Squares::next_of(&Angle::Ccw180, source, func1);
+        Squares::next_of(&Angle::Ccw225, source, func1);
+        Squares::next_of(&Angle::Ccw270, source, func1);
+        Squares::next_of(&Angle::Ccw315, source, func1);
     }
 
     /// 盤上の角から動けるマスを見ます。
@@ -146,10 +146,10 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(&Rotation::Ccw45, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw135, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw225, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw315, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, source, func1);
+        Squares::looking_next_from(&Angle::Ccw135, source, func1);
+        Squares::looking_next_from(&Angle::Ccw225, source, func1);
+        Squares::looking_next_from(&Angle::Ccw315, source, func1);
     }
 
     /// 盤上の飛から動けるマスを見ます。
@@ -163,10 +163,10 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(&Rotation::Ccw0, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw90, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw180, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw270, source, func1);
+        Squares::looking_next_from(&Angle::Ccw0, source, func1);
+        Squares::looking_next_from(&Angle::Ccw90, source, func1);
+        Squares::looking_next_from(&Angle::Ccw180, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, source, func1);
     }
 
     /// 盤上の馬から動けるマスを見ます。
@@ -175,14 +175,14 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Rotation::Ccw45, source, func1);
-        Squares::next_of(&Rotation::Ccw135, source, func1);
-        Squares::next_of(&Rotation::Ccw225, source, func1);
-        Squares::next_of(&Rotation::Ccw315, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw45, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw135, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw225, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw315, source, func1);
+        Squares::next_of(&Angle::Ccw45, source, func1);
+        Squares::next_of(&Angle::Ccw135, source, func1);
+        Squares::next_of(&Angle::Ccw225, source, func1);
+        Squares::next_of(&Angle::Ccw315, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, source, func1);
+        Squares::looking_next_from(&Angle::Ccw135, source, func1);
+        Squares::looking_next_from(&Angle::Ccw225, source, func1);
+        Squares::looking_next_from(&Angle::Ccw315, source, func1);
     }
 
     /// 盤上の竜から動けるマスを見ます。
@@ -191,14 +191,14 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Rotation::Ccw45, source, func1);
-        Squares::next_of(&Rotation::Ccw135, source, func1);
-        Squares::next_of(&Rotation::Ccw225, source, func1);
-        Squares::next_of(&Rotation::Ccw315, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw0, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw90, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw180, source, func1);
-        Squares::looking_next_from(&Rotation::Ccw270, source, func1);
+        Squares::next_of(&Angle::Ccw45, source, func1);
+        Squares::next_of(&Angle::Ccw135, source, func1);
+        Squares::next_of(&Angle::Ccw225, source, func1);
+        Squares::next_of(&Angle::Ccw315, source, func1);
+        Squares::looking_next_from(&Angle::Ccw0, source, func1);
+        Squares::looking_next_from(&Angle::Ccw90, source, func1);
+        Squares::looking_next_from(&Angle::Ccw180, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, source, func1);
     }
 }
 
@@ -390,7 +390,7 @@ impl Squares {
         }
     }
 
-    pub fn looking_next_from<F1>(rot: &Rotation, start: &Square, callback: &mut F1)
+    pub fn looking_next_from<F1>(angle: &Angle, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
@@ -398,7 +398,7 @@ impl Squares {
         loop {
             // 回転の起角は西隣だぜ☆（＾～＾）
             next += RelativeSquare::from_file_and_rank(1, 0)
-                .rotate_ab(rot)
+                .rotate(angle)
                 .get_address();
 
             if Squares::has_jumped_out_of_the_board(next) {
@@ -410,17 +410,15 @@ impl Squares {
     }
 
     /// 北隣☆（＾～＾） 回転もできるぜ☆（＾～＾）
-    pub fn next_of<F1>(rotation: &Rotation, start: &Square, callback: &mut F1)
+    pub fn next_of<F1>(angle: &Angle, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
-        // 北隣＋回転☆（＾～＾）
-        // println!("start={}", start.address);
-        // println!("north={:?}", RelativeSquare::from_file_and_rank(0, -1));
-        let rel = RelativeSquare::from_file_and_rank(0, -1)
-            .rotate_ab(rotation)
+        // 回転の起角は西隣だぜ☆（＾～＾）
+        let rel = RelativeSquare::from_file_and_rank(1, 0)
+            .rotate(angle)
             .get_address();
-        // println!("rot={:?} {}", rotation, rel);
+        // println!("angle={:?} {}", angle, rel);
         let next = start.address + rel;
         // println!("next={}", next);
         if !Squares::has_jumped_out_of_the_board(next) {
@@ -429,8 +427,8 @@ impl Squares {
                 "北隣＋回転☆（＾～＾）",
                 /*
                 &format!(
-                    "北隣＋回転☆（＾～＾） start.address={} rotation={:?} next={}",
-                    start.address, rotation, next
+                    "北隣＋回転☆（＾～＾） start.address={} angle={:?} next={}",
+                    start.address, angle, next
                 ),
                 */
             );

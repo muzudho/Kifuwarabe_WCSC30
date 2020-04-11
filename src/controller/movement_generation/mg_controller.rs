@@ -281,7 +281,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             E(b) => {
                 if b {
                     // 長東
-                    Squares::looking_next_from(&Rotation::Ccw180, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw180, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -292,7 +292,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 東
-                    Squares::next_of(&Rotation::Ccw180, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw180, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -308,7 +308,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             NE(b) => {
                 if b {
                     // 長北東
-                    Squares::looking_next_from(&Rotation::Ccw225, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw225, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -319,7 +319,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 北東
-                    Squares::next_of(&Rotation::Ccw225, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw225, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -353,7 +353,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             N(b) => {
                 if b {
                     // 長北
-                    Squares::looking_next_from(&Rotation::Ccw270, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw270, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -364,7 +364,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 北
-                    Squares::next_of(&Rotation::Ccw270, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw270, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -398,7 +398,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             NW(b) => {
                 if b {
                     // 長北西
-                    Squares::looking_next_from(&Rotation::Ccw315, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw315, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -409,7 +409,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 北西
-                    Squares::next_of(&Rotation::Ccw315, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw315, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -425,7 +425,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             W(b) => {
                 if b {
                     // 長西
-                    Squares::looking_next_from(&Rotation::Ccw0, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw0, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -436,7 +436,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 西
-                    Squares::next_of(&Rotation::Ccw0, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw0, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -452,7 +452,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             SW(b) => {
                 if b {
                     // 長南西
-                    Squares::looking_next_from(&Rotation::Ccw45, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw45, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -463,7 +463,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 南西
-                    Squares::next_of(&Rotation::Ccw45, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw45, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -497,7 +497,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             S(b) => {
                 if b {
                     // 長南
-                    Squares::looking_next_from(&Rotation::Ccw90, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw90, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -508,7 +508,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 南
-                    Squares::next_of(&Rotation::Ccw90, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw90, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -542,7 +542,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             SE(b) => {
                 if b {
                     // 長南東
-                    Squares::looking_next_from(&Rotation::Ccw135, square_dst, &mut |next_square| {
+                    Squares::looking_next_from(&Angle::Ccw135, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_sliding(
                             &ps_dst.piece,
                             current_board,
@@ -553,7 +553,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     });
                 } else {
                     // 南東
-                    Squares::next_of(&Rotation::Ccw135, square_dst, &mut |next_square| {
+                    Squares::next_of(&Angle::Ccw135, square_dst, &mut |next_square| {
                         lookup_no_promotion_source_by_piece_next(
                             &ps_dst.piece,
                             current_board,
@@ -719,7 +719,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長東
                     Squares::looking_next_from(
-                        &Rotation::Ccw180,
+                        &Angle::Ccw180,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -734,7 +734,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 東
                     Squares::next_of(
-                        &Rotation::Ccw180,
+                        &Angle::Ccw180,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -754,7 +754,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長北東
                     Squares::looking_next_from(
-                        &Rotation::Ccw225,
+                        &Angle::Ccw225,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -769,7 +769,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 北東
                     Squares::next_of(
-                        &Rotation::Ccw225,
+                        &Angle::Ccw225,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -807,7 +807,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長北
                     Squares::looking_next_from(
-                        &Rotation::Ccw270,
+                        &Angle::Ccw270,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -822,7 +822,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 北
                     Squares::next_of(
-                        &Rotation::Ccw270,
+                        &Angle::Ccw270,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -860,7 +860,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長北西
                     Squares::looking_next_from(
-                        &Rotation::Ccw315,
+                        &Angle::Ccw315,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -875,7 +875,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 北西
                     Squares::next_of(
-                        &Rotation::Ccw315,
+                        &Angle::Ccw315,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -895,7 +895,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長西
                     Squares::looking_next_from(
-                        &Rotation::Ccw0,
+                        &Angle::Ccw0,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -910,7 +910,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 西
                     Squares::next_of(
-                        &Rotation::Ccw0,
+                        &Angle::Ccw0,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -930,7 +930,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長南西
                     Squares::looking_next_from(
-                        &Rotation::Ccw45,
+                        &Angle::Ccw45,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -945,7 +945,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 南西
                     Squares::next_of(
-                        &Rotation::Ccw45,
+                        &Angle::Ccw45,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -983,7 +983,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長南
                     Squares::looking_next_from(
-                        &Rotation::Ccw90,
+                        &Angle::Ccw90,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -998,7 +998,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 南
                     Squares::next_of(
-                        &Rotation::Ccw90,
+                        &Angle::Ccw90,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -1036,7 +1036,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 if b {
                     // 長南東
                     Squares::looking_next_from(
-                        &Rotation::Ccw135,
+                        &Angle::Ccw135,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_sliding(
@@ -1051,7 +1051,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                 } else {
                     // 南東
                     Squares::next_of(
-                        &Rotation::Ccw135,
+                        &Angle::Ccw135,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -1204,7 +1204,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長東
                         Squares::looking_next_from(
-                            &Rotation::Ccw180,
+                            &Angle::Ccw180,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1218,7 +1218,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     } else {
                         // 東
                         Squares::next_of(
-                            &Rotation::Ccw180,
+                            &Angle::Ccw180,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1237,7 +1237,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北東
                         Squares::looking_next_from(
-                            &Rotation::Ccw225,
+                            &Angle::Ccw225,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1251,7 +1251,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     } else {
                         // 北東
                         Squares::next_of(
-                            &Rotation::Ccw225,
+                            &Angle::Ccw225,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1287,7 +1287,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北
                         Squares::looking_next_from(
-                            &Rotation::Ccw270,
+                            &Angle::Ccw270,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1301,7 +1301,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     } else {
                         // 北
                         Squares::next_of(
-                            &Rotation::Ccw270,
+                            &Angle::Ccw270,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1337,7 +1337,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北西
                         Squares::looking_next_from(
-                            &Rotation::Ccw315,
+                            &Angle::Ccw315,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1351,7 +1351,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     } else {
                         // 北西
                         Squares::next_of(
-                            &Rotation::Ccw315,
+                            &Angle::Ccw315,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1370,7 +1370,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長西
                         Squares::looking_next_from(
-                            &Rotation::Ccw0,
+                            &Angle::Ccw0,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1383,19 +1383,15 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 西
-                        Squares::next_of(
-                            &Rotation::Ccw0,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
+                        Squares::next_of(&Angle::Ccw0, &dst_sq_piece.square, &mut |next_square| {
+                            lookup_no_promotion_source_by_phase_next(
+                                &dst_sq_piece,
+                                current_board,
+                                &mut lookups_the_square,
+                                next_square,
+                            );
+                            true
+                        });
                     }
                 }
                 // 南西
@@ -1403,7 +1399,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南西
                         Squares::looking_next_from(
-                            &Rotation::Ccw45,
+                            &Angle::Ccw45,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1416,19 +1412,15 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 南西
-                        Squares::next_of(
-                            &Rotation::Ccw45,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
+                        Squares::next_of(&Angle::Ccw45, &dst_sq_piece.square, &mut |next_square| {
+                            lookup_no_promotion_source_by_phase_next(
+                                &dst_sq_piece,
+                                current_board,
+                                &mut lookups_the_square,
+                                next_square,
+                            );
+                            true
+                        });
                     }
                 }
                 SSW => {
@@ -1453,7 +1445,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南
                         Squares::looking_next_from(
-                            &Rotation::Ccw90,
+                            &Angle::Ccw90,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1466,19 +1458,15 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 南
-                        Squares::next_of(
-                            &Rotation::Ccw90,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
+                        Squares::next_of(&Angle::Ccw90, &dst_sq_piece.square, &mut |next_square| {
+                            lookup_no_promotion_source_by_phase_next(
+                                &dst_sq_piece,
+                                current_board,
+                                &mut lookups_the_square,
+                                next_square,
+                            );
+                            true
+                        });
                     }
                 }
                 SSE => {
@@ -1503,7 +1491,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南東
                         Squares::looking_next_from(
-                            &Rotation::Ccw135,
+                            &Angle::Ccw135,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -1517,7 +1505,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                     } else {
                         // 南東
                         Squares::next_of(
-                            &Rotation::Ccw135,
+                            &Angle::Ccw135,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1649,7 +1637,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長東
                         Squares::looking_next_from(
-                            &Rotation::Ccw180,
+                            &Angle::Ccw180,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1663,7 +1651,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 東
                         Squares::next_of(
-                            &Rotation::Ccw180,
+                            &Angle::Ccw180,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1682,7 +1670,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北東
                         Squares::looking_next_from(
-                            &Rotation::Ccw225,
+                            &Angle::Ccw225,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1696,7 +1684,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 北東
                         Squares::next_of(
-                            &Rotation::Ccw225,
+                            &Angle::Ccw225,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1732,7 +1720,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北
                         Squares::looking_next_from(
-                            &Rotation::Ccw270,
+                            &Angle::Ccw270,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1746,7 +1734,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 北
                         Squares::next_of(
-                            &Rotation::Ccw270,
+                            &Angle::Ccw270,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1782,7 +1770,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長北西
                         Squares::looking_next_from(
-                            &Rotation::Ccw315,
+                            &Angle::Ccw315,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1796,7 +1784,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 北西
                         Squares::next_of(
-                            &Rotation::Ccw315,
+                            &Angle::Ccw315,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1815,7 +1803,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長西
                         Squares::looking_next_from(
-                            &Rotation::Ccw0,
+                            &Angle::Ccw0,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1829,7 +1817,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 西
                         Squares::next_of(
-                            &Rotation::Ccw0,
+                            &Angle::Ccw0,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1848,7 +1836,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南西
                         Squares::looking_next_from(
-                            &Rotation::Ccw45,
+                            &Angle::Ccw45,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1862,7 +1850,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 南西
                         Squares::next_of(
-                            &Rotation::Ccw45,
+                            &Angle::Ccw45,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1898,7 +1886,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南
                         Squares::looking_next_from(
-                            &Rotation::Ccw90,
+                            &Angle::Ccw90,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1912,7 +1900,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 南
                         Squares::next_of(
-                            &Rotation::Ccw90,
+                            &Angle::Ccw90,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1948,7 +1936,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     if b {
                         // 長南東
                         Squares::looking_next_from(
-                            &Rotation::Ccw135,
+                            &Angle::Ccw135,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_sliding(
@@ -1962,7 +1950,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     } else {
                         // 南東
                         Squares::next_of(
-                            &Rotation::Ccw135,
+                            &Angle::Ccw135,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(

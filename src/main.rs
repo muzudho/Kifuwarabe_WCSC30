@@ -418,28 +418,28 @@ fn test_rotation() {
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
         test_rsq("g1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate_rel(&Rotation::Ccw45);
+        rsq = rsq.rotate(&Angle::Ccw45);
         test_rsq("g2", "(1x -1y 9adr)", &rsq);
         rsq = rsq.double_rank();
         test_rsq("g3", "(1x -2y 8adr)", &rsq);
 
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
         test_rsq("g4", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate_rel(&Rotation::Ccw315);
+        rsq = rsq.rotate(&Angle::Ccw315);
         test_rsq("g5", "(-1x -1y -11adr)", &rsq);
         rsq = rsq.double_rank();
         test_rsq("g6", "(-1x -2y -12adr)", &rsq);
 
         let mut rsq = RelativeSquare::from_file_and_rank(0, 1);
         test_rsq("g7", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate_rel(&Rotation::Ccw45);
+        rsq = rsq.rotate(&Angle::Ccw45);
         test_rsq("g8", "(-1x 1y -9adr)", &rsq);
         rsq = rsq.double_rank();
         test_rsq("g9", "(-1x 2y -8adr)", &rsq);
 
         let mut rsq = RelativeSquare::from_file_and_rank(0, 1);
         test_rsq("g10", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate_rel(&Rotation::Ccw315);
+        rsq = rsq.rotate(&Angle::Ccw315);
         test_rsq("g11", "(1x 1y 11adr)", &rsq);
         rsq = rsq.double_rank();
         test_rsq("g12", "(1x 2y 12adr)", &rsq);

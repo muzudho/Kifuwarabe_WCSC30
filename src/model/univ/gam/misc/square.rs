@@ -132,7 +132,7 @@ impl Degree45Orthant {
 
 /// Counterclockwise(反時計回り)での回転方向。
 #[derive(Debug)]
-pub enum Rotation {
+pub enum Angle {
     /// 西。
     Ccw0,
     /// 南西。
@@ -150,10 +150,10 @@ pub enum Rotation {
     /// 北西。
     Ccw315,
 }
-impl Rotation {
+impl Angle {
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate135cw(&self) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
+        use crate::model::univ::gam::misc::square::Angle::*;
         match self {
             Ccw0 => Ccw225,
             Ccw45 => Ccw270,
@@ -167,7 +167,7 @@ impl Rotation {
     }
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate90cw(&self) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
+        use crate::model::univ::gam::misc::square::Angle::*;
         match self {
             Ccw0 => Ccw270,
             Ccw45 => Ccw315,
@@ -181,7 +181,7 @@ impl Rotation {
     }
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate45cw(&self) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
+        use crate::model::univ::gam::misc::square::Angle::*;
         match self {
             Ccw0 => Ccw315,
             Ccw45 => Ccw0,
@@ -195,7 +195,7 @@ impl Rotation {
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate45ccw(&self) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
+        use crate::model::univ::gam::misc::square::Angle::*;
         match self {
             Ccw0 => Ccw45,
             Ccw45 => Ccw90,
@@ -209,7 +209,7 @@ impl Rotation {
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate90ccw(&self) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
+        use crate::model::univ::gam::misc::square::Angle::*;
         match self {
             Ccw0 => Ccw90,
             Ccw45 => Ccw135,
@@ -223,7 +223,7 @@ impl Rotation {
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate135ccw(&self) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
+        use crate::model::univ::gam::misc::square::Angle::*;
         match self {
             Ccw0 => Ccw135,
             Ccw45 => Ccw180,
@@ -237,7 +237,7 @@ impl Rotation {
     }
     /// 点対称☆（＾～＾）
     pub fn rotate180(&self) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
+        use crate::model::univ::gam::misc::square::Angle::*;
         match self {
             Ccw0 => Ccw180,
             Ccw45 => Ccw225,
@@ -279,9 +279,9 @@ impl RelativeSquare {
         Degree45Orthant::from_file_and_rank(self.file, self.rank)
     }
 
-    pub fn rotate_rel(&self, rot: &Rotation) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
-        match rot {
+    pub fn rotate(&self, angle: &Angle) -> Self {
+        use crate::model::univ::gam::misc::square::Angle::*;
+        match angle {
             Ccw0 => RelativeSquare {
                 file: self.file,
                 rank: self.rank,
@@ -308,54 +308,6 @@ impl RelativeSquare {
             }
             Ccw270 => self.rotate_180().rotate_90_countercrockwise(),
             Ccw315 => {
-                //*
-                let r180 = self.rotate_180();
-                // println!("> r180={:?}", r180);
-                let r180_90 = r180.rotate_90_countercrockwise();
-                // println!("> r180+90={:?}", r180_90);
-                let r180_90_45 = r180_90.rotate_45_countercrockwise();
-                // println!("> r180+90+45={:?}", r180_90_45);
-                r180_90_45
-                // */
-                /*
-                self.rotation_180()
-                    .rotation_90_countercrockwise()
-                    .rotation_45_countercrockwise()
-                */
-            }
-        }
-    }
-
-    pub fn rotate_ab(&self, rot: &Rotation) -> Self {
-        use crate::model::univ::gam::misc::square::Rotation::*;
-        // Square は常に Ccw270(北）を向いています。
-        match rot {
-            Ccw270 => RelativeSquare {
-                file: self.file,
-                rank: self.rank,
-            },
-            Ccw315 => self.rotate_45_countercrockwise(),
-            Ccw0 => self.rotate_90_countercrockwise(),
-            Ccw45 => {
-                let r90 = self.rotate_90_countercrockwise();
-                // println!("> r90={:?}", r90);
-                let r90_45 = r90.rotate_45_countercrockwise();
-                // println!("> r90_45={:?}", r90_45);
-                r90_45
-            }
-            Ccw90 => self.rotate_180(),
-            Ccw135 => {
-                /*
-                let r180 = self.rotation_180();
-                println!("> r180={:?}", r180);
-                let r180_45 = r180.rotation_45_countercrockwise();
-                println!("> r180+45={:?}", r180_45);
-                r180_45
-                */
-                self.rotate_180().rotate_45_countercrockwise()
-            }
-            Ccw180 => self.rotate_180().rotate_90_countercrockwise(),
-            Ccw225 => {
                 //*
                 let r180 = self.rotate_180();
                 // println!("> r180={:?}", r180);
