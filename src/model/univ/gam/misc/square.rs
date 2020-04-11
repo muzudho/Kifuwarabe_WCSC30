@@ -279,7 +279,54 @@ impl RelativeSquare {
         Degree45Orthant::from_file_and_rank(self.file, self.rank)
     }
 
-    pub fn rotate(&self, rot: &Rotation) -> Self {
+    pub fn rotate_rel(&self, rot: &Rotation) -> Self {
+        use crate::model::univ::gam::misc::square::Rotation::*;
+        match rot {
+            Ccw0 => RelativeSquare {
+                file: self.file,
+                rank: self.rank,
+            },
+            Ccw45 => self.rotate_45_countercrockwise(),
+            Ccw90 => self.rotate_90_countercrockwise(),
+            Ccw135 => {
+                let r90 = self.rotate_90_countercrockwise();
+                // println!("> r90={:?}", r90);
+                let r90_45 = r90.rotate_45_countercrockwise();
+                // println!("> r90_45={:?}", r90_45);
+                r90_45
+            }
+            Ccw180 => self.rotate_180(),
+            Ccw225 => {
+                /*
+                let r180 = self.rotation_180();
+                println!("> r180={:?}", r180);
+                let r180_45 = r180.rotation_45_countercrockwise();
+                println!("> r180+45={:?}", r180_45);
+                r180_45
+                */
+                self.rotate_180().rotate_45_countercrockwise()
+            }
+            Ccw270 => self.rotate_180().rotate_90_countercrockwise(),
+            Ccw315 => {
+                //*
+                let r180 = self.rotate_180();
+                // println!("> r180={:?}", r180);
+                let r180_90 = r180.rotate_90_countercrockwise();
+                // println!("> r180+90={:?}", r180_90);
+                let r180_90_45 = r180_90.rotate_45_countercrockwise();
+                // println!("> r180+90+45={:?}", r180_90_45);
+                r180_90_45
+                // */
+                /*
+                self.rotation_180()
+                    .rotation_90_countercrockwise()
+                    .rotation_45_countercrockwise()
+                */
+            }
+        }
+    }
+
+    pub fn rotate_ab(&self, rot: &Rotation) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
         // Square は常に Ccw270(北）を向いています。
         match rot {
@@ -324,6 +371,21 @@ impl RelativeSquare {
                     .rotation_45_countercrockwise()
                 */
             }
+        }
+    }
+
+    /// 段を２倍にします。桂馬に使います。
+    pub fn double_rank(&self) -> Self {
+        let new_rank = 2 * self.rank;
+        let carry = new_rank / 10;
+        let new_file = if carry != 0 {
+            self.file + carry
+        } else {
+            self.file
+        };
+        RelativeSquare {
+            file: new_file,
+            rank: new_rank,
         }
     }
 

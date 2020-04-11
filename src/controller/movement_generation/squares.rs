@@ -398,7 +398,7 @@ impl Squares {
         loop {
             // 回転の起角は西隣だぜ☆（＾～＾）
             next += RelativeSquare::from_file_and_rank(1, 0)
-                .rotate(rot)
+                .rotate_ab(rot)
                 .get_address();
 
             if Squares::has_jumped_out_of_the_board(next) {
@@ -418,7 +418,7 @@ impl Squares {
         // println!("start={}", start.address);
         // println!("north={:?}", RelativeSquare::from_file_and_rank(0, -1));
         let rel = RelativeSquare::from_file_and_rank(0, -1)
-            .rotate(rotation)
+            .rotate_ab(rotation)
             .get_address();
         // println!("rot={:?} {}", rotation, rel);
         let next = start.address + rel;
