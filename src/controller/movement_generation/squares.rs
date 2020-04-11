@@ -1,7 +1,6 @@
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_absolute;
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_relative;
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_with_frame_as_absolute;
-use crate::controller::io::*;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::square::Square;
 use crate::model::univ::gam::misc::square::*;
@@ -30,9 +29,9 @@ impl NextSquares {
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
 
         let rotation = if *friend == Phase::First {
-            Rotation::C0
+            Rotation::Ccw270
         } else {
-            Rotation::C180
+            Rotation::Ccw90
         };
 
         // 回転しなければ北隣だぜ☆（＾～＾）
@@ -79,9 +78,9 @@ impl NextSquares {
         };
 
         let rotation = if *friend == Phase::First {
-            Rotation::C0
+            Rotation::Ccw270
         } else {
-            Rotation::C180
+            Rotation::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         println!("銀1={:?}", rotation);
@@ -106,9 +105,9 @@ impl NextSquares {
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
         let rotation = if *friend == Phase::First {
-            Rotation::C0
+            Rotation::Ccw270
         } else {
-            Rotation::C180
+            Rotation::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
@@ -130,9 +129,9 @@ impl NextSquares {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
 
         let rotation = if *friend == Phase::First {
-            Rotation::C0
+            Rotation::Ccw270
         } else {
-            Rotation::C180
+            Rotation::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
@@ -189,9 +188,9 @@ impl NextSquares {
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
         let rotation = if *friend == Phase::First {
-            Rotation::C0
+            Rotation::Ccw270
         } else {
-            Rotation::C180
+            Rotation::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
         Squares::next_of(&rotation, source, func1);
@@ -325,13 +324,6 @@ impl Promoting {
         (*friend == Phase::First && destination.get_rank() < RANK_4)
             || (*friend == Phase::Second && RANK_6 < destination.get_rank())
     }
-}
-
-pub enum Mirror {
-    Origin,
-    /// East から West へ反転。
-    Mirror,
-    Both,
 }
 
 pub enum UpsideDown {
@@ -519,80 +511,6 @@ impl Squares {
                 */
             );
             callback(Square::from_address(next));
-        }
-    }
-    /// 東隣☆（＾～＾） 西隣もついでに作れだぜ☆（＾～＾）
-    pub fn east_of<F1>(
-        counterclockwise: Counterclockwise,
-        mirror: Mirror,
-        phase: &Phase,
-        start: &Square,
-        callback: &mut F1,
-    ) where
-        F1: FnMut(Square) -> bool,
-    {
-        match mirror {
-            Mirror::Origin | Mirror::Both => {
-                // 東隣☆（＾～＾）
-                let rel_east = -10;
-                let rel_rot180 = Squares::rotate180_as_relative(phase, rel_east);
-                let rot90rel = Squares::rotate90_counterclockwise_as_relative(
-                    &counterclockwise,
-                    &UpsideDown::Origin,
-                    rel_rot180,
-                );
-                let next = rot90rel + start.address;
-                /*
-                IO::logln(&format!(
-                    "東隣 {} rel_east={} {}{}next={} + S{}",
-                    phase,
-                    rel_east,
-                    match *phase {
-                        Phase::Second => format!("rot180={} ", rel_rot180),
-                        _ => "".to_string(),
-                    },
-                    match counterclockwise {
-                        Counterclockwise::Rotate90 => format!("rot90={} ", rot90rel),
-                        _ => "".to_string(),
-                    },
-                    next,
-                    start.address,
-                ));
-                */
-                if !Squares::has_jumped_out_horizontally(&counterclockwise, next) {
-                    assert_in_board_as_absolute(
-                        next,
-                        &format!(
-                            "東隣e☆（＾～＾） start.address={} rot180rel={} rot90rel={}",
-                            start.address, rel_rot180, rot90rel
-                        ),
-                    );
-                    callback(Square::from_address(next));
-                }
-            }
-            _ => {}
-        };
-
-        match mirror {
-            Mirror::Mirror | Mirror::Both => {
-                // 東隣を、上下反転させて先後反転させれば、西隣だぜ☆（＾～＾）
-                let rot180rel = Squares::rotate180_as_relative(phase, 10);
-                let rot90rel = Squares::rotate90_counterclockwise_as_relative(
-                    &counterclockwise,
-                    &UpsideDown::Flip,
-                    rot180rel,
-                );
-                let next = start.address + rot90rel;
-                IO::logln(&format!(
-                    "西隣 rot180rel={} rot90rel={} next={}",
-                    rot180rel, rot90rel, next
-                ));
-                if !Squares::has_jumped_out_horizontally(&counterclockwise, next) {
-                    assert_in_board_as_absolute(next, "西隣w☆（＾～＾）");
-                    callback(Square::from_address(next));
-                }
-            }
-            _ => {}
         }
     }
 

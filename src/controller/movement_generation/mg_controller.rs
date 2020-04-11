@@ -297,22 +297,16 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     );
                 } else {
                     // 東
-                    Squares::east_of(
-                        Counterclockwise::Origin,
-                        Mirror::Origin,
-                        &Phase::First,
-                        square_dst,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_piece_next(
-                                &ps_dst.piece,
-                                current_board,
-                                speed_of_light,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
+                    Squares::next_of(&Rotation::Ccw180, square_dst, &mut |next_square| {
+                        lookup_no_promotion_source_by_piece_next(
+                            &ps_dst.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    });
                 }
             }
             // 北東
@@ -390,22 +384,16 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     );
                 } else {
                     // 北
-                    Squares::east_of(
-                        Counterclockwise::Rotate90,
-                        Mirror::Origin,
-                        &Phase::First,
-                        square_dst,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_piece_next(
-                                &ps_dst.piece,
-                                current_board,
-                                speed_of_light,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
+                    Squares::next_of(&Rotation::Ccw270, square_dst, &mut |next_square| {
+                        lookup_no_promotion_source_by_piece_next(
+                            &ps_dst.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    });
                 }
             }
             NNW => {
@@ -483,22 +471,16 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     );
                 } else {
                     // 西
-                    Squares::east_of(
-                        Counterclockwise::Origin,
-                        Mirror::Mirror,
-                        &Phase::First,
-                        square_dst,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_piece_next(
-                                &ps_dst.piece,
-                                current_board,
-                                speed_of_light,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
+                    Squares::next_of(&Rotation::Ccw0, square_dst, &mut |next_square| {
+                        lookup_no_promotion_source_by_piece_next(
+                            &ps_dst.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    });
                 }
             }
             // 南西
@@ -576,22 +558,16 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     );
                 } else {
                     // 南
-                    Squares::east_of(
-                        Counterclockwise::Rotate90,
-                        Mirror::Origin,
-                        &Phase::First.turn(),
-                        square_dst,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_piece_next(
-                                &ps_dst.piece,
-                                current_board,
-                                speed_of_light,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
+                    Squares::next_of(&Rotation::Ccw90, square_dst, &mut |next_square| {
+                        lookup_no_promotion_source_by_piece_next(
+                            &ps_dst.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    });
                 }
             }
             SSE => {
@@ -818,10 +794,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     );
                 } else {
                     // 東
-                    Squares::east_of(
-                        Counterclockwise::Origin,
-                        Mirror::Origin,
-                        &Phase::First,
+                    Squares::next_of(
+                        &Rotation::Ccw180,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -911,10 +885,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     );
                 } else {
                     // 北
-                    Squares::east_of(
-                        Counterclockwise::Rotate90,
-                        Mirror::Origin,
-                        &Phase::First,
+                    Squares::next_of(
+                        &Rotation::Ccw270,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -1004,10 +976,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     );
                 } else {
                     // 西
-                    Squares::east_of(
-                        Counterclockwise::Origin,
-                        Mirror::Mirror,
-                        &Phase::First,
+                    Squares::next_of(
+                        &Rotation::Ccw0,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -1097,10 +1067,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     );
                 } else {
                     // 南
-                    Squares::east_of(
-                        Counterclockwise::Rotate90,
-                        Mirror::Origin,
-                        &Phase::First.turn(),
+                    Squares::next_of(
+                        &Rotation::Ccw90,
                         &square_dst_piece_src.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_next(
@@ -1322,10 +1290,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 東
-                        Squares::east_of(
-                            Counterclockwise::Origin,
-                            Mirror::Origin,
-                            &Phase::First,
+                        Squares::next_of(
+                            &Rotation::Ccw180,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1410,10 +1376,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 北
-                        Squares::east_of(
-                            Counterclockwise::Rotate90,
-                            Mirror::Origin,
-                            &Phase::First,
+                        Squares::next_of(
+                            &Rotation::Ccw270,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1498,10 +1462,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 西
-                        Squares::east_of(
-                            Counterclockwise::Origin,
-                            Mirror::Mirror,
-                            &Phase::First,
+                        Squares::next_of(
+                            &Rotation::Ccw0,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1586,10 +1548,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 南
-                        Squares::east_of(
-                            Counterclockwise::Rotate90,
-                            Mirror::Origin,
-                            &Phase::First.turn(),
+                        Squares::next_of(
+                            &Rotation::Ccw90,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_next(
@@ -1787,10 +1747,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 東
-                        Squares::east_of(
-                            Counterclockwise::Origin,
-                            Mirror::Origin,
-                            &Phase::First,
+                        Squares::next_of(
+                            &Rotation::Ccw180,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1875,10 +1833,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 北
-                        Squares::east_of(
-                            Counterclockwise::Rotate90,
-                            Mirror::Origin,
-                            &Phase::First,
+                        Squares::next_of(
+                            &Rotation::Ccw270,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -1963,10 +1919,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 西
-                        Squares::east_of(
-                            Counterclockwise::Origin,
-                            Mirror::Mirror,
-                            &Phase::First,
+                        Squares::next_of(
+                            &Rotation::Ccw0,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
@@ -2051,10 +2005,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 南
-                        Squares::east_of(
-                            Counterclockwise::Rotate90,
-                            Mirror::Origin,
-                            &Phase::First.turn(),
+                        Squares::next_of(
+                            &Rotation::Ccw90,
                             &dst_sq_and_demoted_piece.square,
                             &mut |next_square| {
                                 lookup_before_promotion_source_by_phase_next(
