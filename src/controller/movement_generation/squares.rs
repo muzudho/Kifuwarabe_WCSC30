@@ -212,10 +212,10 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::north_east_of(UpsideDown::Flip, &friend.turn(), source, func1);
-        Squares::north_east_of(UpsideDown::Origin, friend, source, func1);
-        Squares::north_east_of(UpsideDown::Origin, &friend.turn(), source, func1);
-        Squares::north_east_of(UpsideDown::Flip, friend, source, func1);
+        Squares::next_of(&Rotation::Ccw315, source, func1);
+        Squares::next_of(&Rotation::Ccw225, source, func1);
+        Squares::next_of(&Rotation::Ccw45, source, func1);
+        Squares::next_of(&Rotation::Ccw135, source, func1);
         Squares::looking_east_from(Counterclockwise::Origin, &friend.turn(), source, func1);
         Squares::looking_east_from(Counterclockwise::Origin, friend, source, func1);
         Squares::looking_east_from(Counterclockwise::Rotate90, friend, source, func1);
@@ -510,24 +510,6 @@ impl Squares {
                 ),
                 */
             );
-            callback(Square::from_address(next));
-        }
-    }
-
-    /// 北東隣☆（＾～＾）
-    /// 南西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    pub fn north_east_of<F1>(
-        upside_down: UpsideDown,
-        phase: &Phase,
-        start: &Square,
-        callback: &mut F1,
-    ) where
-        F1: FnMut(Square) -> bool,
-    {
-        let next = start.address
-            + Squares::rotate180_as_relative(phase, Squares::upside_down(&upside_down, -11));
-        if !Squares::has_jumped_out_of_the_board(next) {
-            assert_in_board_as_absolute(next, "北東隣☆（＾～＾）");
             callback(Square::from_address(next));
         }
     }
