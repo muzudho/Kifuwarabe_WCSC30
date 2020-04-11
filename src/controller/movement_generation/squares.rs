@@ -1,5 +1,4 @@
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_absolute;
-use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_relative;
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_with_frame_as_absolute;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::square::Square;
@@ -28,14 +27,14 @@ impl NextSquares {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
 
-        let rotation = if *friend == Phase::First {
+        let angle = if *friend == Phase::First {
             Angle::Ccw270
         } else {
             Angle::Ccw90
         };
 
         // 回転しなければ北隣だぜ☆（＾～＾）
-        Squares::next_of(&rotation, source, func1);
+        Squares::next_of(&angle, source, func1);
     }
 
     /// 盤上の香から動けるマスを見ます。
@@ -61,8 +60,16 @@ impl NextSquares {
     {
         let func1 =
             &mut |destination| Promoting::case_of_knight(friend, &destination, callback_next);
-        Squares::north_east_keima_of(UpsideDown::Origin, friend, source, func1);
-        Squares::north_east_keima_of(UpsideDown::Flip, &friend.turn(), source, func1);
+
+        let angle = if *friend == Phase::First {
+            Angle::Ccw225
+        } else {
+            Angle::Ccw45
+        };
+        Squares::next_keima_of(&angle, source, func1);
+
+        let angle = angle.rotate90ccw();
+        Squares::next_keima_of(&angle, source, func1);
     }
 
     /// 盤上の銀から動けるマスを見ます。
@@ -77,22 +84,22 @@ impl NextSquares {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
         };
 
-        let rotation = if *friend == Phase::First {
+        let angle = if *friend == Phase::First {
             Angle::Ccw270
         } else {
             Angle::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
-        // println!("銀1={:?}", rotation);
-        Squares::next_of(&rotation, source, func1);
-        // println!("銀2={:?}", rotation.rotate45ccw());
-        Squares::next_of(&rotation.rotate45ccw(), source, func1);
-        // println!("銀3={:?}", rotation.rotate90ccw().rotate45ccw());
-        Squares::next_of(&rotation.rotate90ccw().rotate45ccw(), source, func1);
-        // println!("銀4={:?}", rotation.rotate90cw().rotate45cw());
-        Squares::next_of(&rotation.rotate90cw().rotate45cw(), source, func1);
-        // println!("銀5={:?}", rotation.rotate45cw());
-        Squares::next_of(&rotation.rotate45cw(), source, func1);
+        // println!("銀1={:?}", angle);
+        Squares::next_of(&angle, source, func1);
+        // println!("銀2={:?}", angle.rotate45ccw());
+        Squares::next_of(&angle.rotate45ccw(), source, func1);
+        // println!("銀3={:?}", angle.rotate90ccw().rotate45ccw());
+        Squares::next_of(&angle.rotate90ccw().rotate45ccw(), source, func1);
+        // println!("銀4={:?}", angle.rotate90cw().rotate45cw());
+        Squares::next_of(&angle.rotate90cw().rotate45cw(), source, func1);
+        // println!("銀5={:?}", angle.rotate45cw());
+        Squares::next_of(&angle.rotate45cw(), source, func1);
     }
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
@@ -104,18 +111,18 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        let rotation = if *friend == Phase::First {
+        let angle = if *friend == Phase::First {
             Angle::Ccw270
         } else {
             Angle::Ccw90
         };
         // 回転しなければ北隣だぜ☆（＾～＾）
-        Squares::next_of(&rotation, source, func1);
-        Squares::next_of(&rotation.rotate45ccw(), source, func1);
-        Squares::next_of(&rotation.rotate90ccw(), source, func1);
-        Squares::next_of(&rotation.rotate180(), source, func1);
-        Squares::next_of(&rotation.rotate90cw(), source, func1);
-        Squares::next_of(&rotation.rotate45cw(), source, func1);
+        Squares::next_of(&angle, source, func1);
+        Squares::next_of(&angle.rotate45ccw(), source, func1);
+        Squares::next_of(&angle.rotate90ccw(), source, func1);
+        Squares::next_of(&angle.rotate180(), source, func1);
+        Squares::next_of(&angle.rotate90cw(), source, func1);
+        Squares::next_of(&angle.rotate45cw(), source, func1);
     }
 
     /// 盤上の玉から動けるマスを見ます。
@@ -305,46 +312,13 @@ impl Promoting {
     }
 }
 
-pub enum UpsideDown {
-    Origin,
-    Flip,
-}
-
-pub enum Counterclockwise {
-    Origin,
-    Rotate90,
-}
-
 pub struct Squares {}
 impl Squares {
-    fn rotate180_as_relative(phase: &Phase, square: isquare) -> isquare {
-        if *phase == Phase::Second {
-            -square
-        } else {
-            square
-        }
-    }
     fn rotate180_as_absolute(phase: &Phase, square: isquare) -> isquare {
         if *phase == Phase::Second {
             110 - square
         } else {
             square
-        }
-    }
-
-    fn upside_down(upside_down: &UpsideDown, address: isquare) -> isquare {
-        match upside_down {
-            UpsideDown::Flip => address / 10 * 10 - (10 - (address.abs() % 10)) + 10,
-            UpsideDown::Origin => address,
-        }
-    }
-
-    fn has_jumped_out_horizontally(counterclockwise: &Counterclockwise, address: i8) -> bool {
-        match counterclockwise {
-            // Horizontally.
-            Counterclockwise::Origin => address / 10 % 10 == 0,
-            // Vertically.
-            Counterclockwise::Rotate90 => address % 10 == 0,
         }
     }
 
@@ -409,7 +383,7 @@ impl Squares {
         }
     }
 
-    /// 北隣☆（＾～＾） 回転もできるぜ☆（＾～＾）
+    /// 隣☆（＾～＾）
     pub fn next_of<F1>(angle: &Angle, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
@@ -424,10 +398,10 @@ impl Squares {
         if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board_as_absolute(
                 next,
-                "北隣＋回転☆（＾～＾）",
+                "隣☆（＾～＾）",
                 /*
                 &format!(
-                    "北隣＋回転☆（＾～＾） start.address={} angle={:?} next={}",
+                    "隣☆（＾～＾） start.address={} angle={:?} next={}",
                     start.address, angle, next
                 ),
                 */
@@ -436,34 +410,19 @@ impl Squares {
         }
     }
 
-    /// 北北東隣☆（＾～＾）
-    /// スタート地点は、行き先の有る駒　である前提だぜ☆（＾～＾）
-    /// 南南西隣 にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    /// 南南東隣 にしたかったら upside_down しろだぜ☆（＾～＾）
-    /// 北北西隣 にしたかったら upside_down して、 phase.turn() しろだぜ☆（＾～＾）
-    pub fn north_east_keima_of<F1>(
-        upside_down: UpsideDown,
-        phase: &Phase,
-        start: &Square,
-        callback: &mut F1,
-    ) where
+    /// 隣☆（＾～＾）桂馬用☆（＾～＾）
+    pub fn next_keima_of<F1>(angle: &Angle, start: &Square, callback: &mut F1)
+    where
         F1: FnMut(Square) -> bool,
     {
-        let rel = Squares::rotate180_as_relative(phase, Squares::upside_down(&upside_down, -10));
-        assert_in_board_as_relative(rel, &format!("東隣nek☆（＾～＾） rel={}", rel));
-        let mut next = start.address + rel;
-        if !Squares::has_jumped_out_horizontally(&Counterclockwise::Origin, next) {
-            assert_in_board_as_absolute(next, "東隣nek☆（＾～＾）");
-            next += Squares::rotate180_as_relative(phase, Squares::upside_down(&upside_down, -1));
-            if !Squares::has_jumped_out_horizontally(&Counterclockwise::Rotate90, next) {
-                assert_in_board_as_absolute(next, "北nek東隣☆（＾～＾）");
-                next +=
-                    Squares::rotate180_as_relative(phase, Squares::upside_down(&upside_down, -1));
-                if !Squares::has_jumped_out_horizontally(&Counterclockwise::Rotate90, next) {
-                    assert_in_board_as_absolute(
-                        next,
-                        &format!("start=|{}| 北北東隣☆（＾～＾）", start.address),
-                    );
+        // 回転の起角は西隣だぜ☆（＾～＾）
+        let rel = RelativeSquare::from_file_and_rank(1, 0).rotate(angle);
+        if !Squares::has_jumped_out_of_the_board(start.address + rel.get_address()) {
+            let rel = rel.double_rank();
+            if !Squares::has_jumped_out_of_the_board(start.address + rel.get_address()) {
+                let next = start.address + rel.get_address();
+                if !Squares::has_jumped_out_of_the_board(next) {
+                    assert_in_board_as_absolute(next, "隣＋桂馬☆（＾～＾）");
                     callback(Square::from_address(next));
                 }
             }
