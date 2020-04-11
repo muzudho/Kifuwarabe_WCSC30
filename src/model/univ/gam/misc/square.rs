@@ -254,6 +254,7 @@ impl Rotation {
 /// 相対升。
 /// file, rank から 相対番地は作れますが、相対番地から file, rank を作ることはできません(不定)。
 /// そこから、 file, rank で持ちます。
+#[derive(Clone)]
 pub struct RelativeSquare {
     pub file: i8,
     pub rank: i8,
@@ -278,23 +279,24 @@ impl RelativeSquare {
         Degree45Orthant::from_file_and_rank(self.file, self.rank)
     }
 
-    pub fn rotate_countercrockwise(&self, rot: &Rotation) -> Self {
+    pub fn rotate(&self, rot: &Rotation) -> Self {
         use crate::model::univ::gam::misc::square::Rotation::*;
+        // Square は常に Ccw270(北）を向いています。
         match rot {
             Ccw270 => RelativeSquare {
                 file: self.file,
                 rank: self.rank,
             },
-            Ccw315 => self.rotation_45_countercrockwise(),
-            Ccw0 => self.rotation_90_countercrockwise(),
+            Ccw315 => self.rotate_45_countercrockwise(),
+            Ccw0 => self.rotate_90_countercrockwise(),
             Ccw45 => {
-                let r90 = self.rotation_90_countercrockwise();
+                let r90 = self.rotate_90_countercrockwise();
                 // println!("> r90={:?}", r90);
-                let r90_45 = r90.rotation_45_countercrockwise();
+                let r90_45 = r90.rotate_45_countercrockwise();
                 // println!("> r90_45={:?}", r90_45);
                 r90_45
             }
-            Ccw90 => self.rotation_180(),
+            Ccw90 => self.rotate_180(),
             Ccw135 => {
                 /*
                 let r180 = self.rotation_180();
@@ -303,16 +305,16 @@ impl RelativeSquare {
                 println!("> r180+45={:?}", r180_45);
                 r180_45
                 */
-                self.rotation_180().rotation_45_countercrockwise()
+                self.rotate_180().rotate_45_countercrockwise()
             }
-            Ccw180 => self.rotation_180().rotation_90_countercrockwise(),
+            Ccw180 => self.rotate_180().rotate_90_countercrockwise(),
             Ccw225 => {
                 //*
-                let r180 = self.rotation_180();
+                let r180 = self.rotate_180();
                 // println!("> r180={:?}", r180);
-                let r180_90 = r180.rotation_90_countercrockwise();
+                let r180_90 = r180.rotate_90_countercrockwise();
                 // println!("> r180+90={:?}", r180_90);
-                let r180_90_45 = r180_90.rotation_45_countercrockwise();
+                let r180_90_45 = r180_90.rotate_45_countercrockwise();
                 // println!("> r180+90+45={:?}", r180_90_45);
                 r180_90_45
                 // */
@@ -325,14 +327,14 @@ impl RelativeSquare {
         }
     }
 
-    pub fn rotation_180(&self) -> Self {
+    pub fn rotate_180(&self) -> Self {
         RelativeSquare {
             file: -self.file,
             rank: -self.rank,
         }
     }
 
-    pub fn rotation_90_countercrockwise(&self) -> Self {
+    pub fn rotate_90_countercrockwise(&self) -> Self {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
         // でも、 90°回転のときは 象限は１つしかないけどな☆（＾～＾）全象限同じ式だぜ☆（*＾～＾*）
         let new_file = -self.rank;
@@ -340,7 +342,7 @@ impl RelativeSquare {
         RelativeSquare::from_file_and_rank(new_file, new_rank)
     }
 
-    pub fn rotation_45_countercrockwise(&self) -> Self {
+    pub fn rotate_45_countercrockwise(&self) -> Self {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
         let orthant = self.get_degree45_orthant();
         let (new_file, new_rank) = match orthant {

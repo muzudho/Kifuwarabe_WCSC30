@@ -371,47 +371,47 @@ fn test_rotation() {
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
         test_rsq("a1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a2", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a3", "(1x 0y 10adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a4", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a5", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a6", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a7", "(-1x 0y -10adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a8", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.rotation_45_countercrockwise();
+        rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a9", "(0x -1y -1adr)", &rsq);
     }
     // 90°回転のテスト＜その１＞
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
         test_rsq("c1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("c2", "(1x 0y 10adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("c3", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("c4", "(-1x 0y -10adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("c5", "(0x -1y -1adr)", &rsq);
     }
     // 90°回転のテスト＜その２＞
     {
         let mut rsq = RelativeSquare::from_file_and_rank(1, -1);
         test_rsq("d1", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("d2", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("d3", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("d4", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.rotation_90_countercrockwise();
+        rsq = rsq.rotate_90_countercrockwise();
         test_rsq("d5", "(1x -1y 9adr)", &rsq);
     }
 }

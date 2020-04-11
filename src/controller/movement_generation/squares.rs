@@ -48,7 +48,7 @@ impl NextSquares {
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
-        Squares::looking_east_from(Counterclockwise::Rotate90, friend, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw270, source, func1);
     }
 
     /// 盤上の桂から動けるマスを見ます。
@@ -172,10 +172,10 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_east_from(Counterclockwise::Origin, &friend.turn(), source, func1);
-        Squares::looking_east_from(Counterclockwise::Origin, friend, source, func1);
-        Squares::looking_east_from(Counterclockwise::Rotate90, friend, source, func1);
-        Squares::looking_east_from(Counterclockwise::Rotate90, &friend.turn(), source, func1);
+        Squares::looking_next_from(&Rotation::Ccw0, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw90, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw180, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw270, source, func1);
     }
 
     /// 盤上の馬から動けるマスを見ます。
@@ -204,22 +204,19 @@ impl NextSquares {
     }
 
     /// 盤上の竜から動けるマスを見ます。
-    pub fn looking_for_squares_from_dragon_on_board<F1>(
-        friend: &Phase,
-        source: &Square,
-        callback_next: &mut F1,
-    ) where
+    pub fn looking_for_squares_from_dragon_on_board<F1>(source: &Square, callback_next: &mut F1)
+    where
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Rotation::Ccw315, source, func1);
-        Squares::next_of(&Rotation::Ccw225, source, func1);
         Squares::next_of(&Rotation::Ccw45, source, func1);
         Squares::next_of(&Rotation::Ccw135, source, func1);
-        Squares::looking_east_from(Counterclockwise::Origin, &friend.turn(), source, func1);
-        Squares::looking_east_from(Counterclockwise::Origin, friend, source, func1);
-        Squares::looking_east_from(Counterclockwise::Rotate90, friend, source, func1);
-        Squares::looking_east_from(Counterclockwise::Rotate90, &friend.turn(), source, func1);
+        Squares::next_of(&Rotation::Ccw225, source, func1);
+        Squares::next_of(&Rotation::Ccw315, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw0, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw90, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw180, source, func1);
+        Squares::looking_next_from(&Rotation::Ccw270, source, func1);
     }
 }
 
@@ -353,30 +350,6 @@ impl Squares {
         }
     }
 
-    /// 相対番地が、反時計回りに９０°回転するぜ☆（＾～＾）
-    fn rotate90_counterclockwise_as_relative(
-        counterclockwise: &Counterclockwise,
-        upside_down: &UpsideDown,
-        adr: isquare,
-    ) -> isquare {
-        let rel = match counterclockwise {
-            Counterclockwise::Rotate90 => {
-                let result = (adr.abs() % 10 - 1) * 10 + (10 - ((adr / 10).abs() % 10));
-                if 0 < adr {
-                    -result
-                } else {
-                    result
-                }
-            }
-            Counterclockwise::Origin => adr,
-        };
-
-        match upside_down {
-            UpsideDown::Flip => -rel,
-            UpsideDown::Origin => rel,
-        }
-    }
-
     fn upside_down(upside_down: &UpsideDown, address: isquare) -> isquare {
         match upside_down {
             UpsideDown::Flip => address / 10 * 10 - (10 - (address.abs() % 10)) + 10,
@@ -435,26 +408,18 @@ impl Squares {
         }
     }
 
-    /// 東隣の升から東へ☆（＾～＾）
-    /// 西隣の升から西へ にしたかったら phase.turn() しろだぜ☆（＾～＾）
-    /// 北隣の升から北へ にしたかったら 時計回りに９０°回転しろだぜ☆（＾～＾）
-    /// 南隣の升から南へ にしたかったら 時計回りに９０°回転して、 phase.turn() しろだぜ☆（＾～＾）
-    pub fn looking_east_from<F1>(
-        counterclockwise: Counterclockwise,
-        phase: &Phase,
-        start: &Square,
-        callback: &mut F1,
-    ) where
+    pub fn looking_next_from<F1>(rot: &Rotation, start: &Square, callback: &mut F1)
+    where
         F1: FnMut(Square) -> bool,
     {
         let mut next = start.address;
         loop {
-            next += Squares::rotate90_counterclockwise_as_relative(
-                &counterclockwise,
-                &UpsideDown::Origin,
-                Squares::rotate180_as_relative(phase, -10),
-            );
-            if Squares::has_jumped_out_horizontally(&counterclockwise, next) {
+            // 回転の起角は西隣だぜ☆（＾～＾）
+            next += RelativeSquare::from_file_and_rank(1, 0)
+                .rotate(rot)
+                .get_address();
+
+            if Squares::has_jumped_out_of_the_board(next) {
                 break;
             } else if callback(Square::from_address(next)) {
                 break;
@@ -494,7 +459,7 @@ impl Squares {
         // println!("start={}", start.address);
         // println!("north={:?}", RelativeSquare::from_file_and_rank(0, -1));
         let rel = RelativeSquare::from_file_and_rank(0, -1)
-            .rotate_countercrockwise(rotation)
+            .rotate(rotation)
             .get_address();
         // println!("rot={:?} {}", rotation, rel);
         let next = start.address + rel;

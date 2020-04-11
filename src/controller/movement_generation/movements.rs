@@ -215,14 +215,12 @@ impl MGMovements {
                         }
                         Dragon1 => {
                             NextSquares::looking_for_squares_from_dragon_on_board(
-                                &Phase::First,
                                 &source,
                                 callback_next,
                             );
                         }
                         Dragon2 => {
                             NextSquares::looking_for_squares_from_dragon_on_board(
-                                &Phase::Second,
                                 &source,
                                 callback_next,
                             );
