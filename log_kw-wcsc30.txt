@@ -1,4 +1,4 @@
-id name KifuwarabeW30 bld149
+id name KifuwarabeW30 bld150
 id author TAKAHASHI, Satoshi
 option name MaxDepth type spin default 1 min 1 max 3
 usiok
@@ -25,8 +25,8 @@ P x 0   |    | ▲B |    |    |    |    |    | ▲R |    | h8   p x 0
         +----+----+----+----+----+----+----+----+----+
         | ▲L | ▲N | ▲S | ▲G | ▲K | ▲G | ▲S | ▲N | ▲L | i9
         +----+----+----+----+----+----+----+----+----+
-info depth 0 nodes 1 score cp 0 currmove 7i6h string  7i6h EndNode
-bestmove 7i6h
+info depth 0 nodes 1 score cp 0 currmove 2h5h string  2h5h EndNode
+bestmove 2h5h
 [1 ply.  ▽ phase. 1 repeats.]
 
          9    8    7    6    5    4    3    2    1
@@ -45,8 +45,8 @@ N x 0   |    |    |    |    |    |    |    |    |    | f6   n x 0
         +----+----+----+----+----+----+----+----+----+
 L x 0   | ▲P | ▲P | ▲P | ▲P | ▲P | ▲P | ▲P | ▲P | ▲P | g7   l x 0
         +----+----+----+----+----+----+----+----+----+
-P x 0   |    | ▲B |    | ▲S |    |    |    | ▲R |    | h8   p x 0
+P x 0   |    | ▲B |    |    | ▲R |    |    |    |    | h8   p x 0
         +----+----+----+----+----+----+----+----+----+
-        | ▲L | ▲N |    | ▲G | ▲K | ▲G | ▲S | ▲N | ▲L | i9
+        | ▲L | ▲N | ▲S | ▲G | ▲K | ▲G | ▲S | ▲N | ▲L | i9
         +----+----+----+----+----+----+----+----+----+
 len==0
