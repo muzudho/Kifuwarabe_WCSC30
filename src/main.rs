@@ -34,61 +34,6 @@ use std::collections::HashSet;
 use std::io;
 use view::title_screen::ts_view::*;
 
-/*
-fn half_dict1_orthant(adr: i8) -> i8 {
-    let sign = adr / adr.abs();
-    let x = (adr / 10).abs() % 10;
-    let y = adr.abs() % 10;
-    let n = 10 * (x.abs() - y.abs()) + x.abs();
-    sign * n
-}
-fn half_co_dict1_orthant(adr: i8) -> i8 {
-    let sign = adr / adr.abs();
-    let x = (adr / 10).abs() % 10;
-    let y = adr.abs() % 10;
-    let n = -(10 * (y.abs() - x.abs() - 1) + (10 - y.abs()));
-    sign * n
-}
-fn half_co_dict2_orthant(adr: i8) -> i8 {
-    let sign = adr / adr.abs();
-    let x = (adr / 10).abs() % 10;
-    let y = adr.abs() % 10;
-    let n = 10 * (9 - y.abs()) + (x.abs() + y.abs() + 1);
-    sign * n
-}
-fn half_dict2_orthant(adr: i8) -> i8 {
-    let sign = adr / adr.abs();
-    let x = (adr / 10).abs() % 10;
-    let y = adr.abs() % 10;
-    let n = 10 * (x.abs() - y.abs() + 10) + x.abs();
-    sign * n
-}
-*/
-/*
-fn dict1_orthant(x: i8, y: i8) -> i8 {
-    10 * x.abs() + y.abs()
-}
-fn dict2_orthant(x: i8, y: i8) -> i8 {
-    -(10 * (x.abs() - 1) + (10 - y.abs()))
-}
-fn dict3_orthant(x: i8, y: i8) -> i8 {
-    -(10 * x.abs() + y.abs())
-}
-fn dict4_orthant(x: i8, y: i8) -> i8 {
-    10 * (x.abs() - 1) + (10 - y.abs())
-}
-*/
-/*
-fn test_rel_rot90(adr: i8) -> i8 {
-    let result = (adr.abs() % 10 - 1) * 10 + (10 - ((adr / 10).abs() % 10));
-    if 0 < adr {
-        -result
-    } else {
-        result
-    }
-}
-*/
-
 fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
     let speed_of_light: MLSpeedOfLightVo = MLSpeedOfLightVo::default();
@@ -345,200 +290,128 @@ fn parse_extend_command(
     }
 }
 
-fn test_ort(test_name: &str, ort: &Orthant, expected: &str) {
+fn test_dort(test_name: &str, expected: &str, actual: &DictOrthant) {
     debug_assert!(
-        format!("{:?}", ort) == expected,
-        format!("{}: actual={:?} | expected={}", test_name, ort, expected)
+        format!("{:?}", actual) == expected,
+        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
     );
 }
-fn test_rsq(test_name: &str, rsq: &RelativeSquare, expected: &str) {
+fn test_d45ort(test_name: &str, expected: &str, actual: &Degree45Orthant) {
     debug_assert!(
-        format!("{:?}", rsq) == expected,
-        format!("{}: actual={:?} | expected={}", test_name, rsq, expected)
+        format!("{:?}", actual) == expected,
+        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
+    );
+}
+fn test_rsq(test_name: &str, expected: &str, actual: &RelativeSquare) {
+    debug_assert!(
+        format!("{:?}", actual) == expected,
+        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
     );
 }
 
 fn test_rotation() {
-    // 90°回転時の象限のテスト
+    // 辞書象限のテスト
     {
-        let mut ort = Orthant::from_file_and_rank(90, 0, -1);
-        test_ort("e1", &ort, "co4ort");
-        ort = Orthant::from_file_and_rank(90, 1, -1);
-        test_ort("e2", &ort, "4ort");
-        ort = Orthant::from_file_and_rank(90, 1, 0);
-        test_ort("e3", &ort, "1ort");
-        ort = Orthant::from_file_and_rank(90, 1, 1);
-        test_ort("e4", &ort, "co1ort");
-        ort = Orthant::from_file_and_rank(90, 0, 1);
-        test_ort("e5", &ort, "co2ort");
-        ort = Orthant::from_file_and_rank(90, -1, 1);
-        test_ort("e6", &ort, "2ort");
-        ort = Orthant::from_file_and_rank(90, -1, 0);
-        test_ort("e7", &ort, "3ort");
-        ort = Orthant::from_file_and_rank(90, -1, -1);
-        test_ort("e8", &ort, "co3ort");
+        let mut ort = DictOrthant::from_file_and_rank(0, -1);
+        test_dort("e1", "IOrIII", &ort);
+        ort = DictOrthant::from_file_and_rank(1, -1);
+        test_dort("e2", "IV", &ort);
+        ort = DictOrthant::from_file_and_rank(1, 0);
+        test_dort("e3", "IOrIII", &ort);
+        ort = DictOrthant::from_file_and_rank(1, 1);
+        test_dort("e4", "IOrIII", &ort);
+        ort = DictOrthant::from_file_and_rank(0, 1);
+        test_dort("e5", "IOrIII", &ort);
+        ort = DictOrthant::from_file_and_rank(-1, 1);
+        test_dort("e6", "II", &ort);
+        ort = DictOrthant::from_file_and_rank(-1, 0);
+        test_dort("e7", "IOrIII", &ort);
+        ort = DictOrthant::from_file_and_rank(-1, -1);
+        test_dort("e8", "IOrIII", &ort);
     }
-    // 45°回転時の象限のテスト
+    // 45°回転象限のテスト
     {
-        let mut ort = Orthant::from_file_and_rank(45, 0, -1);
-        test_ort("f1", &ort, "co3ort");
-        ort = Orthant::from_file_and_rank(45, 1, -1);
-        test_ort("f2", &ort, "co4ort");
-        ort = Orthant::from_file_and_rank(45, 1, 0);
-        test_ort("f3", &ort, "1ort");
-        ort = Orthant::from_file_and_rank(45, 1, 1);
-        test_ort("f4", &ort, "1ort");
-        ort = Orthant::from_file_and_rank(45, 0, 1);
-        test_ort("f5", &ort, "co1ort");
-        ort = Orthant::from_file_and_rank(45, -1, 1);
-        test_ort("f6", &ort, "co2ort");
-        ort = Orthant::from_file_and_rank(45, -1, 0);
-        test_ort("f7", &ort, "3ort");
-        ort = Orthant::from_file_and_rank(45, -1, -1);
-        test_ort("f8", &ort, "3ort");
+        let mut ort = Degree45Orthant::from_file_and_rank(0, -1);
+        test_d45ort("f1", "CoIIIOrCoIV", &ort);
+        ort = Degree45Orthant::from_file_and_rank(1, -1);
+        test_d45ort("f2", "IVOrI", &ort);
+        ort = Degree45Orthant::from_file_and_rank(1, 0);
+        test_d45ort("f3", "IVOrI", &ort);
+        ort = Degree45Orthant::from_file_and_rank(1, 1);
+        test_d45ort("f4", "IVOrI", &ort);
+        ort = Degree45Orthant::from_file_and_rank(0, 1);
+        test_d45ort("f5", "CoIOrCoII", &ort);
+        ort = Degree45Orthant::from_file_and_rank(-1, 1);
+        test_d45ort("f6", "IIOrIII", &ort);
+        ort = Degree45Orthant::from_file_and_rank(-1, 0);
+        test_d45ort("f7", "IIOrIII", &ort);
+        ort = Degree45Orthant::from_file_and_rank(-1, -1);
+        test_d45ort("f8", "IIOrIII", &ort);
     }
     // 相対番地のテスト
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("b1", &rsq, "(0x -1y -1adr)");
+        test_rsq("b1", "(0x -1y -1adr)", &rsq);
         rsq = RelativeSquare::from_file_and_rank(1, -1);
-        test_rsq("b2", &rsq, "(1x -1y 9adr)");
+        test_rsq("b2", "(1x -1y 9adr)", &rsq);
         rsq = RelativeSquare::from_file_and_rank(1, 0);
-        test_rsq("b3", &rsq, "(1x 0y 10adr)");
+        test_rsq("b3", "(1x 0y 10adr)", &rsq);
         rsq = RelativeSquare::from_file_and_rank(1, 1);
-        test_rsq("b4", &rsq, "(1x 1y 11adr)");
+        test_rsq("b4", "(1x 1y 11adr)", &rsq);
         rsq = RelativeSquare::from_file_and_rank(0, 1);
-        test_rsq("b5", &rsq, "(0x 1y 1adr)");
+        test_rsq("b5", "(0x 1y 1adr)", &rsq);
         rsq = RelativeSquare::from_file_and_rank(-1, 1);
-        test_rsq("b6", &rsq, "(-1x 1y -9adr)");
+        test_rsq("b6", "(-1x 1y -9adr)", &rsq);
         rsq = RelativeSquare::from_file_and_rank(-1, 0);
-        test_rsq("b7", &rsq, "(-1x 0y -10adr)");
+        test_rsq("b7", "(-1x 0y -10adr)", &rsq);
         rsq = RelativeSquare::from_file_and_rank(-1, -1);
-        test_rsq("b8", &rsq, "(-1x -1y -11adr)");
+        test_rsq("b8", "(-1x -1y -11adr)", &rsq);
     }
     // 45°回転のテスト
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("a1", &rsq, "(0x -1y -1adr)");
+        test_rsq("a1", "(0x -1y -1adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a2", &rsq, "(1x -1y 9adr)");
+        test_rsq("a2", "(1x -1y 9adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a3", &rsq, "(1x 0y 10adr)");
+        test_rsq("a3", "(1x 0y 10adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a4", &rsq, "(1x 1y 11adr)");
+        test_rsq("a4", "(1x 1y 11adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a5", &rsq, "(0x 1y 1adr)");
+        test_rsq("a5", "(0x 1y 1adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a6", &rsq, "(-1x 1y -9adr)");
+        test_rsq("a6", "(-1x 1y -9adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a7", &rsq, "(-1x 0y -10adr)");
+        test_rsq("a7", "(-1x 0y -10adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a8", &rsq, "(-1x -1y -11adr)");
+        test_rsq("a8", "(-1x -1y -11adr)", &rsq);
         rsq = rsq.rotation_45_countercrockwise();
-        test_rsq("a9", &rsq, "(0x -1y -1adr)");
+        test_rsq("a9", "(0x -1y -1adr)", &rsq);
     }
     // 90°回転のテスト＜その１＞
     {
         let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("c1", &rsq, "(0x -1y -1adr)");
+        test_rsq("c1", "(0x -1y -1adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("c2", &rsq, "(1x 0y 10adr)");
+        test_rsq("c2", "(1x 0y 10adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("c3", &rsq, "(0x 1y 1adr)");
+        test_rsq("c3", "(0x 1y 1adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("c4", &rsq, "(-1x 0y -10adr)");
+        test_rsq("c4", "(-1x 0y -10adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("c5", &rsq, "(0x -1y -1adr)");
+        test_rsq("c5", "(0x -1y -1adr)", &rsq);
     }
     // 90°回転のテスト＜その２＞
     {
         let mut rsq = RelativeSquare::from_file_and_rank(1, -1);
-        test_rsq("d1", &rsq, "(1x -1y 9adr)");
+        test_rsq("d1", "(1x -1y 9adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("d2", &rsq, "(1x 1y 11adr)");
+        test_rsq("d2", "(1x 1y 11adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("d3", &rsq, "(-1x 1y -9adr)");
+        test_rsq("d3", "(-1x 1y -9adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("d4", &rsq, "(-1x -1y -11adr)");
+        test_rsq("d4", "(-1x -1y -11adr)", &rsq);
         rsq = rsq.rotation_90_countercrockwise();
-        test_rsq("d5", &rsq, "(1x -1y 9adr)");
+        test_rsq("d5", "(1x -1y 9adr)", &rsq);
     }
-    /*
-    let mut rsq = RelativeSquare::from_file_and_rank(4, 2);
-    println!("Debug   | (4x,2y) -> {:?} expect=(1ort, 42)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (1ort, 42) -> {:?} expect=(co1ort, 24)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co1ort, 24) -> {:?} expect=(co2ort, -16)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co2ort, -16) -> {:?} expect=(2ort, -38)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (2ort, -38) -> {:?} expect=(3ort, -42)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (3ort, -42) -> {:?} expect=(co3ort, -24)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co3ort, -24) -> {:?} expect=(co4ort, 16)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (co4ort, 16) -> {:?} expect=(4ort, 38)", rsq);
-    rsq = rsq.rotation_45_countercrockwise();
-    println!("Debug   | (4ort, 38) -> {:?} expect=(1ort, 42)", rsq);
-    */
-    /*
-    let mut rsq = RelativeSquare::from_file_and_rank(3, 1);
-    println!("Debug   | (3x,1y) -> {:?} expect=(1ort, 31)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (1ort, 31) -> {:?} expect=(co2ort, -7)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co2ort, -7) -> {:?} expect=(3ort, -31)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (3ort, -31) -> {:?} expect=(co4ort, 7)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co4ort, 7) -> {:?} expect=(1ort, 31)", rsq);
-
-    rsq = RelativeSquare::from_file_and_rank(2, 3);
-    println!("Debug   | (2x,3y) -> {:?} expect=(co1ort, 23)", rsq);
-
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co1ort, 23) -> {:?} expect=(2ort, -28)", rsq);
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (2ort, -28) -> {:?} expect=(co3ort, -23)", rsq);
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (co3ort, -23) -> {:?} expect=(4ort, 28)", rsq);
-    rsq = rsq.rotation_90_countercrockwise();
-    println!("Debug   | (4ort, 28) -> {:?} expect=(co1ort, 23)", rsq);
-    */
-    /*
-    println!("Debug   | I(-21)={} expect=-12", half_dict1_orthant(-21));
-    println!(
-        "Debug   | co-I(-12)={} expect=8",
-        half_co_dict1_orthant(-12)
-    );
-    println!(
-        "Debug   | co-II(18)={} expect=20",
-        half_co_dict2_orthant(18)
-    );
-    println!("Debug   | II(-19)={} expect=-21", half_dict2_orthant(-19));
-    */
-    /*
-    println!("Debug   | dict1(0,4)={} expect=4", dict1_orthant(0, 4));
-    println!("Debug   | dict2(0,4)={} expect=4", dict2_orthant(0, 4));
-    println!("Debug   | dict3(0,-4)={} expect=-4", dict3_orthant(0, -4));
-    println!("Debug   | dict4(0,-4)={} expect=-4", dict4_orthant(0, -4));
-    println!("Debug   | dict1(4,0)={} expect=40", dict1_orthant(4, 0));
-    println!("Debug   | dict4(4,0)={} expect=40", dict4_orthant(4, 0));
-    println!("Debug   | dict2(-4,0)={} expect=-40", dict2_orthant(-4, 0));
-    println!("Debug   | dict3(-4,0)={} expect=-40", dict3_orthant(-4, 0));
-    */
-    /*
-    println!("Debug   | -40={} expect=-4", test_rel_rot90(-40));
-    println!("Debug   | - 4={} expect=40", test_rel_rot90(-4));
-    println!("Debug   |  40={} expect= 4", test_rel_rot90(40));
-    println!("Debug   |   4={} expect=-40", test_rel_rot90(4));
-    println!("Debug   | -10={} expect=-1", test_rel_rot90(-10));
-    println!("Debug   |  10={} expect=1", test_rel_rot90(10));
-    */
 }

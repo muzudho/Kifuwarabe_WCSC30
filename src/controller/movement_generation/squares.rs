@@ -499,14 +499,14 @@ impl Squares {
         F1: FnMut(Square) -> bool,
     {
         // 北隣＋回転☆（＾～＾）
-        println!("start={}", start.address);
-        println!("north={:?}", RelativeSquare::from_file_and_rank(0, -1));
+        // println!("start={}", start.address);
+        // println!("north={:?}", RelativeSquare::from_file_and_rank(0, -1));
         let rel = RelativeSquare::from_file_and_rank(0, -1)
             .rotate_countercrockwise(rotation)
             .get_address();
-        println!("rot={:?} {}", rotation, rel);
+        // println!("rot={:?} {}", rotation, rel);
         let next = start.address + rel;
-        println!("next={}", next);
+        // println!("next={}", next);
         if !Squares::has_jumped_out_of_the_board(next) {
             assert_in_board_as_absolute(
                 next,
