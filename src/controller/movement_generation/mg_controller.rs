@@ -264,6 +264,24 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         .get_piece_type_struct_from_piece_type(&ps_dst.piece_type())
         .serial_piece_number;
 
+    /* TODO
+    NextSquares::looking_for_squares_from_on_board(
+        ps_dst.piece_type(),
+        &ps_dst.phase(),
+        square_dst,
+        &mut |next_square| {
+            lookup_no_promotion_source(
+                ps_dst.slider,
+                Some(ps_dst.piece),
+                current_board,
+                speed_of_light,
+                &mut lookups_the_square,
+                next_square,
+            )
+        },
+    );
+    */
+
     for i_dir in 0..KM_UGOKI_LN {
         if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
             let pm2 = if Phase::First != ps_dst.phase() {
@@ -271,22 +289,16 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             } else {
                 pm1.clone()
             };
-            Squares::looking_next_from(
-                &pm2.angle,
-                pm2.slider,
-                pm2.keima,
-                square_dst,
-                &mut |next_square| {
-                    lookup_no_promotion_source(
-                        pm2.slider,
-                        Some(ps_dst.piece),
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    )
-                },
-            );
+            Squares::looking_next_from(&pm2.angle, pm2.agility, square_dst, &mut |next_square| {
+                lookup_no_promotion_source(
+                    pm2.agility,
+                    Some(ps_dst.piece),
+                    current_board,
+                    speed_of_light,
+                    &mut lookups_the_square,
+                    next_square,
+                )
+            });
         } else {
             // 終わり
             break;
@@ -332,7 +344,7 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStruct) -> bo
 
 // 成る前を含めない、利き
 fn lookup_no_promotion_source<F1>(
-    slider: bool,
+    agility: Agility,
     opt_dst_piece: Option<Piece>,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
@@ -342,34 +354,37 @@ fn lookup_no_promotion_source<F1>(
 where
     F1: FnMut(Square),
 {
-    if slider {
-        if let Some(dst_piece) = opt_dst_piece {
-            if current_board.has_sq_km(&next_square, &dst_piece, speed_of_light) {
-                // 指定の駒があれば止まるぜ☆（＾～＾）
+    match agility {
+        Agility::Sliding => {
+            if let Some(dst_piece) = opt_dst_piece {
+                if current_board.has_sq_km(&next_square, &dst_piece, speed_of_light) {
+                    // 指定の駒があれば止まるぜ☆（＾～＾）
+                    lookups_the_square(next_square);
+                    return true;
+                } else if current_board.exists_km(&next_square) {
+                    // 何か駒があれば止まるぜ☆（＾～＾）
+                    return true;
+                }
+            } else {
                 lookups_the_square(next_square);
-                return true;
-            } else if current_board.exists_km(&next_square) {
-                // 何か駒があれば止まるぜ☆（＾～＾）
-                return true;
-            }
-        } else {
-            lookups_the_square(next_square);
-            if current_board.exists_km(&next_square) {
-                // 何か駒があれば止まるぜ☆（＾～＾）
-                return true;
+                if current_board.exists_km(&next_square) {
+                    // 何か駒があれば止まるぜ☆（＾～＾）
+                    return true;
+                }
             }
         }
-    } else {
-        if let Some(dst_piece) = opt_dst_piece {
-            if current_board.has_sq_km(&next_square, &dst_piece, speed_of_light) {
-                // 指定の駒があれば止まるぜ☆（＾～＾）
+        _ => {
+            if let Some(dst_piece) = opt_dst_piece {
+                if current_board.has_sq_km(&next_square, &dst_piece, speed_of_light) {
+                    // 指定の駒があれば止まるぜ☆（＾～＾）
+                    lookups_the_square(next_square);
+                }
+            } else {
                 lookups_the_square(next_square);
             }
-        } else {
-            lookups_the_square(next_square);
+            // 1マスで終わりだぜ☆（＾～＾）
+            return true;
         }
-        // 1マスで終わりだぜ☆（＾～＾）
-        return true;
     }
     false
 }
@@ -439,12 +454,11 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             };
             Squares::looking_next_from(
                 &pm2.angle,
-                pm2.slider,
-                pm2.keima,
+                pm2.agility,
                 &square_dst_piece_src.square,
                 &mut |next_square| {
                     lookup_before_promotion(
-                        pm2.slider,
+                        pm2.agility,
                         &square_dst_piece_src.piece,
                         current_board,
                         speed_of_light,
@@ -462,7 +476,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
 
 /// 成る前の移動元、利き
 fn lookup_before_promotion<F1>(
-    slider: bool,
+    agility: Agility,
     source_piece: &Piece,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
@@ -472,19 +486,22 @@ fn lookup_before_promotion<F1>(
 where
     F1: FnMut(Square),
 {
-    if slider {
-        if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
-            // 指定の駒があれば、その升は移動元になる☆ 続行☆（＾～＾）
-            lookups_the_square(next_square);
-        } else if current_board.exists_km(&next_square) {
-            // なんか他の駒があれば終わり☆ ループを抜けるぜ☆（＾～＾）
+    match agility {
+        Agility::Sliding => {
+            if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
+                // 指定の駒があれば、その升は移動元になる☆ 続行☆（＾～＾）
+                lookups_the_square(next_square);
+            } else if current_board.exists_km(&next_square) {
+                // なんか他の駒があれば終わり☆ ループを抜けるぜ☆（＾～＾）
+                return true;
+            }
+        }
+        _ => {
+            if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
+                lookups_the_square(next_square);
+            }
             return true;
         }
-    } else {
-        if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
-            lookups_the_square(next_square);
-        }
-        return true;
     }
     false
 }
@@ -569,12 +586,11 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 };
                 Squares::looking_next_from(
                     &pm2.angle,
-                    pm2.slider,
-                    pm2.keima,
+                    pm2.agility,
                     &dst_sq_piece.square,
                     &mut |next_square| {
                         lookup_no_promotion_source(
-                            pm2.slider,
+                            pm2.agility,
                             Some(dst_sq_piece.piece),
                             current_board,
                             speed_of_light,
@@ -646,12 +662,11 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 };
                 Squares::looking_next_from(
                     &pm2.angle,
-                    pm2.slider,
-                    pm2.keima,
+                    pm2.agility,
                     &dst_sq_and_demoted_piece.square,
                     &mut |next_square| {
                         lookup_before_promotion_source(
-                            pm2.slider,
+                            pm2.agility,
                             &dst_sq_and_demoted_piece,
                             current_board,
                             &mut lookups_the_square,
@@ -669,7 +684,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
 
 /// 成る前移動元升、利き☆（＾～＾）
 fn lookup_before_promotion_source<F1>(
-    slider: bool,
+    agility: Agility,
     dst_sq_and_demoted_piece: &SquareAndPiece,
     current_board: &Board,
     lookups_the_square: &mut F1,
@@ -678,23 +693,26 @@ fn lookup_before_promotion_source<F1>(
 where
     F1: FnMut(Square),
 {
-    if slider {
-        if let Some(piece) = current_board.get_piece_by_square(&next_square) {
-            // 指定した駒に一致すれば。
-            if piece == dst_sq_and_demoted_piece.piece {
-                lookups_the_square(next_square);
+    match agility {
+        Agility::Sliding => {
+            if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+                // 指定した駒に一致すれば。
+                if piece == dst_sq_and_demoted_piece.piece {
+                    lookups_the_square(next_square);
+                }
+            } else {
+                // End of sliding.
+                return true;
             }
-        } else {
-            // End of sliding.
+        }
+        _ => {
+            if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+                if piece == dst_sq_and_demoted_piece.piece {
+                    lookups_the_square(next_square);
+                }
+            }
             return true;
         }
-    } else {
-        if let Some(piece) = current_board.get_piece_by_square(&next_square) {
-            if piece == dst_sq_and_demoted_piece.piece {
-                lookups_the_square(next_square);
-            }
-        }
-        return true;
     }
     false
 }

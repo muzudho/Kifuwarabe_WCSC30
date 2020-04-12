@@ -7,30 +7,33 @@ use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::Angle;
 use std::fmt;
 
+/// 機敏性。
+#[derive(Clone, Copy, Debug)]
+pub enum Agility {
+    /// 隣へ１つ進む駒。
+    Hopping,
+    /// 長い利き。
+    Sliding,
+    /// 桂馬。
+    Keima,
+}
+
 #[derive(Clone)]
 pub struct PieceMove {
     pub angle: Angle,
-    pub slider: bool,
-    pub keima: bool,
+    pub agility: Agility,
 }
 impl PieceMove {
-    pub fn new(angle1: Angle, slider1: bool, keima1: bool) -> Self {
+    pub fn new(angle1: Angle, agility1: Agility) -> Self {
         PieceMove {
             angle: angle1,
-            slider: slider1,
-            keima: keima1,
+            agility: agility1,
         }
     }
 }
 impl fmt::Debug for PieceMove {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "({:?}{}{})",
-            self.angle,
-            if self.slider { " slider" } else { "" },
-            if self.keima { " keima" } else { "" }
-        )
+        write!(f, "({:?} {:?})", self.angle, self.agility)
     }
 }
 
@@ -48,43 +51,35 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw45,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw135,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
         ],
@@ -92,23 +87,19 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             None,
             None,
@@ -120,23 +111,19 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw45,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw135,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             None,
             None,
@@ -148,33 +135,27 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
             None,
@@ -184,28 +165,23 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw45,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw135,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
             None,
@@ -216,13 +192,11 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: true,
+                agility: Agility::Keima,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: true,
+                agility: Agility::Keima,
             }),
             None,
             None,
@@ -236,8 +210,7 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             None,
             None,
@@ -252,8 +225,7 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
             None,
@@ -268,43 +240,35 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw45,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw135,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
         ],
@@ -312,43 +276,35 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw45,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw135,
-                slider: true,
-                keima: false,
+                agility: Agility::Sliding,
             }),
             None,
         ],
@@ -356,33 +312,27 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
             None,
@@ -392,33 +342,27 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
             None,
@@ -428,33 +372,27 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
             None,
@@ -464,33 +402,27 @@ pub const KM_UGOKI: PieceMovement = PieceMovement {
         [
             Some(PieceMove {
                 angle: Angle::Ccw180,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw225,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw270,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw315,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw0,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             Some(PieceMove {
                 angle: Angle::Ccw90,
-                slider: false,
-                keima: false,
+                agility: Agility::Hopping,
             }),
             None,
             None,
