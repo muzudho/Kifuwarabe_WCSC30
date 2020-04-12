@@ -199,6 +199,7 @@ fn parse_extend_command(
         let s = universe.game.get_all_position_hash_text();
         IO::writeln(&s);
     // K
+    /*
     } else if line.starts_with("kmugokidir") {
         //}else if 9<len && &line[0..10] == "kmugokidir" {
         IO::writeln("9<len kmugokidir");
@@ -207,10 +208,13 @@ fn parse_extend_command(
         IO::writeln(&format!("{}のムーブ元", &piece_type));
         universe.print_kmugoki_dir(*piece_type, speed_of_light);
         IO::writeln(""); //改行
+        */
+    /*
     } else if 6 < len && &line[starts..7] == "kmugoki" {
         IO::writeln("6<len kmugoki");
         // 駒の動きを出力
         universe.print_kmugoki(&speed_of_light);
+    */
     } else if 3 < len && &line[starts..4] == "kifu" {
         IO::writeln("棋譜表示");
         let s = universe.game.get_moves_history_text();

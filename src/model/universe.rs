@@ -3,12 +3,7 @@
 //!
 extern crate rand;
 
-use crate::controller::io::*;
-use crate::model::univ::gam::misc::piece_movement::*;
-use crate::model::univ::gam::misc::piece_type::PieceType;
-use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::game::*;
-use crate::model::univ::speed_of_light::*;
 
 /// アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）
 pub struct Universe {
@@ -52,7 +47,7 @@ impl Universe {
     /* ******
      * 盤上 *
      ********/
-
+    /*
     // 駒の動きを出力
     pub fn print_kmugoki(&self, speed_of_light: &MLSpeedOfLightVo) {
         for piece_type in PIECE_TYPE_ARRAY.iter() {
@@ -61,6 +56,8 @@ impl Universe {
             IO::writeln(""); //改行
         }
     }
+    */
+    /*
     pub fn print_kmugoki_dir(&self, piece_type: PieceType, speed_of_light: &MLSpeedOfLightVo) {
         for kmdir in KM_UGOKI.back[speed_of_light
             .get_piece_type_struct_from_piece_type(&piece_type)
@@ -75,4 +72,5 @@ impl Universe {
             }
         }
     }
+    */
 }

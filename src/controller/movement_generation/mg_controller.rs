@@ -62,7 +62,7 @@ pub fn get_up_potential_movement<F1>(
     F1: FnMut(u64),
 {
     // 盤上の駒の移動。
-    MGMovements::make_movement_on_board(
+    MGMovements::make_all_movements_on_board(
         &game.history.get_phase(&Person::Friend),
         &game.position.current_board,
         &speed_of_light,

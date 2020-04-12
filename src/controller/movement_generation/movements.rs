@@ -15,7 +15,7 @@ pub struct MGMovements {}
 impl MGMovements {
     /// 盤上の駒の動き。
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
-    pub fn make_movement_on_board<F1>(
+    pub fn make_all_movements_on_board<F1>(
         friend: &Phase,
         current_board: &Board,
         speed_of_light: &MLSpeedOfLightVo,
@@ -25,138 +25,155 @@ impl MGMovements {
     {
         // 盤上の駒☆（＾～＾）
         MGSquares::for_all(&mut |source| {
-            let callback_next = &mut |destination, promotability| {
-                use crate::controller::movement_generation::squares::Promotability::*;
-                use crate::model::univ::gam::board::ThingsInTheSquare::*;
-                let things_in_the_square =
-                    current_board.what_is_in_the_square(friend, &destination, speed_of_light);
-                match things_in_the_square {
-                    Space | Opponent => {
-                        // 成れるかどうかの判定☆（＾ｑ＾）
-                        let promotion = match &promotability {
-                            Forced => true,
-                            _ => false,
-                        };
-                        match &promotability {
-                            Any => {
-                                callback_movement(
-                                    MovementBuilder {
-                                        src: source.clone(),
-                                        dst: destination.clone(),
-                                        pro: false,
-                                        drop: None,
-                                    }
-                                    .to_hash(speed_of_light),
-                                );
-                                callback_movement(
-                                    MovementBuilder {
-                                        src: source.clone(),
-                                        dst: destination.clone(),
-                                        pro: true,
-                                        drop: None,
-                                    }
-                                    .to_hash(speed_of_light),
-                                );
-                            }
-                            _ => {
-                                callback_movement(
-                                    MovementBuilder {
-                                        src: source.clone(),
-                                        dst: destination.clone(),
-                                        pro: promotion,
-                                        drop: None,
-                                    }
-                                    .to_hash(speed_of_light),
-                                );
-                            }
-                        };
-                    }
-                    Friend => {}
-                };
+            MGMovements::make_a_movement_on_board(
+                friend,
+                &source,
+                current_board,
+                speed_of_light,
+                callback_movement,
+            )
+        });
+    }
 
-                match things_in_the_square {
-                    Space => false,
-                    _ => true,
+    /// 盤上の駒の動き。
+    /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
+    fn make_a_movement_on_board<F1>(
+        friend: &Phase,
+        source: &Square,
+        current_board: &Board,
+        speed_of_light: &MLSpeedOfLightVo,
+        callback_movement: &mut F1,
+    ) where
+        F1: FnMut(u64),
+    {
+        let callback_next = &mut |destination, promotability| {
+            use crate::controller::movement_generation::squares::Promotability::*;
+            use crate::model::univ::gam::board::ThingsInTheSquare::*;
+            let things_in_the_square =
+                current_board.what_is_in_the_square(friend, &destination, speed_of_light);
+            match things_in_the_square {
+                Space | Opponent => {
+                    // 成れるかどうかの判定☆（＾ｑ＾）
+                    let promotion = match &promotability {
+                        Forced => true,
+                        _ => false,
+                    };
+                    match &promotability {
+                        Any => {
+                            callback_movement(
+                                MovementBuilder {
+                                    src: source.clone(),
+                                    dst: destination.clone(),
+                                    pro: false,
+                                    drop: None,
+                                }
+                                .to_hash(speed_of_light),
+                            );
+                            callback_movement(
+                                MovementBuilder {
+                                    src: source.clone(),
+                                    dst: destination.clone(),
+                                    pro: true,
+                                    drop: None,
+                                }
+                                .to_hash(speed_of_light),
+                            );
+                        }
+                        _ => {
+                            callback_movement(
+                                MovementBuilder {
+                                    src: source.clone(),
+                                    dst: destination.clone(),
+                                    pro: promotion,
+                                    drop: None,
+                                }
+                                .to_hash(speed_of_light),
+                            );
+                        }
+                    };
                 }
+                Friend => {}
             };
 
-            if let Some(piece) = current_board.get_piece_by_square(&source) {
-                let ps = speed_of_light.get_piece_struct(&piece);
+            match things_in_the_square {
+                Space => false,
+                _ => true,
+            }
+        };
 
-                if *friend == ps.phase() {
-                    use crate::model::univ::gam::misc::piece_type::PieceType::*;
-                    match ps.piece_type() {
-                        Pawn => {
-                            NextSquares::looking_for_square_from_pawn_on_board(
-                                friend,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Lance => {
-                            NextSquares::looking_for_squares_from_lance_on_board(
-                                friend,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Knight => {
-                            NextSquares::looking_for_squares_from_knight_on_board(
-                                friend,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Silver => {
-                            NextSquares::looking_for_squares_from_silver_on_board(
-                                friend,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Gold | PromotedPawn | PromotedLance | PromotedKnight | PromotedSilver => {
-                            NextSquares::looking_for_squares_from_gold_on_board(
-                                friend,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        King => {
-                            NextSquares::looking_for_squares_from_king_on_board(
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Bishop => {
-                            NextSquares::looking_for_squares_from_bishop_on_board(
-                                friend,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Rook => {
-                            NextSquares::looking_for_squares_from_rook_on_board(
-                                friend,
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Horse => {
-                            NextSquares::looking_for_squares_from_horse_on_board(
-                                &source,
-                                callback_next,
-                            );
-                        }
-                        Dragon => {
-                            NextSquares::looking_for_squares_from_dragon_on_board(
-                                &source,
-                                callback_next,
-                            );
-                        }
+        if let Some(piece) = current_board.get_piece_by_square(&source) {
+            let ps = speed_of_light.get_piece_struct(&piece);
+
+            if *friend == ps.phase() {
+                use crate::model::univ::gam::misc::piece_type::PieceType::*;
+                match ps.piece_type() {
+                    Pawn => {
+                        NextSquares::looking_for_square_from_pawn_on_board(
+                            friend,
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    Lance => {
+                        NextSquares::looking_for_squares_from_lance_on_board(
+                            friend,
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    Knight => {
+                        NextSquares::looking_for_squares_from_knight_on_board(
+                            friend,
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    Silver => {
+                        NextSquares::looking_for_squares_from_silver_on_board(
+                            friend,
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    Gold | PromotedPawn | PromotedLance | PromotedKnight | PromotedSilver => {
+                        NextSquares::looking_for_squares_from_gold_on_board(
+                            friend,
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    King => {
+                        NextSquares::looking_for_squares_from_king_on_board(&source, callback_next);
+                    }
+                    Bishop => {
+                        NextSquares::looking_for_squares_from_bishop_on_board(
+                            friend,
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    Rook => {
+                        NextSquares::looking_for_squares_from_rook_on_board(
+                            friend,
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    Horse => {
+                        NextSquares::looking_for_squares_from_horse_on_board(
+                            &source,
+                            callback_next,
+                        );
+                    }
+                    Dragon => {
+                        NextSquares::looking_for_squares_from_dragon_on_board(
+                            &source,
+                            callback_next,
+                        );
                     }
                 }
             }
-        });
+        }
     }
 
     /// 持ち駒の動き。
