@@ -33,7 +33,7 @@ impl NextSquares {
             Angle::Ccw90
         };
 
-        Squares::next_of(&angle, false, source, func1);
+        Squares::next_of(&angle, false, false, source, func1);
     }
 
     /// 盤上の香から動けるマスを見ます。
@@ -46,7 +46,7 @@ impl NextSquares {
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
-        Squares::looking_next_from(&Angle::Ccw270, source, func1);
+        Squares::next_of(&Angle::Ccw270, true, false, source, func1);
     }
 
     /// 盤上の桂から動けるマスを見ます。
@@ -65,10 +65,10 @@ impl NextSquares {
         } else {
             Angle::Ccw45
         };
-        Squares::next_of(&angle, true, source, func1);
+        Squares::next_of(&angle, false, true, source, func1);
 
         let angle = angle.rotate90ccw();
-        Squares::next_of(&angle, true, source, func1);
+        Squares::next_of(&angle, false, true, source, func1);
     }
 
     /// 盤上の銀から動けるマスを見ます。
@@ -89,15 +89,27 @@ impl NextSquares {
             Angle::Ccw90
         };
         // println!("銀1={:?}", angle);
-        Squares::next_of(&angle, false, source, func1);
+        Squares::next_of(&angle, false, false, source, func1);
         // println!("銀2={:?}", angle.rotate45ccw());
-        Squares::next_of(&angle.rotate45ccw(), false, source, func1);
+        Squares::next_of(&angle.rotate45ccw(), false, false, source, func1);
         // println!("銀3={:?}", angle.rotate90ccw().rotate45ccw());
-        Squares::next_of(&angle.rotate90ccw().rotate45ccw(), false, source, func1);
+        Squares::next_of(
+            &angle.rotate90ccw().rotate45ccw(),
+            false,
+            false,
+            source,
+            func1,
+        );
         // println!("銀4={:?}", angle.rotate90cw().rotate45cw());
-        Squares::next_of(&angle.rotate90cw().rotate45cw(), false, source, func1);
+        Squares::next_of(
+            &angle.rotate90cw().rotate45cw(),
+            false,
+            false,
+            source,
+            func1,
+        );
         // println!("銀5={:?}", angle.rotate45cw());
-        Squares::next_of(&angle.rotate45cw(), false, source, func1);
+        Squares::next_of(&angle.rotate45cw(), false, false, source, func1);
     }
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
@@ -114,12 +126,12 @@ impl NextSquares {
         } else {
             Angle::Ccw90
         };
-        Squares::next_of(&angle, false, source, func1);
-        Squares::next_of(&angle.rotate45ccw(), false, source, func1);
-        Squares::next_of(&angle.rotate90ccw(), false, source, func1);
-        Squares::next_of(&angle.rotate180(), false, source, func1);
-        Squares::next_of(&angle.rotate90cw(), false, source, func1);
-        Squares::next_of(&angle.rotate45cw(), false, source, func1);
+        Squares::next_of(&angle, false, false, source, func1);
+        Squares::next_of(&angle.rotate45ccw(), false, false, source, func1);
+        Squares::next_of(&angle.rotate90ccw(), false, false, source, func1);
+        Squares::next_of(&angle.rotate180(), false, false, source, func1);
+        Squares::next_of(&angle.rotate90cw(), false, false, source, func1);
+        Squares::next_of(&angle.rotate45cw(), false, false, source, func1);
     }
 
     /// 盤上の玉から動けるマスを見ます。
@@ -128,14 +140,14 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Angle::Ccw0, false, source, func1);
-        Squares::next_of(&Angle::Ccw45, false, source, func1);
-        Squares::next_of(&Angle::Ccw90, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, false, source, func1);
-        Squares::next_of(&Angle::Ccw180, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, false, source, func1);
-        Squares::next_of(&Angle::Ccw270, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, false, source, func1);
+        Squares::next_of(&Angle::Ccw0, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw45, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw90, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw135, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw180, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw225, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw270, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw315, false, false, source, func1);
     }
 
     /// 盤上の角から動けるマスを見ます。
@@ -149,10 +161,10 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(&Angle::Ccw45, source, func1);
-        Squares::looking_next_from(&Angle::Ccw135, source, func1);
-        Squares::looking_next_from(&Angle::Ccw225, source, func1);
-        Squares::looking_next_from(&Angle::Ccw315, source, func1);
+        Squares::next_of(&Angle::Ccw45, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw135, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw225, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw315, true, false, source, func1);
     }
 
     /// 盤上の飛から動けるマスを見ます。
@@ -166,10 +178,10 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(&Angle::Ccw0, source, func1);
-        Squares::looking_next_from(&Angle::Ccw90, source, func1);
-        Squares::looking_next_from(&Angle::Ccw180, source, func1);
-        Squares::looking_next_from(&Angle::Ccw270, source, func1);
+        Squares::next_of(&Angle::Ccw0, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw90, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw180, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw270, true, false, source, func1);
     }
 
     /// 盤上の馬から動けるマスを見ます。
@@ -178,14 +190,14 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Angle::Ccw45, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, false, source, func1);
-        Squares::looking_next_from(&Angle::Ccw45, source, func1);
-        Squares::looking_next_from(&Angle::Ccw135, source, func1);
-        Squares::looking_next_from(&Angle::Ccw225, source, func1);
-        Squares::looking_next_from(&Angle::Ccw315, source, func1);
+        Squares::next_of(&Angle::Ccw45, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw135, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw225, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw315, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw45, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw135, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw225, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw315, true, false, source, func1);
     }
 
     /// 盤上の竜から動けるマスを見ます。
@@ -194,14 +206,14 @@ impl NextSquares {
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Angle::Ccw45, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, false, source, func1);
-        Squares::looking_next_from(&Angle::Ccw0, source, func1);
-        Squares::looking_next_from(&Angle::Ccw90, source, func1);
-        Squares::looking_next_from(&Angle::Ccw180, source, func1);
-        Squares::looking_next_from(&Angle::Ccw270, source, func1);
+        Squares::next_of(&Angle::Ccw45, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw135, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw225, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw315, false, false, source, func1);
+        Squares::next_of(&Angle::Ccw0, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw90, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw180, true, false, source, func1);
+        Squares::next_of(&Angle::Ccw270, true, false, source, func1);
     }
 }
 
@@ -360,31 +372,25 @@ impl Squares {
         }
     }
 
-    pub fn looking_next_from<F1>(angle: &Angle, start: &Square, callback: &mut F1)
-    where
-        F1: FnMut(Square) -> bool,
-    {
-        let mut next = start.address;
-        loop {
-            // 回転の起角は西隣だぜ☆（＾～＾）
-            next += RelativeSquare::from_file_and_rank(1, 0)
-                .rotate(angle)
-                .get_address();
-
-            if Squares::has_jumped_out_of_the_board(next) {
-                break;
-            } else if callback(Square::from_address(next)) {
-                break;
-            }
-        }
-    }
-
     /// 隣☆（＾～＾）
-    pub fn next_of<F1>(angle: &Angle, keima: bool, start: &Square, callback: &mut F1)
+    pub fn next_of<F1>(angle: &Angle, slider: bool, keima: bool, start: &Square, callback: &mut F1)
     where
         F1: FnMut(Square) -> bool,
     {
-        if keima {
+        if slider {
+            let mut next = start.address;
+            loop {
+                // 回転の起角は西隣だぜ☆（＾～＾）
+                next += RelativeSquare::from_file_and_rank(1, 0)
+                    .rotate(angle)
+                    .get_address();
+                if Squares::has_jumped_out_of_the_board(next) {
+                    break;
+                } else if callback(Square::from_address(next)) {
+                    break;
+                }
+            }
+        } else if keima {
             // 隣☆（＾～＾）桂馬用☆（＾～＾）
             // 回転の起角は西隣だぜ☆（＾～＾）
             let rel = RelativeSquare::from_file_and_rank(1, 0).rotate(angle);

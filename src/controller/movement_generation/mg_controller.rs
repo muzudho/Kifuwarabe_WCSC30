@@ -271,29 +271,22 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             } else {
                 pm1.clone()
             };
-            if pm2.slider {
-                // 長
-                Squares::looking_next_from(&pm2.angle, square_dst, &mut |next_square| {
-                    lookup_no_promotion_source_by_piece_sliding(
-                        &ps_dst.piece,
+            Squares::next_of(
+                &pm2.angle,
+                pm2.slider,
+                pm2.keima,
+                square_dst,
+                &mut |next_square| {
+                    lookup_no_promotion_source(
+                        pm2.slider,
+                        Some(ps_dst.piece),
                         current_board,
                         speed_of_light,
                         &mut lookups_the_square,
                         next_square,
                     )
-                });
-            } else {
-                Squares::next_of(&pm2.angle, pm2.keima, square_dst, &mut |next_square| {
-                    lookup_no_promotion_source_by_piece_next(
-                        &ps_dst.piece,
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    );
-                    true
-                });
-            }
+                },
+            );
         } else {
             // 終わり
             break;
@@ -337,9 +330,10 @@ fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStruct) -> bo
     true
 }
 
-// 成る前を含めない、長い利き
-fn lookup_no_promotion_source_by_piece_sliding<F1>(
-    dst_piece: &Piece,
+// 成る前を含めない、利き
+fn lookup_no_promotion_source<F1>(
+    slider: bool,
+    opt_dst_piece: Option<Piece>,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
     lookups_the_square: &mut F1,
@@ -348,29 +342,36 @@ fn lookup_no_promotion_source_by_piece_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    if current_board.has_sq_km(&next_square, dst_piece, speed_of_light) {
-        // TODO ポインター渡しできないもんか……☆（＾～＾）あるいはハッシュ☆（＾～＾）
-        lookups_the_square(next_square);
-    } else if current_board.exists_km(&next_square) {
-        // ループを抜けるぜ☆（＾～＾）
+    if slider {
+        if let Some(dst_piece) = opt_dst_piece {
+            if current_board.has_sq_km(&next_square, &dst_piece, speed_of_light) {
+                // 指定の駒があれば止まるぜ☆（＾～＾）
+                lookups_the_square(next_square);
+                return true;
+            } else if current_board.exists_km(&next_square) {
+                // 何か駒があれば止まるぜ☆（＾～＾）
+                return true;
+            }
+        } else {
+            lookups_the_square(next_square);
+            if current_board.exists_km(&next_square) {
+                // 何か駒があれば止まるぜ☆（＾～＾）
+                return true;
+            }
+        }
+    } else {
+        if let Some(dst_piece) = opt_dst_piece {
+            if current_board.has_sq_km(&next_square, &dst_piece, speed_of_light) {
+                // 指定の駒があれば止まるぜ☆（＾～＾）
+                lookups_the_square(next_square);
+            }
+        } else {
+            lookups_the_square(next_square);
+        }
+        // 1マスで終わりだぜ☆（＾～＾）
         return true;
     }
     false
-}
-
-/// 成る前を含めない、隣への利き
-fn lookup_no_promotion_source_by_piece_next<F1>(
-    dst_piece: &Piece,
-    current_board: &Board,
-    speed_of_light: &MLSpeedOfLightVo,
-    lookups_the_square: &mut F1,
-    next_square: Square,
-) where
-    F1: FnMut(Square),
-{
-    if current_board.has_sq_km(&next_square, dst_piece, speed_of_light) {
-        lookups_the_square(next_square);
-    }
 }
 
 /// 成る前の移動元升生成
@@ -436,38 +437,22 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             } else {
                 pm1.clone()
             };
-            if pm2.slider {
-                // 長
-                Squares::looking_next_from(
-                    &pm2.angle,
-                    &square_dst_piece_src.square,
-                    &mut |next_square| {
-                        lookup_before_promotion_source_sliding(
-                            &square_dst_piece_src.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        )
-                    },
-                );
-            } else {
-                Squares::next_of(
-                    &pm2.angle,
-                    pm2.keima,
-                    &square_dst_piece_src.square,
-                    &mut |next_square| {
-                        lookup_before_promotion_source_next(
-                            &square_dst_piece_src.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    },
-                );
-            }
+            Squares::next_of(
+                &pm2.angle,
+                pm2.slider,
+                pm2.keima,
+                &square_dst_piece_src.square,
+                &mut |next_square| {
+                    lookup_before_promotion(
+                        pm2.slider,
+                        &square_dst_piece_src.piece,
+                        current_board,
+                        speed_of_light,
+                        &mut lookups_the_square,
+                        next_square,
+                    )
+                },
+            );
         } else {
             // 終わり
             break;
@@ -475,8 +460,9 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     }
 }
 
-/// 成る前の移動元、長い利き
-fn lookup_before_promotion_source_sliding<F1>(
+/// 成る前の移動元、利き
+fn lookup_before_promotion<F1>(
+    slider: bool,
     source_piece: &Piece,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
@@ -486,29 +472,21 @@ fn lookup_before_promotion_source_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
-        // 指定の駒があれば、その升は移動元になる☆ 続行☆（＾～＾）
-        lookups_the_square(next_square);
-    } else if current_board.exists_km(&next_square) {
-        // なんか他の駒があれば終わり☆ ループを抜けるぜ☆（＾～＾）
+    if slider {
+        if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
+            // 指定の駒があれば、その升は移動元になる☆ 続行☆（＾～＾）
+            lookups_the_square(next_square);
+        } else if current_board.exists_km(&next_square) {
+            // なんか他の駒があれば終わり☆ ループを抜けるぜ☆（＾～＾）
+            return true;
+        }
+    } else {
+        if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
+            lookups_the_square(next_square);
+        }
         return true;
     }
     false
-}
-
-/// 成る前の移動元、 隣升への利き
-fn lookup_before_promotion_source_next<F1>(
-    source_piece: &Piece,
-    current_board: &Board,
-    speed_of_light: &MLSpeedOfLightVo,
-    mut lookups_the_square: F1,
-    next_square: Square,
-) where
-    F1: FnMut(Square),
-{
-    if current_board.has_sq_km(&next_square, source_piece, speed_of_light) {
-        lookups_the_square(next_square);
-    }
 }
 
 /// 移動元升生成
@@ -589,76 +567,26 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 } else {
                     pm1.clone()
                 };
-                if pm2.slider {
-                    // 長
-                    Squares::looking_next_from(
-                        &pm2.angle,
-                        &dst_sq_piece.square,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_sliding(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            )
-                        },
-                    );
-                } else {
-                    Squares::next_of(
-                        &pm2.angle,
-                        pm2.keima,
-                        &dst_sq_piece.square,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
-                }
+                Squares::next_of(
+                    &pm2.angle,
+                    pm2.slider,
+                    pm2.keima,
+                    &dst_sq_piece.square,
+                    &mut |next_square| {
+                        lookup_no_promotion_source(
+                            pm2.slider,
+                            Some(dst_sq_piece.piece),
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        )
+                    },
+                );
             } else {
                 // 終わり
                 break;
             }
-        }
-    }
-}
-
-// 移動元升、長い利き☆（＾～＾）
-fn lookup_no_promotion_source_by_phase_sliding<F1>(
-    dst_sq_piece: &SquareAndPiece,
-    current_board: &Board,
-    lookups_the_square: &mut F1,
-    next_square: Square,
-) -> bool
-where
-    F1: FnMut(Square),
-{
-    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
-        if piece == dst_sq_piece.piece {
-            lookups_the_square(next_square);
-        }
-        false
-    } else {
-        // End of sliding.
-        true
-    }
-}
-// 移動元升、隣☆（＾～＾）
-fn lookup_no_promotion_source_by_phase_next<F1>(
-    dst_sq_piece: &SquareAndPiece,
-    current_board: &Board,
-    lookup_the_square: &mut F1,
-    next_square: Square,
-) where
-    F1: FnMut(Square),
-{
-    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
-        if piece == dst_sq_piece.piece {
-            lookup_the_square(next_square);
         }
     }
 }
@@ -716,36 +644,21 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 } else {
                     pm1.clone()
                 };
-                if pm2.slider {
-                    // 長
-                    Squares::looking_next_from(
-                        &pm2.angle,
-                        &dst_sq_and_demoted_piece.square,
-                        &mut |next_square| {
-                            lookup_before_promotion_source_by_phase_sliding(
-                                &dst_sq_and_demoted_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            )
-                        },
-                    );
-                } else {
-                    Squares::next_of(
-                        &pm2.angle,
-                        pm2.keima,
-                        &dst_sq_and_demoted_piece.square,
-                        &mut |next_square| {
-                            lookup_before_promotion_source_by_phase_next(
-                                &dst_sq_and_demoted_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
-                }
+                Squares::next_of(
+                    &pm2.angle,
+                    pm2.slider,
+                    pm2.keima,
+                    &dst_sq_and_demoted_piece.square,
+                    &mut |next_square| {
+                        lookup_before_promotion_source(
+                            pm2.slider,
+                            &dst_sq_and_demoted_piece,
+                            current_board,
+                            &mut lookups_the_square,
+                            next_square,
+                        )
+                    },
+                );
             } else {
                 // 終わり
                 break;
@@ -754,8 +667,9 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
     }
 }
 
-/// 成る前移動元升、長い利き☆（＾～＾）
-fn lookup_before_promotion_source_by_phase_sliding<F1>(
+/// 成る前移動元升、利き☆（＾～＾）
+fn lookup_before_promotion_source<F1>(
+    slider: bool,
     dst_sq_and_demoted_piece: &SquareAndPiece,
     current_board: &Board,
     lookups_the_square: &mut F1,
@@ -764,31 +678,25 @@ fn lookup_before_promotion_source_by_phase_sliding<F1>(
 where
     F1: FnMut(Square),
 {
-    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
-        // 指定した駒に一致すれば。
-        if piece == dst_sq_and_demoted_piece.piece {
-            lookups_the_square(next_square);
+    if slider {
+        if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+            // 指定した駒に一致すれば。
+            if piece == dst_sq_and_demoted_piece.piece {
+                lookups_the_square(next_square);
+            }
+        } else {
+            // End of sliding.
+            return true;
         }
-        false
     } else {
-        // End of sliding.
+        if let Some(piece) = current_board.get_piece_by_square(&next_square) {
+            if piece == dst_sq_and_demoted_piece.piece {
+                lookups_the_square(next_square);
+            }
+        }
         return true;
     }
-}
-/// 成る前移動元升、 隣☆（＾～＾）
-fn lookup_before_promotion_source_by_phase_next<F1>(
-    dst_sq_and_demoted_piece: &SquareAndPiece,
-    current_board: &Board,
-    lookups_the_square: &mut F1,
-    next_square: Square,
-) where
-    F1: FnMut(Square),
-{
-    if let Some(piece) = current_board.get_piece_by_square(&next_square) {
-        if piece == dst_sq_and_demoted_piece.piece {
-            lookups_the_square(next_square);
-        }
-    }
+    false
 }
 
 /// 打の駒種類生成
