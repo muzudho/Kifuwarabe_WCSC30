@@ -62,18 +62,15 @@ impl MovementBuilder {
         }
     }
 
-    /**
-     * 考えた結果、指し手が考え付いていれば真。
-     */
-    pub fn exists(&self) -> bool {
-        self.dst.address != SQUARE_NONE
+    pub fn resign(&self) -> bool {
+        self.dst.address == SQUARE_NONE
     }
 }
 impl fmt::Display for MovementBuilder {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 手が何もない、ぐらいの意味だが、
         // その手を指す場合、投了表示
-        if !self.exists() {
+        if self.resign() {
             return write!(f, "resign");
         }
 

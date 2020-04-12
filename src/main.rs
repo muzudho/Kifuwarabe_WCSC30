@@ -131,22 +131,19 @@ fn main() {
             // 思考開始と、bestmoveコマンドの返却
             // go btime 40000 wtime 50000 binc 10000 winc 10000
             let pv = "";
-            match get_best_movement(
+            let bestmove = get_best_movement(
                 0,
                 universe.option_max_depth - 1,
                 0,
                 &mut universe.game,
                 &speed_of_light,
                 pv,
-            ) {
-                Some(bestmove) => {
-                    // 例： bestmove 7g7f
-                    IO::writeln(&format!("bestmove {}", bestmove.movement));
-                }
-                None => {
-                    IO::writeln("bestmove resign");
-                }
-            }
+            );
+            // その手を選んだ理由☆（＾～＾）
+            universe.game.info.print_force_string(&bestmove.reason);
+            // 例: bestmove 7g7f
+            // 例: bestmove resign
+            IO::writeln(&format!("bestmove {}", bestmove.movement));
         } else {
             parse_extend_command(&line, starts, &mut universe, &speed_of_light);
         }

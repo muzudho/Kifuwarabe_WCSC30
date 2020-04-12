@@ -47,4 +47,12 @@ impl SPInfo {
             self.previous = self.stopwatch.elapsed();
         }
     }
+
+    /// 必ず情報表示
+    pub fn print_force_string(&mut self, text: &str) {
+        // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
+        IO::writeln(&format!("info string {}", text));
+        self.first = false;
+        self.previous = self.stopwatch.elapsed();
+    }
 }

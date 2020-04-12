@@ -25,6 +25,8 @@ pub struct Bestmove {
     /// 相手の玉を取ったことが確定していたら 0より大きい偶数の正の数が入っている。
     /// この数を 1 引いたものが、いわゆる mate (メート)。 mate 7 なら 7手あれば相手玉を詰めることができる。
     pub lion_catch: u16,
+    /// この指し手を選んだ理由☆（＾～＾）
+    pub reason: String,
 }
 impl Bestmove {
     pub fn new(
@@ -32,12 +34,14 @@ impl Bestmove {
         changed_value1: i16,
         sum_nodes1: u64,
         lion_catch1: u16,
+        reason1: String,
     ) -> Self {
         Bestmove {
             movement: movement1,
             changed_value: changed_value1,
             sum_nodes: sum_nodes1,
             lion_catch: lion_catch1,
+            reason: reason1,
         }
     }
 }
@@ -100,7 +104,7 @@ pub fn get_best_movement(
     game: &mut Game,
     speed_of_light: &MLSpeedOfLightVo,
     pv: &str,
-) -> Option<Bestmove> {
+) -> Bestmove {
     {
         // 指定局面の利き数ボード再計算。
         // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
@@ -142,7 +146,13 @@ pub fn get_best_movement(
             &resign_move,
             &format!("{} {} EmptyMoves", pv, resign_move),
         );
-        return None;
+        return Bestmove::new(
+            resign_move,
+            best_value,
+            sum_nodes,
+            0,
+            "Saseru te nakatta.".to_string(),
+        );
     }
 
     // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
@@ -178,42 +188,42 @@ pub fn get_best_movement(
             );
         } else {
             // 枝局面なら、更に深く進むぜ☆（＾～＾）
-            match get_best_movement(
+            let opponent_best_move = get_best_movement(
                 cur_depth + 1,
                 end_depth,
                 sum_nodes + 1,
                 game,
                 speed_of_light,
                 &format!("{} {}", pv, MovementBuilder::from_hash(*movement_hash)),
-            ) {
-                Some(opponent_best_move) => {
-                    sum_nodes = opponent_best_move.sum_nodes;
+            );
 
-                    let changed_value: i16 = if opponent_best_move.lion_catch == 1 {
-                        // 次の相手の番に玉を取られてしまうぜ☆（＾～＾）！王手回避漏れか自殺手になってしまうぜ☆（＾～＾）！
-                        // こんな手を指し手はいけないぜ☆（＾～＾）！
-                        -30000
-                    } else if opponent_best_move.lion_catch % 2 == 1 {
-                        // 将来的に玉を取られてしまう詰めろに入ってるぜ☆（＾～＾）！
-                        // こんな手を指し手はいけないぜ☆（＾～＾）！
-                        -30000
-                    } else {
-                        // それ以外なら別に☆（＾～＾）相手が得しない手を選ぼうぜ☆（＾～＾）
-                        -opponent_best_move.changed_value
-                    };
+            sum_nodes = opponent_best_move.sum_nodes;
 
-                    if sibling_bestmove.update_bestmove(changed_value, *movement_hash) {}
-                    let movement = &MovementBuilder::from_hash(*movement_hash);
-                    game.info.print(
-                        cur_depth,
-                        sum_nodes,
-                        sibling_bestmove.value,
-                        movement,
-                        &format!("{} {} Backward1", pv, movement),
-                    );
-                }
-                None => {}
-            }
+            let changed_value: i16 = if opponent_best_move.movement.resign() {
+                // 相手が投了してるなら、良い手だぜ☆（＾～＾）！
+                30000
+            } else if opponent_best_move.lion_catch == 1 {
+                // 次の相手の番に玉を取られてしまうぜ☆（＾～＾）！王手回避漏れか自殺手になってしまうぜ☆（＾～＾）！
+                // こんな手を指し手はいけないぜ☆（＾～＾）！
+                -30000
+            } else if opponent_best_move.lion_catch % 2 == 1 {
+                // 将来的に玉を取られてしまう詰めろに入ってるぜ☆（＾～＾）！
+                // こんな手を指し手はいけないぜ☆（＾～＾）！
+                -30000
+            } else {
+                // それ以外なら別に☆（＾～＾）相手が得しない手を選ぼうぜ☆（＾～＾）
+                -opponent_best_move.changed_value
+            };
+
+            if sibling_bestmove.update_bestmove(changed_value, *movement_hash) {}
+            let movement = &MovementBuilder::from_hash(*movement_hash);
+            game.info.print(
+                cur_depth,
+                sum_nodes,
+                sibling_bestmove.value,
+                movement,
+                &format!("{} {} Backward1", pv, movement),
+            );
         }
         // 1手戻すぜ☆（＾～＾）
         game.undo_move(speed_of_light);
@@ -246,10 +256,11 @@ pub fn get_best_movement(
         &format!("{} {} Backward2", pv, best_movement),
     );
 
-    Some(Bestmove::new(
+    Bestmove::new(
         best_movement,
         sibling_bestmove.value,
         sum_nodes,
         sibling_bestmove.lion_catch,
-    ))
+        "Searching...".to_string(),
+    )
 }
