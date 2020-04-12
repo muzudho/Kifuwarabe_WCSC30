@@ -6,7 +6,6 @@ use super::squares::*;
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
 use crate::controller::movement_generation::mg_choicing_controller::*;
-use crate::controller::movement_generation::mg_direction::*;
 use crate::controller::movement_generation::movements::*;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::misc::movement_builder::*;
@@ -22,6 +21,9 @@ use crate::model::univ::gam::position::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 use std::collections::HashSet;
+
+// 駒の動ける方向数、終端子込み
+pub const KM_UGOKI_LN: usize = 9;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
 /// 利きがどのように変わるかも返して欲しいぜ☆（＾～＾）
@@ -262,7 +264,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         .get_piece_type_struct_from_piece_type(&ps_dst.piece_type())
         .serial_piece_number;
 
-    MGDirection::for_all(&mut |i_dir| {
+    for i_dir in 0..KM_UGOKI_LN {
+        // TODO Delete magic number.
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &Option<PieceMove>;
@@ -318,10 +321,9 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             }
         } else {
             // 終わり
-            return true;
+            break;
         }
-        false
-    });
+    }
 }
 
 /// この駒には行き先があります。
@@ -452,7 +454,8 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
         .get_piece_type_struct_from_piece(&ps_dst.demoted)
         .serial_piece_number;
 
-    MGDirection::for_all(&mut |i_dir| {
+    for i_dir in 0..KM_UGOKI_LN {
+        // TODO Delete magic number.
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
         let p_kmdir: &Option<PieceMove>;
@@ -511,10 +514,9 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             }
         } else {
             // 終わり
-            return true;
+            break;
         }
-        false
-    });
+    }
 }
 
 /// 成る前の移動元、長い利き
@@ -624,7 +626,8 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
         let piece_type_num = speed_of_light
             .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
-        MGDirection::for_all(&mut |i_dir| {
+        for i_dir in 0..KM_UGOKI_LN {
+            // TODO Delete magic number.
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
             let p_kmdir = if &Phase::First == phase {
@@ -680,10 +683,9 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 }
             } else {
                 // 終わり
-                return true;
+                break;
             }
-            false
-        });
+        }
     }
 }
 
@@ -772,7 +774,8 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
         let piece_type_num = speed_of_light
             .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
-        MGDirection::for_all(&mut |i_dir| {
+        for i_dir in 0..KM_UGOKI_LN {
+            // TODO Delete magic number.
             // 指定の駒種類の、全ての逆向きに動ける方向
             let _kmdir;
             // let p_kmdir: &PieceDirection;
@@ -841,10 +844,9 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 }
             } else {
                 // 終わり
-                return true;
+                break;
             }
-            false
-        });
+        }
     }
 }
 

@@ -2,7 +2,7 @@
 //! 駒の動き
 //!
 
-use crate::controller::movement_generation::mg_direction::KM_UGOKI_LN;
+use crate::controller::movement_generation::mg_controller::KM_UGOKI_LN;
 use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::Angle;
 use std::fmt;
