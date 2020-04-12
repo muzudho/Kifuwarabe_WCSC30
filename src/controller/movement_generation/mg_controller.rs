@@ -265,28 +265,15 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         .serial_piece_number;
 
     for i_dir in 0..KM_UGOKI_LN {
-        // TODO Delete magic number.
-        // 指定の駒種類の、全ての逆向きに動ける方向
-        let _kmdir;
-        let p_kmdir: &Option<PieceMove>;
-        if &Phase::First == &ps_dst.phase() {
-            p_kmdir = &KM_UGOKI.back[piece_type_num][i_dir]
-        } else {
-            _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_num][i_dir]);
-            p_kmdir = &_kmdir;
-        };
-
-        // 移動先を開始地点にして、駒の位置を終了地点にする
-        let angle = if let Some(pm) = p_kmdir {
-            &pm.angle
-        } else {
-            &Angle::Ccw0
-        };
-
-        if let Some(pm) = p_kmdir {
-            if pm.keima {
+        if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
+            let pm2 = if Phase::First != ps_dst.phase() {
+                hanten_kmdir_upside_down(&pm1)
+            } else {
+                pm1.clone()
+            };
+            if pm2.keima {
                 // 桂馬
-                Squares::next_keima_of(angle, square_dst, &mut |next_square| {
+                Squares::next_keima_of(&pm2.angle, square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         &ps_dst.piece,
                         current_board,
@@ -296,9 +283,9 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     );
                     true
                 });
-            } else if pm.slider {
+            } else if pm2.slider {
                 // 長
-                Squares::looking_next_from(angle, square_dst, &mut |next_square| {
+                Squares::looking_next_from(&pm2.angle, square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_sliding(
                         &ps_dst.piece,
                         current_board,
@@ -308,7 +295,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     )
                 });
             } else {
-                Squares::next_of(angle, square_dst, &mut |next_square| {
+                Squares::next_of(&pm2.angle, square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         &ps_dst.piece,
                         current_board,
@@ -455,40 +442,32 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
         .serial_piece_number;
 
     for i_dir in 0..KM_UGOKI_LN {
-        // TODO Delete magic number.
-        // 指定の駒種類の、全ての逆向きに動ける方向
-        let _kmdir;
-        let p_kmdir: &Option<PieceMove>;
-        if &Phase::First == &ps_dst.phase() {
-            p_kmdir = &KM_UGOKI.back[piece_type_narumae_num][i_dir]
-        } else {
-            _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_narumae_num][i_dir]);
-            p_kmdir = &_kmdir;
-        };
-
-        let angle = if let Some(pm) = p_kmdir {
-            &pm.angle
-        } else {
-            &Angle::Ccw0
-        };
-
-        if let Some(pm) = p_kmdir {
-            if pm.keima {
+        if let Some(pm1) = &KM_UGOKI.back[piece_type_narumae_num][i_dir] {
+            let pm2 = if Phase::First != ps_dst.phase() {
+                hanten_kmdir_upside_down(pm1)
+            } else {
+                pm1.clone()
+            };
+            if pm2.keima {
                 // 桂馬
-                Squares::next_keima_of(angle, &square_dst_piece_src.square, &mut |next_square| {
-                    lookup_before_promotion_source_next(
-                        &square_dst_piece_src.piece,
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    );
-                    true
-                });
-            } else if pm.slider {
+                Squares::next_keima_of(
+                    &pm2.angle,
+                    &square_dst_piece_src.square,
+                    &mut |next_square| {
+                        lookup_before_promotion_source_next(
+                            &square_dst_piece_src.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    },
+                );
+            } else if pm2.slider {
                 // 長
                 Squares::looking_next_from(
-                    angle,
+                    &pm2.angle,
                     &square_dst_piece_src.square,
                     &mut |next_square| {
                         lookup_before_promotion_source_sliding(
@@ -501,16 +480,20 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     },
                 );
             } else {
-                Squares::next_of(angle, &square_dst_piece_src.square, &mut |next_square| {
-                    lookup_before_promotion_source_next(
-                        &square_dst_piece_src.piece,
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    );
-                    true
-                });
+                Squares::next_of(
+                    &pm2.angle,
+                    &square_dst_piece_src.square,
+                    &mut |next_square| {
+                        lookup_before_promotion_source_next(
+                            &square_dst_piece_src.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    },
+                );
             }
         } else {
             // 終わり
@@ -627,31 +610,15 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
         for i_dir in 0..KM_UGOKI_LN {
-            // TODO Delete magic number.
-            // 指定の駒種類の、全ての逆向きに動ける方向
-            let _kmdir;
-            let p_kmdir = if &Phase::First == phase {
-                &KM_UGOKI.back[piece_type_num][i_dir]
-            // g_writeln(&format!("get_src_by_phase_ms 先手なら piece_type={} piece_type_num={} p_kmdir={}",
-            //     piece_type, piece_type_num, p_kmdir
-            // ));
-            } else {
-                _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_num][i_dir]);
-                &_kmdir
-                // g_writeln(&format!("get_src_by_phase_ms 後手なら piece_type={} piece_type_num={} p_kmdir={}",
-                //     piece_type, piece_type_num, p_kmdir
-                // ));
-            };
-
-            let angle = if let Some(pm) = p_kmdir {
-                &pm.angle
-            } else {
-                &Angle::Ccw0
-            };
-            if let Some(pm) = p_kmdir {
-                if pm.keima {
+            if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
+                let pm2 = if Phase::First != *phase {
+                    hanten_kmdir_upside_down(pm1)
+                } else {
+                    pm1.clone()
+                };
+                if pm2.keima {
                     // 桂馬
-                    Squares::next_keima_of(angle, &dst_sq_piece.square, &mut |next_square| {
+                    Squares::next_keima_of(&pm2.angle, &dst_sq_piece.square, &mut |next_square| {
                         lookup_no_promotion_source_by_phase_next(
                             &dst_sq_piece,
                             current_board,
@@ -660,18 +627,22 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                         true
                     });
-                } else if pm.slider {
+                } else if pm2.slider {
                     // 長
-                    Squares::looking_next_from(angle, &dst_sq_piece.square, &mut |next_square| {
-                        lookup_no_promotion_source_by_phase_sliding(
-                            &dst_sq_piece,
-                            current_board,
-                            &mut lookups_the_square,
-                            next_square,
-                        )
-                    });
+                    Squares::looking_next_from(
+                        &pm2.angle,
+                        &dst_sq_piece.square,
+                        &mut |next_square| {
+                            lookup_no_promotion_source_by_phase_sliding(
+                                &dst_sq_piece,
+                                current_board,
+                                &mut lookups_the_square,
+                                next_square,
+                            )
+                        },
+                    );
                 } else {
-                    Squares::next_of(angle, &dst_sq_piece.square, &mut |next_square| {
+                    Squares::next_of(&pm2.angle, &dst_sq_piece.square, &mut |next_square| {
                         lookup_no_promotion_source_by_phase_next(
                             &dst_sq_piece,
                             current_board,
@@ -775,33 +746,16 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
             .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
         for i_dir in 0..KM_UGOKI_LN {
-            // TODO Delete magic number.
-            // 指定の駒種類の、全ての逆向きに動ける方向
-            let _kmdir;
-            // let p_kmdir: &PieceDirection;
-            let p_kmdir = if Phase::First == *phase {
-                &KM_UGOKI.back[piece_type_num][i_dir]
-            // g_writeln(&format!("get_src_by_phase_ms 先手なら piece_type={} piece_typece_type_num={} p_kmdir={}",
-            //     piece_type, piece_type_num, p_kmdir
-            // ));
-            } else {
-                _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_num][i_dir]);
-                &_kmdir
-                // g_writeln(&format!("get_src_by_phase_ms 後手なら piece_type={} piece_type_num={} p_kmdir={}",
-                //     piece_type, piece_type_num, p_kmdir
-                // ));
-            };
-
-            let angle = if let Some(pm) = p_kmdir {
-                &pm.angle
-            } else {
-                &Angle::Ccw0
-            };
-            if let Some(pm) = p_kmdir {
-                if pm.keima {
+            if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
+                let pm2 = if Phase::First != *phase {
+                    hanten_kmdir_upside_down(pm1)
+                } else {
+                    pm1.clone()
+                };
+                if pm2.keima {
                     // 桂馬
                     Squares::next_keima_of(
-                        angle,
+                        &pm2.angle,
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
@@ -813,10 +767,10 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             true
                         },
                     );
-                } else if pm.slider {
+                } else if pm2.slider {
                     // 長
                     Squares::looking_next_from(
-                        angle,
+                        &pm2.angle,
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_sliding(
@@ -829,7 +783,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                     );
                 } else {
                     Squares::next_of(
-                        angle,
+                        &pm2.angle,
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(

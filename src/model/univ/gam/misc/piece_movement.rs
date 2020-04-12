@@ -7,6 +7,7 @@ use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::Angle;
 use std::fmt;
 
+#[derive(Clone)]
 pub struct PieceMove {
     pub angle: Angle,
     pub slider: bool,

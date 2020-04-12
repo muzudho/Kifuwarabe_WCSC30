@@ -131,7 +131,7 @@ impl Degree45Orthant {
 }
 
 /// Counterclockwise(反時計回り)での回転方向。
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Angle {
     /// 西。
     Ccw0,

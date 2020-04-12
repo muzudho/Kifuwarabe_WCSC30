@@ -157,10 +157,6 @@ pub fn kaiten180_sq_by_sq_phase(square: &Square, phase: &Phase) -> Square {
  ************/
 
 /// 上下反転
-pub fn hanten_kmdir_upside_down(kmdir: &Option<PieceMove>) -> Option<PieceMove> {
-    if let Some(pm) = kmdir {
-        Some(PieceMove::new(pm.angle.rotate180(), pm.slider, pm.keima))
-    } else {
-        None
-    }
+pub fn hanten_kmdir_upside_down(pm: &PieceMove) -> PieceMove {
+    PieceMove::new(pm.angle.rotate180(), pm.slider, pm.keima)
 }
