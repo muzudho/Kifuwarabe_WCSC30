@@ -612,6 +612,22 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
             continue;
         }
 
+        NextSquares::looking_for_squares_from_on_board(
+            *piece_type,
+            phase,
+            square_dst,
+            &mut |next_square, _promotability, agility| {
+                lookup_before_promotion_source(
+                    agility,
+                    &Piece::from_phase_and_piece_type(phase, *piece_type),
+                    current_board,
+                    &mut lookups_the_square,
+                    next_square,
+                )
+            },
+        );
+
+        /*
         let dst_sq_and_demoted_piece = SquareAndPiece::new(
             square_dst,
             &Piece::from_phase_and_piece_type(phase, *piece_type),
@@ -646,13 +662,14 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 break;
             }
         }
+        */
     }
 }
 
 /// 成る前移動元升、利き☆（＾～＾）
 fn lookup_before_promotion_source<F1>(
     agility: Agility,
-    dst_sq_and_demoted_piece: &SquareAndPiece,
+    demoted_piece: &Piece,
     current_board: &Board,
     lookups_the_square: &mut F1,
     next_square: Square,
@@ -664,7 +681,7 @@ where
         Agility::Sliding => {
             if let Some(piece) = current_board.get_piece_by_square(&next_square) {
                 // 指定した駒に一致すれば。
-                if piece == dst_sq_and_demoted_piece.piece {
+                if piece == *demoted_piece {
                     lookups_the_square(next_square);
                 }
             } else {
@@ -674,7 +691,7 @@ where
         }
         _ => {
             if let Some(piece) = current_board.get_piece_by_square(&next_square) {
-                if piece == dst_sq_and_demoted_piece.piece {
+                if piece == *demoted_piece {
                     lookups_the_square(next_square);
                 }
             }
