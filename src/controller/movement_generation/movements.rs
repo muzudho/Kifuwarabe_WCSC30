@@ -105,6 +105,13 @@ impl MGMovements {
             let ps = speed_of_light.get_piece_struct(&piece);
 
             if *friend == ps.phase() {
+                NextSquares::looking_for_squares_from_on_board(
+                    ps.piece_type(),
+                    friend,
+                    &source,
+                    callback_next,
+                );
+                /*
                 use crate::model::univ::gam::misc::piece_type::PieceType::*;
                 match ps.piece_type() {
                     Pawn => {
@@ -172,6 +179,7 @@ impl MGMovements {
                         );
                     }
                 }
+                */
             }
         }
     }

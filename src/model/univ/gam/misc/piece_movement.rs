@@ -38,6 +38,7 @@ impl fmt::Debug for PieceMove {
 pub struct PieceMovement {
     // 駒種類ごとに、駒の動きを保持。動ける方向は、駒ごとに可変長配列
     // 角度、スライダー、桂馬。
+    // const にしたいので、固定長配列にしているぜ☆（＾～＾）
     pub back: [[Option<PieceMove>; KM_UGOKI_LN]; KMS_LN],
 }
 /// 駒の動き。

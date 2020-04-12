@@ -1,6 +1,7 @@
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_absolute;
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_with_frame_as_absolute;
 use crate::model::univ::gam::misc::phase::Phase;
+use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::square::Square;
 use crate::model::univ::gam::misc::square::*;
 
@@ -17,7 +18,62 @@ pub enum Promotability {
 pub struct NextSquares {}
 impl NextSquares {
     /// 盤上の歩から動けるマスを見ます。
-    pub fn looking_for_square_from_pawn_on_board<F1>(
+    pub fn looking_for_squares_from_on_board<F1>(
+        piece_type: PieceType,
+        friend: &Phase,
+        source: &Square,
+        callback_next: &mut F1,
+    ) where
+        F1: FnMut(Square, Promotability) -> bool,
+    {
+        match piece_type {
+            PieceType::Pawn => {
+                NextSquares::looking_for_square_from_pawn_on_board(friend, source, callback_next)
+            }
+            PieceType::Lance => {
+                NextSquares::looking_for_squares_from_lance_on_board(friend, source, callback_next)
+            }
+            PieceType::Knight => {
+                NextSquares::looking_for_squares_from_knight_on_board(friend, source, callback_next)
+            }
+            PieceType::Silver => {
+                NextSquares::looking_for_squares_from_silver_on_board(friend, source, callback_next)
+            }
+            PieceType::Gold => {
+                NextSquares::looking_for_squares_from_gold_on_board(friend, source, callback_next)
+            }
+            PieceType::King => {
+                NextSquares::looking_for_squares_from_king_on_board(source, callback_next)
+            }
+            PieceType::Bishop => {
+                NextSquares::looking_for_squares_from_bishop_on_board(friend, source, callback_next)
+            }
+            PieceType::Rook => {
+                NextSquares::looking_for_squares_from_rook_on_board(friend, source, callback_next)
+            }
+            PieceType::PromotedPawn => {
+                NextSquares::looking_for_squares_from_gold_on_board(friend, source, callback_next)
+            }
+            PieceType::PromotedLance => {
+                NextSquares::looking_for_squares_from_gold_on_board(friend, source, callback_next)
+            }
+            PieceType::PromotedKnight => {
+                NextSquares::looking_for_squares_from_gold_on_board(friend, source, callback_next)
+            }
+            PieceType::PromotedSilver => {
+                NextSquares::looking_for_squares_from_gold_on_board(friend, source, callback_next)
+            }
+            PieceType::Horse => {
+                NextSquares::looking_for_squares_from_horse_on_board(source, callback_next)
+            }
+            PieceType::Dragon => {
+                NextSquares::looking_for_squares_from_dragon_on_board(source, callback_next)
+            }
+        }
+    }
+
+    /// 盤上の歩から動けるマスを見ます。
+    fn looking_for_square_from_pawn_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
@@ -33,11 +89,11 @@ impl NextSquares {
             Angle::Ccw90
         };
 
-        Squares::next_of(&angle, false, false, source, func1);
+        Squares::looking_next_from(&angle, false, false, source, func1);
     }
 
     /// 盤上の香から動けるマスを見ます。
-    pub fn looking_for_squares_from_lance_on_board<F1>(
+    fn looking_for_squares_from_lance_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
@@ -46,11 +102,11 @@ impl NextSquares {
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
-        Squares::next_of(&Angle::Ccw270, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, true, false, source, func1);
     }
 
     /// 盤上の桂から動けるマスを見ます。
-    pub fn looking_for_squares_from_knight_on_board<F1>(
+    fn looking_for_squares_from_knight_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
@@ -65,14 +121,14 @@ impl NextSquares {
         } else {
             Angle::Ccw45
         };
-        Squares::next_of(&angle, false, true, source, func1);
+        Squares::looking_next_from(&angle, false, true, source, func1);
 
         let angle = angle.rotate90ccw();
-        Squares::next_of(&angle, false, true, source, func1);
+        Squares::looking_next_from(&angle, false, true, source, func1);
     }
 
     /// 盤上の銀から動けるマスを見ます。
-    pub fn looking_for_squares_from_silver_on_board<F1>(
+    fn looking_for_squares_from_silver_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
@@ -89,11 +145,11 @@ impl NextSquares {
             Angle::Ccw90
         };
         // println!("銀1={:?}", angle);
-        Squares::next_of(&angle, false, false, source, func1);
+        Squares::looking_next_from(&angle, false, false, source, func1);
         // println!("銀2={:?}", angle.rotate45ccw());
-        Squares::next_of(&angle.rotate45ccw(), false, false, source, func1);
+        Squares::looking_next_from(&angle.rotate45ccw(), false, false, source, func1);
         // println!("銀3={:?}", angle.rotate90ccw().rotate45ccw());
-        Squares::next_of(
+        Squares::looking_next_from(
             &angle.rotate90ccw().rotate45ccw(),
             false,
             false,
@@ -101,7 +157,7 @@ impl NextSquares {
             func1,
         );
         // println!("銀4={:?}", angle.rotate90cw().rotate45cw());
-        Squares::next_of(
+        Squares::looking_next_from(
             &angle.rotate90cw().rotate45cw(),
             false,
             false,
@@ -109,11 +165,11 @@ impl NextSquares {
             func1,
         );
         // println!("銀5={:?}", angle.rotate45cw());
-        Squares::next_of(&angle.rotate45cw(), false, false, source, func1);
+        Squares::looking_next_from(&angle.rotate45cw(), false, false, source, func1);
     }
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
-    pub fn looking_for_squares_from_gold_on_board<F1>(
+    fn looking_for_squares_from_gold_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
@@ -126,32 +182,32 @@ impl NextSquares {
         } else {
             Angle::Ccw90
         };
-        Squares::next_of(&angle, false, false, source, func1);
-        Squares::next_of(&angle.rotate45ccw(), false, false, source, func1);
-        Squares::next_of(&angle.rotate90ccw(), false, false, source, func1);
-        Squares::next_of(&angle.rotate180(), false, false, source, func1);
-        Squares::next_of(&angle.rotate90cw(), false, false, source, func1);
-        Squares::next_of(&angle.rotate45cw(), false, false, source, func1);
+        Squares::looking_next_from(&angle, false, false, source, func1);
+        Squares::looking_next_from(&angle.rotate45ccw(), false, false, source, func1);
+        Squares::looking_next_from(&angle.rotate90ccw(), false, false, source, func1);
+        Squares::looking_next_from(&angle.rotate180(), false, false, source, func1);
+        Squares::looking_next_from(&angle.rotate90cw(), false, false, source, func1);
+        Squares::looking_next_from(&angle.rotate45cw(), false, false, source, func1);
     }
 
     /// 盤上の玉から動けるマスを見ます。
-    pub fn looking_for_squares_from_king_on_board<F1>(source: &Square, callback_next: &mut F1)
+    fn looking_for_squares_from_king_on_board<F1>(source: &Square, callback_next: &mut F1)
     where
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Angle::Ccw0, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw45, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw90, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw180, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw270, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw0, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw90, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw135, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw180, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw225, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw315, false, false, source, func1);
     }
 
     /// 盤上の角から動けるマスを見ます。
-    pub fn looking_for_squares_from_bishop_on_board<F1>(
+    fn looking_for_squares_from_bishop_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
@@ -161,14 +217,14 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::next_of(&Angle::Ccw45, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw135, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw225, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw315, true, false, source, func1);
     }
 
     /// 盤上の飛から動けるマスを見ます。
-    pub fn looking_for_squares_from_rook_on_board<F1>(
+    fn looking_for_squares_from_rook_on_board<F1>(
         friend: &Phase,
         source: &Square,
         callback_next: &mut F1,
@@ -178,42 +234,42 @@ impl NextSquares {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::next_of(&Angle::Ccw0, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw90, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw180, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw270, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw0, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw90, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw180, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, true, false, source, func1);
     }
 
     /// 盤上の馬から動けるマスを見ます。
-    pub fn looking_for_squares_from_horse_on_board<F1>(source: &Square, callback_next: &mut F1)
+    fn looking_for_squares_from_horse_on_board<F1>(source: &Square, callback_next: &mut F1)
     where
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Angle::Ccw45, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw45, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw135, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw225, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw315, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw135, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw225, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw315, true, false, source, func1);
     }
 
     /// 盤上の竜から動けるマスを見ます。
-    pub fn looking_for_squares_from_dragon_on_board<F1>(source: &Square, callback_next: &mut F1)
+    fn looking_for_squares_from_dragon_on_board<F1>(source: &Square, callback_next: &mut F1)
     where
         F1: FnMut(Square, Promotability) -> bool,
     {
         let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::next_of(&Angle::Ccw45, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw135, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw225, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw315, false, false, source, func1);
-        Squares::next_of(&Angle::Ccw0, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw90, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw180, true, false, source, func1);
-        Squares::next_of(&Angle::Ccw270, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw135, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw225, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw315, false, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw0, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw90, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw180, true, false, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, true, false, source, func1);
     }
 }
 
@@ -373,8 +429,13 @@ impl Squares {
     }
 
     /// 隣☆（＾～＾）
-    pub fn next_of<F1>(angle: &Angle, slider: bool, keima: bool, start: &Square, callback: &mut F1)
-    where
+    pub fn looking_next_from<F1>(
+        angle: &Angle,
+        slider: bool,
+        keima: bool,
+        start: &Square,
+        callback: &mut F1,
+    ) where
         F1: FnMut(Square) -> bool,
     {
         if slider {

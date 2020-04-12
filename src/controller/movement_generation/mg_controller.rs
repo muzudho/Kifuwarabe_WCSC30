@@ -271,7 +271,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             } else {
                 pm1.clone()
             };
-            Squares::next_of(
+            Squares::looking_next_from(
                 &pm2.angle,
                 pm2.slider,
                 pm2.keima,
@@ -437,7 +437,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             } else {
                 pm1.clone()
             };
-            Squares::next_of(
+            Squares::looking_next_from(
                 &pm2.angle,
                 pm2.slider,
                 pm2.keima,
@@ -567,7 +567,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 } else {
                     pm1.clone()
                 };
-                Squares::next_of(
+                Squares::looking_next_from(
                     &pm2.angle,
                     pm2.slider,
                     pm2.keima,
@@ -644,7 +644,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 } else {
                     pm1.clone()
                 };
-                Squares::next_of(
+                Squares::looking_next_from(
                     &pm2.angle,
                     pm2.slider,
                     pm2.keima,
