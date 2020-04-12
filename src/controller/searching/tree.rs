@@ -46,10 +46,8 @@ impl Bestmove {
 struct SiblingBestmove {
     movement_hash: u64,
     pub value: i16,
-    /// 玉を取る手が存在すれば真。
+    /// 玉を取る手が存在すれば真☆　必ずその指し手を選ぶだろう☆（＾～＾）
     lion_catch_0flag: bool,
-    /// 玉を取らない手が存在すれば真。
-    lion_no_catch_0flag: bool,
     /// 玉を取ったり取られたり、取られなかったり、まだ確定していなければ 0 が入っている。
     /// 相手の玉を取ることが確定していたら 1 が入っている。
     /// 相手に玉を取られることが確定していたら 2 が入っている。
@@ -64,17 +62,12 @@ impl SiblingBestmove {
             movement_hash: 0u64,
             value: -1,
             lion_catch_0flag: false,
-            lion_no_catch_0flag: false,
             lion_catch: 0,
         }
     }
 
     pub fn get_movement_hash(&self) -> u64 {
         self.movement_hash
-    }
-
-    pub fn is_mate(&self) -> bool {
-        self.lion_catch_0flag && !self.lion_no_catch_0flag
     }
 
     pub fn update_bestmove(&mut self, changed_value: i16, movement_hash1: u64) -> bool {
@@ -172,8 +165,6 @@ pub fn get_best_movement(
 
             if evaluation.king_catch {
                 sibling_bestmove.lion_catch_0flag = true;
-            } else {
-                sibling_bestmove.lion_no_catch_0flag = true;
             }
 
             if sibling_bestmove.update_bestmove(evaluation.score, *movement_hash) {}
@@ -230,7 +221,7 @@ pub fn get_best_movement(
 
     // メートを調べようぜ☆（＾～＾）
     if sibling_bestmove.lion_catch < 1 {
-        if sibling_bestmove.is_mate() {
+        if sibling_bestmove.lion_catch_0flag {
             // 相手玉を取ることがここで確定するぜ☆（＾～＾）
             sibling_bestmove.lion_catch = 1;
         }
