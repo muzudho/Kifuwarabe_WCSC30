@@ -3,56 +3,69 @@
 //!
 
 extern crate rand;
-use crate::model::univ::gam::history::SENNTITE_NUM;
-use crate::model::univ::game::Game;
-use std::collections::HashSet;
-
-use super::sp_evaluation_controller::*;
+use super::evaluator::*;
 use crate::controller::movement_generation::movement_generator::*;
-use crate::controller::searching::sp_control_count_controller::*;
+use crate::controller::searching::control_counter::*;
+use crate::model::univ::gam::history::SENNTITE_NUM;
 use crate::model::univ::gam::misc::movement::Movement;
 use crate::model::univ::gam::misc::movement_builder::*;
+use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
+use std::collections::HashSet;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。
-pub struct SPBestmove {
+pub struct Bestmove {
     pub movement: MovementBuilder,
     pub changed_value: i16,
     pub sum_nodes: u64,
-    /// らいおんきゃっち数。玉を取ったら1。
-    /// 現局面では、玉を取られた時は偶数、玉を取った時は奇数になる。
-    pub raioncatch_number: i16,
+    /// 玉を取ったり取られたり、取られなかったり、まだ確定していなければ 0 が入っている。
+    /// 相手の玉を取ることが確定していたら 1 が入っている。
+    /// 相手に玉を取られることが確定していたら 2 が入っている。
+    /// 相手に玉を取られたことが確定していたら 奇数の正の数が入っている。
+    /// 相手の玉を取ったことが確定していたら 0より大きい偶数の正の数が入っている。
+    /// この数を 1 引いたものが、いわゆる mate (メート)。 mate 7 なら 7手あれば相手玉を詰めることができる。
+    pub lion_catch: u16,
 }
-impl SPBestmove {
+impl Bestmove {
     pub fn new(
         movement1: MovementBuilder,
         changed_value1: i16,
         sum_nodes1: u64,
-        raioncatch_number1: i16,
+        lion_catch1: u16,
     ) -> Self {
-        SPBestmove {
+        Bestmove {
             movement: movement1,
             changed_value: changed_value1,
             sum_nodes: sum_nodes1,
-            raioncatch_number: raioncatch_number1,
+            lion_catch: lion_catch1,
         }
     }
 }
 
 /// 兄弟局面（横方向）と比較しての結果。
-struct SiblingBestmoveState {
+struct SiblingBestmove {
     movement_hash: u64,
     pub value: i16,
-    /// らいおんきゃっち数。玉を取ったら1。
-    /// 現局面では、玉を取られた時は偶数、玉を取った時は奇数になる。
-    raioncatch_number: i16,
+    /// 玉を取る手が存在すれば真。
+    lion_catch_0flag: bool,
+    /// 玉を取らない手が存在すれば真。
+    lion_no_catch_0flag: bool,
+    /// 玉を取ったり取られたり、取られなかったり、まだ確定していなければ 0 が入っている。
+    /// 相手の玉を取ることが確定していたら 1 が入っている。
+    /// 相手に玉を取られることが確定していたら 2 が入っている。
+    /// 相手に玉を取られたことが確定していたら 奇数の正の数が入っている。
+    /// 相手の玉を取ったことが確定していたら 0より大きい偶数の正の数が入っている。
+    /// この数を 1 引いたものが、いわゆる mate (メート)。 mate 7 なら 7手あれば相手玉を詰めることができる。
+    pub lion_catch: u16,
 }
-impl SiblingBestmoveState {
+impl SiblingBestmove {
     pub fn new() -> Self {
-        SiblingBestmoveState {
+        SiblingBestmove {
             movement_hash: 0u64,
             value: -1,
-            raioncatch_number: 32767,
+            lion_catch_0flag: false,
+            lion_no_catch_0flag: false,
+            lion_catch: 0,
         }
     }
 
@@ -60,12 +73,8 @@ impl SiblingBestmoveState {
         self.movement_hash
     }
 
-    pub fn catch_king(&mut self) {
-        self.raioncatch_number = std::cmp::min(self.raioncatch_number, 1);
-    }
-
-    pub fn catch_no_king(&mut self) {
-        self.raioncatch_number = std::cmp::min(self.raioncatch_number, 0);
+    pub fn is_mate(&self) -> bool {
+        self.lion_catch_0flag && !self.lion_no_catch_0flag
     }
 
     pub fn update_bestmove(&mut self, changed_value: i16, movement_hash1: u64) -> bool {
@@ -98,7 +107,7 @@ pub fn get_best_movement(
     game: &mut Game,
     speed_of_light: &MLSpeedOfLightVo,
     pv: &str,
-) -> Option<SPBestmove> {
+) -> Option<Bestmove> {
     {
         // 指定局面の利き数ボード再計算。
         // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
@@ -127,7 +136,6 @@ pub fn get_best_movement(
     // 指し手はハッシュ値で入っている☆（＾～＾）
     let mut movement_set = HashSet::<u64>::new();
 
-    // TODO do_ss とか局面を動かすところで、フリーズしている？
     generate_movement(game, speed_of_light, &mut movement_set);
 
     // 指せる手が無ければ投了☆（＾～＾）
@@ -145,8 +153,8 @@ pub fn get_best_movement(
     }
 
     // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
-    let mut bestmove_state = SiblingBestmoveState::new();
-    // 千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
+    let mut sibling_bestmove = SiblingBestmove::new();
+    // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     let mut repetition_move_hash = 0u64;
     for movement_hash in movement_set.iter() {
         // 1手進めるぜ☆（＾～＾）
@@ -159,22 +167,21 @@ pub fn get_best_movement(
             repetition_move_hash = *movement_hash;
         } else if end_depth <= cur_depth {
             // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
-            let (changed_value, king_catch1) =
-                SPEvaluationController::evaluate(captured_piece, speed_of_light);
+            let evaluation = SPEvaluationController::evaluate(captured_piece, speed_of_light);
             sum_nodes += 1;
 
-            if king_catch1 {
-                bestmove_state.catch_king();
+            if evaluation.king_catch {
+                sibling_bestmove.lion_catch_0flag = true;
             } else {
-                bestmove_state.catch_no_king();
+                sibling_bestmove.lion_no_catch_0flag = true;
             }
 
-            if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
+            if sibling_bestmove.update_bestmove(evaluation.score, *movement_hash) {}
             let movement = MovementBuilder::from_hash(*movement_hash);
             game.info.print(
                 cur_depth,
                 sum_nodes,
-                bestmove_state.value,
+                sibling_bestmove.value,
                 &movement,
                 &format!("{} {} EndNode", pv, movement),
             );
@@ -191,30 +198,25 @@ pub fn get_best_movement(
                 Some(opponent_best_move) => {
                     sum_nodes = opponent_best_move.sum_nodes;
 
-                    let changed_value: i16 = if opponent_best_move.raioncatch_number == 0 {
-                        // 玉を取ったり取られたりしないぜ☆（＾～＾）
-                        -opponent_best_move.changed_value
-                    } else if opponent_best_move.raioncatch_number == 1 {
+                    let changed_value: i16 = if opponent_best_move.lion_catch == 1 {
                         // 次の相手の番に玉を取られてしまうぜ☆（＾～＾）！王手回避漏れか自殺手になってしまうぜ☆（＾～＾）！
                         // こんな手を指し手はいけないぜ☆（＾～＾）！
-                        return None;
+                        -30000
+                    } else if opponent_best_move.lion_catch % 2 == 1 {
+                        // 将来的に玉を取られてしまう詰めろに入ってるぜ☆（＾～＾）！
+                        // こんな手を指し手はいけないぜ☆（＾～＾）！
+                        -30000
                     } else {
-                        bestmove_state.raioncatch_number = opponent_best_move.raioncatch_number + 1;
-                        if bestmove_state.raioncatch_number % 2 == 0 {
-                            // 相手に玉を取られる詰めろだぜ☆（＾～＾）
-                            -30000 + bestmove_state.raioncatch_number
-                        } else {
-                            // 相手の玉を取る詰めろだぜ☆（＾～＾）
-                            30000 - bestmove_state.raioncatch_number
-                        }
+                        // それ以外なら別に☆（＾～＾）相手が得しない手を選ぼうぜ☆（＾～＾）
+                        -opponent_best_move.changed_value
                     };
 
-                    if bestmove_state.update_bestmove(changed_value, *movement_hash) {}
+                    if sibling_bestmove.update_bestmove(changed_value, *movement_hash) {}
                     let movement = &MovementBuilder::from_hash(*movement_hash);
                     game.info.print(
                         cur_depth,
                         sum_nodes,
-                        bestmove_state.value,
+                        sibling_bestmove.value,
                         movement,
                         &format!("{} {} Backward1", pv, movement),
                     );
@@ -226,8 +228,19 @@ pub fn get_best_movement(
         game.undo_move(speed_of_light);
     }
 
-    let best_movement = if bestmove_state.get_movement_hash() != 0 {
-        MovementBuilder::from_hash(bestmove_state.get_movement_hash())
+    // メートを調べようぜ☆（＾～＾）
+    if sibling_bestmove.lion_catch < 1 {
+        if sibling_bestmove.is_mate() {
+            // 相手玉を取ることがここで確定するぜ☆（＾～＾）
+            sibling_bestmove.lion_catch = 1;
+        }
+    } else {
+        // カウントアップ☆（＾～＾）
+        sibling_bestmove.lion_catch += 1;
+    }
+
+    let best_movement = if sibling_bestmove.get_movement_hash() != 0 {
+        MovementBuilder::from_hash(sibling_bestmove.get_movement_hash())
     } else {
         // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
         MovementBuilder::from_hash(repetition_move_hash)
@@ -237,33 +250,15 @@ pub fn get_best_movement(
     game.info.print(
         cur_depth,
         sum_nodes,
-        bestmove_state.value,
+        sibling_bestmove.value,
         &best_movement,
         &format!("{} {} Backward2", pv, best_movement),
     );
 
-    Some(SPBestmove::new(
+    Some(Bestmove::new(
         best_movement,
-        bestmove_state.value,
+        sibling_bestmove.value,
         sum_nodes,
-        bestmove_state.raioncatch_number,
+        sibling_bestmove.lion_catch,
     ))
-    /*
-    // TODO 進めた局面に評価値を付けるぜ☆（＾～＾）
-    // TODO 繰り返すぜ☆（＾～＾）
-    // TODO 一番良い評価値になる１手を選ぶぜ☆（＾～＾）それが最善手だぜ☆（＾～＾）
-    // 最善手を返すぜ☆（＾～＾）
-    let index = rand::thread_rng().gen_range(0, movement_set.len());
-    for (i, ss_hash) in movement_set.into_iter().enumerate() {
-        if i == index {
-            //let result : MLMovementDto = ss.clone();
-            let best_movement = MLMovementDto::from_hash(ss_hash);
-            g_writeln(&format!("info string solution:{}.", best_movement));
-            return best_movement;
-        }
-    }
-
-    // 投了
-    MLMovementDto::default()
-    */
 }

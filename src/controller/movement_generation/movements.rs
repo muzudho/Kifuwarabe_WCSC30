@@ -15,7 +15,7 @@ pub struct MGMovements {}
 impl MGMovements {
     /// 盤上の駒の動き。
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
-    pub fn make_all_movements_on_board<F1>(
+    pub fn make_movements_on_board<F1>(
         friend: Phase,
         current_board: &Board,
         speed_of_light: &MLSpeedOfLightVo,
@@ -117,7 +117,7 @@ impl MGMovements {
 
     /// 持ち駒の動き。
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
-    pub fn make_movement_on_hand<F1>(
+    pub fn make_movements_on_hand<F1>(
         game: &Game,
         speed_of_light: &MLSpeedOfLightVo,
         callback_movement: &mut F1,
@@ -140,7 +140,7 @@ impl MGMovements {
                 // 駒を持っていれば
                 use crate::model::univ::gam::misc::piece::Piece::*;
                 match *hand_piece {
-                    // ▲歩、▲香 は１段目には進めない
+                    // ▲歩、▲香 の打てる範囲は２段目～９段目。
                     Pawn1 | Lance1 => {
                         Squares::for_from_rank2_to_rank9(Phase::First, &mut |destination| {
                             MGMovements::make_hand(
@@ -152,7 +152,7 @@ impl MGMovements {
                             );
                         })
                     }
-                    // ▲桂 は１、２段目には進めない
+                    // ▲桂 の打てる範囲は３段目～９段目。
                     Knight1 => Squares::for_from_rank3_to_rank9(Phase::First, &mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
@@ -162,7 +162,7 @@ impl MGMovements {
                             callback_movement,
                         );
                     }),
-                    // ▽歩、▽香 は９段目には進めない
+                    // ▽歩、▽香 の打てる範囲は１段目～８段目。
                     Pawn2 | Lance2 => {
                         Squares::for_from_rank2_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
@@ -174,7 +174,7 @@ impl MGMovements {
                             );
                         })
                     }
-                    // ▲桂 は８、９段目には進めない
+                    // ▲桂 の打てる範囲は１段目～７段目。
                     Knight2 => {
                         Squares::for_from_rank3_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
@@ -186,6 +186,7 @@ impl MGMovements {
                             );
                         })
                     }
+                    // それ以外の駒が打てる範囲は盤面全体。
                     _ => {
                         MGSquares::for_all(&mut |destination| {
                             MGMovements::make_hand(
@@ -216,11 +217,10 @@ impl MGMovements {
             let current_board = &position.current_board;
             let ps_dst = speed_of_light.get_piece_struct(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
-            // 行先の無いところに駒を進めることの禁止☆（＾～＾）
             use crate::model::univ::gam::misc::piece::Piece::*;
             match *hand_piece {
                 Pawn1 | Pawn2 => {
-                    // ひよこ　は２歩できない
+                    // ひよこ　は２歩できない☆（＾～＾）
                     if current_board.exists_fu_by_phase_suji(
                         ps_dst.phase(),
                         destination.get_file(),

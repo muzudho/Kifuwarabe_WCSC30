@@ -28,7 +28,7 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
 
     // 盤上の駒の移動。
     let mut first_movement_hashset: HashSet<u64> = HashSet::<u64>::new();
-    MGMovements::make_all_movements_on_board(
+    MGMovements::make_movements_on_board(
         game.history.get_phase(&Person::Friend),
         &game.position.current_board,
         &speed_of_light,
@@ -52,7 +52,7 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
     }
 
     let mut second_movement_hashset: HashSet<u64> = HashSet::<u64>::new();
-    MGMovements::make_all_movements_on_board(
+    MGMovements::make_movements_on_board(
         game.history.get_phase(&Person::Opponent),
         &game.position.current_board,
         &speed_of_light,
@@ -76,48 +76,4 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
     }
 
     // 打は考えない。盤上の利き数なので
-
-    /*
-    // すべての駒について
-    GPPieces::for_all(&mut |any_piece| {
-        let ps_dst = PieceStruct::from_piece(any_piece);
-
-        // 移動先の升☆（＾～＾）
-        MGSquares::for_all(&mut |any_square| {
-            assert_in_board_as_absolute(any_square.address, "think 利き調べ");
-
-            // 移動元の升
-            let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            lookup_no_promotion_source_by_square_and_piece(
-                &any_square,
-                &ps_dst,
-                &game.position.current_board,
-                &speed_of_light,
-                |square| {
-                    mv_src_hashset.insert(square);
-                },
-            );
-
-            lookup_before_promotion_source_by_square_piece(
-                &any_square,
-                &ps_dst,
-                &game.position.current_board,
-                &speed_of_light,
-                |square| {
-                    mv_src_hashset.insert(square);
-                },
-            );
-            // 打は考えない。盤上の利き数なので
-            let control_count = mv_src_hashset.len();
-
-            // 駒別
-            game.position.control_count_by_piece[ps_dst.serial_piece_number]
-                .add_count_by_square(&any_square, control_count as i8);
-
-            // 先後別
-            game.position.control_count_by_phase[phase_to_num(ps_dst.phase())]
-                .add_count_by_square(&any_square, control_count as i8);
-        });
-    });
-    */
 }

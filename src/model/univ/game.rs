@@ -1,8 +1,8 @@
-use crate::controller::searching::sp_number_board_controller::NumberBoard;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::history::*;
 use crate::model::univ::gam::misc::info::SPInfo;
 use crate::model::univ::gam::misc::movement::Movement;
+use crate::model::univ::gam::misc::number_board::*;
 use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::PHASE_LN;
 use crate::model::univ::gam::misc::phase::*;

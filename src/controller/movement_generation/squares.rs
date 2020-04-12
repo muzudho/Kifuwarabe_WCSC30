@@ -362,7 +362,7 @@ impl Forbidden {
             Phase::Second => Forbidden { rank: 7 },
         }
     }
-    fn forbid(&self, destination: &Square) -> bool {
+    pub fn forbid(&self, destination: &Square) -> bool {
         if destination.get_rank() < self.rank {
             return true;
         }

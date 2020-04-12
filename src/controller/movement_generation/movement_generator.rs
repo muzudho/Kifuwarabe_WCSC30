@@ -40,14 +40,14 @@ pub fn get_potential_movement<F1>(
     F1: FnMut(u64),
 {
     // 盤上の駒の移動。
-    MGMovements::make_all_movements_on_board(
+    MGMovements::make_movements_on_board(
         game.history.get_phase(&Person::Friend),
         &game.position.current_board,
         &speed_of_light,
         callback_movement,
     );
     // 持ち駒の打。
-    MGMovements::make_movement_on_hand(game, &speed_of_light, callback_movement);
+    MGMovements::make_movements_on_hand(game, &speed_of_light, callback_movement);
 }
 
 pub struct MGSquares {}
