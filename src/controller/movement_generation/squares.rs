@@ -25,7 +25,7 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         match piece_type {
             PieceType::Pawn => {
@@ -79,7 +79,7 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
@@ -99,7 +99,7 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         let func1 =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
@@ -112,7 +112,7 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         let func1 =
             &mut |destination| Promoting::case_of_knight(friend, &destination, callback_next);
@@ -134,7 +134,7 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         let func1 = &mut |destination| {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
@@ -173,36 +173,38 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
+        let hopping =
+            &mut |destination| callback_next(destination, Promotability::Deny, Agility::Hopping);
         let angle = if *friend == Phase::First {
             Angle::Ccw270
         } else {
             Angle::Ccw90
         };
-        Squares::looking_next_from(&angle, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&angle.rotate45ccw(), Agility::Hopping, source, func1);
-        Squares::looking_next_from(&angle.rotate90ccw(), Agility::Hopping, source, func1);
-        Squares::looking_next_from(&angle.rotate180(), Agility::Hopping, source, func1);
-        Squares::looking_next_from(&angle.rotate90cw(), Agility::Hopping, source, func1);
-        Squares::looking_next_from(&angle.rotate45cw(), Agility::Hopping, source, func1);
+        Squares::looking_next_from(&angle, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&angle.rotate45ccw(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&angle.rotate90ccw(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&angle.rotate180(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&angle.rotate90cw(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&angle.rotate45cw(), Agility::Hopping, source, hopping);
     }
 
     /// 盤上の玉から動けるマスを見ます。
     fn looking_for_squares_from_king_on_board<F1>(source: &Square, callback_next: &mut F1)
     where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::looking_next_from(&Angle::Ccw0, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw45, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw90, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw135, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw180, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw225, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw270, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw315, Agility::Hopping, source, func1);
+        let hopping =
+            &mut |destination| callback_next(destination, Promotability::Deny, Agility::Hopping);
+        Squares::looking_next_from(&Angle::Ccw0, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&Angle::Ccw45, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&Angle::Ccw90, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&Angle::Ccw135, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&Angle::Ccw180, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&Angle::Ccw225, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&Angle::Ccw270, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(&Angle::Ccw315, Agility::Hopping, source, hopping);
     }
 
     /// 盤上の角から動けるマスを見ます。
@@ -211,7 +213,7 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
@@ -228,7 +230,7 @@ impl NextSquares {
         source: &Square,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         let func1 = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
@@ -242,33 +244,51 @@ impl NextSquares {
     /// 盤上の馬から動けるマスを見ます。
     fn looking_for_squares_from_horse_on_board<F1>(source: &Square, callback_next: &mut F1)
     where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::looking_next_from(&Angle::Ccw0, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw45, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw90, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw135, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw180, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw225, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw270, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw315, Agility::Sliding, source, func1);
+        {
+            let sliding = &mut |destination| {
+                callback_next(destination, Promotability::Deny, Agility::Sliding)
+            };
+            Squares::looking_next_from(&Angle::Ccw45, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(&Angle::Ccw135, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(&Angle::Ccw225, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(&Angle::Ccw315, Agility::Sliding, source, sliding);
+        }
+        {
+            let hopping = &mut |destination| {
+                callback_next(destination, Promotability::Deny, Agility::Hopping)
+            };
+            Squares::looking_next_from(&Angle::Ccw0, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(&Angle::Ccw90, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(&Angle::Ccw180, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(&Angle::Ccw270, Agility::Hopping, source, hopping);
+        }
     }
 
     /// 盤上の竜から動けるマスを見ます。
     fn looking_for_squares_from_dragon_on_board<F1>(source: &Square, callback_next: &mut F1)
     where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 = &mut |destination| callback_next(destination, Promotability::Deny);
-        Squares::looking_next_from(&Angle::Ccw0, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw45, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw90, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw135, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw180, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw225, Agility::Hopping, source, func1);
-        Squares::looking_next_from(&Angle::Ccw270, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw315, Agility::Hopping, source, func1);
+        {
+            let sliding = &mut |destination| {
+                callback_next(destination, Promotability::Deny, Agility::Sliding)
+            };
+            Squares::looking_next_from(&Angle::Ccw0, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(&Angle::Ccw90, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(&Angle::Ccw180, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(&Angle::Ccw270, Agility::Sliding, source, sliding);
+        }
+        {
+            let hopping = &mut |destination| {
+                callback_next(destination, Promotability::Deny, Agility::Hopping)
+            };
+            Squares::looking_next_from(&Angle::Ccw45, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(&Angle::Ccw135, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(&Angle::Ccw225, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(&Angle::Ccw315, Agility::Hopping, source, hopping);
+        }
     }
 }
 
@@ -278,31 +298,31 @@ impl Promoting {
     /// 成らずに一番奥の段に移動することはできません。
     fn case_of_pawn_lance<F1>(friend: &Phase, destinaion: &Square, callback_next: &mut F1) -> bool
     where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         if Promoting::is_farthest_rank_from_friend(friend, &destinaion) {
             // 自陣から見て一番奥の段
-            callback_next(*destinaion, Promotability::Forced)
+            callback_next(*destinaion, Promotability::Forced, Agility::Hopping)
         } else if Promoting::is_second_third_farthest_rank_from_friend(friend, &destinaion) {
             // 自陣から見て二番、三番目の奥の段
-            callback_next(*destinaion, Promotability::Any)
+            callback_next(*destinaion, Promotability::Any, Agility::Hopping)
         } else {
-            callback_next(*destinaion, Promotability::Deny)
+            callback_next(*destinaion, Promotability::Deny, Agility::Hopping)
         }
     }
 
     /// 成らずに一番奥の段、奥から２番目の段に移動することはできません。
     fn case_of_knight<F1>(friend: &Phase, destination: &Square, callback_next: &mut F1) -> bool
     where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
         if Promoting::is_first_second_farthest_rank_from_friend(friend, &destination) {
-            callback_next(*destination, Promotability::Forced)
+            callback_next(*destination, Promotability::Forced, Agility::Keima)
         } else if Promoting::is_third_farthest_rank_from_friend(friend, &destination) {
-            callback_next(*destination, Promotability::Any)
+            callback_next(*destination, Promotability::Any, Agility::Keima)
         } else {
-            callback_next(*destination, Promotability::Deny)
+            callback_next(*destination, Promotability::Deny, Agility::Keima)
         }
     }
 
@@ -314,14 +334,14 @@ impl Promoting {
         callback_next: &mut F1,
     ) -> bool
     where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         if Promoting::is_third_farthest_rank_from_friend(friend, &source) {
-            callback_next(*destination, Promotability::Any)
+            callback_next(*destination, Promotability::Any, Agility::Hopping)
         } else if Promoting::is_opponent_area_rank(friend, &destination) {
-            callback_next(*destination, Promotability::Any)
+            callback_next(*destination, Promotability::Any, Agility::Hopping)
         } else {
-            callback_next(*destination, Promotability::Deny)
+            callback_next(*destination, Promotability::Deny, Agility::Hopping)
         }
     }
 
@@ -333,14 +353,14 @@ impl Promoting {
         callback_next: &mut F1,
     ) -> bool
     where
-        F1: FnMut(Square, Promotability) -> bool,
+        F1: FnMut(Square, Promotability, Agility) -> bool,
     {
         if Promoting::is_opponent_area_rank(friend, &source)
             || Promoting::is_opponent_area_rank(friend, &destination)
         {
-            callback_next(*destination, Promotability::Any)
+            callback_next(*destination, Promotability::Any, Agility::Sliding)
         } else {
-            callback_next(*destination, Promotability::Deny)
+            callback_next(*destination, Promotability::Deny, Agility::Sliding)
         }
     }
 

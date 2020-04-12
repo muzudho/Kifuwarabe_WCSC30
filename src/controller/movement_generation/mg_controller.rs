@@ -260,18 +260,20 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         return;
     }
 
+    /*
     let piece_type_num = speed_of_light
         .get_piece_type_struct_from_piece_type(&ps_dst.piece_type())
         .serial_piece_number;
+    */
 
-    /* TODO
+    //* TODO
     NextSquares::looking_for_squares_from_on_board(
         ps_dst.piece_type(),
         &ps_dst.phase(),
         square_dst,
-        &mut |next_square| {
+        &mut |next_square, _promotability, agility| {
             lookup_no_promotion_source(
-                ps_dst.slider,
+                agility,
                 Some(ps_dst.piece),
                 current_board,
                 speed_of_light,
@@ -280,8 +282,8 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             )
         },
     );
-    */
-
+    // */
+    /*
     for i_dir in 0..KM_UGOKI_LN {
         if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
             let pm2 = if Phase::First != ps_dst.phase() {
@@ -304,6 +306,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             break;
         }
     }
+    */
 }
 
 /// この駒には行き先があります。

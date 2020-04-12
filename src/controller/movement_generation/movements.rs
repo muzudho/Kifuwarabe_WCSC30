@@ -46,7 +46,7 @@ impl MGMovements {
     ) where
         F1: FnMut(u64),
     {
-        let callback_next = &mut |destination, promotability| {
+        let callback_next = &mut |destination, promotability, _agility| {
             use crate::controller::movement_generation::squares::Promotability::*;
             use crate::model::univ::gam::board::ThingsInTheSquare::*;
             let things_in_the_square =
