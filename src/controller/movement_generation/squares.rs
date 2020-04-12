@@ -550,13 +550,12 @@ impl Squares {
                     if Squares::has_jumped_out_of_the_board(next) {
                         break;
                     }
-                    /*
                     if let Some(forbidden) = &opt_forbidden {
+                        // 香車だけここを通るぜ☆（＾～＾）
                         if forbidden.forbid(&Square::from_address(next)) {
                             break;
                         }
                     }
-                    */
                     if callback(Square::from_address(next)) {
                         break;
                     }

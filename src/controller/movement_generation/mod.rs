@@ -3,5 +3,5 @@
 //!
 pub mod mg_controller;
 pub mod mg_square;
-mod movements;
+pub mod movements;
 mod squares;

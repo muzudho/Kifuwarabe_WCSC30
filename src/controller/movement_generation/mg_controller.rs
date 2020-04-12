@@ -84,13 +84,6 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         "make_no_promotion_source_by_square_and_piece",
     );
 
-    /*
-    // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    if !this_piece_has_a_destination(ps_dst.phase(), destination, ps_dst) {
-        return;
-    }
-    */
-
     NextSquares::looking_for_squares_from_on_board(
         ps_dst.piece_type(),
         ps_dst.phase(),
