@@ -260,13 +260,6 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         return;
     }
 
-    /*
-    let piece_type_num = speed_of_light
-        .get_piece_type_struct_from_piece_type(&ps_dst.piece_type())
-        .serial_piece_number;
-    */
-
-    //* TODO
     NextSquares::looking_for_squares_from_on_board(
         ps_dst.piece_type(),
         &ps_dst.phase(),
@@ -282,31 +275,6 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             )
         },
     );
-    // */
-    /*
-    for i_dir in 0..KM_UGOKI_LN {
-        if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
-            let pm2 = if Phase::First != ps_dst.phase() {
-                hanten_kmdir_upside_down(&pm1)
-            } else {
-                pm1.clone()
-            };
-            Squares::looking_next_from(&pm2.angle, pm2.agility, square_dst, &mut |next_square| {
-                lookup_no_promotion_source(
-                    pm2.agility,
-                    Some(ps_dst.piece),
-                    current_board,
-                    speed_of_light,
-                    &mut lookups_the_square,
-                    next_square,
-                )
-            });
-        } else {
-            // 終わり
-            break;
-        }
-    }
-    */
 }
 
 /// この駒には行き先があります。
@@ -436,6 +404,25 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     // | 移動前は成る前の駒 |
     // +--------------------+
     // 前提として、成った駒であることは分かっているとするぜ☆（＾～＾）
+    NextSquares::looking_for_squares_from_on_board(
+        speed_of_light
+            .get_piece_struct(&ps_dst.demoted)
+            .piece_type(),
+        &ps_dst.phase(),
+        square_dst,
+        &mut |next_square, _promotability, agility| {
+            lookup_before_promotion(
+                agility,
+                &ps_dst.piece,
+                current_board,
+                speed_of_light,
+                &mut lookups_the_square,
+                next_square,
+            )
+        },
+    );
+
+    /*
     let piece_type_src = speed_of_light
         .get_piece_struct(&ps_dst.demoted)
         .piece_type();
@@ -443,7 +430,6 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
         .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
         .piece;
     let square_dst_piece_src = SquareAndPiece::new(square_dst, piece_src);
-
     let piece_type_narumae_num = speed_of_light
         .get_piece_type_struct_from_piece(&ps_dst.demoted)
         .serial_piece_number;
@@ -475,6 +461,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             break;
         }
     }
+    */
 }
 
 /// 成る前の移動元、利き
