@@ -421,47 +421,6 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             )
         },
     );
-
-    /*
-    let piece_type_src = speed_of_light
-        .get_piece_struct(&ps_dst.demoted)
-        .piece_type();
-    let piece_src = &speed_of_light
-        .get_piece_struct_by_phase_and_piece_type(&ps_dst.phase(), piece_type_src)
-        .piece;
-    let square_dst_piece_src = SquareAndPiece::new(square_dst, piece_src);
-    let piece_type_narumae_num = speed_of_light
-        .get_piece_type_struct_from_piece(&ps_dst.demoted)
-        .serial_piece_number;
-
-    for i_dir in 0..KM_UGOKI_LN {
-        if let Some(pm1) = &KM_UGOKI.back[piece_type_narumae_num][i_dir] {
-            let pm2 = if Phase::First != ps_dst.phase() {
-                hanten_kmdir_upside_down(pm1)
-            } else {
-                pm1.clone()
-            };
-            Squares::looking_next_from(
-                &pm2.angle,
-                pm2.agility,
-                &square_dst_piece_src.square,
-                &mut |next_square| {
-                    lookup_before_promotion(
-                        pm2.agility,
-                        &square_dst_piece_src.piece,
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    )
-                },
-            );
-        } else {
-            // 終わり
-            break;
-        }
-    }
-    */
 }
 
 /// 成る前の移動元、利き
@@ -564,6 +523,23 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             &Piece::from_phase_and_piece_type(phase, *piece_type),
         );
 
+        NextSquares::looking_for_squares_from_on_board(
+            *piece_type,
+            phase,
+            square_dst,
+            &mut |next_square, _promotability, agility| {
+                lookup_no_promotion_source(
+                    agility,
+                    Some(dst_sq_piece.piece),
+                    current_board,
+                    speed_of_light,
+                    &mut lookups_the_square,
+                    next_square,
+                )
+            },
+        );
+
+        /*
         let piece_type_num = speed_of_light
             .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
@@ -594,6 +570,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 break;
             }
         }
+        */
     }
 }
 
