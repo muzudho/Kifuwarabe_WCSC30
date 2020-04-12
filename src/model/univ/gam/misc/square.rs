@@ -131,7 +131,7 @@ impl Degree45Orthant {
 }
 
 /// Counterclockwise(反時計回り)での回転方向。
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum Angle {
     /// 西。
     Ccw0,
@@ -279,7 +279,7 @@ impl RelativeSquare {
         Degree45Orthant::from_file_and_rank(self.file, self.rank)
     }
 
-    pub fn rotate(&self, angle: &Angle) -> Self {
+    pub fn rotate(&self, angle: Angle) -> Self {
         use crate::model::univ::gam::misc::square::Angle::*;
         match angle {
             Ccw0 => RelativeSquare {

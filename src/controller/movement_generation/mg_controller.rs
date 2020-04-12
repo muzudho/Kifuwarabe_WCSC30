@@ -108,48 +108,6 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     );
 }
 
-/*
-/// この駒には行き先があります。
-fn this_piece_has_a_destination(
-    _friend: Phase,
-    destination: &Square,
-    ps_dst: &PieceStruct,
-) -> bool {
-    let (_dx, dy) = destination.to_file_rank();
-
-    use crate::model::univ::gam::misc::piece::Piece::*;
-    match &ps_dst.piece {
-        Knight1 => {
-            // ▲うさぎ　は１、２段目には進めない
-            if dy < RANK_3 {
-                return false;
-            }
-        }
-        Lance1 | Pawn1 => {
-            // ▲しし、▲ひよこ　は１段目には進めない
-            if dy < RANK_2 {
-                return false;
-            }
-        }
-        Knight2 => {
-            // ▽うさぎ　は８、９段目には進めない
-            if RANK_7 < dy {
-                return false;
-            }
-        }
-        Lance2 | Pawn2 => {
-            // ▽しし、▽ひよこ　は９段目には進めない
-            if RANK_8 < dy {
-                return false;
-            }
-        }
-        _ => {}
-    }
-
-    true
-}
-*/
-
 // 成る前を含めない、利き
 fn lookup_no_promotion_source<F1>(
     agility: Agility,

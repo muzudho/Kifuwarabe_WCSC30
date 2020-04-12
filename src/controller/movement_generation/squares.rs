@@ -102,7 +102,7 @@ impl NextSquares {
 
         Squares::looking_next_from(
             Some(Forbidden::from_pawn_or_lance(friend)),
-            &angle,
+            angle,
             Agility::Hopping,
             source,
             promoting,
@@ -121,7 +121,7 @@ impl NextSquares {
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
         Squares::looking_next_from(
             Some(Forbidden::from_pawn_or_lance(friend)),
-            &Angle::Ccw270,
+            Angle::Ccw270,
             Agility::Sliding,
             source,
             promoting,
@@ -147,7 +147,7 @@ impl NextSquares {
 
         Squares::looking_next_from(
             Some(Forbidden::from_knight(friend)),
-            &angle,
+            angle,
             Agility::Keima,
             source,
             promoting,
@@ -156,7 +156,7 @@ impl NextSquares {
         let angle = angle.rotate90ccw();
         Squares::looking_next_from(
             Some(Forbidden::from_knight(friend)),
-            &angle,
+            angle,
             Agility::Keima,
             source,
             promoting,
@@ -181,11 +181,11 @@ impl NextSquares {
             Angle::Ccw90
         };
         // println!("銀1={:?}", angle);
-        Squares::looking_next_from(None, &angle, Agility::Hopping, source, promoting);
+        Squares::looking_next_from(None, angle, Agility::Hopping, source, promoting);
         // println!("銀2={:?}", angle.rotate45ccw());
         Squares::looking_next_from(
             None,
-            &angle.rotate45ccw(),
+            angle.rotate45ccw(),
             Agility::Hopping,
             source,
             promoting,
@@ -193,7 +193,7 @@ impl NextSquares {
         // println!("銀3={:?}", angle.rotate90ccw().rotate45ccw());
         Squares::looking_next_from(
             None,
-            &angle.rotate90ccw().rotate45ccw(),
+            angle.rotate90ccw().rotate45ccw(),
             Agility::Hopping,
             source,
             promoting,
@@ -201,7 +201,7 @@ impl NextSquares {
         // println!("銀4={:?}", angle.rotate90cw().rotate45cw());
         Squares::looking_next_from(
             None,
-            &angle.rotate90cw().rotate45cw(),
+            angle.rotate90cw().rotate45cw(),
             Agility::Hopping,
             source,
             promoting,
@@ -209,7 +209,7 @@ impl NextSquares {
         // println!("銀5={:?}", angle.rotate45cw());
         Squares::looking_next_from(
             None,
-            &angle.rotate45cw(),
+            angle.rotate45cw(),
             Agility::Hopping,
             source,
             promoting,
@@ -231,24 +231,12 @@ impl NextSquares {
         } else {
             Angle::Ccw90
         };
-        Squares::looking_next_from(None, &angle, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(
-            None,
-            &angle.rotate45ccw(),
-            Agility::Hopping,
-            source,
-            hopping,
-        );
-        Squares::looking_next_from(
-            None,
-            &angle.rotate90ccw(),
-            Agility::Hopping,
-            source,
-            hopping,
-        );
-        Squares::looking_next_from(None, &angle.rotate180(), Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &angle.rotate90cw(), Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &angle.rotate45cw(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, angle, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, angle.rotate45ccw(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, angle.rotate90ccw(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, angle.rotate180(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, angle.rotate90cw(), Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, angle.rotate45cw(), Agility::Hopping, source, hopping);
     }
 
     /// 盤上の玉から動けるマスを見ます。
@@ -258,14 +246,14 @@ impl NextSquares {
     {
         let hopping =
             &mut |destination| callback_next(destination, Promotability::Deny, Agility::Hopping);
-        Squares::looking_next_from(None, &Angle::Ccw0, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &Angle::Ccw45, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &Angle::Ccw90, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &Angle::Ccw135, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &Angle::Ccw180, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &Angle::Ccw225, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &Angle::Ccw270, Agility::Hopping, source, hopping);
-        Squares::looking_next_from(None, &Angle::Ccw315, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw0, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw45, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw90, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw135, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw180, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw225, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw270, Agility::Hopping, source, hopping);
+        Squares::looking_next_from(None, Angle::Ccw315, Agility::Hopping, source, hopping);
     }
 
     /// 盤上の角から動けるマスを見ます。
@@ -279,10 +267,10 @@ impl NextSquares {
         let promoting = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(None, &Angle::Ccw45, Agility::Sliding, source, promoting);
-        Squares::looking_next_from(None, &Angle::Ccw135, Agility::Sliding, source, promoting);
-        Squares::looking_next_from(None, &Angle::Ccw225, Agility::Sliding, source, promoting);
-        Squares::looking_next_from(None, &Angle::Ccw315, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw45, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw135, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw225, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw315, Agility::Sliding, source, promoting);
     }
 
     /// 盤上の飛から動けるマスを見ます。
@@ -296,10 +284,10 @@ impl NextSquares {
         let promoting = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(None, &Angle::Ccw0, Agility::Sliding, source, promoting);
-        Squares::looking_next_from(None, &Angle::Ccw90, Agility::Sliding, source, promoting);
-        Squares::looking_next_from(None, &Angle::Ccw180, Agility::Sliding, source, promoting);
-        Squares::looking_next_from(None, &Angle::Ccw270, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw0, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw90, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw180, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(None, Angle::Ccw270, Agility::Sliding, source, promoting);
     }
 
     /// 盤上の馬から動けるマスを見ます。
@@ -311,19 +299,19 @@ impl NextSquares {
             let sliding = &mut |destination| {
                 callback_next(destination, Promotability::Deny, Agility::Sliding)
             };
-            Squares::looking_next_from(None, &Angle::Ccw45, Agility::Sliding, source, sliding);
-            Squares::looking_next_from(None, &Angle::Ccw135, Agility::Sliding, source, sliding);
-            Squares::looking_next_from(None, &Angle::Ccw225, Agility::Sliding, source, sliding);
-            Squares::looking_next_from(None, &Angle::Ccw315, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw45, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw135, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw225, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw315, Agility::Sliding, source, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback_next(destination, Promotability::Deny, Agility::Hopping)
             };
-            Squares::looking_next_from(None, &Angle::Ccw0, Agility::Hopping, source, hopping);
-            Squares::looking_next_from(None, &Angle::Ccw90, Agility::Hopping, source, hopping);
-            Squares::looking_next_from(None, &Angle::Ccw180, Agility::Hopping, source, hopping);
-            Squares::looking_next_from(None, &Angle::Ccw270, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw0, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw90, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw180, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw270, Agility::Hopping, source, hopping);
         }
     }
 
@@ -336,19 +324,19 @@ impl NextSquares {
             let sliding = &mut |destination| {
                 callback_next(destination, Promotability::Deny, Agility::Sliding)
             };
-            Squares::looking_next_from(None, &Angle::Ccw0, Agility::Sliding, source, sliding);
-            Squares::looking_next_from(None, &Angle::Ccw90, Agility::Sliding, source, sliding);
-            Squares::looking_next_from(None, &Angle::Ccw180, Agility::Sliding, source, sliding);
-            Squares::looking_next_from(None, &Angle::Ccw270, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw0, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw90, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw180, Agility::Sliding, source, sliding);
+            Squares::looking_next_from(None, Angle::Ccw270, Agility::Sliding, source, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback_next(destination, Promotability::Deny, Agility::Hopping)
             };
-            Squares::looking_next_from(None, &Angle::Ccw45, Agility::Hopping, source, hopping);
-            Squares::looking_next_from(None, &Angle::Ccw135, Agility::Hopping, source, hopping);
-            Squares::looking_next_from(None, &Angle::Ccw225, Agility::Hopping, source, hopping);
-            Squares::looking_next_from(None, &Angle::Ccw315, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw45, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw135, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw225, Agility::Hopping, source, hopping);
+            Squares::looking_next_from(None, Angle::Ccw315, Agility::Hopping, source, hopping);
         }
     }
 }
@@ -544,7 +532,7 @@ impl Squares {
     /// * `friend` - 行き先のない駒の判定に使うぜ☆（＾～＾）
     pub fn looking_next_from<F1>(
         opt_forbidden: Option<Forbidden>,
-        angle: &Angle,
+        angle: Angle,
         agility: Agility,
         start: &Square,
         callback: &mut F1,
