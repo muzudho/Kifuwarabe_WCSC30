@@ -487,4 +487,8 @@ impl Square {
             y: self.get_rank(),
         }
     }
+
+    pub fn rotate_180_on_1_orthant(&self) -> Self {
+        Square::from_address(110 - self.address)
+    }
 }

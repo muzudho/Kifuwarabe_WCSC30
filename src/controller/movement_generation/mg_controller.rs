@@ -7,7 +7,6 @@ use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::movement_generation::movements::*;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::misc::person::Person;
-use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::square::*;
@@ -85,10 +84,12 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
         "make_no_promotion_source_by_square_and_piece",
     );
 
+    /*
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
     if !this_piece_has_a_destination(ps_dst.phase(), destination, ps_dst) {
         return;
     }
+    */
 
     NextSquares::looking_for_squares_from_on_board(
         ps_dst.piece_type(),
@@ -107,6 +108,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     );
 }
 
+/*
 /// この駒には行き先があります。
 fn this_piece_has_a_destination(
     _friend: Phase,
@@ -146,6 +148,7 @@ fn this_piece_has_a_destination(
 
     true
 }
+*/
 
 // 成る前を含めない、利き
 fn lookup_no_promotion_source<F1>(
