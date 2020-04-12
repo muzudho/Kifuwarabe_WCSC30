@@ -31,7 +31,7 @@ impl NextSquares {
     /// 盤上の歩から動けるマスを見ます。
     pub fn looking_for_squares_from_on_board<F1>(
         piece_type: PieceType,
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -85,7 +85,7 @@ impl NextSquares {
 
     /// 盤上の歩から動けるマスを見ます。
     fn looking_for_square_from_pawn_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -94,7 +94,7 @@ impl NextSquares {
         let promoting =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
 
-        let angle = if *friend == Phase::First {
+        let angle = if friend == Phase::First {
             Angle::Ccw270
         } else {
             Angle::Ccw90
@@ -105,7 +105,7 @@ impl NextSquares {
 
     /// 盤上の香から動けるマスを見ます。
     fn looking_for_squares_from_lance_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -118,7 +118,7 @@ impl NextSquares {
 
     /// 盤上の桂から動けるマスを見ます。
     fn looking_for_squares_from_knight_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -127,7 +127,7 @@ impl NextSquares {
         let promoting =
             &mut |destination| Promoting::case_of_knight(friend, &destination, callback_next);
 
-        let angle = if *friend == Phase::First {
+        let angle = if friend == Phase::First {
             Angle::Ccw225
         } else {
             Angle::Ccw45
@@ -140,7 +140,7 @@ impl NextSquares {
 
     /// 盤上の銀から動けるマスを見ます。
     fn looking_for_squares_from_silver_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -150,7 +150,7 @@ impl NextSquares {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
         };
 
-        let angle = if *friend == Phase::First {
+        let angle = if friend == Phase::First {
             Angle::Ccw270
         } else {
             Angle::Ccw90
@@ -179,7 +179,7 @@ impl NextSquares {
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
     fn looking_for_squares_from_gold_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -187,7 +187,7 @@ impl NextSquares {
     {
         let hopping =
             &mut |destination| callback_next(destination, Promotability::Deny, Agility::Hopping);
-        let angle = if *friend == Phase::First {
+        let angle = if friend == Phase::First {
             Angle::Ccw270
         } else {
             Angle::Ccw90
@@ -219,7 +219,7 @@ impl NextSquares {
 
     /// 盤上の角から動けるマスを見ます。
     fn looking_for_squares_from_bishop_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -236,7 +236,7 @@ impl NextSquares {
 
     /// 盤上の飛から動けるマスを見ます。
     fn looking_for_squares_from_rook_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         callback_next: &mut F1,
     ) where
@@ -306,7 +306,7 @@ impl NextSquares {
 struct Promoting {}
 impl Promoting {
     /// 成らずに一番奥の段に移動することはできません。
-    fn case_of_pawn_lance<F1>(friend: &Phase, destinaion: &Square, callback_next: &mut F1) -> bool
+    fn case_of_pawn_lance<F1>(friend: Phase, destinaion: &Square, callback_next: &mut F1) -> bool
     where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
@@ -322,7 +322,7 @@ impl Promoting {
     }
 
     /// 成らずに一番奥の段、奥から２番目の段に移動することはできません。
-    fn case_of_knight<F1>(friend: &Phase, destination: &Square, callback_next: &mut F1) -> bool
+    fn case_of_knight<F1>(friend: Phase, destination: &Square, callback_next: &mut F1) -> bool
     where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
@@ -338,7 +338,7 @@ impl Promoting {
 
     /// TODO 自陣から見て奥から１～３段目に入るときに成れます。元位置が３段目のときは、動けば成るか選べます。
     fn case_of_silver<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         destination: &Square,
         callback_next: &mut F1,
@@ -357,7 +357,7 @@ impl Promoting {
 
     /// TODO 非敵陣にいるとき、敵陣で成れます。敵陣にいるとき、どこでも成れます。
     fn case_of_bishop_rook<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         destination: &Square,
         callback_next: &mut F1,
@@ -375,40 +375,40 @@ impl Promoting {
     }
 
     /// 自陣から見て、一番遠いの段
-    fn is_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.get_rank() < RANK_2)
-            || (*friend == Phase::Second && RANK_8 < destination.get_rank())
+    fn is_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+        (friend == Phase::First && destination.get_rank() < RANK_2)
+            || (friend == Phase::Second && RANK_8 < destination.get_rank())
     }
     /// 自陣から見て、一番目、２番目に遠いの段
-    fn is_first_second_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.get_rank() < RANK_3)
-            || (*friend == Phase::Second && RANK_7 < destination.get_rank())
+    fn is_first_second_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+        (friend == Phase::First && destination.get_rank() < RANK_3)
+            || (friend == Phase::Second && RANK_7 < destination.get_rank())
     }
     /// 自陣から見て、二番目、三番目に遠いの段
-    fn is_second_third_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First
+    fn is_second_third_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+        (friend == Phase::First
             && RANK_1 < destination.get_rank()
             && destination.get_rank() < RANK_4)
-            || (*friend == Phase::Second
+            || (friend == Phase::Second
                 && RANK_6 < destination.get_rank()
                 && destination.get_rank() < RANK_9)
     }
     /// 自陣から見て、三番目に遠いの段
-    fn is_third_farthest_rank_from_friend(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.get_rank() == RANK_3)
-            || (*friend == Phase::Second && RANK_7 == destination.get_rank())
+    fn is_third_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+        (friend == Phase::First && destination.get_rank() == RANK_3)
+            || (friend == Phase::Second && RANK_7 == destination.get_rank())
     }
     /// 敵陣の段
-    fn is_opponent_area_rank(friend: &Phase, destination: &Square) -> bool {
-        (*friend == Phase::First && destination.get_rank() < RANK_4)
-            || (*friend == Phase::Second && RANK_6 < destination.get_rank())
+    fn is_opponent_area_rank(friend: Phase, destination: &Square) -> bool {
+        (friend == Phase::First && destination.get_rank() < RANK_4)
+            || (friend == Phase::Second && RANK_6 < destination.get_rank())
     }
 }
 
 pub struct Squares {}
 impl Squares {
-    fn rotate180_as_absolute(phase: &Phase, square: isquare) -> isquare {
-        if *phase == Phase::Second {
+    fn rotate180_as_absolute(phase: Phase, square: isquare) -> isquare {
+        if phase == Phase::Second {
             110 - square
         } else {
             square
@@ -421,7 +421,7 @@ impl Squares {
 
     /// 2段目～9段目 全升☆（＾～＾）
     /// 1段目～8段目 全升☆ がほしければ phase.turn() しろだぜ☆（＾～＾）
-    pub fn for_from_rank2_to_rank9<F1>(phase: &Phase, callback: &mut F1)
+    pub fn for_from_rank2_to_rank9<F1>(phase: Phase, callback: &mut F1)
     where
         F1: FnMut(Square),
     {
@@ -443,7 +443,7 @@ impl Squares {
 
     /// 3段目～9段目 全升☆（＾～＾）
     /// 1段目～7段目 全升☆ がほしければ phase.turn() しろだぜ☆（＾～＾）
-    pub fn for_from_rank3_to_rank9<F1>(phase: &Phase, callback: &mut F1)
+    pub fn for_from_rank3_to_rank9<F1>(phase: Phase, callback: &mut F1)
     where
         F1: FnMut(Square),
     {

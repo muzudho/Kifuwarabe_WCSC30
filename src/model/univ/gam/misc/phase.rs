@@ -11,7 +11,7 @@ pub const PHASE_LN: usize = 2;
 
 /// 先後。単純にプレイヤー１を先手、プレイヤー２を後手とする。
 /// 駒落ち戦での通称　上手／下手　の場合、上手は先手、下手は後手とする。
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum Phase {
     First,
     Second,
@@ -41,9 +41,9 @@ impl Phase {
 pub const PHASE_ARRAY_LN: usize = 2;
 pub const PHASE_ARRAY: [Phase; PHASE_ARRAY_LN] = [Phase::First, Phase::Second];
 
-pub fn phase_to_num(phase: &Phase) -> usize {
+pub fn phase_to_num(phase: Phase) -> usize {
     use self::Phase::*;
-    match *phase {
+    match phase {
         First => PHASE_FIRST,
         Second => PHASE_SECOND,
     }

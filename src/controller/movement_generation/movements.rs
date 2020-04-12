@@ -16,7 +16,7 @@ impl MGMovements {
     /// 盤上の駒の動き。
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     pub fn make_all_movements_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         current_board: &Board,
         speed_of_light: &MLSpeedOfLightVo,
         callback_movement: &mut F1,
@@ -38,7 +38,7 @@ impl MGMovements {
     /// 盤上の駒の動き。
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     fn make_a_movement_on_board<F1>(
-        friend: &Phase,
+        friend: Phase,
         source: &Square,
         current_board: &Board,
         speed_of_light: &MLSpeedOfLightVo,
@@ -104,7 +104,7 @@ impl MGMovements {
         if let Some(piece) = current_board.get_piece_by_square(&source) {
             let ps = speed_of_light.get_piece_struct(&piece);
 
-            if *friend == ps.phase() {
+            if friend == ps.phase() {
                 NextSquares::looking_for_squares_from_on_board(
                     ps.piece_type(),
                     friend,
@@ -127,7 +127,7 @@ impl MGMovements {
         GPHandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = &speed_of_light
                 .get_piece_struct_by_phase_and_piece_type(
-                    &game.history.get_phase(&Person::Friend),
+                    game.history.get_phase(&Person::Friend),
                     any_piece_type,
                 )
                 .piece;
@@ -142,7 +142,7 @@ impl MGMovements {
                 match *hand_piece {
                     // ▲歩、▲香 は１段目には進めない
                     Pawn1 | Lance1 => {
-                        Squares::for_from_rank2_to_rank9(&Phase::First, &mut |destination| {
+                        Squares::for_from_rank2_to_rank9(Phase::First, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
                                 &game.position,
@@ -153,20 +153,18 @@ impl MGMovements {
                         })
                     }
                     // ▲桂 は１、２段目には進めない
-                    Knight1 => {
-                        Squares::for_from_rank3_to_rank9(&Phase::First, &mut |destination| {
-                            MGMovements::make_hand(
-                                &hand_piece,
-                                &game.position,
-                                speed_of_light,
-                                &destination,
-                                callback_movement,
-                            );
-                        })
-                    }
+                    Knight1 => Squares::for_from_rank3_to_rank9(Phase::First, &mut |destination| {
+                        MGMovements::make_hand(
+                            &hand_piece,
+                            &game.position,
+                            speed_of_light,
+                            &destination,
+                            callback_movement,
+                        );
+                    }),
                     // ▽歩、▽香 は９段目には進めない
                     Pawn2 | Lance2 => {
-                        Squares::for_from_rank2_to_rank9(&Phase::Second, &mut |destination| {
+                        Squares::for_from_rank2_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
                                 &game.position,
@@ -178,7 +176,7 @@ impl MGMovements {
                     }
                     // ▲桂 は８、９段目には進めない
                     Knight2 => {
-                        Squares::for_from_rank3_to_rank9(&Phase::Second, &mut |destination| {
+                        Squares::for_from_rank3_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
                                 &game.position,
@@ -224,7 +222,7 @@ impl MGMovements {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない
                     if current_board.exists_fu_by_phase_suji(
-                        &ps_dst.phase(),
+                        ps_dst.phase(),
                         destination.get_file(),
                         speed_of_light,
                     ) {

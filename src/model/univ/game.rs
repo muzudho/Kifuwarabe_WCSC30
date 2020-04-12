@@ -276,7 +276,7 @@ impl Game {
         &self
             .position
             .current_board
-            .get_sq_r(phase_to_num(&self.history.get_phase(person)))
+            .get_sq_r(phase_to_num(self.history.get_phase(person)))
     }
 
     /// 入れた指し手の通り指すぜ☆（＾～＾）
@@ -302,7 +302,7 @@ impl Game {
                 // 打なら
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
-                    let piece734 = Piece::from_phase_and_piece_type(&phase, drp);
+                    let piece734 = Piece::from_phase_and_piece_type(phase, drp);
                     self.position
                         .current_board
                         .add_hand(&piece734, -1, speed_of_light);
@@ -389,7 +389,7 @@ impl Game {
                 let old_source391_o: Option<Piece> = if movement.source.address == SQUARE_DROP {
                     // 打なら
                     if let Some(drp) = movement.drop {
-                        let drop394 = Piece::from_phase_and_piece_type(&phase, drp);
+                        let drop394 = Piece::from_phase_and_piece_type(phase, drp);
                         // 自分の持ち駒を増やす
                         //let mg = km_to_mg(km);
                         //self.add_hand(mg,1);
@@ -445,8 +445,8 @@ impl Game {
         }
     }
 
-    pub fn get_number_board_by_phase(&self, phase: &Phase) -> &NumberBoard {
-        &self.position.control_count_by_phase[phase_to_num(&phase)]
+    pub fn get_number_board_by_phase(&self, phase: Phase) -> &NumberBoard {
+        &self.position.control_count_by_phase[phase_to_num(phase)]
     }
     pub fn get_number_board_by_piece(
         &self,

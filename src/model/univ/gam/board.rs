@@ -90,7 +90,7 @@ impl Board {
     /// 歩が置いてあるか確認
     pub fn exists_fu_by_phase_suji(
         &self,
-        phase: &Phase,
+        phase: Phase,
         suji: i8,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> bool {
@@ -99,7 +99,7 @@ impl Board {
             if let Some(piece99) = self.get_piece_by_square(&sq) {
                 let ps100 = speed_of_light.get_piece_struct(&piece99);
                 let (phase_piece, piece_type) = &ps100.phase_piece_type;
-                if phase_piece == phase && *piece_type == PieceType::Pawn {
+                if *phase_piece == phase && *piece_type == PieceType::Pawn {
                     return true;
                 }
             }
@@ -139,14 +139,14 @@ impl Board {
     /// 升には何がありますか？
     pub fn what_is_in_the_square(
         &self,
-        ph: &Phase,
+        phase: Phase,
         sq: &Square,
         speed_of_light: &MLSpeedOfLightVo,
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
         if let Some(piece) = self.get_piece_by_square(&sq) {
             let piece_struct = speed_of_light.get_piece_struct(&piece);
-            if piece_struct.phase() == *ph {
+            if piece_struct.phase() == phase {
                 return ThingsInTheSquare::Friend;
             }
             ThingsInTheSquare::Opponent
@@ -180,21 +180,6 @@ impl Board {
         }
         None
     }
-
-    /*
-    /// 指定の升にある駒の先後、または空升
-    pub fn is_phase_by_sq(
-        &self,
-        ph: &Phase,
-        sq: &Square,
-        speed_of_light: &MLSpeedOfLightVo,
-    ) -> bool {
-        speed_of_light
-            .get_piece_struct(self.get_piece_by_square(sq))
-            .phase()
-            == *ph
-    }
-    */
 
     /// 移動先と移動元を比較し、違う駒があれば、成ったと判定するぜ☆（＾～＾）
     pub fn is_natta(

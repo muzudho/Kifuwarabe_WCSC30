@@ -7,6 +7,7 @@ use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::movement_generation::movements::*;
 use crate::model::univ::gam::board::*;
 use crate::model::univ::gam::misc::person::Person;
+use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::square::*;
@@ -46,7 +47,7 @@ pub fn get_potential_movement<F1>(
 {
     // 盤上の駒の移動。
     MGMovements::make_all_movements_on_board(
-        &game.history.get_phase(&Person::Friend),
+        game.history.get_phase(&Person::Friend),
         &game.position.current_board,
         &speed_of_light,
         callback_movement,
@@ -71,7 +72,7 @@ pub fn get_potential_movement<F1>(
 ///
 /// TODO 先手１段目の香車とか、必ず成らないといけないぜ☆（＾～＾）
 pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
-    square_dst: &Square,
+    destination: &Square,
     ps_dst: &PieceStruct,
     current_board: &Board,
     speed_of_light: &MLSpeedOfLightVo,
@@ -80,19 +81,19 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     F1: FnMut(Square),
 {
     assert_in_board_as_absolute(
-        square_dst.address,
+        destination.address,
         "make_no_promotion_source_by_square_and_piece",
     );
 
     // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    if !this_piece_has_a_destination(square_dst, ps_dst) {
+    if !this_piece_has_a_destination(ps_dst.phase(), destination, ps_dst) {
         return;
     }
 
     NextSquares::looking_for_squares_from_on_board(
         ps_dst.piece_type(),
-        &ps_dst.phase(),
-        square_dst,
+        ps_dst.phase(),
+        destination,
         &mut |next_square, _promotability, agility| {
             lookup_no_promotion_source(
                 agility,
@@ -107,8 +108,12 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
 }
 
 /// この駒には行き先があります。
-fn this_piece_has_a_destination(square_dst: &Square, ps_dst: &PieceStruct) -> bool {
-    let (_dx, dy) = square_dst.to_file_rank();
+fn this_piece_has_a_destination(
+    _friend: Phase,
+    destination: &Square,
+    ps_dst: &PieceStruct,
+) -> bool {
+    let (_dx, dy) = destination.to_file_rank();
 
     use crate::model::univ::gam::misc::piece::Piece::*;
     match &ps_dst.piece {
@@ -237,7 +242,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
         speed_of_light
             .get_piece_struct(&ps_dst.demoted)
             .piece_type(),
-        &ps_dst.phase(),
+        ps_dst.phase(),
         square_dst,
         &mut |next_square, _promotability, agility| {
             lookup_before_promotion(

@@ -3,7 +3,6 @@
 //!
 use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::model::univ::gam::misc::direction::*;
-use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::square::*;
 
 /**********
@@ -129,15 +128,5 @@ pub fn num_to_lower_case(num: i8) -> &'static str {
         8 => "h",
         9 => "i",
         _ => "?", // 返却型が &'static str なので、エラー値を動的に作れない
-    }
-}
-/****************************************************
- * 先手であれば、後手のように番号を振った座標に変換 *
- ****************************************************/
-pub fn kaiten180_sq_by_sq_phase(square: &Square, phase: &Phase) -> Square {
-    use crate::model::univ::gam::misc::phase::Phase::*;
-    match *phase {
-        First => Square::from_address(BAN_MAX - square.address + BAN_MIN),
-        _ => (*square).clone(),
     }
 }

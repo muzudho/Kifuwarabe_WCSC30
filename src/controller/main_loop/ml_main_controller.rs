@@ -20,7 +20,7 @@ pub fn cmd_kikisu(universe: &Universe, speed_of_light: &MLSpeedOfLightVo) {
 
     for phase in PHASE_ARRAY.iter() {
         IO::writeln(&format!("利き数：{}", phase));
-        let num_bo = universe.game.get_number_board_by_phase(phase);
+        let num_bo = universe.game.get_number_board_by_phase(*phase);
         let s = universe.game.print_number_board(&num_bo);
         IO::writeln(&s);
     }

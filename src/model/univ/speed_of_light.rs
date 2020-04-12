@@ -153,12 +153,12 @@ impl MLSpeedOfLightVo {
     /// 先後＆駒種類→先後付き駒
     pub fn get_piece_struct_by_phase_and_piece_type(
         &self,
-        phase: &Phase,
+        phase: Phase,
         piece_type: PieceType,
     ) -> &PieceStruct {
         use crate::model::univ::gam::misc::piece::Piece::*;
         use crate::model::univ::gam::misc::piece_type::PieceType::*;
-        match *phase {
+        match phase {
             Phase::First => match piece_type {
                 King => self.get_piece_struct(&King1),
                 Rook => self.get_piece_struct(&Rook1),

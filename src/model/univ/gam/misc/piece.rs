@@ -119,10 +119,10 @@ impl fmt::Display for Piece {
 impl Piece {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
-    pub fn from_phase_and_piece_type(phase: &Phase, piece_type: PieceType) -> Self {
+    pub fn from_phase_and_piece_type(phase: Phase, piece_type: PieceType) -> Self {
         use crate::model::univ::gam::misc::piece::Piece::*;
         use crate::model::univ::gam::misc::piece_type::PieceType::*;
-        match *phase {
+        match phase {
             Phase::First => match piece_type {
                 King => King1,
                 Rook => Rook1,

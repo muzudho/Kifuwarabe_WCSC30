@@ -28,7 +28,7 @@ pub fn is_jisatusyu(
 
         // 升の利き数だが、指した後で再計算が要るはず
         let control_count = ml_universe_dto.game.position.control_count_by_phase
-            [phase_to_num(&opponent)]
+            [phase_to_num(opponent)]
         .get_number_by_square(&ss.dst);
         0 < control_count
     // g_writeln(&format!(

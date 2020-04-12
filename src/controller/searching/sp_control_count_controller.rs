@@ -24,10 +24,10 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
     });
 
     for phase in PHASE_ARRAY.iter() {
-        game.position.control_count_by_phase[phase_to_num(phase)].clear();
+        game.position.control_count_by_phase[phase_to_num(*phase)].clear();
     }
 
-    // カウント
+    // すべての駒について
     GPPieces::for_all(&mut |any_piece| {
         let ps_dst = PieceStruct::from_piece(any_piece);
 
@@ -64,7 +64,7 @@ pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLigh
                 .add_count_by_square(&any_square, control_count as i8);
 
             // 先後別
-            game.position.control_count_by_phase[phase_to_num(&ps_dst.phase())]
+            game.position.control_count_by_phase[phase_to_num(ps_dst.phase())]
                 .add_count_by_square(&any_square, control_count as i8);
         });
     });
