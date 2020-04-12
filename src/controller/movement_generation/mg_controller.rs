@@ -693,13 +693,41 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             // 指定升を開始地点に、離れていくように調べていく
             // 指定先後の駒があれば追加
             use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
+            let angle = match *p_kmdir {
+                // 東
+                E(_b) => &Angle::Ccw180,
+                // 北東
+                NE(_b) => &Angle::Ccw225,
+                // 北北東
+                NNE => &Angle::Ccw225,
+                // 北
+                N(_b) => &Angle::Ccw270,
+                // 北北西
+                NNW => &Angle::Ccw315,
+                // 北西
+                NW(_b) => &Angle::Ccw315,
+                // 西
+                W(_b) => &Angle::Ccw0,
+                // 南西
+                SW(_b) => &Angle::Ccw45,
+                // 南南西
+                SSW => &Angle::Ccw45,
+                // 南
+                S(_b) => &Angle::Ccw90,
+                // 南南東
+                SSE => &Angle::Ccw135,
+                // 南東
+                SE(_b) => &Angle::Ccw135,
+                Owari => &Angle::Ccw0,
+            };
+
             match *p_kmdir {
                 // 東
-                E(b) => {
+                E(b) | NE(b) | N(b) | NW(b) | W(b) | SW(b) | S(b) | SE(b) => {
                     if b {
                         // 長東
                         Squares::looking_next_from(
-                            &Angle::Ccw180,
+                            angle,
                             &dst_sq_piece.square,
                             &mut |next_square| {
                                 lookup_no_promotion_source_by_phase_sliding(
@@ -712,171 +740,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                     } else {
                         // 東
-                        Squares::next_of(
-                            &Angle::Ccw180,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
-                    }
-                }
-                // 北東
-                NE(b) => {
-                    if b {
-                        // 長北東
-                        Squares::looking_next_from(
-                            &Angle::Ccw225,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 北東
-                        Squares::next_of(
-                            &Angle::Ccw225,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
-                    }
-                }
-                NNE => {
-                    // 北北東
-                    Squares::next_keima_of(
-                        &Angle::Ccw225,
-                        &dst_sq_piece.square,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
-                }
-                // 北
-                N(b) => {
-                    if b {
-                        // 長北
-                        Squares::looking_next_from(
-                            &Angle::Ccw270,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 北
-                        Squares::next_of(
-                            &Angle::Ccw270,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
-                    }
-                }
-                NNW => {
-                    // 北北西
-                    Squares::next_keima_of(
-                        &Angle::Ccw315,
-                        &dst_sq_piece.square,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
-                }
-                // 北西
-                NW(b) => {
-                    if b {
-                        // 長北西
-                        Squares::looking_next_from(
-                            &Angle::Ccw315,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 北西
-                        Squares::next_of(
-                            &Angle::Ccw315,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
-                    }
-                }
-                // 西
-                W(b) => {
-                    if b {
-                        // 長西
-                        Squares::looking_next_from(
-                            &Angle::Ccw0,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 西
-                        Squares::next_of(&Angle::Ccw0, &dst_sq_piece.square, &mut |next_square| {
+                        Squares::next_of(angle, &dst_sq_piece.square, &mut |next_square| {
                             lookup_no_promotion_source_by_phase_next(
                                 &dst_sq_piece,
                                 current_board,
@@ -887,128 +751,17 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         });
                     }
                 }
-                // 南西
-                SW(b) => {
-                    if b {
-                        // 長南西
-                        Squares::looking_next_from(
-                            &Angle::Ccw45,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
+                // 北北東
+                NNE | NNW | SSW | SSE => {
+                    Squares::next_keima_of(angle, &dst_sq_piece.square, &mut |next_square| {
+                        lookup_no_promotion_source_by_phase_next(
+                            &dst_sq_piece,
+                            current_board,
+                            &mut lookups_the_square,
+                            next_square,
                         );
-                    } else {
-                        // 南西
-                        Squares::next_of(&Angle::Ccw45, &dst_sq_piece.square, &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        });
-                    }
-                }
-                SSW => {
-                    // 南南西
-                    Squares::next_keima_of(
-                        &Angle::Ccw45,
-                        &dst_sq_piece.square,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
-                }
-                // 南
-                S(b) => {
-                    if b {
-                        // 長南
-                        Squares::looking_next_from(
-                            &Angle::Ccw90,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 南
-                        Squares::next_of(&Angle::Ccw90, &dst_sq_piece.square, &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        });
-                    }
-                }
-                SSE => {
-                    // 南南東
-                    Squares::next_keima_of(
-                        &Angle::Ccw135,
-                        &dst_sq_piece.square,
-                        &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
-                }
-                // 南東
-                SE(b) => {
-                    if b {
-                        // 長南東
-                        Squares::looking_next_from(
-                            &Angle::Ccw135,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 南東
-                        Squares::next_of(
-                            &Angle::Ccw135,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_next(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
-                    }
+                        true
+                    });
                 }
                 Owari => return true,
             }
