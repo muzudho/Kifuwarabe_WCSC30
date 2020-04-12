@@ -4,7 +4,6 @@
 extern crate rand;
 
 use crate::controller::io::*;
-use crate::model::univ::gam::misc::piece_direction::PieceDirection;
 use crate::model::univ::gam::misc::piece_movement::*;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::piece_type::*;
@@ -68,9 +67,11 @@ impl Universe {
             .serial_piece_number]
             .iter()
         {
-            match *kmdir {
-                PieceDirection::Owari => break,
-                _ => IO::write(&format!("{},", kmdir)),
+            if let Some(pm) = kmdir {
+                IO::write(&format!("{:?},", pm))
+            } else {
+                // 終わり
+                break;
             }
         }
     }

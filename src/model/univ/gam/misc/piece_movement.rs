@@ -3,217 +3,500 @@
 //!
 
 use crate::controller::movement_generation::mg_direction::KM_UGOKI_LN;
-use crate::model::univ::gam::misc::piece_direction::*;
 use crate::model::univ::gam::misc::piece_type::*;
+use crate::model::univ::gam::misc::square::Angle;
+use std::fmt;
+
+pub struct PieceMove {
+    pub angle: Angle,
+    pub slider: bool,
+    pub keima: bool,
+}
+impl PieceMove {
+    pub fn new(angle1: Angle, slider1: bool, keima1: bool) -> Self {
+        PieceMove {
+            angle: angle1,
+            slider: slider1,
+            keima: keima1,
+        }
+    }
+}
+impl fmt::Debug for PieceMove {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "({:?}{}{})",
+            self.angle,
+            if self.slider { " slider" } else { "" },
+            if self.keima { " keima" } else { "" }
+        )
+    }
+}
 
 // 駒が戻る動き
-#[allow(dead_code)]
 pub struct PieceMovement {
     // 駒種類ごとに、駒の動きを保持。動ける方向は、駒ごとに可変長配列
-    pub back: [[PieceDirection; KM_UGOKI_LN]; KMS_LN],
+    // 角度、スライダー、桂馬。
+    pub back: [[Option<PieceMove>; KM_UGOKI_LN]; KMS_LN],
 }
-/**
- * 駒が戻る動き。投了図から現局面へ逆向きに指す思想。
- * [駒種類][9]
- *
- * （１）この表は、後手から盤面を見たものを想像する。
- * （２）後手から見て、普通に駒の動きが　登録されている。
- *       先手から見たとき、back （後ろ向きの動き）となる。
- */
+/// 駒の動き。
 pub const KM_UGOKI: PieceMovement = PieceMovement {
     back: [
-        // 東,北東,北,北西,西,南西,南南西,南,南南東,南東,終わり
-        /*ら  */
+        // K
         [
-            PieceDirection::E(false),
-            PieceDirection::NE(false),
-            PieceDirection::N(false),
-            PieceDirection::NW(false),
-            PieceDirection::W(false),
-            PieceDirection::SW(false),
-            PieceDirection::S(false),
-            PieceDirection::SE(false),
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw45,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw135,
+                slider: false,
+                keima: false,
+            }),
+            None,
         ],
-        /*き  */
+        // R
         [
-            PieceDirection::E(true),
-            PieceDirection::N(true),
-            PieceDirection::W(true),
-            PieceDirection::S(true),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: true,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
+            None,
+            None,
         ],
-        /*ぞ  */
+        // B
         [
-            PieceDirection::NE(true),
-            PieceDirection::NW(true),
-            PieceDirection::SW(true),
-            PieceDirection::SE(true),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw45,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw135,
+                slider: true,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
+            None,
+            None,
         ],
-        /*い  */
+        // G
         [
-            PieceDirection::E(false),
-            PieceDirection::NE(false),
-            PieceDirection::N(false),
-            PieceDirection::NW(false),
-            PieceDirection::W(false),
-            PieceDirection::S(false),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: false,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
         ],
-        /*ね  */
+        // S
         [
-            PieceDirection::NE(false),
-            PieceDirection::N(false),
-            PieceDirection::NW(false),
-            PieceDirection::SW(false),
-            PieceDirection::SE(false),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw45,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw135,
+                slider: false,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
+            None,
         ],
-        /*う  */
+        // N
         [
-            PieceDirection::NNE,
-            PieceDirection::NNW,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: true,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: true,
+            }),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
         ],
-        /*し  */
+        // L
         [
-            PieceDirection::N(true),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: true,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
         ],
-        /*ひ  */
+        // P
         [
-            PieceDirection::N(false),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
         ],
-        /*ぱき*/
+        // PR
         [
-            PieceDirection::E(true),
-            PieceDirection::NE(false),
-            PieceDirection::N(true),
-            PieceDirection::NW(false),
-            PieceDirection::W(true),
-            PieceDirection::SW(false),
-            PieceDirection::S(true),
-            PieceDirection::SE(false),
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw45,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw135,
+                slider: false,
+                keima: false,
+            }),
+            None,
         ],
-        /*ぱぞ*/
+        // PB
         [
-            PieceDirection::E(false),
-            PieceDirection::NE(true),
-            PieceDirection::N(false),
-            PieceDirection::NW(true),
-            PieceDirection::W(false),
-            PieceDirection::SW(true),
-            PieceDirection::S(false),
-            PieceDirection::SE(true),
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw45,
+                slider: true,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw135,
+                slider: true,
+                keima: false,
+            }),
+            None,
         ],
-        /*ぱね*/
+        // PS
         [
-            PieceDirection::E(false),
-            PieceDirection::NE(false),
-            PieceDirection::N(false),
-            PieceDirection::NW(false),
-            PieceDirection::W(false),
-            PieceDirection::S(false),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: false,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
         ],
-        /*ぱう*/
+        // PN
         [
-            PieceDirection::E(false),
-            PieceDirection::NE(false),
-            PieceDirection::N(false),
-            PieceDirection::NW(false),
-            PieceDirection::W(false),
-            PieceDirection::S(false),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: false,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
         ],
-        /*ぱし*/
+        // PL
         [
-            PieceDirection::E(false),
-            PieceDirection::NE(false),
-            PieceDirection::N(false),
-            PieceDirection::NW(false),
-            PieceDirection::W(false),
-            PieceDirection::S(false),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: false,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
         ],
-        /*ぱひ*/
+        // PP
         [
-            PieceDirection::E(false),
-            PieceDirection::NE(false),
-            PieceDirection::N(false),
-            PieceDirection::NW(false),
-            PieceDirection::W(false),
-            PieceDirection::S(false),
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
+            Some(PieceMove {
+                angle: Angle::Ccw180,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw225,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw270,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw315,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw0,
+                slider: false,
+                keima: false,
+            }),
+            Some(PieceMove {
+                angle: Angle::Ccw90,
+                slider: false,
+                keima: false,
+            }),
+            None,
+            None,
+            None,
         ],
         /*空升*/
-        [
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-        ],
+        [None, None, None, None, None, None, None, None, None],
         /*終り*/
-        [
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-            PieceDirection::Owari,
-        ],
+        [None, None, None, None, None, None, None, None, None],
     ],
 };

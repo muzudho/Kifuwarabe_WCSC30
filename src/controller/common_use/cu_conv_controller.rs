@@ -5,7 +5,7 @@
 use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::model::univ::gam::misc::direction::*;
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece_direction::PieceDirection;
+use crate::model::univ::gam::misc::piece_movement::PieceMove;
 use crate::model::univ::gam::misc::square::*;
 
 /**********
@@ -156,55 +156,11 @@ pub fn kaiten180_sq_by_sq_phase(square: &Square, phase: &Phase) -> Square {
  * 駒の動き *
  ************/
 
-/**
- * 上下反転
- */
-pub fn hanten_kmdir_joge(kmdir: &PieceDirection) -> PieceDirection {
-    use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
-    match *kmdir {
-        // 東
-        E(b) => E(b),
-        // 北東
-        NE(b) => SE(b),
-        // 北北東（桂馬が戻る動き）
-        NNE => SSE,
-        // 北
-        N(b) => S(b),
-        // 北北西（桂馬が戻る動き）
-        NNW => SSW,
-        // 北西
-        NW(b) => SW(b),
-        // 西
-        W(b) => W(b),
-        // 南西
-        SW(b) => NW(b),
-        // 南南西（桂馬の動き）
-        SSW => NNW,
-        // 南
-        S(b) => N(b),
-        // 南南東（桂馬の動き）
-        SSE => NNE,
-        // 南東
-        SE(b) => NE(b),
-        // 要素数より1小さい数。エラー値用に使っても可
-        Owari => Owari,
+/// 上下反転
+pub fn hanten_kmdir_upside_down(kmdir: &Option<PieceMove>) -> Option<PieceMove> {
+    if let Some(pm) = kmdir {
+        Some(PieceMove::new(pm.angle.rotate180(), pm.slider, pm.keima))
+    } else {
+        None
     }
 }
-/*
-pub fn kmdir_id(kmdir:&PieceDirection) -> usize{
-    use teigi::shogi_syugo::PieceDirection::*;
-    match *kmdir {
-        E  (b)=>if b { 0}else{ 1},
-        NE (b)=>if b { 2}else{ 3},
-        N  (b)=>if b { 4}else{ 5},
-        NW (b)=>if b { 6}else{ 7},
-        W  (b)=>if b { 8}else{ 9},
-        SW (b)=>if b {10}else{11},
-        SSW   =>12,
-        S  (b)=>if b {13}else{14},
-        SSE   =>15,
-        SE (b)=>if b {16}else{17},
-        Owari =>18,
-    }
-}
-*/

@@ -13,7 +13,6 @@ use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::piece::Piece;
-use crate::model::univ::gam::misc::piece_direction::*;
 use crate::model::univ::gam::misc::piece_movement::*;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::piece_type::*;
@@ -266,71 +265,24 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
     MGDirection::for_all(&mut |i_dir| {
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
-        let p_kmdir: &PieceDirection;
+        let p_kmdir: &Option<PieceMove>;
         if &Phase::First == &ps_dst.phase() {
             p_kmdir = &KM_UGOKI.back[piece_type_num][i_dir]
         } else {
-            _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[piece_type_num][i_dir]);
+            _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_num][i_dir]);
             p_kmdir = &_kmdir;
         };
 
         // 移動先を開始地点にして、駒の位置を終了地点にする
-        use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
-        let angle = &match *p_kmdir {
-            // 東
-            E(_b) => Angle::Ccw180,
-            // 北東
-            NE(_b) => Angle::Ccw225,
-            // 北北東
-            NNE => Angle::Ccw225,
-            // 北
-            N(_b) => Angle::Ccw270,
-            // 北北西
-            NNW => Angle::Ccw315,
-            // 北西
-            NW(_b) => Angle::Ccw315,
-            // 西
-            W(_b) => Angle::Ccw0,
-            // 南西
-            SW(_b) => Angle::Ccw45,
-            // 南南西
-            SSW => Angle::Ccw45,
-            // 南
-            S(_b) => Angle::Ccw90,
-            // 南南東
-            SSE => Angle::Ccw135,
-            // 南東
-            SE(_b) => Angle::Ccw135,
-            Owari => Angle::Ccw0,
+        let angle = if let Some(pm) = p_kmdir {
+            &pm.angle
+        } else {
+            &Angle::Ccw0
         };
-        match *p_kmdir {
-            E(b) | NE(b) | N(b) | NW(b) | W(b) | SW(b) | S(b) | SE(b) => {
-                if b {
-                    // 長
-                    Squares::looking_next_from(angle, square_dst, &mut |next_square| {
-                        lookup_no_promotion_source_by_piece_sliding(
-                            &ps_dst.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        )
-                    });
-                } else {
-                    Squares::next_of(angle, square_dst, &mut |next_square| {
-                        lookup_no_promotion_source_by_piece_next(
-                            &ps_dst.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    });
-                }
-            }
-            // 桂馬
-            NNE | NNW | SSW | SSE => {
+
+        if let Some(pm) = p_kmdir {
+            if pm.keima {
+                // 桂馬
                 Squares::next_keima_of(angle, square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         &ps_dst.piece,
@@ -341,8 +293,32 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     );
                     true
                 });
+            } else if pm.slider {
+                // 長
+                Squares::looking_next_from(angle, square_dst, &mut |next_square| {
+                    lookup_no_promotion_source_by_piece_sliding(
+                        &ps_dst.piece,
+                        current_board,
+                        speed_of_light,
+                        &mut lookups_the_square,
+                        next_square,
+                    )
+                });
+            } else {
+                Squares::next_of(angle, square_dst, &mut |next_square| {
+                    lookup_no_promotion_source_by_piece_next(
+                        &ps_dst.piece,
+                        current_board,
+                        speed_of_light,
+                        &mut lookups_the_square,
+                        next_square,
+                    );
+                    true
+                });
             }
-            Owari => return true,
+        } else {
+            // 終わり
+            return true;
         }
         false
     });
@@ -479,77 +455,23 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
     MGDirection::for_all(&mut |i_dir| {
         // 指定の駒種類の、全ての逆向きに動ける方向
         let _kmdir;
-        let p_kmdir: &PieceDirection;
+        let p_kmdir: &Option<PieceMove>;
         if &Phase::First == &ps_dst.phase() {
             p_kmdir = &KM_UGOKI.back[piece_type_narumae_num][i_dir]
         } else {
-            _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[piece_type_narumae_num][i_dir]);
+            _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_narumae_num][i_dir]);
             p_kmdir = &_kmdir;
         };
 
-        // 移動先を開始地点にして、駒の位置を終了地点にする
-        // 進みたいマスから戻ったマス
-        use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
-        let angle = match *p_kmdir {
-            // 東
-            E(_b) => &Angle::Ccw180,
-            // 北東
-            NE(_b) => &Angle::Ccw225,
-            // 北北東
-            NNE => &Angle::Ccw225,
-            // 北
-            N(_b) => &Angle::Ccw270,
-            // 北北西
-            NNW => &Angle::Ccw315,
-            // 北西
-            NW(_b) => &Angle::Ccw315,
-            // 西
-            W(_b) => &Angle::Ccw0,
-            // 南西
-            SW(_b) => &Angle::Ccw45,
-            // 南南西
-            SSW => &Angle::Ccw45,
-            // 南
-            S(_b) => &Angle::Ccw90,
-            // 南南東
-            SSE => &Angle::Ccw135,
-            // 南東
-            SE(_b) => &Angle::Ccw135,
-            Owari => &Angle::Ccw0,
+        let angle = if let Some(pm) = p_kmdir {
+            &pm.angle
+        } else {
+            &Angle::Ccw0
         };
 
-        match *p_kmdir {
-            E(b) | NE(b) | N(b) | NW(b) | W(b) | SW(b) | S(b) | SE(b) => {
-                if b {
-                    // 長
-                    Squares::looking_next_from(
-                        angle,
-                        &square_dst_piece_src.square,
-                        &mut |next_square| {
-                            lookup_before_promotion_source_sliding(
-                                &square_dst_piece_src.piece,
-                                current_board,
-                                speed_of_light,
-                                &mut lookups_the_square,
-                                next_square,
-                            )
-                        },
-                    );
-                } else {
-                    Squares::next_of(angle, &square_dst_piece_src.square, &mut |next_square| {
-                        lookup_before_promotion_source_next(
-                            &square_dst_piece_src.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    });
-                }
-            }
-            NNE | NNW | SSW | SSE => {
-                // 北北東
+        if let Some(pm) = p_kmdir {
+            if pm.keima {
+                // 桂馬
                 Squares::next_keima_of(angle, &square_dst_piece_src.square, &mut |next_square| {
                     lookup_before_promotion_source_next(
                         &square_dst_piece_src.piece,
@@ -560,8 +482,36 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
                     );
                     true
                 });
+            } else if pm.slider {
+                // 長
+                Squares::looking_next_from(
+                    angle,
+                    &square_dst_piece_src.square,
+                    &mut |next_square| {
+                        lookup_before_promotion_source_sliding(
+                            &square_dst_piece_src.piece,
+                            current_board,
+                            speed_of_light,
+                            &mut lookups_the_square,
+                            next_square,
+                        )
+                    },
+                );
+            } else {
+                Squares::next_of(angle, &square_dst_piece_src.square, &mut |next_square| {
+                    lookup_before_promotion_source_next(
+                        &square_dst_piece_src.piece,
+                        current_board,
+                        speed_of_light,
+                        &mut lookups_the_square,
+                        next_square,
+                    );
+                    true
+                });
             }
-            Owari => return true,
+        } else {
+            // 終わり
+            return true;
         }
         false
     });
@@ -683,76 +633,21 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
             //     piece_type, piece_type_num, p_kmdir
             // ));
             } else {
-                _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[piece_type_num][i_dir]);
+                _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_num][i_dir]);
                 &_kmdir
                 // g_writeln(&format!("get_src_by_phase_ms 後手なら piece_type={} piece_type_num={} p_kmdir={}",
                 //     piece_type, piece_type_num, p_kmdir
                 // ));
             };
 
-            // 指定升を開始地点に、離れていくように調べていく
-            // 指定先後の駒があれば追加
-            use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
-            let angle = match *p_kmdir {
-                // 東
-                E(_b) => &Angle::Ccw180,
-                // 北東
-                NE(_b) => &Angle::Ccw225,
-                // 北北東
-                NNE => &Angle::Ccw225,
-                // 北
-                N(_b) => &Angle::Ccw270,
-                // 北北西
-                NNW => &Angle::Ccw315,
-                // 北西
-                NW(_b) => &Angle::Ccw315,
-                // 西
-                W(_b) => &Angle::Ccw0,
-                // 南西
-                SW(_b) => &Angle::Ccw45,
-                // 南南西
-                SSW => &Angle::Ccw45,
-                // 南
-                S(_b) => &Angle::Ccw90,
-                // 南南東
-                SSE => &Angle::Ccw135,
-                // 南東
-                SE(_b) => &Angle::Ccw135,
-                Owari => &Angle::Ccw0,
+            let angle = if let Some(pm) = p_kmdir {
+                &pm.angle
+            } else {
+                &Angle::Ccw0
             };
-
-            match *p_kmdir {
-                // 東
-                E(b) | NE(b) | N(b) | NW(b) | W(b) | SW(b) | S(b) | SE(b) => {
-                    if b {
-                        // 長東
-                        Squares::looking_next_from(
-                            angle,
-                            &dst_sq_piece.square,
-                            &mut |next_square| {
-                                lookup_no_promotion_source_by_phase_sliding(
-                                    &dst_sq_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 東
-                        Squares::next_of(angle, &dst_sq_piece.square, &mut |next_square| {
-                            lookup_no_promotion_source_by_phase_next(
-                                &dst_sq_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        });
-                    }
-                }
-                // 北北東
-                NNE | NNW | SSW | SSE => {
+            if let Some(pm) = p_kmdir {
+                if pm.keima {
+                    // 桂馬
                     Squares::next_keima_of(angle, &dst_sq_piece.square, &mut |next_square| {
                         lookup_no_promotion_source_by_phase_next(
                             &dst_sq_piece,
@@ -762,8 +657,30 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         );
                         true
                     });
+                } else if pm.slider {
+                    // 長
+                    Squares::looking_next_from(angle, &dst_sq_piece.square, &mut |next_square| {
+                        lookup_no_promotion_source_by_phase_sliding(
+                            &dst_sq_piece,
+                            current_board,
+                            &mut lookups_the_square,
+                            next_square,
+                        )
+                    });
+                } else {
+                    Squares::next_of(angle, &dst_sq_piece.square, &mut |next_square| {
+                        lookup_no_promotion_source_by_phase_next(
+                            &dst_sq_piece,
+                            current_board,
+                            &mut lookups_the_square,
+                            next_square,
+                        );
+                        true
+                    });
                 }
-                Owari => return true,
+            } else {
+                // 終わり
+                return true;
             }
             false
         });
@@ -865,80 +782,21 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
             //     piece_type, piece_type_num, p_kmdir
             // ));
             } else {
-                _kmdir = hanten_kmdir_joge(&KM_UGOKI.back[piece_type_num][i_dir]);
+                _kmdir = hanten_kmdir_upside_down(&KM_UGOKI.back[piece_type_num][i_dir]);
                 &_kmdir
                 // g_writeln(&format!("get_src_by_phase_ms 後手なら piece_type={} piece_type_num={} p_kmdir={}",
                 //     piece_type, piece_type_num, p_kmdir
                 // ));
             };
 
-            // 指定升を開始地点に、離れていくように調べていく
-            // 指定先後の駒があれば追加
-            use crate::model::univ::gam::misc::piece_direction::PieceDirection::*;
-            let angle = match *p_kmdir {
-                // 東
-                E(_b) => &Angle::Ccw180,
-                // 北東
-                NE(_b) => &Angle::Ccw225,
-                // 北北東
-                NNE => &Angle::Ccw225,
-                // 北
-                N(_b) => &Angle::Ccw270,
-                // 北北西
-                NNW => &Angle::Ccw315,
-                // 北西
-                NW(_b) => &Angle::Ccw315,
-                // 西
-                W(_b) => &Angle::Ccw0,
-                // 南西
-                SW(_b) => &Angle::Ccw45,
-                // 南南西
-                SSW => &Angle::Ccw45,
-                // 南
-                S(_b) => &Angle::Ccw90,
-                // 南南東
-                SSE => &Angle::Ccw135,
-                // 南東
-                SE(_b) => &Angle::Ccw135,
-                Owari => &Angle::Ccw0,
+            let angle = if let Some(pm) = p_kmdir {
+                &pm.angle
+            } else {
+                &Angle::Ccw0
             };
-
-            match *p_kmdir {
-                // 東
-                E(b) | NE(b) | N(b) | NW(b) | W(b) | SW(b) | S(b) | SE(b) => {
-                    if b {
-                        // 長東
-                        Squares::looking_next_from(
-                            angle,
-                            &dst_sq_and_demoted_piece.square,
-                            &mut |next_square| {
-                                lookup_before_promotion_source_by_phase_sliding(
-                                    &dst_sq_and_demoted_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                )
-                            },
-                        );
-                    } else {
-                        // 東
-                        Squares::next_of(
-                            angle,
-                            &dst_sq_and_demoted_piece.square,
-                            &mut |next_square| {
-                                lookup_before_promotion_source_by_phase_next(
-                                    &dst_sq_and_demoted_piece,
-                                    current_board,
-                                    &mut lookups_the_square,
-                                    next_square,
-                                );
-                                true
-                            },
-                        );
-                    }
-                }
-                NNE | NNW | SSW | SSE => {
-                    // 北北東
+            if let Some(pm) = p_kmdir {
+                if pm.keima {
+                    // 桂馬
                     Squares::next_keima_of(
                         angle,
                         &dst_sq_and_demoted_piece.square,
@@ -952,8 +810,38 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                             true
                         },
                     );
+                } else if pm.slider {
+                    // 長
+                    Squares::looking_next_from(
+                        angle,
+                        &dst_sq_and_demoted_piece.square,
+                        &mut |next_square| {
+                            lookup_before_promotion_source_by_phase_sliding(
+                                &dst_sq_and_demoted_piece,
+                                current_board,
+                                &mut lookups_the_square,
+                                next_square,
+                            )
+                        },
+                    );
+                } else {
+                    Squares::next_of(
+                        angle,
+                        &dst_sq_and_demoted_piece.square,
+                        &mut |next_square| {
+                            lookup_before_promotion_source_by_phase_next(
+                                &dst_sq_and_demoted_piece,
+                                current_board,
+                                &mut lookups_the_square,
+                                next_square,
+                            );
+                            true
+                        },
+                    );
                 }
-                Owari => return true,
+            } else {
+                // 終わり
+                return true;
             }
             false
         });
