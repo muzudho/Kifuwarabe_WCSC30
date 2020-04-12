@@ -124,7 +124,7 @@ fn main() {
             IO::writeln("option name ResetLearning type button");
             IO::writeln("option name LearningFile type filename default <empty>");
             */
-            IO::writeln("option name MaxDepth type spin default 1 min 1 max 3");
+            IO::writeln("option name MaxDepth type spin default 1 min 1 max 5");
             IO::writeln("usiok");
         } else if 1 < len && &line[starts..2] == "go" {
             universe.game.info.clear();

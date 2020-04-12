@@ -50,8 +50,6 @@ impl Bestmove {
 struct SiblingBestmove {
     movement_hash: u64,
     pub value: i16,
-    /// 玉を取る手が存在すれば真☆　必ずその指し手を選ぶだろう☆（＾～＾）
-    lion_catch_0flag: bool,
     /// 玉を取ったり取られたり、取られなかったり、まだ確定していなければ 0 が入っている。
     /// 相手の玉を取ることが確定していたら 1 が入っている。
     /// 相手に玉を取られることが確定していたら 2 が入っている。
@@ -59,14 +57,16 @@ struct SiblingBestmove {
     /// 相手の玉を取ったことが確定していたら 0より大きい偶数の正の数が入っている。
     /// この数を 1 引いたものが、いわゆる mate (メート)。 mate 7 なら 7手あれば相手玉を詰めることができる。
     pub lion_catch: u16,
+    /// 玉を取る手が存在すれば真☆　必ずその指し手を選ぶだろう☆（＾～＾）
+    pub lion_catched: bool,
 }
 impl SiblingBestmove {
     pub fn new() -> Self {
         SiblingBestmove {
             movement_hash: 0u64,
             value: -1,
-            lion_catch_0flag: false,
             lion_catch: 0,
+            lion_catched: false,
         }
     }
 
@@ -74,10 +74,18 @@ impl SiblingBestmove {
         self.movement_hash
     }
 
-    pub fn update_bestmove(&mut self, changed_value: i16, movement_hash1: u64) -> bool {
-        if self.value < changed_value {
+    pub fn update_bestmove(&mut self, evaluation: &Evaluation, movement_hash1: u64) -> bool {
+        if self.lion_catched {
+            // すでにライオンキャッチする手を見つけているから、更新しないぜ☆（＾～＾）
+            return false;
+        } else if evaluation.king_catch {
             self.movement_hash = movement_hash1;
-            self.value = changed_value;
+            self.value = evaluation.score;
+            self.lion_catched = true;
+            return true;
+        } else if self.value < evaluation.score {
+            self.movement_hash = movement_hash1;
+            self.value = evaluation.score;
             return true;
         }
         false
@@ -173,11 +181,7 @@ pub fn get_best_movement(
             let evaluation = SPEvaluationController::evaluate(captured_piece, speed_of_light);
             sum_nodes += 1;
 
-            if evaluation.king_catch {
-                sibling_bestmove.lion_catch_0flag = true;
-            }
-
-            if sibling_bestmove.update_bestmove(evaluation.score, *movement_hash) {}
+            if sibling_bestmove.update_bestmove(&evaluation, *movement_hash) {}
             let movement = MovementBuilder::from_hash(*movement_hash);
             game.info.print(
                 cur_depth,
@@ -215,15 +219,18 @@ pub fn get_best_movement(
                 -opponent_best_move.changed_value
             };
 
-            if sibling_bestmove.update_bestmove(changed_value, *movement_hash) {}
-            let movement = &MovementBuilder::from_hash(*movement_hash);
-            game.info.print(
-                cur_depth,
-                sum_nodes,
-                sibling_bestmove.value,
-                movement,
-                &format!("{} {} Backward1", pv, movement),
-            );
+            if sibling_bestmove
+                .update_bestmove(&Evaluation::new(changed_value, false), *movement_hash)
+            {
+                let movement = &MovementBuilder::from_hash(*movement_hash);
+                game.info.print(
+                    cur_depth,
+                    sum_nodes,
+                    sibling_bestmove.value,
+                    movement,
+                    &format!("{} {} Backward1", pv, movement),
+                );
+            }
         }
         // 1手戻すぜ☆（＾～＾）
         game.undo_move(speed_of_light);
@@ -231,7 +238,7 @@ pub fn get_best_movement(
 
     // メートを調べようぜ☆（＾～＾）
     if sibling_bestmove.lion_catch < 1 {
-        if sibling_bestmove.lion_catch_0flag {
+        if sibling_bestmove.lion_catched {
             // 相手玉を取ることがここで確定するぜ☆（＾～＾）
             sibling_bestmove.lion_catch = 1;
         }
