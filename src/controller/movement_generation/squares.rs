@@ -91,7 +91,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 =
+        let promoting =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
 
         let angle = if *friend == Phase::First {
@@ -100,7 +100,7 @@ impl NextSquares {
             Angle::Ccw90
         };
 
-        Squares::looking_next_from(&angle, Agility::Hopping, source, func1);
+        Squares::looking_next_from(&angle, Agility::Hopping, source, promoting);
     }
 
     /// 盤上の香から動けるマスを見ます。
@@ -111,9 +111,9 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 =
+        let promoting =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
-        Squares::looking_next_from(&Angle::Ccw270, Agility::Sliding, source, func1);
+        Squares::looking_next_from(&Angle::Ccw270, Agility::Sliding, source, promoting);
     }
 
     /// 盤上の桂から動けるマスを見ます。
@@ -124,7 +124,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 =
+        let promoting =
             &mut |destination| Promoting::case_of_knight(friend, &destination, callback_next);
 
         let angle = if *friend == Phase::First {
@@ -132,10 +132,10 @@ impl NextSquares {
         } else {
             Angle::Ccw45
         };
-        Squares::looking_next_from(&angle, Agility::Keima, source, func1);
+        Squares::looking_next_from(&angle, Agility::Keima, source, promoting);
 
         let angle = angle.rotate90ccw();
-        Squares::looking_next_from(&angle, Agility::Keima, source, func1);
+        Squares::looking_next_from(&angle, Agility::Keima, source, promoting);
     }
 
     /// 盤上の銀から動けるマスを見ます。
@@ -146,7 +146,7 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 = &mut |destination| {
+        let promoting = &mut |destination| {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
         };
 
@@ -156,25 +156,25 @@ impl NextSquares {
             Angle::Ccw90
         };
         // println!("銀1={:?}", angle);
-        Squares::looking_next_from(&angle, Agility::Hopping, source, func1);
+        Squares::looking_next_from(&angle, Agility::Hopping, source, promoting);
         // println!("銀2={:?}", angle.rotate45ccw());
-        Squares::looking_next_from(&angle.rotate45ccw(), Agility::Hopping, source, func1);
+        Squares::looking_next_from(&angle.rotate45ccw(), Agility::Hopping, source, promoting);
         // println!("銀3={:?}", angle.rotate90ccw().rotate45ccw());
         Squares::looking_next_from(
             &angle.rotate90ccw().rotate45ccw(),
             Agility::Hopping,
             source,
-            func1,
+            promoting,
         );
         // println!("銀4={:?}", angle.rotate90cw().rotate45cw());
         Squares::looking_next_from(
             &angle.rotate90cw().rotate45cw(),
             Agility::Hopping,
             source,
-            func1,
+            promoting,
         );
         // println!("銀5={:?}", angle.rotate45cw());
-        Squares::looking_next_from(&angle.rotate45cw(), Agility::Hopping, source, func1);
+        Squares::looking_next_from(&angle.rotate45cw(), Agility::Hopping, source, promoting);
     }
 
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
@@ -225,13 +225,13 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 = &mut |destination| {
+        let promoting = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(&Angle::Ccw45, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw135, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw225, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw315, Agility::Sliding, source, func1);
+        Squares::looking_next_from(&Angle::Ccw45, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(&Angle::Ccw135, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(&Angle::Ccw225, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(&Angle::Ccw315, Agility::Sliding, source, promoting);
     }
 
     /// 盤上の飛から動けるマスを見ます。
@@ -242,13 +242,13 @@ impl NextSquares {
     ) where
         F1: FnMut(Square, Promotability, Agility) -> bool,
     {
-        let func1 = &mut |destination| {
+        let promoting = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
         };
-        Squares::looking_next_from(&Angle::Ccw0, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw90, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw180, Agility::Sliding, source, func1);
-        Squares::looking_next_from(&Angle::Ccw270, Agility::Sliding, source, func1);
+        Squares::looking_next_from(&Angle::Ccw0, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(&Angle::Ccw90, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(&Angle::Ccw180, Agility::Sliding, source, promoting);
+        Squares::looking_next_from(&Angle::Ccw270, Agility::Sliding, source, promoting);
     }
 
     /// 盤上の馬から動けるマスを見ます。
