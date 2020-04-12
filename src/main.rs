@@ -26,7 +26,7 @@ use config::*;
 use controller::common_use::cu_conv_controller::*;
 use controller::io::*;
 use controller::main_loop::ml_usi_controller::*;
-use controller::movement_generation::mg_controller::*;
+use controller::movement_generation::movement_generator::*;
 use controller::searching::tree::*;
 use controller::unit_test::ut_controller::*;
 use rand::Rng;

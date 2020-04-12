@@ -8,7 +8,7 @@ use crate::model::univ::game::Game;
 use std::collections::HashSet;
 
 use super::sp_evaluation_controller::*;
-use crate::controller::movement_generation::mg_controller::*;
+use crate::controller::movement_generation::movement_generator::*;
 use crate::controller::searching::sp_control_count_controller::*;
 use crate::model::univ::gam::misc::movement::Movement;
 use crate::model::univ::gam::misc::movement_builder::*;

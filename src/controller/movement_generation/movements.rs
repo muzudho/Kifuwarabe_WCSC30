@@ -1,4 +1,4 @@
-use crate::controller::movement_generation::mg_square::*;
+use crate::controller::movement_generation::movement_generator::*;
 use crate::controller::movement_generation::squares::*;
 use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::misc::movement_builder::*;
