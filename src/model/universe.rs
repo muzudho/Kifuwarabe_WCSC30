@@ -43,34 +43,4 @@ impl Universe {
     pub fn pop_command(&mut self) -> String {
         self.vec_command.pop().unwrap()
     }
-
-    /* ******
-     * 盤上 *
-     ********/
-    /*
-    // 駒の動きを出力
-    pub fn print_kmugoki(&self, speed_of_light: &MLSpeedOfLightVo) {
-        for piece_type in PIECE_TYPE_ARRAY.iter() {
-            IO::write(&format!("{} ", piece_type));
-            self.print_kmugoki_dir(*piece_type, speed_of_light);
-            IO::writeln(""); //改行
-        }
-    }
-    */
-    /*
-    pub fn print_kmugoki_dir(&self, piece_type: PieceType, speed_of_light: &MLSpeedOfLightVo) {
-        for kmdir in KM_UGOKI.back[speed_of_light
-            .get_piece_type_struct_from_piece_type(&piece_type)
-            .serial_piece_number]
-            .iter()
-        {
-            if let Some(pm) = kmdir {
-                IO::write(&format!("{:?},", pm))
-            } else {
-                // 終わり
-                break;
-            }
-        }
-    }
-    */
 }

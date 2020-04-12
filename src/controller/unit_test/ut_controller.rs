@@ -13,10 +13,8 @@ use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::square::*;
-use crate::model::univ::gam::misc::square_and_piece::*;
 use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
-use crate::view::unit_test::unit_test_view::print_piece_type_hashset;
 use crate::view::unit_test::unit_test_view::print_square_hashset;
 use std::collections::HashSet;
 
@@ -49,7 +47,6 @@ pub fn unit_test(
             piece_type, pc, sq_dst.address
         ));
         let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-        let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
         lookup_no_promotion_source_by_square_and_piece(
             &sq_dst,
             &ps,
@@ -68,16 +65,7 @@ pub fn unit_test(
                 mv_src_hashset.insert(square);
             },
         );
-        lookup_drop_by_square_piece(
-            &SquareAndPiece::new(&sq_dst, pc),
-            &ml_universe_dto.game.position.current_board,
-            &speed_of_light,
-            |piece_type_hash| {
-                da_piece_type_hashset.insert(piece_type_hash);
-            },
-        );
         print_square_hashset(&mv_src_hashset);
-        print_piece_type_hashset(&da_piece_type_hashset);
     } else if 3 < (len - *starts) && &line[*starts..*starts + 4] == "mvkm" {
         *starts += 4;
         // 移動後の駒
@@ -145,7 +133,6 @@ pub fn unit_test(
                 piece_type, pc, sq_dst.address
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -164,16 +151,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            lookup_drop_by_square_piece(
-                &SquareAndPiece::new(&sq_dst, pc),
-                &ml_universe_dto.game.position.current_board,
-                &speed_of_light,
-                |piece_type_hash| {
-                    da_piece_type_hashset.insert(piece_type_hash);
-                },
-            );
             print_square_hashset(&mv_src_hashset);
-            print_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             IO::writeln("利きテスト2");
@@ -187,7 +165,6 @@ pub fn unit_test(
                 piece_type, pc, sq_dst.address
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -206,16 +183,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            lookup_drop_by_square_piece(
-                &SquareAndPiece::new(&sq_dst, pc),
-                &ml_universe_dto.game.position.current_board,
-                &speed_of_light,
-                |piece_type_hash| {
-                    da_piece_type_hashset.insert(piece_type_hash);
-                },
-            );
             print_square_hashset(&mv_src_hashset);
-            print_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             IO::writeln("利きテスト3");
@@ -229,7 +197,6 @@ pub fn unit_test(
                 piece_type, pc, sq_dst.address
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -248,16 +215,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            lookup_drop_by_square_piece(
-                &SquareAndPiece::new(&sq_dst, pc),
-                &ml_universe_dto.game.position.current_board,
-                &speed_of_light,
-                |piece_type_hash| {
-                    da_piece_type_hashset.insert(piece_type_hash);
-                },
-            );
             print_square_hashset(&mv_src_hashset);
-            print_piece_type_hashset(&da_piece_type_hashset);
         }
         {
             IO::writeln("利きテスト2");
@@ -271,7 +229,6 @@ pub fn unit_test(
                 piece_type, pc, sq_dst.address
             ));
             let mut mv_src_hashset: HashSet<Square> = HashSet::<Square>::new();
-            let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
             lookup_no_promotion_source_by_square_and_piece(
                 &sq_dst,
                 &ps,
@@ -290,16 +247,7 @@ pub fn unit_test(
                     mv_src_hashset.insert(square);
                 },
             );
-            lookup_drop_by_square_piece(
-                &SquareAndPiece::new(&sq_dst, pc),
-                &ml_universe_dto.game.position.current_board,
-                &speed_of_light,
-                |piece_type_hash| {
-                    da_piece_type_hashset.insert(piece_type_hash);
-                },
-            );
             print_square_hashset(&mv_src_hashset);
-            print_piece_type_hashset(&da_piece_type_hashset);
         }
     } else if 0 < (len - *starts) && &line[*starts..=*starts] == "2" {
         *starts += 1;

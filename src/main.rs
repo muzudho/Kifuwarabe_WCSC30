@@ -183,7 +183,7 @@ fn parse_extend_command(
         // Generation move.
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
-        get_up_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
+        get_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
             ss_potential_hashset.insert(movement_hash);
         });
         IO::writeln("----指し手生成(合法手とは限らない) ここから----");

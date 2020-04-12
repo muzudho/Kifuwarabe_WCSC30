@@ -34,7 +34,6 @@ impl Default for MovementBuilder {
     }
 }
 impl MovementBuilder {
-    #[allow(dead_code)]
     pub fn clear(&mut self) {
         self.src = Square::from_address(0);
         self.dst = Square::from_address(0);

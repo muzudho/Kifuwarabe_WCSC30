@@ -11,7 +11,6 @@ use crate::model::univ::gam::misc::square::*;
 /**
  * ランダムに真偽を返す。
  */
-#[allow(dead_code)]
 pub fn random_bool() -> bool {
     rand::thread_rng().gen_range(0, 2) == 0
 }

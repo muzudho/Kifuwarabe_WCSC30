@@ -1,10 +1,20 @@
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_absolute;
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_with_frame_as_absolute;
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece_movement::Agility;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::square::Square;
 use crate::model::univ::gam::misc::square::*;
+
+/// 機敏性。
+#[derive(Clone, Copy, Debug)]
+pub enum Agility {
+    /// 隣へ１つ進む駒。
+    Hopping,
+    /// 長い利き。
+    Sliding,
+    /// 桂馬。
+    Keima,
+}
 
 pub enum Promotability {
     /// 成ることはできないぜ☆（＾～＾）

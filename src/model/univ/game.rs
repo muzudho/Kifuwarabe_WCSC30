@@ -197,7 +197,6 @@ impl Game {
     }
 
     /// 自陣
-    #[allow(dead_code)]
     pub fn get_ji_jin(&self) -> Vec<Square> {
         if let Phase::First = self.history.get_phase(&Person::Friend) {
             crate::model::univ::gam::misc::region::SenteJin::to_elm()
@@ -207,7 +206,6 @@ impl Game {
     }
 
     /// 相手陣
-    #[allow(dead_code)]
     pub fn get_aite_jin(&self) -> Vec<Square> {
         if let Phase::First = self.history.get_phase(&Person::Friend) {
             crate::model::univ::gam::misc::region::GoteJin::to_elm()

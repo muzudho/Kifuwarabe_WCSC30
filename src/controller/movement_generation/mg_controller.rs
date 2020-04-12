@@ -4,26 +4,18 @@
 
 use super::squares::*;
 use crate::controller::common_use::cu_asserts_controller::*;
-use crate::controller::common_use::cu_conv_controller::*;
-use crate::controller::movement_generation::mg_choicing_controller::*;
 use crate::controller::movement_generation::movements::*;
 use crate::model::univ::gam::board::*;
-use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::piece::Piece;
-use crate::model::univ::gam::misc::piece_movement::*;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::gam::misc::square_and_piece::SquareAndPiece;
-use crate::model::univ::gam::position::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 use std::collections::HashSet;
-
-// 駒の動ける方向数、終端子込み
-pub const KM_UGOKI_LN: usize = 9;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
 /// 利きがどのように変わるかも返して欲しいぜ☆（＾～＾）
@@ -33,17 +25,9 @@ pub fn generate_movement(
     movement_set: &mut HashSet<u64>,
 ) {
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-    get_up_potential_movement(&game, &speed_of_light, &mut |movement| {
+    get_potential_movement(&game, &speed_of_light, &mut |movement| {
         &movement_set.insert(movement);
     });
-
-    if false {
-        // 王が取られる局面を除く手を選ぶぜ☆（＾～＾）
-        select_movement_except_check(movement_set, &game, &speed_of_light);
-
-        // 自殺手は省くぜ☆（＾～＾）
-        select_movement_except_suiceid(movement_set, game, speed_of_light);
-    }
 }
 
 ///
@@ -56,7 +40,7 @@ pub fn generate_movement(
 ///
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
-pub fn get_up_potential_movement<F1>(
+pub fn get_potential_movement<F1>(
     game: &Game,
     speed_of_light: &MLSpeedOfLightVo,
     callback_movement: &mut F1,
@@ -72,158 +56,6 @@ pub fn get_up_potential_movement<F1>(
     );
     // 持ち駒の打。
     MGMovements::make_movement_on_hand(game, &speed_of_light, callback_movement);
-}
-
-/// 1. 移動先升指定  ms_dst
-/// 2. 移動先駒指定  piece_dst
-///
-/// 盤上の駒の移動の最初の１つ。打を除く
-pub fn get_movement_by_square_and_piece_on_board<F1>(
-    sq_dst: &Square,
-    piece_dst: Piece,
-    position: &Position,
-    speed_of_light: &MLSpeedOfLightVo,
-    mut gets_movement: F1,
-) where
-    F1: FnMut(u64),
-{
-    assert_in_board_as_absolute(sq_dst.address, "Ｉnsert_ss_by_ms_km_on_banjo");
-
-    // 手番の先後、駒種類
-    let ps_dst = speed_of_light.get_piece_struct(&piece_dst);
-    let (phase1, _piece_type_dst) = &ps_dst.phase_piece_type;
-
-    // 移動先に自駒があれば、指し手は何もない。終わり。
-    if let Some(phase2) = position
-        .current_board
-        .get_phase_by_sq(&sq_dst, speed_of_light)
-    {
-        if phase2 == *phase1 {
-            return;
-        }
-    }
-
-    // ハッシュを作るのに使う
-    let mut ss_hash_builder = MovementBuilder::default();
-
-    ss_hash_builder.dst = (*sq_dst).clone();
-
-    // 移動元の升
-    let mut mv_src_hashset: HashSet<Square> = HashSet::new();
-
-    // +----------------+
-    // | 盤上（成らず） |
-    // +----------------+
-    lookup_no_promotion_source_by_square_and_piece(
-        &sq_dst,
-        &ps_dst,
-        &position.current_board,
-        &speed_of_light,
-        |square| {
-            mv_src_hashset.insert(square);
-        },
-    );
-    for sq_src in &mv_src_hashset {
-        assert_in_board_as_absolute(
-            sq_src.address,
-            "make_no_promotion_source_by_square_and_piece(成らず)",
-        );
-
-        ss_hash_builder.src = sq_src.clone();
-        // 成らず
-        ss_hash_builder.pro = false;
-        ss_hash_builder.drop = None;
-        gets_movement(ss_hash_builder.to_hash(speed_of_light));
-    }
-
-    // +--------------+
-    // | 盤上（成り） |
-    // +--------------+
-    mv_src_hashset.clear();
-    lookup_before_promotion_source_by_square_piece(
-        sq_dst,
-        &ps_dst,
-        &position.current_board,
-        &speed_of_light,
-        |square| {
-            mv_src_hashset.insert(square);
-        },
-    );
-    for sq_src in &mv_src_hashset {
-        assert_in_board_as_absolute(sq_src.address, "Ｉnsert_ss_by_ms_km_on_banjo ms_src(成り)");
-
-        ss_hash_builder.src = sq_src.clone();
-        // 成り
-        ss_hash_builder.pro = true;
-        ss_hash_builder.drop = None;
-        gets_movement(ss_hash_builder.to_hash(speed_of_light));
-    }
-}
-
-/// 打
-///
-/// 1. 移動先升指定  ms_dst
-/// 2. 移動先駒指定  piece_dst
-pub fn get_movement_by_square_and_piece_on_drop<F1>(
-    sq_dst: &Square,
-    piece_dst: &Piece,
-    position: &Position,
-    speed_of_light: &MLSpeedOfLightVo,
-    mut gets_movement: F1,
-) where
-    F1: FnMut(u64),
-{
-    assert_in_board_as_absolute(sq_dst.address, "get_movement_by_square_and_piece_on_drop");
-
-    // 手番の先後、駒種類
-    let ps_dst = speed_of_light.get_piece_struct(piece_dst);
-    let (phase1, _piece_type_dst) = &ps_dst.phase_piece_type;
-
-    // 移動先に自駒があれば、指し手は何もない。終わり。
-    if let Some(phase2) = position
-        .current_board
-        .get_phase_by_sq(&sq_dst, speed_of_light)
-    {
-        if phase2 == *phase1 {
-            return;
-        }
-    }
-
-    // ハッシュを作るのに使う
-    let mut ss_hash_builder = MovementBuilder::default();
-
-    ss_hash_builder.dst = (*sq_dst).clone();
-
-    // 移動元の升
-    //let mut mv_src_hashset : HashSet<Square> = HashSet::<Square>::new();
-
-    // +----+
-    // | 打 |
-    // +----+
-
-    let mut da_piece_type_hashset: HashSet<usize> = HashSet::new();
-    lookup_drop_by_square_piece(
-        &SquareAndPiece::new(&sq_dst, piece_dst),
-        &position.current_board,
-        &speed_of_light,
-        |piece_type_hash| {
-            da_piece_type_hashset.insert(piece_type_hash);
-        },
-    );
-    // 打
-    for num_piece_type_da in da_piece_type_hashset.iter() {
-        let drop_piece_type_o = num_to_piece_type(*num_piece_type_da);
-
-        let movement_hash = MovementBuilder {
-            src: Square::from_address(SQUARE_DROP),
-            dst: (*sq_dst).clone(),
-            pro: false,
-            drop: drop_piece_type_o,
-        }
-        .to_hash(speed_of_light);
-
-        gets_movement(movement_hash);
-    }
 }
 
 /// 成る前を含めない、移動元升生成
@@ -538,39 +370,6 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 )
             },
         );
-
-        /*
-        let piece_type_num = speed_of_light
-            .get_piece_type_struct_from_piece_type(piece_type)
-            .serial_piece_number;
-        for i_dir in 0..KM_UGOKI_LN {
-            if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
-                let pm2 = if Phase::First != *phase {
-                    hanten_kmdir_upside_down(pm1)
-                } else {
-                    pm1.clone()
-                };
-                Squares::looking_next_from(
-                    &pm2.angle,
-                    pm2.agility,
-                    &dst_sq_piece.square,
-                    &mut |next_square| {
-                        lookup_no_promotion_source(
-                            pm2.agility,
-                            Some(dst_sq_piece.piece),
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        )
-                    },
-                );
-            } else {
-                // 終わり
-                break;
-            }
-        }
-        */
     }
 }
 
@@ -626,43 +425,6 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 )
             },
         );
-
-        /*
-        let dst_sq_and_demoted_piece = SquareAndPiece::new(
-            square_dst,
-            &Piece::from_phase_and_piece_type(phase, *piece_type),
-        );
-
-        let piece_type_num = speed_of_light
-            .get_piece_type_struct_from_piece_type(piece_type)
-            .serial_piece_number;
-        for i_dir in 0..KM_UGOKI_LN {
-            if let Some(pm1) = &KM_UGOKI.back[piece_type_num][i_dir] {
-                let pm2 = if Phase::First != *phase {
-                    hanten_kmdir_upside_down(pm1)
-                } else {
-                    pm1.clone()
-                };
-                Squares::looking_next_from(
-                    &pm2.angle,
-                    pm2.agility,
-                    &dst_sq_and_demoted_piece.square,
-                    &mut |next_square| {
-                        lookup_before_promotion_source(
-                            pm2.agility,
-                            &dst_sq_and_demoted_piece,
-                            current_board,
-                            &mut lookups_the_square,
-                            next_square,
-                        )
-                    },
-                );
-            } else {
-                // 終わり
-                break;
-            }
-        }
-        */
     }
 }
 
@@ -699,123 +461,4 @@ where
         }
     }
     false
-}
-
-/// 打の駒種類生成
-///
-/// 他のコンピューター将棋ソフトでは、現局面から指せる指し手を生成する現実指向だが、
-/// きふわらべ　は理想指向☆（＾～＾）
-/// 打ちたい升　を指定することで　指し手を生成するぜ☆（＾～＾）
-///
-/// 1. 移動先の升    ms_dst
-/// 2. 移動先の駒    piece_dst  ※先後が要るので、piece_typeではなくkm。
-///
-/// そこに打てる駒種類を返す。
-///
-/// # Arguments
-///
-/// * `lookups_the_drops` - Piece type hash.
-pub fn lookup_drop_by_square_piece<F1>(
-    destination_sqp: &SquareAndPiece,
-    current_board: &Board,
-    speed_of_light: &MLSpeedOfLightVo,
-    mut lookups_the_drops: F1,
-) where
-    F1: FnMut(usize),
-{
-    assert_in_board_as_absolute(destination_sqp.square.address, "make_drop_by_square_piece");
-
-    let ps_dst = speed_of_light.get_piece_struct(&destination_sqp.piece);
-    let piece_type_dst = ps_dst.piece_type();
-    if !speed_of_light
-        .get_piece_type_struct_from_piece_type(&piece_type_dst)
-        .can_drop
-    {
-        return; // 打って出てくることがない駒なら終了
-    }
-
-    // +------------------------+
-    // | 打ちたいところは空升か |
-    // +------------------------+
-    if let Some(_piece_on_board) = current_board.get_piece_by_square(&destination_sqp.square) {
-        // 駒があるところに打つ手は終了
-        return;
-    }
-    // 駒が無いところに打つ
-
-    // +------------------+
-    // | 持っている駒か？ |
-    // +------------------+
-    if current_board.get_hand(&destination_sqp.piece, speed_of_light) < 1 {
-        return; // 持っていない駒は打てない
-    }
-
-    // 回転していない将棋盤から見た筋番号
-    let (suji, dy) = destination_sqp.square.to_file_rank();
-    /*
-     * Square は 将棋盤座標
-     *
-     * 考えることを打に限れば、先手も、後手も、後手から見た座標を使えば十分だぜ☆（＾～＾）
-     *
-     * ...
-     * 13 23 33
-     * 12 22 32
-     * 11 21 31 ...
-     */
-    let sq = kaiten180_sq_by_sq_phase(&destination_sqp.square, &ps_dst.phase());
-
-    assert_in_board_as_absolute(sq.address, "Ｉnsert_da_piece_type_by_ms_km＜その２＞");
-    //let (_x,y) = ms_to_suji_dan(ms);
-
-    // 行先の無いところに駒を進めることの禁止☆（＾～＾）
-    use crate::model::univ::gam::misc::piece::Piece::*;
-    match destination_sqp.piece {
-        Knight1 => {
-            // ▲うさぎ　は１、２段目には進めない
-            if dy < RANK_3 {
-                return;
-            }
-        }
-        // ▲しし、▲ひよこ　は１段目には進めない
-        Lance1 => {
-            if dy < RANK_2 {
-                return;
-            }
-        }
-        Pawn1 => {
-            // ▲ひよこ　は２歩できない
-            if dy < RANK_2
-                || current_board.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
-            {
-                return;
-            }
-        }
-        Knight2 => {
-            // ▽うさぎ　は８、９段目には進めない
-            if RANK_7 < dy {
-                return;
-            }
-        }
-        // ▽しし、▽ひよこ　は９段目には進めない
-        Lance2 => {
-            if RANK_8 < dy {
-                return;
-            }
-        }
-        Pawn2 => {
-            // ▽ひよこ　は２歩できない
-            if RANK_8 < dy
-                || current_board.exists_fu_by_phase_suji(&ps_dst.phase(), suji, speed_of_light)
-            {
-                return;
-            }
-        }
-        _ => {}
-    }
-
-    lookups_the_drops(
-        speed_of_light
-            .get_piece_type_struct_from_piece_type(&piece_type_dst)
-            .serial_piece_number,
-    );
 }

@@ -1,11 +1,9 @@
 //!
 //! 変換
 //!
-#![allow(dead_code)]
 use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::model::univ::gam::misc::direction::*;
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece_movement::PieceMove;
 use crate::model::univ::gam::misc::square::*;
 
 /**********
@@ -17,14 +15,12 @@ use crate::model::univ::gam::misc::square::*;
  *
  * bool は i32 だが、_to_num 系は usize を返すように合わせるぜ☆（*＾～＾*）
  */
-#[allow(dead_code)]
 pub fn bool_to_num(b: bool) -> usize {
     b as usize
 }
 /**
  * 0 なら偽、それ以外は真☆（＾～＾）
  */
-#[allow(dead_code)]
 pub fn num_to_bool(n: usize) -> bool {
     match n {
         0 => false,
@@ -34,7 +30,6 @@ pub fn num_to_bool(n: usize) -> bool {
 /**
  * ハッシュ値を作る
  */
-#[allow(dead_code)]
 pub fn push_bool_to_hash(hash: u64, b: bool) -> u64 {
     // bool は i32 だが、hash は u64 なので u64 に合わせるぜ☆（*＾～＾*）
     (hash << 7) + b as u64
@@ -42,7 +37,6 @@ pub fn push_bool_to_hash(hash: u64, b: bool) -> u64 {
 /**
  * ハッシュ値から作る
  */
-#[allow(dead_code)]
 pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
     let b_num = num_to_bool((hash & 0b1) as usize);
     (hash >> 7, b_num)
@@ -55,7 +49,6 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
 /*********
  * 8方向 *
  *********/
-#[allow(dead_code)]
 pub fn dir8_to_num(dir: &Dir8) -> usize {
     use crate::model::univ::gam::misc::direction::Dir8::*;
     match *dir {
@@ -70,7 +63,6 @@ pub fn dir8_to_num(dir: &Dir8) -> usize {
         Owari => 8,
     }
 }
-#[allow(dead_code)]
 pub fn num_to_dir8(n: usize) -> Dir8 {
     use crate::model::univ::gam::misc::direction::Dir8::*;
     match n {
@@ -88,7 +80,6 @@ pub fn num_to_dir8(n: usize) -> Dir8 {
 /**
  * ハッシュ値を作る
  */
-#[allow(dead_code)]
 pub fn push_dir8_to_hash(hash: u64, dir: &Dir8) -> u64 {
     // エラー値含めて 9bit あるので 2^5
     (hash << 5) + dir8_to_num(dir) as u64
@@ -96,7 +87,6 @@ pub fn push_dir8_to_hash(hash: u64, dir: &Dir8) -> u64 {
 /**
  * ハッシュ値から作る
  */
-#[allow(dead_code)]
 pub fn pop_dir8_from_hash(hash: u64) -> (u64, Dir8) {
     // エラー値含めて 9bit あるので 2^5
     let dir = num_to_dir8((hash & 0b11111) as usize);
@@ -150,13 +140,4 @@ pub fn kaiten180_sq_by_sq_phase(square: &Square, phase: &Phase) -> Square {
         First => Square::from_address(BAN_MAX - square.address + BAN_MIN),
         _ => (*square).clone(),
     }
-}
-
-/************
- * 駒の動き *
- ************/
-
-/// 上下反転
-pub fn hanten_kmdir_upside_down(pm: &PieceMove) -> PieceMove {
-    PieceMove::new(pm.angle.rotate180(), pm.agility)
 }

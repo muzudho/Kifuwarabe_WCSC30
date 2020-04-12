@@ -6,7 +6,6 @@ pub mod person;
 pub mod phase;
 pub mod piece;
 pub mod piece_direction;
-pub mod piece_movement;
 pub mod piece_set;
 pub mod piece_struct;
 pub mod piece_type;
