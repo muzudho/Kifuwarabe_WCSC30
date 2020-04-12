@@ -271,19 +271,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
             } else {
                 pm1.clone()
             };
-            if pm2.keima {
-                // 桂馬
-                Squares::next_keima_of(&pm2.angle, square_dst, &mut |next_square| {
-                    lookup_no_promotion_source_by_piece_next(
-                        &ps_dst.piece,
-                        current_board,
-                        speed_of_light,
-                        &mut lookups_the_square,
-                        next_square,
-                    );
-                    true
-                });
-            } else if pm2.slider {
+            if pm2.slider {
                 // 長
                 Squares::looking_next_from(&pm2.angle, square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_sliding(
@@ -295,7 +283,7 @@ pub fn lookup_no_promotion_source_by_square_and_piece<F1>(
                     )
                 });
             } else {
-                Squares::next_of(&pm2.angle, square_dst, &mut |next_square| {
+                Squares::next_of(&pm2.angle, pm2.keima, square_dst, &mut |next_square| {
                     lookup_no_promotion_source_by_piece_next(
                         &ps_dst.piece,
                         current_board,
@@ -448,23 +436,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             } else {
                 pm1.clone()
             };
-            if pm2.keima {
-                // 桂馬
-                Squares::next_keima_of(
-                    &pm2.angle,
-                    &square_dst_piece_src.square,
-                    &mut |next_square| {
-                        lookup_before_promotion_source_next(
-                            &square_dst_piece_src.piece,
-                            current_board,
-                            speed_of_light,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    },
-                );
-            } else if pm2.slider {
+            if pm2.slider {
                 // 長
                 Squares::looking_next_from(
                     &pm2.angle,
@@ -482,6 +454,7 @@ pub fn lookup_before_promotion_source_by_square_piece<F1>(
             } else {
                 Squares::next_of(
                     &pm2.angle,
+                    pm2.keima,
                     &square_dst_piece_src.square,
                     &mut |next_square| {
                         lookup_before_promotion_source_next(
@@ -616,18 +589,7 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                 } else {
                     pm1.clone()
                 };
-                if pm2.keima {
-                    // 桂馬
-                    Squares::next_keima_of(&pm2.angle, &dst_sq_piece.square, &mut |next_square| {
-                        lookup_no_promotion_source_by_phase_next(
-                            &dst_sq_piece,
-                            current_board,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    });
-                } else if pm2.slider {
+                if pm2.slider {
                     // 長
                     Squares::looking_next_from(
                         &pm2.angle,
@@ -642,15 +604,20 @@ pub fn lookup_no_promotion_source_by_phase_square<F1>(
                         },
                     );
                 } else {
-                    Squares::next_of(&pm2.angle, &dst_sq_piece.square, &mut |next_square| {
-                        lookup_no_promotion_source_by_phase_next(
-                            &dst_sq_piece,
-                            current_board,
-                            &mut lookups_the_square,
-                            next_square,
-                        );
-                        true
-                    });
+                    Squares::next_of(
+                        &pm2.angle,
+                        pm2.keima,
+                        &dst_sq_piece.square,
+                        &mut |next_square| {
+                            lookup_no_promotion_source_by_phase_next(
+                                &dst_sq_piece,
+                                current_board,
+                                &mut lookups_the_square,
+                                next_square,
+                            );
+                            true
+                        },
+                    );
                 }
             } else {
                 // 終わり
@@ -739,9 +706,6 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
             &Piece::from_phase_and_piece_type(phase, *piece_type),
         );
 
-        // 成れる駒は、成る前の駒の動きも調べる
-        // 成り駒に、行先の無いところは無いぜ☆
-
         let piece_type_num = speed_of_light
             .get_piece_type_struct_from_piece_type(piece_type)
             .serial_piece_number;
@@ -752,22 +716,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 } else {
                     pm1.clone()
                 };
-                if pm2.keima {
-                    // 桂馬
-                    Squares::next_keima_of(
-                        &pm2.angle,
-                        &dst_sq_and_demoted_piece.square,
-                        &mut |next_square| {
-                            lookup_before_promotion_source_by_phase_next(
-                                &dst_sq_and_demoted_piece,
-                                current_board,
-                                &mut lookups_the_square,
-                                next_square,
-                            );
-                            true
-                        },
-                    );
-                } else if pm2.slider {
+                if pm2.slider {
                     // 長
                     Squares::looking_next_from(
                         &pm2.angle,
@@ -784,6 +733,7 @@ pub fn lookup_before_promotion_source_by_phase_square<F1>(
                 } else {
                     Squares::next_of(
                         &pm2.angle,
+                        pm2.keima,
                         &dst_sq_and_demoted_piece.square,
                         &mut |next_square| {
                             lookup_before_promotion_source_by_phase_next(
