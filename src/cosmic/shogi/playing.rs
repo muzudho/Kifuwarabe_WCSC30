@@ -117,6 +117,9 @@ impl Game {
             PosNums::Start => &self.starting_board,
         }
     }
+    pub fn get_mut_starting_board(&mut self) -> &mut Board {
+        &mut self.starting_board
+    }
 
     /// 初期局面、現局面ともにクリアーします。
     /// 手目も 0 に戻します。
@@ -138,12 +141,6 @@ impl Game {
 
         // 持ち駒
         self.current_board.hand[..PIECE_LN].clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
-    }
-
-    /// 初期局面の盤上に駒の位置を設定するもの
-    pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, pc: Option<Piece>) {
-        self.starting_board
-            .set_piece_by_square(&AbsoluteAddress::from_file_rank(suji, dan), pc);
     }
 
     pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {

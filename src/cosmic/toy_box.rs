@@ -96,6 +96,9 @@ impl Board {
     pub fn get_piece_by_square(&self, sq: &AbsoluteAddress) -> Option<Piece> {
         self.board[sq.address as usize]
     }
+    pub fn set_piece(&mut self, file: i8, rank: i8, piece_o: Option<Piece>) {
+        self.set_piece_by_square(&AbsoluteAddress::from_file_rank(file, rank), piece_o);
+    }
     /// 升で指定して駒を置く
     pub fn set_piece_by_square(&mut self, sq: &AbsoluteAddress, piece_o: Option<Piece>) {
         if let Some(_piece) = piece_o {
