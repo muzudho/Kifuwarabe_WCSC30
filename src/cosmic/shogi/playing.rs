@@ -1,9 +1,11 @@
-use crate::cosmic::shogi::info::Info;
 use crate::cosmic::shogi::recording::{History, Movement};
 use crate::cosmic::shogi::state::{Person, Position, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
-use crate::cosmic::smart::square::{isquare, Square, BOARD_MEMORY_AREA, SQUARE_DROP, SQUARE_NONE};
+use crate::cosmic::smart::square::{
+    isquare, AbsoluteAddress, BOARD_MEMORY_AREA, SQUARE_DROP, SQUARE_NONE,
+};
 use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};
-use crate::law::speed_of_light::*;
+use crate::law::speed_of_light::SpeedOfLight;
+use crate::spaceship::equipment::Info;
 use rand::Rng;
 
 /// 局面
@@ -90,8 +92,7 @@ impl Game {
         self.history.movements[self.history.ply as usize] = movement.clone()
     }
     pub fn build_current_movement(&mut self) {
-        self.history.movements[self.history.ply as usize] =
-            Movement::new(&self.position.current_movement_builder)
+        self.history.movements[self.history.ply as usize] = self.position.current_movement_builder
     }
     pub fn get_move(&self) -> &Movement {
         &self.history.movements[self.history.ply as usize]
@@ -137,7 +138,7 @@ impl Game {
     pub fn copy_starting_position_to_current_position(&mut self) {
         // 盤上の駒。
         for i_adr in 0..BOARD_MEMORY_AREA {
-            let i_sq = Square::from_address(i_adr as isquare);
+            let i_sq = AbsoluteAddress::from_address(i_adr as isquare);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
             let piece = self.starting_board.get_piece_by_square(&i_sq);
             self.position
@@ -159,7 +160,7 @@ impl Game {
     /// 初期局面の盤上に駒の位置を設定するもの
     pub fn set_piece_to_starting_position(&mut self, suji: i8, dan: i8, pc: Option<Piece>) {
         self.starting_board
-            .set_piece_by_square(&Square::from_file_rank(suji, dan), pc);
+            .set_piece_by_square(&AbsoluteAddress::from_file_rank(suji, dan), pc);
     }
 
     pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {

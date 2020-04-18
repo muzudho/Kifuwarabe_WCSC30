@@ -4,9 +4,9 @@
 
 use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::state::Person;
-use crate::cosmic::smart::square::Square;
-use crate::law::generate_move::movements::*;
-use crate::law::speed_of_light::*;
+use crate::cosmic::smart::square::AbsoluteAddress;
+use crate::law::generate_move::movements::MGMovements;
+use crate::law::speed_of_light::SpeedOfLight;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）
@@ -55,11 +55,11 @@ impl MGSquares {
     /// 全升☆（＾～＾）
     pub fn for_all<F1>(callback: &mut F1)
     where
-        F1: FnMut(Square),
+        F1: FnMut(AbsoluteAddress),
     {
         for rank_src in 1..10 {
             for file_src in (1..10).rev() {
-                callback(Square::from_file_rank(file_src, rank_src));
+                callback(AbsoluteAddress::from_file_rank(file_src, rank_src));
             }
         }
     }

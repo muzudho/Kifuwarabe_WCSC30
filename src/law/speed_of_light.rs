@@ -5,114 +5,113 @@
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
 use crate::cosmic::shogi::state::Phase;
-use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::toy_box::Piece;
-use crate::law::piece_struct::PieceStruct;
-use crate::law::piece_type_struct::PieceTypeStruct;
+use crate::law::chart::{PieceChart, PieceTypeChart};
 
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
     /// イミュータブルなのだから、直接参照してもいい☆（＾～＾）
     /// 先後付きの駒☆（＾～＾）
-    pub king1: PieceStruct,
-    pub rook1: PieceStruct,
-    pub bishop1: PieceStruct,
-    pub gold1: PieceStruct,
-    pub silver1: PieceStruct,
-    pub knight1: PieceStruct,
-    pub lance1: PieceStruct,
-    pub pawn1: PieceStruct,
-    pub promoted_rook1: PieceStruct,
-    pub promoted_bishop1: PieceStruct,
-    pub promoted_silver1: PieceStruct,
-    pub promoted_knight1: PieceStruct,
-    pub promoted_lance1: PieceStruct,
-    pub promoted_pawn1: PieceStruct,
-    pub king2: PieceStruct,
-    pub rook2: PieceStruct,
-    pub bishop2: PieceStruct,
-    pub gold2: PieceStruct,
-    pub silver2: PieceStruct,
-    pub knight2: PieceStruct,
-    pub lance2: PieceStruct,
-    pub pawn2: PieceStruct,
-    pub promoted_rook2: PieceStruct,
-    pub promoted_bishop2: PieceStruct,
-    pub promoted_silver2: PieceStruct,
-    pub promoted_knight2: PieceStruct,
-    pub promoted_lance2: PieceStruct,
-    pub promoted_pawn2: PieceStruct,
+    pub king1: PieceChart,
+    pub rook1: PieceChart,
+    pub bishop1: PieceChart,
+    pub gold1: PieceChart,
+    pub silver1: PieceChart,
+    pub knight1: PieceChart,
+    pub lance1: PieceChart,
+    pub pawn1: PieceChart,
+    pub promoted_rook1: PieceChart,
+    pub promoted_bishop1: PieceChart,
+    pub promoted_silver1: PieceChart,
+    pub promoted_knight1: PieceChart,
+    pub promoted_lance1: PieceChart,
+    pub promoted_pawn1: PieceChart,
+    pub king2: PieceChart,
+    pub rook2: PieceChart,
+    pub bishop2: PieceChart,
+    pub gold2: PieceChart,
+    pub silver2: PieceChart,
+    pub knight2: PieceChart,
+    pub lance2: PieceChart,
+    pub pawn2: PieceChart,
+    pub promoted_rook2: PieceChart,
+    pub promoted_bishop2: PieceChart,
+    pub promoted_silver2: PieceChart,
+    pub promoted_knight2: PieceChart,
+    pub promoted_lance2: PieceChart,
+    pub promoted_pawn2: PieceChart,
 
     /// 駒種類☆（＾～＾）
-    pub king: PieceTypeStruct,
-    pub rook: PieceTypeStruct,
-    pub bishop: PieceTypeStruct,
-    pub gold: PieceTypeStruct,
-    pub silver: PieceTypeStruct,
-    pub knight: PieceTypeStruct,
-    pub lance: PieceTypeStruct,
-    pub pawn: PieceTypeStruct,
-    pub promoted_rook: PieceTypeStruct,
-    pub promoted_bishop: PieceTypeStruct,
-    pub promoted_silver: PieceTypeStruct,
-    pub promoted_knight: PieceTypeStruct,
-    pub promoted_lance: PieceTypeStruct,
-    pub promoted_pawn: PieceTypeStruct,
+    pub king: PieceTypeChart,
+    pub rook: PieceTypeChart,
+    pub bishop: PieceTypeChart,
+    pub gold: PieceTypeChart,
+    pub silver: PieceTypeChart,
+    pub knight: PieceTypeChart,
+    pub lance: PieceTypeChart,
+    pub pawn: PieceTypeChart,
+    pub promoted_rook: PieceTypeChart,
+    pub promoted_bishop: PieceTypeChart,
+    pub promoted_silver: PieceTypeChart,
+    pub promoted_knight: PieceTypeChart,
+    pub promoted_lance: PieceTypeChart,
+    pub promoted_pawn: PieceTypeChart,
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
-        use crate::cosmic::smart::piece_type::PieceType::*;
+        use crate::cosmic::smart::features::PieceType::*;
         use crate::cosmic::toy_box::Piece::*;
         SpeedOfLight {
-            king1: PieceStruct::from_piece(King1),
-            rook1: PieceStruct::from_piece(Rook1),
-            bishop1: PieceStruct::from_piece(Bishop1),
-            gold1: PieceStruct::from_piece(Gold1),
-            silver1: PieceStruct::from_piece(Silver1),
-            knight1: PieceStruct::from_piece(Knight1),
-            lance1: PieceStruct::from_piece(Lance1),
-            pawn1: PieceStruct::from_piece(Pawn1),
-            promoted_rook1: PieceStruct::from_piece(Dragon1),
-            promoted_bishop1: PieceStruct::from_piece(Horse1),
-            promoted_silver1: PieceStruct::from_piece(PromotedSilver1),
-            promoted_knight1: PieceStruct::from_piece(PromotedKnight1),
-            promoted_lance1: PieceStruct::from_piece(PromotedLance1),
-            promoted_pawn1: PieceStruct::from_piece(PromotedPawn1),
-            king2: PieceStruct::from_piece(King2),
-            rook2: PieceStruct::from_piece(Rook2),
-            bishop2: PieceStruct::from_piece(Bishop2),
-            gold2: PieceStruct::from_piece(Gold2),
-            silver2: PieceStruct::from_piece(Silver2),
-            knight2: PieceStruct::from_piece(Knight2),
-            lance2: PieceStruct::from_piece(Lance2),
-            pawn2: PieceStruct::from_piece(Pawn2),
-            promoted_rook2: PieceStruct::from_piece(Dragon2),
-            promoted_bishop2: PieceStruct::from_piece(Horse2),
-            promoted_silver2: PieceStruct::from_piece(PromotedSilver2),
-            promoted_knight2: PieceStruct::from_piece(PromotedKnight2),
-            promoted_lance2: PieceStruct::from_piece(PromotedLance2),
-            promoted_pawn2: PieceStruct::from_piece(PromotedPawn2),
-            king: PieceTypeStruct::from_piece_type(King),
-            rook: PieceTypeStruct::from_piece_type(Rook),
-            bishop: PieceTypeStruct::from_piece_type(Bishop),
-            gold: PieceTypeStruct::from_piece_type(Gold),
-            silver: PieceTypeStruct::from_piece_type(Silver),
-            knight: PieceTypeStruct::from_piece_type(Knight),
-            lance: PieceTypeStruct::from_piece_type(Lance),
-            pawn: PieceTypeStruct::from_piece_type(Pawn),
-            promoted_rook: PieceTypeStruct::from_piece_type(Dragon),
-            promoted_bishop: PieceTypeStruct::from_piece_type(Horse),
-            promoted_silver: PieceTypeStruct::from_piece_type(PromotedSilver),
-            promoted_knight: PieceTypeStruct::from_piece_type(PromotedKnight),
-            promoted_lance: PieceTypeStruct::from_piece_type(PromotedLance),
-            promoted_pawn: PieceTypeStruct::from_piece_type(PromotedPawn),
+            king1: PieceChart::from_piece(King1),
+            rook1: PieceChart::from_piece(Rook1),
+            bishop1: PieceChart::from_piece(Bishop1),
+            gold1: PieceChart::from_piece(Gold1),
+            silver1: PieceChart::from_piece(Silver1),
+            knight1: PieceChart::from_piece(Knight1),
+            lance1: PieceChart::from_piece(Lance1),
+            pawn1: PieceChart::from_piece(Pawn1),
+            promoted_rook1: PieceChart::from_piece(Dragon1),
+            promoted_bishop1: PieceChart::from_piece(Horse1),
+            promoted_silver1: PieceChart::from_piece(PromotedSilver1),
+            promoted_knight1: PieceChart::from_piece(PromotedKnight1),
+            promoted_lance1: PieceChart::from_piece(PromotedLance1),
+            promoted_pawn1: PieceChart::from_piece(PromotedPawn1),
+            king2: PieceChart::from_piece(King2),
+            rook2: PieceChart::from_piece(Rook2),
+            bishop2: PieceChart::from_piece(Bishop2),
+            gold2: PieceChart::from_piece(Gold2),
+            silver2: PieceChart::from_piece(Silver2),
+            knight2: PieceChart::from_piece(Knight2),
+            lance2: PieceChart::from_piece(Lance2),
+            pawn2: PieceChart::from_piece(Pawn2),
+            promoted_rook2: PieceChart::from_piece(Dragon2),
+            promoted_bishop2: PieceChart::from_piece(Horse2),
+            promoted_silver2: PieceChart::from_piece(PromotedSilver2),
+            promoted_knight2: PieceChart::from_piece(PromotedKnight2),
+            promoted_lance2: PieceChart::from_piece(PromotedLance2),
+            promoted_pawn2: PieceChart::from_piece(PromotedPawn2),
+            king: PieceTypeChart::from_piece_type(King),
+            rook: PieceTypeChart::from_piece_type(Rook),
+            bishop: PieceTypeChart::from_piece_type(Bishop),
+            gold: PieceTypeChart::from_piece_type(Gold),
+            silver: PieceTypeChart::from_piece_type(Silver),
+            knight: PieceTypeChart::from_piece_type(Knight),
+            lance: PieceTypeChart::from_piece_type(Lance),
+            pawn: PieceTypeChart::from_piece_type(Pawn),
+            promoted_rook: PieceTypeChart::from_piece_type(Dragon),
+            promoted_bishop: PieceTypeChart::from_piece_type(Horse),
+            promoted_silver: PieceTypeChart::from_piece_type(PromotedSilver),
+            promoted_knight: PieceTypeChart::from_piece_type(PromotedKnight),
+            promoted_lance: PieceTypeChart::from_piece_type(PromotedLance),
+            promoted_pawn: PieceTypeChart::from_piece_type(PromotedPawn),
         }
     }
 }
 
 impl SpeedOfLight {
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
+    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceChart {
         use crate::cosmic::toy_box::Piece::*;
 
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
@@ -157,8 +156,8 @@ impl SpeedOfLight {
         &self,
         phase: Phase,
         piece_type: PieceType,
-    ) -> &PieceStruct {
-        use crate::cosmic::smart::piece_type::PieceType::*;
+    ) -> &PieceChart {
+        use crate::cosmic::smart::features::PieceType::*;
         use crate::cosmic::toy_box::Piece::*;
         match phase {
             Phase::First => match piece_type {
@@ -196,16 +195,13 @@ impl SpeedOfLight {
         }
     }
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_type_struct_from_piece_type(
-        &self,
-        piece_type: &PieceType,
-    ) -> &PieceTypeStruct {
+    pub fn get_piece_type_struct_from_piece_type(&self, piece_type: &PieceType) -> &PieceTypeChart {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::cosmic::smart::piece_type::PieceType::*;
+        use crate::cosmic::smart::features::PieceType::*;
         match *piece_type {
             King => &self.king,
             Rook => &self.rook,

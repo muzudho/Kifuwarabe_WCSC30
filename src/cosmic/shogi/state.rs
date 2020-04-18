@@ -4,9 +4,9 @@
 //! Person (先手,後手).
 //!
 
-use crate::cosmic::shogi::recording::MovementBuilder;
-use crate::cosmic::smart::piece_type::*;
-use crate::cosmic::smart::square::*;
+use crate::cosmic::shogi::recording::Movement;
+use crate::cosmic::smart::features::PieceType;
+use crate::cosmic::smart::square::AbsoluteAddress;
 use crate::cosmic::toy_box::Board;
 use std::fmt;
 
@@ -16,7 +16,7 @@ pub struct Position {
     pub current_board: Board,
 
     /// 現在の指し手を作成中。
-    pub current_movement_builder: MovementBuilder,
+    pub current_movement_builder: Movement,
 }
 impl Default for Position {
     fn default() -> Self {
@@ -24,19 +24,19 @@ impl Default for Position {
             // 現局面
             current_board: Board::default(),
             /// 現在の指し手を作成中。
-            current_movement_builder: MovementBuilder::default(),
+            current_movement_builder: Movement::default(),
         }
     }
 }
 impl Position {
-    pub fn set_current_movement_source_temporary(&mut self, src: &Square) {
-        self.current_movement_builder.src = src.clone()
+    pub fn set_current_movement_source_temporary(&mut self, src: &AbsoluteAddress) {
+        self.current_movement_builder.source = src.clone()
     }
-    pub fn set_current_movement_destination_temporary(&mut self, dst: &Square) {
-        self.current_movement_builder.dst = dst.clone()
+    pub fn set_current_movement_destination_temporary(&mut self, dst: &AbsoluteAddress) {
+        self.current_movement_builder.destination = dst.clone()
     }
     pub fn set_current_movement_promote_temporary(&mut self, pro: bool) {
-        self.current_movement_builder.pro = pro
+        self.current_movement_builder.promote = pro
     }
     pub fn set_current_movement_drop_temporary(&mut self, piece_type: Option<PieceType>) {
         self.current_movement_builder.drop = piece_type

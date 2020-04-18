@@ -1,7 +1,7 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use crate::cosmic::shogi::recording::MovementBuilder;
+use crate::cosmic::shogi::recording::Movement;
 use crate::white_hole::io::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -12,7 +12,7 @@ pub fn print_movement_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
     // 辞書順ソート
     let mut vec_ss_str = Vec::new();
     for ss_hash in ss_hashset {
-        let ss = MovementBuilder::from_hash(*ss_hash);
+        let ss = Movement::from_hash(*ss_hash);
         let ss_str = format!("{}", ss);
         vec_ss_str.push(ss_str);
     }

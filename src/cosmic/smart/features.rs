@@ -4,14 +4,14 @@
 //! 先後なしの駒と空白
 //!
 
-use crate::law::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
-use crate::law::speed_of_light::*;
+use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
 /*
 pub const KMS_LN: usize = 16;
 pub static PIECE_TYPE_WHITE_SPACE: &str = "  ";
 */
+pub const NONE_SERIAL_PIECE_TYPE_NUMBER: u64 = 14;
 
 /// USIでCopyするので、Copyが要る。
 #[derive(Copy, Clone, PartialEq)]
@@ -118,8 +118,8 @@ pub const KMS_PRO_ARRAY: [PieceType; KMS_PRO_ARRAY_LN] = [
 ];
 */
 
-pub struct GPHandPieces {}
-impl GPHandPieces {
+pub struct HandPieces {}
+impl HandPieces {
     pub fn for_all<F1>(callback: &mut F1)
     where
         F1: FnMut(PieceType),

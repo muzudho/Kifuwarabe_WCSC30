@@ -1,9 +1,9 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::shogi::playing::{Game, PosNums};
-use crate::cosmic::smart::square::Square;
+use crate::cosmic::smart::square::AbsoluteAddress;
 use crate::cosmic::universe::Universe;
-use crate::law::cryptographic::cu_conv_controller::*;
+use crate::law::cryptographic::*;
 use crate::law::generate_move::movement_generator::*;
 use crate::law::speed_of_light::*;
 use crate::law::usi::*;
@@ -53,7 +53,14 @@ impl Kifuwarabe {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let bestmove = Tree::first_move(speed_of_light, universe);
         // その手を選んだ理由☆（＾～＾）
-        universe.game.info.print_force_string(&bestmove.reason);
+        universe.game.info.print(
+            0,
+            bestmove.node_counter.get_sum_state(),
+            bestmove.changed_value,
+            &bestmove.movement,
+            &bestmove.reason,
+            true,
+        );
         // 例: bestmove 7g7f
         // 例: bestmove resign
         IO::writeln(&format!("bestmove {}", bestmove.movement));
@@ -191,7 +198,7 @@ impl Chiyuri {
 
         for ms in 11..19 {
             for hash in 0..10 {
-                let sq = Square::from_address(ms);
+                let sq = AbsoluteAddress::from_address(ms);
                 let next = push_sq_to_hash(hash, &sq);
                 let (hash_orig, square_orig) = pop_sq_from_hash(next);
                 IO::writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"

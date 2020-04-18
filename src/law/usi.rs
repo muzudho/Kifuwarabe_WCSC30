@@ -1,7 +1,7 @@
 //!
 //! USIプロトコル
 //!
-use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::Piece;
 use crate::cosmic::universe::*;
@@ -51,7 +51,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_address(0));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
       universe
         .game
         .position
@@ -62,7 +62,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_address(0));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
       universe
         .game
         .position
@@ -73,7 +73,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_address(0));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
       universe
         .game
         .position
@@ -84,7 +84,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_address(0));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
       universe
         .game
         .position
@@ -95,7 +95,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_address(0));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
       universe
         .game
         .position
@@ -106,7 +106,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_address(0));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
       universe
         .game
         .position
@@ -117,7 +117,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_address(0));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
       universe
         .game
         .position
@@ -216,7 +216,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
       universe
         .game
         .position
-        .set_current_movement_source_temporary(&Square::from_file_rank(suji, dan));
+        .set_current_movement_source_temporary(&AbsoluteAddress::from_file_rank(suji, dan));
       universe
         .game
         .position
@@ -319,7 +319,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
   universe
     .game
     .position
-    .set_current_movement_destination_temporary(&Square::from_file_rank(suji, dan));
+    .set_current_movement_destination_temporary(&AbsoluteAddress::from_file_rank(suji, dan));
 
   // 5文字に「+」があれば成り。
   if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {

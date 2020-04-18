@@ -1,12 +1,10 @@
 use crate::cosmic::shogi::state::Phase;
-use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    isquare, Angle, RelativeSquare, Square, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,
-    RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
+    isquare, AbsoluteAddress, Angle, RelativeAddress, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2,
+    RANK_3, RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
 };
-use crate::law::diagnostic::cu_asserts_controller::{
-    assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute,
-};
+use crate::law::diagnostic::{assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute};
 use std::fmt;
 
 /// 機敏性。
@@ -36,10 +34,10 @@ impl NextSquares {
     pub fn looking_for_squares_from_on_board<F1>(
         piece_type: PieceType,
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         match piece_type {
             PieceType::Pawn => {
@@ -90,10 +88,10 @@ impl NextSquares {
     /// 盤上の歩から動けるマスを見ます。
     fn looking_for_square_from_pawn_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let promoting =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
@@ -124,10 +122,10 @@ impl NextSquares {
     /// 盤上の香から動けるマスを見ます。
     fn looking_for_squares_from_lance_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let promoting =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
@@ -150,10 +148,10 @@ impl NextSquares {
     /// 盤上の桂から動けるマスを見ます。
     fn looking_for_squares_from_knight_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let promoting =
             &mut |destination| Promoting::case_of_knight(friend, &destination, callback_next);
@@ -185,10 +183,10 @@ impl NextSquares {
     /// 盤上の銀から動けるマスを見ます。
     fn looking_for_squares_from_silver_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let promoting = &mut |destination| {
             Promoting::case_of_silver(friend, &source, &destination, callback_next)
@@ -238,10 +236,10 @@ impl NextSquares {
     /// 盤上の金、と、杏、圭、全から動けるマスを見ます。
     fn looking_for_squares_from_gold_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let hopping =
             &mut |destination| callback_next(destination, Promotability::Deny, Agility::Hopping);
@@ -259,9 +257,9 @@ impl NextSquares {
     }
 
     /// 盤上の玉から動けるマスを見ます。
-    fn looking_for_squares_from_king_on_board<F1>(source: &Square, callback_next: &mut F1)
+    fn looking_for_squares_from_king_on_board<F1>(source: &AbsoluteAddress, callback_next: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let hopping =
             &mut |destination| callback_next(destination, Promotability::Deny, Agility::Hopping);
@@ -278,10 +276,10 @@ impl NextSquares {
     /// 盤上の角から動けるマスを見ます。
     fn looking_for_squares_from_bishop_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let promoting = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
@@ -295,10 +293,10 @@ impl NextSquares {
     /// 盤上の飛から動けるマスを見ます。
     fn looking_for_squares_from_rook_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         callback_next: &mut F1,
     ) where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         let promoting = &mut |destination| {
             Promoting::case_of_bishop_rook(friend, &source, &destination, callback_next)
@@ -310,9 +308,9 @@ impl NextSquares {
     }
 
     /// 盤上の馬から動けるマスを見ます。
-    fn looking_for_squares_from_horse_on_board<F1>(source: &Square, callback_next: &mut F1)
+    fn looking_for_squares_from_horse_on_board<F1>(source: &AbsoluteAddress, callback_next: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         {
             let sliding = &mut |destination| {
@@ -335,9 +333,11 @@ impl NextSquares {
     }
 
     /// 盤上の竜から動けるマスを見ます。
-    fn looking_for_squares_from_dragon_on_board<F1>(source: &Square, callback_next: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+    fn looking_for_squares_from_dragon_on_board<F1>(
+        source: &AbsoluteAddress,
+        callback_next: &mut F1,
+    ) where
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         {
             let sliding = &mut |destination| {
@@ -392,7 +392,7 @@ impl MovePermission {
             },
         }
     }
-    pub fn check(&self, destination: &Square) -> bool {
+    pub fn check(&self, destination: &AbsoluteAddress) -> bool {
         if destination.get_rank() < self.min_rank || self.max_rank < destination.get_rank() {
             return false;
         }
@@ -409,9 +409,13 @@ impl fmt::Debug for MovePermission {
 struct Promoting {}
 impl Promoting {
     /// 成らずに一番奥の段に移動することはできません。
-    fn case_of_pawn_lance<F1>(friend: Phase, destinaion: &Square, callback_next: &mut F1) -> bool
+    fn case_of_pawn_lance<F1>(
+        friend: Phase,
+        destinaion: &AbsoluteAddress,
+        callback_next: &mut F1,
+    ) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         if Promoting::is_farthest_rank_from_friend(friend, &destinaion) {
             // 自陣から見て一番奥の段
@@ -425,9 +429,13 @@ impl Promoting {
     }
 
     /// 成らずに一番奥の段、奥から２番目の段に移動することはできません。
-    fn case_of_knight<F1>(friend: Phase, destination: &Square, callback_next: &mut F1) -> bool
+    fn case_of_knight<F1>(
+        friend: Phase,
+        destination: &AbsoluteAddress,
+        callback_next: &mut F1,
+    ) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
         if Promoting::is_first_second_farthest_rank_from_friend(friend, &destination) {
@@ -442,12 +450,12 @@ impl Promoting {
     /// TODO 自陣から見て奥から１～３段目に入るときに成れます。元位置が３段目のときは、動けば成るか選べます。
     fn case_of_silver<F1>(
         friend: Phase,
-        source: &Square,
-        destination: &Square,
+        source: &AbsoluteAddress,
+        destination: &AbsoluteAddress,
         callback_next: &mut F1,
     ) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         if Promoting::is_third_farthest_rank_from_friend(friend, &source) {
             callback_next(*destination, Promotability::Any, Agility::Hopping)
@@ -461,12 +469,12 @@ impl Promoting {
     /// TODO 非敵陣にいるとき、敵陣で成れます。敵陣にいるとき、どこでも成れます。
     fn case_of_bishop_rook<F1>(
         friend: Phase,
-        source: &Square,
-        destination: &Square,
+        source: &AbsoluteAddress,
+        destination: &AbsoluteAddress,
         callback_next: &mut F1,
     ) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility) -> bool,
+        F1: FnMut(AbsoluteAddress, Promotability, Agility) -> bool,
     {
         if Promoting::is_opponent_area_rank(friend, &source)
             || Promoting::is_opponent_area_rank(friend, &destination)
@@ -478,17 +486,23 @@ impl Promoting {
     }
 
     /// 自陣から見て、一番遠いの段
-    fn is_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+    fn is_farthest_rank_from_friend(friend: Phase, destination: &AbsoluteAddress) -> bool {
         (friend == Phase::First && destination.get_rank() < RANK_2)
             || (friend == Phase::Second && RANK_8 < destination.get_rank())
     }
     /// 自陣から見て、一番目、２番目に遠いの段
-    fn is_first_second_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+    fn is_first_second_farthest_rank_from_friend(
+        friend: Phase,
+        destination: &AbsoluteAddress,
+    ) -> bool {
         (friend == Phase::First && destination.get_rank() < RANK_3)
             || (friend == Phase::Second && RANK_7 < destination.get_rank())
     }
     /// 自陣から見て、二番目、三番目に遠いの段
-    fn is_second_third_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+    fn is_second_third_farthest_rank_from_friend(
+        friend: Phase,
+        destination: &AbsoluteAddress,
+    ) -> bool {
         (friend == Phase::First
             && RANK_1 < destination.get_rank()
             && destination.get_rank() < RANK_4)
@@ -497,12 +511,12 @@ impl Promoting {
                 && destination.get_rank() < RANK_9)
     }
     /// 自陣から見て、三番目に遠いの段
-    fn is_third_farthest_rank_from_friend(friend: Phase, destination: &Square) -> bool {
+    fn is_third_farthest_rank_from_friend(friend: Phase, destination: &AbsoluteAddress) -> bool {
         (friend == Phase::First && destination.get_rank() == RANK_3)
             || (friend == Phase::Second && RANK_7 == destination.get_rank())
     }
     /// 敵陣の段
-    fn is_opponent_area_rank(friend: Phase, destination: &Square) -> bool {
+    fn is_opponent_area_rank(friend: Phase, destination: &AbsoluteAddress) -> bool {
         (friend == Phase::First && destination.get_rank() < RANK_4)
             || (friend == Phase::Second && RANK_6 < destination.get_rank())
     }
@@ -526,11 +540,11 @@ impl Squares {
     /// 1段目～8段目 全升☆ がほしければ phase.turn() しろだぜ☆（＾～＾）
     pub fn for_from_rank2_to_rank9<F1>(phase: Phase, callback: &mut F1)
     where
-        F1: FnMut(Square),
+        F1: FnMut(AbsoluteAddress),
     {
         for rank in RANK_2..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                let adr1 = Square::from_file_rank(file, rank).address;
+                let adr1 = AbsoluteAddress::from_file_rank(file, rank).address;
                 let adr2 = Squares::rotate180_as_absolute(phase, adr1);
                 assert_in_board_with_frame_as_absolute(
                     adr2,
@@ -539,7 +553,7 @@ impl Squares {
                         rank, file, adr1, adr2
                     ),
                 );
-                callback(Square::from_address(adr2));
+                callback(AbsoluteAddress::from_address(adr2));
             }
         }
     }
@@ -548,14 +562,16 @@ impl Squares {
     /// 1段目～7段目 全升☆ がほしければ phase.turn() しろだぜ☆（＾～＾）
     pub fn for_from_rank3_to_rank9<F1>(phase: Phase, callback: &mut F1)
     where
-        F1: FnMut(Square),
+        F1: FnMut(AbsoluteAddress),
     {
         for rank in RANK_3..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                callback(Square::from_address(Squares::rotate180_as_absolute(
-                    phase,
-                    Square::from_file_rank(file, rank).address,
-                )));
+                callback(AbsoluteAddress::from_address(
+                    Squares::rotate180_as_absolute(
+                        phase,
+                        AbsoluteAddress::from_file_rank(file, rank).address,
+                    ),
+                ));
             }
         }
     }
@@ -570,17 +586,17 @@ impl Squares {
         opt_move_permission: Option<MovePermission>,
         angle: Angle,
         agility: Agility,
-        start: &Square,
+        start: &AbsoluteAddress,
         callback: &mut F1,
     ) where
-        F1: FnMut(Square) -> bool,
+        F1: FnMut(AbsoluteAddress) -> bool,
     {
         match agility {
             Agility::Sliding => {
                 let mut next = start.address;
                 loop {
                     // 回転の起角は西隣だぜ☆（＾～＾）
-                    next += RelativeSquare::from_file_and_rank(1, 0)
+                    next += RelativeAddress::from_file_and_rank(1, 0)
                         .rotate(angle)
                         .get_address();
                     if Squares::has_jumped_out_of_the_board(next) {
@@ -588,11 +604,11 @@ impl Squares {
                     }
                     if let Some(permission) = &opt_move_permission {
                         // 香車しか使わないぜ☆（＾～＾）ｗｗｗ
-                        if !permission.check(&Square::from_address(next)) {
+                        if !permission.check(&AbsoluteAddress::from_address(next)) {
                             break;
                         }
                     }
-                    if callback(Square::from_address(next)) {
+                    if callback(AbsoluteAddress::from_address(next)) {
                         break;
                     }
                 }
@@ -600,27 +616,27 @@ impl Squares {
             Agility::Keima => {
                 // 隣☆（＾～＾）桂馬用☆（＾～＾）
                 // 回転の起角は西隣だぜ☆（＾～＾）
-                let rel = RelativeSquare::from_file_and_rank(1, 0).rotate(angle);
+                let rel = RelativeAddress::from_file_and_rank(1, 0).rotate(angle);
                 if !Squares::has_jumped_out_of_the_board(start.address + rel.get_address()) {
                     let rel = rel.double_rank();
                     if !Squares::has_jumped_out_of_the_board(start.address + rel.get_address()) {
                         let next = start.address + rel.get_address();
 
                         if let Some(permission) = &opt_move_permission {
-                            if !permission.check(&Square::from_address(next)) {
+                            if !permission.check(&AbsoluteAddress::from_address(next)) {
                                 return;
                             }
                         }
                         if !Squares::has_jumped_out_of_the_board(next) {
                             assert_in_board_as_absolute(next, "隣＋桂馬☆（＾～＾）");
-                            callback(Square::from_address(next));
+                            callback(AbsoluteAddress::from_address(next));
                         }
                     }
                 }
             }
             Agility::Hopping => {
                 // 回転の起角は西隣だぜ☆（＾～＾）
-                let rel = RelativeSquare::from_file_and_rank(1, 0)
+                let rel = RelativeAddress::from_file_and_rank(1, 0)
                     .rotate(angle)
                     .get_address();
                 // println!("angle={:?} {}", angle, rel);
@@ -639,12 +655,12 @@ impl Squares {
                     );
 
                     if let Some(permission) = &opt_move_permission {
-                        if !permission.check(&Square::from_address(next)) {
+                        if !permission.check(&AbsoluteAddress::from_address(next)) {
                             return;
                         }
                     }
 
-                    callback(Square::from_address(next));
+                    callback(AbsoluteAddress::from_address(next));
                 }
             }
         }

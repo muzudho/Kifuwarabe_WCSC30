@@ -1,12 +1,12 @@
 use crate::cosmic::shogi::playing::Game;
-use crate::cosmic::shogi::recording::MovementBuilder;
+use crate::cosmic::shogi::recording::Movement;
 use crate::cosmic::shogi::state::{Person, Phase, Position};
-use crate::cosmic::smart::piece_type::*;
-use crate::cosmic::smart::square::*;
+use crate::cosmic::smart::features::{num_to_piece_type, HandPieces};
+use crate::cosmic::smart::square::{AbsoluteAddress, SQUARE_DROP};
 use crate::cosmic::toy_box::{Board, Piece};
-use crate::law::generate_move::movement_generator::*;
-use crate::law::generate_move::squares::*;
-use crate::law::speed_of_light::*;
+use crate::law::generate_move::movement_generator::MGSquares;
+use crate::law::generate_move::squares::{NextSquares, Squares};
+use crate::law::speed_of_light::SpeedOfLight;
 
 pub struct MGMovements {}
 impl MGMovements {
@@ -36,7 +36,7 @@ impl MGMovements {
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     fn make_a_movement_on_board<F1>(
         friend: Phase,
-        source: &Square,
+        source: &AbsoluteAddress,
         current_board: &Board,
         speed_of_light: &SpeedOfLight,
         callback_movement: &mut F1,
@@ -58,19 +58,19 @@ impl MGMovements {
                     match &promotability {
                         Any => {
                             callback_movement(
-                                MovementBuilder {
-                                    src: source.clone(),
-                                    dst: destination.clone(),
-                                    pro: false,
+                                Movement {
+                                    source: source.clone(),
+                                    destination: destination.clone(),
+                                    promote: false,
                                     drop: None,
                                 }
                                 .to_hash(speed_of_light),
                             );
                             callback_movement(
-                                MovementBuilder {
-                                    src: source.clone(),
-                                    dst: destination.clone(),
-                                    pro: true,
+                                Movement {
+                                    source: source.clone(),
+                                    destination: destination.clone(),
+                                    promote: true,
                                     drop: None,
                                 }
                                 .to_hash(speed_of_light),
@@ -78,10 +78,10 @@ impl MGMovements {
                         }
                         _ => {
                             callback_movement(
-                                MovementBuilder {
-                                    src: source.clone(),
-                                    dst: destination.clone(),
-                                    pro: promotion,
+                                Movement {
+                                    source: source.clone(),
+                                    destination: destination.clone(),
+                                    promote: promotion,
                                     drop: None,
                                 }
                                 .to_hash(speed_of_light),
@@ -121,7 +121,7 @@ impl MGMovements {
     ) where
         F1: FnMut(u64),
     {
-        GPHandPieces::for_all(&mut |any_piece_type| {
+        HandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = &speed_of_light
                 .get_piece_struct_by_phase_and_piece_type(
                     game.history.get_phase(&Person::Friend),
@@ -204,7 +204,7 @@ impl MGMovements {
         hand_piece: &Piece,
         position: &Position,
         speed_of_light: &SpeedOfLight,
-        destination: &Square,
+        destination: &AbsoluteAddress,
         callback_movement: &mut F1,
     ) where
         F1: FnMut(u64),
@@ -229,10 +229,10 @@ impl MGMovements {
                 _ => {}
             }
             callback_movement(
-                MovementBuilder {
-                    src: Square::from_address(SQUARE_DROP), // 駒台
-                    dst: destination.clone(),               // どの升へ行きたいか
-                    pro: false,                             // 打に成りは無し
+                Movement {
+                    source: AbsoluteAddress::from_address(SQUARE_DROP), // 駒台
+                    destination: destination.clone(),                   // どの升へ行きたいか
+                    promote: false,                                     // 打に成りは無し
                     drop: num_to_piece_type(
                         speed_of_light
                             .get_piece_type_struct_from_piece_type(&piece_type_dst)

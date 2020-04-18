@@ -1,7 +1,7 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::toy_box::Piece;
 use crate::law::speed_of_light::*;
 
@@ -16,13 +16,13 @@ impl Evaluation {
             king_catch: king_catch1,
         }
     }
-}
 
-pub struct SPEvaluationController {}
-impl SPEvaluationController {
     /// 取った駒は相手の駒に決まってるぜ☆（＾～＾）
     /// ライオンを取ったら勝ちだぜ☆（＾～＾）
-    pub fn evaluate(captured_piece_o: Option<Piece>, speed_of_light: &SpeedOfLight) -> Evaluation {
+    pub fn from_caputured_piece(
+        captured_piece_o: Option<Piece>,
+        speed_of_light: &SpeedOfLight,
+    ) -> Evaluation {
         if let Some(captured_piece) = captured_piece_o {
             let captured_ps = speed_of_light.get_piece_struct(&captured_piece);
             match captured_ps.phase_piece_type.1 {

@@ -4,9 +4,11 @@
 
 use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::state::{Phase, PHASE_LN};
-use crate::cosmic::smart::piece_type::*;
-use crate::cosmic::smart::square::*;
-use crate::law::speed_of_light::*;
+use crate::cosmic::smart::features::PieceType;
+use crate::cosmic::smart::square::{
+    isquare, AbsoluteAddress, BOARD_MEMORY_AREA, RANK_1, RANK_10, SQUARE_NONE,
+};
+use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
 pub enum ThingsInTheSquare {
@@ -26,7 +28,7 @@ pub struct Board {
     pub hand: [i8; PIECE_LN],
     /// らいおんの位置
     /// [先後]
-    square_of_king: [Square; PHASE_LN],
+    square_of_king: [AbsoluteAddress; PHASE_LN],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -50,7 +52,10 @@ impl Default for Board {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
             ],
-            square_of_king: [Square::from_address(0), Square::from_address(0)],
+            square_of_king: [
+                AbsoluteAddress::from_address(0),
+                AbsoluteAddress::from_address(0),
+            ],
         }
     }
 }
@@ -90,7 +95,7 @@ impl Board {
         speed_of_light: &SpeedOfLight,
     ) -> bool {
         for dan in RANK_1..RANK_10 {
-            let sq = Square::from_file_rank(suji, dan);
+            let sq = AbsoluteAddress::from_file_rank(suji, dan);
             if let Some(piece99) = self.get_piece_by_square(&sq) {
                 let ps100 = speed_of_light.get_piece_struct(&piece99);
                 let (phase_piece, piece_type) = &ps100.phase_piece_type;
@@ -102,11 +107,11 @@ impl Board {
         false
     }
     /// 升で指定して駒を取得
-    pub fn get_piece_by_square(&self, sq: &Square) -> Option<Piece> {
+    pub fn get_piece_by_square(&self, sq: &AbsoluteAddress) -> Option<Piece> {
         self.board[sq.address as usize]
     }
     /// 升で指定して駒を置く
-    pub fn set_piece_by_square(&mut self, sq: &Square, piece_o: Option<Piece>) {
+    pub fn set_piece_by_square(&mut self, sq: &AbsoluteAddress, piece_o: Option<Piece>) {
         if let Some(piece) = piece_o {
             self.board[sq.address as usize] = piece_o;
 
@@ -135,7 +140,7 @@ impl Board {
     pub fn what_is_in_the_square(
         &self,
         phase: Phase,
-        sq: &Square,
+        sq: &AbsoluteAddress,
         speed_of_light: &SpeedOfLight,
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
@@ -214,7 +219,7 @@ impl Board {
 
         // 盤上の駒
         for i_address in SQUARE_NONE..BOARD_MEMORY_AREA {
-            let i_sq = Square::from_address(i_address as isquare);
+            let i_sq = AbsoluteAddress::from_address(i_address as isquare);
             if let Some(km) = self.get_piece_by_square(&i_sq) {
                 let num_km = speed_of_light.get_piece_struct(&km).serial_piece_number;
                 hash ^= game.hash_seed.km[i_address as usize][num_km];
@@ -357,7 +362,7 @@ impl Piece {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
     pub fn from_phase_and_piece_type(phase: Phase, piece_type: PieceType) -> Self {
-        use crate::cosmic::smart::piece_type::PieceType::*;
+        use crate::cosmic::smart::features::PieceType::*;
         use crate::cosmic::toy_box::Piece::*;
         match phase {
             Phase::First => match piece_type {
