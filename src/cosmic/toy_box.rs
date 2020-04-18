@@ -97,7 +97,7 @@ impl Board {
         for dan in RANK_1..RANK_10 {
             let sq = AbsoluteAddress::from_file_rank(suji, dan);
             if let Some(piece99) = self.get_piece_by_square(&sq) {
-                let ps100 = speed_of_light.get_piece_struct(&piece99);
+                let ps100 = speed_of_light.get_piece_chart(&piece99);
                 let (phase_piece, piece_type) = &ps100.phase_piece_type;
                 if *phase_piece == phase && *piece_type == PieceType::Pawn {
                     return true;
@@ -130,10 +130,10 @@ impl Board {
      * 持ち駒の枚数を加算
      */
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
-        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number] += maisu;
+        self.hand[speed_of_light.get_piece_chart(hand).serial_piece_number] += maisu;
     }
     pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
-        self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number]
+        self.hand[speed_of_light.get_piece_chart(hand).serial_piece_number]
     }
 
     /// 升には何がありますか？
@@ -145,7 +145,7 @@ impl Board {
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
         if let Some(piece) = self.get_piece_by_square(&sq) {
-            let piece_struct = speed_of_light.get_piece_struct(&piece);
+            let piece_struct = speed_of_light.get_piece_chart(&piece);
             if piece_struct.phase() == phase {
                 return ThingsInTheSquare::Friend;
             }
@@ -221,7 +221,7 @@ impl Board {
         for i_address in SQUARE_NONE..BOARD_MEMORY_AREA {
             let i_sq = AbsoluteAddress::from_address(i_address as isquare);
             if let Some(km) = self.get_piece_by_square(&i_sq) {
-                let num_km = speed_of_light.get_piece_struct(&km).serial_piece_number;
+                let num_km = speed_of_light.get_piece_chart(&km).serial_piece_number;
                 hash ^= game.hash_seed.km[i_address as usize][num_km];
             }
         }
@@ -229,7 +229,7 @@ impl Board {
         // 持ち駒ハッシュ
         GPPieces::for_all(&mut |any_piece| {
             let num_km = speed_of_light
-                .get_piece_struct(&any_piece)
+                .get_piece_chart(&any_piece)
                 .serial_piece_number;
 
             let maisu = self.get_hand(&any_piece, &speed_of_light);

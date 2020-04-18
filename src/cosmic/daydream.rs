@@ -5,6 +5,7 @@
 use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::recording::{Movement, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::Evaluation;
+use crate::cosmic::smart::features::PieceType::King;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::movement_generator::generate_movement;
 use crate::law::speed_of_light::*;
@@ -25,8 +26,6 @@ pub struct TreeState {
     /// さらに一手前は 1 が入る。
     /// この数は n手詰め に対応する。
     pub king_catch: Option<u16>,
-    /// 玉を取る手が存在すれば真☆　必ずその指し手を選ぶだろう☆（＾～＾）
-    pub king_catched: bool,
 
     /// この指し手を選んだ理由☆（＾～＾）
     pub reason: String,
@@ -39,7 +38,6 @@ impl Default for TreeState {
             movement_hash: 0u64,
             repetition_movement_hash: 0u64,
             king_catch: None,
-            king_catched: false,
             reason: "no update".to_string(),
         }
     }
@@ -57,15 +55,11 @@ impl TreeState {
         self.king_catch
     }
 
-    pub fn is_king_catch(&self) -> bool {
-        self.king_catched
-    }
-
     pub fn add_state(&mut self) {
         self.sum_state += 1;
     }
 
-    pub fn add_turn_over(&mut self, opponent_ts: &TreeState) -> bool {
+    pub fn add_turn_over(&mut self, opponent_ts: &TreeState, friend_movement_hash: u64) -> bool {
         self.sum_state += opponent_ts.get_sum_state();
 
         if let Some(king_catch) = opponent_ts.get_king_catch() {
@@ -79,11 +73,18 @@ impl TreeState {
         if let Some(opponent_value) = opponent_ts.value {
             // 評価値は ひっくり返します。
             let friend_value = -opponent_value;
-            if let Some(current_value) = self.value {
+
+            if self.movement_hash == 0 {
+                // どんな手も 投了より良いだろ☆（＾～＾）
+                self.movement_hash = friend_movement_hash;
+                self.value = Some(friend_value);
+                self.reason = "this better than resign".to_string();
+                return true;
+            } else if let Some(current_value) = self.value {
                 if current_value < friend_value {
                     // 更新
                     self.value = Some(friend_value);
-                    self.movement_hash = opponent_ts.movement_hash;
+                    self.movement_hash = friend_movement_hash;
                     self.reason = "update value".to_string();
                     return true;
                 }
@@ -100,14 +101,6 @@ impl TreeState {
             self.movement_hash = movement_hash;
             self.value = Some(evaluation.value);
             self.reason = "this better than resign".to_string();
-            return true;
-        } else if evaluation.king_catch {
-            // 玉を取ったぜ☆（＾～＾）！
-            self.movement_hash = movement_hash;
-            self.value = None;
-            self.king_catch = Some(0);
-            self.king_catched = true;
-            self.reason = "king catch".to_string();
             return true;
         } else if let Some(current_value) = self.get_value() {
             if current_value < evaluation.value {
@@ -126,6 +119,14 @@ impl TreeState {
 
     pub fn to_movement(&self) -> Movement {
         Movement::from_hash(self.movement_hash)
+    }
+
+    pub fn catch_king(&mut self, movement_hash: u64) {
+        // 玉を取る手より強い手はないぜ☆（＾～＾）！
+        self.movement_hash = movement_hash;
+        self.value = None;
+        self.king_catch = Some(0);
+        self.reason = "king catch is strongest".to_string();
     }
 }
 
@@ -201,6 +202,26 @@ impl Tree {
             Commands::pos(&game);
             */
 
+            if let Some(cap) = captured_piece {
+                if speed_of_light.get_piece_chart(&cap).piece_type() == King {
+                    // 玉を取る手より強い手はないぜ☆（＾～＾）！
+                    ts.catch_king(*movement_hash);
+
+                    if game.info.is_printable() {
+                        game.info.print(
+                            cur_depth,
+                            ts.get_sum_state(),
+                            ts.get_value(),
+                            ts.get_king_catch(),
+                            *movement_hash,
+                            &format!("{} {} EndNode", pv, movement),
+                        );
+                    }
+
+                    return ts;
+                }
+            }
+
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_ky() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
@@ -221,11 +242,6 @@ impl Tree {
                     }
                 }
 
-                if ts.is_king_catch() {
-                    // 玉を取ったのなら、もう帰るぜ☆（＾～＾）
-                    break;
-                }
-
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
@@ -238,7 +254,7 @@ impl Tree {
                 );
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
-                if ts.add_turn_over(&opponent_ts) {
+                if ts.add_turn_over(&opponent_ts, *movement_hash) {
                     // 指し手の更新があれば。
                     if game.info.is_printable() {
                         game.info.print(
@@ -250,11 +266,6 @@ impl Tree {
                             &format!("{} {} Backward1", pv, Movement::from_hash(*movement_hash)),
                         );
                     }
-                }
-
-                if ts.is_king_catch() {
-                    // らいおんキャッチする手を見つけていれば、もう探索しません。
-                    break;
                 }
             }
             // 1手戻すぜ☆（＾～＾）

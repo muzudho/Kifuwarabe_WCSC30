@@ -111,7 +111,7 @@ impl Default for SpeedOfLight {
 
 impl SpeedOfLight {
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_struct(&self, piece: &Piece) -> &PieceChart {
+    pub fn get_piece_chart(&self, piece: &Piece) -> &PieceChart {
         use crate::cosmic::toy_box::Piece::*;
 
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
@@ -161,36 +161,36 @@ impl SpeedOfLight {
         use crate::cosmic::toy_box::Piece::*;
         match phase {
             Phase::First => match piece_type {
-                King => self.get_piece_struct(&King1),
-                Rook => self.get_piece_struct(&Rook1),
-                Bishop => self.get_piece_struct(&Bishop1),
-                Gold => self.get_piece_struct(&Gold1),
-                Silver => self.get_piece_struct(&Silver1),
-                Knight => self.get_piece_struct(&Knight1),
-                Lance => self.get_piece_struct(&Lance1),
-                Pawn => self.get_piece_struct(&Pawn1),
-                Dragon => self.get_piece_struct(&Dragon1),
-                Horse => self.get_piece_struct(&Horse1),
-                PromotedSilver => self.get_piece_struct(&PromotedSilver1),
-                PromotedKnight => self.get_piece_struct(&PromotedKnight1),
-                PromotedLance => self.get_piece_struct(&PromotedLance1),
-                PromotedPawn => self.get_piece_struct(&PromotedPawn1),
+                King => self.get_piece_chart(&King1),
+                Rook => self.get_piece_chart(&Rook1),
+                Bishop => self.get_piece_chart(&Bishop1),
+                Gold => self.get_piece_chart(&Gold1),
+                Silver => self.get_piece_chart(&Silver1),
+                Knight => self.get_piece_chart(&Knight1),
+                Lance => self.get_piece_chart(&Lance1),
+                Pawn => self.get_piece_chart(&Pawn1),
+                Dragon => self.get_piece_chart(&Dragon1),
+                Horse => self.get_piece_chart(&Horse1),
+                PromotedSilver => self.get_piece_chart(&PromotedSilver1),
+                PromotedKnight => self.get_piece_chart(&PromotedKnight1),
+                PromotedLance => self.get_piece_chart(&PromotedLance1),
+                PromotedPawn => self.get_piece_chart(&PromotedPawn1),
             },
             Phase::Second => match piece_type {
-                King => self.get_piece_struct(&King2),
-                Rook => self.get_piece_struct(&Rook2),
-                Bishop => self.get_piece_struct(&Bishop2),
-                Gold => self.get_piece_struct(&Gold2),
-                Silver => self.get_piece_struct(&Silver2),
-                Knight => self.get_piece_struct(&Knight2),
-                Lance => self.get_piece_struct(&Lance2),
-                Pawn => self.get_piece_struct(&Pawn2),
-                Dragon => self.get_piece_struct(&Dragon2),
-                Horse => self.get_piece_struct(&Horse2),
-                PromotedSilver => self.get_piece_struct(&PromotedSilver2),
-                PromotedKnight => self.get_piece_struct(&PromotedKnight2),
-                PromotedLance => self.get_piece_struct(&PromotedLance2),
-                PromotedPawn => self.get_piece_struct(&PromotedPawn2),
+                King => self.get_piece_chart(&King2),
+                Rook => self.get_piece_chart(&Rook2),
+                Bishop => self.get_piece_chart(&Bishop2),
+                Gold => self.get_piece_chart(&Gold2),
+                Silver => self.get_piece_chart(&Silver2),
+                Knight => self.get_piece_chart(&Knight2),
+                Lance => self.get_piece_chart(&Lance2),
+                Pawn => self.get_piece_chart(&Pawn2),
+                Dragon => self.get_piece_chart(&Dragon2),
+                Horse => self.get_piece_chart(&Horse2),
+                PromotedSilver => self.get_piece_chart(&PromotedSilver2),
+                PromotedKnight => self.get_piece_chart(&PromotedKnight2),
+                PromotedLance => self.get_piece_chart(&PromotedLance2),
+                PromotedPawn => self.get_piece_chart(&PromotedPawn2),
             },
         }
     }

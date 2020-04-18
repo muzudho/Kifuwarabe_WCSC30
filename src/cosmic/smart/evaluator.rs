@@ -7,42 +7,37 @@ use crate::law::speed_of_light::*;
 
 pub struct Evaluation {
     pub value: i16,
-    pub king_catch: bool,
 }
 impl Evaluation {
-    pub fn new(score1: i16, king_catch1: bool) -> Self {
-        Evaluation {
-            value: score1,
-            king_catch: king_catch1,
-        }
+    pub fn new(value1: i16) -> Self {
+        Evaluation { value: value1 }
     }
 
     /// 取った駒は相手の駒に決まってるぜ☆（＾～＾）
-    /// ライオンを取ったら勝ちだぜ☆（＾～＾）
     pub fn from_caputured_piece(
         captured_piece_o: Option<Piece>,
         speed_of_light: &SpeedOfLight,
     ) -> Evaluation {
         if let Some(captured_piece) = captured_piece_o {
-            let captured_ps = speed_of_light.get_piece_struct(&captured_piece);
+            let captured_ps = speed_of_light.get_piece_chart(&captured_piece);
             match captured_ps.phase_piece_type.1 {
-                PieceType::King => Evaluation::new(25000, true),
-                PieceType::Rook => Evaluation::new(1000, false),
-                PieceType::Bishop => Evaluation::new(900, false),
-                PieceType::Gold => Evaluation::new(600, false),
-                PieceType::Silver => Evaluation::new(500, false),
-                PieceType::Knight => Evaluation::new(300, false),
-                PieceType::Lance => Evaluation::new(200, false),
-                PieceType::Pawn => Evaluation::new(100, false),
-                PieceType::Dragon => Evaluation::new(2000, false),
-                PieceType::Horse => Evaluation::new(1900, false),
-                PieceType::PromotedSilver => Evaluation::new(500, false),
-                PieceType::PromotedKnight => Evaluation::new(300, false),
-                PieceType::PromotedLance => Evaluation::new(200, false),
-                PieceType::PromotedPawn => Evaluation::new(100, false),
+                PieceType::King => Evaluation::new(25000), // 玉を取ったら、評価しないのでここには来ないぜ☆（＾～＾）
+                PieceType::Rook => Evaluation::new(1000),
+                PieceType::Bishop => Evaluation::new(900),
+                PieceType::Gold => Evaluation::new(600),
+                PieceType::Silver => Evaluation::new(500),
+                PieceType::Knight => Evaluation::new(300),
+                PieceType::Lance => Evaluation::new(200),
+                PieceType::Pawn => Evaluation::new(100),
+                PieceType::Dragon => Evaluation::new(2000),
+                PieceType::Horse => Evaluation::new(1900),
+                PieceType::PromotedSilver => Evaluation::new(500),
+                PieceType::PromotedKnight => Evaluation::new(300),
+                PieceType::PromotedLance => Evaluation::new(200),
+                PieceType::PromotedPawn => Evaluation::new(100),
             }
         } else {
-            Evaluation::new(0, false)
+            Evaluation::new(0)
         }
     }
 }

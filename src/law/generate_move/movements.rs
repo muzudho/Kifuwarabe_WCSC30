@@ -99,7 +99,7 @@ impl MGMovements {
         };
 
         if let Some(piece) = current_board.get_piece_by_square(&source) {
-            let ps = speed_of_light.get_piece_struct(&piece);
+            let ps = speed_of_light.get_piece_chart(&piece);
 
             if friend == ps.phase() {
                 NextSquares::looking_for_squares_from_on_board(
@@ -212,7 +212,7 @@ impl MGMovements {
         if let None = position.current_board.get_piece_by_square(&destination) {
             // 駒が無いところに打つ
             let current_board = &position.current_board;
-            let ps_dst = speed_of_light.get_piece_struct(hand_piece);
+            let ps_dst = speed_of_light.get_piece_chart(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             use crate::cosmic::toy_box::Piece::*;
             match *hand_piece {

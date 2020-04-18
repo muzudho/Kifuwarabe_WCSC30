@@ -293,7 +293,7 @@ impl Game {
                         .current_board
                         .get_piece_by_square(&movement.source)
                     {
-                        Some(speed_of_light.get_piece_struct(&pc).promoted)
+                        Some(speed_of_light.get_piece_chart(&pc).promoted)
                     } else {
                         panic!("成ったのに、元の升に駒がなかった☆（＾～＾）");
                     }
@@ -325,7 +325,7 @@ impl Game {
                 };
 
                 if let Some(cap764) = cap_o764 {
-                    let cap773 = speed_of_light.get_piece_struct(&cap764).captured;
+                    let cap773 = speed_of_light.get_piece_chart(&cap764).captured;
                     self.position
                         .current_board
                         .add_hand(&cap773, 1, speed_of_light);
@@ -383,7 +383,7 @@ impl Game {
                             .current_board
                             .get_piece_by_square(&movement.destination)
                         {
-                            Some(speed_of_light.get_piece_struct(&source409).demoted)
+                            Some(speed_of_light.get_piece_chart(&source409).demoted)
                         } else {
                             panic!("成ったのに移動先に駒が無いぜ☆（＾～＾）！")
                         }
@@ -401,7 +401,7 @@ impl Game {
                     .set_piece_by_square(&movement.destination, cap_o);
 
                 if let Some(cap) = cap_o {
-                    let captured = speed_of_light.get_piece_struct(&cap).captured;
+                    let captured = speed_of_light.get_piece_chart(&cap).captured;
                     // 自分の持ち駒を減らす
                     self.position
                         .current_board
