@@ -1,5 +1,5 @@
 use crate::cosmic::shogi::recording::{History, Movement};
-use crate::cosmic::shogi::state::{Person, Position, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
+use crate::cosmic::shogi::state::{Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
 use crate::cosmic::smart::square::{
     isquare, AbsoluteAddress, BOARD_MEMORY_AREA, SQUARE_DROP, SQUARE_NONE,
 };
@@ -37,7 +37,7 @@ pub struct Game {
     /// 現対局ハッシュ種☆（＾～＾）
     pub hash_seed: GameHashSeed,
     /// 現局面
-    pub position: Position,
+    pub current_board: Board,
     /// 情報表示担当
     pub info: Info,
 }
@@ -55,7 +55,7 @@ impl Default for Game {
                 // 先後
                 phase: [0; PHASE_LN],
             },
-            position: Position::default(),
+            current_board: Board::default(),
             info: Info::default(),
         }
     }
@@ -91,11 +91,6 @@ impl Game {
     pub fn set_current_movement(&mut self, movement: &Movement) {
         self.history.movements[self.history.ply as usize] = movement.clone()
     }
-    /*
-    pub fn build_current_movement(&mut self) {
-        self.history.movements[self.history.ply as usize] = self.position.current_movement_builder
-    }
-    */
     pub fn get_move(&self) -> &Movement {
         &self.history.movements[self.history.ply as usize]
     }
@@ -123,7 +118,7 @@ impl Game {
 
     pub fn get_board(&self, num: &PosNums) -> &Board {
         match *num {
-            PosNums::Current => &self.position.current_board,
+            PosNums::Current => &self.current_board,
             PosNums::Start => &self.starting_board,
         }
     }
@@ -132,7 +127,7 @@ impl Game {
     /// 手目も 0 に戻します。
     pub fn clear_all_positions(&mut self) {
         self.starting_board.clear();
-        self.position.current_board.clear();
+        self.current_board.clear();
         self.history.ply = 0;
     }
 
@@ -143,14 +138,11 @@ impl Game {
             let i_sq = AbsoluteAddress::from_address(i_adr as isquare);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
             let piece = self.starting_board.get_piece_by_square(&i_sq);
-            self.position
-                .current_board
-                .set_piece_by_square(&i_sq, piece);
+            self.current_board.set_piece_by_square(&i_sq, piece);
         }
 
         // 持ち駒
-        self.position.current_board.hand[..PIECE_LN]
-            .clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
+        self.current_board.hand[..PIECE_LN].clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
         /*
         for i_mg in 0..PIECE_LN {
             self.get_searching_mut().get_current_position_mut().mg[i_mg] =
@@ -204,10 +196,7 @@ impl Game {
 
     /// 局面ハッシュを作り直す
     pub fn create_ky1_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
-        let mut hash = self
-            .position
-            .current_board
-            .create_hash(&self, speed_of_light);
+        let mut hash = self.current_board.create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
         use crate::cosmic::shogi::state::Phase::*;
@@ -278,9 +267,7 @@ impl Game {
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
                     let piece734 = Piece::from_phase_and_piece_type(friend, drp);
-                    self.position
-                        .current_board
-                        .add_hand(&piece734, -1, speed_of_light);
+                    self.current_board.add_hand(&piece734, -1, speed_of_light);
                     Some(piece734)
                 } else {
                     panic!("打なのに駒を指定してないぜ☆（＾～＾）");
@@ -289,11 +276,7 @@ impl Game {
                 // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152 = if movement.promote {
                     // 成りなら
-                    if let Some(pc) = self
-                        .position
-                        .current_board
-                        .get_piece_by_square(&movement.source)
-                    {
+                    if let Some(pc) = self.current_board.get_piece_by_square(&movement.source) {
                         // 成り駒をクローン。
                         Some(speed_of_light.get_piece_chart(&pc).promoted)
                     } else {
@@ -301,15 +284,13 @@ impl Game {
                     }
                 } else {
                     // 移動元の駒をクローン。
-                    self.position
-                        .current_board
+                    self.current_board
                         .get_piece_by_square(&movement.source)
                         .clone()
                 };
 
                 // 移動元を空に。
-                self.position
-                    .current_board
+                self.current_board
                     .set_piece_by_square(&movement.source, None);
 
                 piece152
@@ -317,22 +298,18 @@ impl Game {
 
             // 移動先升に駒があるかどうか
             cap = if let Some(_) = self
-                .position
                 .current_board
                 .get_piece_by_square(&movement.destination)
             {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let cap_o764 = {
-                    self.position
-                        .current_board
+                    self.current_board
                         .get_piece_by_square(&movement.destination)
                 };
 
                 if let Some(cap764) = cap_o764 {
                     let cap773 = speed_of_light.get_piece_chart(&cap764).captured;
-                    self.position
-                        .current_board
-                        .add_hand(&cap773, 1, speed_of_light);
+                    self.current_board.add_hand(&cap773, 1, speed_of_light);
                 };
                 cap_o764
             } else {
@@ -340,8 +317,7 @@ impl Game {
             };
 
             // 移動先升に駒を置く
-            self.position
-                .current_board
+            self.current_board
                 .set_piece_by_square(&movement.destination, moveing_piece);
         }
         self.set_cap(self.history.ply as usize, cap);
@@ -371,9 +347,7 @@ impl Game {
                         // 自分の持ち駒を増やす
                         //let mg = km_to_mg(km);
                         //self.add_hand(mg,1);
-                        self.position
-                            .current_board
-                            .add_hand(&drop394, 1, speed_of_light);
+                        self.current_board.add_hand(&drop394, 1, speed_of_light);
                         Some(drop394)
                     } else {
                         panic!("打なのに駒を指定していないぜ☆（＾～＾）！")
@@ -383,7 +357,6 @@ impl Game {
                     if movement.promote {
                         // 成ったなら、成る前へ
                         if let Some(source409) = self
-                            .position
                             .current_board
                             .get_piece_by_square(&movement.destination)
                         {
@@ -392,28 +365,23 @@ impl Game {
                             panic!("成ったのに移動先に駒が無いぜ☆（＾～＾）！")
                         }
                     } else {
-                        self.position
-                            .current_board
+                        self.current_board
                             .get_piece_by_square(&movement.destination)
                             .clone()
                     }
                 };
 
                 // 移動先の駒を、取った駒（あるいは空）に戻す
-                self.position
-                    .current_board
+                self.current_board
                     .set_piece_by_square(&movement.destination, cap_o);
 
                 if let Some(cap) = cap_o {
                     let captured = speed_of_light.get_piece_chart(&cap).captured;
                     // 自分の持ち駒を減らす
-                    self.position
-                        .current_board
-                        .add_hand(&captured, -1, speed_of_light);
+                    self.current_board.add_hand(&captured, -1, speed_of_light);
                 }
                 // 移動元升に、動かした駒を置く
-                self.position
-                    .current_board
+                self.current_board
                     .set_piece_by_square(&movement.source, old_source391_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく

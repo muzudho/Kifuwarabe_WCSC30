@@ -1,6 +1,6 @@
 use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::recording::Movement;
-use crate::cosmic::shogi::state::{Person, Phase, Position};
+use crate::cosmic::shogi::state::{Person, Phase};
 use crate::cosmic::smart::features::{num_to_piece_type, HandPieces};
 use crate::cosmic::smart::square::{AbsoluteAddress, SQUARE_DROP};
 use crate::cosmic::toy_box::{Board, Piece};
@@ -149,11 +149,7 @@ impl MGMovements {
                 )
                 .piece;
 
-            if 0 < game
-                .position
-                .current_board
-                .get_hand(hand_piece, speed_of_light)
-            {
+            if 0 < game.current_board.get_hand(hand_piece, speed_of_light) {
                 // 駒を持っていれば
                 use crate::cosmic::toy_box::Piece::*;
                 match *hand_piece {
@@ -162,7 +158,7 @@ impl MGMovements {
                         Squares::for_from_rank2_to_rank9(Phase::First, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.position,
+                                &game.current_board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -173,7 +169,7 @@ impl MGMovements {
                     Knight1 => Squares::for_from_rank3_to_rank9(Phase::First, &mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            &game.position,
+                            &game.current_board,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -184,7 +180,7 @@ impl MGMovements {
                         Squares::for_from_rank2_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.position,
+                                &game.current_board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -196,7 +192,7 @@ impl MGMovements {
                         Squares::for_from_rank3_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.position,
+                                &game.current_board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -208,7 +204,7 @@ impl MGMovements {
                         MGSquares::for_all(&mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.position,
+                                &game.current_board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -222,16 +218,15 @@ impl MGMovements {
 
     fn make_hand<F1>(
         hand_piece: &Piece,
-        position: &Position,
+        current_board: &Board,
         speed_of_light: &SpeedOfLight,
         destination: &AbsoluteAddress,
         callback_movement: &mut F1,
     ) where
         F1: FnMut(u64),
     {
-        if let None = position.current_board.get_piece_by_square(&destination) {
+        if let None = current_board.get_piece_by_square(&destination) {
             // 駒が無いところに打つ
-            let current_board = &position.current_board;
             let ps_dst = speed_of_light.get_piece_chart(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
             use crate::cosmic::toy_box::Piece::*;

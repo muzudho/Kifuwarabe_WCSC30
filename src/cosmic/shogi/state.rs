@@ -4,22 +4,7 @@
 //! Person (先手,後手).
 //!
 
-use crate::cosmic::toy_box::Board;
 use std::fmt;
-
-/// ミュータブルなオブジェクト☆（＾～＾）
-pub struct Position {
-    /// 現局面
-    pub current_board: Board,
-}
-impl Default for Position {
-    fn default() -> Self {
-        Position {
-            // 現局面
-            current_board: Board::default(),
-        }
-    }
-}
 
 /// 局面ハッシュを作るときに、フェーズ用に配列があって、それのサイズに使ってるぜ☆（＾～＾）
 pub const PHASE_FIRST: usize = 0;
