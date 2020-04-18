@@ -43,7 +43,7 @@ fn main() {
 
 fn main_loop(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
     loop {
-        let (line, len, starts) = Kifuwarabe::catch_the_message(universe);
+        let (line, len, starts) = Kifuwarabe::catch_the_message();
 
         if len == 0 {
             // 任せろだぜ☆（＾～＾）

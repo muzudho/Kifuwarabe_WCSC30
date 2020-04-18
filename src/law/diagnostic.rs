@@ -29,12 +29,3 @@ pub fn assert_in_board_as_absolute(adr: isquare, hint: &str) {
 pub fn assert_in_board_with_frame_as_absolute(adr: isquare, hint: &str) {
     debug_assert!((-1 < adr && adr < 111), "abs-adr=|{}| hint={}", adr, hint);
 }
-
-/*
-///
-/// 打はテストできない
-///
-pub fn assert_in_board_as_relative(adr: isquare, hint: &str) {
-    debug_assert!(-89 < adr && adr < 89, "rel-adr=|{}| hint={}", adr, hint);
-}
-*/

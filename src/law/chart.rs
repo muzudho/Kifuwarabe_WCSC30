@@ -261,52 +261,6 @@ impl PieceChart {
         }
     }
 
-    /*
-    pub fn from_serial_piece_number(km_num: usize) -> Option<Self> {
-        use crate::cosmic::game::piece::piece::Piece::*;
-        match km_num {
-            0 => Some(PieceStruct::from_piece(King1)),
-            1 => Some(PieceStruct::from_piece(Rook1)),
-            2 => Some(PieceStruct::from_piece(Bishop1)),
-            3 => Some(PieceStruct::from_piece(Gold1)),
-            4 => Some(PieceStruct::from_piece(Silver1)),
-            5 => Some(PieceStruct::from_piece(Knight1)),
-            6 => Some(PieceStruct::from_piece(Lance1)),
-            7 => Some(PieceStruct::from_piece(Pawn1)),
-            8 => Some(PieceStruct::from_piece(Dragon1)),
-            9 => Some(PieceStruct::from_piece(Horse1)),
-            10 => Some(PieceStruct::from_piece(PromotedSilver1)),
-            11 => Some(PieceStruct::from_piece(PromotedKnight1)),
-            12 => Some(PieceStruct::from_piece(PromotedLance1)),
-            13 => Some(PieceStruct::from_piece(PromotedPawn1)),
-            14 => Some(PieceStruct::from_piece(King2)),
-            15 => Some(PieceStruct::from_piece(Rook2)),
-            16 => Some(PieceStruct::from_piece(Bishop2)),
-            17 => Some(PieceStruct::from_piece(Gold2)),
-            18 => Some(PieceStruct::from_piece(Silver2)),
-            19 => Some(PieceStruct::from_piece(Knight2)),
-            20 => Some(PieceStruct::from_piece(Lance2)),
-            21 => Some(PieceStruct::from_piece(Pawn2)),
-            22 => Some(PieceStruct::from_piece(Dragon2)),
-            23 => Some(PieceStruct::from_piece(Horse2)),
-            24 => Some(PieceStruct::from_piece(PromotedSilver2)),
-            25 => Some(PieceStruct::from_piece(PromotedKnight2)),
-            26 => Some(PieceStruct::from_piece(PromotedLance2)),
-            27 => Some(PieceStruct::from_piece(PromotedPawn2)),
-            _ => None,
-        }
-    }
-    */
-
-    /*
-    /// ハッシュ値から作る
-    pub fn from_hash(hash: u64) -> (u64, Option<Self>) {
-        // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-        let ps_o = PieceStruct::from_serial_piece_number((hash & 0b11111) as usize);
-        (hash >> 5, ps_o)
-    }
-    */
-
     pub fn phase(&self) -> Phase {
         self.phase_piece_type.0.clone()
     }
@@ -314,50 +268,6 @@ impl PieceChart {
     pub fn piece_type(&self) -> PieceType {
         self.phase_piece_type.1
     }
-
-    /*
-    // 降格できるか。
-    pub fn can_demote(&self) -> bool {
-        // 降格後の駒が、今の駒と異なっていれば、降格できるぜ☆（＾～＾）
-        self.piece != self.demoted
-    }
-
-    /// 駒の一致比較
-    pub fn equals_piece(&self, b: &PieceStruct) -> bool {
-        self.serial_piece_number == b.serial_piece_number
-    }
-
-    /// 駒種類→｛　成駒,（不成駒、それ以外）　｝
-    pub fn is_promoted(&self) -> bool {
-        use crate::cosmic::game::piece::piece_type::PieceType::*;
-        match self.piece_type() {
-            King => false,
-            Rook => false,
-            Bishop => false,
-            Gold => false,
-            Silver => false,
-            Knight => false,
-            Lance => false,
-            Pawn => false,
-            Dragon => true,
-            Horse => true,
-            PromotedSilver => true,
-            PromotedKnight => true,
-            PromotedLance => true,
-            PromotedPawn => true,
-        }
-    }
-
-    pub fn is_promotable(&self) -> bool {
-        self.piece != self.promoted
-    }
-
-    /// ハッシュ値を作る
-    pub fn add_hash(&self, hash: u64) -> u64 {
-        // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
-        (hash << 5) + self.serial_piece_number as u64
-    }
-    */
 }
 
 pub struct PieceTypeChart {

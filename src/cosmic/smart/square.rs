@@ -283,26 +283,8 @@ pub fn test_rotation() {
 #[allow(non_camel_case_types)]
 pub type isquare = i8;
 
-/*
-/// 盤を回転するのに使うぜ☆（＾～＾）
-pub const BAN_MIN: isquare = 11;
-
-/// 盤を回転するのに使うぜ☆（＾～＾）
-pub const BAN_MAX: isquare = 99;
-*/
-
-/*
-// 盤のヨコ幅、タテ幅。
-// pub const BOARD_WIDTH: i8 = 9;
-// pub const BOARD_HEIGHT: i8 = 9;
-// 正方形という前提☆（＾～＾）
-pub const BOARD_DIAGONAL_LENGTH: isquare = 9;
-*/
-
 // 枠も使う☆（＾～＾）
 pub const BOARD_MEMORY_AREA: isquare = 111;
-// 1辺の長さ
-//pub const BAN_LINE :usize = 10;
 
 /// 筋、段は 1 から始まる、という明示。
 /// 増減はよく使うので u8 ではなく i8 にした。
@@ -396,22 +378,6 @@ pub enum Angle {
     Ccw315,
 }
 impl Angle {
-    /*
-    /// 時計回り(Clockwise)☆（＾～＾）
-    pub fn rotate135cw(&self) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
-        match self {
-            Ccw0 => Ccw225,
-            Ccw45 => Ccw270,
-            Ccw90 => Ccw315,
-            Ccw135 => Ccw0,
-            Ccw180 => Ccw45,
-            Ccw225 => Ccw90,
-            Ccw270 => Ccw135,
-            Ccw315 => Ccw180,
-        }
-    }
-    */
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate90cw(&self) -> Self {
         use crate::cosmic::smart::square::Angle::*;
@@ -468,22 +434,6 @@ impl Angle {
             Ccw315 => Ccw45,
         }
     }
-    /*
-    /// 反時計回り(Counterclockwise)☆（＾～＾）
-    pub fn rotate135ccw(&self) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
-        match self {
-            Ccw0 => Ccw135,
-            Ccw45 => Ccw180,
-            Ccw90 => Ccw225,
-            Ccw135 => Ccw270,
-            Ccw180 => Ccw315,
-            Ccw225 => Ccw0,
-            Ccw270 => Ccw45,
-            Ccw315 => Ccw90,
-        }
-    }
-    */
     /// 点対称☆（＾～＾）
     pub fn rotate180(&self) -> Self {
         use crate::cosmic::smart::square::Angle::*;
@@ -519,12 +469,6 @@ impl RelativeAddress {
     pub fn get_address(&self) -> isquare {
         10 * self.file + self.rank
     }
-
-    /*
-    pub fn get_dict_orthant(&self) -> DictOrthant {
-        DictOrthant::from_file_and_rank(self.file, self.rank)
-    }
-    */
 
     pub fn get_degree45_orthant(&self) -> Degree45Orthant {
         Degree45Orthant::from_file_and_rank(self.file, self.rank)

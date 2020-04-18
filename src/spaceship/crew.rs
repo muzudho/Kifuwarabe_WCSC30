@@ -10,8 +10,8 @@ use crate::law::usi::*;
 use crate::spaceship::equipment::Telescope;
 use crate::white_hole::io::IO;
 use crate::white_hole::visual::game_view::GameView;
-use crate::white_hole::visual::title_screen::ts_view::print_title;
-use crate::white_hole::visual::unit_test::unit_test_view::print_movement_hashset;
+use crate::white_hole::visual::title_screen::print_title;
+use crate::white_hole::visual::unit_test_view::print_movement_hashset;
 use rand::Rng;
 use std::collections::HashSet;
 use std::io as std_io;
@@ -21,13 +21,8 @@ use std::io as std_io;
 /// 対局で許されている命令だけをするぜ☆（＾～＾）
 pub struct Kifuwarabe {}
 impl Kifuwarabe {
-    pub fn catch_the_message(universe: &mut Universe) -> (String, usize, usize) {
-        let mut line: String = if universe.is_empty_command() {
-            String::new()
-        } else {
-            // バッファーに溜まっていれば☆（＾～＾）
-            universe.pop_command()
-        };
+    pub fn catch_the_message() -> (String, usize, usize) {
+        let mut line: String = String::new();
 
         // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
         match std_io::stdin().read_line(&mut line) {
@@ -97,7 +92,7 @@ impl Kifuwarabe {
         IO::writeln("option name ResetLearning type button");
         IO::writeln("option name LearningFile type filename default <empty>");
         */
-        IO::writeln("option name MaxDepth type spin default 1 min 1 max 5");
+        IO::writeln("option name MaxDepth type spin default 1 min 1 max 10");
         IO::writeln("usiok");
     }
     pub fn usinewgame(universe: &mut Universe) {

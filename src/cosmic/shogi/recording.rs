@@ -95,16 +95,6 @@ impl Default for Movement {
     }
 }
 impl Movement {
-    /*
-    pub fn new(movement_dto: &MovementBuilder) -> Self {
-        Movement {
-            source: movement_dto.src.clone(),
-            destination: movement_dto.dst.clone(),
-            promote: movement_dto.pro,
-            drop: movement_dto.drop,
-        }
-    }
-    */
     pub fn from_hash(hash: u64) -> Movement {
         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
         let (hash, src52) = pop_sq_from_hash(hash);
@@ -118,25 +108,6 @@ impl Movement {
             drop: drop55,
         }
     }
-    /*
-    pub fn clear(&mut self) {
-        self.src = Square::from_address(0);
-        self.dst = Square::from_address(0);
-        self.pro = false;
-        self.drop = None;
-    }
-    */
-
-    /*
-    pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
-        let mut hash = 0;
-        // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_piece_type_to_hash(hash, self.drop, speed_of_light);
-        hash = push_bool_to_hash(hash, self.promote);
-        hash = push_sq_to_hash(hash, &self.destination);
-        push_sq_to_hash(hash, &self.source)
-    }
-    */
 
     pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = 0;

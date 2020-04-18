@@ -104,11 +104,6 @@ impl Game {
         s
     }
 
-    /*
-    pub fn get_current_position_hash(&mut self) -> u64 {
-        self.history.position_hashs[self.history.ply as usize]
-    }
-    */
     pub fn set_current_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
@@ -143,12 +138,6 @@ impl Game {
 
         // 持ち駒
         self.current_board.hand[..PIECE_LN].clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
-        /*
-        for i_mg in 0..PIECE_LN {
-            self.get_searching_mut().get_current_position_mut().mg[i_mg] =
-                self.get_starting_position().mg[i_mg];
-        }
-        */
     }
 
     /// 初期局面の盤上に駒の位置を設定するもの
@@ -160,16 +149,6 @@ impl Game {
     pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {
         self.starting_board.hand[km as usize] = maisu;
     }
-
-    /*
-    pub fn get_person_by_piece_struct(&self, piece_struct: &PieceStruct) -> Person {
-        if &piece_struct.phase() == &self.history.get_phase(&Person::Friend) {
-            Person::Friend
-        } else {
-            Person::Opponent
-        }
-    }
-    */
 
     /// 局面ハッシュ。
     pub fn get_all_position_hash_text(&self) -> String {
@@ -237,16 +216,6 @@ impl Game {
 
         count
     }
-
-    /*
-    /// らいおんの位置
-    pub fn get_king_sq(&self, person: &Person) -> &Square {
-        &self
-            .position
-            .current_board
-            .get_sq_r(phase_to_num(self.history.get_phase(person)))
-    }
-    */
 
     /// 入れた指し手の通り指すぜ☆（＾～＾）
     ///

@@ -3,7 +3,7 @@
 //!
 
 use crate::cosmic::shogi::playing::Game;
-use crate::cosmic::shogi::state::{Phase, PHASE_LN};
+use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
     isquare, AbsoluteAddress, BOARD_MEMORY_AREA, RANK_1, RANK_10, SQUARE_NONE,
@@ -26,9 +26,6 @@ pub struct Board {
     /// 持ち駒数。持ち駒に使える、成らずの駒の部分だけ使用。
     /// 増減させたいので、u8 ではなく i8。
     pub hand: [i8; PIECE_LN],
-    /// らいおんの位置
-    /// [先後]
-    square_of_king: [AbsoluteAddress; PHASE_LN],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -51,10 +48,6 @@ impl Default for Board {
                 // ▽ラ,▽キ,▽ゾ,▽イ,▽ネ,▽ウ,▽シ,▽ヒ,▽パキ,▽パゾ,▽パネ,▽パウ,▽パシ,▽パピ,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
-            ],
-            square_of_king: [
-                AbsoluteAddress::from_address(0),
-                AbsoluteAddress::from_address(0),
             ],
         }
     }
@@ -79,13 +72,6 @@ impl Board {
             0, 0,
         ];
     }
-
-    /*
-    /// らいおんの位置
-    pub fn get_sq_r(&self, phase_number: usize) -> &Square {
-        &self.square_of_king[phase_number]
-    }
-    */
 
     /// 歩が置いてあるか確認
     pub fn exists_fu_by_phase_suji(
@@ -112,23 +98,13 @@ impl Board {
     }
     /// 升で指定して駒を置く
     pub fn set_piece_by_square(&mut self, sq: &AbsoluteAddress, piece_o: Option<Piece>) {
-        if let Some(piece) = piece_o {
+        if let Some(_piece) = piece_o {
             self.board[sq.address as usize] = piece_o;
-
-            // 玉の位置を覚え直します。
-            use crate::cosmic::shogi::state::Phase::*;
-            match piece {
-                Piece::King1 => self.square_of_king[First as usize] = sq.clone(),
-                Piece::King2 => self.square_of_king[Second as usize] = sq.clone(),
-                _ => {}
-            }
         } else {
             self.board[sq.address as usize] = None;
         }
     }
-    /**
-     * 持ち駒の枚数を加算
-     */
+    /// 持ち駒の枚数を加算
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
         self.hand[speed_of_light.get_piece_chart(hand).serial_piece_number] += maisu;
     }
@@ -154,64 +130,6 @@ impl Board {
             ThingsInTheSquare::Space
         }
     }
-
-    /*
-    /// 指定の升に駒があれば真
-    pub fn exists_km(&self, sq: &Square) -> bool {
-        if let Some(_piece) = self.get_piece_by_square(&sq) {
-            true
-        } else {
-            false
-        }
-    }
-
-    /// 指定の升に指定の駒があれば真
-    pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &SpeedOfLight) -> bool {
-        if let Some(piece2) = self.get_piece_by_square(&sq) {
-            return speed_of_light
-                .get_piece_struct(&piece)
-                .equals_piece(&speed_of_light.get_piece_struct(&piece2));
-        }
-        false
-    }
-    */
-
-    /*
-    /// 指定の升にある駒の先後
-    pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> Option<Phase> {
-        if let Some(piece) = self.get_piece_by_square(sq) {
-            return Some(speed_of_light.get_piece_struct(&piece).phase());
-        }
-        None
-    }
-
-    /// 移動先と移動元を比較し、違う駒があれば、成ったと判定するぜ☆（＾～＾）
-    pub fn is_natta(
-        &self,
-        sq_src: &Square,
-        sq_dst: &Square,
-        speed_of_light: &SpeedOfLight,
-    ) -> bool {
-        if let Some(km_src) = self.get_piece_by_square(&sq_src) {
-            let ps_src = speed_of_light.get_piece_struct(&km_src);
-            let pro_src = ps_src.is_promoted();
-
-            if let Some(km_dst) = self.get_piece_by_square(&sq_dst) {
-                let ps_dst = speed_of_light.get_piece_struct(&km_dst);
-                // 移動先の駒が成り駒で、 移動元の駒が不成駒なら、成る
-                let pro_dst = ps_dst.is_promoted();
-                // 成り
-                pro_dst && !pro_src
-            } else {
-                // 空升には成れない☆（＾～＾）
-                false
-            }
-        } else {
-            // 空升は成れない☆（＾～＾）
-            false
-        }
-    }
-    */
 
     /// 局面ハッシュを作り直す
     pub fn create_hash(&self, game: &Game, speed_of_light: &SpeedOfLight) -> u64 {
@@ -353,8 +271,6 @@ impl fmt::Display for Piece {
             PromotedKnight2 => write!(f, " ▽pn"),
             PromotedLance2 => write!(f, " ▽pl"),
             PromotedPawn2 => write!(f, " ▽pp"),
-            // NonePiece => write!(f, "    "),
-            // OwariPiece => write!(f, " ×× "),
         }
     }
 }
@@ -443,56 +359,3 @@ impl GPPieces {
         }
     }
 }
-/*
-pub const KM_ARRAY_HALF_LN: usize = 14;
-pub const PHASE_KM_ARRAY: [[Piece; KM_ARRAY_HALF_LN]; PHASE_LN] = [
-    [
-        Piece::King1,           // らいおん
-        Piece::Rook1,           // きりん
-        Piece::Bishop1,         // ぞう
-        Piece::Gold1,           // いぬ
-        Piece::Silver1,         // ねこ
-        Piece::Knight1,         // うさぎ
-        Piece::Lance1,          // いのしし
-        Piece::Pawn1,           // ひよこ
-        Piece::Dragon1,         // ぱわーあっぷきりん
-        Piece::Horse1,          // ぱわーあっぷぞう
-        Piece::PromotedSilver1, // ぱわーあっぷねこ
-        Piece::PromotedKnight1, // ぱわーあっぷうさぎ
-        Piece::PromotedLance1,  // ぱわーあっぷいのしし
-        Piece::PromotedPawn1,   // ぱわーあっぷひよこ
-    ],
-    [
-        Piece::King2,           // らいおん
-        Piece::Rook2,           // きりん
-        Piece::Bishop2,         // ぞう
-        Piece::Gold2,           // いぬ
-        Piece::Silver2,         // ねこ
-        Piece::Knight2,         // うさぎ
-        Piece::Lance2,          // いのしし
-        Piece::Pawn2,           // ひよこ
-        Piece::Dragon2,         // ぱわーあっぷきりん
-        Piece::Horse2,          // ぱわーあっぷぞう
-        Piece::PromotedSilver2, // ぱわーあっぷねこ
-        Piece::PromotedKnight2, // ぱわーあっぷうさぎ
-        Piece::PromotedLance2,  // ぱわーあっぷいのしし
-        Piece::PromotedPawn2,   // ぱわーあっぷひよこ
-    ],
-    [
-        Piece::OwariPiece, // らいおん
-        Piece::OwariPiece, // きりん
-        Piece::OwariPiece, // ぞう
-        Piece::OwariPiece, // いぬ
-        Piece::OwariPiece, // ねこ
-        Piece::OwariPiece, // うさぎ
-        Piece::OwariPiece, // いのしし
-        Piece::OwariPiece, // ひよこ
-        Piece::OwariPiece, // ぱわーあっぷきりん
-        Piece::OwariPiece, // ぱわーあっぷぞう
-        Piece::OwariPiece, // ぱわーあっぷねこ
-        Piece::OwariPiece, // ぱわーあっぷうさぎ
-        Piece::OwariPiece, // ぱわーあっぷいのしし
-        Piece::OwariPiece, // ぱわーあっぷひよこ
-    ],
-];
-*/

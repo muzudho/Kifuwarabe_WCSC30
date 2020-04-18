@@ -219,46 +219,4 @@ impl SpeedOfLight {
             PromotedPawn => &self.promoted_pawn,
         }
     }
-
-    /*
-    /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_type_struct_from_piece(&self, piece: &Piece) -> &PieceTypeStruct {
-        // 列挙型を配列のインデックスとして使用☆（＾～＾）
-        // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
-        // &self.pieces[(*piece).clone() as usize]
-
-        // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::cosmic::game::piece::piece::Piece::*;
-        match *piece {
-            King1 => &self.king,
-            Rook1 => &self.rook,
-            Bishop1 => &self.bishop,
-            Gold1 => &self.gold,
-            Silver1 => &self.silver,
-            Knight1 => &self.knight,
-            Lance1 => &self.lance,
-            Pawn1 => &self.pawn,
-            Dragon1 => &self.promoted_rook,
-            Horse1 => &self.promoted_bishop,
-            PromotedSilver1 => &self.promoted_silver,
-            PromotedKnight1 => &self.promoted_knight,
-            PromotedLance1 => &self.promoted_lance,
-            PromotedPawn1 => &self.promoted_pawn,
-            King2 => &self.king,
-            Rook2 => &self.rook,
-            Bishop2 => &self.bishop,
-            Gold2 => &self.gold,
-            Silver2 => &self.silver,
-            Knight2 => &self.knight,
-            Lance2 => &self.lance,
-            Pawn2 => &self.pawn,
-            Dragon2 => &self.promoted_rook,
-            Horse2 => &self.promoted_bishop,
-            PromotedSilver2 => &self.promoted_silver,
-            PromotedKnight2 => &self.promoted_knight,
-            PromotedLance2 => &self.promoted_lance,
-            PromotedPawn2 => &self.promoted_pawn,
-        }
-    }
-    */
 }

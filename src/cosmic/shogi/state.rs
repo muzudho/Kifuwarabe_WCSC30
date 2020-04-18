@@ -1,5 +1,4 @@
 //!
-//! Position (局面),
 //! Phase (先後。手番,相手番),
 //! Person (先手,後手).
 //!
@@ -38,19 +37,6 @@ impl Phase {
             First => Second,
             Second => First,
         }
-    }
-}
-*/
-
-/*
-pub const PHASE_ARRAY_LN: usize = 2;
-pub const PHASE_ARRAY: [Phase; PHASE_ARRAY_LN] = [Phase::First, Phase::Second];
-
-pub fn phase_to_num(phase: Phase) -> usize {
-    use self::Phase::*;
-    match phase {
-        First => PHASE_FIRST,
-        Second => PHASE_SECOND,
     }
 }
 */

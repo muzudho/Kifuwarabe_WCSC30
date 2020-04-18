@@ -58,4 +58,8 @@ position startpos moves 5g5f 6a7b 4i3h 5a4b 2g2f 4b3b 5i4i 4a5b 9g9f 7c7d 5f5e 8
 
 position startpos moves 7g7f 3c3d 8h7g 7a7b 2h9h 6a6b 7i6h 5a4b 7g8f 3d3e 3g3f 2b5e 8f7g 5e1i+ 7g1a+ L*5h 4i5h 4c4d 1a2a 6b6a L*4c 4b5b N*7d 3a3b 3i2h 9c9d 4c4b+ 4a4b 7d6b+ 5b4c 2a3b 4c3d S*4c 3d2e 4c3d 2e1d 3d2c 1d1e L*1f 1e2d 2c1d+ 2d2e 1d1e 2e3d 3b3c 3d4e 3c3d 4e3d 3f3e 3d2c 1e1d 2c1b 1d1c 1b2a 1c2b 2a2b 1f1c+ 2b3c 1c2c 3c4c 2c3c 4c5d 6b7b B*9e S*4c 5d6e 6g6f 6e7d 7b7c 9e7c 7f7e 7d8e 8i7g 8e9e 9g9f 9e8d 4c5d S*5a 5g5f 6a6b 7e7d N*5e 7d7c+ L*2b B*7e 8d7c 7g8e 7c7d 8e7c+ 7d7c 7e6d 7c7d P*7e 7d6d 5d5c 6d7c 5c6b 7c6d
 
+### 王手を読むとフリーズする☆（＾～＾）？
+
+position startpos moves 9i9h 8c8d 2h6h 1c1d 2g2f 1d1e 6g6f 5a6b 8g8f 8d8e 6h3h 8e8f 6i5h 8f8g+ 7i7h 8g8h 3h4h 8h7h
+
 ```

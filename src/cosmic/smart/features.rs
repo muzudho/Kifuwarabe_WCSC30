@@ -7,10 +7,6 @@
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
-/*
-pub const KMS_LN: usize = 16;
-pub static PIECE_TYPE_WHITE_SPACE: &str = "  ";
-*/
 pub const NONE_SERIAL_PIECE_TYPE_NUMBER: u64 = 14;
 
 /// USIでCopyするので、Copyが要る。
@@ -67,56 +63,6 @@ impl fmt::Display for PieceType {
         }
     }
 }
-
-/*
-// 駒種類数
-pub const KMS_ARRAY_LN: usize = 14;
-// 駒種類
-pub const PIECE_TYPE_ARRAY: [PieceType; KMS_ARRAY_LN] = [
-    PieceType::King,           // らいおん
-    PieceType::Rook,           // きりん
-    PieceType::Bishop,         // ぞう
-    PieceType::Gold,           // いぬ
-    PieceType::Silver,         // ねこ
-    PieceType::Knight,         // うさぎ
-    PieceType::Lance,          // いのしし
-    PieceType::Pawn,           // ひよこ
-    PieceType::Dragon,         // ぱわーあっぷきりん
-    PieceType::Horse,          // ぱわーあっぷぞう
-    PieceType::PromotedSilver, // ぱわーあっぷねこ
-    PieceType::PromotedKnight, // ぱわーあっぷうさぎ
-    PieceType::PromotedLance,  // ぱわーあっぷいのしし
-    PieceType::PromotedPawn,   // ぱわーあっぷひよこ
-];
-*/
-
-/*
-// 非成 駒種類数
-pub const KMS_NPRO_ARRAY_LN: usize = 8;
-// 非成 駒種類
-pub const KMS_NPRO_ARRAY: [PieceType; KMS_NPRO_ARRAY_LN] = [
-    PieceType::King,   // らいおん
-    PieceType::Rook,   // きりん
-    PieceType::Bishop, // ぞう
-    PieceType::Gold,   // いぬ
-    PieceType::Silver, // ねこ
-    PieceType::Knight, // うさぎ
-    PieceType::Lance,  // いのしし
-    PieceType::Pawn,   // ひよこ
-];
-
-// 成 駒種類数
-pub const KMS_PRO_ARRAY_LN: usize = 6;
-// 成 駒種類
-pub const KMS_PRO_ARRAY: [PieceType; KMS_PRO_ARRAY_LN] = [
-    PieceType::Dragon,         // ぱわーあっぷきりん
-    PieceType::Horse,          // ぱわーあっぷぞう
-    PieceType::PromotedSilver, // ぱわーあっぷねこ
-    PieceType::PromotedKnight, // ぱわーあっぷうさぎ
-    PieceType::PromotedLance,  // ぱわーあっぷいのしし
-    PieceType::PromotedPawn,   // ぱわーあっぷひよこ
-];
-*/
 
 pub struct HandPieces {}
 impl HandPieces {
