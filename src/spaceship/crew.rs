@@ -51,19 +51,19 @@ impl Kifuwarabe {
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
     pub fn go(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
-        let bestmove = Tree::first_move(speed_of_light, universe);
+        let ts = Tree::first_move(speed_of_light, universe);
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print(
             0,
-            bestmove.node_counter.get_sum_state(),
-            bestmove.changed_value,
-            &bestmove.movement,
-            &bestmove.reason,
-            true,
+            ts.get_sum_state(),
+            ts.get_value(),
+            ts.get_king_catch(),
+            ts.get_movement_hash(),
+            &ts.reason,
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
-        IO::writeln(&format!("bestmove {}", bestmove.movement));
+        IO::writeln(&format!("bestmove {}", ts.to_movement()));
     }
     pub fn isready() {
         IO::writeln("readyok");

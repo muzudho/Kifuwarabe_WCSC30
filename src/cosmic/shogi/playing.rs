@@ -209,7 +209,7 @@ impl Game {
 
         // 手番ハッシュ
         use crate::cosmic::shogi::state::Phase::*;
-        match self.history.get_phase(&Person::Friend) {
+        match self.history.get_phase(Person::Friend) {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],
         }
@@ -266,7 +266,7 @@ impl Game {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.history.ply;
         self.set_current_movement(movement);
-        let phase = self.history.get_phase(&Person::Friend);
+        let phase = self.history.get_phase(Person::Friend);
 
         // 取った駒
         let cap: Option<Piece>;
@@ -356,7 +356,7 @@ impl Game {
             self.history.ply -= 1;
             let movement = &self.get_move().clone();
             {
-                let phase = self.history.get_phase(&Person::Friend);
+                let phase = self.history.get_phase(Person::Friend);
                 // 取った駒が有ったか。
                 let cap_o: Option<Piece> = self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒

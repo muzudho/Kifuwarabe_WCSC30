@@ -4,6 +4,8 @@
 
 use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::recording::{Movement, SENNTITE_NUM};
+use crate::cosmic::shogi::state::Person;
+use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::evaluator::Evaluation;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::movement_generator::generate_movement;
@@ -11,34 +13,131 @@ use crate::law::speed_of_light::*;
 use std::collections::HashSet;
 
 #[derive(Clone)]
-pub struct NodeCounter {
+pub struct TreeState {
     sum_state: u64,
-}
-impl Default for NodeCounter {
-    fn default() -> Self {
-        NodeCounter { sum_state: 0 }
-    }
-}
-impl NodeCounter {
-    pub fn add_state(&mut self) {
-        self.sum_state += 1;
-    }
+    pub value: Option<i16>,
 
+    movement_hash: u64,
+    /// 何も起こっていなければ None が入っている。
+    /// 相手玉を取ったら 別のフラグが立つ。
+    /// その一手前は 0 が入る。
+    /// さらに一手前は 1 が入る。
+    /// この数は n手詰め に対応する。
+    pub king_catch: Option<u16>,
+    /// 玉を取る手が存在すれば真☆　必ずその指し手を選ぶだろう☆（＾～＾）
+    pub king_catched: bool,
+
+    /// この指し手を選んだ理由☆（＾～＾）
+    pub reason: String,
+}
+impl Default for TreeState {
+    fn default() -> Self {
+        TreeState {
+            sum_state: 0,
+            value: None,
+            movement_hash: 0u64,
+            king_catch: None,
+            king_catched: false,
+            reason: "no update".to_string(),
+        }
+    }
+}
+impl TreeState {
     pub fn get_sum_state(&self) -> u64 {
         self.sum_state
     }
 
-    pub fn add_sum(&mut self, nc: &NodeCounter) {
-        self.sum_state += nc.get_sum_state();
+    pub fn get_value(&self) -> Option<i16> {
+        self.value
+    }
+
+    pub fn get_king_catch(&self) -> Option<u16> {
+        self.king_catch
+    }
+
+    pub fn is_king_catch(&self) -> bool {
+        self.king_catched
+    }
+
+    pub fn add_state(&mut self) {
+        self.sum_state += 1;
+    }
+
+    pub fn add_turn_over(&mut self, opponent_ts: &TreeState) -> bool {
+        self.sum_state += opponent_ts.get_sum_state();
+
+        if let Some(king_catch) = opponent_ts.get_king_catch() {
+            // ライオン・キャッチは１足します。
+            self.king_catch = Some(king_catch + 1);
+        } else if opponent_ts.is_king_catch() {
+            // らいおんキャッチした。評価は付けません。
+            self.movement_hash = opponent_ts.movement_hash;
+            self.value = None;
+            self.king_catch = Some(0);
+            self.king_catched = true;
+            self.reason = "lion catch".to_string();
+            return true;
+        } else if let Some(opponent_value) = opponent_ts.value {
+            // 評価値は ひっくり返します。
+            let friend_value = -opponent_value;
+            if let Some(current_value) = self.value {
+                if current_value < friend_value {
+                    // 更新
+                    self.value = Some(friend_value);
+                    self.movement_hash = opponent_ts.movement_hash;
+                    self.reason = "update value".to_string();
+                    return true;
+                }
+            }
+        } else {
+            panic!("評価値が付いてないぜ☆（＾～＾）！")
+        }
+        false
+    }
+
+    pub fn check_leaf(&mut self, evaluation: &Evaluation, movement_hash: u64) -> bool {
+        if self.movement_hash == 0 {
+            // どんな手も 投了より良いだろ☆（＾～＾）
+            self.movement_hash = movement_hash;
+            self.value = Some(evaluation.value);
+            self.reason = "this better than resign".to_string();
+            return true;
+        } else if evaluation.king_catch {
+            // 玉を取ったぜ☆（＾～＾）！
+            self.movement_hash = movement_hash;
+            self.value = None;
+            self.king_catch = Some(0);
+            self.king_catched = true;
+            self.reason = "king catch".to_string();
+            return true;
+        } else if let Some(current_value) = self.get_value() {
+            if current_value < evaluation.value {
+                self.movement_hash = movement_hash;
+                self.value = Some(evaluation.value);
+                self.reason = "good position".to_string();
+                return true;
+            }
+        }
+        false
+    }
+
+    pub fn get_movement_hash(&self) -> u64 {
+        self.movement_hash
+    }
+
+    pub fn to_movement(&self) -> Movement {
+        Movement::from_hash(self.movement_hash)
     }
 }
 
 pub struct Tree {}
 impl Tree {
-    pub fn first_move(speed_of_light: &SpeedOfLight, universe: &mut Universe) -> Bestmove {
+    pub fn first_move(speed_of_light: &SpeedOfLight, universe: &mut Universe) -> TreeState {
         universe.game.info.clear();
 
+        let friend = universe.game.history.get_phase(Person::Friend);
         Tree::get_best_movement(
+            friend,
             0,
             universe.option_max_depth - 1,
             &mut universe.game,
@@ -60,13 +159,14 @@ impl Tree {
     ///
     /// Best movement, Value, Sum nodes
     fn get_best_movement(
+        friend: Phase,
         cur_depth: u16,
         end_depth: u16,
         game: &mut Game,
         speed_of_light: &SpeedOfLight,
         pv: &str,
-    ) -> Bestmove {
-        let mut nc = NodeCounter::default();
+    ) -> TreeState {
+        let mut ts = TreeState::default();
         /* TODO
         {
             // 指定局面の利き数ボード再計算。
@@ -109,32 +209,24 @@ impl Tree {
 
         // 指せる手が無ければ投了☆（＾～＾）
         if movement_set.is_empty() {
-            let best_value = 0;
-            let resign_move = Movement::default();
-            game.info.print(
-                cur_depth,
-                nc.get_sum_state(),
-                best_value,
-                &resign_move,
-                &format!("{} {} EmptyMoves", pv, resign_move),
-                false,
-            );
-            return Bestmove::new(
-                resign_move,
-                best_value,
-                nc,
-                0,
-                "Saseru te nakatta.".to_string(),
-            );
+            if game.info.is_printable() {
+                game.info.print(
+                    cur_depth,
+                    ts.get_sum_state(),
+                    ts.get_value(),
+                    ts.get_king_catch(),
+                    ts.movement_hash,
+                    &format!("{} resign EmptyMoves", pv),
+                );
+            }
+            return ts;
         }
 
-        // TODO その中から１手指して、局面を進めるぜ☆（＾～＾）評価値は差分更新したいぜ☆（＾～＾）
-        let mut sibling_bestmove = SiblingBestmove::new();
         // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
         let mut repetition_move_hash = 0u64;
         for movement_hash in movement_set.iter() {
             // 1手進めるぜ☆（＾～＾）
-            nc.add_state();
+            ts.add_state();
             let movement = Movement::from_hash(*movement_hash);
             let captured_piece = game.do_move(&movement, speed_of_light);
             /*
@@ -149,21 +241,29 @@ impl Tree {
             } else if end_depth <= cur_depth {
                 // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
                 let evaluation = Evaluation::from_caputured_piece(captured_piece, speed_of_light);
+                if ts.check_leaf(&evaluation, *movement_hash) {
+                    if game.info.is_printable() {
+                        game.info.print(
+                            cur_depth,
+                            ts.get_sum_state(),
+                            ts.get_value(),
+                            ts.get_king_catch(),
+                            *movement_hash,
+                            &format!("{} {} EndNode", pv, movement),
+                        );
+                    }
+                }
 
-                if sibling_bestmove.update_bestmove(&evaluation, *movement_hash) {}
-                let movement = Movement::from_hash(*movement_hash);
-                game.info.print(
-                    cur_depth,
-                    nc.get_sum_state(),
-                    sibling_bestmove.value,
-                    &movement,
-                    &format!("{} {} EndNode", pv, movement),
-                    false,
-                );
+                if ts.is_king_catch() {
+                    // 玉を取ったのなら、もう帰るぜ☆（＾～＾）
+                    break;
+                }
+
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                let opponent_best_move = Tree::get_best_movement(
+                let opponent_ts = Tree::get_best_movement(
+                    friend.turn(),
                     cur_depth + 1,
                     end_depth,
                     game,
@@ -171,36 +271,24 @@ impl Tree {
                     &format!("{} {}", pv, Movement::from_hash(*movement_hash)),
                 );
 
-                nc.add_sum(&opponent_best_move.node_counter);
+                // 下の木の結果を、ひっくり返して、引き継ぎます。
+                if ts.add_turn_over(&opponent_ts) {
+                    // 指し手の更新があれば。
+                    if game.info.is_printable() {
+                        game.info.print(
+                            cur_depth,
+                            ts.get_sum_state(),
+                            ts.get_value(),
+                            ts.get_king_catch(),
+                            *movement_hash,
+                            &format!("{} {} Backward1", pv, Movement::from_hash(*movement_hash)),
+                        );
+                    }
+                }
 
-                let changed_value: i16 = if opponent_best_move.movement.resign() {
-                    // 相手が投了してるなら、良い手だぜ☆（＾～＾）！
-                    30000
-                } else if opponent_best_move.lion_catch == 1 {
-                    // 次の相手の番に玉を取られてしまうぜ☆（＾～＾）！王手回避漏れか自殺手になってしまうぜ☆（＾～＾）！
-                    // こんな手を指し手はいけないぜ☆（＾～＾）！
-                    -30000
-                } else if opponent_best_move.lion_catch % 2 == 1 {
-                    // 将来的に玉を取られてしまう詰めろに入ってるぜ☆（＾～＾）！
-                    // こんな手を指し手はいけないぜ☆（＾～＾）！
-                    -30000
-                } else {
-                    // それ以外なら別に☆（＾～＾）相手が得しない手を選ぼうぜ☆（＾～＾）
-                    -opponent_best_move.changed_value
-                };
-
-                if sibling_bestmove
-                    .update_bestmove(&Evaluation::new(changed_value, false), *movement_hash)
-                {
-                    let movement = &Movement::from_hash(*movement_hash);
-                    game.info.print(
-                        cur_depth,
-                        nc.get_sum_state(),
-                        sibling_bestmove.value,
-                        movement,
-                        &format!("{} {} Backward1", pv, movement),
-                        false,
-                    );
+                if ts.is_king_catch() {
+                    // らいおんキャッチする手を見つけていれば、もう探索しません。
+                    break;
                 }
             }
             // 1手戻すぜ☆（＾～＾）
@@ -211,120 +299,23 @@ impl Tree {
             */
         }
 
-        // メートを調べようぜ☆（＾～＾）
-        if sibling_bestmove.lion_catch < 1 {
-            if sibling_bestmove.lion_catched {
-                // 相手玉を取ることがここで確定するぜ☆（＾～＾）
-                sibling_bestmove.lion_catch = 1;
-            }
-        } else {
-            // カウントアップ☆（＾～＾）
-            sibling_bestmove.lion_catch += 1;
-        }
-
-        let best_movement = if sibling_bestmove.get_movement_hash() != 0 {
-            Movement::from_hash(sibling_bestmove.get_movement_hash())
-        } else {
+        if ts.get_movement_hash() == 0 {
             // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-            Movement::from_hash(repetition_move_hash)
+            ts.movement_hash = repetition_move_hash
         };
 
         // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-        game.info.print(
-            cur_depth,
-            nc.get_sum_state(),
-            sibling_bestmove.value,
-            &best_movement,
-            &format!("{} {} Backward2", pv, best_movement),
-            false,
-        );
-
-        Bestmove::new(
-            best_movement,
-            sibling_bestmove.value,
-            nc,
-            sibling_bestmove.lion_catch,
-            "Searching...".to_string(),
-        )
-    }
-}
-
-/// 将来の結果を、現在に遡って持ってくる方向の結果。
-pub struct Bestmove {
-    pub movement: Movement,
-    pub changed_value: i16,
-
-    pub node_counter: NodeCounter,
-    /// 玉を取ったり取られたり、取られなかったり、まだ確定していなければ 0 が入っている。
-    /// 相手の玉を取ることが確定していたら 1 が入っている。
-    /// 相手に玉を取られることが確定していたら 2 が入っている。
-    /// 相手に玉を取られたことが確定していたら 奇数の正の数が入っている。
-    /// 相手の玉を取ったことが確定していたら 0より大きい偶数の正の数が入っている。
-    /// この数を 1 引いたものが、いわゆる mate (メート)。 mate 7 なら 7手あれば相手玉を詰めることができる。
-    pub lion_catch: u16,
-    /// この指し手を選んだ理由☆（＾～＾）
-    pub reason: String,
-}
-impl Bestmove {
-    pub fn new(
-        movement1: Movement,
-        changed_value1: i16,
-        node_counter1: NodeCounter,
-        lion_catch1: u16,
-        reason1: String,
-    ) -> Self {
-        Bestmove {
-            movement: movement1,
-            changed_value: changed_value1,
-            node_counter: node_counter1,
-            lion_catch: lion_catch1,
-            reason: reason1,
+        if game.info.is_printable() {
+            game.info.print(
+                cur_depth,
+                ts.get_sum_state(),
+                ts.get_value(),
+                ts.get_king_catch(),
+                ts.movement_hash,
+                &format!("{} {}", pv, ts.to_movement()),
+            );
         }
-    }
-}
 
-/// 兄弟局面（横方向）と比較しての結果。
-struct SiblingBestmove {
-    movement_hash: u64,
-    pub value: i16,
-    /// 玉を取ったり取られたり、取られなかったり、まだ確定していなければ 0 が入っている。
-    /// 相手の玉を取ることが確定していたら 1 が入っている。
-    /// 相手に玉を取られることが確定していたら 2 が入っている。
-    /// 相手に玉を取られたことが確定していたら 奇数の正の数が入っている。
-    /// 相手の玉を取ったことが確定していたら 0より大きい偶数の正の数が入っている。
-    /// この数を 1 引いたものが、いわゆる mate (メート)。 mate 7 なら 7手あれば相手玉を詰めることができる。
-    pub lion_catch: u16,
-    /// 玉を取る手が存在すれば真☆　必ずその指し手を選ぶだろう☆（＾～＾）
-    pub lion_catched: bool,
-}
-impl SiblingBestmove {
-    pub fn new() -> Self {
-        SiblingBestmove {
-            movement_hash: 0u64,
-            value: -1,
-            lion_catch: 0,
-            lion_catched: false,
-        }
-    }
-
-    pub fn get_movement_hash(&self) -> u64 {
-        self.movement_hash
-    }
-
-    pub fn update_bestmove(&mut self, evaluation: &Evaluation, movement_hash1: u64) -> bool {
-        if self.lion_catched {
-            // すでにライオンキャッチする手を見つけているから、更新しないぜ☆（＾～＾）
-            return false;
-        } else if evaluation.king_catch {
-            self.movement_hash = movement_hash1;
-            self.value = evaluation.value;
-            self.lion_catched = true;
-            return true;
-        } else if self.value < evaluation.value {
-            self.movement_hash = movement_hash1;
-            self.value = evaluation.value;
-            return true;
-        }
-        false
+        ts
     }
 }

@@ -47,10 +47,9 @@ impl Default for History {
 }
 impl History {
     /// 手番
-    pub fn get_phase(&self, person: &Person) -> Phase {
+    pub fn get_phase(&self, person: Person) -> Phase {
         use crate::cosmic::shogi::state::Person::*;
-        match *person {
-            // None => Phase::None,
+        match person {
             Friend => {
                 // 手番
                 if self.ply % 2 == 0 {

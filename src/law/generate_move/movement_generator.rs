@@ -41,7 +41,7 @@ pub fn get_potential_movement<F1>(
 {
     // 盤上の駒の移動。
     MGMovements::make_movements_on_board(
-        game.history.get_phase(&Person::Friend),
+        game.history.get_phase(Person::Friend),
         &game.position.current_board,
         &speed_of_light,
         callback_movement,

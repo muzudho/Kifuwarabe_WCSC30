@@ -67,7 +67,6 @@ impl fmt::Display for Phase {
         }
     }
 }
-/*
 impl Phase {
     pub fn turn(&self) -> Phase {
         use self::Phase::*;
@@ -77,7 +76,6 @@ impl Phase {
         }
     }
 }
-*/
 
 /*
 pub const PHASE_ARRAY_LN: usize = 2;

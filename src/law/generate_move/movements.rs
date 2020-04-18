@@ -124,7 +124,7 @@ impl MGMovements {
         HandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = &speed_of_light
                 .get_piece_struct_by_phase_and_piece_type(
-                    game.history.get_phase(&Person::Friend),
+                    game.history.get_phase(Person::Friend),
                     any_piece_type,
                 )
                 .piece;
