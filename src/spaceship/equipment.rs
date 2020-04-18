@@ -49,11 +49,12 @@ impl Info {
         value: Option<i16>,
         // lion_catch: Option<u16>,
         movement_hash: u64,
-        text: &str,
+        pv: Option<String>,
+        string: Option<String>,
     ) {
         // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
         IO::writeln(&format!(
-            "info depth {} nodes {}{} currmove {} string {}",
+            "info depth {} nodes {}{} currmove {}{}",
             cur_depth,
             sum_nodes,
             if let Some(centi_pawn) = value {
@@ -72,7 +73,13 @@ impl Info {
                 "".to_string()
             },
             Movement::from_hash(movement_hash),
-            text
+            if let Some(pv_val) = pv {
+                format!(" pv {}", pv_val)
+            } else if let Some(string_val) = string {
+                format!(" string {}", string_val)
+            } else {
+                "".to_string()
+            }
         ));
         self.first = false;
         self.previous = self.stopwatch.elapsed();

@@ -55,13 +55,13 @@ impl TreeState {
         self.sum_state += 1;
     }
 
-    pub fn add_turn_over(&mut self, opponent_ts: &TreeState, friend_movement_hash: u64) -> bool {
+    pub fn add_turn_over(&mut self, opponent_ts: &TreeState, friend_movement_hash: u64) {
         self.sum_state += opponent_ts.get_sum_state();
 
         if opponent_ts.was_king_catch() {
             // この手を指すと、次に相手に玉を取られるぜ☆（＾～＾）！
             // アップデートせずに終了☆（＾～＾）！
-            return false;
+            return;
         }
 
         if let Some(opponent_value) = opponent_ts.value {
@@ -73,38 +73,36 @@ impl TreeState {
                 self.movement_hash = friend_movement_hash;
                 self.value = Some(friend_value);
                 self.reason = "this better than resign".to_string();
-                return true;
+                return;
             } else if let Some(current_value) = self.value {
                 if current_value < friend_value {
                     // 更新
                     self.value = Some(friend_value);
                     self.movement_hash = friend_movement_hash;
                     self.reason = "update value".to_string();
-                    return true;
+                    return;
                 }
             }
         } else {
             panic!("評価値が付いてないぜ☆（＾～＾）！")
         }
-        false
     }
 
-    pub fn check_leaf(&mut self, evaluation: &Evaluation, movement_hash: u64) -> bool {
+    pub fn check_leaf(&mut self, evaluation: &Evaluation, movement_hash: u64) {
         if self.movement_hash == 0 {
             // どんな手も 投了より良いだろ☆（＾～＾）
             self.movement_hash = movement_hash;
             self.value = Some(evaluation.value);
             self.reason = "this better than resign".to_string();
-            return true;
+            return;
         } else if let Some(current_value) = self.get_value() {
             if current_value < evaluation.value {
                 self.movement_hash = movement_hash;
                 self.value = Some(evaluation.value);
                 self.reason = "good position".to_string();
-                return true;
+                return;
             }
         }
-        false
     }
 
     pub fn get_movement_hash(&self) -> u64 {
@@ -129,12 +127,15 @@ impl Tree {
     pub fn first_move(speed_of_light: &SpeedOfLight, universe: &mut Universe) -> TreeState {
         universe.game.info.clear();
 
-        Tree::get_best_movement(
+        let dammy_ts = TreeState::default();
+
+        Tree::search(
             0,
             universe.option_max_depth - 1,
             &mut universe.game,
             speed_of_light,
             "",
+            &dammy_ts,
         )
     }
 
@@ -150,12 +151,13 @@ impl Tree {
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn get_best_movement(
+    fn search(
         cur_depth: u16,
         end_depth: u16,
         game: &mut Game,
         speed_of_light: &SpeedOfLight,
         pv: &str,
+        parent_ts: &TreeState,
     ) -> TreeState {
         let mut ts = TreeState::default();
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
@@ -173,28 +175,19 @@ impl Tree {
 
         // 指せる手が無ければ投了☆（＾～＾）
         if movement_set.is_empty() {
-            if game.info.is_printable() {
-                game.info.print(
-                    cur_depth,
-                    ts.get_sum_state(),
-                    ts.get_value(),
-                    // ts.get_king_catch(),
-                    ts.movement_hash,
-                    &format!("{} resign EmptyMoves", pv),
-                );
-            }
             return ts;
         }
 
         for movement_hash in movement_set.iter() {
             if game.info.is_printable() {
-                // 無限ループしてないかどうかの確認のためだぜ☆（＾～＾）
+                // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
                 game.info.print(
                     cur_depth,
-                    ts.get_sum_state(),
+                    ts.get_sum_state() + parent_ts.get_sum_state(),
                     ts.get_value(),
                     *movement_hash,
-                    &format!("{} {} StartLoop", pv, ts.to_movement()),
+                    Some(format!("{} {}", pv, ts.to_movement())),
+                    None,
                 );
             }
 
@@ -212,17 +205,6 @@ impl Tree {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！
                     ts.catch_king(*movement_hash);
 
-                    if game.info.is_printable() {
-                        game.info.print(
-                            cur_depth,
-                            ts.get_sum_state(),
-                            ts.get_value(),
-                            // ts.get_king_catch(),
-                            *movement_hash,
-                            &format!("{} {} EndNode", pv, movement),
-                        );
-                    }
-
                     // 1手戻すぜ☆（＾～＾）
                     game.undo_move(speed_of_light);
                     return ts;
@@ -236,44 +218,22 @@ impl Tree {
             } else if end_depth <= cur_depth {
                 // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
                 let evaluation = Evaluation::from_caputured_piece(captured_piece, speed_of_light);
-                if ts.check_leaf(&evaluation, *movement_hash) {
-                    if game.info.is_printable() {
-                        game.info.print(
-                            cur_depth,
-                            ts.get_sum_state(),
-                            ts.get_value(),
-                            // ts.get_king_catch(),
-                            *movement_hash,
-                            &format!("{} {} EndNode", pv, movement),
-                        );
-                    }
-                }
+                ts.check_leaf(&evaluation, *movement_hash);
 
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                let opponent_ts = Tree::get_best_movement(
+                let opponent_ts = Tree::search(
                     cur_depth + 1,
                     end_depth,
                     game,
                     speed_of_light,
                     &format!("{} {}", pv, Movement::from_hash(*movement_hash)),
+                    &ts,
                 );
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
-                if ts.add_turn_over(&opponent_ts, *movement_hash) {
-                    // 指し手の更新があれば。
-                    if game.info.is_printable() {
-                        game.info.print(
-                            cur_depth,
-                            ts.get_sum_state(),
-                            ts.get_value(),
-                            // ts.get_king_catch(),
-                            *movement_hash,
-                            &format!("{} {} Backward1", pv, Movement::from_hash(*movement_hash)),
-                        );
-                    }
-                }
+                ts.add_turn_over(&opponent_ts, *movement_hash);
             }
             // 1手戻すぜ☆（＾～＾）
             game.undo_move(speed_of_light);
@@ -289,18 +249,6 @@ impl Tree {
             ts.value = Some(0);
             ts.reason = "repetition better than resign".to_string();
         };
-
-        // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
-        if game.info.is_printable() {
-            game.info.print(
-                cur_depth,
-                ts.get_sum_state(),
-                ts.get_value(),
-                // ts.get_king_catch(),
-                ts.movement_hash,
-                &format!("{} {}", pv, ts.to_movement()),
-            );
-        }
 
         ts
     }

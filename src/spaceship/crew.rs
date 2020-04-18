@@ -54,7 +54,8 @@ impl Kifuwarabe {
             ts.get_value(),
             // ts.get_king_catch(),
             ts.get_movement_hash(),
-            &ts.reason,
+            None,
+            Some(ts.reason.to_string()),
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
