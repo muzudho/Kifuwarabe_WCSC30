@@ -2,7 +2,7 @@ use crate::cosmic::game::board::square::Square;
 use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::piece::piece_type::PieceType;
 use crate::cosmic::game::position::phase::Phase;
-use crate::cosmic::law::diagnostic::cu_asserts_controller::{
+use crate::law::diagnostic::cu_asserts_controller::{
     assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute,
 };
 use std::fmt;

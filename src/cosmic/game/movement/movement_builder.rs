@@ -4,11 +4,11 @@
 use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::piece::piece_type::PieceType;
 use crate::cosmic::game::piece::piece_type::*;
-use crate::cosmic::law::cryptographic::cu_conv_controller::{
+use crate::law::cryptographic::cu_conv_controller::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
-use crate::cosmic::law::diagnostic::cu_asserts_controller::*;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::diagnostic::cu_asserts_controller::*;
+use crate::law::speed_of_light::*;
 use std::fmt;
 
 /// Movement. (指し手)
@@ -36,12 +36,14 @@ impl Default for MovementBuilder {
     }
 }
 impl MovementBuilder {
+    /*
     pub fn clear(&mut self) {
         self.src = Square::from_address(0);
         self.dst = Square::from_address(0);
         self.pro = false;
         self.drop = None;
     }
+    */
     pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）

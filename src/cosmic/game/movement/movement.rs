@@ -6,9 +6,8 @@ use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::movement::movement_builder::MovementBuilder;
 use crate::cosmic::game::piece::piece_type::PieceType;
 use crate::cosmic::game::piece::piece_type::*;
-use crate::cosmic::law::cryptographic::cu_conv_controller::*;
-use crate::cosmic::law::diagnostic::cu_asserts_controller::*;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::cryptographic::cu_conv_controller::*;
+use crate::law::diagnostic::cu_asserts_controller::*;
 use std::fmt;
 
 /// Movement. (指し手)
@@ -53,6 +52,8 @@ impl Movement {
             drop: drop55,
         }
     }
+
+    /*
     pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
@@ -61,6 +62,7 @@ impl Movement {
         hash = push_sq_to_hash(hash, &self.destination);
         push_sq_to_hash(hash, &self.source)
     }
+    */
 
     /// 考えた結果、指し手が考え付いていれば真。
     pub fn exists(&self) -> bool {

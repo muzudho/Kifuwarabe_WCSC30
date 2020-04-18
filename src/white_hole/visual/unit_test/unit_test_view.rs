@@ -1,9 +1,7 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::movement::movement_builder::MovementBuilder;
-use crate::cosmic::game::piece::piece_type::*;
 use crate::white_hole::io::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -44,6 +42,7 @@ pub fn print_movement_hashset<S: BuildHasher>(ss_hashset: &HashSet<u64, S>) {
     }
 }
 
+/*
 /// 升を表示
 pub fn print_square_hashset<S: BuildHasher>(sq_hashset: &HashSet<Square, S>) {
     IO::writeln(&format!("sq_hashset.len()={}", sq_hashset.len()));
@@ -83,3 +82,4 @@ pub fn print_piece_type_hashset<S: BuildHasher>(num_piece_type_hashset: &HashSet
         IO::writeln(&format!("piece_type({})", display));
     }
 }
+*/

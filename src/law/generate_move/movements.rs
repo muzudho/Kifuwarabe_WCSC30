@@ -7,9 +7,9 @@ use crate::cosmic::game::piece::piece_type::*;
 use crate::cosmic::game::position::person::Person;
 use crate::cosmic::game::position::phase::Phase;
 use crate::cosmic::game::position::position::Position;
-use crate::cosmic::law::generate_move::movement_generator::*;
-use crate::cosmic::law::generate_move::squares::*;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::generate_move::movement_generator::*;
+use crate::law::generate_move::squares::*;
+use crate::law::speed_of_light::*;
 
 pub struct MGMovements {}
 impl MGMovements {
@@ -48,7 +48,7 @@ impl MGMovements {
     {
         let callback_next = &mut |destination, promotability, _agility| {
             use crate::cosmic::game::board::board::ThingsInTheSquare::*;
-            use crate::cosmic::law::generate_move::squares::Promotability::*;
+            use crate::law::generate_move::squares::Promotability::*;
             let things_in_the_square =
                 current_board.what_is_in_the_square(friend, &destination, speed_of_light);
             match things_in_the_square {

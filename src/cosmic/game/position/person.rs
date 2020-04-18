@@ -13,22 +13,24 @@ use std::fmt;
 /// #[derive(PartialEq)]
 pub enum Person {
     Friend,
-    Opponent,
+    _Opponent,
 }
 impl fmt::Display for Person {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use self::Person::*;
         match *self {
             Friend => write!(f, "Fr"),
-            Opponent => write!(f, "Op"),
+            _Opponent => write!(f, "Op"),
         }
     }
 }
 
+/*
 pub fn turn_person(person: &Person) -> Person {
     use self::Person::*;
     match *person {
-        Friend => Opponent,
-        Opponent => Friend,
+        Friend => _Opponent,
+        _Opponent => Friend,
     }
 }
+*/

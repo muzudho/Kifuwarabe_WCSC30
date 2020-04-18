@@ -5,11 +5,13 @@
 //!
 
 use crate::cosmic::game::piece::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::speed_of_light::*;
 use std::fmt;
 
+/*
 pub const KMS_LN: usize = 16;
 pub static PIECE_TYPE_WHITE_SPACE: &str = "  ";
+*/
 
 /// USIでCopyするので、Copyが要る。
 #[derive(Copy, Clone, PartialEq)]
@@ -66,6 +68,7 @@ impl fmt::Display for PieceType {
     }
 }
 
+/*
 // 駒種類数
 pub const KMS_ARRAY_LN: usize = 14;
 // 駒種類
@@ -85,7 +88,9 @@ pub const PIECE_TYPE_ARRAY: [PieceType; KMS_ARRAY_LN] = [
     PieceType::PromotedLance,  // ぱわーあっぷいのしし
     PieceType::PromotedPawn,   // ぱわーあっぷひよこ
 ];
+*/
 
+/*
 // 非成 駒種類数
 pub const KMS_NPRO_ARRAY_LN: usize = 8;
 // 非成 駒種類
@@ -111,6 +116,7 @@ pub const KMS_PRO_ARRAY: [PieceType; KMS_PRO_ARRAY_LN] = [
     PieceType::PromotedLance,  // ぱわーあっぷいのしし
     PieceType::PromotedPawn,   // ぱわーあっぷひよこ
 ];
+*/
 
 pub struct GPHandPieces {}
 impl GPHandPieces {

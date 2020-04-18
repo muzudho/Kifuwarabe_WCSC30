@@ -47,7 +47,7 @@ impl History {
                     Phase::Second
                 }
             }
-            Opponent => {
+            _Opponent => {
                 // 相手番
                 if self.ply % 2 == 0 {
                     Phase::Second

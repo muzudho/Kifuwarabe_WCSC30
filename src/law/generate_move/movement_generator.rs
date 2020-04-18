@@ -5,8 +5,8 @@
 use crate::cosmic::game::board::square::Square;
 use crate::cosmic::game::game::Game;
 use crate::cosmic::game::position::person::Person;
-use crate::cosmic::law::generate_move::movements::*;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::generate_move::movements::*;
+use crate::law::speed_of_light::*;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）

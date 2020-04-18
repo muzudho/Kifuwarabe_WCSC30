@@ -27,7 +27,7 @@
 //!              Source
 //!
 //! None is 0.
-use crate::cosmic::law::diagnostic::cu_asserts_controller::*;
+use crate::law::diagnostic::cu_asserts_controller::*;
 use std::cmp::max;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
@@ -283,17 +283,22 @@ pub fn test_rotation() {
 #[allow(non_camel_case_types)]
 pub type isquare = i8;
 
+/*
 /// 盤を回転するのに使うぜ☆（＾～＾）
 pub const BAN_MIN: isquare = 11;
 
 /// 盤を回転するのに使うぜ☆（＾～＾）
 pub const BAN_MAX: isquare = 99;
+*/
 
+/*
 // 盤のヨコ幅、タテ幅。
 // pub const BOARD_WIDTH: i8 = 9;
 // pub const BOARD_HEIGHT: i8 = 9;
 // 正方形という前提☆（＾～＾）
 pub const BOARD_DIAGONAL_LENGTH: isquare = 9;
+*/
+
 // 枠も使う☆（＾～＾）
 pub const BOARD_MEMORY_AREA: isquare = 111;
 // 1辺の長さ
@@ -301,16 +306,16 @@ pub const BOARD_MEMORY_AREA: isquare = 111;
 
 /// 筋、段は 1 から始まる、という明示。
 /// 増減はよく使うので u8 ではなく i8 にした。
-pub const FILE_0: i8 = 0;
+// pub const FILE_0: i8 = 0;
 pub const FILE_1: i8 = 1;
 pub const FILE_9: i8 = 9;
 pub const FILE_10: i8 = 10;
-pub const RANK_0: i8 = 0;
+// pub const RANK_0: i8 = 0;
 pub const RANK_1: i8 = 1;
 pub const RANK_2: i8 = 2;
 pub const RANK_3: i8 = 3;
 pub const RANK_4: i8 = 4;
-pub const RANK_5: i8 = 5;
+// pub const RANK_5: i8 = 5;
 pub const RANK_6: i8 = 6;
 pub const RANK_7: i8 = 7;
 pub const RANK_8: i8 = 8; //うさぎの打てる段の上限
@@ -391,6 +396,7 @@ pub enum Angle {
     Ccw315,
 }
 impl Angle {
+    /*
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate135cw(&self) -> Self {
         use crate::cosmic::game::board::square::Angle::*;
@@ -405,6 +411,7 @@ impl Angle {
             Ccw315 => Ccw180,
         }
     }
+    */
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate90cw(&self) -> Self {
         use crate::cosmic::game::board::square::Angle::*;
@@ -461,6 +468,7 @@ impl Angle {
             Ccw315 => Ccw45,
         }
     }
+    /*
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate135ccw(&self) -> Self {
         use crate::cosmic::game::board::square::Angle::*;
@@ -475,6 +483,7 @@ impl Angle {
             Ccw315 => Ccw90,
         }
     }
+    */
     /// 点対称☆（＾～＾）
     pub fn rotate180(&self) -> Self {
         use crate::cosmic::game::board::square::Angle::*;
@@ -511,9 +520,11 @@ impl RelativeSquare {
         10 * self.file + self.rank
     }
 
+    /*
     pub fn get_dict_orthant(&self) -> DictOrthant {
         DictOrthant::from_file_and_rank(self.file, self.rank)
     }
+    */
 
     pub fn get_degree45_orthant(&self) -> Degree45Orthant {
         Degree45Orthant::from_file_and_rank(self.file, self.rank)
@@ -714,9 +725,11 @@ impl Square {
         (self.get_file(), self.get_rank())
     }
 
+    /*
     pub fn rotate_180_on_1_orthant(&self) -> Self {
         Square::from_address(110 - self.address)
     }
+    */
 }
 impl fmt::Debug for Square {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

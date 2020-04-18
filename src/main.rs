@@ -1,6 +1,10 @@
 //!
 //! きふわらべＷＣＳＣ３０
 //!
+//! これは、最初に実行されるファイルだぜ☆（＾～＾）
+//!
+
+// extern crate は、 main.rs か lib.rs の冒頭にまとめろだぜ☆（＾～＾）
 extern crate rand;
 #[macro_use]
 extern crate lazy_static;
@@ -9,38 +13,41 @@ extern crate lazy_static;
 //     「Rust のモジュールシステム」
 //      https://qiita.com/skitaoka/items/753a519d720a1ccebb0d
 //
-// use したい モジュールは、最初に読み取られる　この main.rs ファイルに並べる
-pub mod config;
-pub mod cosmic;
-pub mod spaceship;
-pub mod white_hole;
+// 使いたい ディレクトリー名を pub mod しろだぜ☆（＾～＾）
+// 別のアプリにも見えるようにしたけりゃ pub mod にしろだぜ☆（＾～＾）
+mod config;
+mod cosmic;
+mod law;
+mod spaceship;
+mod white_hole;
 
-use crate::config::*;
 use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::game::PosNums;
-use crate::cosmic::law::cryptographic::cu_conv_controller::*;
-use crate::cosmic::law::speed_of_light::*;
-use crate::cosmic::law::usi::*;
 use crate::cosmic::universe::*;
-use crate::cosmic::wisdom::searching::tree::*;
-use crate::spaceship::captain::Commands;
+use crate::law::speed_of_light::*;
+use crate::spaceship::crew::{Chiyuri, Kifuwarabe};
 use crate::white_hole::io::*;
 use crate::white_hole::visual::game_view::*;
 use crate::white_hole::visual::title_screen::ts_view::*;
-use rand::Rng;
 use std::io as std_io;
 
 fn main() {
-    // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
+    // 光速は定義☆（＾～＾）変化しないぜ☆（＾～＾）
     let speed_of_light: SpeedOfLight = SpeedOfLight::default();
-    // 宇宙
+    // 宇宙☆（＾～＾）変化するぜ☆（＾～＾）
     let mut universe: Universe = Universe::default();
+
+    // ビッグバン
     universe.big_bang();
 
     // テスト
     test_rotation();
 
+    main_loop(&speed_of_light, &mut universe);
     // [Ctrl]+[C] で強制終了
+}
+
+fn main_loop(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
     loop {
         let mut line: String = if universe.is_empty_command() {
             String::new()
@@ -82,142 +89,66 @@ fn main() {
             }
         // 文字数の長いものからチェック
         } else if 9 < len && &line[starts..10] == "usinewgame" {
-            universe.game.clear_all_positions();
+            Kifuwarabe::usinewgame(universe);
         } else if line.starts_with("position") {
-            Commands::position(&speed_of_light, &mut universe, &line);
+            Kifuwarabe::position(&speed_of_light, universe, &line);
         } else if 6 < len && &line[starts..7] == "isready" {
-            IO::writeln("readyok");
+            Kifuwarabe::isready();
         } else if 3 < len && &line[starts..4] == "quit" {
-            // 独自コマンド☆（＾～＾）
             // ループを抜けて終了
             break;
         } else if 15 < len && &line[starts..15] == "setoption name " {
-            Commands::setoption_name(&mut universe, &line);
+            Kifuwarabe::setoption_name(universe, &line);
         } else if 2 < len && &line[starts..3] == "usi" {
-            IO::writeln(&format!("id name {}", ENGINE_NAME));
-            IO::writeln(&format!("id author {}", ENGINE_AUTHOR));
-            /*
-            IO::writeln("option name BookFile type string default public.bin");
-            IO::writeln("option name UseBook type check default true");
-            IO::writeln("option name Selectivity type spin default 2 min 0 max 4");
-            IO::writeln(
-                "option name Style type combo default Normal var Solid var Normal var Risky",
-            );
-            IO::writeln("option name ResetLearning type button");
-            IO::writeln("option name LearningFile type filename default <empty>");
-            */
-            IO::writeln("option name MaxDepth type spin default 1 min 1 max 5");
-            IO::writeln("usiok");
+            Kifuwarabe::usi();
         } else if 1 < len && &line[starts..2] == "go" {
-            universe.game.info.clear();
-            // 思考開始と、bestmoveコマンドの返却
-            // go btime 40000 wtime 50000 binc 10000 winc 10000
-            let pv = "";
-            let bestmove = get_best_movement(
-                0,
-                universe.option_max_depth - 1 + 1,
-                0,
-                &mut universe.game,
-                &speed_of_light,
-                pv,
-            );
-            // その手を選んだ理由☆（＾～＾）
-            universe.game.info.print_force_string(&bestmove.reason);
-            // 例: bestmove 7g7f
-            // 例: bestmove resign
-            IO::writeln(&format!("bestmove {}", bestmove.movement));
+            Kifuwarabe::go(speed_of_light, universe);
         } else {
-            parse_extend_command(&line, starts, &mut universe, &speed_of_light);
+            help_chiyuri(&line, len, starts, speed_of_light, universe);
         }
     } //loop
 }
 
 /// 独自コマンド☆（＾～＾）
-fn parse_extend_command(
+fn help_chiyuri(
     line: &str,
-    mut starts: usize,
-    universe: &mut Universe,
+    len: usize,
+    starts: usize,
     speed_of_light: &SpeedOfLight,
+    universe: &mut Universe,
 ) {
-    // 文字数を調べようぜ☆（＾～＾）
-    let len = line.chars().count();
     // D
     if 2 < len && &line[starts..3] == "do " {
-        starts += 3;
-        // コマンド読取。棋譜に追加され、手目も増える
-        if read_sasite(&line, &mut starts, len, universe) {
-            // 手目を戻す
-            universe.game.history.ply -= 1;
-            // 入っている指し手の通り指すぜ☆（＾～＾）
-            let ply = universe.game.history.ply;
-            let ss = universe.game.history.movements[ply as usize].clone();
-            universe.game.do_move(&ss, speed_of_light);
-        }
+        Chiyuri::do_(speed_of_light, universe, line, len, starts);
     // G
     } else if 6 < len && &line[starts..7] == "genmove" {
-        // Generation move.
-        // FIXME 合法手とは限らない
-        Commands::genmove(speed_of_light, &universe.game);
+        Chiyuri::genmove(speed_of_light, &universe.game);
     // H
     } else if 7 < len && &line[starts..8] == "how-much" {
-        // Example: how-much 7g7f
-        let bestmove = &line[9..];
-        IO::writeln(&format!("Debug   | bestmove=|{}|", bestmove));
+        Chiyuri::how_much(line);
     } else if 3 < len && &line[starts..4] == "hash" {
-        IO::writeln("局面ハッシュ表示");
-        let s = universe.game.get_all_position_hash_text();
-        IO::writeln(&s);
+        Chiyuri::hash(universe);
     } else if 3 < len && &line[starts..4] == "kifu" {
-        IO::writeln("棋譜表示");
-        let s = universe.game.get_moves_history_text();
-        IO::writeln(&s);
+        Chiyuri::kifu(universe);
     // P
     } else if 3 < len && &line[starts..4] == "pos0" {
-        // 初期局面表示
-        let s = GameView::to_string(&universe.game, &PosNums::Start);
-        IO::writeln(&s);
+        Chiyuri::pos0(universe);
     } else if 2 < len && &line[starts..3] == "pos" {
-        // 現局面表示
-        Commands::pos(&universe.game);
+        Chiyuri::pos(universe);
     // S
     } else if 7 < len && &line[starts..8] == "startpos" {
-        // 平手初期局面
-        read_position(&POS_1.to_string(), universe, &speed_of_light);
+        Chiyuri::startpos(speed_of_light, universe);
     // R
     } else if 3 < len && &line[starts..4] == "rand" {
-        IO::writeln("3<len rand");
-        // 乱数の試し
-        let secret_number = rand::thread_rng().gen_range(1, 101); //1~100
-        IO::writeln(&format!("乱数={}", secret_number));
+        Chiyuri::rand();
     // S
     } else if 3 < len && &line[starts..4] == "same" {
-        let count = universe.game.count_same_ky();
-        IO::writeln(&format!("同一局面調べ count={}", count));
+        Chiyuri::same(universe);
     // T
     } else if 3 < len && &line[starts..4] == "teigi::conv" {
-        IO::writeln("teigi::convのテスト");
-
-        for ms in 11..19 {
-            for hash in 0..10 {
-                let sq = Square::from_address(ms);
-                let next = push_sq_to_hash(hash, &sq);
-                let (hash_orig, square_orig) = pop_sq_from_hash(next);
-                IO::writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
-                    ,hash
-                    ,ms
-                    ,next
-                    ,hash_orig
-                    ,square_orig.address
-                ));
-            }
-        }
+        Chiyuri::teigi_conv();
     // U
     } else if 3 < len && &line[starts..4] == "undo" {
-        if !universe.game.undo_move(&speed_of_light) {
-            IO::writeln(&format!(
-                "ply={} を、これより戻せません",
-                universe.game.history.ply
-            ));
-        }
+        Chiyuri::undo(speed_of_light, universe);
     }
 }

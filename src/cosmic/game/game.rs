@@ -6,12 +6,11 @@ use crate::cosmic::game::history::history::*;
 use crate::cosmic::game::info::Info;
 use crate::cosmic::game::movement::movement::Movement;
 use crate::cosmic::game::piece::piece::{Piece, MG_MAX, PIECE_LN};
-use crate::cosmic::game::piece::piece_struct::PieceStruct;
 use crate::cosmic::game::position::person::Person;
 use crate::cosmic::game::position::phase::PHASE_LN;
 use crate::cosmic::game::position::phase::*;
 use crate::cosmic::game::position::position::Position;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::speed_of_light::*;
 use rand::Rng;
 
 /// 局面
@@ -114,9 +113,11 @@ impl Game {
         s
     }
 
+    /*
     pub fn get_current_position_hash(&mut self) -> u64 {
         self.history.position_hashs[self.history.ply as usize]
     }
+    */
     pub fn set_current_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
@@ -172,6 +173,7 @@ impl Game {
         self.starting_board.hand[km as usize] = maisu;
     }
 
+    /*
     pub fn get_person_by_piece_struct(&self, piece_struct: &PieceStruct) -> Person {
         if &piece_struct.phase() == &self.history.get_phase(&Person::Friend) {
             Person::Friend
@@ -179,6 +181,7 @@ impl Game {
             Person::Opponent
         }
     }
+    */
 
     /// 局面ハッシュ。
     pub fn get_all_position_hash_text(&self) -> String {
@@ -250,6 +253,7 @@ impl Game {
         count
     }
 
+    /*
     /// らいおんの位置
     pub fn get_king_sq(&self, person: &Person) -> &Square {
         &self
@@ -257,6 +261,7 @@ impl Game {
             .current_board
             .get_sq_r(phase_to_num(self.history.get_phase(person)))
     }
+    */
 
     /// 入れた指し手の通り指すぜ☆（＾～＾）
     ///

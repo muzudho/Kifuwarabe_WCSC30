@@ -13,7 +13,7 @@ use crate::cosmic::game::game::Game;
 use crate::cosmic::game::piece::piece::*;
 use crate::cosmic::game::piece::piece_type::*;
 use crate::cosmic::game::position::phase::*;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::speed_of_light::*;
 
 pub enum ThingsInTheSquare {
     Space,
@@ -81,10 +81,12 @@ impl Board {
         ];
     }
 
+    /*
     /// らいおんの位置
     pub fn get_sq_r(&self, phase_number: usize) -> &Square {
         &self.square_of_king[phase_number]
     }
+    */
 
     /// 歩が置いてあるか確認
     pub fn exists_fu_by_phase_suji(
@@ -153,6 +155,8 @@ impl Board {
             ThingsInTheSquare::Space
         }
     }
+
+    /*
     /// 指定の升に駒があれば真
     pub fn exists_km(&self, sq: &Square) -> bool {
         if let Some(_piece) = self.get_piece_by_square(&sq) {
@@ -171,7 +175,9 @@ impl Board {
         }
         false
     }
+    */
 
+    /*
     /// 指定の升にある駒の先後
     pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> Option<Phase> {
         if let Some(piece) = self.get_piece_by_square(sq) {
@@ -206,6 +212,7 @@ impl Board {
             false
         }
     }
+    */
 
     /// 局面ハッシュを作り直す
     pub fn create_hash(&self, game: &Game, speed_of_light: &SpeedOfLight) -> u64 {

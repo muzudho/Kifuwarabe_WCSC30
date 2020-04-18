@@ -257,6 +257,7 @@ impl PieceStruct {
         }
     }
 
+    /*
     pub fn from_serial_piece_number(km_num: usize) -> Option<Self> {
         use crate::cosmic::game::piece::piece::Piece::*;
         match km_num {
@@ -291,13 +292,16 @@ impl PieceStruct {
             _ => None,
         }
     }
+    */
 
+    /*
     /// ハッシュ値から作る
     pub fn from_hash(hash: u64) -> (u64, Option<Self>) {
         // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
         let ps_o = PieceStruct::from_serial_piece_number((hash & 0b11111) as usize);
         (hash >> 5, ps_o)
     }
+    */
 
     pub fn phase(&self) -> Phase {
         self.phase_piece_type.0.clone()
@@ -307,6 +311,7 @@ impl PieceStruct {
         self.phase_piece_type.1
     }
 
+    /*
     // 降格できるか。
     pub fn can_demote(&self) -> bool {
         // 降格後の駒が、今の駒と異なっていれば、降格できるぜ☆（＾～＾）
@@ -348,4 +353,5 @@ impl PieceStruct {
         // 使ってるのは30駒番号ぐらいなんで、32(=2^5) あれば十分
         (hash << 5) + self.serial_piece_number as u64
     }
+    */
 }

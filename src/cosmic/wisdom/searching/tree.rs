@@ -7,8 +7,8 @@ use crate::cosmic::game::game::Game;
 use crate::cosmic::game::history::history::SENNTITE_NUM;
 use crate::cosmic::game::movement::movement::Movement;
 use crate::cosmic::game::movement::movement_builder::MovementBuilder;
-use crate::cosmic::law::generate_move::movement_generator::*;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::generate_move::movement_generator::*;
+use crate::law::speed_of_light::*;
 use std::collections::HashSet;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。

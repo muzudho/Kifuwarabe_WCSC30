@@ -3,7 +3,7 @@
 //!
 use crate::cosmic::game::piece::piece::Piece;
 use crate::cosmic::game::piece::piece_type::PieceType;
-use crate::cosmic::law::speed_of_light::*;
+use crate::law::speed_of_light::*;
 
 pub struct Evaluation {
     pub value: i16,

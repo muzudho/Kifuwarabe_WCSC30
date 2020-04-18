@@ -222,6 +222,7 @@ impl SpeedOfLight {
         }
     }
 
+    /*
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_type_struct_from_piece(&self, piece: &Piece) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
@@ -261,4 +262,5 @@ impl SpeedOfLight {
             PromotedPawn2 => &self.promoted_pawn,
         }
     }
+    */
 }

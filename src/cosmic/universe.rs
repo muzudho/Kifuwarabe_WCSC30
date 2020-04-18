@@ -37,9 +37,12 @@ impl Universe {
     pub fn is_empty_command(&mut self) -> bool {
         self.vec_command.is_empty()
     }
+
+    /*
     pub fn push_command(&mut self, line: &str) {
         self.vec_command.push(format!("{}\n", line));
     }
+    */
     pub fn pop_command(&mut self) -> String {
         self.vec_command.pop().unwrap()
     }
