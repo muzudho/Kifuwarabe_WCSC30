@@ -109,12 +109,14 @@ impl NextSquares {
             source,
             promoting,
         );
+        /*
         IO::debugln(&format!(
             "歩の動き source={:?} angle={:?} forbidden={:?}",
             source,
             angle,
             MovePermission::from_pawn_or_lance(friend),
         ));
+        */
     }
 
     /// 盤上の香から動けるマスを見ます。
@@ -127,9 +129,16 @@ impl NextSquares {
     {
         let promoting =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
+
+        let angle = if friend == Phase::First {
+            Angle::Ccw270
+        } else {
+            Angle::Ccw90
+        };
+
         Squares::looking_next_from(
             Some(MovePermission::from_pawn_or_lance(friend)),
-            Angle::Ccw270,
+            angle,
             Agility::Sliding,
             source,
             promoting,
@@ -576,7 +585,7 @@ impl Squares {
                         break;
                     }
                     if let Some(permission) = &opt_move_permission {
-                        // 香車だけここを通るぜ☆（＾～＾）
+                        // 香車しか使わないぜ☆（＾～＾）ｗｗｗ
                         if !permission.check(&Square::from_address(next)) {
                             break;
                         }
