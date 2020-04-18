@@ -4,8 +4,8 @@
 //! 先後なしの駒と空白
 //!
 
-use crate::model::univ::gam::misc::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
 use crate::speed_of_light::*;
+use crate::universe::game::piece::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;

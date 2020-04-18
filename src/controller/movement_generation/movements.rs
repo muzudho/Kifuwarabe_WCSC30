@@ -3,12 +3,12 @@ use crate::controller::movement_generation::squares::*;
 use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
 use crate::universe::game::board::board::Board;
 use crate::universe::game::game::Game;
 use crate::universe::game::piece::piece::*;
+use crate::universe::game::piece::piece_type::*;
 use crate::universe::game::position::position::Position;
 
 pub struct MGMovements {}

@@ -1,7 +1,7 @@
 //!
 //! 駒種類。
 //!
-use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::universe::game::piece::piece_type::PieceType;
 
 pub const NONE_SERIAL_PIECE_TYPE_NUMBER: u64 = 14;
 
@@ -21,7 +21,7 @@ pub struct PieceTypeStruct {
 }
 impl PieceTypeStruct {
     pub fn from_piece_type(piece_type: PieceType) -> Self {
-        use crate::model::univ::gam::misc::piece_type::PieceType::*;
+        use crate::universe::game::piece::piece_type::PieceType::*;
         match piece_type {
             King => PieceTypeStruct {
                 serial_piece_number: 0,

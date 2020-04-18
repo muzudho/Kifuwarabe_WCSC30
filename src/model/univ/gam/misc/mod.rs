@@ -1,17 +1,8 @@
-pub mod direction;
 pub mod info;
 pub mod movement;
 pub mod movement_builder;
 pub mod number_board;
 pub mod person;
 pub mod phase;
-pub mod piece_direction;
-pub mod piece_struct;
-pub mod piece_type;
-pub mod piece_type_set;
-pub mod piece_type_struct;
 pub mod region;
 pub mod square;
-pub mod square_and_piece;
-pub mod square_and_piece_struct;
-pub mod square_and_piece_type;

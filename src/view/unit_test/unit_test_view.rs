@@ -3,8 +3,8 @@
 //!
 use crate::controller::io::*;
 use crate::model::univ::gam::misc::movement_builder::*;
-use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
+use crate::universe::game::piece::piece_type::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 

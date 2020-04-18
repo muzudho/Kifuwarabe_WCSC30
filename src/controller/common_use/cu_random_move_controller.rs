@@ -2,11 +2,11 @@
 //! ランダムムーブ
 //!
 extern crate rand;
-use rand::Rng;
 
-use crate::model::univ::gam::misc::piece_type::PieceType;
-use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
+use crate::universe::game::piece::piece_type::PieceType;
+use crate::universe::game::piece::piece_type::*;
+use rand::Rng;
 
 /**
  * ランダムに真偽を返す。

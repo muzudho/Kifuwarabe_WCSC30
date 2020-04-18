@@ -1,7 +1,7 @@
 use crate::model::univ::gam::misc::movement_builder::*;
-use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
 use crate::universe::game::board::board::*;
+use crate::universe::game::piece::piece_type::*;
 
 /// ミュータブルなオブジェクト☆（＾～＾）
 pub struct Position {

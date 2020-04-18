@@ -2,11 +2,15 @@
 //! USIプロトコル
 //!
 use crate::controller::common_use::cu_asserts_controller::*;
-use crate::controller::common_use::cu_conv_controller::*;
-use crate::model::univ::gam::misc::piece_type::PieceType;
-use crate::model::univ::gam::misc::piece_type::*;
+use crate::controller::common_use::cu_conv_controller::num_to_lower_case;
+use crate::controller::common_use::cu_conv_controller::pop_bool_from_hash;
+use crate::controller::common_use::cu_conv_controller::pop_sq_from_hash;
+use crate::controller::common_use::cu_conv_controller::push_bool_to_hash;
+use crate::controller::common_use::cu_conv_controller::push_sq_to_hash;
 use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
+use crate::universe::game::piece::piece_type::PieceType;
+use crate::universe::game::piece::piece_type::*;
 use std::fmt;
 
 /// Movement. (指し手)
@@ -79,7 +83,7 @@ impl fmt::Display for MovementBuilder {
         let (dx, dy) = self.dst.to_file_rank();
 
         if self.src.address == SQUARE_DROP {
-            use crate::model::univ::gam::misc::piece_type::PieceType::*;
+            use crate::universe::game::piece::piece_type::PieceType::*;
             write!(
                 f,
                 "{}*{}{}{}",

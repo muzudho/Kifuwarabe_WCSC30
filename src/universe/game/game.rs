@@ -4,7 +4,6 @@ use crate::model::univ::gam::misc::number_board::*;
 use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::PHASE_LN;
 use crate::model::univ::gam::misc::phase::*;
-use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::square::BOARD_MEMORY_AREA;
 use crate::model::univ::gam::misc::square::SQUARE_NONE;
 use crate::model::univ::gam::misc::square::*;
@@ -12,6 +11,7 @@ use crate::speed_of_light::*;
 use crate::universe::game::board::board::Board;
 use crate::universe::game::history::history::*;
 use crate::universe::game::piece::piece::{Piece, MG_MAX, PIECE_LN};
+use crate::universe::game::piece::piece_struct::PieceStruct;
 use crate::universe::game::position::position::Position;
 use rand::Rng;
 

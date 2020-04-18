@@ -2,7 +2,6 @@
 //! 変換
 //!
 use crate::controller::common_use::cu_geo_teigi_controller::*;
-use crate::model::univ::gam::misc::direction::*;
 use crate::model::univ::gam::misc::square::*;
 
 /**********
@@ -39,57 +38,6 @@ pub fn push_bool_to_hash(hash: u64, b: bool) -> u64 {
 pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
     let b_num = num_to_bool((hash & 0b1) as usize);
     (hash >> 7, b_num)
-}
-
-/*********
- * 4角度 *
- *********/
-
-/*********
- * 8方向 *
- *********/
-pub fn dir8_to_num(dir: &Dir8) -> usize {
-    use crate::model::univ::gam::misc::direction::Dir8::*;
-    match *dir {
-        E => 0,
-        NE => 1,
-        N => 2,
-        NW => 3,
-        W => 4,
-        SW => 5,
-        S => 6,
-        SE => 7,
-        Owari => 8,
-    }
-}
-pub fn num_to_dir8(n: usize) -> Dir8 {
-    use crate::model::univ::gam::misc::direction::Dir8::*;
-    match n {
-        0 => E,
-        1 => NE,
-        2 => N,
-        3 => NW,
-        4 => W,
-        5 => SW,
-        6 => S,
-        7 => SE,
-        _ => Owari,
-    }
-}
-/**
- * ハッシュ値を作る
- */
-pub fn push_dir8_to_hash(hash: u64, dir: &Dir8) -> u64 {
-    // エラー値含めて 9bit あるので 2^5
-    (hash << 5) + dir8_to_num(dir) as u64
-}
-/**
- * ハッシュ値から作る
- */
-pub fn pop_dir8_from_hash(hash: u64) -> (u64, Dir8) {
-    // エラー値含めて 9bit あるので 2^5
-    let dir = num_to_dir8((hash & 0b11111) as usize);
-    (hash >> 5, dir)
 }
 
 /******************

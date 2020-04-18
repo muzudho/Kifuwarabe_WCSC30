@@ -1,9 +1,9 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::speed_of_light::*;
 use crate::universe::game::piece::piece::Piece;
+use crate::universe::game::piece::piece_type::PieceType;
 
 pub struct Evaluation {
     pub value: i16,
