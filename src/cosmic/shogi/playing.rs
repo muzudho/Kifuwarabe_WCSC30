@@ -91,9 +91,11 @@ impl Game {
     pub fn set_current_movement(&mut self, movement: &Movement) {
         self.history.movements[self.history.ply as usize] = movement.clone()
     }
+    /*
     pub fn build_current_movement(&mut self) {
         self.history.movements[self.history.ply as usize] = self.position.current_movement_builder
     }
+    */
     pub fn get_move(&self) -> &Movement {
         &self.history.movements[self.history.ply as usize]
     }
@@ -264,19 +266,18 @@ impl Game {
     /// Captured piece.
     pub fn do_move(&mut self, movement: &Movement, speed_of_light: &SpeedOfLight) -> Option<Piece> {
         // もう入っているかも知れないが、棋譜に入れる☆
-        let ply = self.history.ply;
         self.set_current_movement(movement);
-        let phase = self.history.get_phase(Person::Friend);
+        let friend = self.history.get_phase(Person::Friend);
 
         // 取った駒
         let cap: Option<Piece>;
         {
             // 動かす駒
-            let piece144_o: Option<Piece> = if movement.source.address == SQUARE_DROP {
+            let moveing_piece: Option<Piece> = if movement.source.address == SQUARE_DROP {
                 // 打なら
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
-                    let piece734 = Piece::from_phase_and_piece_type(phase, drp);
+                    let piece734 = Piece::from_phase_and_piece_type(friend, drp);
                     self.position
                         .current_board
                         .add_hand(&piece734, -1, speed_of_light);
@@ -293,17 +294,20 @@ impl Game {
                         .current_board
                         .get_piece_by_square(&movement.source)
                     {
+                        // 成り駒をクローン。
                         Some(speed_of_light.get_piece_chart(&pc).promoted)
                     } else {
                         panic!("成ったのに、元の升に駒がなかった☆（＾～＾）");
                     }
                 } else {
+                    // 移動元の駒をクローン。
                     self.position
                         .current_board
                         .get_piece_by_square(&movement.source)
                         .clone()
                 };
 
+                // 移動元を空に。
                 self.position
                     .current_board
                     .set_piece_by_square(&movement.source, None);
@@ -338,9 +342,9 @@ impl Game {
             // 移動先升に駒を置く
             self.position
                 .current_board
-                .set_piece_by_square(&movement.destination, piece144_o);
+                .set_piece_by_square(&movement.destination, moveing_piece);
         }
-        self.set_cap(ply as usize, cap);
+        self.set_cap(self.history.ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_ky1_hash(speed_of_light);

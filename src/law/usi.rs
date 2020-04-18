@@ -1,6 +1,7 @@
 //!
 //! USIプロトコル
 //!
+use crate::cosmic::shogi::recording::Movement;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::Piece;
@@ -42,86 +43,46 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
         return false;
     }
 
+    let mut buffer = Movement::default();
+
     // 移動元とドロップ。
     // 1文字目と2文字目
     match &line[*starts..=*starts] {
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(Some(PieceType::Rook));
+            buffer.source = AbsoluteAddress::from_address(0);
+            buffer.drop = Some(PieceType::Rook);
         }
         "B" => {
             *starts += 2;
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(Some(PieceType::Bishop));
+            buffer.source = AbsoluteAddress::from_address(0);
+            buffer.drop = Some(PieceType::Bishop);
         }
         "G" => {
             *starts += 2;
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(Some(PieceType::Gold));
+            buffer.source = AbsoluteAddress::from_address(0);
+            buffer.drop = Some(PieceType::Gold);
         }
         "S" => {
             *starts += 2;
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(Some(PieceType::Silver));
+            buffer.source = AbsoluteAddress::from_address(0);
+            buffer.drop = Some(PieceType::Silver);
         }
         "N" => {
             *starts += 2;
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(Some(PieceType::Knight));
+            buffer.source = AbsoluteAddress::from_address(0);
+            buffer.drop = Some(PieceType::Knight);
         }
         "L" => {
             *starts += 2;
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(Some(PieceType::Lance));
+            buffer.source = AbsoluteAddress::from_address(0);
+            buffer.drop = Some(PieceType::Lance);
         }
         "P" => {
             *starts += 2;
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_address(0));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(Some(PieceType::Pawn));
+            buffer.source = AbsoluteAddress::from_address(0);
+            buffer.drop = Some(PieceType::Pawn);
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
@@ -213,14 +174,8 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
                 }
             }
 
-            universe
-                .game
-                .position
-                .set_current_movement_source_temporary(&AbsoluteAddress::from_file_rank(suji, dan));
-            universe
-                .game
-                .position
-                .set_current_movement_drop_temporary(None);
+            buffer.source = AbsoluteAddress::from_file_rank(suji, dan);
+            buffer.drop = None;
         }
     }
 
@@ -316,23 +271,14 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     }
 
     // 行き先。
-    universe
-        .game
-        .position
-        .set_current_movement_destination_temporary(&AbsoluteAddress::from_file_rank(suji, dan));
+    buffer.destination = AbsoluteAddress::from_file_rank(suji, dan);
 
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
-        universe
-            .game
-            .position
-            .set_current_movement_promote_temporary(true);
+        buffer.promote = true;
         *starts += 1;
     } else {
-        universe
-            .game
-            .position
-            .set_current_movement_promote_temporary(false);
+        buffer.promote = false;
     }
 
     // 続きにスペース「 」が１つあれば読み飛ばす
@@ -341,7 +287,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     }
 
     // 確定。
-    universe.game.build_current_movement();
+    universe.game.set_current_movement(&buffer);
 
     universe.game.history.ply += 1;
     true

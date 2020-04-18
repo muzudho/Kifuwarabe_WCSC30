@@ -187,6 +187,17 @@ impl Tree {
         }
 
         for movement_hash in movement_set.iter() {
+            if game.info.is_printable() {
+                // 無限ループしてないかどうかの確認のためだぜ☆（＾～＾）
+                game.info.print(
+                    cur_depth,
+                    ts.get_sum_state(),
+                    ts.get_value(),
+                    *movement_hash,
+                    &format!("{} {} StartLoop", pv, ts.to_movement()),
+                );
+            }
+
             // 1手進めるぜ☆（＾～＾）
             ts.add_state();
             let movement = Movement::from_hash(*movement_hash);
