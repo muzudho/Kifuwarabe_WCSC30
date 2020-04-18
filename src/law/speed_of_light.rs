@@ -4,13 +4,11 @@
 //!
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use crate::cosmic::game::piece::piece::Piece;
-use crate::cosmic::game::piece::piece::Piece::*;
-use crate::cosmic::game::piece::piece_struct::PieceStruct;
-use crate::cosmic::game::piece::piece_type::PieceType;
-use crate::cosmic::game::piece::piece_type::PieceType::*;
-use crate::cosmic::game::piece::piece_type_struct::PieceTypeStruct;
 use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::toy_box::Piece;
+use crate::law::piece_struct::PieceStruct;
+use crate::law::piece_type_struct::PieceTypeStruct;
 
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
@@ -63,6 +61,8 @@ pub struct SpeedOfLight {
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
+        use crate::cosmic::smart::piece_type::PieceType::*;
+        use crate::cosmic::toy_box::Piece::*;
         SpeedOfLight {
             king1: PieceStruct::from_piece(King1),
             rook1: PieceStruct::from_piece(Rook1),
@@ -113,6 +113,8 @@ impl Default for SpeedOfLight {
 impl SpeedOfLight {
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
+        use crate::cosmic::toy_box::Piece::*;
+
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.pieces[(*piece).clone() as usize]
@@ -156,8 +158,8 @@ impl SpeedOfLight {
         phase: Phase,
         piece_type: PieceType,
     ) -> &PieceStruct {
-        use crate::cosmic::game::piece::piece::Piece::*;
-        use crate::cosmic::game::piece::piece_type::PieceType::*;
+        use crate::cosmic::smart::piece_type::PieceType::*;
+        use crate::cosmic::toy_box::Piece::*;
         match phase {
             Phase::First => match piece_type {
                 King => self.get_piece_struct(&King1),
@@ -203,7 +205,7 @@ impl SpeedOfLight {
         // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::cosmic::game::piece::piece_type::PieceType::*;
+        use crate::cosmic::smart::piece_type::PieceType::*;
         match *piece_type {
             King => &self.king,
             Rook => &self.rook,

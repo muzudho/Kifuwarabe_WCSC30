@@ -1,15 +1,12 @@
-use crate::cosmic::game::board::board::Board;
-use crate::cosmic::game::board::square::BOARD_MEMORY_AREA;
-use crate::cosmic::game::board::square::SQUARE_NONE;
-use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::history::history::*;
 use crate::cosmic::game::info::Info;
 use crate::cosmic::game::movement::movement::Movement;
-use crate::cosmic::game::piece::piece::{Piece, MG_MAX, PIECE_LN};
 use crate::cosmic::game::position::person::Person;
 use crate::cosmic::game::position::phase::PHASE_LN;
 use crate::cosmic::game::position::phase::*;
 use crate::cosmic::game::position::position::Position;
+use crate::cosmic::smart::square::{isquare, Square, BOARD_MEMORY_AREA, SQUARE_DROP, SQUARE_NONE};
+use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};
 use crate::law::speed_of_light::*;
 use rand::Rng;
 

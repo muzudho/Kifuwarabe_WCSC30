@@ -1,7 +1,7 @@
 //!
 //! 値チェック
 //!
-use crate::cosmic::game::board::square::isquare;
+use crate::cosmic::smart::square::isquare;
 
 ///
 /// 打はテストできない

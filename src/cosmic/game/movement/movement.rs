@@ -2,10 +2,10 @@
 //! Value object.
 //! Movement. (指し手)
 //!
-use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::movement::movement_builder::MovementBuilder;
-use crate::cosmic::game::piece::piece_type::PieceType;
-use crate::cosmic::game::piece::piece_type::*;
+use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::piece_type::*;
+use crate::cosmic::smart::square::*;
 use crate::law::cryptographic::cu_conv_controller::*;
 use crate::law::diagnostic::cu_asserts_controller::*;
 use std::fmt;
@@ -82,7 +82,7 @@ impl fmt::Display for Movement {
         let (dx, dy) = self.destination.to_file_rank();
 
         if self.source.address == SQUARE_DROP {
-            use crate::cosmic::game::piece::piece_type::PieceType::*;
+            use crate::cosmic::smart::piece_type::PieceType::*;
             write!(
                 f,
                 "{}*{}{}{}",

@@ -4,7 +4,7 @@
 //! 先後なしの駒と空白
 //!
 
-use crate::cosmic::game::piece::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
+use crate::law::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
 use crate::law::speed_of_light::*;
 use std::fmt;
 

@@ -1,7 +1,7 @@
-use crate::cosmic::game::board::board::*;
-use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::movement::movement_builder::MovementBuilder;
-use crate::cosmic::game::piece::piece_type::*;
+use crate::cosmic::smart::piece_type::*;
+use crate::cosmic::smart::square::*;
+use crate::cosmic::toy_box::Board;
 
 /// ミュータブルなオブジェクト☆（＾～＾）
 pub struct Position {

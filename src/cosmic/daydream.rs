@@ -2,11 +2,12 @@
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
 
-use super::evaluator::*;
 use crate::cosmic::game::game::Game;
 use crate::cosmic::game::history::history::SENNTITE_NUM;
 use crate::cosmic::game::movement::movement::Movement;
 use crate::cosmic::game::movement::movement_builder::MovementBuilder;
+use crate::cosmic::universe::Universe;
+use crate::cosmic::wisdom::searching::evaluator::*;
 use crate::law::generate_move::movement_generator::*;
 use crate::law::speed_of_light::*;
 use std::collections::HashSet;
@@ -92,6 +93,18 @@ impl SiblingBestmove {
 
 pub struct Tree {}
 impl Tree {
+    pub fn first_move(speed_of_light: &SpeedOfLight, universe: &mut Universe) -> Bestmove {
+        universe.game.info.clear();
+        Tree::get_best_movement(
+            0,
+            universe.option_max_depth - 1,
+            0,
+            &mut universe.game,
+            speed_of_light,
+            "",
+        )
+    }
+
     /// 現局面での最善手を返すぜ☆（*＾～＾*）
     ///
     /// # Arguments
@@ -104,7 +117,7 @@ impl Tree {
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    pub fn get_best_movement(
+    fn get_best_movement(
         cur_depth: u16,
         end_depth: u16,
         mut sum_nodes: u64,

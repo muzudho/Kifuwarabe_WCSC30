@@ -1,9 +1,9 @@
 //!
 //! USIプロトコル
 //!
-use crate::cosmic::game::board::square::*;
-use crate::cosmic::game::piece::piece::Piece;
-use crate::cosmic::game::piece::piece_type::PieceType;
+use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::square::*;
+use crate::cosmic::toy_box::Piece;
 use crate::cosmic::universe::*;
 use crate::law::speed_of_light::*;
 use crate::white_hole::io::*;
@@ -802,7 +802,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
             _ => {} // 駒の名前か、エラーなら次へ
           }
 
-          use crate::cosmic::game::piece::piece::Piece::*;
+          use crate::cosmic::toy_box::Piece::*;
           let km: Piece;
           match &line[starts..=starts] {
             "R" => {

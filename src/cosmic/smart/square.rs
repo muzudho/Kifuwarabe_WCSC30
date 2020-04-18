@@ -414,7 +414,7 @@ impl Angle {
     */
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate90cw(&self) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
+        use crate::cosmic::smart::square::Angle::*;
         match self {
             Ccw0 => Ccw270,
             Ccw45 => Ccw315,
@@ -428,7 +428,7 @@ impl Angle {
     }
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate45cw(&self) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
+        use crate::cosmic::smart::square::Angle::*;
         match self {
             Ccw0 => Ccw315,
             Ccw45 => Ccw0,
@@ -442,7 +442,7 @@ impl Angle {
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate45ccw(&self) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
+        use crate::cosmic::smart::square::Angle::*;
         match self {
             Ccw0 => Ccw45,
             Ccw45 => Ccw90,
@@ -456,7 +456,7 @@ impl Angle {
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate90ccw(&self) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
+        use crate::cosmic::smart::square::Angle::*;
         match self {
             Ccw0 => Ccw90,
             Ccw45 => Ccw135,
@@ -486,7 +486,7 @@ impl Angle {
     */
     /// 点対称☆（＾～＾）
     pub fn rotate180(&self) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
+        use crate::cosmic::smart::square::Angle::*;
         match self {
             Ccw0 => Ccw180,
             Ccw45 => Ccw225,
@@ -531,7 +531,7 @@ impl RelativeSquare {
     }
 
     pub fn rotate(&self, angle: Angle) -> Self {
-        use crate::cosmic::game::board::square::Angle::*;
+        use crate::cosmic::smart::square::Angle::*;
         match angle {
             Ccw0 => RelativeSquare {
                 file: self.file,

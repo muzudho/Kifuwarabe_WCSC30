@@ -1,8 +1,8 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::cosmic::game::piece::piece::Piece;
-use crate::cosmic::game::piece::piece_type::PieceType;
+use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::toy_box::Piece;
 use crate::law::speed_of_light::*;
 
 pub struct Evaluation {

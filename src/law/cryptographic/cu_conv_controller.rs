@@ -1,7 +1,7 @@
 //!
 //! 変換
 //!
-use crate::cosmic::game::board::square::*;
+use crate::cosmic::smart::square::*;
 
 /**********
  * 論理値 *

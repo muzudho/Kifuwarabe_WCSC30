@@ -1,8 +1,8 @@
 use crate::config::*;
-use crate::cosmic::game::board::square::Square;
+use crate::cosmic::daydream::Tree;
 use crate::cosmic::game::game::{Game, PosNums};
+use crate::cosmic::smart::square::Square;
 use crate::cosmic::universe::Universe;
-use crate::cosmic::wisdom::searching::tree::*;
 use crate::law::cryptographic::cu_conv_controller::*;
 use crate::law::generate_move::movement_generator::*;
 use crate::law::speed_of_light::*;
@@ -48,19 +48,10 @@ impl Kifuwarabe {
 
         (line, len, starts)
     }
+    /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
     pub fn go(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
-        universe.game.info.clear();
-        // 思考開始と、bestmoveコマンドの返却
         // go btime 40000 wtime 50000 binc 10000 winc 10000
-        let pv = "";
-        let bestmove = Tree::get_best_movement(
-            0,
-            universe.option_max_depth - 1 + 1,
-            0,
-            &mut universe.game,
-            speed_of_light,
-            pv,
-        );
+        let bestmove = Tree::first_move(speed_of_light, universe);
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print_force_string(&bestmove.reason);
         // 例: bestmove 7g7f

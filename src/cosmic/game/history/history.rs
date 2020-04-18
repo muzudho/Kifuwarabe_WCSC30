@@ -1,7 +1,7 @@
 use crate::cosmic::game::movement::movement::Movement;
-use crate::cosmic::game::piece::piece::Piece;
 use crate::cosmic::game::position::person::Person;
 use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::toy_box::Piece;
 
 /// 手目数。何手目まで指せるか。
 /// 棋譜を残す配列のサイズでもある。

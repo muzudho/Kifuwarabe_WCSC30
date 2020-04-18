@@ -1,6 +1,6 @@
-use crate::cosmic::game::piece::piece::Piece;
-use crate::cosmic::game::piece::piece_type::PieceType;
 use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::toy_box::Piece;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
@@ -26,9 +26,9 @@ pub struct PieceStruct {
 impl PieceStruct {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
-        use crate::cosmic::game::piece::piece::Piece::*;
-        use crate::cosmic::game::piece::piece_type::PieceType::*;
         use crate::cosmic::game::position::phase::Phase::*;
+        use crate::cosmic::smart::piece_type::PieceType::*;
+        use crate::cosmic::toy_box::Piece::*;
         match p {
             King1 => PieceStruct {
                 piece: King1,

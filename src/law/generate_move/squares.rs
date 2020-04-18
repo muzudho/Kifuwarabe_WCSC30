@@ -1,7 +1,9 @@
-use crate::cosmic::game::board::square::Square;
-use crate::cosmic::game::board::square::*;
-use crate::cosmic::game::piece::piece_type::PieceType;
 use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::square::{
+    isquare, Angle, RelativeSquare, Square, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,
+    RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
+};
 use crate::law::diagnostic::cu_asserts_controller::{
     assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute,
 };

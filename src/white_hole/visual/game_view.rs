@@ -1,7 +1,7 @@
-use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::game::{Game, PosNums};
-use crate::cosmic::game::piece::piece::{Piece, PIECE_WHITE_SPACE};
 use crate::cosmic::game::position::person::Person;
+use crate::cosmic::smart::square::*;
+use crate::cosmic::toy_box::{Piece, PIECE_WHITE_SPACE};
 
 pub struct GameView {}
 impl GameView {

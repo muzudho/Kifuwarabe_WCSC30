@@ -1,12 +1,11 @@
-use crate::cosmic::game::board::board::Board;
-use crate::cosmic::game::board::square::*;
 use crate::cosmic::game::game::Game;
 use crate::cosmic::game::movement::movement_builder::MovementBuilder;
-use crate::cosmic::game::piece::piece::*;
-use crate::cosmic::game::piece::piece_type::*;
 use crate::cosmic::game::position::person::Person;
 use crate::cosmic::game::position::phase::Phase;
 use crate::cosmic::game::position::position::Position;
+use crate::cosmic::smart::piece_type::*;
+use crate::cosmic::smart::square::*;
+use crate::cosmic::toy_box::{Board, Piece};
 use crate::law::generate_move::movement_generator::*;
 use crate::law::generate_move::squares::*;
 use crate::law::speed_of_light::*;
@@ -47,7 +46,7 @@ impl MGMovements {
         F1: FnMut(u64),
     {
         let callback_next = &mut |destination, promotability, _agility| {
-            use crate::cosmic::game::board::board::ThingsInTheSquare::*;
+            use crate::cosmic::toy_box::ThingsInTheSquare::*;
             use crate::law::generate_move::squares::Promotability::*;
             let things_in_the_square =
                 current_board.what_is_in_the_square(friend, &destination, speed_of_light);
@@ -138,7 +137,7 @@ impl MGMovements {
                 .get_hand(hand_piece, speed_of_light)
             {
                 // 駒を持っていれば
-                use crate::cosmic::game::piece::piece::Piece::*;
+                use crate::cosmic::toy_box::Piece::*;
                 match *hand_piece {
                     // ▲歩、▲香 の打てる範囲は２段目～９段目。
                     Pawn1 | Lance1 => {
@@ -217,7 +216,7 @@ impl MGMovements {
             let current_board = &position.current_board;
             let ps_dst = speed_of_light.get_piece_struct(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
-            use crate::cosmic::game::piece::piece::Piece::*;
+            use crate::cosmic::toy_box::Piece::*;
             match *hand_piece {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない☆（＾～＾）

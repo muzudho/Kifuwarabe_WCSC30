@@ -1,9 +1,9 @@
 //!
 //! USIプロトコル
 //!
-use crate::cosmic::game::board::square::*;
-use crate::cosmic::game::piece::piece_type::PieceType;
-use crate::cosmic::game::piece::piece_type::*;
+use crate::cosmic::smart::piece_type::PieceType;
+use crate::cosmic::smart::piece_type::*;
+use crate::cosmic::smart::square::*;
 use crate::law::cryptographic::cu_conv_controller::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
@@ -83,7 +83,7 @@ impl fmt::Display for MovementBuilder {
         let (dx, dy) = self.dst.to_file_rank();
 
         if self.src.address == SQUARE_DROP {
-            use crate::cosmic::game::piece::piece_type::PieceType::*;
+            use crate::cosmic::smart::piece_type::PieceType::*;
             write!(
                 f,
                 "{}*{}{}{}",
