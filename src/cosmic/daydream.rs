@@ -218,6 +218,8 @@ impl Tree {
                         );
                     }
 
+                    // 1手戻すぜ☆（＾～＾）
+                    game.undo_move(speed_of_light);
                     return ts;
                 }
             }
