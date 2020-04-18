@@ -14,7 +14,7 @@ use std::collections::HashSet;
 /// 指定局面の利き升調べ。一から再計算☆（＾～＾）
 ///
 /// 用途：自殺手防止他
-pub fn recalculate_control_count(game: &mut Game, speed_of_light: &MLSpeedOfLightVo) {
+pub fn recalculate_control_count(game: &mut Game, speed_of_light: &SpeedOfLight) {
     // ゼロ・リセット
     GPPieces::for_all(&mut |any_piece| {
         game.position.control_count_by_piece

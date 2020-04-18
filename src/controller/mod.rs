@@ -3,6 +3,7 @@
 //!
 //! 公開するモジュールを記述
 //!
+pub mod command;
 pub mod common_use;
 pub mod io;
 pub mod main_loop;

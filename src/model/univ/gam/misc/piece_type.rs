@@ -5,7 +5,7 @@
 //!
 
 use crate::model::univ::gam::misc::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
-use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
+use crate::model::univ::speed_of_light::SpeedOfLight;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;
@@ -161,7 +161,7 @@ pub fn num_to_piece_type(n: usize) -> Option<PieceType> {
 pub fn push_piece_type_to_hash(
     hash: u64,
     piece_type_o: Option<PieceType>,
-    speed_of_light: &MLSpeedOfLightVo,
+    speed_of_light: &SpeedOfLight,
 ) -> u64 {
     let num = if let Some(piece_type) = piece_type_o {
         // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分

@@ -18,7 +18,7 @@ impl MGMovements {
     pub fn make_movements_on_board<F1>(
         friend: Phase,
         current_board: &Board,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
         callback_movement: &mut F1,
     ) where
         F1: FnMut(u64),
@@ -41,7 +41,7 @@ impl MGMovements {
         friend: Phase,
         source: &Square,
         current_board: &Board,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
         callback_movement: &mut F1,
     ) where
         F1: FnMut(u64),
@@ -119,7 +119,7 @@ impl MGMovements {
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     pub fn make_movements_on_hand<F1>(
         game: &Game,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
         callback_movement: &mut F1,
     ) where
         F1: FnMut(u64),
@@ -206,7 +206,7 @@ impl MGMovements {
     fn make_hand<F1>(
         hand_piece: &Piece,
         position: &Position,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
         destination: &Square,
         callback_movement: &mut F1,
     ) where

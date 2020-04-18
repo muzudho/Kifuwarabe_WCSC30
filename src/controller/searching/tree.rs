@@ -2,8 +2,9 @@
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
 
-extern crate rand;
 use super::evaluator::*;
+use crate::controller::command::Commands;
+use crate::controller::io::*;
 use crate::controller::movement_generation::movement_generator::*;
 use crate::controller::searching::control_counter::*;
 use crate::model::univ::gam::history::SENNTITE_NUM;
@@ -80,12 +81,12 @@ impl SiblingBestmove {
             return false;
         } else if evaluation.king_catch {
             self.movement_hash = movement_hash1;
-            self.value = evaluation.score;
+            self.value = evaluation.value;
             self.lion_catched = true;
             return true;
-        } else if self.value < evaluation.score {
+        } else if self.value < evaluation.value {
             self.movement_hash = movement_hash1;
-            self.value = evaluation.score;
+            self.value = evaluation.value;
             return true;
         }
         false
@@ -110,7 +111,7 @@ pub fn get_best_movement(
     end_depth: u16,
     mut sum_nodes: u64,
     game: &mut Game,
-    speed_of_light: &MLSpeedOfLightVo,
+    speed_of_light: &SpeedOfLight,
     pv: &str,
 ) -> Bestmove {
     {
@@ -171,6 +172,9 @@ pub fn get_best_movement(
         // 1手進めるぜ☆（＾～＾）
         let movement = Movement::from_hash(*movement_hash);
         let captured_piece = game.do_move(&movement, speed_of_light);
+        println!("Debug   | n={} do.", sum_nodes);
+        IO::debugln(&format!("n={} do.", sum_nodes));
+        Commands::pos(&game);
 
         // 千日手かどうかを判定する☆（＾～＾）
         if SENNTITE_NUM <= game.count_same_ky() {
@@ -190,6 +194,7 @@ pub fn get_best_movement(
                 &movement,
                 &format!("{} {} EndNode", pv, movement),
             );
+            IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
         } else {
             // 枝局面なら、更に深く進むぜ☆（＾～＾）
             let opponent_best_move = get_best_movement(
@@ -234,6 +239,8 @@ pub fn get_best_movement(
         }
         // 1手戻すぜ☆（＾～＾）
         game.undo_move(speed_of_light);
+        IO::debugln(&format!("n={} undo.", sum_nodes));
+        Commands::pos(&game);
     }
 
     // メートを調べようぜ☆（＾～＾）

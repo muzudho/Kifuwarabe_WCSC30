@@ -337,7 +337,7 @@ pub fn read_banjo(
     starts: &mut usize,
     len: usize,
     universe: &mut Universe,
-    speed_of_light: &MLSpeedOfLightVo,
+    speed_of_light: &SpeedOfLight,
 ) {
     // 盤部
     let mut suji = FILE_9; //９筋から右方向へ読取
@@ -679,7 +679,7 @@ pub fn read_banjo(
 /**
  * position コマンド読取
  */
-pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &MLSpeedOfLightVo) {
+pub fn read_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedOfLight) {
     let mut starts = 0;
 
     // 全体の長さ

@@ -92,7 +92,7 @@ impl Board {
         &self,
         phase: Phase,
         suji: i8,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
     ) -> bool {
         for dan in RANK_1..RANK_10 {
             let sq = Square::from_file_rank(suji, dan);
@@ -129,10 +129,10 @@ impl Board {
     /**
      * 持ち駒の枚数を加算
      */
-    pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &MLSpeedOfLightVo) {
+    pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
         self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number] += maisu;
     }
-    pub fn get_hand(&self, hand: &Piece, speed_of_light: &MLSpeedOfLightVo) -> i8 {
+    pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
         self.hand[speed_of_light.get_piece_struct(hand).serial_piece_number]
     }
 
@@ -141,7 +141,7 @@ impl Board {
         &self,
         phase: Phase,
         sq: &Square,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
         if let Some(piece) = self.get_piece_by_square(&sq) {
@@ -164,7 +164,7 @@ impl Board {
     }
 
     /// 指定の升に指定の駒があれば真
-    pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &MLSpeedOfLightVo) -> bool {
+    pub fn has_sq_km(&self, sq: &Square, piece: &Piece, speed_of_light: &SpeedOfLight) -> bool {
         if let Some(piece2) = self.get_piece_by_square(&sq) {
             return speed_of_light
                 .get_piece_struct(&piece)
@@ -174,7 +174,7 @@ impl Board {
     }
 
     /// 指定の升にある駒の先後
-    pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &MLSpeedOfLightVo) -> Option<Phase> {
+    pub fn get_phase_by_sq(&self, sq: &Square, speed_of_light: &SpeedOfLight) -> Option<Phase> {
         if let Some(piece) = self.get_piece_by_square(sq) {
             return Some(speed_of_light.get_piece_struct(&piece).phase());
         }
@@ -186,7 +186,7 @@ impl Board {
         &self,
         sq_src: &Square,
         sq_dst: &Square,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
     ) -> bool {
         if let Some(km_src) = self.get_piece_by_square(&sq_src) {
             let ps_src = speed_of_light.get_piece_struct(&km_src);
@@ -209,7 +209,7 @@ impl Board {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_hash(&self, game: &Game, speed_of_light: &MLSpeedOfLightVo) -> u64 {
+    pub fn create_hash(&self, game: &Game, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒

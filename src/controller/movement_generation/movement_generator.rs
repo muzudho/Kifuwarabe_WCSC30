@@ -13,7 +13,7 @@ use std::collections::HashSet;
 /// 利きがどのように変わるかも返して欲しいぜ☆（＾～＾）
 pub fn generate_movement(
     game: &mut Game,
-    speed_of_light: &MLSpeedOfLightVo,
+    speed_of_light: &SpeedOfLight,
     movement_set: &mut HashSet<u64>,
 ) {
     // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
@@ -34,7 +34,7 @@ pub fn generate_movement(
 ///
 pub fn get_potential_movement<F1>(
     game: &Game,
-    speed_of_light: &MLSpeedOfLightVo,
+    speed_of_light: &SpeedOfLight,
     callback_movement: &mut F1,
 ) where
     F1: FnMut(u64),

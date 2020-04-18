@@ -18,7 +18,7 @@ pub fn unit_test(
     starts: &mut usize,
     len: usize,
     ml_universe_dto: &mut Universe,
-    speed_of_light: &MLSpeedOfLightVo,
+    speed_of_light: &SpeedOfLight,
 ) {
     // いろいろな動作テスト
     IO::writeln(&format!("unit-test starts={} len={}", *starts, len));

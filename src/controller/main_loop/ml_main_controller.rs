@@ -8,7 +8,7 @@ use crate::model::univ::speed_of_light::*;
 use crate::model::universe::*;
 
 /// 利き数表示
-pub fn cmd_kikisu(universe: &Universe, speed_of_light: &MLSpeedOfLightVo) {
+pub fn cmd_kikisu(universe: &Universe, speed_of_light: &SpeedOfLight) {
     GPPieces::for_all(&mut |any_piece| {
         IO::writeln(&format!("利き数：{}", any_piece));
         let num_bo = universe

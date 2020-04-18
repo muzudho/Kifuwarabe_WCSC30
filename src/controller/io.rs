@@ -60,4 +60,8 @@ impl IO {
         println!("{}", s);
         IO::logln(s);
     }
+    #[allow(dead_code)]
+    pub fn debugln(s: &str) {
+        IO::writeln(&format!("Debug   | {}", s));
+    }
 }

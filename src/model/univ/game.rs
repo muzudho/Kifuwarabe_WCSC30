@@ -14,7 +14,7 @@ use crate::model::univ::gam::misc::square::BOARD_MEMORY_AREA;
 use crate::model::univ::gam::misc::square::SQUARE_NONE;
 use crate::model::univ::gam::misc::square::*;
 use crate::model::univ::gam::position::Position;
-use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
+use crate::model::univ::speed_of_light::SpeedOfLight;
 use rand::Rng;
 
 /// 局面
@@ -215,7 +215,7 @@ impl Game {
     }
 
     /// 初期局面ハッシュを作り直す
-    pub fn create_starting_position_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
+    pub fn create_starting_position_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = self.starting_board.create_hash(&self, speed_of_light);
 
         // 手番ハッシュ（後手固定）
@@ -225,7 +225,7 @@ impl Game {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_ky1_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
+    pub fn create_ky1_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = self
             .position
             .current_board
@@ -284,11 +284,7 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(
-        &mut self,
-        movement: &Movement,
-        speed_of_light: &MLSpeedOfLightVo,
-    ) -> Option<Piece> {
+    pub fn do_move(&mut self, movement: &Movement, speed_of_light: &SpeedOfLight) -> Option<Piece> {
         // もう入っているかも知れないが、棋譜に入れる☆
         let ply = self.history.ply;
         self.set_current_movement(movement);
@@ -376,7 +372,7 @@ impl Game {
         cap
     }
 
-    pub fn undo_move(&mut self, speed_of_light: &MLSpeedOfLightVo) -> bool {
+    pub fn undo_move(&mut self, speed_of_light: &SpeedOfLight) -> bool {
         if 0 < self.history.ply {
             // 棋譜から読取、手目も減る
             self.history.ply -= 1;
@@ -451,7 +447,7 @@ impl Game {
     pub fn get_number_board_by_piece(
         &self,
         pc: &Piece,
-        speed_of_light: &MLSpeedOfLightVo,
+        speed_of_light: &SpeedOfLight,
     ) -> &NumberBoard {
         &self.position.control_count_by_piece
             [speed_of_light.get_piece_struct(pc).serial_piece_number]

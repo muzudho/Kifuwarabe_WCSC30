@@ -3,16 +3,16 @@
 //!
 use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_type::PieceType;
-use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
+use crate::model::univ::speed_of_light::SpeedOfLight;
 
 pub struct Evaluation {
-    pub score: i16,
+    pub value: i16,
     pub king_catch: bool,
 }
 impl Evaluation {
     pub fn new(score1: i16, king_catch1: bool) -> Self {
         Evaluation {
-            score: score1,
+            value: score1,
             king_catch: king_catch1,
         }
     }
@@ -22,10 +22,7 @@ pub struct SPEvaluationController {}
 impl SPEvaluationController {
     /// 取った駒は相手の駒に決まってるぜ☆（＾～＾）
     /// ライオンを取ったら勝ちだぜ☆（＾～＾）
-    pub fn evaluate(
-        captured_piece_o: Option<Piece>,
-        speed_of_light: &MLSpeedOfLightVo,
-    ) -> Evaluation {
+    pub fn evaluate(captured_piece_o: Option<Piece>, speed_of_light: &SpeedOfLight) -> Evaluation {
         if let Some(captured_piece) = captured_piece_o {
             let captured_ps = speed_of_light.get_piece_struct(&captured_piece);
             match captured_ps.phase_piece_type.1 {

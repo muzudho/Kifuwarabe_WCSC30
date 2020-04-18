@@ -12,7 +12,7 @@ use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::piece_type::PieceType::*;
 use crate::model::univ::gam::misc::piece_type_struct::PieceTypeStruct;
 
-pub struct MLSpeedOfLightVo {
+pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
     /// イミュータブルなのだから、直接参照してもいい☆（＾～＾）
     /// 先後付きの駒☆（＾～＾）
@@ -61,9 +61,9 @@ pub struct MLSpeedOfLightVo {
     pub promoted_lance: PieceTypeStruct,
     pub promoted_pawn: PieceTypeStruct,
 }
-impl Default for MLSpeedOfLightVo {
+impl Default for SpeedOfLight {
     fn default() -> Self {
-        MLSpeedOfLightVo {
+        SpeedOfLight {
             king1: PieceStruct::from_piece(King1),
             rook1: PieceStruct::from_piece(Rook1),
             bishop1: PieceStruct::from_piece(Bishop1),
@@ -110,7 +110,7 @@ impl Default for MLSpeedOfLightVo {
     }
 }
 
-impl MLSpeedOfLightVo {
+impl SpeedOfLight {
     /// 駒の属性を参照するぜ☆（＾～＾）
     pub fn get_piece_struct(&self, piece: &Piece) -> &PieceStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）

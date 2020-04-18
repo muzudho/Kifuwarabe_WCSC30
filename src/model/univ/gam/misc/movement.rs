@@ -8,7 +8,7 @@ use crate::model::univ::gam::misc::movement_builder::MovementBuilder;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
-use crate::model::univ::speed_of_light::MLSpeedOfLightVo;
+use crate::model::univ::speed_of_light::SpeedOfLight;
 use std::fmt;
 
 /// Movement. (指し手)
@@ -53,7 +53,7 @@ impl Movement {
             drop: drop55,
         }
     }
-    pub fn to_hash(&self, speed_of_light: &MLSpeedOfLightVo) -> u64 {
+    pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_piece_type_to_hash(hash, self.drop, speed_of_light);
