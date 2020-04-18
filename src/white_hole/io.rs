@@ -46,7 +46,7 @@ impl IO {
         IO::log(s)
     }
     #[allow(dead_code)]
-    pub fn logln(s: &str) {
+    pub fn logln(s: &str) -> &str {
         if LOG_ENABLE {
             if let Err(_why) = LOGFILE
                 .lock()
@@ -54,6 +54,7 @@ impl IO {
                 .write_all(format!("{}\n", s).as_bytes())
             {}
         }
+        s
     }
     #[allow(dead_code)]
     pub fn writeln(s: &str) {

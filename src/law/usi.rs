@@ -86,93 +86,43 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
-            let suji;
-            let dan;
-            match &line[*starts..=*starts] {
-                "1" => {
-                    suji = 1;
-                    *starts += 1;
-                }
-                "2" => {
-                    suji = 2;
-                    *starts += 1;
-                }
-                "3" => {
-                    suji = 3;
-                    *starts += 1;
-                }
-                "4" => {
-                    suji = 4;
-                    *starts += 1;
-                }
-                "5" => {
-                    suji = 5;
-                    *starts += 1;
-                }
-                "6" => {
-                    suji = 6;
-                    *starts += 1;
-                }
-                "7" => {
-                    suji = 7;
-                    *starts += 1;
-                }
-                "8" => {
-                    suji = 8;
-                    *starts += 1;
-                }
-                "9" => {
-                    suji = 9;
-                    *starts += 1;
-                }
+            let suji = match &line[*starts..=*starts] {
+                "1" => 1,
+                "2" => 2,
+                "3" => 3,
+                "4" => 4,
+                "5" => 5,
+                "6" => 6,
+                "7" => 7,
+                "8" => 8,
+                "9" => 9,
                 _ => {
-                    IO::writeln(&format!("(1) '{}' だった。", &line[*starts..=*starts]));
-                    return false;
+                    panic!(
+                        "{}",
+                        IO::logln(&format!("(1) '{}' だった。", &line[*starts..=*starts]))
+                    );
                 }
-            }
+            };
+            *starts += 1;
 
-            match &line[*starts..=*starts] {
-                "a" => {
-                    dan = 1;
-                    *starts += 1;
-                }
-                "b" => {
-                    dan = 2;
-                    *starts += 1;
-                }
-                "c" => {
-                    dan = 3;
-                    *starts += 1;
-                }
-                "d" => {
-                    dan = 4;
-                    *starts += 1;
-                }
-                "e" => {
-                    dan = 5;
-                    *starts += 1;
-                }
-                "f" => {
-                    dan = 6;
-                    *starts += 1;
-                }
-                "g" => {
-                    dan = 7;
-                    *starts += 1;
-                }
-                "h" => {
-                    dan = 8;
-                    *starts += 1;
-                }
-                "i" => {
-                    dan = 9;
-                    *starts += 1;
-                }
+            let dan = match &line[*starts..=*starts] {
+                "a" => 1,
+                "b" => 2,
+                "c" => 3,
+                "d" => 4,
+                "e" => 5,
+                "f" => 6,
+                "g" => 7,
+                "h" => 8,
+                "i" => 9,
                 _ => {
-                    IO::writeln(&format!("(2) '{}' だった。", &line[*starts..=*starts]));
-                    return false;
+                    panic!(
+                        "{}",
+                        IO::logln(&format!("(2) '{}' だった。", &line[*starts..=*starts]))
+                    );
                 }
-            }
+            };
+            *starts += 1;
 
             buffer.source = AbsoluteAddress::from_file_rank(suji, dan);
             buffer.drop = None;
@@ -180,95 +130,45 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     }
 
     // 残りは「筋の数字」、「段のアルファベット」のはず。
-    let suji;
-    let dan;
 
     // 3文字目
-    match &line[*starts..=*starts] {
-        "1" => {
-            suji = 1;
-            *starts += 1;
-        }
-        "2" => {
-            suji = 2;
-            *starts += 1;
-        }
-        "3" => {
-            suji = 3;
-            *starts += 1;
-        }
-        "4" => {
-            suji = 4;
-            *starts += 1;
-        }
-        "5" => {
-            suji = 5;
-            *starts += 1;
-        }
-        "6" => {
-            suji = 6;
-            *starts += 1;
-        }
-        "7" => {
-            suji = 7;
-            *starts += 1;
-        }
-        "8" => {
-            suji = 8;
-            *starts += 1;
-        }
-        "9" => {
-            suji = 9;
-            *starts += 1;
-        }
+    let suji = match &line[*starts..=*starts] {
+        "1" => 1,
+        "2" => 2,
+        "3" => 3,
+        "4" => 4,
+        "5" => 5,
+        "6" => 6,
+        "7" => 7,
+        "8" => 8,
+        "9" => 9,
         _ => {
-            IO::writeln(&format!("(3) '{}' だった。", &line[*starts..=*starts]));
-            return false;
+            panic!(
+                "{}",
+                IO::logln(&format!("(3) '{}' だった。", &line[*starts..=*starts]))
+            );
         }
-    }
+    };
+    *starts += 1;
     // 4文字目
-    match &line[*starts..=*starts] {
-        "a" => {
-            dan = 1;
-            *starts += 1;
-        }
-        "b" => {
-            dan = 2;
-            *starts += 1;
-        }
-        "c" => {
-            dan = 3;
-            *starts += 1;
-        }
-        "d" => {
-            dan = 4;
-            *starts += 1;
-        }
-        "e" => {
-            dan = 5;
-            *starts += 1;
-        }
-        "f" => {
-            dan = 6;
-            *starts += 1;
-        }
-        "g" => {
-            dan = 7;
-            *starts += 1;
-        }
-        "h" => {
-            dan = 8;
-            *starts += 1;
-        }
-        "i" => {
-            dan = 9;
-            *starts += 1;
-        }
+    let dan = match &line[*starts..=*starts] {
+        "a" => 1,
+        "b" => 2,
+        "c" => 3,
+        "d" => 4,
+        "e" => 5,
+        "f" => 6,
+        "g" => 7,
+        "h" => 8,
+        "i" => 9,
         _ => {
-            IO::writeln(&format!("(4) '{}' だった。", &line[*starts..=*starts]));
-            return false;
+            panic!(
+                "{}",
+                IO::logln(&format!("(4) '{}' だった。", &line[*starts..=*starts]))
+            );
         }
-    }
+    };
+    *starts += 1;
 
     // 行き先。
     buffer.destination = AbsoluteAddress::from_file_rank(suji, dan);
@@ -622,8 +522,10 @@ pub fn read_banjo(
                         suji -= 1;
                     }
                     _ => {
-                        IO::writeln(&format!("盤部(0) '{}' だった。", &line[*starts..=*starts]));
-                        break 'ban;
+                        panic!(
+                            "{}",
+                            IO::logln(&format!("盤部(0) '{}' だった。", &line[*starts..=*starts]))
+                        );
                     }
                 }
             }
@@ -691,51 +593,27 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
                     match &line[starts..=starts] {
                         "1" => {
                             // 1枚のときは数字は付かないので、10～18 と確定☆
-                            match &line[starts..=starts] {
-                                "0" => {
-                                    maisu = 10;
-                                    starts += 2;
-                                }
-                                "1" => {
-                                    maisu = 11;
-                                    starts += 2;
-                                }
-                                "2" => {
-                                    maisu = 12;
-                                    starts += 2;
-                                }
-                                "3" => {
-                                    maisu = 13;
-                                    starts += 2;
-                                }
-                                "4" => {
-                                    maisu = 14;
-                                    starts += 2;
-                                }
-                                "5" => {
-                                    maisu = 15;
-                                    starts += 2;
-                                }
-                                "6" => {
-                                    maisu = 16;
-                                    starts += 2;
-                                }
-                                "7" => {
-                                    maisu = 17;
-                                    starts += 2;
-                                }
-                                "8" => {
-                                    maisu = 18;
-                                    starts += 2;
-                                }
+                            maisu = match &line[starts..=starts] {
+                                "0" => 10,
+                                "1" => 11,
+                                "2" => 12,
+                                "3" => 13,
+                                "4" => 14,
+                                "5" => 15,
+                                "6" => 16,
+                                "7" => 17,
+                                "8" => 18,
                                 _ => {
-                                    IO::writeln(&format!(
-                                        "持駒部(0) '{}' だった。",
-                                        &line[starts..(starts + 2)]
-                                    ));
-                                    return;
+                                    panic!(
+                                        "{}",
+                                        IO::logln(&format!(
+                                            "持駒部(0) '{}' だった。",
+                                            &line[starts..(starts + 2)]
+                                        ))
+                                    );
                                 }
-                            }
+                            };
+                            starts += 2;
                         }
                         "2" => {
                             maisu = 2;
@@ -870,9 +748,5 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
             &universe.game.history.movements[ply as usize].clone(),
             speed_of_light,
         );
-
-        // 現局面表示
-        //let s1 = &ml_universe_dto.print_ky( &PosNums::Current );
-        //g_writeln( &s1 );
     }
 }
