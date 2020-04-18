@@ -10,12 +10,12 @@ destination = 'C:/Users/むずでょ/Documents/GitHub/rust-kifuwarabe-wcsc30'
 
 def go():
     print('Trace   | Remove.')
-    shutil.rmtree(f'{destination}/src')
-    os.remove(f'{destination}/.gitignore')
-    os.remove(f'{destination}/Cargo.toml')
-    os.remove(f'{destination}/copy-dir-to-git.py')
-    os.remove(f'{destination}/LICENSE')
-    os.remove(f'{destination}/README.md')
+    remove_destination_dir('/src')
+    remove_destination_dir('/.gitignore')
+    remove_destination_dir('/Cargo.toml')
+    remove_destination_dir('/copy-dir-to-git.py')
+    remove_destination_dir('/LICENSE')
+    remove_destination_dir('/README.md')
 
     print('Trace   | Copy.')
     copy_dir('/src', ignore=shutil.ignore_patterns('*.pdb'))
@@ -27,12 +27,24 @@ def go():
     print('Trace   | Finished.')
 
 
-def copy_dir(child_path, ignore=None):
+def remove_destination_dir(child_path: str):
+    path = f'{destination}{child_path}'
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+
+
+def remove_destination_file(child_path: str):
+    path = f'{destination}{child_path}'
+    if os.path.isfile(path):
+        os.remove(path)
+
+
+def copy_dir(child_path: str, ignore=None):
     shutil.copytree(f'{source}{child_path}',
                     f'{destination}{child_path}', ignore=ignore)
 
 
-def copy_file(child_path):
+def copy_file(child_path: str):
     shutil.copy2(f'{source}{child_path}', f'{destination}{child_path}')
 
 
