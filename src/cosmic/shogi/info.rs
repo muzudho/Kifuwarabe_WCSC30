@@ -1,5 +1,5 @@
 //! 情報表示担当☆（＾～＾）
-use crate::cosmic::shogi::movement::movement_builder::MovementBuilder;
+use crate::cosmic::shogi::recording::MovementBuilder;
 use crate::white_hole::io::*;
 use std::time::{Duration, Instant};
 

@@ -1,6 +1,5 @@
 use crate::cosmic::shogi::info::Info;
-use crate::cosmic::shogi::movement::movement::Movement;
-use crate::cosmic::shogi::recording::History;
+use crate::cosmic::shogi::recording::{History, Movement};
 use crate::cosmic::shogi::state::{Person, Position, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
 use crate::cosmic::smart::square::{isquare, Square, BOARD_MEMORY_AREA, SQUARE_DROP, SQUARE_NONE};
 use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};

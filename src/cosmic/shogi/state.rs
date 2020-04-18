@@ -4,7 +4,7 @@
 //! Person (先手,後手).
 //!
 
-use crate::cosmic::shogi::movement::movement_builder::MovementBuilder;
+use crate::cosmic::shogi::recording::MovementBuilder;
 use crate::cosmic::smart::piece_type::*;
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::Board;

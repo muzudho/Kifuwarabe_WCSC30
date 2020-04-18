@@ -1,5 +1,5 @@
-use crate::cosmic::shogi::movement::movement_builder::MovementBuilder;
 use crate::cosmic::shogi::playing::Game;
+use crate::cosmic::shogi::recording::MovementBuilder;
 use crate::cosmic::shogi::state::{Person, Phase, Position};
 use crate::cosmic::smart::piece_type::*;
 use crate::cosmic::smart::square::*;
