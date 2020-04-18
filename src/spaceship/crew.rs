@@ -7,23 +7,53 @@ use crate::law::cryptographic::cu_conv_controller::*;
 use crate::law::generate_move::movement_generator::*;
 use crate::law::speed_of_light::*;
 use crate::law::usi::*;
-use crate::white_hole::io::*;
-use crate::white_hole::visual::game_view::*;
+use crate::spaceship::equipment::Telescope;
+use crate::white_hole::io::IO;
+use crate::white_hole::visual::game_view::GameView;
+use crate::white_hole::visual::title_screen::ts_view::print_title;
 use crate::white_hole::visual::unit_test::unit_test_view::print_movement_hashset;
 use rand::Rng;
 use std::collections::HashSet;
+use std::io as std_io;
 
 /// 船長：きふわらべ
 ///
 /// 対局で許されている命令だけをするぜ☆（＾～＾）
 pub struct Kifuwarabe {}
 impl Kifuwarabe {
+    pub fn catch_the_message(universe: &mut Universe) -> (String, usize, usize) {
+        let mut line: String = if universe.is_empty_command() {
+            String::new()
+        } else {
+            // バッファーに溜まっていれば☆（＾～＾）
+            universe.pop_command()
+        };
+
+        // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
+        match std_io::stdin().read_line(&mut line) {
+            Ok(_n) => {}
+            Err(e) => panic!("info string Failed to read line. / {}", e),
+        };
+
+        // 末尾の改行を除こうぜ☆（＾～＾）
+        // trim すると空白も消えるぜ☆（＾～＾）
+        let line: String = match line.trim().parse() {
+            Ok(n) => n,
+            Err(e) => panic!("info string Failed to parse. / {}", e),
+        };
+
+        // 文字数を調べようぜ☆（＾～＾）
+        let len = line.chars().count();
+        let starts = 0;
+
+        (line, len, starts)
+    }
     pub fn go(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
         universe.game.info.clear();
         // 思考開始と、bestmoveコマンドの返却
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let pv = "";
-        let bestmove = get_best_movement(
+        let bestmove = Tree::get_best_movement(
             0,
             universe.option_max_depth - 1 + 1,
             0,
@@ -126,6 +156,21 @@ impl Chiyuri {
         let s = universe.game.get_moves_history_text();
         IO::writeln(&s);
     }
+    pub fn len0(universe: &mut Universe) {
+        IO::writeln("len==0");
+        if !&universe.dialogue_mode {
+            // 空打ち１回目なら、対話モードへ☆（＾～＾）
+            universe.dialogue_mode = true;
+            // タイトル表示
+            // １画面は２５行だが、最後の２行は開けておかないと、
+            // カーソルが２行分場所を取るんだぜ☆（＾～＾）
+            print_title();
+        } else {
+            // 局面表示
+            let s = GameView::to_string(&universe.game, &PosNums::Current);
+            IO::writeln(&s);
+        }
+    }
     pub fn pos(universe: &Universe) {
         // 現局面表示
         let s = GameView::to_string(&universe.game, &PosNums::Current);
@@ -175,5 +220,14 @@ impl Chiyuri {
                 universe.game.history.ply
             ));
         }
+    }
+}
+
+/// 乗組員：夢美
+pub struct Yumemi {}
+impl Yumemi {
+    /// 望遠鏡を覗き込みましょう。
+    pub fn look_into_the_telescope() {
+        Telescope::look();
     }
 }

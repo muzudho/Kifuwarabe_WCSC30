@@ -21,15 +21,9 @@ mod law;
 mod spaceship;
 mod white_hole;
 
-use crate::cosmic::game::board::square::*;
-use crate::cosmic::game::game::PosNums;
-use crate::cosmic::universe::*;
-use crate::law::speed_of_light::*;
-use crate::spaceship::crew::{Chiyuri, Kifuwarabe};
-use crate::white_hole::io::*;
-use crate::white_hole::visual::game_view::*;
-use crate::white_hole::visual::title_screen::ts_view::*;
-use std::io as std_io;
+use crate::cosmic::universe::Universe;
+use crate::law::speed_of_light::SpeedOfLight;
+use crate::spaceship::crew::{Chiyuri, Kifuwarabe, Yumemi};
 
 fn main() {
     // 光速は定義☆（＾～＾）変化しないぜ☆（＾～＾）
@@ -40,8 +34,8 @@ fn main() {
     // ビッグバン
     universe.big_bang();
 
-    // テスト
-    test_rotation();
+    // 「何が見えんの？」
+    Yumemi::look_into_the_telescope();
 
     main_loop(&speed_of_light, &mut universe);
     // [Ctrl]+[C] で強制終了
@@ -49,44 +43,11 @@ fn main() {
 
 fn main_loop(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
     loop {
-        let mut line: String = if universe.is_empty_command() {
-            String::new()
-        } else {
-            // バッファーに溜まっていれば☆（＾～＾）
-            universe.pop_command()
-        };
-
-        // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
-        match std_io::stdin().read_line(&mut line) {
-            Ok(_n) => {}
-            Err(e) => panic!("info string Failed to read line. / {}", e),
-        };
-
-        // 末尾の改行を除こうぜ☆（＾～＾）
-        // trim すると空白も消えるぜ☆（＾～＾）
-        let line: String = match line.trim().parse() {
-            Ok(n) => n,
-            Err(e) => panic!("info string Failed to parse. / {}", e),
-        };
-
-        // 文字数を調べようぜ☆（＾～＾）
-        let len = line.chars().count();
-        let starts = 0;
+        let (line, len, starts) = Kifuwarabe::catch_the_message(universe);
 
         if len == 0 {
-            IO::writeln("len==0");
-            if !&universe.dialogue_mode {
-                // 空打ち１回目なら、対話モードへ☆（＾～＾）
-                universe.dialogue_mode = true;
-                // タイトル表示
-                // １画面は２５行だが、最後の２行は開けておかないと、
-                // カーソルが２行分場所を取るんだぜ☆（＾～＾）
-                print_title();
-            } else {
-                // 局面表示
-                let s = GameView::to_string(&universe.game, &PosNums::Current);
-                IO::writeln(&s);
-            }
+            // 任せろだぜ☆（＾～＾）
+            Chiyuri::len0(universe);
         // 文字数の長いものからチェック
         } else if 9 < len && &line[starts..10] == "usinewgame" {
             Kifuwarabe::usinewgame(universe);

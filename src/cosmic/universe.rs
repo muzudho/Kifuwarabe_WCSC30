@@ -34,7 +34,7 @@ impl Universe {
     /* **********************
      * コマンド・バッファー *
      ************************/
-    pub fn is_empty_command(&mut self) -> bool {
+    pub fn is_empty_command(&self) -> bool {
         self.vec_command.is_empty()
     }
 
