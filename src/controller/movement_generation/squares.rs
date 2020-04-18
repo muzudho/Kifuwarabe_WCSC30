@@ -1,9 +1,11 @@
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_absolute;
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_with_frame_as_absolute;
+use crate::controller::io::*;
 use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::square::Square;
 use crate::model::univ::gam::misc::square::*;
+use std::fmt;
 
 /// 機敏性。
 #[derive(Clone, Copy, Debug)]
@@ -101,12 +103,18 @@ impl NextSquares {
         };
 
         Squares::looking_next_from(
-            Some(Forbidden::from_pawn_or_lance(friend)),
+            Some(MovePermission::from_pawn_or_lance(friend)),
             angle,
             Agility::Hopping,
             source,
             promoting,
         );
+        IO::debugln(&format!(
+            "歩の動き source={:?} angle={:?} forbidden={:?}",
+            source,
+            angle,
+            MovePermission::from_pawn_or_lance(friend),
+        ));
     }
 
     /// 盤上の香から動けるマスを見ます。
@@ -120,7 +128,7 @@ impl NextSquares {
         let promoting =
             &mut |destination| Promoting::case_of_pawn_lance(friend, &destination, callback_next);
         Squares::looking_next_from(
-            Some(Forbidden::from_pawn_or_lance(friend)),
+            Some(MovePermission::from_pawn_or_lance(friend)),
             Angle::Ccw270,
             Agility::Sliding,
             source,
@@ -146,7 +154,7 @@ impl NextSquares {
         };
 
         Squares::looking_next_from(
-            Some(Forbidden::from_knight(friend)),
+            Some(MovePermission::from_knight(friend)),
             angle,
             Agility::Keima,
             source,
@@ -155,7 +163,7 @@ impl NextSquares {
 
         let angle = angle.rotate90ccw();
         Squares::looking_next_from(
-            Some(Forbidden::from_knight(friend)),
+            Some(MovePermission::from_knight(friend)),
             angle,
             Agility::Keima,
             source,
@@ -342,33 +350,50 @@ impl NextSquares {
 }
 
 /// 行き先があるかないかのチェックに使うぜ☆（＾～＾）
-pub struct Forbidden {
-    /// １段目に進めないなら 2、
-    /// １、２段目に進めないなら 3。
-    rank: i8,
+pub struct MovePermission {
+    min_rank: i8,
+    max_rank: i8,
 }
-impl Forbidden {
+impl MovePermission {
     pub fn from_pawn_or_lance(friend: Phase) -> Self {
         // ▲P,▲L　は１段目(▽P,▽L　は９段目)には進めない
         match friend {
-            Phase::First => Forbidden { rank: 2 },
-            Phase::Second => Forbidden { rank: 8 },
+            Phase::First => MovePermission {
+                min_rank: 2,
+                max_rank: 9,
+            },
+            Phase::Second => MovePermission {
+                min_rank: 1,
+                max_rank: 8,
+            },
         }
     }
     pub fn from_knight(friend: Phase) -> Self {
         // ▲N　は１、２段目(▽N　は８、９段目)には進めない
         match friend {
-            Phase::First => Forbidden { rank: 3 },
-            Phase::Second => Forbidden { rank: 7 },
+            Phase::First => MovePermission {
+                min_rank: 3,
+                max_rank: 9,
+            },
+            Phase::Second => MovePermission {
+                min_rank: 1,
+                max_rank: 7,
+            },
         }
     }
-    pub fn forbid(&self, destination: &Square) -> bool {
-        if destination.get_rank() < self.rank {
-            return true;
+    pub fn check(&self, destination: &Square) -> bool {
+        if destination.get_rank() < self.min_rank || self.max_rank < destination.get_rank() {
+            return false;
         }
-        false
+        true
     }
 }
+impl fmt::Debug for MovePermission {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "(rank{}~{})", self.min_rank, self.max_rank)
+    }
+}
+
 /// 成れるか、成れないか☆（＾～＾）
 struct Promoting {}
 impl Promoting {
@@ -531,7 +556,7 @@ impl Squares {
     ///
     /// * `friend` - 行き先のない駒の判定に使うぜ☆（＾～＾）
     pub fn looking_next_from<F1>(
-        opt_forbidden: Option<Forbidden>,
+        opt_move_permission: Option<MovePermission>,
         angle: Angle,
         agility: Agility,
         start: &Square,
@@ -550,9 +575,9 @@ impl Squares {
                     if Squares::has_jumped_out_of_the_board(next) {
                         break;
                     }
-                    if let Some(forbidden) = &opt_forbidden {
+                    if let Some(permission) = &opt_move_permission {
                         // 香車だけここを通るぜ☆（＾～＾）
-                        if forbidden.forbid(&Square::from_address(next)) {
+                        if !permission.check(&Square::from_address(next)) {
                             break;
                         }
                     }
@@ -570,8 +595,8 @@ impl Squares {
                     if !Squares::has_jumped_out_of_the_board(start.address + rel.get_address()) {
                         let next = start.address + rel.get_address();
 
-                        if let Some(forbidden) = &opt_forbidden {
-                            if forbidden.forbid(&Square::from_address(next)) {
+                        if let Some(permission) = &opt_move_permission {
+                            if !permission.check(&Square::from_address(next)) {
                                 return;
                             }
                         }
@@ -602,8 +627,8 @@ impl Squares {
                         */
                     );
 
-                    if let Some(forbidden) = &opt_forbidden {
-                        if forbidden.forbid(&Square::from_address(next)) {
+                    if let Some(permission) = &opt_move_permission {
+                        if !permission.check(&Square::from_address(next)) {
                             return;
                         }
                     }

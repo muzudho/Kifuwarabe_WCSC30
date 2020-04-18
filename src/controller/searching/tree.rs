@@ -6,10 +6,11 @@ use super::evaluator::*;
 use crate::controller::command::Commands;
 use crate::controller::io::*;
 use crate::controller::movement_generation::movement_generator::*;
-use crate::controller::searching::control_counter::*;
+// use crate::controller::searching::control_counter::*;
 use crate::model::univ::gam::history::SENNTITE_NUM;
 use crate::model::univ::gam::misc::movement::Movement;
 use crate::model::univ::gam::misc::movement_builder::*;
+use crate::model::univ::gam::misc::person::*;
 use crate::model::univ::game::Game;
 use crate::model::univ::speed_of_light::*;
 use std::collections::HashSet;
@@ -114,12 +115,14 @@ pub fn get_best_movement(
     speed_of_light: &SpeedOfLight,
     pv: &str,
 ) -> Bestmove {
+    /* TODO
     {
         // 指定局面の利き数ボード再計算。
         // 王手放置漏れ回避　を最優先させたいぜ☆（＾～＾）
         // 相手の利き升調べ（自殺手、特に王手放置回避漏れ　防止のため）
         recalculate_control_count(game, speed_of_light);
     }
+    */
     // TODO 利きの差分更新をしたいぜ☆（＾～＾）
     //
     //  ・先後別の２つの利き数ボード、駒別の約３０種類の利き数ボードがあって、全て最新にすること。
@@ -142,7 +145,13 @@ pub fn get_best_movement(
     // 指し手はハッシュ値で入っている☆（＾～＾）
     let mut movement_set = HashSet::<u64>::new();
 
+    IO::debugln(&format!(
+        "n={} friend={}.",
+        sum_nodes,
+        game.history.get_phase(&Person::Friend)
+    ));
     generate_movement(game, speed_of_light, &mut movement_set);
+    Commands::genmove(&speed_of_light, &game);
 
     // 指せる手が無ければ投了☆（＾～＾）
     if movement_set.is_empty() {
@@ -172,7 +181,6 @@ pub fn get_best_movement(
         // 1手進めるぜ☆（＾～＾）
         let movement = Movement::from_hash(*movement_hash);
         let captured_piece = game.do_move(&movement, speed_of_light);
-        println!("Debug   | n={} do.", sum_nodes);
         IO::debugln(&format!("n={} do.", sum_nodes));
         Commands::pos(&game);
 

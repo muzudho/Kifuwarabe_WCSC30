@@ -1,12 +1,26 @@
 use crate::controller::io::*;
 use crate::controller::main_loop::ml_usi_controller::*;
+use crate::controller::movement_generation::movement_generator::*;
 use crate::model::univ::game::*;
 use crate::model::univ::speed_of_light::SpeedOfLight;
 use crate::model::universe::Universe;
 use crate::view::game_view::*;
+use crate::view::unit_test::unit_test_view::print_movement_hashset;
+use std::collections::HashSet;
 
 pub struct Commands {}
 impl Commands {
+    pub fn genmove(speed_of_light: &SpeedOfLight, game: &Game) {
+        // Generation move.
+        // FIXME 合法手とは限らない
+        let mut ss_potential_hashset = HashSet::<u64>::new();
+        get_potential_movement(&game, &speed_of_light, &mut |movement_hash| {
+            ss_potential_hashset.insert(movement_hash);
+        });
+        IO::writeln("----指し手生成(合法手とは限らない) ここから----");
+        print_movement_hashset(&ss_potential_hashset);
+        IO::writeln("----指し手生成(合法手とは限らない) ここまで----");
+    }
     pub fn pos(game: &Game) {
         let s = GameView::to_string(&game, &PosNums::Current);
         IO::writeln(&s);

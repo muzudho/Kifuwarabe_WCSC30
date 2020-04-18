@@ -20,7 +20,6 @@ use crate::controller::command::Commands;
 use crate::controller::common_use::cu_conv_controller::*;
 use crate::controller::io::*;
 use crate::controller::main_loop::ml_usi_controller::*;
-use crate::controller::movement_generation::movement_generator::*;
 use crate::controller::searching::tree::*;
 use crate::controller::unit_test::ut_controller::*;
 use crate::model::univ::gam::misc::square::*;
@@ -29,9 +28,7 @@ use crate::model::univ::speed_of_light::*;
 use crate::model::univ::usi::*;
 use crate::model::universe::*;
 use crate::view::game_view::*;
-use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use rand::Rng;
-use std::collections::HashSet;
 use std::io;
 use view::title_screen::ts_view::*;
 
@@ -166,13 +163,7 @@ fn parse_extend_command(
     } else if 6 < len && &line[starts..7] == "genmove" {
         // Generation move.
         // FIXME 合法手とは限らない
-        let mut ss_potential_hashset = HashSet::<u64>::new();
-        get_potential_movement(&universe.game, &speed_of_light, &mut |movement_hash| {
-            ss_potential_hashset.insert(movement_hash);
-        });
-        IO::writeln("----指し手生成(合法手とは限らない) ここから----");
-        print_movement_hashset(&ss_potential_hashset);
-        IO::writeln("----指し手生成(合法手とは限らない) ここまで----");
+        Commands::genmove(speed_of_light, &universe.game);
     // H
     } else if 7 < len && &line[starts..8] == "how-much" {
         // Example: how-much 7g7f
@@ -257,161 +248,5 @@ fn parse_extend_command(
         IO::writeln(&format!("unit-test starts={} len={}", starts, len));
         unit_test(&line, &mut starts, len, universe, &speed_of_light);
         //IO::writeln( &ml_universe_dto.pop_command() );
-    }
-}
-
-fn test_dort(test_name: &str, expected: &str, actual: &DictOrthant) {
-    debug_assert!(
-        format!("{:?}", actual) == expected,
-        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
-    );
-}
-fn test_d45ort(test_name: &str, expected: &str, actual: &Degree45Orthant) {
-    debug_assert!(
-        format!("{:?}", actual) == expected,
-        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
-    );
-}
-fn test_rsq(test_name: &str, expected: &str, actual: &RelativeSquare) {
-    debug_assert!(
-        format!("{:?}", actual) == expected,
-        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
-    );
-}
-
-fn test_rotation() {
-    // 辞書象限のテスト
-    {
-        let mut ort = DictOrthant::from_file_and_rank(0, -1);
-        test_dort("e1", "IOrIII", &ort);
-        ort = DictOrthant::from_file_and_rank(1, -1);
-        test_dort("e2", "IV", &ort);
-        ort = DictOrthant::from_file_and_rank(1, 0);
-        test_dort("e3", "IOrIII", &ort);
-        ort = DictOrthant::from_file_and_rank(1, 1);
-        test_dort("e4", "IOrIII", &ort);
-        ort = DictOrthant::from_file_and_rank(0, 1);
-        test_dort("e5", "IOrIII", &ort);
-        ort = DictOrthant::from_file_and_rank(-1, 1);
-        test_dort("e6", "II", &ort);
-        ort = DictOrthant::from_file_and_rank(-1, 0);
-        test_dort("e7", "IOrIII", &ort);
-        ort = DictOrthant::from_file_and_rank(-1, -1);
-        test_dort("e8", "IOrIII", &ort);
-    }
-    // 45°回転象限のテスト
-    {
-        let mut ort = Degree45Orthant::from_file_and_rank(0, -1);
-        test_d45ort("f1", "CoIIIOrCoIV", &ort);
-        ort = Degree45Orthant::from_file_and_rank(1, -1);
-        test_d45ort("f2", "IVOrI", &ort);
-        ort = Degree45Orthant::from_file_and_rank(1, 0);
-        test_d45ort("f3", "IVOrI", &ort);
-        ort = Degree45Orthant::from_file_and_rank(1, 1);
-        test_d45ort("f4", "IVOrI", &ort);
-        ort = Degree45Orthant::from_file_and_rank(0, 1);
-        test_d45ort("f5", "CoIOrCoII", &ort);
-        ort = Degree45Orthant::from_file_and_rank(-1, 1);
-        test_d45ort("f6", "IIOrIII", &ort);
-        ort = Degree45Orthant::from_file_and_rank(-1, 0);
-        test_d45ort("f7", "IIOrIII", &ort);
-        ort = Degree45Orthant::from_file_and_rank(-1, -1);
-        test_d45ort("f8", "IIOrIII", &ort);
-    }
-    // 相対番地のテスト
-    {
-        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("b1", "(0x -1y -1adr)", &rsq);
-        rsq = RelativeSquare::from_file_and_rank(1, -1);
-        test_rsq("b2", "(1x -1y 9adr)", &rsq);
-        rsq = RelativeSquare::from_file_and_rank(1, 0);
-        test_rsq("b3", "(1x 0y 10adr)", &rsq);
-        rsq = RelativeSquare::from_file_and_rank(1, 1);
-        test_rsq("b4", "(1x 1y 11adr)", &rsq);
-        rsq = RelativeSquare::from_file_and_rank(0, 1);
-        test_rsq("b5", "(0x 1y 1adr)", &rsq);
-        rsq = RelativeSquare::from_file_and_rank(-1, 1);
-        test_rsq("b6", "(-1x 1y -9adr)", &rsq);
-        rsq = RelativeSquare::from_file_and_rank(-1, 0);
-        test_rsq("b7", "(-1x 0y -10adr)", &rsq);
-        rsq = RelativeSquare::from_file_and_rank(-1, -1);
-        test_rsq("b8", "(-1x -1y -11adr)", &rsq);
-    }
-    // 45°回転のテスト
-    {
-        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("a1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a2", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a3", "(1x 0y 10adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a4", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a5", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a6", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a7", "(-1x 0y -10adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a8", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
-        test_rsq("a9", "(0x -1y -1adr)", &rsq);
-    }
-    // 90°回転のテスト＜その１＞
-    {
-        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("c1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("c2", "(1x 0y 10adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("c3", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("c4", "(-1x 0y -10adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("c5", "(0x -1y -1adr)", &rsq);
-    }
-    // 90°回転のテスト＜その２＞
-    {
-        let mut rsq = RelativeSquare::from_file_and_rank(1, -1);
-        test_rsq("d1", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("d2", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("d3", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("d4", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
-        test_rsq("d5", "(1x -1y 9adr)", &rsq);
-    }
-    // 桂馬のテスト
-    {
-        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("g1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw45);
-        test_rsq("g2", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.double_rank();
-        test_rsq("g3", "(1x -2y 8adr)", &rsq);
-
-        let mut rsq = RelativeSquare::from_file_and_rank(0, -1);
-        test_rsq("g4", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw315);
-        test_rsq("g5", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.double_rank();
-        test_rsq("g6", "(-1x -2y -12adr)", &rsq);
-
-        let mut rsq = RelativeSquare::from_file_and_rank(0, 1);
-        test_rsq("g7", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw45);
-        test_rsq("g8", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.double_rank();
-        test_rsq("g9", "(-1x 2y -8adr)", &rsq);
-
-        let mut rsq = RelativeSquare::from_file_and_rank(0, 1);
-        test_rsq("g10", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw315);
-        test_rsq("g11", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.double_rank();
-        test_rsq("g12", "(1x 2y 12adr)", &rsq);
     }
 }
