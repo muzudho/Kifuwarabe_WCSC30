@@ -20,12 +20,8 @@ pub struct TreeState {
 
     // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     pub repetition_movement_hash: u64,
-    /// 何も起こっていなければ None が入っている。
-    /// 相手玉を取ったら 別のフラグが立つ。
-    /// その一手前は 0 が入る。
-    /// さらに一手前は 1 が入る。
-    /// この数は n手詰め に対応する。
-    pub king_catch: Option<u16>,
+    /// 玉を取ったぜ☆（＾～＾）
+    pub king_catched: bool,
 
     /// この指し手を選んだ理由☆（＾～＾）
     pub reason: String,
@@ -37,7 +33,7 @@ impl Default for TreeState {
             value: None,
             movement_hash: 0u64,
             repetition_movement_hash: 0u64,
-            king_catch: None,
+            king_catched: false,
             reason: "no update".to_string(),
         }
     }
@@ -51,8 +47,8 @@ impl TreeState {
         self.value
     }
 
-    pub fn get_king_catch(&self) -> Option<u16> {
-        self.king_catch
+    pub fn was_king_catch(&self) -> bool {
+        self.king_catched
     }
 
     pub fn add_state(&mut self) {
@@ -62,12 +58,10 @@ impl TreeState {
     pub fn add_turn_over(&mut self, opponent_ts: &TreeState, friend_movement_hash: u64) -> bool {
         self.sum_state += opponent_ts.get_sum_state();
 
-        if let Some(king_catch) = opponent_ts.get_king_catch() {
-            if king_catch == 0 {
-                // この手を指すと、次に相手に玉を取られるぜ☆（＾～＾）！
-                // アップデートせずに終了☆（＾～＾）！
-                return false;
-            }
+        if opponent_ts.was_king_catch() {
+            // この手を指すと、次に相手に玉を取られるぜ☆（＾～＾）！
+            // アップデートせずに終了☆（＾～＾）！
+            return false;
         }
 
         if let Some(opponent_value) = opponent_ts.value {
@@ -125,7 +119,7 @@ impl TreeState {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
         self.movement_hash = movement_hash;
         self.value = None;
-        self.king_catch = Some(0);
+        self.king_catched = true;
         self.reason = "king catch is strongest".to_string();
     }
 }
@@ -184,7 +178,7 @@ impl Tree {
                     cur_depth,
                     ts.get_sum_state(),
                     ts.get_value(),
-                    ts.get_king_catch(),
+                    // ts.get_king_catch(),
                     ts.movement_hash,
                     &format!("{} resign EmptyMoves", pv),
                 );
@@ -212,7 +206,7 @@ impl Tree {
                             cur_depth,
                             ts.get_sum_state(),
                             ts.get_value(),
-                            ts.get_king_catch(),
+                            // ts.get_king_catch(),
                             *movement_hash,
                             &format!("{} {} EndNode", pv, movement),
                         );
@@ -237,7 +231,7 @@ impl Tree {
                             cur_depth,
                             ts.get_sum_state(),
                             ts.get_value(),
-                            ts.get_king_catch(),
+                            // ts.get_king_catch(),
                             *movement_hash,
                             &format!("{} {} EndNode", pv, movement),
                         );
@@ -263,7 +257,7 @@ impl Tree {
                             cur_depth,
                             ts.get_sum_state(),
                             ts.get_value(),
-                            ts.get_king_catch(),
+                            // ts.get_king_catch(),
                             *movement_hash,
                             &format!("{} {} Backward1", pv, Movement::from_hash(*movement_hash)),
                         );
@@ -291,7 +285,7 @@ impl Tree {
                 cur_depth,
                 ts.get_sum_state(),
                 ts.get_value(),
-                ts.get_king_catch(),
+                // ts.get_king_catch(),
                 ts.movement_hash,
                 &format!("{} {}", pv, ts.to_movement()),
             );

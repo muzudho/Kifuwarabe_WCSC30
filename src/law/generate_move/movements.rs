@@ -5,6 +5,7 @@ use crate::cosmic::smart::features::{num_to_piece_type, HandPieces};
 use crate::cosmic::smart::square::{AbsoluteAddress, SQUARE_DROP};
 use crate::cosmic::toy_box::{Board, Piece};
 use crate::law::generate_move::movement_generator::MGSquares;
+use crate::law::generate_move::squares::MovePermission;
 use crate::law::generate_move::squares::{NextSquares, Squares};
 use crate::law::speed_of_light::SpeedOfLight;
 
@@ -43,60 +44,79 @@ impl MGMovements {
     ) where
         F1: FnMut(u64),
     {
-        let callback_next = &mut |destination, promotability, _agility| {
-            use crate::cosmic::toy_box::ThingsInTheSquare::*;
-            use crate::law::generate_move::squares::Promotability::*;
-            let things_in_the_square =
-                current_board.what_is_in_the_square(friend, &destination, speed_of_light);
-            match things_in_the_square {
-                Space | Opponent => {
-                    // 成れるかどうかの判定☆（＾ｑ＾）
-                    let promotion = match &promotability {
-                        Forced => true,
-                        _ => false,
-                    };
-                    match &promotability {
-                        Any => {
-                            callback_movement(
-                                Movement {
-                                    source: source.clone(),
-                                    destination: destination.clone(),
-                                    promote: false,
-                                    drop: None,
-                                }
-                                .to_hash(speed_of_light),
-                            );
-                            callback_movement(
-                                Movement {
-                                    source: source.clone(),
-                                    destination: destination.clone(),
-                                    promote: true,
-                                    drop: None,
-                                }
-                                .to_hash(speed_of_light),
-                            );
-                        }
-                        _ => {
-                            callback_movement(
-                                Movement {
-                                    source: source.clone(),
-                                    destination: destination.clone(),
-                                    promote: promotion,
-                                    drop: None,
-                                }
-                                .to_hash(speed_of_light),
-                            );
-                        }
-                    };
-                }
-                Friend => {}
-            };
+        let callback_next =
+            &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
+                use crate::cosmic::toy_box::ThingsInTheSquare::*;
+                use crate::law::generate_move::squares::Promotability::*;
+                let things_in_the_square =
+                    current_board.what_is_in_the_square(friend, &destination, speed_of_light);
+                match things_in_the_square {
+                    Space | Opponent => {
+                        // 成れるかどうかの判定☆（＾ｑ＾）
+                        let promotion = match &promotability {
+                            Forced => true,
+                            _ => false,
+                        };
 
-            match things_in_the_square {
-                Space => false,
-                _ => true,
-            }
-        };
+                        // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
+                        let forbidden = if let Some(move_permission_val) = move_permission {
+                            if move_permission_val.check(&destination) {
+                                false
+                            } else {
+                                true
+                            }
+                        } else {
+                            false
+                        };
+
+                        match &promotability {
+                            Any => {
+                                // 成ったり、成れなかったりできるとき。
+                                if !forbidden {
+                                    callback_movement(
+                                        Movement {
+                                            source: source.clone(),
+                                            destination: destination.clone(),
+                                            promote: false,
+                                            drop: None,
+                                        }
+                                        .to_hash(speed_of_light),
+                                    );
+                                }
+                                callback_movement(
+                                    Movement {
+                                        source: source.clone(),
+                                        destination: destination.clone(),
+                                        promote: true,
+                                        drop: None,
+                                    }
+                                    .to_hash(speed_of_light),
+                                );
+                            }
+                            _ => {
+                                // 成れるか、成れないかのどちらかのとき。
+                                if promotion || !forbidden {
+                                    callback_movement(
+                                        Movement {
+                                            source: source.clone(),
+                                            destination: destination.clone(),
+                                            promote: promotion,
+                                            drop: None,
+                                        }
+                                        .to_hash(speed_of_light),
+                                    );
+                                }
+                            }
+                        };
+                    }
+                    Friend => {}
+                };
+
+                match things_in_the_square {
+                    Space => false,
+                    _ => true,
+                }
+            };
 
         if let Some(piece) = current_board.get_piece_by_square(&source) {
             let ps = speed_of_light.get_piece_chart(&piece);

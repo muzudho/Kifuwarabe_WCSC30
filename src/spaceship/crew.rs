@@ -57,7 +57,7 @@ impl Kifuwarabe {
             0,
             ts.get_sum_state(),
             ts.get_value(),
-            ts.get_king_catch(),
+            // ts.get_king_catch(),
             ts.get_movement_hash(),
             &ts.reason,
         );

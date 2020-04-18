@@ -47,7 +47,7 @@ impl Info {
         cur_depth: u16,
         sum_nodes: u64,
         value: Option<i16>,
-        lion_catch: Option<u16>,
+        // lion_catch: Option<u16>,
         movement_hash: u64,
         text: &str,
     ) {
@@ -58,6 +58,7 @@ impl Info {
             sum_nodes,
             if let Some(centi_pawn) = value {
                 format!(" score cp {}", centi_pawn)
+            /*
             } else if let Some(lion_catch_num) = lion_catch {
                 let mate: i32 = if lion_catch_num % 2 == 0 {
                     // 偶数ならマイナスにするぜ☆（＾～＾）
@@ -66,6 +67,7 @@ impl Info {
                     lion_catch_num as i32
                 };
                 format!(" score mate {}", mate)
+                */
             } else {
                 "".to_string()
             },
