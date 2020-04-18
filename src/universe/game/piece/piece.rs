@@ -4,8 +4,8 @@
 //! 先後付き駒
 //!
 
-use crate::model::univ::gam::misc::phase::*;
 use crate::universe::game::piece::piece_type::*;
+use crate::universe::game::position::phase::*;
 use std::fmt;
 
 ///

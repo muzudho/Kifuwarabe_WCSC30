@@ -1,25 +1,25 @@
 //! 情報表示担当☆（＾～＾）
 use crate::controller::io::*;
-use crate::model::univ::gam::misc::movement_builder::MovementBuilder;
+use crate::universe::game::movement::movement_builder::MovementBuilder;
 use std::time::{Duration, Instant};
 
-pub struct SPInfo {
+pub struct Info {
     /// 情報用のストップウォッチ
     stopwatch: Instant,
     previous: Duration,
     first: bool,
 }
-impl Default for SPInfo {
+impl Default for Info {
     fn default() -> Self {
         let stopwatch1 = Instant::now();
-        SPInfo {
+        Info {
             stopwatch: stopwatch1,
             previous: stopwatch1.elapsed(),
             first: true,
         }
     }
 }
-impl SPInfo {
+impl Info {
     /// ストップウォッチを初期化します。
     pub fn clear(&mut self) {
         self.stopwatch = Instant::now();

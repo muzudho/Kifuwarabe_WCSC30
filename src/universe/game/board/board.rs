@@ -8,12 +8,12 @@
 //! 盤を想像すること☆（＾～＾）！
 //!
 
-use crate::model::univ::gam::misc::phase::*;
-use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
+use crate::universe::game::board::square::*;
 use crate::universe::game::game::Game;
 use crate::universe::game::piece::piece::*;
 use crate::universe::game::piece::piece_type::*;
+use crate::universe::game::position::phase::*;
 
 pub enum ThingsInTheSquare {
     Space,
@@ -115,7 +115,7 @@ impl Board {
             self.board[sq.address as usize] = piece_o;
 
             // 玉の位置を覚え直します。
-            use crate::model::univ::gam::misc::phase::Phase::*;
+            use crate::universe::game::position::phase::Phase::*;
             match piece {
                 Piece::King1 => self.square_of_king[First as usize] = sq.clone(),
                 Piece::King2 => self.square_of_king[Second as usize] = sq.clone(),

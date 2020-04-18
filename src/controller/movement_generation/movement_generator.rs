@@ -3,10 +3,10 @@
 //!
 
 use crate::controller::movement_generation::movements::*;
-use crate::model::univ::gam::misc::person::Person;
-use crate::model::univ::gam::misc::square::Square;
 use crate::speed_of_light::*;
+use crate::universe::game::board::square::Square;
 use crate::universe::game::game::Game;
+use crate::universe::game::position::person::Person;
 use std::collections::HashSet;
 
 /// 現局面の指し手を返すぜ☆（＾～＾）

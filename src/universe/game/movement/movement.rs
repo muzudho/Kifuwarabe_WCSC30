@@ -4,9 +4,9 @@
 //!
 use crate::controller::common_use::cu_asserts_controller::*;
 use crate::controller::common_use::cu_conv_controller::*;
-use crate::model::univ::gam::misc::movement_builder::MovementBuilder;
-use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
+use crate::universe::game::board::square::*;
+use crate::universe::game::movement::movement_builder::MovementBuilder;
 use crate::universe::game::piece::piece_type::PieceType;
 use crate::universe::game::piece::piece_type::*;
 use std::fmt;

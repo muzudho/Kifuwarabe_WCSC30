@@ -3,7 +3,7 @@
 //!
 extern crate rand;
 
-use crate::model::univ::gam::misc::square::*;
+use crate::universe::game::board::square::*;
 use crate::universe::game::piece::piece_type::PieceType;
 use crate::universe::game::piece::piece_type::*;
 use rand::Rng;

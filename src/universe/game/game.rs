@@ -1,17 +1,16 @@
-use crate::model::univ::gam::misc::info::SPInfo;
-use crate::model::univ::gam::misc::movement::Movement;
-use crate::model::univ::gam::misc::number_board::*;
-use crate::model::univ::gam::misc::person::Person;
-use crate::model::univ::gam::misc::phase::PHASE_LN;
-use crate::model::univ::gam::misc::phase::*;
-use crate::model::univ::gam::misc::square::BOARD_MEMORY_AREA;
-use crate::model::univ::gam::misc::square::SQUARE_NONE;
-use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
 use crate::universe::game::board::board::Board;
+use crate::universe::game::board::square::BOARD_MEMORY_AREA;
+use crate::universe::game::board::square::SQUARE_NONE;
+use crate::universe::game::board::square::*;
 use crate::universe::game::history::history::*;
+use crate::universe::game::info::Info;
+use crate::universe::game::movement::movement::Movement;
 use crate::universe::game::piece::piece::{Piece, MG_MAX, PIECE_LN};
 use crate::universe::game::piece::piece_struct::PieceStruct;
+use crate::universe::game::position::person::Person;
+use crate::universe::game::position::phase::PHASE_LN;
+use crate::universe::game::position::phase::*;
 use crate::universe::game::position::position::Position;
 use rand::Rng;
 
@@ -46,7 +45,7 @@ pub struct Game {
     /// 現局面
     pub position: Position,
     /// 情報表示担当
-    pub info: SPInfo,
+    pub info: Info,
 }
 impl Default for Game {
     fn default() -> Game {
@@ -63,7 +62,7 @@ impl Default for Game {
                 phase: [0; PHASE_LN],
             },
             position: Position::default(),
-            info: SPInfo::default(),
+            info: Info::default(),
         }
     }
 }
@@ -194,24 +193,6 @@ impl Game {
         s
     }
 
-    /// 自陣
-    pub fn get_ji_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.history.get_phase(&Person::Friend) {
-            crate::model::univ::gam::misc::region::SenteJin::to_elm()
-        } else {
-            crate::model::univ::gam::misc::region::GoteJin::to_elm()
-        }
-    }
-
-    /// 相手陣
-    pub fn get_aite_jin(&self) -> Vec<Square> {
-        if let Phase::First = self.history.get_phase(&Person::Friend) {
-            crate::model::univ::gam::misc::region::GoteJin::to_elm()
-        } else {
-            crate::model::univ::gam::misc::region::SenteJin::to_elm()
-        }
-    }
-
     /// 初期局面ハッシュを作り直す
     pub fn create_starting_position_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = self.starting_board.create_hash(&self, speed_of_light);
@@ -230,7 +211,7 @@ impl Game {
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use crate::model::univ::gam::misc::phase::Phase::*;
+        use crate::universe::game::position::phase::Phase::*;
         match self.history.get_phase(&Person::Friend) {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],
@@ -437,114 +418,5 @@ impl Game {
         } else {
             false
         }
-    }
-
-    /// 表示
-    pub fn print_number_board(&self, nb: &NumberBoard) -> String {
-        // 数盤表示
-        format!(
-            "    +----+----+----+----+----+----+----+----+----+
-i9  |{0:4}|{1:4}|{2:4}|{3:4}|{4:4}|{5:4}|{6:4}|{7:4}|{8:4}|
-    +----+----+----+----+----+----+----+----+----+
-h8  |{9:4}|{10:4}|{11:4}|{12:4}|{13:4}|{14:4}|{15:4}|{16:4}|{17:4}|
-    +----+----+----+----+----+----+----+----+----+
-g7  |{18:4}|{19:4}|{20:4}|{21:4}|{22:4}|{23:4}|{24:4}|{25:4}|{26:4}|
-    +----+----+----+----+----+----+----+----+----+
-f6  |{27:4}|{28:4}|{29:4}|{30:4}|{31:4}|{32:4}|{33:4}|{34:4}|{35:4}|
-    +----+----+----+----+----+----+----+----+----+
-e5  |{36:4}|{37:4}|{38:4}|{39:4}|{40:4}|{41:4}|{42:4}|{43:4}|{44:4}|
-    +----+----+----+----+----+----+----+----+----+
-d4  |{45:4}|{46:4}|{47:4}|{48:4}|{49:4}|{50:4}|{51:4}|{52:4}|{53:4}|
-    +----+----+----+----+----+----+----+----+----+
-c3  |{54:4}|{55:4}|{56:4}|{57:4}|{58:4}|{59:4}|{60:4}|{61:4}|{62:4}|
-    +----+----+----+----+----+----+----+----+----+
-b2  |{63:4}|{64:4}|{65:4}|{66:4}|{67:4}|{68:4}|{69:4}|{70:4}|{71:4}|
-    +----+----+----+----+----+----+----+----+----+
-a1  |{72:4}|{73:4}|{74:4}|{75:4}|{76:4}|{77:4}|{78:4}|{79:4}|{80:4}|
-    +----+----+----+----+----+----+----+----+----+
-       1    2    3    4    5    6    7    8    9\
-",
-            nb.get_number_by_square(&Square::from_address(19)),
-            nb.get_number_by_square(&Square::from_address(29)),
-            nb.get_number_by_square(&Square::from_address(39)),
-            nb.get_number_by_square(&Square::from_address(49)),
-            nb.get_number_by_square(&Square::from_address(59)),
-            nb.get_number_by_square(&Square::from_address(69)),
-            nb.get_number_by_square(&Square::from_address(79)),
-            nb.get_number_by_square(&Square::from_address(89)),
-            nb.get_number_by_square(&Square::from_address(99)),
-            nb.get_number_by_square(&Square::from_address(18)),
-            nb.get_number_by_square(&Square::from_address(28)),
-            nb.get_number_by_square(&Square::from_address(38)),
-            nb.get_number_by_square(&Square::from_address(48)),
-            nb.get_number_by_square(&Square::from_address(58)),
-            nb.get_number_by_square(&Square::from_address(68)),
-            nb.get_number_by_square(&Square::from_address(78)),
-            nb.get_number_by_square(&Square::from_address(88)),
-            nb.get_number_by_square(&Square::from_address(98)),
-            nb.get_number_by_square(&Square::from_address(17)),
-            nb.get_number_by_square(&Square::from_address(27)),
-            nb.get_number_by_square(&Square::from_address(37)),
-            nb.get_number_by_square(&Square::from_address(47)),
-            nb.get_number_by_square(&Square::from_address(57)),
-            nb.get_number_by_square(&Square::from_address(67)),
-            nb.get_number_by_square(&Square::from_address(77)),
-            nb.get_number_by_square(&Square::from_address(87)),
-            nb.get_number_by_square(&Square::from_address(97)),
-            nb.get_number_by_square(&Square::from_address(16)),
-            nb.get_number_by_square(&Square::from_address(26)),
-            nb.get_number_by_square(&Square::from_address(36)),
-            nb.get_number_by_square(&Square::from_address(46)),
-            nb.get_number_by_square(&Square::from_address(56)),
-            nb.get_number_by_square(&Square::from_address(66)),
-            nb.get_number_by_square(&Square::from_address(76)),
-            nb.get_number_by_square(&Square::from_address(86)),
-            nb.get_number_by_square(&Square::from_address(96)),
-            nb.get_number_by_square(&Square::from_address(15)),
-            nb.get_number_by_square(&Square::from_address(25)),
-            nb.get_number_by_square(&Square::from_address(35)),
-            nb.get_number_by_square(&Square::from_address(45)),
-            nb.get_number_by_square(&Square::from_address(55)),
-            nb.get_number_by_square(&Square::from_address(65)),
-            nb.get_number_by_square(&Square::from_address(75)),
-            nb.get_number_by_square(&Square::from_address(85)),
-            nb.get_number_by_square(&Square::from_address(95)),
-            nb.get_number_by_square(&Square::from_address(14)),
-            nb.get_number_by_square(&Square::from_address(24)),
-            nb.get_number_by_square(&Square::from_address(34)),
-            nb.get_number_by_square(&Square::from_address(44)),
-            nb.get_number_by_square(&Square::from_address(54)),
-            nb.get_number_by_square(&Square::from_address(64)),
-            nb.get_number_by_square(&Square::from_address(74)),
-            nb.get_number_by_square(&Square::from_address(84)),
-            nb.get_number_by_square(&Square::from_address(94)),
-            nb.get_number_by_square(&Square::from_address(13)),
-            nb.get_number_by_square(&Square::from_address(23)),
-            nb.get_number_by_square(&Square::from_address(33)),
-            nb.get_number_by_square(&Square::from_address(43)),
-            nb.get_number_by_square(&Square::from_address(53)),
-            nb.get_number_by_square(&Square::from_address(63)),
-            nb.get_number_by_square(&Square::from_address(73)),
-            nb.get_number_by_square(&Square::from_address(83)),
-            nb.get_number_by_square(&Square::from_address(93)),
-            nb.get_number_by_square(&Square::from_address(12)),
-            nb.get_number_by_square(&Square::from_address(22)),
-            nb.get_number_by_square(&Square::from_address(32)),
-            nb.get_number_by_square(&Square::from_address(42)),
-            nb.get_number_by_square(&Square::from_address(52)),
-            nb.get_number_by_square(&Square::from_address(62)),
-            nb.get_number_by_square(&Square::from_address(72)),
-            nb.get_number_by_square(&Square::from_address(82)),
-            nb.get_number_by_square(&Square::from_address(92)),
-            nb.get_number_by_square(&Square::from_address(11)),
-            nb.get_number_by_square(&Square::from_address(21)),
-            nb.get_number_by_square(&Square::from_address(31)),
-            nb.get_number_by_square(&Square::from_address(41)),
-            nb.get_number_by_square(&Square::from_address(51)),
-            nb.get_number_by_square(&Square::from_address(61)),
-            nb.get_number_by_square(&Square::from_address(71)),
-            nb.get_number_by_square(&Square::from_address(81)),
-            nb.get_number_by_square(&Square::from_address(91)),
-        )
     }
 }

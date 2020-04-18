@@ -7,8 +7,8 @@ use crate::controller::common_use::cu_geo_teigi_controller::*;
 use crate::controller::common_use::cu_math_controller::*;
 use crate::controller::common_use::cu_random_move_controller;
 use crate::controller::io::*;
-use crate::model::univ::gam::misc::person::Person;
 use crate::speed_of_light::*;
+use crate::universe::game::position::person::Person;
 use crate::universe::universe::*;
 
 /// unit-test 2

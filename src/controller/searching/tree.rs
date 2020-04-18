@@ -4,11 +4,11 @@
 
 use super::evaluator::*;
 use crate::controller::movement_generation::movement_generator::*;
-use crate::model::univ::gam::misc::movement::Movement;
-use crate::model::univ::gam::misc::movement_builder::*;
 use crate::speed_of_light::*;
 use crate::universe::game::game::Game;
 use crate::universe::game::history::history::SENNTITE_NUM;
+use crate::universe::game::movement::movement::Movement;
+use crate::universe::game::movement::movement_builder::MovementBuilder;
 use std::collections::HashSet;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。

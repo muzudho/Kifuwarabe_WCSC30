@@ -4,13 +4,13 @@
 //!
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use crate::model::univ::gam::misc::phase::Phase;
 use crate::universe::game::piece::piece::Piece;
 use crate::universe::game::piece::piece::Piece::*;
 use crate::universe::game::piece::piece_struct::PieceStruct;
 use crate::universe::game::piece::piece_type::PieceType;
 use crate::universe::game::piece::piece_type::PieceType::*;
 use crate::universe::game::piece::piece_type_struct::PieceTypeStruct;
+use crate::universe::game::position::phase::Phase;
 
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）

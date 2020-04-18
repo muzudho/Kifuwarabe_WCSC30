@@ -2,7 +2,7 @@
 //! 変換
 //!
 use crate::controller::common_use::cu_geo_teigi_controller::*;
-use crate::model::univ::gam::misc::square::*;
+use crate::universe::game::board::square::*;
 
 /**********
  * 論理値 *

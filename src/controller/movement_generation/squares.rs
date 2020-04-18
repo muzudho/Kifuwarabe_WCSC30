@@ -1,9 +1,9 @@
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_as_absolute;
 use crate::controller::common_use::cu_asserts_controller::assert_in_board_with_frame_as_absolute;
-use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::square::Square;
-use crate::model::univ::gam::misc::square::*;
+use crate::universe::game::board::square::Square;
+use crate::universe::game::board::square::*;
 use crate::universe::game::piece::piece_type::PieceType;
+use crate::universe::game::position::phase::Phase;
 use std::fmt;
 
 /// 機敏性。

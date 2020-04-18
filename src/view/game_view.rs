@@ -1,7 +1,7 @@
-use crate::model::univ::gam::misc::person::Person;
-use crate::model::univ::gam::misc::square::*;
+use crate::universe::game::board::square::*;
 use crate::universe::game::game::{Game, PosNums};
 use crate::universe::game::piece::piece::{Piece, PIECE_WHITE_SPACE};
+use crate::universe::game::position::person::Person;
 
 pub struct GameView {}
 impl GameView {

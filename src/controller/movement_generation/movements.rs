@@ -1,14 +1,14 @@
 use crate::controller::movement_generation::movement_generator::*;
 use crate::controller::movement_generation::squares::*;
-use crate::model::univ::gam::misc::movement_builder::*;
-use crate::model::univ::gam::misc::person::Person;
-use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
 use crate::universe::game::board::board::Board;
+use crate::universe::game::board::square::*;
 use crate::universe::game::game::Game;
+use crate::universe::game::movement::movement_builder::MovementBuilder;
 use crate::universe::game::piece::piece::*;
 use crate::universe::game::piece::piece_type::*;
+use crate::universe::game::position::person::Person;
+use crate::universe::game::position::phase::Phase;
 use crate::universe::game::position::position::Position;
 
 pub struct MGMovements {}

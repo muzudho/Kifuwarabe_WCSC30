@@ -1,6 +1,6 @@
-use crate::model::univ::gam::misc::movement_builder::*;
-use crate::model::univ::gam::misc::square::*;
 use crate::universe::game::board::board::*;
+use crate::universe::game::board::square::*;
+use crate::universe::game::movement::movement_builder::MovementBuilder;
 use crate::universe::game::piece::piece_type::*;
 
 /// ミュータブルなオブジェクト☆（＾～＾）

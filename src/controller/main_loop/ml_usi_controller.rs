@@ -2,12 +2,12 @@
 //! USIプロトコル
 //!
 use crate::controller::io::*;
-use crate::model::univ::gam::misc::square::*;
-use crate::model::univ::usi::*;
 use crate::speed_of_light::*;
+use crate::universe::game::board::square::*;
 use crate::universe::game::piece::piece::Piece;
 use crate::universe::game::piece::piece_type::PieceType;
 use crate::universe::universe::*;
+use crate::universe::usi::*;
 
 /**
  * 指し手読取
