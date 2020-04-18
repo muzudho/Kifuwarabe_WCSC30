@@ -1,5 +1,5 @@
-use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::square::*;
+use crate::universe::game::piece::piece::Piece;
 
 /// 升 × 駒
 pub struct SquareAndPiece {

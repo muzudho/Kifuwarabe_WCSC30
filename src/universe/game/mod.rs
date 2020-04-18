@@ -1,2 +1,4 @@
+pub mod board;
 pub mod game;
-pub mod position;
+pub mod history;
+pub mod piece;pub mod position;

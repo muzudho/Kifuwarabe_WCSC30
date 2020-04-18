@@ -1,7 +1,7 @@
 use crate::model::univ::gam::misc::movement::Movement;
 use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece::Piece;
+use crate::universe::game::piece::piece::Piece;
 
 /// 手目数。何手目まで指せるか。
 /// 棋譜を残す配列のサイズでもある。

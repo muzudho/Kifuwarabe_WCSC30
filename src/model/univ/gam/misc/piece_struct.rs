@@ -1,6 +1,6 @@
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_type::PieceType;
+use crate::universe::game::piece::piece::Piece;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
@@ -27,8 +27,8 @@ impl PieceStruct {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
         use crate::model::univ::gam::misc::phase::Phase::*;
-        use crate::model::univ::gam::misc::piece::Piece::*;
         use crate::model::univ::gam::misc::piece_type::PieceType::*;
+        use crate::universe::game::piece::piece::Piece::*;
         match p {
             King1 => PieceStruct {
                 piece: King1,
@@ -258,7 +258,7 @@ impl PieceStruct {
     }
 
     pub fn from_serial_piece_number(km_num: usize) -> Option<Self> {
-        use crate::model::univ::gam::misc::piece::Piece::*;
+        use crate::universe::game::piece::piece::Piece::*;
         match km_num {
             0 => Some(PieceStruct::from_piece(King1)),
             1 => Some(PieceStruct::from_piece(Rook1)),

@@ -5,12 +5,12 @@
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece::Piece;
-use crate::model::univ::gam::misc::piece::Piece::*;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::piece_type::PieceType::*;
 use crate::model::univ::gam::misc::piece_type_struct::PieceTypeStruct;
+use crate::universe::game::piece::piece::Piece;
+use crate::universe::game::piece::piece::Piece::*;
 
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
@@ -156,8 +156,8 @@ impl SpeedOfLight {
         phase: Phase,
         piece_type: PieceType,
     ) -> &PieceStruct {
-        use crate::model::univ::gam::misc::piece::Piece::*;
         use crate::model::univ::gam::misc::piece_type::PieceType::*;
+        use crate::universe::game::piece::piece::Piece::*;
         match phase {
             Phase::First => match piece_type {
                 King => self.get_piece_struct(&King1),
@@ -223,16 +223,13 @@ impl SpeedOfLight {
     }
 
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn get_piece_type_struct_from_piece(
-        &self,
-        piece: &crate::model::univ::gam::misc::piece::Piece,
-    ) -> &PieceTypeStruct {
+    pub fn get_piece_type_struct_from_piece(&self, piece: &Piece) -> &PieceTypeStruct {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::model::univ::gam::misc::piece::Piece::*;
+        use crate::universe::game::piece::piece::Piece::*;
         match *piece {
             King1 => &self.king,
             Rook1 => &self.rook,

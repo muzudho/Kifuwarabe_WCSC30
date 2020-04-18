@@ -9,12 +9,11 @@
 //!
 
 use crate::model::univ::gam::misc::phase::*;
-use crate::model::univ::gam::misc::piece::Piece;
-use crate::model::univ::gam::misc::piece::*;
 use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
 use crate::universe::game::game::Game;
+use crate::universe::game::piece::piece::*;
 
 pub enum ThingsInTheSquare {
     Space,

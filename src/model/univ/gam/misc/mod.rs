@@ -5,7 +5,6 @@ pub mod movement_builder;
 pub mod number_board;
 pub mod person;
 pub mod phase;
-pub mod piece;
 pub mod piece_direction;
 pub mod piece_struct;
 pub mod piece_type;

@@ -1,14 +1,14 @@
 use crate::controller::movement_generation::movement_generator::*;
 use crate::controller::movement_generation::squares::*;
-use crate::model::univ::gam::board::Board;
 use crate::model::univ::gam::misc::movement_builder::*;
 use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::Phase;
-use crate::model::univ::gam::misc::piece::*;
 use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
 use crate::speed_of_light::*;
+use crate::universe::game::board::board::Board;
 use crate::universe::game::game::Game;
+use crate::universe::game::piece::piece::*;
 use crate::universe::game::position::position::Position;
 
 pub struct MGMovements {}
@@ -48,7 +48,7 @@ impl MGMovements {
     {
         let callback_next = &mut |destination, promotability, _agility| {
             use crate::controller::movement_generation::squares::Promotability::*;
-            use crate::model::univ::gam::board::ThingsInTheSquare::*;
+            use crate::universe::game::board::board::ThingsInTheSquare::*;
             let things_in_the_square =
                 current_board.what_is_in_the_square(friend, &destination, speed_of_light);
             match things_in_the_square {
@@ -138,7 +138,7 @@ impl MGMovements {
                 .get_hand(hand_piece, speed_of_light)
             {
                 // 駒を持っていれば
-                use crate::model::univ::gam::misc::piece::Piece::*;
+                use crate::universe::game::piece::piece::Piece::*;
                 match *hand_piece {
                     // ▲歩、▲香 の打てる範囲は２段目～９段目。
                     Pawn1 | Lance1 => {
@@ -217,7 +217,7 @@ impl MGMovements {
             let current_board = &position.current_board;
             let ps_dst = speed_of_light.get_piece_struct(hand_piece);
             let piece_type_dst = ps_dst.piece_type();
-            use crate::model::univ::gam::misc::piece::Piece::*;
+            use crate::universe::game::piece::piece::Piece::*;
             match *hand_piece {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない☆（＾～＾）

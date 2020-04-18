@@ -3,16 +3,12 @@
 //!
 
 use super::evaluator::*;
-// use crate::controller::command::Commands;
-// use crate::controller::io::*;
 use crate::controller::movement_generation::movement_generator::*;
-// use crate::controller::searching::control_counter::*;
-use crate::model::univ::gam::history::SENNTITE_NUM;
 use crate::model::univ::gam::misc::movement::Movement;
 use crate::model::univ::gam::misc::movement_builder::*;
-// use crate::model::univ::gam::misc::person::*;
 use crate::speed_of_light::*;
 use crate::universe::game::game::Game;
+use crate::universe::game::history::history::SENNTITE_NUM;
 use std::collections::HashSet;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。

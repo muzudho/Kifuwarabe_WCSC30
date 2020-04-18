@@ -145,12 +145,8 @@ fn parse_extend_command(
 ) {
     // 文字数を調べようぜ☆（＾～＾）
     let len = line.chars().count();
-    // C
-    if 6 < len && &line[starts..7] == "contnum" {
-        // 利き数表示
-        controller::main_loop::ml_main_controller::cmd_kikisu(&universe, &speed_of_light);
     // D
-    } else if 2 < len && &line[starts..3] == "do " {
+    if 2 < len && &line[starts..3] == "do " {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える
         if read_sasite(&line, &mut starts, len, universe) {
