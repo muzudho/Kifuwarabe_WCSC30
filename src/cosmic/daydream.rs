@@ -127,15 +127,13 @@ impl Tree {
     pub fn first_move(speed_of_light: &SpeedOfLight, universe: &mut Universe) -> TreeState {
         universe.game.info.clear();
 
-        let dammy_ts = TreeState::default();
-
         Tree::search(
             0,
             universe.option_max_depth - 1,
             &mut universe.game,
             speed_of_light,
             "",
-            &dammy_ts,
+            0,
         )
     }
 
@@ -157,7 +155,7 @@ impl Tree {
         game: &mut Game,
         speed_of_light: &SpeedOfLight,
         pv: &str,
-        parent_ts: &TreeState,
+        parent_sum_nodes: u64,
     ) -> TreeState {
         let mut ts = TreeState::default();
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
@@ -179,18 +177,6 @@ impl Tree {
         }
 
         for movement_hash in movement_set.iter() {
-            if game.info.is_printable() {
-                // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
-                game.info.print(
-                    cur_depth,
-                    ts.get_sum_state() + parent_ts.get_sum_state(),
-                    ts.get_value(),
-                    *movement_hash,
-                    Some(format!("{} {}", pv, ts.to_movement())),
-                    None,
-                );
-            }
-
             // 1手進めるぜ☆（＾～＾）
             ts.add_state();
             let movement = Movement::from_hash(*movement_hash);
@@ -207,7 +193,7 @@ impl Tree {
 
                     // 1手戻すぜ☆（＾～＾）
                     game.undo_move(speed_of_light);
-                    return ts;
+                    break;
                 }
             }
 
@@ -229,7 +215,7 @@ impl Tree {
                     game,
                     speed_of_light,
                     &format!("{} {}", pv, Movement::from_hash(*movement_hash)),
-                    &ts,
+                    ts.get_sum_state() + parent_sum_nodes,
                 );
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
@@ -249,6 +235,18 @@ impl Tree {
             ts.value = Some(0);
             ts.reason = "repetition better than resign".to_string();
         };
+
+        if game.info.is_printable() {
+            // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
+            game.info.print(
+                cur_depth,
+                ts.get_sum_state() + parent_sum_nodes,
+                ts.get_value(),
+                ts.movement_hash,
+                Some(format!("{} {}", pv, ts.to_movement())),
+                None,
+            );
+        }
 
         ts
     }
