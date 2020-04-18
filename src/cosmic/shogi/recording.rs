@@ -1,6 +1,5 @@
-use crate::cosmic::game::movement::movement::Movement;
-use crate::cosmic::game::position::person::Person;
-use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::shogi::movement::movement::Movement;
+use crate::cosmic::shogi::state::{Person, Phase};
 use crate::cosmic::toy_box::Piece;
 
 /// 手目数。何手目まで指せるか。
@@ -36,7 +35,7 @@ impl Default for History {
 impl History {
     /// 手番
     pub fn get_phase(&self, person: &Person) -> Phase {
-        use crate::cosmic::game::position::person::Person::*;
+        use crate::cosmic::shogi::state::Person::*;
         match *person {
             // None => Phase::None,
             Friend => {

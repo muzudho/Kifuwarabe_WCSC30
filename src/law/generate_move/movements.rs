@@ -1,8 +1,6 @@
-use crate::cosmic::game::game::Game;
-use crate::cosmic::game::movement::movement_builder::MovementBuilder;
-use crate::cosmic::game::position::person::Person;
-use crate::cosmic::game::position::phase::Phase;
-use crate::cosmic::game::position::position::Position;
+use crate::cosmic::shogi::movement::movement_builder::MovementBuilder;
+use crate::cosmic::shogi::playing::Game;
+use crate::cosmic::shogi::state::{Person, Phase, Position};
 use crate::cosmic::smart::piece_type::*;
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::{Board, Piece};

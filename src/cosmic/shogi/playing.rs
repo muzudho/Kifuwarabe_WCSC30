@@ -1,10 +1,7 @@
-use crate::cosmic::game::history::history::*;
-use crate::cosmic::game::info::Info;
-use crate::cosmic::game::movement::movement::Movement;
-use crate::cosmic::game::position::person::Person;
-use crate::cosmic::game::position::phase::PHASE_LN;
-use crate::cosmic::game::position::phase::*;
-use crate::cosmic::game::position::position::Position;
+use crate::cosmic::shogi::info::Info;
+use crate::cosmic::shogi::movement::movement::Movement;
+use crate::cosmic::shogi::recording::History;
+use crate::cosmic::shogi::state::{Person, Position, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
 use crate::cosmic::smart::square::{isquare, Square, BOARD_MEMORY_AREA, SQUARE_DROP, SQUARE_NONE};
 use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};
 use crate::law::speed_of_light::*;
@@ -211,7 +208,7 @@ impl Game {
             .create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use crate::cosmic::game::position::phase::Phase::*;
+        use crate::cosmic::shogi::state::Phase::*;
         match self.history.get_phase(&Person::Friend) {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],

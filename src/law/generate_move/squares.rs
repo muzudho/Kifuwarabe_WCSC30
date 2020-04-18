@@ -1,4 +1,4 @@
-use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::piece_type::PieceType;
 use crate::cosmic::smart::square::{
     isquare, Angle, RelativeSquare, Square, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,

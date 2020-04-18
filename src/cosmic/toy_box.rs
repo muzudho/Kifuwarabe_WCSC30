@@ -2,8 +2,8 @@
 //! 駒 と 盤
 //!
 
-use crate::cosmic::game::game::Game;
-use crate::cosmic::game::position::phase::*;
+use crate::cosmic::shogi::playing::Game;
+use crate::cosmic::shogi::state::{Phase, PHASE_LN};
 use crate::cosmic::smart::piece_type::*;
 use crate::cosmic::smart::square::*;
 use crate::law::speed_of_light::*;
@@ -111,7 +111,7 @@ impl Board {
             self.board[sq.address as usize] = piece_o;
 
             // 玉の位置を覚え直します。
-            use crate::cosmic::game::position::phase::Phase::*;
+            use crate::cosmic::shogi::state::Phase::*;
             match piece {
                 Piece::King1 => self.square_of_king[First as usize] = sq.clone(),
                 Piece::King2 => self.square_of_king[Second as usize] = sq.clone(),

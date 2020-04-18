@@ -2,10 +2,10 @@
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
 
-use crate::cosmic::game::game::Game;
-use crate::cosmic::game::history::history::SENNTITE_NUM;
-use crate::cosmic::game::movement::movement::Movement;
-use crate::cosmic::game::movement::movement_builder::MovementBuilder;
+use crate::cosmic::shogi::movement::movement::Movement;
+use crate::cosmic::shogi::movement::movement_builder::MovementBuilder;
+use crate::cosmic::shogi::playing::Game;
+use crate::cosmic::shogi::recording::SENNTITE_NUM;
 use crate::cosmic::universe::Universe;
 use crate::cosmic::wisdom::searching::evaluator::*;
 use crate::law::generate_move::movement_generator::*;

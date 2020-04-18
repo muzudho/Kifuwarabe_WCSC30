@@ -1,4 +1,4 @@
-use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::piece_type::PieceType;
 use crate::cosmic::toy_box::Piece;
 
@@ -26,7 +26,7 @@ pub struct PieceStruct {
 impl PieceStruct {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
-        use crate::cosmic::game::position::phase::Phase::*;
+        use crate::cosmic::shogi::state::Phase::*;
         use crate::cosmic::smart::piece_type::PieceType::*;
         use crate::cosmic::toy_box::Piece::*;
         match p {

@@ -1,5 +1,5 @@
-use crate::cosmic::game::game::{Game, PosNums};
-use crate::cosmic::game::position::person::Person;
+use crate::cosmic::shogi::playing::{Game, PosNums};
+use crate::cosmic::shogi::state::Person;
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::{Piece, PIECE_WHITE_SPACE};
 

@@ -4,7 +4,7 @@
 //!
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use crate::cosmic::game::position::phase::Phase;
+use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::piece_type::PieceType;
 use crate::cosmic::toy_box::Piece;
 use crate::law::piece_struct::PieceStruct;

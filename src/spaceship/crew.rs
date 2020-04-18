@@ -1,6 +1,6 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
-use crate::cosmic::game::game::{Game, PosNums};
+use crate::cosmic::shogi::playing::{Game, PosNums};
 use crate::cosmic::smart::square::Square;
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::cu_conv_controller::*;

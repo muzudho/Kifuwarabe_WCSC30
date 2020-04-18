@@ -2,7 +2,7 @@
 //! Value object.
 //! Movement. (指し手)
 //!
-use crate::cosmic::game::movement::movement_builder::MovementBuilder;
+use crate::cosmic::shogi::movement::movement_builder::MovementBuilder;
 use crate::cosmic::smart::piece_type::PieceType;
 use crate::cosmic::smart::piece_type::*;
 use crate::cosmic::smart::square::*;

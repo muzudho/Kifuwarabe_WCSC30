@@ -2,8 +2,8 @@
 //! 現局面を使った指し手生成
 //!
 
-use crate::cosmic::game::game::Game;
-use crate::cosmic::game::position::person::Person;
+use crate::cosmic::shogi::playing::Game;
+use crate::cosmic::shogi::state::Person;
 use crate::cosmic::smart::square::Square;
 use crate::law::generate_move::movements::*;
 use crate::law::speed_of_light::*;
