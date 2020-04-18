@@ -11,27 +11,24 @@ extern crate lazy_static;
 //
 // use したい モジュールは、最初に読み取られる　この main.rs ファイルに並べる
 pub mod config;
-pub mod controller;
-pub mod speed_of_light;
-pub mod universe;
-pub mod view;
+pub mod cosmic;
+pub mod spaceship;
+pub mod white_hole;
 
 use crate::config::*;
-use crate::controller::command::Commands;
-use crate::controller::common_use::cu_conv_controller::*;
-use crate::controller::io::*;
-use crate::controller::main_loop::ml_usi_controller::*;
-use crate::controller::searching::tree::*;
-use crate::controller::unit_test::ut_controller::*;
-use crate::speed_of_light::*;
-use crate::universe::game::board::square::*;
-use crate::universe::game::game::PosNums;
-use crate::universe::universe::*;
-use crate::universe::usi::*;
-use crate::view::game_view::*;
+use crate::cosmic::game::board::square::*;
+use crate::cosmic::game::game::PosNums;
+use crate::cosmic::law::cryptographic::cu_conv_controller::*;
+use crate::cosmic::law::speed_of_light::*;
+use crate::cosmic::law::usi::*;
+use crate::cosmic::universe::*;
+use crate::cosmic::wisdom::searching::tree::*;
+use crate::spaceship::captain::Commands;
+use crate::white_hole::io::*;
+use crate::white_hole::visual::game_view::*;
+use crate::white_hole::visual::title_screen::ts_view::*;
 use rand::Rng;
-use std::io;
-use view::title_screen::ts_view::*;
+use std::io as std_io;
 
 fn main() {
     // 光速は定義☆（＾～＾）変化しないから直接アクセスしろだぜ☆（＾～＾）アクセッサは要らないぜ☆（＾～＾）
@@ -53,7 +50,7 @@ fn main() {
         };
 
         // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
-        match io::stdin().read_line(&mut line) {
+        match std_io::stdin().read_line(&mut line) {
             Ok(_n) => {}
             Err(e) => panic!("info string Failed to read line. / {}", e),
         };
@@ -185,21 +182,8 @@ fn parse_extend_command(
     // S
     } else if 7 < len && &line[starts..8] == "startpos" {
         // 平手初期局面
-        controller::main_loop::ml_usi_controller::read_position(
-            &POS_1.to_string(),
-            universe,
-            &speed_of_light,
-        );
+        read_position(&POS_1.to_string(), universe, &speed_of_light);
     // R
-    } else if 5 < len && &line[starts..6] == "random_piece_type" {
-        IO::writeln("5<len random_piece_type");
-        // 乱駒種類
-        let piece_type = controller::common_use::cu_random_move_controller::random_piece_type();
-        IO::writeln(&format!("乱駒種類={}", &piece_type));
-    } else if 4 < len && &line[starts..5] == "random_ms" {
-        // 乱升
-        let square = controller::common_use::cu_random_move_controller::random_square();
-        IO::writeln(&format!("乱升={}", square.address));
     } else if 3 < len && &line[starts..4] == "rand" {
         IO::writeln("3<len rand");
         // 乱数の試し
@@ -235,15 +219,5 @@ fn parse_extend_command(
                 universe.game.history.ply
             ));
         }
-    } else if 8 < len && &line[starts..9] == "unit-test" {
-        starts += 4;
-        // 続きにスペース「 」が１つあれば読み飛ばす
-        if 0 < (len - starts) && &line[starts..=starts] == " " {
-            starts += 1;
-        }
-        // いろいろな動作テスト
-        IO::writeln(&format!("unit-test starts={} len={}", starts, len));
-        unit_test(&line, &mut starts, len, universe, &speed_of_light);
-        //IO::writeln( &ml_universe_dto.pop_command() );
     }
 }
