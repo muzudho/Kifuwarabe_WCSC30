@@ -1,9 +1,9 @@
 use crate::controller::io::*;
 use crate::controller::main_loop::ml_usi_controller::*;
 use crate::controller::movement_generation::movement_generator::*;
-use crate::model::univ::game::*;
-use crate::model::univ::speed_of_light::SpeedOfLight;
-use crate::model::universe::Universe;
+use crate::speed_of_light::*;
+use crate::universe::game::game::{Game, PosNums};
+use crate::universe::universe::Universe;
 use crate::view::game_view::*;
 use crate::view::unit_test::unit_test_view::print_movement_hashset;
 use std::collections::HashSet;

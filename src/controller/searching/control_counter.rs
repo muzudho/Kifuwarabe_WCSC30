@@ -7,8 +7,8 @@ use crate::model::univ::gam::misc::person::Person;
 use crate::model::univ::gam::misc::phase::*;
 use crate::model::univ::gam::misc::piece::*;
 use crate::model::univ::gam::misc::piece_struct::PieceStruct;
-use crate::model::univ::game::Game;
-use crate::model::univ::speed_of_light::*;
+use crate::speed_of_light::*;
+use crate::universe::game::game::Game;
 use std::collections::HashSet;
 
 /// 指定局面の利き升調べ。一から再計算☆（＾～＾）

@@ -4,7 +4,7 @@
 
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::piece_type::*;
-use crate::model::univ::speed_of_light::*;
+use crate::speed_of_light::*;
 use std::collections::HashSet;
 
 pub struct SPPieceTypeSetDto {

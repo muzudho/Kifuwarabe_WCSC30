@@ -3,16 +3,16 @@
 //!
 
 use super::evaluator::*;
-use crate::controller::command::Commands;
-use crate::controller::io::*;
+// use crate::controller::command::Commands;
+// use crate::controller::io::*;
 use crate::controller::movement_generation::movement_generator::*;
 // use crate::controller::searching::control_counter::*;
 use crate::model::univ::gam::history::SENNTITE_NUM;
 use crate::model::univ::gam::misc::movement::Movement;
 use crate::model::univ::gam::misc::movement_builder::*;
-use crate::model::univ::gam::misc::person::*;
-use crate::model::univ::game::Game;
-use crate::model::univ::speed_of_light::*;
+// use crate::model::univ::gam::misc::person::*;
+use crate::speed_of_light::*;
+use crate::universe::game::game::Game;
 use std::collections::HashSet;
 
 /// 将来の結果を、現在に遡って持ってくる方向の結果。
@@ -145,13 +145,15 @@ pub fn get_best_movement(
     // 指し手はハッシュ値で入っている☆（＾～＾）
     let mut movement_set = HashSet::<u64>::new();
 
+    /*
     IO::debugln(&format!(
         "n={} friend={}.",
         sum_nodes,
         game.history.get_phase(&Person::Friend)
     ));
+    */
     generate_movement(game, speed_of_light, &mut movement_set);
-    Commands::genmove(&speed_of_light, &game);
+    // Commands::genmove(&speed_of_light, &game);
 
     // 指せる手が無ければ投了☆（＾～＾）
     if movement_set.is_empty() {
@@ -181,8 +183,10 @@ pub fn get_best_movement(
         // 1手進めるぜ☆（＾～＾）
         let movement = Movement::from_hash(*movement_hash);
         let captured_piece = game.do_move(&movement, speed_of_light);
+        /*
         IO::debugln(&format!("n={} do.", sum_nodes));
         Commands::pos(&game);
+        */
 
         // 千日手かどうかを判定する☆（＾～＾）
         if SENNTITE_NUM <= game.count_same_ky() {
@@ -202,7 +206,7 @@ pub fn get_best_movement(
                 &movement,
                 &format!("{} {} EndNode", pv, movement),
             );
-            IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
+        // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
         } else {
             // 枝局面なら、更に深く進むぜ☆（＾～＾）
             let opponent_best_move = get_best_movement(
@@ -247,8 +251,10 @@ pub fn get_best_movement(
         }
         // 1手戻すぜ☆（＾～＾）
         game.undo_move(speed_of_light);
+        /*
         IO::debugln(&format!("n={} undo.", sum_nodes));
         Commands::pos(&game);
+        */
     }
 
     // メートを調べようぜ☆（＾～＾）

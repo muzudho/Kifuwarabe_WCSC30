@@ -5,7 +5,7 @@
 //!
 
 use crate::model::univ::gam::misc::piece_type_struct::NONE_SERIAL_PIECE_TYPE_NUMBER;
-use crate::model::univ::speed_of_light::SpeedOfLight;
+use crate::speed_of_light::*;
 use std::fmt;
 
 pub const KMS_LN: usize = 16;

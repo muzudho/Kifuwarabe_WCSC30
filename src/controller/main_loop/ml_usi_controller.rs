@@ -5,9 +5,9 @@ use crate::controller::io::*;
 use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_type::PieceType;
 use crate::model::univ::gam::misc::square::*;
-use crate::model::univ::speed_of_light::*;
 use crate::model::univ::usi::*;
-use crate::model::universe::*;
+use crate::speed_of_light::*;
+use crate::universe::universe::*;
 
 /**
  * 指し手読取

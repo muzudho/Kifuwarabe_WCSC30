@@ -8,8 +8,8 @@ use crate::controller::common_use::cu_math_controller::*;
 use crate::controller::common_use::cu_random_move_controller;
 use crate::controller::io::*;
 use crate::model::univ::gam::misc::person::Person;
-use crate::model::univ::speed_of_light::*;
-use crate::model::universe::*;
+use crate::speed_of_light::*;
+use crate::universe::universe::*;
 
 /// unit-test 2
 /// といったコマンドに対応☆（＾～＾）

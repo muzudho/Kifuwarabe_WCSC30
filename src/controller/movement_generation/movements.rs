@@ -7,9 +7,9 @@ use crate::model::univ::gam::misc::phase::Phase;
 use crate::model::univ::gam::misc::piece::*;
 use crate::model::univ::gam::misc::piece_type::*;
 use crate::model::univ::gam::misc::square::*;
-use crate::model::univ::gam::position::Position;
-use crate::model::univ::game::Game;
-use crate::model::univ::speed_of_light::*;
+use crate::speed_of_light::*;
+use crate::universe::game::game::Game;
+use crate::universe::game::position::position::Position;
 
 pub struct MGMovements {}
 impl MGMovements {

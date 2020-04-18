@@ -13,8 +13,8 @@ use crate::model::univ::gam::misc::piece_struct::PieceStruct;
 use crate::model::univ::gam::misc::square::BOARD_MEMORY_AREA;
 use crate::model::univ::gam::misc::square::SQUARE_NONE;
 use crate::model::univ::gam::misc::square::*;
-use crate::model::univ::gam::position::Position;
-use crate::model::univ::speed_of_light::SpeedOfLight;
+use crate::speed_of_light::*;
+use crate::universe::game::position::position::Position;
 use rand::Rng;
 
 /// 局面

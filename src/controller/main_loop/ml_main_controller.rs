@@ -4,8 +4,8 @@
 use crate::controller::io::*;
 use crate::model::univ::gam::misc::phase::*;
 use crate::model::univ::gam::misc::piece::*;
-use crate::model::univ::speed_of_light::*;
-use crate::model::universe::*;
+use crate::speed_of_light::*;
+use crate::universe::universe::*;
 
 /// 利き数表示
 pub fn cmd_kikisu(universe: &Universe, speed_of_light: &SpeedOfLight) {

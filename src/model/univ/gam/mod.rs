@@ -1,3 +1,3 @@
 pub mod board;
 pub mod history;
-pub mod misc;pub mod position;
+pub mod misc;

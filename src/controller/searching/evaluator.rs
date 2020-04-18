@@ -3,7 +3,7 @@
 //!
 use crate::model::univ::gam::misc::piece::Piece;
 use crate::model::univ::gam::misc::piece_type::PieceType;
-use crate::model::univ::speed_of_light::SpeedOfLight;
+use crate::speed_of_light::*;
 
 pub struct Evaluation {
     pub value: i16,
