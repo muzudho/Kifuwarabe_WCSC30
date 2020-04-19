@@ -9,7 +9,7 @@ use crate::cosmic::smart::features::PieceType::King;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::*;
-use crate::white_hole::io::IO;
+use crate::spaceship::equipment::Beam;
 use std::collections::HashSet;
 
 #[derive(Clone)]
@@ -85,7 +85,7 @@ impl TreeState {
                 }
             }
         } else {
-            panic!(IO::panicing("評価値が付いてないぜ☆（＾～＾）！"))
+            panic!(Beam::trouble("評価値が付いてないぜ☆（＾～＾）！"))
         }
     }
 

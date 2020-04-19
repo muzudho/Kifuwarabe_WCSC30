@@ -4,10 +4,11 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::features::PieceType;
-use crate::cosmic::smart::square::*;
+use crate::cosmic::smart::square::{Address, FILE_9, RANK_1};
 use crate::cosmic::toy_box::Piece;
-use crate::law::speed_of_light::*;
-use crate::white_hole::io::*;
+use crate::law::speed_of_light::SpeedOfLight;
+use crate::spaceship::equipment::Beam;
+use atoi::atoi;
 
 /*
 /// USIプロトコル表記: 最多合法手５９３手局面
@@ -48,7 +49,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     // 1文字目と2文字目
     // 移動元とドロップ。
     enum Source {
-        Move(i8, i8),
+        Move(u8, i8),
         Drop(PieceType),
     }
 
@@ -63,22 +64,14 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         "P" => Source::Drop(PieceType::Pawn),
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
-            let file = match &line[*starts..=*starts] {
-                "1" => 1,
-                "2" => 2,
-                "3" => 3,
-                "4" => 4,
-                "5" => 5,
-                "6" => 6,
-                "7" => 7,
-                "8" => 8,
-                "9" => 9,
-                _ => {
-                    panic!(IO::panicing(&format!(
-                        "(1) '{}' だった。",
-                        &line[*starts..=*starts]
-                    )));
-                }
+            // 数字じゃないものが入ったら強制終了するんじゃないか☆（＾～＾）
+            let file = if let Some(num) = atoi::<u8>(line[*starts..=*starts].as_bytes()) {
+                num
+            } else {
+                panic!(Beam::trouble(&format!(
+                    "(1) '{}' だった。",
+                    &line[*starts..=*starts]
+                )))
             };
             *starts += 1;
 
@@ -93,7 +86,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
                 "h" => Source::Move(file, 8),
                 "i" => Source::Move(file, 9),
                 _ => {
-                    panic!(IO::panicing(&format!(
+                    panic!(Beam::trouble(&format!(
                         "(2) '{}' だった。",
                         &line[*starts..=*starts]
                     )));
@@ -105,7 +98,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     match source {
         Source::Move(file, rank) => {
             *starts += 1;
-            buffer.source = Address::new(file, rank).abs();
+            buffer.source = Address::new(file as i8, rank).abs();
             buffer.drop = None;
         }
         Source::Drop(hand) => {
@@ -118,22 +111,13 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     // 残りは「筋の数字」、「段のアルファベット」のはず。
 
     // 3文字目
-    let file = match &line[*starts..=*starts] {
-        "1" => 1,
-        "2" => 2,
-        "3" => 3,
-        "4" => 4,
-        "5" => 5,
-        "6" => 6,
-        "7" => 7,
-        "8" => 8,
-        "9" => 9,
-        _ => {
-            panic!(IO::panicing(&format!(
-                "(3) '{}' だった。",
-                &line[*starts..=*starts]
-            )));
-        }
+    let file = if let Some(num) = atoi::<u8>(line[*starts..=*starts].as_bytes()) {
+        num
+    } else {
+        panic!(Beam::trouble(&format!(
+            "(3) '{}' だった。",
+            &line[*starts..=*starts]
+        )));
     };
     *starts += 1;
     // 4文字目
@@ -148,7 +132,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         "h" => 8,
         "i" => 9,
         _ => {
-            panic!(IO::panicing(&format!(
+            panic!(Beam::trouble(&format!(
                 "(4) '{}' だった。",
                 &line[*starts..=*starts]
             )));
@@ -157,7 +141,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     *starts += 1;
 
     // 行き先。
-    buffer.destination = Address::new(file, rank).abs();
+    buffer.destination = Address::new(file as i8, rank).abs();
 
     // 5文字に「+」があれば成り。
     buffer.promote = if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
@@ -247,7 +231,7 @@ pub fn read_board(
                     "l" => BoardPart::Alphabet(Piece::PromotedLance2),
                     "p" => BoardPart::Alphabet(Piece::PromotedPawn2),
                     _ => {
-                        panic!(IO::panicing(&format!(
+                        panic!(Beam::trouble(&format!(
                             "盤部(0) '{}' だった。",
                             &line[*starts..=*starts]
                         )));
@@ -358,7 +342,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                                 "7" => HandCount::N2Digit(17),
                                 "8" => HandCount::N2Digit(18),
                                 _ => {
-                                    panic!(IO::panicing(&format!(
+                                    panic!(Beam::trouble(&format!(
                                         "持駒部(0) '{}' だった。",
                                         &line[starts..(starts + 2)]
                                     )));
@@ -422,7 +406,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
             starts += 3;
         }
     } else {
-        IO::writeln("'position startpos' でも、'position sfen ' でも始まらなかった。");
+        Beam::shoot("'position startpos' でも、'position sfen ' でも始まらなかった。");
         return;
     }
 

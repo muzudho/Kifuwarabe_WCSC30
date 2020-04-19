@@ -1,7 +1,7 @@
 //!
-//! 変換
+//! なんか難しいやつはここだぜ☆（＾～＾）
 //!
-use crate::cosmic::smart::square::*;
+use crate::cosmic::smart::square::{AbsoluteAddress, Address};
 
 /// 0 なら偽、それ以外は真☆（＾～＾）
 pub fn num_to_bool(n: usize) -> bool {

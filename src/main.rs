@@ -8,6 +8,7 @@
 extern crate rand;
 #[macro_use]
 extern crate lazy_static;
+extern crate atoi;
 
 // Rust言語の mod や ソース置き場の説明
 //     「Rust のモジュールシステム」
@@ -19,7 +20,6 @@ mod config;
 mod cosmic;
 mod law;
 mod spaceship;
-mod white_hole;
 
 use crate::cosmic::universe::Universe;
 use crate::law::speed_of_light::SpeedOfLight;

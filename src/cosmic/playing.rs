@@ -4,8 +4,7 @@ use crate::cosmic::smart::square::{
 };
 use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};
 use crate::law::speed_of_light::SpeedOfLight;
-use crate::spaceship::equipment::Info;
-use crate::white_hole::io::IO;
+use crate::spaceship::equipment::{Beam, DestinationDisplay};
 use rand::Rng;
 
 /// 局面
@@ -39,7 +38,7 @@ pub struct Game {
     /// 現盤面
     pub board: Board,
     /// 情報表示担当
-    pub info: Info,
+    pub info: DestinationDisplay,
 }
 impl Default for Game {
     fn default() -> Game {
@@ -56,7 +55,7 @@ impl Default for Game {
                 phase: [0; PHASE_LN],
             },
             board: Board::default(),
-            info: Info::default(),
+            info: DestinationDisplay::default(),
         }
     }
 }
@@ -234,7 +233,7 @@ impl Game {
                     self.board.add_hand(&piece734, -1, speed_of_light);
                     Some(piece734)
                 } else {
-                    panic!(IO::panicing("打なのに駒を指定してないぜ☆（＾～＾）"));
+                    panic!(Beam::trouble("打なのに駒を指定してないぜ☆（＾～＾）"));
                 }
             } else {
                 // 打でなければ、元の升に駒はあるので、それを消す。
@@ -244,7 +243,7 @@ impl Game {
                         // 成り駒をクローン。
                         Some(piece.promoted(speed_of_light))
                     } else {
-                        panic!(IO::panicing("成ったのに、元の升に駒がなかった☆（＾～＾）"));
+                        panic!(Beam::trouble("成ったのに、元の升に駒がなかった☆（＾～＾）"));
                     }
                 } else {
                     // 移動元の駒をクローン。
@@ -305,7 +304,7 @@ impl Game {
                         self.board.add_hand(&drop394, 1, speed_of_light);
                         Some(drop394)
                     } else {
-                        panic!(IO::panicing("打なのに駒を指定していないぜ☆（＾～＾）！"))
+                        panic!(Beam::trouble("打なのに駒を指定していないぜ☆（＾～＾）！"))
                     }
                 } else {
                     // 打でなければ
@@ -314,7 +313,7 @@ impl Game {
                         if let Some(source_piece) = self.board.piece_at(&movement.destination) {
                             Some(source_piece.demoted(speed_of_light))
                         } else {
-                            panic!(IO::panicing("成ったのに移動先に駒が無いぜ☆（＾～＾）！"))
+                            panic!(Beam::trouble("成ったのに移動先に駒が無いぜ☆（＾～＾）！"))
                         }
                     } else {
                         self.board.piece_at(&movement.destination).clone()

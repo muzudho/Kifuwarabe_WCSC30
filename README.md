@@ -66,4 +66,8 @@ position startpos moves 9i9h 8c8d 2h6h 1c1d 2g2f 1d1e 6g6f 5a6b 8g8f 8d8e 6h3h 8
 
 position startpos moves 7g7f 3c3d 8g8f 4a5b 9i9h 6c6d 2g2f 5b4b 8h7g 2b4d 3g3f 3a2b 1g1f 6a7b 2h2g 4d3e 7g3c 3e2f 5i5h 2f1g+ 4i3h
 
+### 後手が桂馬を 0c に打ったぜ☆（＾～＾）？
+
+position startpos moves 7g7f 3c3d 2h7h 8c8d 9i9h 6a6b 7h1h 4a3b 8g8f 8b8c 8h7g 8d8e 7g8h 5a5b 8h6f 7c7d 6f8h 7a7b 9g9f 1c1d 1h5h 8c8d 8h6f 7b8c 5h2h 2b3c 7i7h 3a4b 2h4h 4b5a 6i7i 3c4d 1g1f 9a9b 5i6h 2a1c 1i1h 6b6a 4i5i 9c9d 5i6i 1d1e 3g3f 4d2b 3i2h 2b4d 2i1g 1e1f 5g5f 1f1g+ 4h5h N*4f 4g4f 6a7b N*6d 5b6b 6d5b+ 6b5b 1h1g N*8g 1g1d 1a1b 1d1c 3b2b N*6d 6c6d 9f9e N*9c 2h1g 2b1c 5h2h L*1a 6h7g 6d6e 4f4e 7b7a 8f8e 4d1g 7g8f 8d8e 8f9f 9d9e 9f9g 9e9f 9g9f P*9e 9f9g S*8f 9g8h 8f7g 8h9g 7g8f 9g8h 8f7g 8h9g 7g8f 9g8h 8f7g+ 6f7g 8g7i+ 7g8f G*7g 8h9i 7g8h 9i8h 7i8i 7h8i P*8g 8h7h N*6f 7h8g 8e8f 8g8f P*8e 8f9g B*6d 9g8h 6d9g+ 9h9g 9e9f R*1h 9f9g+ 8h7g 9g8g 7g6h 8g7g 6h5g 7g6g 5g4f 6f7h+ B*5h 4c4d S*9h 4d4e 4f5e L*5d 5e4e P*4d 4e4f 4d4e 4f4e P*4d 4e3d 1c2d 3d3c 2d3d 3c2c 3d3c 2c2b 3c3b 2b3b 7d7e G*3e 5b6b 8i8h 1g2f+ N*7d 6b6c G*4h 2f2g 6i5i P*3g P*2e 1b1g+ P*6d 6c7d 7f7e 7d7c 7e7d 7c7b 7d7c+ 7b6a 5h4i
+
 ```

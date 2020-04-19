@@ -12,7 +12,6 @@ use crate::cosmic::toy_box::Piece;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
-use crate::law::diagnostic::*;
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
@@ -131,8 +130,6 @@ impl fmt::Display for Movement {
             return write!(f, "resign");
         }
 
-        // 投了を弾いたあと、診断☆（＾～＾）
-        assert_in_board_as_absolute(&self.destination, "Movement-display");
         let (dx, dy) = self.destination.to_file_rank();
 
         if self.source.is_drop() {
@@ -163,7 +160,6 @@ impl fmt::Display for Movement {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
-                assert_in_board_as_absolute(&self.source, "Movement-display-2");
                 self.source.to_file_rank()
             };
             write!(
