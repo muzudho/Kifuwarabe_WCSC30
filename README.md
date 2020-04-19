@@ -62,4 +62,8 @@ position startpos moves 7g7f 3c3d 8h7g 7a7b 2h9h 6a6b 7i6h 5a4b 7g8f 3d3e 3g3f 2
 
 position startpos moves 9i9h 8c8d 2h6h 1c1d 2g2f 1d1e 6g6f 5a6b 8g8f 8d8e 6h3h 8e8f 6i5h 8f8g+ 7i7h 8g8h 3h4h 8h7h
 
+### 後手が歩を 0i に打ったぜ☆（＾～＾）？
+
+position startpos moves 7g7f 3c3d 8g8f 4a5b 9i9h 6c6d 2g2f 5b4b 8h7g 2b4d 3g3f 3a2b 1g1f 6a7b 2h2g 4d3e 7g3c 3e2f 5i5h 2f1g+ 4i3h
+
 ```

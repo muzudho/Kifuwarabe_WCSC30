@@ -13,7 +13,7 @@ use crate::cosmic::smart::square::{
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::cosmic::toy_box::Board;
-use crate::law::diagnostic::{assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute};
+use crate::law::diagnostic::assert_in_board_as_absolute;
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
@@ -59,7 +59,7 @@ impl LegalMoves {
         F1: FnMut(u64),
     {
         // 盤上の駒☆（＾～＾）
-        NextSquares::for_all(None, &mut |source| {
+        Area::for_all(None, &mut |source| {
             LegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });
     }
@@ -159,7 +159,7 @@ impl LegalMoves {
 
         if let Some(piece) = board.piece_at(&source) {
             if friend == piece.phase(speed_of_light) {
-                NextSquares::piece_of(piece.r#type(speed_of_light), friend, &source, callback_next);
+                Area::piece_of(piece.r#type(speed_of_light), friend, &source, callback_next);
             }
         }
     }
@@ -217,11 +217,11 @@ impl LegalMoves {
                 use crate::cosmic::smart::features::PieceType::*;
                 match hand.r#type(speed_of_light) {
                     // 歩、香
-                    Pawn | Lance => NextSquares::drop_pawn_lance(hand.phase(speed_of_light), drop),
+                    Pawn | Lance => Area::drop_pawn_lance(friend, drop),
                     // 桂
-                    Knight => NextSquares::drop_knight(hand.phase(speed_of_light), drop),
+                    Knight => Area::drop_knight(friend, drop),
                     // それ以外の駒が打てる範囲は盤面全体。
-                    _ => NextSquares::for_all(None, drop),
+                    _ => Area::for_all(None, drop),
                 }
             }
         });
@@ -229,8 +229,8 @@ impl LegalMoves {
 }
 
 /// 次の升☆（＾～＾）
-pub struct NextSquares {}
-impl NextSquares {
+pub struct Area {}
+impl Area {
     /// 全升の面積だぜ☆（＾～＾）
     ///
     /// Arguments
@@ -267,20 +267,20 @@ impl NextSquares {
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         match piece_type {
-            PieceType::Pawn => NextSquares::pawn(friend, source, callback),
-            PieceType::Lance => NextSquares::lance(friend, source, callback),
-            PieceType::Knight => NextSquares::knight(friend, source, callback),
-            PieceType::Silver => NextSquares::silver(friend, source, callback),
-            PieceType::Gold => NextSquares::gold(friend, source, callback),
-            PieceType::King => NextSquares::king(source, callback),
-            PieceType::Bishop => NextSquares::bishop(friend, source, callback),
-            PieceType::Rook => NextSquares::rook(friend, source, callback),
-            PieceType::PromotedPawn => NextSquares::gold(friend, source, callback),
-            PieceType::PromotedLance => NextSquares::gold(friend, source, callback),
-            PieceType::PromotedKnight => NextSquares::gold(friend, source, callback),
-            PieceType::PromotedSilver => NextSquares::gold(friend, source, callback),
-            PieceType::Horse => NextSquares::horse(source, callback),
-            PieceType::Dragon => NextSquares::dragon(source, callback),
+            PieceType::Pawn => Area::pawn(friend, source, callback),
+            PieceType::Lance => Area::lance(friend, source, callback),
+            PieceType::Knight => Area::knight(friend, source, callback),
+            PieceType::Silver => Area::silver(friend, source, callback),
+            PieceType::Gold => Area::gold(friend, source, callback),
+            PieceType::King => Area::king(source, callback),
+            PieceType::Bishop => Area::bishop(friend, source, callback),
+            PieceType::Rook => Area::rook(friend, source, callback),
+            PieceType::PromotedPawn => Area::gold(friend, source, callback),
+            PieceType::PromotedLance => Area::gold(friend, source, callback),
+            PieceType::PromotedKnight => Area::gold(friend, source, callback),
+            PieceType::PromotedSilver => Area::gold(friend, source, callback),
+            PieceType::Horse => Area::horse(source, callback),
+            PieceType::Dragon => Area::dragon(source, callback),
         }
     }
 
@@ -297,7 +297,7 @@ impl NextSquares {
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting = &mut |destination| {
-            Promoting::case_of_pawn_lance(
+            Promoting::pawn_lance(
                 friend,
                 &destination,
                 callback,
@@ -311,7 +311,7 @@ impl NextSquares {
             Angle::Ccw90
         };
 
-        NextSquares::r#move(angle, Agility::Hopping, source, promoting);
+        Area::r#move(source, angle, Agility::Hopping, promoting);
         /*
         IO::debugln(&format!(
             "歩の動き source={:?} angle={:?} forbidden={:?}",
@@ -335,7 +335,7 @@ impl NextSquares {
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting = &mut |destination| {
-            Promoting::case_of_pawn_lance(
+            Promoting::pawn_lance(
                 friend,
                 &destination,
                 callback,
@@ -349,7 +349,7 @@ impl NextSquares {
             Angle::Ccw90
         };
 
-        NextSquares::r#move(angle, Agility::Sliding, source, promoting);
+        Area::r#move(source, angle, Agility::Sliding, promoting);
     }
 
     /// 先手から見た盤上の桂の動けるマスだぜ☆（＾～＾）
@@ -365,7 +365,7 @@ impl NextSquares {
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting = &mut |destination| {
-            Promoting::case_of_knight(
+            Promoting::knight(
                 friend,
                 &destination,
                 callback,
@@ -379,10 +379,10 @@ impl NextSquares {
             Angle::Ccw45
         };
 
-        NextSquares::r#move(angle, Agility::Knight, source, promoting);
+        Area::r#move(source, angle, Agility::Knight, promoting);
 
         let angle = angle.rotate90ccw();
-        NextSquares::r#move(angle, Agility::Knight, source, promoting);
+        Area::r#move(source, angle, Agility::Knight, promoting);
     }
 
     /// 先手から見た盤上の銀の動けるマスだぜ☆（＾～＾）
@@ -398,7 +398,7 @@ impl NextSquares {
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting =
-            &mut |destination| Promoting::case_of_silver(friend, &source, &destination, callback);
+            &mut |destination| Promoting::silver(friend, &source, &destination, callback);
 
         let angle = if friend == Phase::First {
             Angle::Ccw270
@@ -406,25 +406,25 @@ impl NextSquares {
             Angle::Ccw90
         };
         // println!("銀1={:?}", angle);
-        NextSquares::r#move(angle, Agility::Hopping, source, promoting);
+        Area::r#move(source, angle, Agility::Hopping, promoting);
         // println!("銀2={:?}", angle.rotate45ccw());
-        NextSquares::r#move(angle.rotate45ccw(), Agility::Hopping, source, promoting);
+        Area::r#move(source, angle.rotate45ccw(), Agility::Hopping, promoting);
         // println!("銀3={:?}", angle.rotate90ccw().rotate45ccw());
-        NextSquares::r#move(
+        Area::r#move(
+            source,
             angle.rotate90ccw().rotate45ccw(),
             Agility::Hopping,
-            source,
             promoting,
         );
         // println!("銀4={:?}", angle.rotate90cw().rotate45cw());
-        NextSquares::r#move(
+        Area::r#move(
+            source,
             angle.rotate90cw().rotate45cw(),
             Agility::Hopping,
-            source,
             promoting,
         );
         // println!("銀5={:?}", angle.rotate45cw());
-        NextSquares::r#move(angle.rotate45cw(), Agility::Hopping, source, promoting);
+        Area::r#move(source, angle.rotate45cw(), Agility::Hopping, promoting);
     }
 
     /// 先手から見た盤上の金、と、杏、圭、全の動けるマスだぜ☆（＾～＾）
@@ -446,12 +446,12 @@ impl NextSquares {
         } else {
             Angle::Ccw90
         };
-        NextSquares::r#move(angle, Agility::Hopping, source, hopping);
-        NextSquares::r#move(angle.rotate45ccw(), Agility::Hopping, source, hopping);
-        NextSquares::r#move(angle.rotate90ccw(), Agility::Hopping, source, hopping);
-        NextSquares::r#move(angle.rotate180(), Agility::Hopping, source, hopping);
-        NextSquares::r#move(angle.rotate90cw(), Agility::Hopping, source, hopping);
-        NextSquares::r#move(angle.rotate45cw(), Agility::Hopping, source, hopping);
+        Area::r#move(source, angle, Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate45ccw(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate90ccw(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate180(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate90cw(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate45cw(), Agility::Hopping, hopping);
     }
 
     /// 盤上の玉の動けるマスだぜ☆（＾～＾）
@@ -467,14 +467,14 @@ impl NextSquares {
     {
         let hopping =
             &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
-        NextSquares::r#move(Angle::Ccw0, Agility::Hopping, source, hopping);
-        NextSquares::r#move(Angle::Ccw45, Agility::Hopping, source, hopping);
-        NextSquares::r#move(Angle::Ccw90, Agility::Hopping, source, hopping);
-        NextSquares::r#move(Angle::Ccw135, Agility::Hopping, source, hopping);
-        NextSquares::r#move(Angle::Ccw180, Agility::Hopping, source, hopping);
-        NextSquares::r#move(Angle::Ccw225, Agility::Hopping, source, hopping);
-        NextSquares::r#move(Angle::Ccw270, Agility::Hopping, source, hopping);
-        NextSquares::r#move(Angle::Ccw315, Agility::Hopping, source, hopping);
+        Area::r#move(source, Angle::Ccw0, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw45, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw90, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw135, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw180, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw225, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw270, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw315, Agility::Hopping, hopping);
     }
 
     /// 盤上の角の動けるマスだぜ☆（＾～＾）
@@ -488,13 +488,12 @@ impl NextSquares {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting = &mut |destination| {
-            Promoting::case_of_bishop_rook(friend, &source, &destination, callback)
-        };
-        NextSquares::r#move(Angle::Ccw45, Agility::Sliding, source, promoting);
-        NextSquares::r#move(Angle::Ccw135, Agility::Sliding, source, promoting);
-        NextSquares::r#move(Angle::Ccw225, Agility::Sliding, source, promoting);
-        NextSquares::r#move(Angle::Ccw315, Agility::Sliding, source, promoting);
+        let promoting =
+            &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
+        Area::r#move(source, Angle::Ccw45, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw135, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw225, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw315, Agility::Sliding, promoting);
     }
 
     /// 盤上の飛の動けるマスだぜ☆（＾～＾）
@@ -508,13 +507,12 @@ impl NextSquares {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting = &mut |destination| {
-            Promoting::case_of_bishop_rook(friend, &source, &destination, callback)
-        };
-        NextSquares::r#move(Angle::Ccw0, Agility::Sliding, source, promoting);
-        NextSquares::r#move(Angle::Ccw90, Agility::Sliding, source, promoting);
-        NextSquares::r#move(Angle::Ccw180, Agility::Sliding, source, promoting);
-        NextSquares::r#move(Angle::Ccw270, Agility::Sliding, source, promoting);
+        let promoting =
+            &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
+        Area::r#move(source, Angle::Ccw0, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw90, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw180, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw270, Agility::Sliding, promoting);
     }
 
     /// 盤上の馬の動けるマスだぜ☆（＾～＾）
@@ -532,19 +530,19 @@ impl NextSquares {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            NextSquares::r#move(Angle::Ccw45, Agility::Sliding, source, sliding);
-            NextSquares::r#move(Angle::Ccw135, Agility::Sliding, source, sliding);
-            NextSquares::r#move(Angle::Ccw225, Agility::Sliding, source, sliding);
-            NextSquares::r#move(Angle::Ccw315, Agility::Sliding, source, sliding);
+            Area::r#move(source, Angle::Ccw45, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw135, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw225, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw315, Agility::Sliding, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            NextSquares::r#move(Angle::Ccw0, Agility::Hopping, source, hopping);
-            NextSquares::r#move(Angle::Ccw90, Agility::Hopping, source, hopping);
-            NextSquares::r#move(Angle::Ccw180, Agility::Hopping, source, hopping);
-            NextSquares::r#move(Angle::Ccw270, Agility::Hopping, source, hopping);
+            Area::r#move(source, Angle::Ccw0, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw90, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw180, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw270, Agility::Hopping, hopping);
         }
     }
 
@@ -563,19 +561,19 @@ impl NextSquares {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            NextSquares::r#move(Angle::Ccw0, Agility::Sliding, source, sliding);
-            NextSquares::r#move(Angle::Ccw90, Agility::Sliding, source, sliding);
-            NextSquares::r#move(Angle::Ccw180, Agility::Sliding, source, sliding);
-            NextSquares::r#move(Angle::Ccw270, Agility::Sliding, source, sliding);
+            Area::r#move(source, Angle::Ccw0, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw90, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw180, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw270, Agility::Sliding, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            NextSquares::r#move(Angle::Ccw45, Agility::Hopping, source, hopping);
-            NextSquares::r#move(Angle::Ccw135, Agility::Hopping, source, hopping);
-            NextSquares::r#move(Angle::Ccw225, Agility::Hopping, source, hopping);
-            NextSquares::r#move(Angle::Ccw315, Agility::Hopping, source, hopping);
+            Area::r#move(source, Angle::Ccw45, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw135, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw225, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw315, Agility::Hopping, hopping);
         }
     }
 
@@ -590,26 +588,16 @@ impl NextSquares {
     where
         F1: FnMut(AbsoluteAddress),
     {
-        // TODO for文の方を変えた方が高速だろ……☆（＾～＾）
-        for rank in RANK_2..RANK_10 {
-            for file in (FILE_1..FILE_10).rev() {
-                let mut ab_adr = Address::new(file, rank).abs();
+        // 180°回転とかするより、for文の方を変えた方が高速だろ……☆（＾～＾）
+        let (min_rank, max_rank) = if phase == Phase::First {
+            (RANK_2, RANK_10)
+        } else {
+            (RANK_1, RANK_9)
+        };
 
-                // 後手ならひっくり返すぜ☆（＾～＾）
-                if phase == Phase::Second {
-                    ab_adr = ab_adr.rotate_180();
-                }
-                assert_in_board_with_frame_as_absolute(
-                    ab_adr.address(),
-                    &format!(
-                        "square::for_from_rank2_to_rank9. phase={} rank={}, file={}, ab_adr={}.",
-                        phase,
-                        rank,
-                        file,
-                        ab_adr.address()
-                    ),
-                );
-                callback(ab_adr);
+        for rank in min_rank..max_rank {
+            for file in (FILE_1..FILE_10).rev() {
+                callback(Address::new(file, rank).abs());
             }
         }
     }
@@ -642,11 +630,11 @@ impl NextSquares {
     /// Arguments
     /// ---------
     ///
+    /// * `start` - 移動元升☆（＾～＾）
     /// * `angle` - 角度☆（＾～＾）
     /// * `agility` - 動き方☆（＾～＾）
-    /// * `start` - 移動元升☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn r#move<F1>(angle: Angle, agility: Agility, start: &AbsoluteAddress, callback: &mut F1)
+    fn r#move<F1>(start: &AbsoluteAddress, angle: Angle, agility: Agility, callback: &mut F1)
     where
         F1: FnMut(AbsoluteAddress) -> bool,
     {
@@ -709,7 +697,7 @@ enum Promotability {
 }
 
 /// 行き先があるかないかのチェックに使うぜ☆（＾～＾）
-/// TODO 成れるときは要らないぜ☆（＾～＾）
+/// 成れるときは使わないぜ☆（＾～＾）
 struct MovePermission {
     min_rank: i8,
     max_rank: i8,
@@ -757,11 +745,19 @@ impl fmt::Debug for MovePermission {
 /// 成れるか、成れないか☆（＾～＾）
 struct Promoting {}
 impl Promoting {
-    /// 成らずに一番奥の段に移動することはできません。
-    fn case_of_pawn_lance<F1>(
+    /// 歩と香のための、成れるか成れないか判定だぜ☆（＾～＾）！
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `destinaion` -
+    /// * `callback` -
+    /// * `move_permission` - 成らずに一番奥の段に移動することはできません。
+    fn pawn_lance<F1>(
         friend: Phase,
         destinaion: &AbsoluteAddress,
-        callback_next: &mut F1,
+        callback: &mut F1,
         move_permission: Option<MovePermission>,
     ) -> bool
     where
@@ -769,7 +765,7 @@ impl Promoting {
     {
         if Promoting::is_farthest_rank_from_friend(friend, &destinaion) {
             // 自陣から見て一番奥の段
-            callback_next(
+            callback(
                 *destinaion,
                 Promotability::Forced,
                 Agility::Hopping,
@@ -777,14 +773,14 @@ impl Promoting {
             )
         } else if Promoting::is_second_third_farthest_rank_from_friend(friend, &destinaion) {
             // 自陣から見て二番、三番目の奥の段
-            callback_next(
+            callback(
                 *destinaion,
                 Promotability::Any,
                 Agility::Hopping,
                 move_permission,
             )
         } else {
-            callback_next(
+            callback(
                 *destinaion,
                 Promotability::Deny,
                 Agility::Hopping,
@@ -793,33 +789,40 @@ impl Promoting {
         }
     }
 
-    /// 成らずに一番奥の段、奥から２番目の段に移動することはできません。
-    fn case_of_knight<F1>(
+    /// 桂のための、成れるか成れないか判定だぜ☆（＾～＾）！
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `destinaion` -
+    /// * `callback` -
+    /// * `move_permission` - 成らずに奥から２番目の段に移動することはできません。
+    fn knight<F1>(
         friend: Phase,
         destination: &AbsoluteAddress,
-        callback_next: &mut F1,
+        callback: &mut F1,
         move_permission: Option<MovePermission>,
     ) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        // TODO 成らずに一番奥の段、奥から２番目の段に移動することはできません。
         if Promoting::is_first_second_farthest_rank_from_friend(friend, &destination) {
-            callback_next(
+            callback(
                 *destination,
                 Promotability::Forced,
                 Agility::Knight,
                 move_permission,
             )
         } else if Promoting::is_third_farthest_rank_from_friend(friend, &destination) {
-            callback_next(
+            callback(
                 *destination,
                 Promotability::Any,
                 Agility::Knight,
                 move_permission,
             )
         } else {
-            callback_next(
+            callback(
                 *destination,
                 Promotability::Deny,
                 Agility::Knight,
@@ -828,50 +831,80 @@ impl Promoting {
         }
     }
 
-    /// TODO 自陣から見て奥から１～３段目に入るときに成れます。元位置が３段目のときは、動けば成るか選べます。
-    fn case_of_silver<F1>(
+    /// 銀のための、成れるか成れないか判定だぜ☆（＾～＾）！
+    /// 自陣から見て奥から１～３段目に入るときに成れます。元位置が３段目のときは、動けば成るか選べます。
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `source` -
+    /// * `destination` -
+    /// * `callback` -
+    fn silver<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
         destination: &AbsoluteAddress,
-        callback_next: &mut F1,
+        callback: &mut F1,
     ) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         if Promoting::is_third_farthest_rank_from_friend(friend, &source) {
-            callback_next(*destination, Promotability::Any, Agility::Hopping, None)
-        } else if Promoting::is_opponent_area_rank(friend, &destination) {
-            callback_next(*destination, Promotability::Any, Agility::Hopping, None)
+            callback(*destination, Promotability::Any, Agility::Hopping, None)
+        } else if Promoting::is_opponent_region(friend, &destination) {
+            callback(*destination, Promotability::Any, Agility::Hopping, None)
         } else {
-            callback_next(*destination, Promotability::Deny, Agility::Hopping, None)
+            callback(*destination, Promotability::Deny, Agility::Hopping, None)
         }
     }
 
-    /// TODO 非敵陣にいるとき、敵陣で成れます。敵陣にいるとき、どこでも成れます。
-    fn case_of_bishop_rook<F1>(
+    /// 角と飛のための、成れるか成れないか判定だぜ☆（＾～＾）！
+    /// 非敵陣にいるとき、敵陣で成れます。敵陣にいるとき、どこでも成れます。
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `source` -
+    /// * `destination` -
+    /// * `callback` -
+    fn bishop_rook<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
         destination: &AbsoluteAddress,
-        callback_next: &mut F1,
+        callback: &mut F1,
     ) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_opponent_area_rank(friend, &source)
-            || Promoting::is_opponent_area_rank(friend, &destination)
+        if Promoting::is_opponent_region(friend, &source)
+            || Promoting::is_opponent_region(friend, &destination)
         {
-            callback_next(*destination, Promotability::Any, Agility::Sliding, None)
+            callback(*destination, Promotability::Any, Agility::Sliding, None)
         } else {
-            callback_next(*destination, Promotability::Deny, Agility::Sliding, None)
+            callback(*destination, Promotability::Deny, Agility::Sliding, None)
         }
     }
 
     /// 自陣から見て、一番遠いの段
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `destination` -
     fn is_farthest_rank_from_friend(friend: Phase, destination: &AbsoluteAddress) -> bool {
         (friend == Phase::First && destination.rank() < RANK_2)
             || (friend == Phase::Second && RANK_8 < destination.rank())
     }
     /// 自陣から見て、一番目、２番目に遠いの段
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `destination` -
     fn is_first_second_farthest_rank_from_friend(
         friend: Phase,
         destination: &AbsoluteAddress,
@@ -880,6 +913,12 @@ impl Promoting {
             || (friend == Phase::Second && RANK_7 < destination.rank())
     }
     /// 自陣から見て、二番目、三番目に遠いの段
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `destination` -
     fn is_second_third_farthest_rank_from_friend(
         friend: Phase,
         destination: &AbsoluteAddress,
@@ -890,12 +929,24 @@ impl Promoting {
                 && destination.rank() < RANK_9)
     }
     /// 自陣から見て、三番目に遠いの段
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `destination` -
     fn is_third_farthest_rank_from_friend(friend: Phase, destination: &AbsoluteAddress) -> bool {
         (friend == Phase::First && destination.rank() == RANK_3)
             || (friend == Phase::Second && RANK_7 == destination.rank())
     }
-    /// 敵陣の段
-    fn is_opponent_area_rank(friend: Phase, destination: &AbsoluteAddress) -> bool {
+    /// 敵陣
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` -
+    /// * `destination` -
+    fn is_opponent_region(friend: Phase, destination: &AbsoluteAddress) -> bool {
         (friend == Phase::First && destination.rank() < RANK_4)
             || (friend == Phase::Second && RANK_6 < destination.rank())
     }

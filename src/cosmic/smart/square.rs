@@ -483,6 +483,14 @@ impl Address {
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
+        debug_assert!(
+            FILE_0 <= self.file && self.file < FILE_11,
+            format!("file={}", self.file)
+        );
+        debug_assert!(
+            RANK_0 <= self.rank && self.rank < RANK_11,
+            format!("rank={}", self.rank)
+        );
         AbsoluteAddress::new(self.file, self.rank)
     }
 
