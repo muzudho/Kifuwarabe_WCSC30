@@ -346,68 +346,67 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
         if 0 < (len - starts) && &line[starts..=starts] == "-" {
             starts += 1;
         } else {
+            enum HandCount {
+                // 数字なし
+                N0Digit,
+                // 1桁の数
+                N1Digit(i8),
+                // 2桁の数
+                N2Digit(i8),
+            }
             'mg: loop {
                 if 0 < (len - starts) {
-                    let mut count = 1;
-                    match &line[starts..=starts] {
+                    // 数字か、数字でないかで大きく分かれるぜ☆（＾～＾）
+                    // let mut count = 1;
+                    let hand_count = match &line[starts..=starts] {
                         "1" => {
                             // 1枚のときは数字は付かないので、10～18 と確定☆
-                            count = match &line[starts..=starts] {
-                                "0" => 10,
-                                "1" => 11,
-                                "2" => 12,
-                                "3" => 13,
-                                "4" => 14,
-                                "5" => 15,
-                                "6" => 16,
-                                "7" => 17,
-                                "8" => 18,
+                            match &line[starts..=starts] {
+                                "0" => HandCount::N2Digit(10),
+                                "1" => HandCount::N2Digit(11),
+                                "2" => HandCount::N2Digit(12),
+                                "3" => HandCount::N2Digit(13),
+                                "4" => HandCount::N2Digit(14),
+                                "5" => HandCount::N2Digit(15),
+                                "6" => HandCount::N2Digit(16),
+                                "7" => HandCount::N2Digit(17),
+                                "8" => HandCount::N2Digit(18),
                                 _ => {
                                     panic!(IO::panicing(&format!(
                                         "持駒部(0) '{}' だった。",
                                         &line[starts..(starts + 2)]
                                     )));
                                 }
-                            };
+                            }
+                        }
+                        "2" => HandCount::N1Digit(2),
+                        "3" => HandCount::N1Digit(3),
+                        "4" => HandCount::N1Digit(4),
+                        "5" => HandCount::N1Digit(5),
+                        "6" => HandCount::N1Digit(6),
+                        "7" => HandCount::N1Digit(7),
+                        "8" => HandCount::N1Digit(8),
+                        "9" => HandCount::N1Digit(9),
+                        _ => HandCount::N0Digit, // 駒の名前か、エラーなら次へ
+                    };
+
+                    let hand_num = match hand_count {
+                        HandCount::N0Digit => {
+                            // 持ち駒が１枚のときは数は付かないぜ☆（＾～＾）
+                            1
+                        }
+                        HandCount::N1Digit(hand_num) => {
+                            starts += 1;
+                            hand_num
+                        }
+                        HandCount::N2Digit(hand_num) => {
                             starts += 2;
+                            hand_num
                         }
-                        "2" => {
-                            count = 2;
-                            starts += 1;
-                        }
-                        "3" => {
-                            count = 3;
-                            starts += 1;
-                        }
-                        "4" => {
-                            count = 4;
-                            starts += 1;
-                        }
-                        "5" => {
-                            count = 5;
-                            starts += 1;
-                        }
-                        "6" => {
-                            count = 6;
-                            starts += 1;
-                        }
-                        "7" => {
-                            count = 7;
-                            starts += 1;
-                        }
-                        "8" => {
-                            count = 8;
-                            starts += 1;
-                        }
-                        "9" => {
-                            count = 9;
-                            starts += 1;
-                        }
-                        _ => {} // 駒の名前か、エラーなら次へ
-                    }
+                    };
 
                     use crate::cosmic::toy_box::Piece::*;
-                    let km: Piece = match &line[starts..=starts] {
+                    let hand = match &line[starts..=starts] {
                         "R" => Rook1,
                         "B" => Bishop1,
                         "G" => Gold1,
@@ -428,7 +427,10 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
                     };
                     starts += 1;
 
-                    universe.game.get_mut_starting_board().set_hand(km, count);
+                    universe
+                        .game
+                        .get_mut_starting_board()
+                        .set_hand(hand, hand_num);
                 } //if
             } //loop
         } //else
