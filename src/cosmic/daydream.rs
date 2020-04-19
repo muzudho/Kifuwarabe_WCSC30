@@ -5,9 +5,7 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::Evaluation;
-use crate::cosmic::smart::evaluator::LOSE_VALUE;
 use crate::cosmic::smart::evaluator::REPITITION_VALUE;
-use crate::cosmic::smart::evaluator::WIN_VALUE;
 use crate::cosmic::smart::features::PieceType::King;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
@@ -253,7 +251,7 @@ impl Default for TreeState {
     fn default() -> Self {
         TreeState {
             sum_state: 0,
-            value: Value::CentiPawn(LOSE_VALUE),
+            value: Value::Lose,
             movement_hash: 0u64,
             repetition_movement_hash: 0u64,
             reason: "no update".to_string(),
@@ -343,7 +341,7 @@ impl TreeState {
             // どんな葉も 投了より良いだろ☆（＾～＾）
             // TODO 王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
             self.movement_hash = movement_hash;
-            self.value = Value::CentiPawn(evaluation.value);
+            self.value = evaluation.value;
             self.reason = "any leaf better than resign".to_string();
             return;
         } else {
@@ -354,16 +352,31 @@ impl TreeState {
                 Value::Lose => {
                     // どんな評価値でも、負けるよりマシだろ☆（＾～＾）
                     self.movement_hash = movement_hash;
-                    self.value = Value::CentiPawn(evaluation.value);
+                    self.value = evaluation.value;
                     self.reason = "any leaf more than lose".to_string();
                     return;
                 }
-                Value::CentiPawn(centi_pawn) => {
-                    if centi_pawn < evaluation.value {
-                        self.movement_hash = movement_hash;
-                        self.value = Value::CentiPawn(evaluation.value);
-                        self.reason = "good position".to_string();
-                        return;
+                Value::CentiPawn(best_centi_pawn) => {
+                    match evaluation.value {
+                        Value::Win => {
+                            // 勝つんだから更新するぜ☆（＾～＾）
+                            self.movement_hash = movement_hash;
+                            self.value = evaluation.value;
+                            self.reason = "win".to_string();
+                            return;
+                        }
+                        Value::Lose => {
+                            // TODO ここは通らないぜ☆（＾～＾）要対応☆（＾～＾）
+                        }
+                        Value::CentiPawn(leaf_centi_pawn) => {
+                            if best_centi_pawn < leaf_centi_pawn {
+                                // 更新☆（＾～＾）
+                                self.movement_hash = movement_hash;
+                                self.value = evaluation.value;
+                                self.reason = "good position".to_string();
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -381,7 +394,7 @@ impl TreeState {
     pub fn catch_king(&mut self, movement_hash: u64) {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
         self.movement_hash = movement_hash;
-        self.value = Value::CentiPawn(WIN_VALUE);
+        self.value = Value::Win;
         self.reason = "king catch is strongest".to_string();
     }
 }

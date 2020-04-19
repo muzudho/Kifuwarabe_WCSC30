@@ -1,22 +1,19 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
+use crate::cosmic::daydream::Value;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::toy_box::Piece;
 use crate::law::speed_of_light::*;
 
-/// 勝利の価値☆（＾～＾）
-pub const WIN_VALUE: i16 = 32000;
-/// 敗北の価値☆（＾～＾）
-pub const LOSE_VALUE: i16 = -32000;
 /// 千日手の価値☆（＾～＾）
 pub const REPITITION_VALUE: i16 = -300;
 
 pub struct Evaluation {
-    pub value: i16,
+    pub value: Value,
 }
 impl Evaluation {
-    pub fn new(value1: i16) -> Self {
+    pub fn new(value1: Value) -> Self {
         Evaluation { value: value1 }
     }
 
@@ -24,32 +21,33 @@ impl Evaluation {
     ///
     /// 読みを深めていくと、当たってる駒を　あとで取っても同じだろ、とか思って取らないんで、
     /// 読みの深い所の駒の価値は減らしてやろうぜ☆（＾～＾）？
+    ///
+    /// * `cur_depth` - １手指すから葉に進めるわけで、必ず 1 は有るから 0除算エラー は心配しなくていいぜ☆（＾～＾）
     pub fn from_caputured_piece(
         cur_depth: u8,
-        captured_piece_o: Option<Piece>,
+        captured_piece: Option<Piece>,
         speed_of_light: &SpeedOfLight,
     ) -> Evaluation {
-        // 0 除算を避けたいだけだぜ☆（＾～＾）
-        let denom = (cur_depth + 1) as i16;
-        if let Some(captured_piece_val) = captured_piece_o {
+        if let Some(captured_piece_val) = captured_piece {
+            let cur_depth = cur_depth as i16;
             match captured_piece_val.r#type(speed_of_light) {
-                PieceType::King => Evaluation::new(WIN_VALUE), // 玉を取ったら、評価しないのでここには来ないぜ☆（＾～＾）
-                PieceType::Rook => Evaluation::new((1000 / denom) as i16),
-                PieceType::Bishop => Evaluation::new((900 / denom) as i16),
-                PieceType::Gold => Evaluation::new((600 / denom) as i16),
-                PieceType::Silver => Evaluation::new((500 / denom) as i16),
-                PieceType::Knight => Evaluation::new((300 / denom) as i16),
-                PieceType::Lance => Evaluation::new((200 / denom) as i16),
-                PieceType::Pawn => Evaluation::new((100 / denom) as i16),
-                PieceType::Dragon => Evaluation::new((2000 / denom) as i16),
-                PieceType::Horse => Evaluation::new((1900 / denom) as i16),
-                PieceType::PromotedSilver => Evaluation::new((500 / denom) as i16),
-                PieceType::PromotedKnight => Evaluation::new((300 / denom) as i16),
-                PieceType::PromotedLance => Evaluation::new((200 / denom) as i16),
-                PieceType::PromotedPawn => Evaluation::new((100 / denom) as i16),
+                PieceType::King => Evaluation::new(Value::Win), // 玉を取ったら、評価しないのでここには来ないぜ☆（＾～＾）
+                PieceType::Rook => Evaluation::new(Value::CentiPawn(1000 / cur_depth)),
+                PieceType::Bishop => Evaluation::new(Value::CentiPawn(900 / cur_depth)),
+                PieceType::Gold => Evaluation::new(Value::CentiPawn(600 / cur_depth)),
+                PieceType::Silver => Evaluation::new(Value::CentiPawn(500 / cur_depth)),
+                PieceType::Knight => Evaluation::new(Value::CentiPawn(300 / cur_depth)),
+                PieceType::Lance => Evaluation::new(Value::CentiPawn(200 / cur_depth)),
+                PieceType::Pawn => Evaluation::new(Value::CentiPawn(100 / cur_depth)),
+                PieceType::Dragon => Evaluation::new(Value::CentiPawn(2000 / cur_depth)),
+                PieceType::Horse => Evaluation::new(Value::CentiPawn(1900 / cur_depth)),
+                PieceType::PromotedSilver => Evaluation::new(Value::CentiPawn(500 / cur_depth)),
+                PieceType::PromotedKnight => Evaluation::new(Value::CentiPawn(300 / cur_depth)),
+                PieceType::PromotedLance => Evaluation::new(Value::CentiPawn(200 / cur_depth)),
+                PieceType::PromotedPawn => Evaluation::new(Value::CentiPawn(100 / cur_depth)),
             }
         } else {
-            Evaluation::new(0)
+            Evaluation::new(Value::CentiPawn(0))
         }
     }
 }
