@@ -3,6 +3,7 @@
 //!
 
 use crate::cosmic::playing::Game;
+use crate::cosmic::recording::Person;
 use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
@@ -10,12 +11,6 @@ use crate::cosmic::smart::square::{
 };
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
-
-pub enum ThingsInTheSquare {
-    Space,
-    Friend,
-    Opponent,
-}
 
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
@@ -124,15 +119,15 @@ impl Board {
         phase: Phase,
         adr: &AbsoluteAddress,
         speed_of_light: &SpeedOfLight,
-    ) -> ThingsInTheSquare {
+    ) -> Option<Person> {
         // TODO 範囲外チェックは？行わない？
         if let Some(piece) = self.piece_at(&adr) {
             if piece.phase(speed_of_light) == phase {
-                return ThingsInTheSquare::Friend;
+                return Some(Person::Friend);
             }
-            ThingsInTheSquare::Opponent
+            Some(Person::_Opponent)
         } else {
-            ThingsInTheSquare::Space
+            None
         }
     }
 

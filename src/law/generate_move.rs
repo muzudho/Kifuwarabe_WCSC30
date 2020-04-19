@@ -2,7 +2,7 @@
 //! 現局面を使った指し手生成☆（＾～＾）
 //!
 
-use crate::cosmic::recording::{Movement, Phase};
+use crate::cosmic::recording::{Movement, Person, Phase};
 use crate::cosmic::smart::features::{HandPieces, PieceType};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
@@ -90,76 +90,77 @@ impl PseudoLegalMoves {
     {
         let callback_next =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
-                use crate::cosmic::toy_box::ThingsInTheSquare::*;
-                use crate::law::generate_move::Promotability::*;
-                let things_in_the_square =
-                    board.what_is_in_the_square(friend, &destination, speed_of_light);
-                match things_in_the_square {
-                    Space | Opponent => {
-                        // 成れるかどうかの判定☆（＾ｑ＾）
-                        let promotion = match &promotability {
-                            Forced => true,
-                            _ => false,
-                        };
+                let (ok, space) = if let Some(person) =
+                    board.what_is_in_the_square(friend, &destination, speed_of_light)
+                {
+                    match person {
+                        Person::Friend => (false, false),
+                        Person::_Opponent => (true, false),
+                    }
+                } else {
+                    (true, true)
+                };
+                if ok {
+                    // 成れるかどうかの判定☆（＾ｑ＾）
+                    use crate::law::generate_move::Promotability::*;
+                    let promotion = match &promotability {
+                        Forced => true,
+                        _ => false,
+                    };
 
-                        // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
-                        let forbidden = if let Some(move_permission_val) = move_permission {
-                            if move_permission_val.check(&destination) {
-                                false
-                            } else {
-                                true
-                            }
-                        } else {
+                    // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
+                    let forbidden = if let Some(move_permission_val) = move_permission {
+                        if move_permission_val.check(&destination) {
                             false
-                        };
+                        } else {
+                            true
+                        }
+                    } else {
+                        false
+                    };
 
-                        match &promotability {
-                            Any => {
-                                // 成ったり、成れなかったりできるとき。
-                                if !forbidden {
-                                    callback(
-                                        Movement {
-                                            source: source.clone(),
-                                            destination: destination.clone(),
-                                            promote: false,
-                                            drop: None,
-                                        }
-                                        .to_hash(speed_of_light),
-                                    );
-                                }
+                    match &promotability {
+                        Any => {
+                            // 成ったり、成れなかったりできるとき。
+                            if !forbidden {
                                 callback(
                                     Movement {
                                         source: source.clone(),
                                         destination: destination.clone(),
-                                        promote: true,
+                                        promote: false,
                                         drop: None,
                                     }
                                     .to_hash(speed_of_light),
                                 );
                             }
-                            _ => {
-                                // 成れるか、成れないかのどちらかのとき。
-                                if promotion || !forbidden {
-                                    callback(
-                                        Movement {
-                                            source: source.clone(),
-                                            destination: destination.clone(),
-                                            promote: promotion,
-                                            drop: None,
-                                        }
-                                        .to_hash(speed_of_light),
-                                    );
+                            callback(
+                                Movement {
+                                    source: source.clone(),
+                                    destination: destination.clone(),
+                                    promote: true,
+                                    drop: None,
                                 }
+                                .to_hash(speed_of_light),
+                            );
+                        }
+                        _ => {
+                            // 成れるか、成れないかのどちらかのとき。
+                            if promotion || !forbidden {
+                                callback(
+                                    Movement {
+                                        source: source.clone(),
+                                        destination: destination.clone(),
+                                        promote: promotion,
+                                        drop: None,
+                                    }
+                                    .to_hash(speed_of_light),
+                                );
                             }
-                        };
-                    }
-                    Friend => {}
-                };
-
-                match things_in_the_square {
-                    Space => false,
-                    _ => true,
+                        }
+                    };
                 }
+
+                !space
             };
 
         if let Some(piece) = board.piece_at(&source) {
