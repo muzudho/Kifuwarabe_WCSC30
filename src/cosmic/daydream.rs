@@ -42,7 +42,7 @@ impl Tree {
         universe.game.info.clear();
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
-        let mut best_ts = self.search(0, 0, 0, &mut universe.game, speed_of_light);
+        let mut best_ts = self.search(0, 0, &mut universe.game, speed_of_light);
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
         for max_depth in 1..universe.option_max_depth {
@@ -77,7 +77,6 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             let ts = self.search(
-                0,
                 max_depth,
                 best_ts.get_sum_state(),
                 &mut universe.game,
@@ -111,7 +110,6 @@ impl Tree {
     /// Best movement, Value, Sum nodes
     fn search(
         &mut self,
-        cur_depth: u8,
         max_depth: u8,
         parent_sum_state: u64,
         game: &mut Game,
@@ -181,10 +179,13 @@ impl Tree {
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 ts.repetition_movement_hash = *movement_hash;
-            } else if max_depth <= cur_depth {
+            } else if max_depth < self.pv.len() as u8 {
                 // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
-                let evaluation =
-                    Evaluation::from_caputured_piece(cur_depth, captured_piece, speed_of_light);
+                let evaluation = Evaluation::from_caputured_piece(
+                    self.pv.len() as u8,
+                    captured_piece,
+                    speed_of_light,
+                );
                 ts.check_leaf(&evaluation, *movement_hash);
 
                 if game.info.is_printable() {
@@ -204,7 +205,6 @@ impl Tree {
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 let opponent_ts = self.search(
-                    cur_depth + 1,
                     max_depth,
                     ts.get_sum_state() + parent_sum_state,
                     game,
