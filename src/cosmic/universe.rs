@@ -10,8 +10,8 @@ pub struct Universe {
     pub game: Game,
     /// 対話モード
     pub dialogue_mode: bool,
-    /// 読みの最大深さ
-    pub option_max_depth: u16,
+    /// 読みの最大深さ。最大で 255 だぜ☆（＾～＾） そんな要らんだろ☆（＾～＾）
+    pub option_max_depth: u8,
 }
 impl Default for Universe {
     fn default() -> Self {

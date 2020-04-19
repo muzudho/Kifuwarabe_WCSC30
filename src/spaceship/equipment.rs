@@ -51,9 +51,9 @@ impl DestinationDisplay {
     /// 情報表示
     pub fn print(
         &mut self,
-        cur_depth: u16,
+        cur_depth: u8,
         sum_nodes: u64,
-        value: Option<i16>,
+        value: i16,
         // lion_catch: Option<u16>,
         movement_hash: u64,
         pv: Option<String>,
@@ -64,8 +64,8 @@ impl DestinationDisplay {
             "info depth {} nodes {}{} currmove {}{}",
             cur_depth,
             sum_nodes,
-            if let Some(centi_pawn) = value {
-                format!(" score cp {}", centi_pawn)
+            //if let Some(centi_pawn) = value {
+            format!(" score cp {}", value),
             /*
             } else if let Some(lion_catch_num) = lion_catch {
                 let mate: i32 = if lion_catch_num % 2 == 0 {
@@ -76,9 +76,11 @@ impl DestinationDisplay {
                 };
                 format!(" score mate {}", mate)
                 */
+                /*
             } else {
                 "".to_string()
             },
+            */
             Movement::from_hash(movement_hash),
             if let Some(pv_val) = pv {
                 format!(" pv {}", pv_val)

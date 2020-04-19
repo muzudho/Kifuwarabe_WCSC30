@@ -95,7 +95,7 @@ impl PseudoLegalMoves {
                 {
                     match person {
                         Person::Friend => (false, false),
-                        Person::_Opponent => (true, false),
+                        Person::Opponent => (true, false),
                     }
                 } else {
                     (true, true)

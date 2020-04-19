@@ -125,7 +125,7 @@ impl Board {
             if piece.phase(speed_of_light) == phase {
                 return Some(Person::Friend);
             }
-            Some(Person::_Opponent)
+            Some(Person::Opponent)
         } else {
             None
         }

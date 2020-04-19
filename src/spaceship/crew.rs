@@ -44,7 +44,7 @@ impl Kifuwarabe {
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
     pub fn go(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
-        let ts = Tree::first_move(speed_of_light, universe);
+        let ts = Tree::default().iteration_deeping(speed_of_light, universe);
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print(
             0,
