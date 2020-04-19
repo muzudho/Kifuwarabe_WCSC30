@@ -29,7 +29,7 @@ impl MGMovements {
         F1: FnMut(u64),
     {
         // 盤上の駒☆（＾～＾）
-        PublicNextSquares::for_all(&mut |source| {
+        PublicNextSquares::for_all(None, &mut |source| {
             MGMovements::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });
     }
@@ -186,7 +186,7 @@ impl MGMovements {
                     }
                     // それ以外の駒が打てる範囲は盤面全体。
                     _ => {
-                        PublicNextSquares::for_all(&mut |destination| {
+                        PublicNextSquares::for_all(None, &mut |destination| {
                             MGMovements::a_piece_on_hand(
                                 &hand,
                                 &board,

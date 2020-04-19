@@ -4,7 +4,8 @@
 
 use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::state::Person;
-use crate::cosmic::smart::square::{AbsoluteAddress, Address};
+use crate::cosmic::shogi::state::Phase;
+use crate::cosmic::smart::square::{AbsoluteAddress, Address, FILE_1, FILE_10, RANK_1, RANK_10};
 use crate::law::generate_move::movements::MGMovements;
 use crate::law::speed_of_light::SpeedOfLight;
 use std::collections::HashSet;
@@ -45,14 +46,20 @@ where
 
 pub struct PublicNextSquares {}
 impl PublicNextSquares {
-    /// 全升☆（＾～＾）
-    pub fn for_all<F1>(callback: &mut F1)
+    /// 全升の面積だぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `_friend` - 使わないぜ☆（＾～＾）
+    /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
+    pub fn for_all<F1>(_friend: Option<Phase>, callback: &mut F1)
     where
         F1: FnMut(AbsoluteAddress),
     {
-        for rank_src in 1..10 {
-            for file_src in (1..10).rev() {
-                callback(Address::new(file_src, rank_src).abs());
+        for rank in RANK_1..RANK_10 {
+            for file in (FILE_1..FILE_10).rev() {
+                callback(Address::new(file, rank).abs());
             }
         }
     }
