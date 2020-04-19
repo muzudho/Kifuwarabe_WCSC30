@@ -20,9 +20,9 @@ pub enum PosNums {
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
 pub struct GameHashSeed {
     // 盤上の駒
-    pub km: [[u64; PIECE_LN]; BOARD_MEMORY_AREA as usize],
+    pub piece: [[u64; PIECE_LN]; BOARD_MEMORY_AREA as usize],
     // 持ち駒
-    pub mg: [[u64; MG_MAX]; PIECE_LN],
+    pub hand: [[u64; MG_MAX]; PIECE_LN],
     // 先後
     pub phase: [u64; PHASE_LN],
 }
@@ -49,9 +49,9 @@ impl Default for Game {
             starting_board: Board::default(),
             hash_seed: GameHashSeed {
                 // 盤上の駒
-                km: [[0; PIECE_LN]; BOARD_MEMORY_AREA as usize],
+                piece: [[0; PIECE_LN]; BOARD_MEMORY_AREA as usize],
                 // 持ち駒
-                mg: [[0; MG_MAX]; PIECE_LN],
+                hand: [[0; MG_MAX]; PIECE_LN],
                 // 先後
                 phase: [0; PHASE_LN],
             },
@@ -69,14 +69,14 @@ impl Game {
         for i_square in SQUARE_NONE..BOARD_MEMORY_AREA {
             for i_km in 0..PIECE_LN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.hash_seed.km[i_square as usize][i_km] =
+                self.hash_seed.piece[i_square as usize][i_km] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 持ち駒
         for i_km in 0..PIECE_LN {
             for i_mg in 0..MG_MAX {
-                self.hash_seed.mg[i_km][i_mg] =
+                self.hash_seed.hand[i_km][i_mg] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
@@ -107,7 +107,7 @@ impl Game {
     pub fn set_current_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    pub fn set_cap(&mut self, ply1: usize, pc: Option<Piece>) {
+    pub fn set_captured(&mut self, ply1: usize, pc: Option<Piece>) {
         self.history.captured_pieces[ply1] = pc
     }
 
@@ -123,7 +123,7 @@ impl Game {
 
     /// 初期局面、現局面ともにクリアーします。
     /// 手目も 0 に戻します。
-    pub fn clear_all_positions(&mut self) {
+    pub fn clear(&mut self) {
         self.starting_board.clear();
         self.current_board.clear();
         self.history.ply = 0;
@@ -135,16 +135,12 @@ impl Game {
         for i_adr in 0..BOARD_MEMORY_AREA {
             let i_sq = AbsoluteAddress::from_address(i_adr as isquare);
             // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-            let piece = self.starting_board.get_piece_by_square(&i_sq);
-            self.current_board.set_piece_by_square(&i_sq, piece);
+            let piece = self.starting_board.piece_at(&i_sq);
+            self.current_board.set_piece_at(&i_sq, piece);
         }
 
         // 持ち駒
         self.current_board.hand[..PIECE_LN].clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
-    }
-
-    pub fn set_starting_position_hand_piece(&mut self, km: Piece, maisu: i8) {
-        self.starting_board.hand[km as usize] = maisu;
     }
 
     /// 局面ハッシュ。
@@ -171,7 +167,7 @@ impl Game {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_ky1_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
+    pub fn create_current_position_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
         let mut hash = self.current_board.create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
@@ -187,7 +183,7 @@ impl Game {
     /// 千日手を調べるために、
     /// 現局面は、同一局面が何回目かを調べるぜ☆（＾～＾）
     /// TODO 初期局面を何に使ってるのか☆（＾～＾）？
-    pub fn count_same_ky(&self) -> i8 {
+    pub fn count_same_position(&self) -> i8 {
         if self.history.ply < 1 {
             return 0;
         }
@@ -242,39 +238,30 @@ impl Game {
                 // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152 = if movement.promote {
                     // 成りなら
-                    if let Some(pc) = self.current_board.get_piece_by_square(&movement.source) {
+                    if let Some(pc) = self.current_board.piece_at(&movement.source) {
                         // 成り駒をクローン。
-                        Some(speed_of_light.get_piece_chart(&pc).promoted)
+                        Some(speed_of_light.piece_chart(&pc).promoted)
                     } else {
                         panic!("成ったのに、元の升に駒がなかった☆（＾～＾）");
                     }
                 } else {
                     // 移動元の駒をクローン。
-                    self.current_board
-                        .get_piece_by_square(&movement.source)
-                        .clone()
+                    self.current_board.piece_at(&movement.source).clone()
                 };
 
                 // 移動元を空に。
-                self.current_board
-                    .set_piece_by_square(&movement.source, None);
+                self.current_board.set_piece_at(&movement.source, None);
 
                 piece152
             };
 
             // 移動先升に駒があるかどうか
-            cap = if let Some(_) = self
-                .current_board
-                .get_piece_by_square(&movement.destination)
-            {
+            cap = if let Some(_) = self.current_board.piece_at(&movement.destination) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                let cap_o764 = {
-                    self.current_board
-                        .get_piece_by_square(&movement.destination)
-                };
+                let cap_o764 = { self.current_board.piece_at(&movement.destination) };
 
                 if let Some(cap764) = cap_o764 {
-                    let cap773 = speed_of_light.get_piece_chart(&cap764).captured;
+                    let cap773 = speed_of_light.piece_chart(&cap764).captured;
                     self.current_board.add_hand(&cap773, 1, speed_of_light);
                 };
                 cap_o764
@@ -284,12 +271,12 @@ impl Game {
 
             // 移動先升に駒を置く
             self.current_board
-                .set_piece_by_square(&movement.destination, moveing_piece);
+                .set_piece_at(&movement.destination, moveing_piece);
         }
-        self.set_cap(self.history.ply as usize, cap);
+        self.set_captured(self.history.ply as usize, cap);
 
         // 局面ハッシュを作り直す
-        let ky_hash = self.create_ky1_hash(speed_of_light);
+        let ky_hash = self.create_current_position_hash(speed_of_light);
         self.set_current_position_hash(ky_hash);
 
         self.history.ply += 1;
@@ -322,33 +309,29 @@ impl Game {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
-                        if let Some(source409) = self
-                            .current_board
-                            .get_piece_by_square(&movement.destination)
+                        if let Some(source409) = self.current_board.piece_at(&movement.destination)
                         {
-                            Some(speed_of_light.get_piece_chart(&source409).demoted)
+                            Some(speed_of_light.piece_chart(&source409).demoted)
                         } else {
                             panic!("成ったのに移動先に駒が無いぜ☆（＾～＾）！")
                         }
                     } else {
-                        self.current_board
-                            .get_piece_by_square(&movement.destination)
-                            .clone()
+                        self.current_board.piece_at(&movement.destination).clone()
                     }
                 };
 
                 // 移動先の駒を、取った駒（あるいは空）に戻す
                 self.current_board
-                    .set_piece_by_square(&movement.destination, cap_o);
+                    .set_piece_at(&movement.destination, cap_o);
 
                 if let Some(cap) = cap_o {
-                    let captured = speed_of_light.get_piece_chart(&cap).captured;
+                    let captured = speed_of_light.piece_chart(&cap).captured;
                     // 自分の持ち駒を減らす
                     self.current_board.add_hand(&captured, -1, speed_of_light);
                 }
                 // 移動元升に、動かした駒を置く
                 self.current_board
-                    .set_piece_by_square(&movement.source, old_source391_o);
+                    .set_piece_at(&movement.source, old_source391_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true

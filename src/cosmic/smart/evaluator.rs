@@ -19,7 +19,7 @@ impl Evaluation {
         speed_of_light: &SpeedOfLight,
     ) -> Evaluation {
         if let Some(captured_piece) = captured_piece_o {
-            let captured_ps = speed_of_light.get_piece_chart(&captured_piece);
+            let captured_ps = speed_of_light.piece_chart(&captured_piece);
             match captured_ps.phase_piece_type.1 {
                 PieceType::King => Evaluation::new(25000), // 玉を取ったら、評価しないのでここには来ないぜ☆（＾～＾）
                 PieceType::Rook => Evaluation::new(1000),

@@ -74,7 +74,7 @@ impl Board {
     }
 
     /// 歩が置いてあるか確認
-    pub fn exists_fu_by_phase_suji(
+    pub fn exists_pawn_on_file(
         &self,
         phase: Phase,
         suji: i8,
@@ -82,8 +82,8 @@ impl Board {
     ) -> bool {
         for dan in RANK_1..RANK_10 {
             let sq = AbsoluteAddress::from_file_rank(suji, dan);
-            if let Some(piece99) = self.get_piece_by_square(&sq) {
-                let ps100 = speed_of_light.get_piece_chart(&piece99);
+            if let Some(piece99) = self.piece_at(&sq) {
+                let ps100 = speed_of_light.piece_chart(&piece99);
                 let (phase_piece, piece_type) = &ps100.phase_piece_type;
                 if *phase_piece == phase && *piece_type == PieceType::Pawn {
                     return true;
@@ -93,39 +93,41 @@ impl Board {
         false
     }
     /// 升で指定して駒を取得
-    pub fn get_piece_by_square(&self, sq: &AbsoluteAddress) -> Option<Piece> {
-        self.board[sq.address as usize]
+    pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<Piece> {
+        self.board[adr.address as usize]
     }
     pub fn set_piece(&mut self, file: i8, rank: i8, piece_o: Option<Piece>) {
-        self.set_piece_by_square(&AbsoluteAddress::from_file_rank(file, rank), piece_o);
+        self.set_piece_at(&AbsoluteAddress::from_file_rank(file, rank), piece_o);
     }
     /// 升で指定して駒を置く
-    pub fn set_piece_by_square(&mut self, sq: &AbsoluteAddress, piece_o: Option<Piece>) {
-        if let Some(_piece) = piece_o {
-            self.board[sq.address as usize] = piece_o;
+    pub fn set_piece_at(&mut self, adr: &AbsoluteAddress, piece: Option<Piece>) {
+        if let Some(_piece) = piece {
+            self.board[adr.address as usize] = piece;
         } else {
-            self.board[sq.address as usize] = None;
+            self.board[adr.address as usize] = None;
         }
     }
     /// 持ち駒の枚数を加算
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
-        self.hand[speed_of_light.get_piece_chart(hand).serial_piece_number] += maisu;
+        self.hand[speed_of_light.piece_chart(hand).serial_piece_number] += maisu;
     }
     pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
-        self.hand[speed_of_light.get_piece_chart(hand).serial_piece_number]
+        self.hand[speed_of_light.piece_chart(hand).serial_piece_number]
+    }
+    pub fn set_hand(&mut self, km: Piece, number: i8) {
+        self.hand[km as usize] = number;
     }
 
     /// 升には何がありますか？
     pub fn what_is_in_the_square(
         &self,
         phase: Phase,
-        sq: &AbsoluteAddress,
+        adr: &AbsoluteAddress,
         speed_of_light: &SpeedOfLight,
     ) -> ThingsInTheSquare {
         // TODO 範囲外チェックは？行わない？
-        if let Some(piece) = self.get_piece_by_square(&sq) {
-            let piece_struct = speed_of_light.get_piece_chart(&piece);
-            if piece_struct.phase() == phase {
+        if let Some(piece) = self.piece_at(&adr) {
+            if piece.phase(speed_of_light) == phase {
                 return ThingsInTheSquare::Friend;
             }
             ThingsInTheSquare::Opponent
@@ -141,17 +143,15 @@ impl Board {
         // 盤上の駒
         for i_address in SQUARE_NONE..BOARD_MEMORY_AREA {
             let i_sq = AbsoluteAddress::from_address(i_address as isquare);
-            if let Some(km) = self.get_piece_by_square(&i_sq) {
-                let num_km = speed_of_light.get_piece_chart(&km).serial_piece_number;
-                hash ^= game.hash_seed.km[i_address as usize][num_km];
+            if let Some(km) = self.piece_at(&i_sq) {
+                let num_km = speed_of_light.piece_chart(&km).serial_piece_number;
+                hash ^= game.hash_seed.piece[i_address as usize][num_km];
             }
         }
 
         // 持ち駒ハッシュ
         GPPieces::for_all(&mut |any_piece| {
-            let num_km = speed_of_light
-                .get_piece_chart(&any_piece)
-                .serial_piece_number;
+            let num_km = speed_of_light.piece_chart(&any_piece).serial_piece_number;
 
             let maisu = self.get_hand(&any_piece, &speed_of_light);
             debug_assert!(
@@ -162,7 +162,7 @@ impl Board {
                 MG_MAX
             );
 
-            hash ^= game.hash_seed.mg[num_km][maisu as usize];
+            hash ^= game.hash_seed.hand[num_km][maisu as usize];
         });
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）

@@ -445,7 +445,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
     let len = line.chars().count();
 
     // 局面をクリアー。手目も 0 に戻します。
-    universe.game.clear_all_positions();
+    universe.game.clear();
 
     if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
         // 'position startpos' を読み飛ばし
@@ -611,7 +611,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
                         } // 持駒部 正常終了
                     }
 
-                    universe.game.set_starting_position_hand_piece(km, maisu);
+                    universe.game.get_mut_starting_board().set_hand(km, maisu);
                 } //if
             } //loop
         } //else

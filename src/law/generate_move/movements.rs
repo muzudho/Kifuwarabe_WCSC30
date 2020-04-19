@@ -118,12 +118,10 @@ impl MGMovements {
                 }
             };
 
-        if let Some(piece) = current_board.get_piece_by_square(&source) {
-            let ps = speed_of_light.get_piece_chart(&piece);
-
-            if friend == ps.phase() {
+        if let Some(piece) = current_board.piece_at(&source) {
+            if friend == piece.phase(speed_of_light) {
                 NextSquares::looking_for_squares_from_on_board(
-                    ps.piece_type(),
+                    piece.r#type(speed_of_light),
                     friend,
                     &source,
                     callback_next,
@@ -143,7 +141,7 @@ impl MGMovements {
     {
         HandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = &speed_of_light
-                .get_piece_struct_by_phase_and_piece_type(
+                .piece_chart_by_phase_and_piece_type(
                     game.history.get_phase(Person::Friend),
                     any_piece_type,
                 )
@@ -225,16 +223,14 @@ impl MGMovements {
     ) where
         F1: FnMut(u64),
     {
-        if let None = current_board.get_piece_by_square(&destination) {
+        if let None = current_board.piece_at(&destination) {
             // 駒が無いところに打つ
-            let ps_dst = speed_of_light.get_piece_chart(hand_piece);
-            let piece_type_dst = ps_dst.piece_type();
             use crate::cosmic::toy_box::Piece::*;
             match *hand_piece {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない☆（＾～＾）
-                    if current_board.exists_fu_by_phase_suji(
-                        ps_dst.phase(),
+                    if current_board.exists_pawn_on_file(
+                        hand_piece.phase(speed_of_light),
                         destination.get_file(),
                         speed_of_light,
                     ) {
@@ -250,7 +246,7 @@ impl MGMovements {
                     promote: false,                                     // 打に成りは無し
                     drop: num_to_piece_type(
                         speed_of_light
-                            .get_piece_type_struct_from_piece_type(&piece_type_dst)
+                            .piece_type_chart_from_piece_type(&hand_piece.r#type(speed_of_light))
                             .serial_piece_number,
                     ), // 打った駒種類
                 }

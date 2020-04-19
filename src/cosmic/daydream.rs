@@ -186,8 +186,8 @@ impl Tree {
             Commands::pos(&game);
             */
 
-            if let Some(cap) = captured_piece {
-                if speed_of_light.get_piece_chart(&cap).piece_type() == King {
+            if let Some(captured_piece_val) = captured_piece {
+                if captured_piece_val.r#type(speed_of_light) == King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！
                     ts.catch_king(*movement_hash);
 
@@ -198,7 +198,7 @@ impl Tree {
             }
 
             // 千日手かどうかを判定する☆（＾～＾）
-            if SENNTITE_NUM <= game.count_same_ky() {
+            if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 ts.repetition_movement_hash = *movement_hash;
             } else if end_depth <= cur_depth {

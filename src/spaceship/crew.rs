@@ -97,7 +97,7 @@ impl Kifuwarabe {
         IO::writeln("usiok");
     }
     pub fn usinewgame(universe: &mut Universe) {
-        universe.game.clear_all_positions();
+        universe.game.clear();
     }
 }
 
@@ -182,7 +182,7 @@ impl Chiyuri {
         IO::writeln(&format!("乱数={}", secret_number));
     }
     pub fn same(universe: &Universe) {
-        let count = universe.game.count_same_ky();
+        let count = universe.game.count_same_position();
         IO::writeln(&format!("同一局面調べ count={}", count));
     }
     pub fn startpos(speed_of_light: &SpeedOfLight, universe: &mut Universe) {

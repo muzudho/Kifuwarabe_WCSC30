@@ -5,6 +5,7 @@
 use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::toy_box::Piece;
+use crate::law::speed_of_light::SpeedOfLight;
 
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
@@ -267,6 +268,16 @@ impl PieceChart {
 
     pub fn piece_type(&self) -> PieceType {
         self.phase_piece_type.1
+    }
+}
+/// コーディングを短くするためのものだぜ☆（＾～＾）
+impl Piece {
+    pub fn phase(&self, speed_of_light: &SpeedOfLight) -> Phase {
+        speed_of_light.piece_chart(self).phase()
+    }
+
+    pub fn r#type(&self, speed_of_light: &SpeedOfLight) -> PieceType {
+        speed_of_light.piece_chart(self).piece_type()
     }
 }
 
