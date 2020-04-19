@@ -27,14 +27,20 @@ impl Kifuwarabe {
         // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
         match std_io::stdin().read_line(&mut line) {
             Ok(_n) => {}
-            Err(e) => panic!("info string Failed to read line. / {}", e),
+            Err(e) => panic!(IO::panicing(&format!(
+                "info string Failed to read line. / {}",
+                e
+            ))),
         };
 
         // 末尾の改行を除こうぜ☆（＾～＾）
         // trim すると空白も消えるぜ☆（＾～＾）
         let line: String = match line.trim().parse() {
             Ok(n) => n,
-            Err(e) => panic!("info string Failed to parse. / {}", e),
+            Err(e) => panic!(IO::panicing(&format!(
+                "info string Failed to parse. / {}",
+                e
+            ))),
         };
 
         // 文字数を調べようぜ☆（＾～＾）
@@ -137,7 +143,7 @@ impl Chiyuri {
     }
     pub fn hash(universe: &Universe) {
         IO::writeln("局面ハッシュ表示");
-        let s = universe.game.get_all_position_hash_text();
+        let s = universe.game.get_positions_hash_text();
         IO::writeln(&s);
     }
     pub fn how_much(line: &str) {

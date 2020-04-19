@@ -65,4 +65,10 @@ impl IO {
     pub fn debugln(s: &str) {
         IO::writeln(&format!("Debug   | {}", s));
     }
+
+    /// panic! で強制終了する前に、ヤケクソで読み筋欄に表示できないかトライするぜ☆（＾～＾）
+    #[allow(dead_code)]
+    pub fn panicing(s: &str) -> String {
+        IO::logln(&format!("info string panic! {}", s)).to_string()
+    }
 }

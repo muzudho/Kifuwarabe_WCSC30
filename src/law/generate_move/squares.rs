@@ -1,8 +1,8 @@
 use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    isquare, AbsoluteAddress, Angle, RelativeAddress, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2,
-    RANK_3, RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
+    AbsoluteAddress, Angle, RelativeAddress, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,
+    RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::law::diagnostic::{assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute};
 use std::fmt;
@@ -539,14 +539,6 @@ impl Promoting {
 
 pub struct Squares {}
 impl Squares {
-    fn rotate180_as_absolute(phase: Phase, square: isquare) -> isquare {
-        if phase == Phase::Second {
-            110 - square
-        } else {
-            square
-        }
-    }
-
     fn has_jumped_out_of_the_board(address: i8) -> bool {
         address / 10 % 10 == 0 || address % 10 == 0
     }
@@ -557,18 +549,23 @@ impl Squares {
     where
         F1: FnMut(AbsoluteAddress),
     {
+        // TODO for文の方を変えた方が高速だろ……☆（＾～＾）
         for rank in RANK_2..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                let adr1 = AbsoluteAddress::from_file_rank(file, rank).address;
-                let adr2 = Squares::rotate180_as_absolute(phase, adr1);
+                let mut ab_adr = AbsoluteAddress::from_file_rank(file, rank);
+
+                // 後手ならひっくり返すぜ☆（＾～＾）
+                if phase == Phase::Second {
+                    ab_adr = ab_adr.rotate_180();
+                }
                 assert_in_board_with_frame_as_absolute(
-                    adr2,
+                    ab_adr.address,
                     &format!(
-                        "square::for_from_rank2_to_rank9(). rank={}, file={}, adr1={}, adr2={}.",
-                        rank, file, adr1, adr2
+                        "square::for_from_rank2_to_rank9. phase={} rank={}, file={}, ab_adr={}.",
+                        phase, rank, file, ab_adr.address
                     ),
                 );
-                callback(AbsoluteAddress::from_address(adr2));
+                callback(ab_adr);
             }
         }
     }
@@ -581,12 +578,12 @@ impl Squares {
     {
         for rank in RANK_3..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                callback(AbsoluteAddress::from_address(
-                    Squares::rotate180_as_absolute(
-                        phase,
-                        AbsoluteAddress::from_file_rank(file, rank).address,
-                    ),
-                ));
+                let mut ab_adr = AbsoluteAddress::from_file_rank(file, rank);
+                if phase == Phase::Second {
+                    ab_adr = ab_adr.rotate_180();
+                }
+
+                callback(ab_adr);
             }
         }
     }

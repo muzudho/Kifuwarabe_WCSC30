@@ -9,6 +9,7 @@ use crate::cosmic::smart::features::PieceType::King;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::movement_generator::generate_movement;
 use crate::law::speed_of_light::*;
+use crate::white_hole::io::IO;
 use std::collections::HashSet;
 
 #[derive(Clone)]
@@ -84,7 +85,7 @@ impl TreeState {
                 }
             }
         } else {
-            panic!("評価値が付いてないぜ☆（＾～＾）！")
+            panic!(IO::panicing("評価値が付いてないぜ☆（＾～＾）！"))
         }
     }
 

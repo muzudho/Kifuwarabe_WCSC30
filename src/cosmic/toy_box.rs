@@ -6,7 +6,7 @@ use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    isquare, AbsoluteAddress, BOARD_MEMORY_AREA, RANK_1, RANK_10, SQUARE_NONE,
+    AbsoluteAddress, Address, BOARD_MEMORY_AREA, RANK_1, RANK_10, SQUARE_NONE,
 };
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
@@ -108,8 +108,8 @@ impl Board {
         }
     }
     /// 持ち駒の枚数を加算
-    pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
-        self.hand[hand.serial_number(speed_of_light)] += maisu;
+    pub fn add_hand(&mut self, hand: &Piece, count: i8, speed_of_light: &SpeedOfLight) {
+        self.hand[hand.serial_number(speed_of_light)] += count;
     }
     pub fn get_hand(&self, hand: Piece, speed_of_light: &SpeedOfLight) -> i8 {
         self.hand[hand.serial_number(speed_of_light)]
@@ -141,11 +141,9 @@ impl Board {
         let mut hash: u64 = 0;
 
         // 盤上の駒
-        for i_address in SQUARE_NONE..BOARD_MEMORY_AREA {
-            let i_sq = AbsoluteAddress::from_address(i_address as isquare);
-            if let Some(piece_val) = self.piece_at(&i_sq) {
-                let piece_num = piece_val.serial_number(speed_of_light);
-                hash ^= game.hash_seed.piece[i_address as usize][piece_num];
+        for adr in SQUARE_NONE..BOARD_MEMORY_AREA {
+            if let Some(piece) = self.piece_at(&Address::from_number(adr).abs()) {
+                hash ^= game.hash_seed.piece[adr as usize][piece.serial_number(speed_of_light)];
             }
         }
 

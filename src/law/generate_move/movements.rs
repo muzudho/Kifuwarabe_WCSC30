@@ -142,7 +142,7 @@ impl MGMovements {
         HandPieces::for_all(&mut |any_piece_type| {
             let hand_piece = any_piece_type.add_phase(game.history.get_phase(Person::Friend));
 
-            if 0 < game.current_board.get_hand(hand_piece, speed_of_light) {
+            if 0 < game.board.get_hand(hand_piece, speed_of_light) {
                 // 駒を持っていれば
                 use crate::cosmic::toy_box::Piece::*;
                 match hand_piece {
@@ -151,7 +151,7 @@ impl MGMovements {
                         Squares::for_from_rank2_to_rank9(Phase::First, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.current_board,
+                                &game.board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -162,7 +162,7 @@ impl MGMovements {
                     Knight1 => Squares::for_from_rank3_to_rank9(Phase::First, &mut |destination| {
                         MGMovements::make_hand(
                             &hand_piece,
-                            &game.current_board,
+                            &game.board,
                             speed_of_light,
                             &destination,
                             callback_movement,
@@ -173,7 +173,7 @@ impl MGMovements {
                         Squares::for_from_rank2_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.current_board,
+                                &game.board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -185,7 +185,7 @@ impl MGMovements {
                         Squares::for_from_rank3_to_rank9(Phase::Second, &mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.current_board,
+                                &game.board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,
@@ -197,7 +197,7 @@ impl MGMovements {
                         MGSquares::for_all(&mut |destination| {
                             MGMovements::make_hand(
                                 &hand_piece,
-                                &game.current_board,
+                                &game.board,
                                 speed_of_light,
                                 &destination,
                                 callback_movement,

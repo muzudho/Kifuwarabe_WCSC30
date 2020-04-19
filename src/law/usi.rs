@@ -97,10 +97,10 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
                 "8" => 8,
                 "9" => 9,
                 _ => {
-                    panic!(
-                        "{}",
-                        IO::logln(&format!("(1) '{}' だった。", &line[*starts..=*starts]))
-                    );
+                    panic!(IO::panicing(&format!(
+                        "(1) '{}' だった。",
+                        &line[*starts..=*starts]
+                    )));
                 }
             };
             *starts += 1;
@@ -116,10 +116,10 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
                 "h" => 8,
                 "i" => 9,
                 _ => {
-                    panic!(
-                        "{}",
-                        IO::logln(&format!("(2) '{}' だった。", &line[*starts..=*starts]))
-                    );
+                    panic!(IO::panicing(&format!(
+                        "(2) '{}' だった。",
+                        &line[*starts..=*starts]
+                    )));
                 }
             };
             *starts += 1;
@@ -143,10 +143,10 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
         "8" => 8,
         "9" => 9,
         _ => {
-            panic!(
-                "{}",
-                IO::logln(&format!("(3) '{}' だった。", &line[*starts..=*starts]))
-            );
+            panic!(IO::panicing(&format!(
+                "(3) '{}' だった。",
+                &line[*starts..=*starts]
+            )));
         }
     };
     *starts += 1;
@@ -162,10 +162,10 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
         "h" => 8,
         "i" => 9,
         _ => {
-            panic!(
-                "{}",
-                IO::logln(&format!("(4) '{}' だった。", &line[*starts..=*starts]))
-            );
+            panic!(IO::panicing(&format!(
+                "(4) '{}' だった。",
+                &line[*starts..=*starts]
+            )));
         }
     };
     *starts += 1;
@@ -187,7 +187,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     }
 
     // 確定。
-    universe.game.set_current_movement(&buffer);
+    universe.game.set_move(&buffer);
 
     universe.game.history.ply += 1;
     true
@@ -419,10 +419,10 @@ pub fn read_banjo(
                         suji -= 1;
                     }
                     _ => {
-                        panic!(
-                            "{}",
-                            IO::logln(&format!("盤部(0) '{}' だった。", &line[*starts..=*starts]))
-                        );
+                        panic!(IO::panicing(&format!(
+                            "盤部(0) '{}' だった。",
+                            &line[*starts..=*starts]
+                        )));
                     }
                 }
             }
@@ -501,13 +501,10 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
                                 "7" => 17,
                                 "8" => 18,
                                 _ => {
-                                    panic!(
-                                        "{}",
-                                        IO::logln(&format!(
-                                            "持駒部(0) '{}' だった。",
-                                            &line[starts..(starts + 2)]
-                                        ))
-                                    );
+                                    panic!(IO::panicing(&format!(
+                                        "持駒部(0) '{}' だった。",
+                                        &line[starts..(starts + 2)]
+                                    )));
                                 }
                             };
                             starts += 2;

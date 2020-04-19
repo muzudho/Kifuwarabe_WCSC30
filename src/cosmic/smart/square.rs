@@ -450,7 +450,28 @@ impl Angle {
     }
 }
 
-/// 相対番地。
+/// 升の番地だぜ☆（＾～＾）
+pub struct Address {
+    number: i8,
+}
+impl Address {
+    pub fn from_number(number: i8) -> Self {
+        Address { number: number }
+    }
+
+    pub fn abs(&self) -> AbsoluteAddress {
+        AbsoluteAddress::from_address(self.number as isquare)
+    }
+}
+
+/// 相対番地。絶対番地と同じだが、回転の中心を原点に固定した操作が行われるぜ☆（＾～＾）
+///
+/// 18  8  -2 -12 -22
+/// 19  9  -1 -11 -21
+/// 20 10   0 -10 -20
+/// 21 11   1 - 9 -19
+/// 22 12   2 - 8 -18
+///
 /// file, rank から 相対番地は作れますが、相対番地から file, rank を作ることはできません(不定)。
 /// そこから、 file, rank で持ちます。
 #[derive(Clone)]
@@ -618,7 +639,7 @@ impl fmt::Debug for RelativeAddress {
     }
 }
 
-/// Square(升).
+/// 絶対番地☆（＾～＾）相対番地と同じだが、回転の操作は座標 55 が中心になるぜ☆（＾～＾）
 ///
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -669,11 +690,9 @@ impl AbsoluteAddress {
         (self.get_file(), self.get_rank())
     }
 
-    /*
-    pub fn rotate_180_on_1_orthant(&self) -> Self {
-        Square::from_address(110 - self.address)
+    pub fn rotate_180(&self) -> Self {
+        AbsoluteAddress::from_address(110 - self.address)
     }
-    */
 }
 impl fmt::Debug for AbsoluteAddress {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
