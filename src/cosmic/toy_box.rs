@@ -94,7 +94,7 @@ impl Board {
     }
     /// 升で指定して駒を取得
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<Piece> {
-        self.board[adr.address as usize]
+        self.board[adr.address() as usize]
     }
     pub fn set_piece(&mut self, file: i8, rank: i8, piece_o: Option<Piece>) {
         self.set_piece_at(&AbsoluteAddress::from_file_rank(file, rank), piece_o);
@@ -102,9 +102,9 @@ impl Board {
     /// 升で指定して駒を置く
     pub fn set_piece_at(&mut self, adr: &AbsoluteAddress, piece: Option<Piece>) {
         if let Some(_piece) = piece {
-            self.board[adr.address as usize] = piece;
+            self.board[adr.address() as usize] = piece;
         } else {
-            self.board[adr.address as usize] = None;
+            self.board[adr.address() as usize] = None;
         }
     }
     /// 持ち駒の枚数を加算
@@ -145,7 +145,7 @@ impl Board {
             for file in (FILE_0..FILE_11).rev() {
                 let ab_adr = &Address::from_file_rank(file, rank).abs();
                 if let Some(piece) = self.piece_at(ab_adr) {
-                    hash ^= game.hash_seed.piece[ab_adr.address as usize]
+                    hash ^= game.hash_seed.piece[ab_adr.address() as usize]
                         [piece.serial_number(speed_of_light)];
                 }
             }

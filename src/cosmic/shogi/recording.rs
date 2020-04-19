@@ -6,7 +6,7 @@ use crate::cosmic::shogi::state::{Person, Phase};
 use crate::cosmic::smart::features::{
     pop_piece_type_from_hash, push_piece_type_to_hash, PieceType,
 };
-use crate::cosmic::smart::square::{AbsoluteAddress, SQUARE_DROP, SQUARE_NONE};
+use crate::cosmic::smart::square::{AbsoluteAddress, Address};
 use crate::cosmic::toy_box::Piece;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
@@ -87,8 +87,8 @@ pub struct Movement {
 impl Default for Movement {
     fn default() -> Self {
         Movement {
-            source: AbsoluteAddress::from_number(0),
-            destination: AbsoluteAddress::from_number(0),
+            source: Address::default().abs(),
+            destination: Address::default().abs(),
             promote: false,
             drop: None,
         }
@@ -119,7 +119,7 @@ impl Movement {
     }
 
     pub fn resign(&self) -> bool {
-        self.destination.address == SQUARE_NONE
+        self.destination.is_none()
     }
 }
 impl fmt::Display for Movement {
@@ -134,7 +134,7 @@ impl fmt::Display for Movement {
         assert_in_board_as_absolute(&self.destination, "Movement-display");
         let (dx, dy) = self.destination.to_file_rank();
 
-        if self.source.address == SQUARE_DROP {
+        if self.source.is_drop() {
             use crate::cosmic::smart::features::PieceType::*;
             write!(
                 f,
@@ -158,7 +158,7 @@ impl fmt::Display for Movement {
                 if self.promote { "+" } else { "" }
             )
         } else {
-            let (sx, sy) = if self.source.address == SQUARE_NONE {
+            let (sx, sy) = if self.source.is_none() {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
@@ -182,8 +182,8 @@ impl fmt::Debug for Movement {
         write!(
             f,
             "Movement({}{}{}{})",
-            self.source.address,
-            self.destination.address,
+            self.source.address(),
+            self.destination.address(),
             self.promote,
             if let Some(drp) = self.drop {
                 format!("{}", drp)

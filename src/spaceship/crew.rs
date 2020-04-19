@@ -1,7 +1,7 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::shogi::playing::{Game, PosNums};
-use crate::cosmic::smart::square::AbsoluteAddress;
+use crate::cosmic::smart::square::{Address, FILE_1};
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
 use crate::law::generate_move::movement_generator::*;
@@ -198,9 +198,9 @@ impl Chiyuri {
     pub fn teigi_conv() {
         IO::writeln("teigi::convのテスト");
 
-        for ms in 11..19 {
+        for ms in 1..9 {
             for hash in 0..10 {
-                let sq = AbsoluteAddress::from_number(ms);
+                let sq = Address::from_file_rank(FILE_1, ms).abs();
                 let next = push_sq_to_hash(hash, &sq);
                 let (hash_orig, square_orig) = pop_sq_from_hash(next);
                 IO::writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
@@ -208,7 +208,7 @@ impl Chiyuri {
                     ,ms
                     ,next
                     ,hash_orig
-                    ,square_orig.address
+                    ,square_orig.address()
                 ));
             }
         }

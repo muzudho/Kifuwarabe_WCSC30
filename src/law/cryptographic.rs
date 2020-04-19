@@ -25,13 +25,13 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
 pub fn push_sq_to_hash(hash: u64, square: &AbsoluteAddress) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    (hash << 7) + square.address as u64
+    (hash << 7) + square.address() as u64
 }
 /// ハッシュ値から作る
 pub fn pop_sq_from_hash(hash: u64) -> (u64, AbsoluteAddress) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let sq_num = AbsoluteAddress::from_number((hash & 0b111_1111) as i8);
+    let sq_num = Address::from_absolute_address((hash & 0b111_1111) as i8);
     (hash >> 7, sq_num)
 }
 

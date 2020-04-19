@@ -553,10 +553,13 @@ impl Squares {
                     ab_adr = ab_adr.rotate_180();
                 }
                 assert_in_board_with_frame_as_absolute(
-                    ab_adr.address,
+                    ab_adr.address(),
                     &format!(
                         "square::for_from_rank2_to_rank9. phase={} rank={}, file={}, ab_adr={}.",
-                        phase, rank, file, ab_adr.address
+                        phase,
+                        rank,
+                        file,
+                        ab_adr.address()
                     ),
                 );
                 callback(ab_adr);

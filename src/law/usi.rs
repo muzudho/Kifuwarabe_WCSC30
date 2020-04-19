@@ -51,37 +51,37 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            buffer.source = AbsoluteAddress::from_number(0);
+            buffer.source = Address::default().abs();
             buffer.drop = Some(PieceType::Rook);
         }
         "B" => {
             *starts += 2;
-            buffer.source = AbsoluteAddress::from_number(0);
+            buffer.source = Address::default().abs();
             buffer.drop = Some(PieceType::Bishop);
         }
         "G" => {
             *starts += 2;
-            buffer.source = AbsoluteAddress::from_number(0);
+            buffer.source = Address::default().abs();
             buffer.drop = Some(PieceType::Gold);
         }
         "S" => {
             *starts += 2;
-            buffer.source = AbsoluteAddress::from_number(0);
+            buffer.source = Address::default().abs();
             buffer.drop = Some(PieceType::Silver);
         }
         "N" => {
             *starts += 2;
-            buffer.source = AbsoluteAddress::from_number(0);
+            buffer.source = Address::default().abs();
             buffer.drop = Some(PieceType::Knight);
         }
         "L" => {
             *starts += 2;
-            buffer.source = AbsoluteAddress::from_number(0);
+            buffer.source = Address::default().abs();
             buffer.drop = Some(PieceType::Lance);
         }
         "P" => {
             *starts += 2;
-            buffer.source = AbsoluteAddress::from_number(0);
+            buffer.source = Address::default().abs();
             buffer.drop = Some(PieceType::Pawn);
         }
         _ => {

@@ -7,7 +7,7 @@ use crate::cosmic::smart::square::AbsoluteAddress;
 /// 打はテストできない
 ///
 pub fn assert_in_board_as_absolute(ab_adr: &AbsoluteAddress, hint: &str) {
-    let adr = ab_adr.address;
+    let adr = ab_adr.address();
     debug_assert!(
         (10 < adr && adr < 20)
             || (20 < adr && adr < 30)

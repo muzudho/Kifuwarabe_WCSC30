@@ -1,7 +1,7 @@
 use crate::cosmic::shogi::recording::{History, Movement};
 use crate::cosmic::shogi::state::{Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
 use crate::cosmic::smart::square::{
-    Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_DROP, SQUARE_NONE,
+    Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_NONE,
 };
 use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};
 use crate::law::speed_of_light::SpeedOfLight;
@@ -227,7 +227,7 @@ impl Game {
         let cap: Option<Piece>;
         {
             // 動かす駒
-            let moveing_piece: Option<Piece> = if movement.source.address == SQUARE_DROP {
+            let moveing_piece: Option<Piece> = if movement.source.is_drop() {
                 // 打なら
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
@@ -296,7 +296,7 @@ impl Game {
                 // 取った駒が有ったか。
                 let cap_o: Option<Piece> = self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let old_source391_o: Option<Piece> = if movement.source.address == SQUARE_DROP {
+                let old_source391_o: Option<Piece> = if movement.source.is_drop() {
                     // 打なら
                     if let Some(drp) = movement.drop {
                         let drop394 = Piece::from_phase_and_piece_type(phase, drp);

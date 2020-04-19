@@ -309,9 +309,6 @@ pub const RANK_11: i8 = 11;
 /// 升の検索等で、該当なしの場合
 pub const SQUARE_NONE: i8 = 0;
 
-/// 指し手。打の場合のsrc
-pub const SQUARE_DROP: i8 = 0;
-
 #[derive(Debug)]
 pub enum DictOrthant {
     /// 第２象限。x=0, y=0 ともに含みません。
@@ -459,8 +456,21 @@ pub struct Address {
     file: i8,
     rank: i8,
 }
+impl Default for Address {
+    fn default() -> Self {
+        Address { file: 0, rank: 0 }
+    }
+}
 impl Address {
     pub fn from_file_rank(file1: i8, rank1: i8) -> Self {
+        debug_assert!(
+            -FILE_11 < file1 && file1 < FILE_11,
+            format!("file={}", file1)
+        );
+        debug_assert!(
+            -RANK_11 < rank1 && rank1 < RANK_11,
+            format!("rank={}", rank1)
+        );
         Address {
             file: file1,
             rank: rank1,
@@ -470,6 +480,10 @@ impl Address {
     /// 駒台に番地は無いぜ☆（＾～＾） 仮に (0, 0) でも入れとくぜ☆（＾～＾）
     pub fn from_drop() -> Self {
         Address { file: 0, rank: 0 }
+    }
+
+    pub fn from_absolute_address(address: i8) -> AbsoluteAddress {
+        AbsoluteAddress::from_file_rank(address as i8 / 10 % 10, address as i8 % 10)
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
@@ -684,53 +698,93 @@ pub struct AbsoluteAddress {
     ///   98 88 78 68 58 48 38 28 18
     ///   99 89 79 69 59 49 39 29 19
     ///           Source
-    pub address: i8,
+    file: i8,
+    rank: i8,
 }
 impl AbsoluteAddress {
-    pub fn from_number(address1: i8) -> Self {
-        assert_in_board_with_frame_as_absolute(
-            address1,
-            &format!("square::from_address({})", address1),
-        );
-        AbsoluteAddress { address: address1 }
-    }
     pub fn from_file_rank(file: i8, rank: i8) -> Self {
-        let adr = file * 10 + rank;
+        debug_assert!(FILE_0 <= file && file < FILE_11, format!("file={}", file));
+        debug_assert!(RANK_0 <= rank && rank < RANK_11, format!("rank={}", rank));
+        let ab_adr = AbsoluteAddress {
+            file: file,
+            rank: rank,
+        };
         assert_in_board_with_frame_as_absolute(
-            adr,
-            &format!("{} = square::from_file_rank({}, {})", adr, file, rank),
+            ab_adr.address(),
+            &format!("ab_adr={:?} ({}, {})", ab_adr, file, rank),
         );
-        AbsoluteAddress { address: adr }
+        ab_adr
     }
 
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...
     pub fn file(&self) -> i8 {
-        self.address / 10
+        self.file
     }
 
     /// 行番号。いわゆる段。上から 1, 2, 3 ...
     pub fn rank(&self) -> i8 {
-        self.address % 10
+        self.rank
     }
 
     pub fn to_file_rank(&self) -> (i8, i8) {
         (self.file(), self.rank())
     }
 
+    pub fn is_drop(&self) -> bool {
+        self.file == 0 && self.rank == 0
+    }
+
+    pub fn is_none(&self) -> bool {
+        self.file == 0 && self.rank == 0
+    }
+
     pub fn rotate_180(&self) -> Self {
-        AbsoluteAddress::from_number(110 - self.address)
+        AbsoluteAddress::from_file_rank(FILE_11 - self.file, RANK_11 - self.rank)
     }
 
     pub fn has_jumped_out_of_the_board(&self) -> bool {
-        self.address / 10 % 10 == 0 || self.address % 10 == 0
+        self.file % 10 == 0 || self.rank % 10 == 0
     }
 
     pub fn add_mut(&mut self, rel_adr: &RelativeAddress) {
-        self.address += rel_adr.get_address();
+        // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
+        let sum = self.address() + rel_adr.get_address();
+        // Initialize.
+        self.rank = sum % 10;
+        self.file = 0;
+        // Carry.
+        if 9 < self.rank {
+            self.rank = self.rank % 10;
+            self.file += 1;
+        }
+        self.file += sum / 10 % 10;
+        // Carry over flow.
+        if 9 < self.file {
+            self.file = self.file % 10;
+        }
+
+        debug_assert!(
+            FILE_0 <= self.file && self.file < FILE_11,
+            format!("file={}", self.file)
+        );
+        debug_assert!(
+            RANK_0 <= self.rank && self.rank < RANK_11,
+            format!("rank={}", self.rank)
+        );
+    }
+
+    pub fn address(&self) -> i8 {
+        self.file * 10 + self.rank
     }
 }
 impl fmt::Debug for AbsoluteAddress {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "({}x {}y {}adr)", self.file(), self.rank(), self.address)
+        write!(
+            f,
+            "({}x {}y {}adr)",
+            self.file(),
+            self.rank(),
+            self.address()
+        )
     }
 }
