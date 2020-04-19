@@ -117,7 +117,7 @@ impl Game {
             PosNums::Start => &self.starting_board,
         }
     }
-    pub fn get_mut_starting_board(&mut self) -> &mut Board {
+    pub fn mut_starting(&mut self) -> &mut Board {
         &mut self.starting_board
     }
 

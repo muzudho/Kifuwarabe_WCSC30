@@ -1,11 +1,11 @@
 //!
 //! USIプロトコル
 //!
+use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::Piece;
-use crate::cosmic::universe::*;
 use crate::law::speed_of_light::*;
 use crate::white_hole::io::*;
 
@@ -35,7 +35,7 @@ pub const STARTPOS: &str = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSG
 ///
 /// 読み取った指し手は、棋譜に入れる。
 /// 現在の手目のところに入れ、手目のカウントアップも行う。
-pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Universe) -> bool {
+pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) -> bool {
     // 4文字か5文字あるはず。
     if (len - *starts) < 4 {
         // 指し手読取終了時にここを通るぜ☆（＾～＾）
@@ -45,45 +45,22 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
 
     let mut buffer = Movement::default();
 
-    // 移動元とドロップ。
     // 1文字目と2文字目
-    match &line[*starts..=*starts] {
+    // 移動元とドロップ。
+    enum Source {
+        Move(i8, i8),
+        Drop(PieceType),
+    }
+
+    let source = match &line[*starts..=*starts] {
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
-        "R" => {
-            *starts += 2;
-            buffer.source = Address::default().abs();
-            buffer.drop = Some(PieceType::Rook);
-        }
-        "B" => {
-            *starts += 2;
-            buffer.source = Address::default().abs();
-            buffer.drop = Some(PieceType::Bishop);
-        }
-        "G" => {
-            *starts += 2;
-            buffer.source = Address::default().abs();
-            buffer.drop = Some(PieceType::Gold);
-        }
-        "S" => {
-            *starts += 2;
-            buffer.source = Address::default().abs();
-            buffer.drop = Some(PieceType::Silver);
-        }
-        "N" => {
-            *starts += 2;
-            buffer.source = Address::default().abs();
-            buffer.drop = Some(PieceType::Knight);
-        }
-        "L" => {
-            *starts += 2;
-            buffer.source = Address::default().abs();
-            buffer.drop = Some(PieceType::Lance);
-        }
-        "P" => {
-            *starts += 2;
-            buffer.source = Address::default().abs();
-            buffer.drop = Some(PieceType::Pawn);
-        }
+        "R" => Source::Drop(PieceType::Rook),
+        "B" => Source::Drop(PieceType::Bishop),
+        "G" => Source::Drop(PieceType::Gold),
+        "S" => Source::Drop(PieceType::Silver),
+        "N" => Source::Drop(PieceType::Knight),
+        "L" => Source::Drop(PieceType::Lance),
+        "P" => Source::Drop(PieceType::Pawn),
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
             let file = match &line[*starts..=*starts] {
@@ -105,27 +82,36 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             };
             *starts += 1;
 
-            let rank = match &line[*starts..=*starts] {
-                "a" => 1,
-                "b" => 2,
-                "c" => 3,
-                "d" => 4,
-                "e" => 5,
-                "f" => 6,
-                "g" => 7,
-                "h" => 8,
-                "i" => 9,
+            match &line[*starts..=*starts] {
+                "a" => Source::Move(file, 1),
+                "b" => Source::Move(file, 2),
+                "c" => Source::Move(file, 3),
+                "d" => Source::Move(file, 4),
+                "e" => Source::Move(file, 5),
+                "f" => Source::Move(file, 6),
+                "g" => Source::Move(file, 7),
+                "h" => Source::Move(file, 8),
+                "i" => Source::Move(file, 9),
                 _ => {
                     panic!(IO::panicing(&format!(
                         "(2) '{}' だった。",
                         &line[*starts..=*starts]
                     )));
                 }
-            };
-            *starts += 1;
+            }
+        }
+    };
 
+    match source {
+        Source::Move(file, rank) => {
+            *starts += 1;
             buffer.source = Address::new(file, rank).abs();
             buffer.drop = None;
+        }
+        Source::Drop(hand) => {
+            *starts += 2;
+            buffer.source = Address::default().abs();
+            buffer.drop = Some(hand);
         }
     }
 
@@ -174,12 +160,12 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     buffer.destination = Address::new(file, rank).abs();
 
     // 5文字に「+」があれば成り。
-    if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
-        buffer.promote = true;
+    buffer.promote = if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
         *starts += 1;
+        true
     } else {
-        buffer.promote = false;
-    }
+        false
+    };
 
     // 続きにスペース「 」が１つあれば読み飛ばす
     if 0 < (len - *starts) && &line[*starts..=*starts] == " " {
@@ -187,9 +173,9 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     }
 
     // 確定。
-    universe.game.set_move(&buffer);
+    game.set_move(&buffer);
 
-    universe.game.history.ply += 1;
+    game.history.ply += 1;
     true
 }
 
@@ -198,11 +184,11 @@ pub fn read_board(
     line: &str,
     starts: &mut usize,
     len: usize,
-    universe: &mut Universe,
+    game: &mut Game,
     speed_of_light: &SpeedOfLight,
 ) {
     // 盤部
-    let board = universe.game.get_mut_starting_board();
+    let board = game.mut_starting();
     let mut file = FILE_9; //９筋から右方向へ読取
     let mut rank = RANK_1;
 
@@ -295,19 +281,19 @@ pub fn read_board(
     }
 
     // 初期局面ハッシュを作り直す
-    let ky_hash = universe.game.create_starting_position_hash(speed_of_light);
-    universe.game.starting_position_hash = ky_hash;
+    let ky_hash = game.create_starting_position_hash(speed_of_light);
+    game.starting_position_hash = ky_hash;
 }
 
 /// position コマンド読取
-pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedOfLight) {
+pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) {
     let mut starts = 0;
 
     // 全体の長さ
     let len = line.chars().count();
 
     // 局面をクリアー。手目も 0 に戻します。
-    universe.game.clear();
+    game.clear();
 
     if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
         // 'position startpos' を読み飛ばし
@@ -318,7 +304,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
             &STARTPOS.to_string(),
             &mut local_starts,
             STARTPOS_LN,
-            universe,
+            game,
             speed_of_light,
         );
 
@@ -328,7 +314,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_board(line, &mut starts, len, universe, speed_of_light);
+        read_board(line, &mut starts, len, game, speed_of_light);
 
         if 0 < (len - starts) && &line[starts..=starts] == " " {
             starts += 1;
@@ -427,10 +413,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
                     };
                     starts += 1;
 
-                    universe
-                        .game
-                        .get_mut_starting_board()
-                        .set_hand(hand, hand_num);
+                    game.mut_starting().set_hand(hand, hand_num);
                 } //if
             } //loop
         } //else
@@ -452,16 +435,16 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
     }
 
     // 初期局面を、現局面にコピーします
-    universe.game.copy_starting_position_to_current_position();
+    game.copy_starting_position_to_current_position();
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
-    while read_sasite(line, &mut starts, len, universe) {
+    while read_sasite(line, &mut starts, len, game) {
         // 手目を戻す
-        universe.game.history.ply -= 1;
+        game.history.ply -= 1;
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = universe.game.history.ply;
-        universe.game.do_move(
-            &universe.game.history.movements[ply as usize].clone(),
+        let ply = game.history.ply;
+        game.do_move(
+            &game.history.movements[ply as usize].clone(),
             speed_of_light,
         );
     }

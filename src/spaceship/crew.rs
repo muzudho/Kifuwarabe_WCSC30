@@ -73,7 +73,7 @@ impl Kifuwarabe {
     }
     pub fn position(speed_of_light: &SpeedOfLight, universe: &mut Universe, line: &String) {
         // positionコマンドの読取を丸投げ
-        set_position(&line, universe, &speed_of_light);
+        set_position(&line, &mut universe.game, &speed_of_light);
     }
     pub fn setoption_name(universe: &mut Universe, line: &String) {
         // Example: setoption name USI_Ponder value true
@@ -122,7 +122,7 @@ impl Chiyuri {
     ) {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える
-        if read_sasite(&line, &mut starts, len, universe) {
+        if read_sasite(&line, &mut starts, len, &mut universe.game) {
             // 手目を戻す
             universe.game.history.ply -= 1;
             // 入っている指し手の通り指すぜ☆（＾～＾）
@@ -199,7 +199,7 @@ impl Chiyuri {
     }
     pub fn startpos(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
         // 平手初期局面
-        set_position(&POS_1.to_string(), universe, &speed_of_light);
+        set_position(&POS_1.to_string(), &mut universe.game, &speed_of_light);
     }
     pub fn teigi_conv() {
         IO::writeln("teigi::convのテスト");
