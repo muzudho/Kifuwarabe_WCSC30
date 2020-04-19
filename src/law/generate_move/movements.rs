@@ -140,17 +140,12 @@ impl MGMovements {
         F1: FnMut(u64),
     {
         HandPieces::for_all(&mut |any_piece_type| {
-            let hand_piece = &speed_of_light
-                .piece_chart_by_phase_and_piece_type(
-                    game.history.get_phase(Person::Friend),
-                    any_piece_type,
-                )
-                .piece;
+            let hand_piece = any_piece_type.add_phase(game.history.get_phase(Person::Friend));
 
             if 0 < game.current_board.get_hand(hand_piece, speed_of_light) {
                 // 駒を持っていれば
                 use crate::cosmic::toy_box::Piece::*;
-                match *hand_piece {
+                match hand_piece {
                     // ▲歩、▲香 の打てる範囲は２段目～９段目。
                     Pawn1 | Lance1 => {
                         Squares::for_from_rank2_to_rank9(Phase::First, &mut |destination| {
@@ -245,9 +240,9 @@ impl MGMovements {
                     destination: destination.clone(),                   // どの升へ行きたいか
                     promote: false,                                     // 打に成りは無し
                     drop: num_to_piece_type(
-                        speed_of_light
-                            .piece_type_chart_from_piece_type(&hand_piece.r#type(speed_of_light))
-                            .serial_number,
+                        hand_piece
+                            .r#type(speed_of_light)
+                            .serial_number(speed_of_light),
                     ), // 打った駒種類
                 }
                 .to_hash(speed_of_light),

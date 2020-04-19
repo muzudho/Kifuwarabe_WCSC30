@@ -323,17 +323,17 @@ impl Piece {
 
 pub struct PieceTypeChart {
     /// 配列のインデックス用☆（＾～＾）
-    pub serial_number: usize,
+    serial_number: usize,
 
     /// 成れる駒種類か。
-    pub can_promote: bool,
+    _can_promote: bool,
 
     /// 打てる駒種類か。
-    pub can_drop: bool,
+    _can_drop: bool,
 
     /// スライダー（長い利きのある駒種類）か☆（＾～＾）
     /// 合い駒で、進路を防ぎえる可能性があれば真
-    pub slider: bool,
+    _slider: bool,
 }
 impl PieceTypeChart {
     pub fn from_piece_type(piece_type: PieceType) -> Self {
@@ -341,87 +341,141 @@ impl PieceTypeChart {
         match piece_type {
             King => PieceTypeChart {
                 serial_number: 0,
-                can_promote: false,
-                can_drop: false,
-                slider: false,
+                _can_promote: false,
+                _can_drop: false,
+                _slider: false,
             },
             Rook => PieceTypeChart {
                 serial_number: 1,
-                can_promote: true,
-                can_drop: true,
-                slider: true,
+                _can_promote: true,
+                _can_drop: true,
+                _slider: true,
             },
             Bishop => PieceTypeChart {
                 serial_number: 2,
-                can_promote: true,
-                can_drop: true,
-                slider: true,
+                _can_promote: true,
+                _can_drop: true,
+                _slider: true,
             },
             Gold => PieceTypeChart {
                 serial_number: 3,
-                can_promote: false,
-                can_drop: true,
-                slider: false,
+                _can_promote: false,
+                _can_drop: true,
+                _slider: false,
             },
             Silver => PieceTypeChart {
                 serial_number: 4,
-                can_promote: true,
-                can_drop: true,
-                slider: false,
+                _can_promote: true,
+                _can_drop: true,
+                _slider: false,
             },
             Knight => PieceTypeChart {
                 serial_number: 5,
-                can_promote: true,
-                can_drop: true,
-                slider: false,
+                _can_promote: true,
+                _can_drop: true,
+                _slider: false,
             },
             Lance => PieceTypeChart {
                 serial_number: 6,
-                can_promote: true,
-                can_drop: true,
-                slider: true,
+                _can_promote: true,
+                _can_drop: true,
+                _slider: true,
             },
             Pawn => PieceTypeChart {
                 serial_number: 7,
-                can_promote: true,
-                can_drop: true,
-                slider: false,
+                _can_promote: true,
+                _can_drop: true,
+                _slider: false,
             },
             Dragon => PieceTypeChart {
                 serial_number: 8,
-                can_promote: false,
-                can_drop: false,
-                slider: true,
+                _can_promote: false,
+                _can_drop: false,
+                _slider: true,
             },
             Horse => PieceTypeChart {
                 serial_number: 9,
-                can_promote: false,
-                can_drop: false,
-                slider: true,
+                _can_promote: false,
+                _can_drop: false,
+                _slider: true,
             },
             PromotedSilver => PieceTypeChart {
                 serial_number: 10,
-                can_promote: false,
-                can_drop: false,
-                slider: false,
+                _can_promote: false,
+                _can_drop: false,
+                _slider: false,
             },
             PromotedKnight => PieceTypeChart {
                 serial_number: 11,
-                can_promote: false,
-                can_drop: false,
-                slider: false,
+                _can_promote: false,
+                _can_drop: false,
+                _slider: false,
             },
             PromotedLance => PieceTypeChart {
                 serial_number: 12,
-                can_promote: false,
-                can_drop: false,
-                slider: false,
+                _can_promote: false,
+                _can_drop: false,
+                _slider: false,
             },
             PromotedPawn => PieceTypeChart {
                 serial_number: 13,
-                can_promote: false,
-                can_drop: false,
-                slider: false,
+                _can_promote: false,
+                _can_drop: false,
+                _slider: false,
+            },
+        }
+    }
+}
+
+/// コーディングを短くするためのものだぜ☆（＾～＾）
+impl PieceType {
+    pub fn serial_number(&self, speed_of_light: &SpeedOfLight) -> usize {
+        speed_of_light.piece_type_chart(self).serial_number
+    }
+    pub fn _can_promote(&self, speed_of_light: &SpeedOfLight) -> bool {
+        speed_of_light.piece_type_chart(self)._can_promote
+    }
+    pub fn _can_drop(&self, speed_of_light: &SpeedOfLight) -> bool {
+        speed_of_light.piece_type_chart(self)._can_drop
+    }
+    pub fn _slider(&self, speed_of_light: &SpeedOfLight) -> bool {
+        speed_of_light.piece_type_chart(self)._slider
+    }
+    pub fn add_phase(&self, phase: Phase) -> Piece {
+        use crate::cosmic::smart::features::PieceType::*;
+        use crate::cosmic::toy_box::Piece::*;
+        match phase {
+            Phase::First => match self {
+                King => King1,
+                Rook => Rook1,
+                Bishop => Bishop1,
+                Gold => Gold1,
+                Silver => Silver1,
+                Knight => Knight1,
+                Lance => Lance1,
+                Pawn => Pawn1,
+                Dragon => Dragon1,
+                Horse => Horse1,
+                PromotedSilver => PromotedSilver1,
+                PromotedKnight => PromotedKnight1,
+                PromotedLance => PromotedLance1,
+                PromotedPawn => PromotedPawn1,
+            },
+            Phase::Second => match self {
+                King => King2,
+                Rook => Rook2,
+                Bishop => Bishop2,
+                Gold => Gold2,
+                Silver => Silver2,
+                Knight => Knight2,
+                Lance => Lance2,
+                Pawn => Pawn2,
+                Dragon => Dragon2,
+                Horse => Horse2,
+                PromotedSilver => PromotedSilver2,
+                PromotedKnight => PromotedKnight2,
+                PromotedLance => PromotedLance2,
+                PromotedPawn => PromotedPawn2,
             },
         }
     }

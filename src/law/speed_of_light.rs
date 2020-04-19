@@ -4,7 +4,6 @@
 //!
 //! 駒の実体はここだぜ☆（＾～＾）
 //! マスター・テーブルみたいなもん☆（＾～＾）
-use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::toy_box::Piece;
 use crate::law::chart::{PieceChart, PieceTypeChart};
@@ -151,51 +150,8 @@ impl SpeedOfLight {
         }
     }
 
-    /// 先後＆駒種類→先後付き駒
-    pub fn piece_chart_by_phase_and_piece_type(
-        &self,
-        phase: Phase,
-        piece_type: PieceType,
-    ) -> &PieceChart {
-        use crate::cosmic::smart::features::PieceType::*;
-        use crate::cosmic::toy_box::Piece::*;
-        match phase {
-            Phase::First => match piece_type {
-                King => self.piece_chart(&King1),
-                Rook => self.piece_chart(&Rook1),
-                Bishop => self.piece_chart(&Bishop1),
-                Gold => self.piece_chart(&Gold1),
-                Silver => self.piece_chart(&Silver1),
-                Knight => self.piece_chart(&Knight1),
-                Lance => self.piece_chart(&Lance1),
-                Pawn => self.piece_chart(&Pawn1),
-                Dragon => self.piece_chart(&Dragon1),
-                Horse => self.piece_chart(&Horse1),
-                PromotedSilver => self.piece_chart(&PromotedSilver1),
-                PromotedKnight => self.piece_chart(&PromotedKnight1),
-                PromotedLance => self.piece_chart(&PromotedLance1),
-                PromotedPawn => self.piece_chart(&PromotedPawn1),
-            },
-            Phase::Second => match piece_type {
-                King => self.piece_chart(&King2),
-                Rook => self.piece_chart(&Rook2),
-                Bishop => self.piece_chart(&Bishop2),
-                Gold => self.piece_chart(&Gold2),
-                Silver => self.piece_chart(&Silver2),
-                Knight => self.piece_chart(&Knight2),
-                Lance => self.piece_chart(&Lance2),
-                Pawn => self.piece_chart(&Pawn2),
-                Dragon => self.piece_chart(&Dragon2),
-                Horse => self.piece_chart(&Horse2),
-                PromotedSilver => self.piece_chart(&PromotedSilver2),
-                PromotedKnight => self.piece_chart(&PromotedKnight2),
-                PromotedLance => self.piece_chart(&PromotedLance2),
-                PromotedPawn => self.piece_chart(&PromotedPawn2),
-            },
-        }
-    }
     /// 駒の属性を参照するぜ☆（＾～＾）
-    pub fn piece_type_chart_from_piece_type(&self, piece_type: &PieceType) -> &PieceTypeChart {
+    pub fn piece_type_chart(&self, piece_type: &PieceType) -> &PieceTypeChart {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.pieces[(*piece).clone() as usize]

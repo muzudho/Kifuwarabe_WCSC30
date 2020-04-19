@@ -111,7 +111,7 @@ impl Board {
     pub fn add_hand(&mut self, hand: &Piece, maisu: i8, speed_of_light: &SpeedOfLight) {
         self.hand[hand.serial_number(speed_of_light)] += maisu;
     }
-    pub fn get_hand(&self, hand: &Piece, speed_of_light: &SpeedOfLight) -> i8 {
+    pub fn get_hand(&self, hand: Piece, speed_of_light: &SpeedOfLight) -> i8 {
         self.hand[hand.serial_number(speed_of_light)]
     }
     pub fn set_hand(&mut self, km: Piece, number: i8) {
@@ -153,7 +153,7 @@ impl Board {
         GPPieces::for_all(&mut |any_piece| {
             let piece_num = any_piece.serial_number(speed_of_light);
 
-            let maisu = self.get_hand(&any_piece, &speed_of_light);
+            let maisu = self.get_hand(any_piece, &speed_of_light);
             debug_assert!(
                 -1 < maisu && maisu <= MG_MAX as i8,
                 "持ち駒 {} の枚数 {} <= {}",
