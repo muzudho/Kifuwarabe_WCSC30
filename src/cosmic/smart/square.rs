@@ -693,6 +693,14 @@ impl AbsoluteAddress {
     pub fn rotate_180(&self) -> Self {
         AbsoluteAddress::from_address(110 - self.address)
     }
+
+    pub fn has_jumped_out_of_the_board(&self) -> bool {
+        self.address / 10 % 10 == 0 || self.address % 10 == 0
+    }
+
+    pub fn add_mut(&mut self, rel_adr: &RelativeAddress) {
+        self.address += rel_adr.get_address();
+    }
 }
 impl fmt::Debug for AbsoluteAddress {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

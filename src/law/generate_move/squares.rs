@@ -539,10 +539,6 @@ impl Promoting {
 
 pub struct Squares {}
 impl Squares {
-    fn has_jumped_out_of_the_board(address: i8) -> bool {
-        address / 10 % 10 == 0 || address % 10 == 0
-    }
-
     /// 2段目～9段目 全升☆（＾～＾）
     /// 1段目～8段目 全升☆ がほしければ phase.turn() しろだぜ☆（＾～＾）
     pub fn for_from_rank2_to_rank9<F1>(phase: Phase, callback: &mut F1)
@@ -604,58 +600,40 @@ impl Squares {
     {
         match agility {
             Agility::Sliding => {
-                let mut next = start.address;
+                let mut next = start.clone();
                 loop {
-                    // 回転の起角は西隣だぜ☆（＾～＾）
-                    next += RelativeAddress::from_file_and_rank(1, 0)
-                        .rotate(angle)
-                        .get_address();
-                    if Squares::has_jumped_out_of_the_board(next) {
+                    // 西隣から反時計回りだぜ☆（＾～＾）
+                    next.add_mut(&RelativeAddress::from_file_and_rank(1, 0).rotate(angle));
+                    if next.has_jumped_out_of_the_board() {
                         break;
                     }
 
-                    if callback(AbsoluteAddress::from_address(next)) {
+                    if callback(next) {
                         break;
                     }
                 }
             }
+            // 桂馬専用☆（＾～＾）行き先の無いところに置いてないはずだぜ☆（＾～＾）
             Agility::Keima => {
-                // 隣☆（＾～＾）桂馬用☆（＾～＾）
-                // 回転の起角は西隣だぜ☆（＾～＾）
-                let rel = RelativeAddress::from_file_and_rank(1, 0).rotate(angle);
-                if !Squares::has_jumped_out_of_the_board(start.address + rel.get_address()) {
-                    let rel = rel.double_rank();
-                    if !Squares::has_jumped_out_of_the_board(start.address + rel.get_address()) {
-                        let next = start.address + rel.get_address();
-
-                        if !Squares::has_jumped_out_of_the_board(next) {
-                            assert_in_board_as_absolute(next, "隣＋桂馬☆（＾～＾）");
-                            callback(AbsoluteAddress::from_address(next));
-                        }
-                    }
+                let mut next = start.clone();
+                // 西隣から反時計回りだぜ☆（＾～＾）
+                next.add_mut(
+                    &RelativeAddress::from_file_and_rank(1, 0)
+                        .rotate(angle)
+                        .double_rank(),
+                );
+                if !next.has_jumped_out_of_the_board() {
+                    assert_in_board_as_absolute(&next, "桂馬☆（＾～＾）");
+                    callback(next);
                 }
             }
             Agility::Hopping => {
-                // 回転の起角は西隣だぜ☆（＾～＾）
-                let rel = RelativeAddress::from_file_and_rank(1, 0)
-                    .rotate(angle)
-                    .get_address();
-                // println!("angle={:?} {}", angle, rel);
-                let next = start.address + rel;
-                // println!("next={}", next);
-                if !Squares::has_jumped_out_of_the_board(next) {
-                    assert_in_board_as_absolute(
-                        next,
-                        "隣☆（＾～＾）",
-                        /*
-                        &format!(
-                            "隣☆（＾～＾） start.address={} angle={:?} next={}",
-                            start.address, angle, next
-                        ),
-                        */
-                    );
-
-                    callback(AbsoluteAddress::from_address(next));
+                let mut next = start.clone();
+                // 西隣から反時計回りだぜ☆（＾～＾）
+                next.add_mut(&RelativeAddress::from_file_and_rank(1, 0).rotate(angle));
+                if !next.has_jumped_out_of_the_board() {
+                    assert_in_board_as_absolute(&next, "隣☆（＾～＾）");
+                    callback(next);
                 }
             }
         }

@@ -131,7 +131,7 @@ impl fmt::Display for Movement {
         }
 
         // 投了を弾いたあと、診断☆（＾～＾）
-        assert_in_board_as_absolute(self.destination.address, "Movement-display");
+        assert_in_board_as_absolute(&self.destination, "Movement-display");
         let (dx, dy) = self.destination.to_file_rank();
 
         if self.source.address == SQUARE_DROP {
@@ -162,7 +162,7 @@ impl fmt::Display for Movement {
                 // エラー・データも表示したい
                 (0, 0)
             } else {
-                assert_in_board_as_absolute(self.source.address, "Movement-display-2");
+                assert_in_board_as_absolute(&self.source, "Movement-display-2");
                 self.source.to_file_rank()
             };
             write!(
