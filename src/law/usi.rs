@@ -194,7 +194,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
 }
 
 /// position コマンド 盤上部分のみ 読取
-pub fn read_banjo(
+pub fn read_board(
     line: &str,
     starts: &mut usize,
     len: usize,
@@ -203,221 +203,63 @@ pub fn read_banjo(
 ) {
     // 盤部
     let board = universe.game.get_mut_starting_board();
-    let mut suji = FILE_9; //９筋から右方向へ読取
-    let mut dan = RANK_1;
+    let mut file = FILE_9; //９筋から右方向へ読取
+    let mut rank = RANK_1;
+
+    // `/` か、`+`か、1桁の数か、1文字のアルファベットのいずれかだぜ☆（＾～＾）それ以外なら盤パート終了☆（＾～＾）
+    enum BoardPart {
+        /// 改行のようなものだぜ☆（＾～＾）
+        NewLine,
+        /// スペース数☆（＾～＾）
+        Number(i8),
+        /// 駒☆（＾～＾）+で始まるものもこっちだぜ☆（＾～＾）
+        Alphabet(Piece),
+    }
+
     'ban: while 0 < (len - *starts) {
-        match &line[*starts..=*starts] {
-            "/" => {
-                *starts += 1;
-                suji = FILE_9;
-                dan += 1;
-            }
-            "1" => {
-                *starts += 1;
-                board.set_piece(suji, dan, None);
-                suji -= 1;
-            }
-            "2" => {
-                *starts += 1;
-                board.set_piece(suji, dan, None);
-                suji -= 1;
-                board.set_piece(suji, dan, None);
-                suji -= 1;
-            }
-            "3" => {
-                *starts += 1;
-                board.set_piece(suji, dan, None);
-                suji -= 1;
-                board.set_piece(suji, dan, None);
-                suji -= 1;
-                board.set_piece(suji, dan, None);
-                suji -= 1;
-            }
-            "4" => {
-                *starts += 1;
-                for _i_kara in 0..4 {
-                    board.set_piece(suji, dan, None);
-                    suji -= 1;
-                }
-            }
-            "5" => {
-                *starts += 1;
-                for _i_kara in 0..5 {
-                    board.set_piece(suji, dan, None);
-                    suji -= 1;
-                }
-            }
-            "6" => {
-                *starts += 1;
-                for _i_kara in 0..6 {
-                    board.set_piece(suji, dan, None);
-                    suji -= 1;
-                }
-            }
-            "7" => {
-                *starts += 1;
-                for _i_kara in 0..7 {
-                    board.set_piece(suji, dan, None);
-                    suji -= 1;
-                }
-            }
-            "8" => {
-                *starts += 1;
-                for _i_kara in 0..8 {
-                    board.set_piece(suji, dan, None);
-                    suji -= 1;
-                }
-            }
-            "9" => {
-                *starts += 1;
-                for _i_kara in 0..9 {
-                    board.set_piece(suji, dan, None);
-                    suji -= 1;
-                }
-            }
-            "K" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::King1));
-                suji -= 1;
-            }
-            "R" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Rook1));
-                suji -= 1;
-            }
-            "B" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Bishop1));
-                suji -= 1;
-            }
-            "G" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Gold1));
-                suji -= 1;
-            }
-            "S" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Silver1));
-                suji -= 1;
-            }
-            "N" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Knight1));
-                suji -= 1;
-            }
-            "L" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Lance1));
-                suji -= 1;
-            }
-            "P" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Pawn1));
-                suji -= 1;
-            }
-            "k" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::King2));
-                suji -= 1;
-            }
-            "r" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Rook2));
-                suji -= 1;
-            }
-            "b" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Bishop2));
-                suji -= 1;
-            }
-            "g" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Gold2));
-                suji -= 1;
-            }
-            "s" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Silver2));
-                suji -= 1;
-            }
-            "n" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Knight2));
-                suji -= 1;
-            }
-            "l" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Lance2));
-                suji -= 1;
-            }
-            "p" => {
-                *starts += 1;
-                board.set_piece(suji, dan, Some(Piece::Pawn2));
-                suji -= 1;
-            }
+        let board_part = match &line[*starts..=*starts] {
+            "/" => BoardPart::NewLine,
+            "1" => BoardPart::Number(1),
+            "2" => BoardPart::Number(2),
+            "3" => BoardPart::Number(3),
+            "4" => BoardPart::Number(4),
+            "5" => BoardPart::Number(5),
+            "6" => BoardPart::Number(6),
+            "7" => BoardPart::Number(7),
+            "8" => BoardPart::Number(8),
+            "9" => BoardPart::Number(9),
+            "K" => BoardPart::Alphabet(Piece::King1),
+            "R" => BoardPart::Alphabet(Piece::Rook1),
+            "B" => BoardPart::Alphabet(Piece::Bishop1),
+            "G" => BoardPart::Alphabet(Piece::Gold1),
+            "S" => BoardPart::Alphabet(Piece::Silver1),
+            "N" => BoardPart::Alphabet(Piece::Knight1),
+            "L" => BoardPart::Alphabet(Piece::Lance1),
+            "P" => BoardPart::Alphabet(Piece::Pawn1),
+            "k" => BoardPart::Alphabet(Piece::King2),
+            "r" => BoardPart::Alphabet(Piece::Rook2),
+            "b" => BoardPart::Alphabet(Piece::Bishop2),
+            "g" => BoardPart::Alphabet(Piece::Gold2),
+            "s" => BoardPart::Alphabet(Piece::Silver2),
+            "n" => BoardPart::Alphabet(Piece::Knight2),
+            "l" => BoardPart::Alphabet(Piece::Lance2),
+            "p" => BoardPart::Alphabet(Piece::Pawn2),
             "+" => {
                 *starts += 1;
+                // 次に必ず１文字が来るぜ☆（＾～＾）
                 match &line[*starts..=*starts] {
-                    "R" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::Dragon1));
-                        suji -= 1;
-                    }
-                    "B" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::Horse1));
-                        suji -= 1;
-                    }
-                    "S" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedSilver1));
-                        suji -= 1;
-                    }
-                    "N" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedKnight1));
-                        suji -= 1;
-                    }
-                    "L" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedLance1));
-                        suji -= 1;
-                    }
-                    "P" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedPawn1));
-                        suji -= 1;
-                    }
-                    "r" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::Dragon2));
-                        suji -= 1;
-                    }
-                    "b" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::Horse2));
-                        suji -= 1;
-                    }
-                    "s" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedSilver2));
-                        suji -= 1;
-                    }
-                    "n" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedKnight2));
-                        suji -= 1;
-                    }
-                    "l" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedLance2));
-                        suji -= 1;
-                    }
-                    "p" => {
-                        *starts += 1;
-                        board.set_piece(suji, dan, Some(Piece::PromotedPawn2));
-                        suji -= 1;
-                    }
+                    "R" => BoardPart::Alphabet(Piece::Dragon1),
+                    "B" => BoardPart::Alphabet(Piece::Horse1),
+                    "S" => BoardPart::Alphabet(Piece::PromotedSilver1),
+                    "N" => BoardPart::Alphabet(Piece::PromotedKnight1),
+                    "L" => BoardPart::Alphabet(Piece::PromotedLance1),
+                    "P" => BoardPart::Alphabet(Piece::PromotedPawn1),
+                    "r" => BoardPart::Alphabet(Piece::Dragon2),
+                    "b" => BoardPart::Alphabet(Piece::Horse2),
+                    "s" => BoardPart::Alphabet(Piece::PromotedSilver2),
+                    "n" => BoardPart::Alphabet(Piece::PromotedKnight2),
+                    "l" => BoardPart::Alphabet(Piece::PromotedLance2),
+                    "p" => BoardPart::Alphabet(Piece::PromotedPawn2),
                     _ => {
                         panic!(IO::panicing(&format!(
                             "盤部(0) '{}' だった。",
@@ -429,6 +271,26 @@ pub fn read_banjo(
             _ => {
                 break 'ban;
             } // 盤部正常終了
+        };
+
+        match board_part {
+            BoardPart::Alphabet(piece) => {
+                *starts += 1;
+                board.set_piece(file, rank, Some(piece));
+                file -= 1;
+            }
+            BoardPart::Number(space_num) => {
+                *starts += 1;
+                for _ in 0..space_num {
+                    board.set_piece(file, rank, None);
+                    file -= 1;
+                }
+            }
+            BoardPart::NewLine => {
+                *starts += 1;
+                file = FILE_9;
+                rank += 1;
+            }
         }
     }
 
@@ -452,7 +314,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
         starts += 17;
         // 別途用意した平手初期局面文字列を読取
         let mut local_starts = 0;
-        read_banjo(
+        read_board(
             &STARTPOS.to_string(),
             &mut local_starts,
             STARTPOS_LN,
@@ -466,7 +328,7 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_banjo(line, &mut starts, len, universe, speed_of_light);
+        read_board(line, &mut starts, len, universe, speed_of_light);
 
         if 0 < (len - starts) && &line[starts..=starts] == " " {
             starts += 1;
@@ -486,11 +348,11 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
         } else {
             'mg: loop {
                 if 0 < (len - starts) {
-                    let mut maisu = 1;
+                    let mut count = 1;
                     match &line[starts..=starts] {
                         "1" => {
                             // 1枚のときは数字は付かないので、10～18 と確定☆
-                            maisu = match &line[starts..=starts] {
+                            count = match &line[starts..=starts] {
                                 "0" => 10,
                                 "1" => 11,
                                 "2" => 12,
@@ -510,105 +372,63 @@ pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedO
                             starts += 2;
                         }
                         "2" => {
-                            maisu = 2;
+                            count = 2;
                             starts += 1;
                         }
                         "3" => {
-                            maisu = 3;
+                            count = 3;
                             starts += 1;
                         }
                         "4" => {
-                            maisu = 4;
+                            count = 4;
                             starts += 1;
                         }
                         "5" => {
-                            maisu = 5;
+                            count = 5;
                             starts += 1;
                         }
                         "6" => {
-                            maisu = 6;
+                            count = 6;
                             starts += 1;
                         }
                         "7" => {
-                            maisu = 7;
+                            count = 7;
                             starts += 1;
                         }
                         "8" => {
-                            maisu = 8;
+                            count = 8;
                             starts += 1;
                         }
                         "9" => {
-                            maisu = 9;
+                            count = 9;
                             starts += 1;
                         }
                         _ => {} // 駒の名前か、エラーなら次へ
                     }
 
                     use crate::cosmic::toy_box::Piece::*;
-                    let km: Piece;
-                    match &line[starts..=starts] {
-                        "R" => {
-                            km = Rook1;
-                            starts += 1;
-                        }
-                        "B" => {
-                            km = Bishop1;
-                            starts += 1;
-                        }
-                        "G" => {
-                            km = Gold1;
-                            starts += 1;
-                        }
-                        "S" => {
-                            km = Silver1;
-                            starts += 1;
-                        }
-                        "N" => {
-                            km = Knight1;
-                            starts += 1;
-                        }
-                        "L" => {
-                            km = Lance1;
-                            starts += 1;
-                        }
-                        "P" => {
-                            km = Pawn1;
-                            starts += 1;
-                        }
-                        "r" => {
-                            km = Rook2;
-                            starts += 1;
-                        }
-                        "b" => {
-                            km = Bishop2;
-                            starts += 1;
-                        }
-                        "g" => {
-                            km = Gold2;
-                            starts += 1;
-                        }
-                        "s" => {
-                            km = Silver2;
-                            starts += 1;
-                        }
-                        "n" => {
-                            km = Knight2;
-                            starts += 1;
-                        }
-                        "l" => {
-                            km = Lance2;
-                            starts += 1;
-                        }
-                        "p" => {
-                            km = Pawn2;
-                            starts += 1;
-                        }
+                    let km: Piece = match &line[starts..=starts] {
+                        "R" => Rook1,
+                        "B" => Bishop1,
+                        "G" => Gold1,
+                        "S" => Silver1,
+                        "N" => Knight1,
+                        "L" => Lance1,
+                        "P" => Pawn1,
+                        "r" => Rook2,
+                        "b" => Bishop2,
+                        "g" => Gold2,
+                        "s" => Silver2,
+                        "n" => Knight2,
+                        "l" => Lance2,
+                        "p" => Pawn2,
                         _ => {
                             break 'mg;
                         } // 持駒部 正常終了
-                    }
+                    };
+                    starts += 1;
 
-                    universe.game.get_mut_starting_board().set_hand(km, maisu);
+                    universe.game.get_mut_starting_board().set_hand(km, count);
                 } //if
             } //loop
         } //else
