@@ -49,7 +49,7 @@ impl Kifuwarabe {
         universe.game.info.print(
             None,
             None, // ここではタイムアップで途中抜けしてくるんで総ノード数は調べられないので表示しないぜ☆（＾～＾）
-            Some(ts.get_value()),
+            Some(ts.value()),
             // ts.get_king_catch(),
             Some(ts.to_movement()),
             None,

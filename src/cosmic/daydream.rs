@@ -46,7 +46,7 @@ impl Tree {
             universe.game.info.print(
                 Some(max_depth),
                 Some(best_ts.get_sum_state()),
-                Some(best_ts.get_value()),
+                Some(best_ts.value()),
                 Some(movement),
                 Some(format!("{}", movement,)),
                 None,
@@ -196,7 +196,7 @@ impl Tree {
                 game.info.print(
                     Some(cur_depth),
                     Some(ts.get_sum_state() + parent_sum_state),
-                    Some(ts.get_value()),
+                    Some(ts.value()),
                     Some(movement),
                     Some(format!("{} {}", pv, movement)),
                     None,
@@ -214,7 +214,7 @@ impl Tree {
         if ts.get_movement_hash() == 0 && ts.repetition_movement_hash != 0 {
             // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
             ts.movement_hash = ts.repetition_movement_hash;
-            ts.value = REPITITION_VALUE;
+            ts.value = Value::CentiPawn(REPITITION_VALUE);
             ts.reason = "repetition better than resign".to_string();
         };
 
@@ -225,7 +225,7 @@ impl Tree {
 #[derive(Clone)]
 pub struct TreeState {
     sum_state: u64,
-    pub value: i16,
+    pub value: Value,
 
     movement_hash: u64,
 
@@ -242,7 +242,7 @@ impl Default for TreeState {
     fn default() -> Self {
         TreeState {
             sum_state: 0,
-            value: LOSE_VALUE,
+            value: Value::CentiPawn(LOSE_VALUE),
             movement_hash: 0u64,
             repetition_movement_hash: 0u64,
             king_catched: false,
@@ -256,7 +256,7 @@ impl TreeState {
         self.sum_state
     }
 
-    pub fn get_value(&self) -> i16 {
+    pub fn value(&self) -> Value {
         self.value
     }
 
@@ -277,21 +277,44 @@ impl TreeState {
             return;
         }
 
-        // 評価値は ひっくり返します。
-        let friend_value = -opponent_ts.value;
+        // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
 
-        if self.movement_hash == 0 {
-            // どんな手も 投了より良いだろ☆（＾～＾）
+        // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
+
+        let (update, reason, friend_value) = match opponent_ts.value {
+            Value::CentiPawn(num) => {
+                // 評価値は ひっくり返します。
+                let friend_centi_pawn = -num;
+                if self.movement_hash == 0 {
+                    // どんな手も 投了より良いだろ☆（＾～＾）
+                    (
+                        true,
+                        "this better than resign".to_string(),
+                        Value::CentiPawn(friend_centi_pawn),
+                    )
+                } else {
+                    match self.value {
+                        Value::CentiPawn(best_centi_pawn) => {
+                            if best_centi_pawn < friend_centi_pawn {
+                                // 上方修正
+                                (
+                                    true,
+                                    "update value".to_string(),
+                                    Value::CentiPawn(friend_centi_pawn),
+                                )
+                            } else {
+                                (false, "".to_string(), self.value)
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        if update {
             self.movement_hash = friend_movement_hash;
             self.value = friend_value;
-            self.reason = "this better than resign".to_string();
-            return;
-        } else if self.value < friend_value {
-            // 上方修正
-            self.value = friend_value;
-            self.movement_hash = friend_movement_hash;
-            self.reason = "update value".to_string();
-            return;
+            self.reason = reason;
         }
     }
 
@@ -300,14 +323,20 @@ impl TreeState {
             // どんな葉も 投了より良いだろ☆（＾～＾）
             // TODO 王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
             self.movement_hash = movement_hash;
-            self.value = evaluation.value;
+            self.value = Value::CentiPawn(evaluation.value);
             self.reason = "any leaf better than resign".to_string();
             return;
-        } else if self.value < evaluation.value {
-            self.movement_hash = movement_hash;
-            self.value = evaluation.value;
-            self.reason = "good position".to_string();
-            return;
+        } else {
+            match self.value {
+                Value::CentiPawn(centi_pawn) => {
+                    if centi_pawn < evaluation.value {
+                        self.movement_hash = movement_hash;
+                        self.value = Value::CentiPawn(evaluation.value);
+                        self.reason = "good position".to_string();
+                        return;
+                    }
+                }
+            }
         }
     }
 
@@ -322,8 +351,17 @@ impl TreeState {
     pub fn catch_king(&mut self, movement_hash: u64) {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
         self.movement_hash = movement_hash;
-        self.value = WIN_VALUE;
+        self.value = Value::CentiPawn(WIN_VALUE);
         self.king_catched = true;
         self.reason = "king catch is strongest".to_string();
     }
+}
+
+/// 指し手の評価値だぜ☆（＾～＾）
+#[derive(Clone, Copy)]
+pub enum Value {
+    /// 歩１枚の交換値を 100 とするぜ☆（＾～＾）
+    /// 将棋は、相手は駒を取られて損、自分は駒を取って得という風に痛手が２倍広がるので、
+    /// 交換値が 100 ということは、200点差が開くということだぜ☆（＾～＾）
+    CentiPawn(i16),
 }

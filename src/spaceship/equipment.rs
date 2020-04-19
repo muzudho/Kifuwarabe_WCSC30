@@ -1,5 +1,6 @@
 //! 宇宙船の備品だぜ☆（＾～＾）
 use crate::config::*;
+use crate::cosmic::daydream::Value;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::square::test_rotation;
 use std::fs::File;
@@ -53,7 +54,7 @@ impl DestinationDisplay {
         &mut self,
         cur_depth: Option<u8>,
         sum_nodes: Option<u64>,
-        value: Option<i16>,
+        value: Option<Value>,
         // lion_catch: Option<u16>,
         movement: Option<Movement>,
         pv: Option<String>,
@@ -74,8 +75,10 @@ impl DestinationDisplay {
                 "".to_string()
             },
             //if let Some(centi_pawn) = value {
-            if let Some(num) = value {
-                format!(" score cp {}", num)
+            if let Some(value_val) = value {
+                match value_val {
+                    Value::CentiPawn(num) => format!(" score cp {}", num),
+                }
             } else {
                 "".to_string()
             },
