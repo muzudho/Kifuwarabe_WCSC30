@@ -1,8 +1,8 @@
 use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Angle, RelativeAddress, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,
-    RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
+    AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
+    RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::law::diagnostic::{assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute};
 use std::fmt;
@@ -376,7 +376,7 @@ impl MovePermission {
         }
     }
     pub fn check(&self, destination: &AbsoluteAddress) -> bool {
-        if destination.get_rank() < self.min_rank || self.max_rank < destination.get_rank() {
+        if destination.rank() < self.min_rank || self.max_rank < destination.rank() {
             return false;
         }
         true
@@ -502,38 +502,36 @@ impl Promoting {
 
     /// 自陣から見て、一番遠いの段
     fn is_farthest_rank_from_friend(friend: Phase, destination: &AbsoluteAddress) -> bool {
-        (friend == Phase::First && destination.get_rank() < RANK_2)
-            || (friend == Phase::Second && RANK_8 < destination.get_rank())
+        (friend == Phase::First && destination.rank() < RANK_2)
+            || (friend == Phase::Second && RANK_8 < destination.rank())
     }
     /// 自陣から見て、一番目、２番目に遠いの段
     fn is_first_second_farthest_rank_from_friend(
         friend: Phase,
         destination: &AbsoluteAddress,
     ) -> bool {
-        (friend == Phase::First && destination.get_rank() < RANK_3)
-            || (friend == Phase::Second && RANK_7 < destination.get_rank())
+        (friend == Phase::First && destination.rank() < RANK_3)
+            || (friend == Phase::Second && RANK_7 < destination.rank())
     }
     /// 自陣から見て、二番目、三番目に遠いの段
     fn is_second_third_farthest_rank_from_friend(
         friend: Phase,
         destination: &AbsoluteAddress,
     ) -> bool {
-        (friend == Phase::First
-            && RANK_1 < destination.get_rank()
-            && destination.get_rank() < RANK_4)
+        (friend == Phase::First && RANK_1 < destination.rank() && destination.rank() < RANK_4)
             || (friend == Phase::Second
-                && RANK_6 < destination.get_rank()
-                && destination.get_rank() < RANK_9)
+                && RANK_6 < destination.rank()
+                && destination.rank() < RANK_9)
     }
     /// 自陣から見て、三番目に遠いの段
     fn is_third_farthest_rank_from_friend(friend: Phase, destination: &AbsoluteAddress) -> bool {
-        (friend == Phase::First && destination.get_rank() == RANK_3)
-            || (friend == Phase::Second && RANK_7 == destination.get_rank())
+        (friend == Phase::First && destination.rank() == RANK_3)
+            || (friend == Phase::Second && RANK_7 == destination.rank())
     }
     /// 敵陣の段
     fn is_opponent_area_rank(friend: Phase, destination: &AbsoluteAddress) -> bool {
-        (friend == Phase::First && destination.get_rank() < RANK_4)
-            || (friend == Phase::Second && RANK_6 < destination.get_rank())
+        (friend == Phase::First && destination.rank() < RANK_4)
+            || (friend == Phase::Second && RANK_6 < destination.rank())
     }
 }
 
@@ -603,7 +601,7 @@ impl Squares {
                 let mut next = start.clone();
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    next.add_mut(&RelativeAddress::from_file_and_rank(1, 0).rotate(angle));
+                    next.add_mut(&Address::from_file_rank(1, 0).rel().rotate(angle));
                     if next.has_jumped_out_of_the_board() {
                         break;
                     }
@@ -618,7 +616,8 @@ impl Squares {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 next.add_mut(
-                    &RelativeAddress::from_file_and_rank(1, 0)
+                    &Address::from_file_rank(1, 0)
+                        .rel()
                         .rotate(angle)
                         .double_rank(),
                 );
@@ -630,7 +629,7 @@ impl Squares {
             Agility::Hopping => {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                next.add_mut(&RelativeAddress::from_file_and_rank(1, 0).rotate(angle));
+                next.add_mut(&Address::from_file_rank(1, 0).rel().rotate(angle));
                 if !next.has_jumped_out_of_the_board() {
                     assert_in_board_as_absolute(&next, "隣☆（＾～＾）");
                     callback(next);

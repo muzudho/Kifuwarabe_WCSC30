@@ -87,8 +87,8 @@ pub struct Movement {
 impl Default for Movement {
     fn default() -> Self {
         Movement {
-            source: AbsoluteAddress::from_address(0),
-            destination: AbsoluteAddress::from_address(0),
+            source: AbsoluteAddress::from_number(0),
+            destination: AbsoluteAddress::from_number(0),
             promote: false,
             drop: None,
         }

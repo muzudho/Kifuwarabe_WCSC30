@@ -6,7 +6,7 @@ use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Address, BOARD_MEMORY_AREA, RANK_1, RANK_10, SQUARE_NONE,
+    AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_1, RANK_10, RANK_11,
 };
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
@@ -141,9 +141,13 @@ impl Board {
         let mut hash: u64 = 0;
 
         // 盤上の駒
-        for adr in SQUARE_NONE..BOARD_MEMORY_AREA {
-            if let Some(piece) = self.piece_at(&Address::from_number(adr).abs()) {
-                hash ^= game.hash_seed.piece[adr as usize][piece.serial_number(speed_of_light)];
+        for rank in RANK_0..RANK_11 {
+            for file in (FILE_0..FILE_11).rev() {
+                let ab_adr = &Address::from_file_rank(file, rank).abs();
+                if let Some(piece) = self.piece_at(ab_adr) {
+                    hash ^= game.hash_seed.piece[ab_adr.address as usize]
+                        [piece.serial_number(speed_of_light)];
+                }
             }
         }
 

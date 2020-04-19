@@ -1,7 +1,7 @@
 //!
 //! 値チェック
 //!
-use crate::cosmic::smart::square::{isquare, AbsoluteAddress};
+use crate::cosmic::smart::square::AbsoluteAddress;
 
 ///
 /// 打はテストできない
@@ -27,6 +27,11 @@ pub fn assert_in_board_as_absolute(ab_adr: &AbsoluteAddress, hint: &str) {
 ///
 /// 打はテストできない
 ///
-pub fn assert_in_board_with_frame_as_absolute(adr: isquare, hint: &str) {
-    debug_assert!((-1 < adr && adr < 111), "abs-adr=|{}| hint={}", adr, hint);
+pub fn assert_in_board_with_frame_as_absolute(number: i8, hint: &str) {
+    debug_assert!(
+        (-1 < number && number < 111),
+        "abs-adr=|{}| hint={}",
+        number,
+        hint
+    );
 }

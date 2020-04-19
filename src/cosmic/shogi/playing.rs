@@ -1,6 +1,8 @@
 use crate::cosmic::shogi::recording::{History, Movement};
 use crate::cosmic::shogi::state::{Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
-use crate::cosmic::smart::square::{Address, BOARD_MEMORY_AREA, SQUARE_DROP, SQUARE_NONE};
+use crate::cosmic::smart::square::{
+    Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_DROP, SQUARE_NONE,
+};
 use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Info;
@@ -131,11 +133,13 @@ impl Game {
     /// 開始盤面を、現盤面にコピーします
     pub fn copy_starting_position_to_current_position(&mut self) {
         // 盤上の駒。
-        for i_adr in 0..BOARD_MEMORY_AREA {
-            let abs_adr = Address::from_number(i_adr).abs();
-            // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-            self.board
-                .set_piece_at(&abs_adr, self.starting_board.piece_at(&abs_adr));
+        for rank in RANK_0..RANK_11 {
+            for file in (FILE_0..FILE_11).rev() {
+                let abs_adr = Address::from_file_rank(file, rank).abs();
+                // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
+                self.board
+                    .set_piece_at(&abs_adr, self.starting_board.piece_at(&abs_adr));
+            }
         }
 
         // 持ち駒

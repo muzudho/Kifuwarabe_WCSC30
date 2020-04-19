@@ -2,7 +2,7 @@ use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::recording::Movement;
 use crate::cosmic::shogi::state::{Person, Phase};
 use crate::cosmic::smart::features::{num_to_piece_type, HandPieces};
-use crate::cosmic::smart::square::{AbsoluteAddress, SQUARE_DROP};
+use crate::cosmic::smart::square::{AbsoluteAddress, Address};
 use crate::cosmic::toy_box::{Board, Piece};
 use crate::law::generate_move::movement_generator::MGSquares;
 use crate::law::generate_move::squares::MovePermission;
@@ -226,7 +226,7 @@ impl MGMovements {
                     // ひよこ　は２歩できない☆（＾～＾）
                     if current_board.exists_pawn_on_file(
                         hand_piece.phase(speed_of_light),
-                        destination.get_file(),
+                        destination.file(),
                         speed_of_light,
                     ) {
                         return;
@@ -236,9 +236,9 @@ impl MGMovements {
             }
             callback_movement(
                 Movement {
-                    source: AbsoluteAddress::from_address(SQUARE_DROP), // 駒台
-                    destination: destination.clone(),                   // どの升へ行きたいか
-                    promote: false,                                     // 打に成りは無し
+                    source: Address::from_drop().abs(), // 駒台
+                    destination: destination.clone(),   // どの升へ行きたいか
+                    promote: false,                     // 打に成りは無し
                     drop: num_to_piece_type(
                         hand_piece
                             .r#type(speed_of_light)
