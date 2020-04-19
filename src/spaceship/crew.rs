@@ -47,11 +47,11 @@ impl Kifuwarabe {
         let ts = Tree::default().iteration_deeping(speed_of_light, universe);
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print(
-            0,
-            ts.get_sum_state(),
-            ts.get_value(),
+            None,
+            Some(ts.get_sum_state()),
+            Some(ts.get_value()),
             // ts.get_king_catch(),
-            ts.get_movement_hash(),
+            Some(ts.to_movement()),
             None,
             Some(ts.reason.to_string()),
         );

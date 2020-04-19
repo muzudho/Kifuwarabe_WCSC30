@@ -51,21 +51,33 @@ impl DestinationDisplay {
     /// 情報表示
     pub fn print(
         &mut self,
-        cur_depth: u8,
-        sum_nodes: u64,
-        value: i16,
+        cur_depth: Option<u8>,
+        sum_nodes: Option<u64>,
+        value: Option<i16>,
         // lion_catch: Option<u16>,
-        movement_hash: u64,
+        movement: Option<Movement>,
         pv: Option<String>,
         string: Option<String>,
     ) {
         // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
         Beam::shoot(&format!(
-            "info depth {} nodes {}{} currmove {}{}",
-            cur_depth,
-            sum_nodes,
+            "info{}{}{} currmove {}{}",
+            if let Some(num) = cur_depth {
+                format!(" depth {}", num)
+            } else {
+                "".to_string()
+            },
+            if let Some(num) = sum_nodes {
+                format!(" nodes {}", num)
+            } else {
+                "".to_string()
+            },
             //if let Some(centi_pawn) = value {
-            format!(" score cp {}", value),
+            if let Some(num) = value {
+                format!(" score cp {}", num)
+            } else {
+                "".to_string()
+            },
             /*
             } else if let Some(lion_catch_num) = lion_catch {
                 let mate: i32 = if lion_catch_num % 2 == 0 {
@@ -81,7 +93,11 @@ impl DestinationDisplay {
                 "".to_string()
             },
             */
-            Movement::from_hash(movement_hash),
+            if let Some(movement_val) = movement {
+                format!("{}", movement_val)
+            } else {
+                "".to_string()
+            },
             if let Some(pv_val) = pv {
                 format!(" pv {}", pv_val)
             } else if let Some(string_val) = string {

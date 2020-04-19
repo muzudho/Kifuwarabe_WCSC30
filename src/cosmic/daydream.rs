@@ -34,36 +34,56 @@ impl Tree {
         speed_of_light: &SpeedOfLight,
         universe: &mut Universe,
     ) -> TreeState {
+        universe.game.info.clear();
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
-        let mut best_ts = self.root_move(0, speed_of_light, universe);
+        let mut best_ts = self.search(0, 0, 0, &mut universe.game, speed_of_light, "");
 
-        // TODO 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
+        // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
         for max_depth in 1..universe.option_max_depth {
-            let ts = self.root_move(max_depth, speed_of_light, universe);
+            // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
+            let movement = best_ts.to_movement();
+            universe.game.info.print(
+                Some(max_depth),
+                Some(best_ts.get_sum_state()),
+                Some(best_ts.get_value()),
+                Some(movement),
+                Some(format!("{}", movement,)),
+                None,
+            );
+            // 横線で仕切るぜ☆（＾～＾）
+            universe.game.info.print(
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(format!("----------Iteration deeping----------")),
+            );
 
+            // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
+            let ts = self.search(
+                0,
+                max_depth,
+                best_ts.get_sum_state(),
+                &mut universe.game,
+                speed_of_light,
+                "",
+            );
             if ts.timeout {
                 // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
             }
 
             if best_ts.value <= ts.value {
+                let temp = best_ts.get_sum_state();
                 best_ts = ts.clone();
+                best_ts.add_state(temp);
+            } else {
+                best_ts.add_state(ts.get_sum_state());
             }
         }
 
         best_ts
-    }
-
-    /// 木の根っこで一番良い指し手を返すぜ☆（＾～＾）
-    pub fn root_move(
-        &mut self,
-        max_depth: u8,
-        speed_of_light: &SpeedOfLight,
-        universe: &mut Universe,
-    ) -> TreeState {
-        universe.game.info.clear();
-
-        self.search(0, max_depth, &mut universe.game, speed_of_light, "", 0)
     }
 
     /// 先手の気持ちで、勝てだぜ☆（*＾～＾*）
@@ -82,10 +102,10 @@ impl Tree {
         &mut self,
         cur_depth: u8,
         end_depth: u8,
+        parent_sum_state: u64,
         game: &mut Game,
         speed_of_light: &SpeedOfLight,
         pv: &str,
-        parent_sum_nodes: u64,
     ) -> TreeState {
         let mut ts = TreeState::default();
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
@@ -119,14 +139,14 @@ impl Tree {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
                 break;
-            } else if 30 < self.stopwatch.elapsed().as_secs() {
-                // とりあえず 30 秒で探索を打ち切ろうぜ☆（＾～＾）？
+            } else if 20 < self.stopwatch.elapsed().as_secs() {
+                // とりあえず 20 秒で探索を打ち切ろうぜ☆（＾～＾）？
                 ts.timeout = true;
                 break;
             }
 
             // 1手進めるぜ☆（＾～＾）
-            ts.add_state();
+            ts.add_state(1);
             let movement = Movement::from_hash(*movement_hash);
             let captured_piece = game.do_move(&movement, speed_of_light);
             /*
@@ -161,10 +181,10 @@ impl Tree {
                 let opponent_ts = self.search(
                     cur_depth + 1,
                     end_depth,
+                    ts.get_sum_state() + parent_sum_state,
                     game,
                     speed_of_light,
                     &format!("{} {}", pv, Movement::from_hash(*movement_hash)),
-                    ts.get_sum_state() + parent_sum_nodes,
                 );
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
@@ -187,12 +207,13 @@ impl Tree {
 
         if game.info.is_printable() {
             // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
+            let movement = ts.to_movement();
             game.info.print(
-                cur_depth,
-                ts.get_sum_state() + parent_sum_nodes,
-                ts.get_value(),
-                ts.movement_hash,
-                Some(format!("{} {}", pv, ts.to_movement())),
+                Some(cur_depth),
+                Some(ts.get_sum_state() + parent_sum_state),
+                Some(ts.get_value()),
+                Some(movement),
+                Some(format!("{} {}", pv, movement)),
                 None,
             );
         }
@@ -243,8 +264,8 @@ impl TreeState {
         self.king_catched
     }
 
-    pub fn add_state(&mut self) {
-        self.sum_state += 1;
+    pub fn add_state(&mut self, val: u64) {
+        self.sum_state += val;
     }
 
     pub fn add_turn_over(&mut self, opponent_ts: &TreeState, friend_movement_hash: u64) {
