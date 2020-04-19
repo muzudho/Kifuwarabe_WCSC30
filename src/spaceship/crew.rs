@@ -1,7 +1,7 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
-use crate::cosmic::shogi::playing::{Game, PosNums};
-use crate::cosmic::shogi::state::Person;
+use crate::cosmic::playing::{Game, PosNums};
+use crate::cosmic::recording::Person;
 use crate::cosmic::smart::square::{Address, FILE_1};
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;

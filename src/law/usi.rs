@@ -1,7 +1,7 @@
 //!
 //! USIプロトコル
 //!
-use crate::cosmic::shogi::recording::Movement;
+use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::Piece;
@@ -86,7 +86,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
         }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
-            let suji = match &line[*starts..=*starts] {
+            let file = match &line[*starts..=*starts] {
                 "1" => 1,
                 "2" => 2,
                 "3" => 3,
@@ -105,7 +105,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             };
             *starts += 1;
 
-            let dan = match &line[*starts..=*starts] {
+            let rank = match &line[*starts..=*starts] {
                 "a" => 1,
                 "b" => 2,
                 "c" => 3,
@@ -124,7 +124,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             };
             *starts += 1;
 
-            buffer.source = Address::new(suji, dan).abs();
+            buffer.source = Address::new(file, rank).abs();
             buffer.drop = None;
         }
     }
@@ -132,7 +132,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     // 残りは「筋の数字」、「段のアルファベット」のはず。
 
     // 3文字目
-    let suji = match &line[*starts..=*starts] {
+    let file = match &line[*starts..=*starts] {
         "1" => 1,
         "2" => 2,
         "3" => 3,
@@ -151,7 +151,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     };
     *starts += 1;
     // 4文字目
-    let dan = match &line[*starts..=*starts] {
+    let rank = match &line[*starts..=*starts] {
         "a" => 1,
         "b" => 2,
         "c" => 3,
@@ -171,7 +171,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     *starts += 1;
 
     // 行き先。
-    buffer.destination = Address::new(suji, dan).abs();
+    buffer.destination = Address::new(file, rank).abs();
 
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {

@@ -3,7 +3,7 @@
 //!
 extern crate rand;
 
-use crate::cosmic::shogi::playing::Game;
+use crate::cosmic::playing::Game;
 
 /// アプリケーション開始時に決め終えておくものだぜ☆（＾～＾）
 pub struct Universe {

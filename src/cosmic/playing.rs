@@ -1,5 +1,4 @@
-use crate::cosmic::shogi::recording::{History, Movement};
-use crate::cosmic::shogi::state::{Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
+use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
 use crate::cosmic::smart::square::{
     Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_NONE,
 };
@@ -174,7 +173,7 @@ impl Game {
         let mut hash = self.board.create_hash(&self, speed_of_light);
 
         // 手番ハッシュ
-        use crate::cosmic::shogi::state::Phase::*;
+        use crate::cosmic::recording::Phase::*;
         match self.history.get_phase(Person::Friend) {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],

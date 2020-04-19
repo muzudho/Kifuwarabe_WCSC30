@@ -1,5 +1,5 @@
 //! 宇宙船の備品だぜ☆（＾～＾）
-use crate::cosmic::shogi::recording::Movement;
+use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::square::test_rotation;
 use crate::white_hole::io::*;
 use std::time::{Duration, Instant};

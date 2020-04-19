@@ -1,7 +1,7 @@
 //!
 //! コレクションの内容をダンプ（全部見る）とかだぜ☆（＾～＾）
 //!
-use crate::cosmic::shogi::recording::Movement;
+use crate::cosmic::recording::Movement;
 use crate::white_hole::io::*;
 use std::collections::HashSet;
 use std::hash::BuildHasher;

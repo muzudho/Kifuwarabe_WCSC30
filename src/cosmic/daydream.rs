@@ -2,9 +2,8 @@
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
 
-use crate::cosmic::shogi::playing::Game;
-use crate::cosmic::shogi::recording::{Movement, SENNTITE_NUM};
-use crate::cosmic::shogi::state::Person;
+use crate::cosmic::playing::Game;
+use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::Evaluation;
 use crate::cosmic::smart::features::PieceType::King;
 use crate::cosmic::universe::Universe;

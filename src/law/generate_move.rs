@@ -2,8 +2,7 @@
 //! 現局面を使った指し手生成☆（＾～＾）
 //!
 
-use crate::cosmic::shogi::recording::Movement;
-use crate::cosmic::shogi::state::Phase;
+use crate::cosmic::recording::{Movement, Phase};
 use crate::cosmic::smart::features::{HandPieces, PieceType};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
@@ -64,6 +63,7 @@ impl PseudoLegalMoves {
         F1: FnMut(u64),
     {
         // 盤上の駒☆（＾～＾）
+        // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
         Area::for_all(None, &mut |source| {
             PseudoLegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });

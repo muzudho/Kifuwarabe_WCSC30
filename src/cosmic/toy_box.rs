@@ -2,8 +2,8 @@
 //! 駒 と 盤
 //!
 
-use crate::cosmic::shogi::playing::Game;
-use crate::cosmic::shogi::state::Phase;
+use crate::cosmic::playing::Game;
+use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_1, RANK_10, RANK_11,

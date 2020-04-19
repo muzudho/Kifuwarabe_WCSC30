@@ -2,7 +2,7 @@
 //! 駒早見表 (PieceChart),
 //! 駒種類早見表 (PieceTypeChart).
 //!
-use crate::cosmic::shogi::state::Phase;
+use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::toy_box::Piece;
 use crate::law::speed_of_light::SpeedOfLight;
@@ -35,7 +35,7 @@ pub struct PieceChart {
 impl PieceChart {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
     pub fn from_piece(p: Piece) -> Self {
-        use crate::cosmic::shogi::state::Phase::*;
+        use crate::cosmic::recording::Phase::*;
         use crate::cosmic::smart::features::PieceType::*;
         use crate::cosmic::toy_box::Piece::*;
         match p {
