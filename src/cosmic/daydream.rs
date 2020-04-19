@@ -13,17 +13,22 @@ use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::SpeedOfLight;
 use std::collections::HashSet;
+use std::fmt;
 use std::time::Instant;
 
 pub struct Tree {
     // この木を生成したと同時にストップ・ウォッチを開始するぜ☆（＾～＾）
     stopwatch: Instant,
+
+    // Principal variation(読み筋)☆（＾～＾）
+    pv: PrincipalVariation,
 }
 impl Default for Tree {
     fn default() -> Self {
         let stopwatch1 = Instant::now();
         Tree {
             stopwatch: stopwatch1,
+            pv: PrincipalVariation::default(),
         }
     }
 }
@@ -44,13 +49,19 @@ impl Tree {
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             let movement = best_ts.to_movement();
             universe.game.info.print(
-                Some(max_depth),
+                None,
                 Some(best_ts.get_sum_state()),
                 Some(best_ts.value()),
                 Some(movement),
-                Some(format!("{}", movement,)),
+                Some(format!("{}", movement,)), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
                 None,
             );
+
+            if movement.resign() {
+                // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
+                break;
+            }
+
             // 横線で仕切るぜ☆（＾～＾）
             universe.game.info.print(
                 None,
@@ -60,6 +71,9 @@ impl Tree {
                 None,
                 Some(format!("----------Iteration deeping----------")),
             );
+
+            // リセット
+            self.pv.clear();
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             let ts = self.search(
@@ -137,8 +151,8 @@ impl Tree {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
                 break;
-            } else if 20 < self.stopwatch.elapsed().as_secs() {
-                // とりあえず 20 秒で探索を打ち切ろうぜ☆（＾～＾）？
+            } else if 15 < self.stopwatch.elapsed().as_secs() {
+                // とりあえず 15 秒で探索を打ち切ろうぜ☆（＾～＾）？
                 ts.timeout = true;
                 break;
             }
@@ -147,6 +161,7 @@ impl Tree {
             ts.add_state(1);
             let movement = Movement::from_hash(*movement_hash);
             let captured_piece = game.do_move(&movement, speed_of_light);
+            self.pv.push(&movement);
             /*
             IO::debugln(&format!("n={} do.", sum_nodes));
             Commands::pos(&game);
@@ -158,6 +173,7 @@ impl Tree {
                     ts.catch_king(*movement_hash);
 
                     // 1手戻すぜ☆（＾～＾）
+                    self.pv.pop();
                     game.undo_move(speed_of_light);
                     break;
                 }
@@ -194,7 +210,7 @@ impl Tree {
                 // 葉から根へ戻るタイミングでないと ts が更新されてないからな☆（＾～＾）
                 let movement = ts.to_movement();
                 game.info.print(
-                    Some(cur_depth),
+                    Some(self.pv.len() as u8),
                     Some(ts.get_sum_state() + parent_sum_state),
                     Some(ts.value()),
                     Some(movement),
@@ -204,6 +220,7 @@ impl Tree {
             }
 
             // 1手戻すぜ☆（＾～＾）
+            self.pv.pop();
             game.undo_move(speed_of_light);
             /*
             IO::debugln(&format!("n={} undo.", sum_nodes));
@@ -400,4 +417,40 @@ pub enum Value {
 
     /// 負け☆（＾～＾）
     Lose,
+}
+
+pub struct PrincipalVariation {
+    moves: Vec<Movement>,
+}
+impl Default for PrincipalVariation {
+    fn default() -> Self {
+        PrincipalVariation {
+            moves: Vec::default(),
+        }
+    }
+}
+impl PrincipalVariation {
+    fn clear(&mut self) {
+        self.moves.clear();
+    }
+    fn push(&mut self, movement: &Movement) {
+        self.moves.push(*movement);
+    }
+
+    fn pop(&mut self) {
+        self.moves.pop();
+    }
+
+    fn len(&self) -> usize {
+        self.moves.len()
+    }
+}
+impl fmt::Display for PrincipalVariation {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut buffer = String::new();
+        for movement in &self.moves {
+            buffer.push_str(&format!("{} ", movement));
+        }
+        write!(f, "{}", buffer)
+    }
 }
