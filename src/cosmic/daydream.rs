@@ -5,11 +5,11 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::Evaluation;
+use crate::cosmic::smart::evaluator::WIN_VALUE;
 use crate::cosmic::smart::features::PieceType::King;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::*;
-use crate::spaceship::equipment::Beam;
 use std::collections::HashSet;
 
 #[derive(Clone)]
@@ -85,7 +85,13 @@ impl TreeState {
                 }
             }
         } else {
-            panic!(Beam::trouble("評価値が付いてないぜ☆（＾～＾）！"))
+            // 評価値が付いていないことがあるが、相手が投了したのかもしれないな☆（＾～＾）
+            // 更新
+            self.value = Some(WIN_VALUE);
+            self.movement_hash = friend_movement_hash;
+            self.reason = "win?".to_string();
+            return;
+            // panic!(Beam::trouble("評価値が付いてないぜ☆（＾～＾）！"))
         }
     }
 

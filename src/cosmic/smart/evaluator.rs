@@ -5,6 +5,8 @@ use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::toy_box::Piece;
 use crate::law::speed_of_light::*;
 
+pub const WIN_VALUE: i16 = 25000;
+
 pub struct Evaluation {
     pub value: i16,
 }
@@ -20,7 +22,7 @@ impl Evaluation {
     ) -> Evaluation {
         if let Some(captured_piece_val) = captured_piece_o {
             match captured_piece_val.r#type(speed_of_light) {
-                PieceType::King => Evaluation::new(25000), // 玉を取ったら、評価しないのでここには来ないぜ☆（＾～＾）
+                PieceType::King => Evaluation::new(WIN_VALUE), // 玉を取ったら、評価しないのでここには来ないぜ☆（＾～＾）
                 PieceType::Rook => Evaluation::new(1000),
                 PieceType::Bishop => Evaluation::new(900),
                 PieceType::Gold => Evaluation::new(600),
