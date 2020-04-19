@@ -187,6 +187,19 @@ impl Tree {
                     Evaluation::from_caputured_piece(cur_depth, captured_piece, speed_of_light);
                 ts.check_leaf(&evaluation, *movement_hash);
 
+                if game.info.is_printable() {
+                    // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
+                    // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
+                    let movement = ts.to_movement();
+                    game.info.print(
+                        Some(self.pv.len() as u8),
+                        Some(ts.get_sum_state() + parent_sum_state),
+                        Some(ts.value()),
+                        Some(movement),
+                        Some(format!("{}", self.pv)),
+                        None,
+                    );
+                }
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
@@ -200,20 +213,6 @@ impl Tree {
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 ts.add_turn_over(&opponent_ts, *movement_hash);
-            }
-
-            if game.info.is_printable() {
-                // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
-                // 葉から根へ戻るタイミングでないと ts が更新されてないからな☆（＾～＾）
-                let movement = ts.to_movement();
-                game.info.print(
-                    Some(self.pv.len() as u8),
-                    Some(ts.get_sum_state() + parent_sum_state),
-                    Some(ts.value()),
-                    Some(movement),
-                    Some(format!("{}", self.pv)),
-                    None,
-                );
             }
 
             // 1手戻すぜ☆（＾～＾）
@@ -402,6 +401,7 @@ pub enum Value {
     Lose,
 }
 
+#[derive(Clone)]
 pub struct PrincipalVariation {
     /// 根っこに戻ると、中身が空っぽになっているので困るぜ（＾～＾）
     moves: Vec<Movement>,
