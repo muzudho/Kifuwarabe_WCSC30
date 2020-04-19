@@ -81,7 +81,7 @@ impl Board {
         speed_of_light: &SpeedOfLight,
     ) -> bool {
         for rank in RANK_1..RANK_10 {
-            let adr = AbsoluteAddress::from_file_rank(file, rank);
+            let adr = Address::new(file, rank).abs();
             if let Some(piece) = self.piece_at(&adr) {
                 if piece.phase(speed_of_light) == phase
                     && piece.r#type(speed_of_light) == PieceType::Pawn
@@ -97,7 +97,7 @@ impl Board {
         self.board[adr.address() as usize]
     }
     pub fn set_piece(&mut self, file: i8, rank: i8, piece_o: Option<Piece>) {
-        self.set_piece_at(&AbsoluteAddress::from_file_rank(file, rank), piece_o);
+        self.set_piece_at(&Address::new(file, rank).abs(), piece_o);
     }
     /// 升で指定して駒を置く
     pub fn set_piece_at(&mut self, adr: &AbsoluteAddress, piece: Option<Piece>) {
@@ -143,7 +143,7 @@ impl Board {
         // 盤上の駒
         for rank in RANK_0..RANK_11 {
             for file in (FILE_0..FILE_11).rev() {
-                let ab_adr = &Address::from_file_rank(file, rank).abs();
+                let ab_adr = &Address::new(file, rank).abs();
                 if let Some(piece) = self.piece_at(ab_adr) {
                     hash ^= game.hash_seed.piece[ab_adr.address() as usize]
                         [piece.serial_number(speed_of_light)];

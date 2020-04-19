@@ -1,46 +1,55 @@
-use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::recording::Movement;
-use crate::cosmic::shogi::state::{Person, Phase};
+use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::{num_to_piece_type, HandPieces};
 use crate::cosmic::smart::square::{AbsoluteAddress, Address};
 use crate::cosmic::toy_box::{Board, Piece};
-use crate::law::generate_move::movement_generator::MGSquares;
+use crate::law::generate_move::movement_generator::PublicNextSquares;
 use crate::law::generate_move::squares::MovePermission;
-use crate::law::generate_move::squares::{NextSquares, Squares};
+use crate::law::generate_move::squares::NextSquares;
 use crate::law::speed_of_light::SpeedOfLight;
 
 pub struct MGMovements {}
 impl MGMovements {
-    /// 盤上の駒の動き。
+    /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
-    pub fn make_movements_on_board<F1>(
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    pub fn all_pieces_on_board<F1>(
         friend: Phase,
-        current_board: &Board,
+        board: &Board,
         speed_of_light: &SpeedOfLight,
-        callback_movement: &mut F1,
+        callback: &mut F1,
     ) where
         F1: FnMut(u64),
     {
         // 盤上の駒☆（＾～＾）
-        MGSquares::for_all(&mut |source| {
-            MGMovements::make_a_movement_on_board(
-                friend,
-                &source,
-                current_board,
-                speed_of_light,
-                callback_movement,
-            )
+        PublicNextSquares::for_all(&mut |source| {
+            MGMovements::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });
     }
 
-    /// 盤上の駒の動き。
-    /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
-    fn make_a_movement_on_board<F1>(
+    /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
+    /// * `source` - 移動元升だぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    fn a_piece_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
-        current_board: &Board,
+        board: &Board,
         speed_of_light: &SpeedOfLight,
-        callback_movement: &mut F1,
+        callback: &mut F1,
     ) where
         F1: FnMut(u64),
     {
@@ -49,7 +58,7 @@ impl MGMovements {
                 use crate::cosmic::toy_box::ThingsInTheSquare::*;
                 use crate::law::generate_move::squares::Promotability::*;
                 let things_in_the_square =
-                    current_board.what_is_in_the_square(friend, &destination, speed_of_light);
+                    board.what_is_in_the_square(friend, &destination, speed_of_light);
                 match things_in_the_square {
                     Space | Opponent => {
                         // 成れるかどうかの判定☆（＾ｑ＾）
@@ -73,7 +82,7 @@ impl MGMovements {
                             Any => {
                                 // 成ったり、成れなかったりできるとき。
                                 if !forbidden {
-                                    callback_movement(
+                                    callback(
                                         Movement {
                                             source: source.clone(),
                                             destination: destination.clone(),
@@ -83,7 +92,7 @@ impl MGMovements {
                                         .to_hash(speed_of_light),
                                     );
                                 }
-                                callback_movement(
+                                callback(
                                     Movement {
                                         source: source.clone(),
                                         destination: destination.clone(),
@@ -96,7 +105,7 @@ impl MGMovements {
                             _ => {
                                 // 成れるか、成れないかのどちらかのとき。
                                 if promotion || !forbidden {
-                                    callback_movement(
+                                    callback(
                                         Movement {
                                             source: source.clone(),
                                             destination: destination.clone(),
@@ -118,89 +127,72 @@ impl MGMovements {
                 }
             };
 
-        if let Some(piece) = current_board.piece_at(&source) {
+        if let Some(piece) = board.piece_at(&source) {
             if friend == piece.phase(speed_of_light) {
-                NextSquares::looking_for_squares_from_on_board(
-                    piece.r#type(speed_of_light),
-                    friend,
-                    &source,
-                    callback_next,
-                );
+                NextSquares::piece_of(piece.r#type(speed_of_light), friend, &source, callback_next);
             }
         }
     }
 
-    /// 持ち駒の動き。
-    /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
-    pub fn make_movements_on_hand<F1>(
-        game: &Game,
+    /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    pub fn all_pieces_on_hand<F1>(
+        friend: Phase,
+        board: &Board,
         speed_of_light: &SpeedOfLight,
-        callback_movement: &mut F1,
+        callback: &mut F1,
     ) where
         F1: FnMut(u64),
     {
         HandPieces::for_all(&mut |any_piece_type| {
-            let hand_piece = any_piece_type.add_phase(game.history.get_phase(Person::Friend));
+            // 持ち駒
+            let hand = any_piece_type.add_phase(friend);
 
-            if 0 < game.board.get_hand(hand_piece, speed_of_light) {
+            if 0 < board.get_hand(hand, speed_of_light) {
                 // 駒を持っていれば
-                use crate::cosmic::toy_box::Piece::*;
-                match hand_piece {
-                    // ▲歩、▲香 の打てる範囲は２段目～９段目。
-                    Pawn1 | Lance1 => {
-                        Squares::for_from_rank2_to_rank9(Phase::First, &mut |destination| {
-                            MGMovements::make_hand(
-                                &hand_piece,
-                                &game.board,
+                use crate::cosmic::smart::features::PieceType::*;
+                match hand.r#type(speed_of_light) {
+                    // 歩、香
+                    Pawn | Lance => NextSquares::drop_pawn_lance(
+                        hand.phase(speed_of_light),
+                        &mut |destination| {
+                            MGMovements::a_piece_on_hand(
+                                &hand,
+                                &board,
                                 speed_of_light,
                                 &destination,
-                                callback_movement,
+                                callback,
                             );
-                        })
-                    }
-                    // ▲桂 の打てる範囲は３段目～９段目。
-                    Knight1 => Squares::for_from_rank3_to_rank9(Phase::First, &mut |destination| {
-                        MGMovements::make_hand(
-                            &hand_piece,
-                            &game.board,
-                            speed_of_light,
-                            &destination,
-                            callback_movement,
-                        );
-                    }),
-                    // ▽歩、▽香 の打てる範囲は１段目～８段目。
-                    Pawn2 | Lance2 => {
-                        Squares::for_from_rank2_to_rank9(Phase::Second, &mut |destination| {
-                            MGMovements::make_hand(
-                                &hand_piece,
-                                &game.board,
+                        },
+                    ),
+                    // 桂
+                    Knight => {
+                        NextSquares::drop_knight(hand.phase(speed_of_light), &mut |destination| {
+                            MGMovements::a_piece_on_hand(
+                                &hand,
+                                &board,
                                 speed_of_light,
                                 &destination,
-                                callback_movement,
-                            );
-                        })
-                    }
-                    // ▲桂 の打てる範囲は１段目～７段目。
-                    Knight2 => {
-                        Squares::for_from_rank3_to_rank9(Phase::Second, &mut |destination| {
-                            MGMovements::make_hand(
-                                &hand_piece,
-                                &game.board,
-                                speed_of_light,
-                                &destination,
-                                callback_movement,
+                                callback,
                             );
                         })
                     }
                     // それ以外の駒が打てる範囲は盤面全体。
                     _ => {
-                        MGSquares::for_all(&mut |destination| {
-                            MGMovements::make_hand(
-                                &hand_piece,
-                                &game.board,
+                        PublicNextSquares::for_all(&mut |destination| {
+                            MGMovements::a_piece_on_hand(
+                                &hand,
+                                &board,
                                 speed_of_light,
                                 &destination,
-                                callback_movement,
+                                callback,
                             );
                         });
                     }
@@ -209,23 +201,33 @@ impl MGMovements {
         });
     }
 
-    fn make_hand<F1>(
-        hand_piece: &Piece,
-        current_board: &Board,
+    /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `hand_piece` - 持ち駒だぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `destination` - 移動先升だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    fn a_piece_on_hand<F1>(
+        hand: &Piece,
+        board: &Board,
         speed_of_light: &SpeedOfLight,
         destination: &AbsoluteAddress,
-        callback_movement: &mut F1,
+        callback: &mut F1,
     ) where
         F1: FnMut(u64),
     {
-        if let None = current_board.piece_at(&destination) {
+        if let None = board.piece_at(&destination) {
             // 駒が無いところに打つ
             use crate::cosmic::toy_box::Piece::*;
-            match *hand_piece {
+            match *hand {
                 Pawn1 | Pawn2 => {
                     // ひよこ　は２歩できない☆（＾～＾）
-                    if current_board.exists_pawn_on_file(
-                        hand_piece.phase(speed_of_light),
+                    if board.exists_pawn_on_file(
+                        hand.phase(speed_of_light),
                         destination.file(),
                         speed_of_light,
                     ) {
@@ -234,15 +236,13 @@ impl MGMovements {
                 }
                 _ => {}
             }
-            callback_movement(
+            callback(
                 Movement {
-                    source: Address::from_drop().abs(), // 駒台
-                    destination: destination.clone(),   // どの升へ行きたいか
-                    promote: false,                     // 打に成りは無し
+                    source: Address::default().abs(), // 駒台
+                    destination: destination.clone(), // どの升へ行きたいか
+                    promote: false,                   // 打に成りは無し
                     drop: num_to_piece_type(
-                        hand_piece
-                            .r#type(speed_of_light)
-                            .serial_number(speed_of_light),
+                        hand.r#type(speed_of_light).serial_number(speed_of_light),
                     ), // 打った駒種類
                 }
                 .to_hash(speed_of_light),

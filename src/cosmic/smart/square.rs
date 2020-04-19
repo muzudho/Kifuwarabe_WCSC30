@@ -94,26 +94,26 @@ pub fn test_rotation() {
     }
     // 相対番地のテスト
     {
-        let mut rsq = Address::from_file_rank(0, -1).rel();
+        let mut rsq = Address::new(0, -1).rel();
         test_rsq("b1", "(0x -1y -1adr)", &rsq);
-        rsq = Address::from_file_rank(1, -1).rel();
+        rsq = Address::new(1, -1).rel();
         test_rsq("b2", "(1x -1y 9adr)", &rsq);
-        rsq = Address::from_file_rank(1, 0).rel();
+        rsq = Address::new(1, 0).rel();
         test_rsq("b3", "(1x 0y 10adr)", &rsq);
-        rsq = Address::from_file_rank(1, 1).rel();
+        rsq = Address::new(1, 1).rel();
         test_rsq("b4", "(1x 1y 11adr)", &rsq);
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         test_rsq("b5", "(0x 1y 1adr)", &rsq);
-        rsq = Address::from_file_rank(-1, 1).rel();
+        rsq = Address::new(-1, 1).rel();
         test_rsq("b6", "(-1x 1y -9adr)", &rsq);
-        rsq = Address::from_file_rank(-1, 0).rel();
+        rsq = Address::new(-1, 0).rel();
         test_rsq("b7", "(-1x 0y -10adr)", &rsq);
-        rsq = Address::from_file_rank(-1, -1).rel();
+        rsq = Address::new(-1, -1).rel();
         test_rsq("b8", "(-1x -1y -11adr)", &rsq);
     }
     // 45°回転のテスト
     {
-        let mut rsq = Address::from_file_rank(0, -1).rel();
+        let mut rsq = Address::new(0, -1).rel();
         test_rsq("a1", "(0x -1y -1adr)", &rsq);
         rsq = rsq.rotate_45_countercrockwise();
         test_rsq("a2", "(1x -1y 9adr)", &rsq);
@@ -134,7 +134,7 @@ pub fn test_rotation() {
     }
     // 90°回転のテスト＜その１＞
     {
-        let mut rsq = Address::from_file_rank(0, -1).rel();
+        let mut rsq = Address::new(0, -1).rel();
         test_rsq("c1", "(0x -1y -1adr)", &rsq);
         rsq = rsq.rotate_90_countercrockwise();
         test_rsq("c2", "(1x 0y 10adr)", &rsq);
@@ -147,7 +147,7 @@ pub fn test_rotation() {
     }
     // 90°回転のテスト＜その２＞
     {
-        let mut rsq = Address::from_file_rank(1, -1).rel();
+        let mut rsq = Address::new(1, -1).rel();
         test_rsq("d1", "(1x -1y 9adr)", &rsq);
         rsq = rsq.rotate_90_countercrockwise();
         test_rsq("d2", "(1x 1y 11adr)", &rsq);
@@ -160,28 +160,28 @@ pub fn test_rotation() {
     }
     // 桂馬のテスト
     {
-        let mut rsq = Address::from_file_rank(0, -1).rel();
+        let mut rsq = Address::new(0, -1).rel();
         test_rsq("g1", "(0x -1y -1adr)", &rsq);
         rsq = rsq.rotate(Angle::Ccw45);
         test_rsq("g2", "(1x -1y 9adr)", &rsq);
         rsq = rsq.double_rank();
         test_rsq("g3", "(1x -2y 8adr)", &rsq);
 
-        let mut rsq = Address::from_file_rank(0, -1).rel();
+        let mut rsq = Address::new(0, -1).rel();
         test_rsq("g4", "(0x -1y -1adr)", &rsq);
         rsq = rsq.rotate(Angle::Ccw315);
         test_rsq("g5", "(-1x -1y -11adr)", &rsq);
         rsq = rsq.double_rank();
         test_rsq("g6", "(-1x -2y -12adr)", &rsq);
 
-        let mut rsq = Address::from_file_rank(0, 1).rel();
+        let mut rsq = Address::new(0, 1).rel();
         test_rsq("g7", "(0x 1y 1adr)", &rsq);
         rsq = rsq.rotate(Angle::Ccw45);
         test_rsq("g8", "(-1x 1y -9adr)", &rsq);
         rsq = rsq.double_rank();
         test_rsq("g9", "(-1x 2y -8adr)", &rsq);
 
-        let mut rsq = Address::from_file_rank(0, 1).rel();
+        let mut rsq = Address::new(0, 1).rel();
         test_rsq("g10", "(0x 1y 1adr)", &rsq);
         rsq = rsq.rotate(Angle::Ccw315);
         test_rsq("g11", "(1x 1y 11adr)", &rsq);
@@ -191,86 +191,86 @@ pub fn test_rotation() {
     // 角度指定回転のテスト(北から)
     {
         // 0
-        let mut rsq = Address::from_file_rank(0, -1).rel();
+        let mut rsq = Address::new(0, -1).rel();
         test_rsq("h1", "(0x -1y -1adr)", &rsq);
         rsq = rsq.rotate(Angle::Ccw0);
         test_rsq("h2", "(0x -1y -1adr)", &rsq);
 
         // 45
-        rsq = Address::from_file_rank(0, -1).rel();
+        rsq = Address::new(0, -1).rel();
         rsq = rsq.rotate(Angle::Ccw45);
         test_rsq("h3", "(1x -1y 9adr)", &rsq);
 
         // 90
-        rsq = Address::from_file_rank(0, -1).rel();
+        rsq = Address::new(0, -1).rel();
         rsq = rsq.rotate(Angle::Ccw90);
         test_rsq("h4", "(1x 0y 10adr)", &rsq);
 
         // 135
-        rsq = Address::from_file_rank(0, -1).rel();
+        rsq = Address::new(0, -1).rel();
         rsq = rsq.rotate(Angle::Ccw135);
         test_rsq("h5", "(1x 1y 11adr)", &rsq);
 
         // 180
-        rsq = Address::from_file_rank(0, -1).rel();
+        rsq = Address::new(0, -1).rel();
         rsq = rsq.rotate(Angle::Ccw180);
         test_rsq("h6", "(0x 1y 1adr)", &rsq);
 
         // 225
-        rsq = Address::from_file_rank(0, -1).rel();
+        rsq = Address::new(0, -1).rel();
         rsq = rsq.rotate(Angle::Ccw225);
         test_rsq("h7", "(-1x 1y -9adr)", &rsq);
 
         // 270
-        rsq = Address::from_file_rank(0, -1).rel();
+        rsq = Address::new(0, -1).rel();
         rsq = rsq.rotate(Angle::Ccw270);
         test_rsq("h8", "(-1x 0y -10adr)", &rsq);
 
         // 315
-        rsq = Address::from_file_rank(0, -1).rel();
+        rsq = Address::new(0, -1).rel();
         rsq = rsq.rotate(Angle::Ccw315);
         test_rsq("h9", "(-1x -1y -11adr)", &rsq);
     }
     // 角度指定回転のテスト(南から)
     {
         // 0
-        let mut rsq = Address::from_file_rank(0, 1).rel();
+        let mut rsq = Address::new(0, 1).rel();
         test_rsq("h1", "(0x 1y 1adr)", &rsq);
         rsq = rsq.rotate(Angle::Ccw0);
         test_rsq("h2", "(0x 1y 1adr)", &rsq);
 
         // 45
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         rsq = rsq.rotate(Angle::Ccw45);
         test_rsq("h3", "(-1x 1y -9adr)", &rsq);
 
         // 90
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         rsq = rsq.rotate(Angle::Ccw90);
         test_rsq("h4", "(-1x 0y -10adr)", &rsq);
 
         // 135
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         rsq = rsq.rotate(Angle::Ccw135);
         test_rsq("h5", "(-1x -1y -11adr)", &rsq);
 
         // 180
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         rsq = rsq.rotate(Angle::Ccw180);
         test_rsq("h6", "(0x -1y -1adr)", &rsq);
 
         // 225
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         rsq = rsq.rotate(Angle::Ccw225);
         test_rsq("h7", "(1x -1y 9adr)", &rsq);
 
         // 270
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         rsq = rsq.rotate(Angle::Ccw270);
         test_rsq("h8", "(1x 0y 10adr)", &rsq);
 
         // 315
-        rsq = Address::from_file_rank(0, 1).rel();
+        rsq = Address::new(0, 1).rel();
         rsq = rsq.rotate(Angle::Ccw315);
         test_rsq("h9", "(1x 1y 11adr)", &rsq);
     }
@@ -457,12 +457,13 @@ pub struct Address {
     rank: i8,
 }
 impl Default for Address {
+    /// 駒台に番地は無いぜ☆（＾～＾） 仮に (0, 0) でも入れとくぜ☆（＾～＾）
     fn default() -> Self {
         Address { file: 0, rank: 0 }
     }
 }
 impl Address {
-    pub fn from_file_rank(file1: i8, rank1: i8) -> Self {
+    pub fn new(file1: i8, rank1: i8) -> Self {
         debug_assert!(
             -FILE_11 < file1 && file1 < FILE_11,
             format!("file={}", file1)
@@ -477,21 +478,16 @@ impl Address {
         }
     }
 
-    /// 駒台に番地は無いぜ☆（＾～＾） 仮に (0, 0) でも入れとくぜ☆（＾～＾）
-    pub fn from_drop() -> Self {
-        Address { file: 0, rank: 0 }
-    }
-
     pub fn from_absolute_address(address: i8) -> AbsoluteAddress {
-        AbsoluteAddress::from_file_rank(address as i8 / 10 % 10, address as i8 % 10)
+        AbsoluteAddress::new(address as i8 / 10 % 10, address as i8 % 10)
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
-        AbsoluteAddress::from_file_rank(self.file, self.rank)
+        AbsoluteAddress::new(self.file, self.rank)
     }
 
     pub fn rel(&self) -> RelativeAddress {
-        RelativeAddress::from_file_rank(self.file, self.rank)
+        RelativeAddress::new(self.file, self.rank)
     }
 }
 
@@ -511,7 +507,7 @@ pub struct RelativeAddress {
     rank: i8,
 }
 impl RelativeAddress {
-    fn from_file_rank(file1: i8, rank1: i8) -> Self {
+    fn new(file1: i8, rank1: i8) -> Self {
         RelativeAddress {
             file: file1,
             rank: rank1,
@@ -610,7 +606,7 @@ impl RelativeAddress {
         // でも、 90°回転のときは 象限は１つしかないけどな☆（＾～＾）全象限同じ式だぜ☆（*＾～＾*）
         let new_file = -self.rank;
         let new_rank = self.file;
-        RelativeAddress::from_file_rank(new_file, new_rank)
+        RelativeAddress::new(new_file, new_rank)
     }
 
     pub fn rotate_45_countercrockwise(&self) -> Self {
@@ -663,7 +659,7 @@ impl RelativeAddress {
             }
         };
 
-        RelativeAddress::from_file_rank(new_file, new_rank)
+        RelativeAddress::new(new_file, new_rank)
     }
 }
 
@@ -702,7 +698,7 @@ pub struct AbsoluteAddress {
     rank: i8,
 }
 impl AbsoluteAddress {
-    pub fn from_file_rank(file: i8, rank: i8) -> Self {
+    fn new(file: i8, rank: i8) -> Self {
         debug_assert!(FILE_0 <= file && file < FILE_11, format!("file={}", file));
         debug_assert!(RANK_0 <= rank && rank < RANK_11, format!("rank={}", rank));
         let ab_adr = AbsoluteAddress {
@@ -739,7 +735,7 @@ impl AbsoluteAddress {
     }
 
     pub fn rotate_180(&self) -> Self {
-        AbsoluteAddress::from_file_rank(FILE_11 - self.file, RANK_11 - self.rank)
+        AbsoluteAddress::new(FILE_11 - self.file, RANK_11 - self.rank)
     }
 
     pub fn has_jumped_out_of_the_board(&self) -> bool {

@@ -4,7 +4,7 @@
 
 use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::state::Person;
-use crate::cosmic::smart::square::AbsoluteAddress;
+use crate::cosmic::smart::square::{AbsoluteAddress, Address};
 use crate::law::generate_move::movements::MGMovements;
 use crate::law::speed_of_light::SpeedOfLight;
 use std::collections::HashSet;
@@ -32,26 +32,19 @@ pub fn generate_movement(
 ///
 /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
 ///
-pub fn get_potential_movement<F1>(
-    game: &Game,
-    speed_of_light: &SpeedOfLight,
-    callback_movement: &mut F1,
-) where
+pub fn get_potential_movement<F1>(game: &Game, speed_of_light: &SpeedOfLight, callback: &mut F1)
+where
     F1: FnMut(u64),
 {
+    let friend = game.history.get_phase(Person::Friend);
     // 盤上の駒の移動。
-    MGMovements::make_movements_on_board(
-        game.history.get_phase(Person::Friend),
-        &game.board,
-        &speed_of_light,
-        callback_movement,
-    );
+    MGMovements::all_pieces_on_board(friend, &game.board, &speed_of_light, callback);
     // 持ち駒の打。
-    MGMovements::make_movements_on_hand(game, &speed_of_light, callback_movement);
+    MGMovements::all_pieces_on_hand(friend, &game.board, &speed_of_light, callback);
 }
 
-pub struct MGSquares {}
-impl MGSquares {
+pub struct PublicNextSquares {}
+impl PublicNextSquares {
     /// 全升☆（＾～＾）
     pub fn for_all<F1>(callback: &mut F1)
     where
@@ -59,7 +52,7 @@ impl MGSquares {
     {
         for rank_src in 1..10 {
             for file_src in (1..10).rev() {
-                callback(AbsoluteAddress::from_file_rank(file_src, rank_src));
+                callback(Address::new(file_src, rank_src).abs());
             }
         }
     }

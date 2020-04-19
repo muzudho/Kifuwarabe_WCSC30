@@ -135,7 +135,7 @@ impl Game {
         // 盤上の駒。
         for rank in RANK_0..RANK_11 {
             for file in (FILE_0..FILE_11).rev() {
-                let abs_adr = Address::from_file_rank(file, rank).abs();
+                let abs_adr = Address::new(file, rank).abs();
                 // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
                 self.board
                     .set_piece_at(&abs_adr, self.starting_board.piece_at(&abs_adr));

@@ -124,7 +124,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
             };
             *starts += 1;
 
-            buffer.source = AbsoluteAddress::from_file_rank(suji, dan);
+            buffer.source = Address::new(suji, dan).abs();
             buffer.drop = None;
         }
     }
@@ -171,7 +171,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, universe: &mut Un
     *starts += 1;
 
     // 行き先。
-    buffer.destination = AbsoluteAddress::from_file_rank(suji, dan);
+    buffer.destination = Address::new(suji, dan).abs();
 
     // 5文字に「+」があれば成り。
     if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {

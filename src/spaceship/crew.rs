@@ -200,7 +200,7 @@ impl Chiyuri {
 
         for ms in 1..9 {
             for hash in 0..10 {
-                let sq = Address::from_file_rank(FILE_1, ms).abs();
+                let sq = Address::new(FILE_1, ms).abs();
                 let next = push_sq_to_hash(hash, &sq);
                 let (hash_orig, square_orig) = pop_sq_from_hash(next);
                 IO::writeln( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
