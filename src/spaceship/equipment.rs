@@ -77,6 +77,14 @@ impl DestinationDisplay {
             //if let Some(centi_pawn) = value {
             if let Some(value_val) = value {
                 match value_val {
+                    Value::Win => {
+                        // 自分が勝つ
+                        " score mate +".to_string()
+                    }
+                    Value::Lose => {
+                        // 自分が負ける
+                        " score mate -".to_string()
+                    }
                     Value::CentiPawn(num) => format!(" score cp {}", num),
                 }
             } else {

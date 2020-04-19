@@ -282,6 +282,14 @@ impl TreeState {
         // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
 
         let (update, reason, friend_value) = match opponent_ts.value {
+            Value::Win => {
+                // 相手が勝ったので、自分は負けてるぜ☆（＾～＾）
+                (true, "opponent win".to_string(), Value::Lose)
+            }
+            Value::Lose => {
+                // 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
+                (true, "friend win".to_string(), Value::Win)
+            }
             Value::CentiPawn(num) => {
                 // 評価値は ひっくり返します。
                 let friend_centi_pawn = -num;
@@ -294,6 +302,18 @@ impl TreeState {
                     )
                 } else {
                     match self.value {
+                        Value::Win => {
+                            // 自分が勝つ手を既に読んでるのに、ここに来るのはおかしいぜ☆（＾～＾）
+                            (false, "".to_string(), self.value)
+                        }
+                        Value::Lose => {
+                            // 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
+                            (
+                                true,
+                                "any move more than lose".to_string(),
+                                Value::CentiPawn(friend_centi_pawn),
+                            )
+                        }
                         Value::CentiPawn(best_centi_pawn) => {
                             if best_centi_pawn < friend_centi_pawn {
                                 // 上方修正
@@ -328,6 +348,16 @@ impl TreeState {
             return;
         } else {
             match self.value {
+                Value::Win => {
+                    // 自分が勝つ手を読んでるのに、ここに来るのはおかしいぜ☆（＾～＾）
+                }
+                Value::Lose => {
+                    // どんな評価値でも、負けるよりマシだろ☆（＾～＾）
+                    self.movement_hash = movement_hash;
+                    self.value = Value::CentiPawn(evaluation.value);
+                    self.reason = "any leaf more than lose".to_string();
+                    return;
+                }
                 Value::CentiPawn(centi_pawn) => {
                     if centi_pawn < evaluation.value {
                         self.movement_hash = movement_hash;
@@ -364,4 +394,10 @@ pub enum Value {
     /// 将棋は、相手は駒を取られて損、自分は駒を取って得という風に痛手が２倍広がるので、
     /// 交換値が 100 ということは、200点差が開くということだぜ☆（＾～＾）
     CentiPawn(i16),
+
+    /// 勝ち☆（＾～＾）
+    Win,
+
+    /// 負け☆（＾～＾）
+    Lose,
 }
