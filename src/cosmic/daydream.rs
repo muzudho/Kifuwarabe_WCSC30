@@ -42,14 +42,14 @@ impl Tree {
         universe.game.info.clear();
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
-        let mut best_ts = self.search(0, 0, 0, &mut universe.game, speed_of_light, "");
+        let mut best_ts = self.search(0, 0, 0, &mut universe.game, speed_of_light);
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
         for max_depth in 1..universe.option_max_depth {
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             let movement = best_ts.to_movement();
             universe.game.info.print(
-                None,
+                Some(max_depth),
                 Some(best_ts.get_sum_state()),
                 Some(best_ts.value()),
                 Some(movement),
@@ -82,7 +82,6 @@ impl Tree {
                 best_ts.get_sum_state(),
                 &mut universe.game,
                 speed_of_light,
-                "",
             );
             if ts.timeout {
                 // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -117,7 +116,6 @@ impl Tree {
         parent_sum_state: u64,
         game: &mut Game,
         speed_of_light: &SpeedOfLight,
-        pv: &str,
     ) -> TreeState {
         let mut ts = TreeState::default();
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
@@ -198,7 +196,6 @@ impl Tree {
                     ts.get_sum_state() + parent_sum_state,
                     game,
                     speed_of_light,
-                    &format!("{} {}", pv, Movement::from_hash(*movement_hash)),
                 );
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
@@ -214,7 +211,7 @@ impl Tree {
                     Some(ts.get_sum_state() + parent_sum_state),
                     Some(ts.value()),
                     Some(movement),
-                    Some(format!("{} {}", pv, movement)),
+                    Some(format!("{}", self.pv)),
                     None,
                 );
             }
@@ -248,8 +245,6 @@ pub struct TreeState {
 
     // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     pub repetition_movement_hash: u64,
-    /// 玉を取ったぜ☆（＾～＾）
-    pub king_catched: bool,
 
     /// この指し手を選んだ理由☆（＾～＾）
     pub reason: String,
@@ -262,7 +257,6 @@ impl Default for TreeState {
             value: Value::CentiPawn(LOSE_VALUE),
             movement_hash: 0u64,
             repetition_movement_hash: 0u64,
-            king_catched: false,
             reason: "no update".to_string(),
             timeout: false,
         }
@@ -277,22 +271,12 @@ impl TreeState {
         self.value
     }
 
-    pub fn was_king_catch(&self) -> bool {
-        self.king_catched
-    }
-
     pub fn add_state(&mut self, val: u64) {
         self.sum_state += val;
     }
 
     pub fn add_turn_over(&mut self, opponent_ts: &TreeState, friend_movement_hash: u64) {
         self.sum_state += opponent_ts.get_sum_state();
-
-        if opponent_ts.was_king_catch() {
-            // この手を指すと、次に相手に玉を取られるぜ☆（＾～＾）！
-            // アップデートせずに終了☆（＾～＾）！
-            return;
-        }
 
         // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
 
@@ -399,7 +383,6 @@ impl TreeState {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
         self.movement_hash = movement_hash;
         self.value = Value::CentiPawn(WIN_VALUE);
-        self.king_catched = true;
         self.reason = "king catch is strongest".to_string();
     }
 }
@@ -420,6 +403,7 @@ pub enum Value {
 }
 
 pub struct PrincipalVariation {
+    /// 根っこに戻ると、中身が空っぽになっているので困るぜ（＾～＾）
     moves: Vec<Movement>,
 }
 impl Default for PrincipalVariation {
