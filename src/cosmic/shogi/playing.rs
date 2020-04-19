@@ -238,9 +238,9 @@ impl Game {
                 // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152 = if movement.promote {
                     // 成りなら
-                    if let Some(pc) = self.current_board.piece_at(&movement.source) {
+                    if let Some(piece) = self.current_board.piece_at(&movement.source) {
                         // 成り駒をクローン。
-                        Some(speed_of_light.piece_chart(&pc).promoted)
+                        Some(piece.promoted(speed_of_light))
                     } else {
                         panic!("成ったのに、元の升に駒がなかった☆（＾～＾）");
                     }
@@ -260,8 +260,8 @@ impl Game {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let cap_o764 = { self.current_board.piece_at(&movement.destination) };
 
-                if let Some(cap764) = cap_o764 {
-                    let cap773 = speed_of_light.piece_chart(&cap764).captured;
+                if let Some(captured_piece) = cap_o764 {
+                    let cap773 = captured_piece.captured(speed_of_light);
                     self.current_board.add_hand(&cap773, 1, speed_of_light);
                 };
                 cap_o764
@@ -309,9 +309,10 @@ impl Game {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
-                        if let Some(source409) = self.current_board.piece_at(&movement.destination)
+                        if let Some(source_piece) =
+                            self.current_board.piece_at(&movement.destination)
                         {
-                            Some(speed_of_light.piece_chart(&source409).demoted)
+                            Some(source_piece.demoted(speed_of_light))
                         } else {
                             panic!("成ったのに移動先に駒が無いぜ☆（＾～＾）！")
                         }
@@ -324,8 +325,8 @@ impl Game {
                 self.current_board
                     .set_piece_at(&movement.destination, cap_o);
 
-                if let Some(cap) = cap_o {
-                    let captured = speed_of_light.piece_chart(&cap).captured;
+                if let Some(captured_piece_val) = cap_o {
+                    let captured = captured_piece_val.captured(speed_of_light);
                     // 自分の持ち駒を減らす
                     self.current_board.add_hand(&captured, -1, speed_of_light);
                 }

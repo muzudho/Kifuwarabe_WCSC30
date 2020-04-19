@@ -119,7 +119,7 @@ pub fn push_piece_type_to_hash(
         // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
         speed_of_light
             .piece_type_chart_from_piece_type(&piece_type)
-            .serial_piece_number as u64
+            .serial_number as u64
     } else {
         NONE_SERIAL_PIECE_TYPE_NUMBER
     };

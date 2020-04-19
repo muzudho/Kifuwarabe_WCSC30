@@ -247,7 +247,7 @@ impl MGMovements {
                     drop: num_to_piece_type(
                         speed_of_light
                             .piece_type_chart_from_piece_type(&hand_piece.r#type(speed_of_light))
-                            .serial_piece_number,
+                            .serial_number,
                     ), // 打った駒種類
                 }
                 .to_hash(speed_of_light),

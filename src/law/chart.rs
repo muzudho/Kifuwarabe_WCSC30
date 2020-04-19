@@ -12,21 +12,25 @@ use crate::law::speed_of_light::SpeedOfLight;
 #[derive(Clone)]
 pub struct PieceChart {
     pub piece: Piece,
-    /// 先後、駒種類。
-    pub phase_piece_type: (Phase, PieceType),
+
+    /// 先後
+    phase: Phase,
+
+    /// 駒種類
+    piece_type: PieceType,
 
     /// 駒→成駒　（成れない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    pub promoted: Piece,
+    promoted: Piece,
 
     /// 成駒→駒　（成っていない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    pub demoted: Piece,
+    demoted: Piece,
 
     /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
-    pub captured: Piece,
+    captured: Piece,
 
     /// 先後付き駒の配列のインデックス
-    pub serial_piece_number: usize,
+    serial_number: usize,
 }
 impl PieceChart {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
@@ -37,253 +41,289 @@ impl PieceChart {
         match p {
             King1 => PieceChart {
                 piece: King1,
-                phase_piece_type: (First, King),
+                phase: First,
+                piece_type: King,
                 promoted: King1,
                 demoted: King1,
                 captured: King2,
-                serial_piece_number: 0,
+                serial_number: 0,
             },
             Rook1 => PieceChart {
                 piece: Rook1,
-                phase_piece_type: (First, Rook),
+                phase: First,
+                piece_type: Rook,
                 promoted: Dragon1,
                 demoted: Rook1,
                 captured: Rook2,
-                serial_piece_number: 1,
+                serial_number: 1,
             },
             Bishop1 => PieceChart {
                 piece: Bishop1,
-                phase_piece_type: (First, Bishop),
+                phase: First,
+                piece_type: Bishop,
                 promoted: Horse1,
                 demoted: Bishop1,
                 captured: Bishop2,
-                serial_piece_number: 2,
+                serial_number: 2,
             },
             Gold1 => PieceChart {
                 piece: Gold1,
-                phase_piece_type: (First, Gold),
+                phase: First,
+                piece_type: Gold,
                 promoted: Gold1,
                 demoted: Gold1,
                 captured: Gold2,
-                serial_piece_number: 3,
+                serial_number: 3,
             },
             Silver1 => PieceChart {
                 piece: Silver1,
-                phase_piece_type: (First, Silver),
+                phase: First,
+                piece_type: Silver,
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
-                serial_piece_number: 4,
+                serial_number: 4,
             },
             Knight1 => PieceChart {
                 piece: Knight1,
-                phase_piece_type: (First, Knight),
+                phase: First,
+                piece_type: Knight,
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
-                serial_piece_number: 5,
+                serial_number: 5,
             },
             Lance1 => PieceChart {
                 piece: Lance1,
-                phase_piece_type: (First, Lance),
+                phase: First,
+                piece_type: Lance,
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
-                serial_piece_number: 6,
+                serial_number: 6,
             },
             Pawn1 => PieceChart {
                 piece: Pawn1,
-                phase_piece_type: (First, Pawn),
+                phase: First,
+                piece_type: Pawn,
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
-                serial_piece_number: 7,
+                serial_number: 7,
             },
             Dragon1 => PieceChart {
                 piece: Dragon1,
-                phase_piece_type: (First, Dragon),
+                phase: First,
+                piece_type: Dragon,
                 promoted: Dragon1,
                 demoted: Rook1,
                 captured: Rook2,
-                serial_piece_number: 8,
+                serial_number: 8,
             },
             Horse1 => PieceChart {
                 piece: Horse1,
-                phase_piece_type: (First, Horse),
+                phase: First,
+                piece_type: Horse,
                 promoted: Horse1,
                 demoted: Bishop1,
                 captured: Bishop2,
-                serial_piece_number: 9,
+                serial_number: 9,
             },
             PromotedSilver1 => PieceChart {
                 piece: PromotedSilver1,
-                phase_piece_type: (First, PromotedSilver),
+                phase: First,
+                piece_type: PromotedSilver,
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
-                serial_piece_number: 10,
+                serial_number: 10,
             },
             PromotedKnight1 => PieceChart {
                 piece: PromotedKnight1,
-                phase_piece_type: (First, PromotedKnight),
+                phase: First,
+                piece_type: PromotedKnight,
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
-                serial_piece_number: 11,
+                serial_number: 11,
             },
             PromotedLance1 => PieceChart {
                 piece: PromotedLance1,
-                phase_piece_type: (First, PromotedLance),
+                phase: First,
+                piece_type: PromotedLance,
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
-                serial_piece_number: 12,
+                serial_number: 12,
             },
             PromotedPawn1 => PieceChart {
                 piece: PromotedPawn1,
-                phase_piece_type: (First, PromotedPawn),
+                phase: First,
+                piece_type: PromotedPawn,
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
-                serial_piece_number: 13,
+                serial_number: 13,
             },
             King2 => PieceChart {
                 piece: King2,
-                phase_piece_type: (Second, King),
+                phase: Second,
+                piece_type: King,
                 promoted: King2,
                 demoted: King2,
                 captured: King1,
-                serial_piece_number: 14,
+                serial_number: 14,
             },
             Rook2 => PieceChart {
                 piece: Rook2,
-                phase_piece_type: (Second, Rook),
+                phase: Second,
+                piece_type: Rook,
                 promoted: Dragon2,
                 demoted: Rook2,
                 captured: Rook1,
-                serial_piece_number: 15,
+                serial_number: 15,
             },
             Bishop2 => PieceChart {
                 piece: Bishop2,
-                phase_piece_type: (Second, Bishop),
+                phase: Second,
+                piece_type: Bishop,
                 promoted: Horse2,
                 demoted: Bishop2,
                 captured: Bishop1,
-                serial_piece_number: 16,
+                serial_number: 16,
             },
             Gold2 => PieceChart {
                 piece: Gold2,
-                phase_piece_type: (Second, Gold),
+                phase: Second,
+                piece_type: Gold,
                 promoted: Gold2,
                 demoted: Gold2,
                 captured: Gold1,
-                serial_piece_number: 17,
+                serial_number: 17,
             },
             Silver2 => PieceChart {
                 piece: Silver2,
-                phase_piece_type: (Second, Silver),
+                phase: Second,
+                piece_type: Silver,
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
-                serial_piece_number: 18,
+                serial_number: 18,
             },
             Knight2 => PieceChart {
                 piece: Knight2,
-                phase_piece_type: (Second, Knight),
+                phase: Second,
+                piece_type: Knight,
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
-                serial_piece_number: 19,
+                serial_number: 19,
             },
             Lance2 => PieceChart {
                 piece: Lance2,
-                phase_piece_type: (Second, Lance),
+                phase: Second,
+                piece_type: Lance,
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
-                serial_piece_number: 20,
+                serial_number: 20,
             },
             Pawn2 => PieceChart {
                 piece: Pawn2,
-                phase_piece_type: (Second, Pawn),
+                phase: Second,
+                piece_type: Pawn,
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,
-                serial_piece_number: 21,
+                serial_number: 21,
             },
             Dragon2 => PieceChart {
                 piece: Dragon2,
-                phase_piece_type: (Second, Dragon),
+                phase: Second,
+                piece_type: Dragon,
                 promoted: Dragon2,
                 demoted: Rook2,
                 captured: Rook1,
-                serial_piece_number: 22,
+                serial_number: 22,
             },
             Horse2 => PieceChart {
                 piece: Horse2,
-                phase_piece_type: (Second, Horse),
+                phase: Second,
+                piece_type: Horse,
                 promoted: Horse2,
                 demoted: Bishop2,
                 captured: Bishop1,
-                serial_piece_number: 23,
+                serial_number: 23,
             },
             PromotedSilver2 => PieceChart {
                 piece: PromotedSilver2,
-                phase_piece_type: (Second, PromotedSilver),
+                phase: Second,
+                piece_type: PromotedSilver,
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
-                serial_piece_number: 24,
+                serial_number: 24,
             },
             PromotedKnight2 => PieceChart {
                 piece: PromotedKnight2,
-                phase_piece_type: (Second, PromotedKnight),
+                phase: Second,
+                piece_type: PromotedKnight,
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
-                serial_piece_number: 25,
+                serial_number: 25,
             },
             PromotedLance2 => PieceChart {
                 piece: PromotedLance2,
-                phase_piece_type: (Second, PromotedLance),
+                phase: Second,
+                piece_type: PromotedLance,
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
-                serial_piece_number: 26,
+                serial_number: 26,
             },
             PromotedPawn2 => PieceChart {
                 piece: PromotedPawn2,
-                phase_piece_type: (Second, PromotedPawn),
+                phase: Second,
+                piece_type: PromotedPawn,
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,
-                serial_piece_number: 27,
+                serial_number: 27,
             },
         }
-    }
-
-    pub fn phase(&self) -> Phase {
-        self.phase_piece_type.0.clone()
-    }
-
-    pub fn piece_type(&self) -> PieceType {
-        self.phase_piece_type.1
     }
 }
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl Piece {
     pub fn phase(&self, speed_of_light: &SpeedOfLight) -> Phase {
-        speed_of_light.piece_chart(self).phase()
+        speed_of_light.piece_chart(self).phase
     }
 
     pub fn r#type(&self, speed_of_light: &SpeedOfLight) -> PieceType {
-        speed_of_light.piece_chart(self).piece_type()
+        speed_of_light.piece_chart(self).piece_type
+    }
+
+    pub fn promoted(&self, speed_of_light: &SpeedOfLight) -> Piece {
+        speed_of_light.piece_chart(self).promoted
+    }
+
+    pub fn demoted(&self, speed_of_light: &SpeedOfLight) -> Piece {
+        speed_of_light.piece_chart(self).demoted
+    }
+
+    pub fn captured(&self, speed_of_light: &SpeedOfLight) -> Piece {
+        speed_of_light.piece_chart(self).captured
+    }
+
+    pub fn serial_number(&self, speed_of_light: &SpeedOfLight) -> usize {
+        speed_of_light.piece_chart(self).serial_number
     }
 }
 
 pub struct PieceTypeChart {
     /// 配列のインデックス用☆（＾～＾）
-    pub serial_piece_number: usize,
+    pub serial_number: usize,
 
     /// 成れる駒種類か。
     pub can_promote: bool,
@@ -300,85 +340,85 @@ impl PieceTypeChart {
         use crate::cosmic::smart::features::PieceType::*;
         match piece_type {
             King => PieceTypeChart {
-                serial_piece_number: 0,
+                serial_number: 0,
                 can_promote: false,
                 can_drop: false,
                 slider: false,
             },
             Rook => PieceTypeChart {
-                serial_piece_number: 1,
+                serial_number: 1,
                 can_promote: true,
                 can_drop: true,
                 slider: true,
             },
             Bishop => PieceTypeChart {
-                serial_piece_number: 2,
+                serial_number: 2,
                 can_promote: true,
                 can_drop: true,
                 slider: true,
             },
             Gold => PieceTypeChart {
-                serial_piece_number: 3,
+                serial_number: 3,
                 can_promote: false,
                 can_drop: true,
                 slider: false,
             },
             Silver => PieceTypeChart {
-                serial_piece_number: 4,
+                serial_number: 4,
                 can_promote: true,
                 can_drop: true,
                 slider: false,
             },
             Knight => PieceTypeChart {
-                serial_piece_number: 5,
+                serial_number: 5,
                 can_promote: true,
                 can_drop: true,
                 slider: false,
             },
             Lance => PieceTypeChart {
-                serial_piece_number: 6,
+                serial_number: 6,
                 can_promote: true,
                 can_drop: true,
                 slider: true,
             },
             Pawn => PieceTypeChart {
-                serial_piece_number: 7,
+                serial_number: 7,
                 can_promote: true,
                 can_drop: true,
                 slider: false,
             },
             Dragon => PieceTypeChart {
-                serial_piece_number: 8,
+                serial_number: 8,
                 can_promote: false,
                 can_drop: false,
                 slider: true,
             },
             Horse => PieceTypeChart {
-                serial_piece_number: 9,
+                serial_number: 9,
                 can_promote: false,
                 can_drop: false,
                 slider: true,
             },
             PromotedSilver => PieceTypeChart {
-                serial_piece_number: 10,
+                serial_number: 10,
                 can_promote: false,
                 can_drop: false,
                 slider: false,
             },
             PromotedKnight => PieceTypeChart {
-                serial_piece_number: 11,
+                serial_number: 11,
                 can_promote: false,
                 can_drop: false,
                 slider: false,
             },
             PromotedLance => PieceTypeChart {
-                serial_piece_number: 12,
+                serial_number: 12,
                 can_promote: false,
                 can_drop: false,
                 slider: false,
             },
             PromotedPawn => PieceTypeChart {
-                serial_piece_number: 13,
+                serial_number: 13,
                 can_promote: false,
                 can_drop: false,
                 slider: false,
