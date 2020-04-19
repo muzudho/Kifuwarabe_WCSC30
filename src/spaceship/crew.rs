@@ -1,10 +1,11 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::shogi::playing::{Game, PosNums};
+use crate::cosmic::shogi::state::Person;
 use crate::cosmic::smart::square::{Address, FILE_1};
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
-use crate::law::generate_move::LegalMoves;
+use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::*;
 use crate::law::usi::*;
 use crate::spaceship::equipment::Telescope;
@@ -134,9 +135,14 @@ impl Chiyuri {
         // Generation move.
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
-        LegalMoves::make_move(&game, &speed_of_light, &mut |movement_hash| {
-            ss_potential_hashset.insert(movement_hash);
-        });
+        PseudoLegalMoves::make_move(
+            game.history.get_phase(Person::Friend),
+            &game.board,
+            &speed_of_light,
+            &mut |movement_hash| {
+                ss_potential_hashset.insert(movement_hash);
+            },
+        );
         IO::writeln("----指し手生成(合法手とは限らない) ここから----");
         print_movement_hashset(&ss_potential_hashset);
         IO::writeln("----指し手生成(合法手とは限らない) ここまで----");

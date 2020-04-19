@@ -767,6 +767,7 @@ impl AbsoluteAddress {
             self.file = self.file % 10;
         }
 
+        // 番兵込みの絶対番地に収めろだぜ☆（＾～＾）
         debug_assert!(
             FILE_0 <= self.file && self.file < FILE_11,
             format!("file={}", self.file)

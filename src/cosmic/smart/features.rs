@@ -87,7 +87,7 @@ impl HandPieces {
     }
 }
 
-/// 数値の駒種類化
+/// 数値から駒種類を作るぜ☆（＾～＾）ハッシュを使うときに使うぜ☆（＾～＾）
 pub fn num_to_piece_type(n: usize) -> Option<PieceType> {
     use PieceType::*;
     match n {

@@ -2,24 +2,26 @@
 //! 現局面を使った指し手生成☆（＾～＾）
 //!
 
-use crate::cosmic::shogi::playing::Game;
 use crate::cosmic::shogi::recording::Movement;
-use crate::cosmic::shogi::state::Person;
 use crate::cosmic::shogi::state::Phase;
-use crate::cosmic::smart::features::PieceType;
-use crate::cosmic::smart::features::{num_to_piece_type, HandPieces};
+use crate::cosmic::smart::features::{HandPieces, PieceType};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::cosmic::toy_box::Board;
-use crate::law::diagnostic::assert_in_board_as_absolute;
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
-/// 合法手☆（＾～＾）
-pub struct LegalMoves {}
-impl LegalMoves {
+/// Pseudo legal move(疑似合法手)☆（＾～＾）
+///
+/// 先手の連続王手の千日手とか、空き王手とか、駒を見ただけでは調べられないだろ☆（＾～＾）
+/// 棋譜や盤面を見ず、駒だけで調べる合法手が Pseudo legal move だぜ☆（＾～＾）
+///
+/// 二歩とか、打った後で調べた方が高速になるはずだが、探索部がまだできてないので、指し手生成の中でチェックしているぜ☆（＾～＾）
+/// 香を２段目に打たないとか強い将棋を目指すことは　まだやってないぜ☆（＾～＾）
+pub struct PseudoLegalMoves {}
+impl PseudoLegalMoves {
     ///
     /// 現局面の、任意の移動先升の、
     /// - 盤上の駒の移動
@@ -30,15 +32,18 @@ impl LegalMoves {
     ///
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     ///
-    pub fn make_move<F1>(game: &Game, speed_of_light: &SpeedOfLight, callback: &mut F1)
-    where
+    pub fn make_move<F1>(
+        friend: Phase,
+        board: &Board,
+        speed_of_light: &SpeedOfLight,
+        callback: &mut F1,
+    ) where
         F1: FnMut(u64),
     {
-        let friend = game.history.get_phase(Person::Friend);
         // 盤上の駒の移動。
-        LegalMoves::all_pieces_on_board(friend, &game.board, &speed_of_light, callback);
+        PseudoLegalMoves::all_pieces_on_board(friend, board, speed_of_light, callback);
         // 持ち駒の打。
-        LegalMoves::all_pieces_on_hand(friend, &game.board, &speed_of_light, callback);
+        PseudoLegalMoves::all_pieces_on_hand(friend, board, speed_of_light, callback);
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
@@ -60,7 +65,7 @@ impl LegalMoves {
     {
         // 盤上の駒☆（＾～＾）
         Area::for_all(None, &mut |source| {
-            LegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
+            PseudoLegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });
     }
 
@@ -201,12 +206,10 @@ impl LegalMoves {
                     }
                     callback(
                         Movement {
-                            source: Address::default().abs(), // 駒台
-                            destination: destination.clone(), // どの升へ行きたいか
-                            promote: false,                   // 打に成りは無し
-                            drop: num_to_piece_type(
-                                hand.r#type(speed_of_light).serial_number(speed_of_light),
-                            ), // 打った駒種類
+                            source: Address::default().abs(),        // 駒台
+                            destination: destination.clone(),        // どの升へ行きたいか
+                            promote: false,                          // 打に成りは無し
+                            drop: Some(hand.r#type(speed_of_light)), // 打った駒種類
                         }
                         .to_hash(speed_of_light),
                     );
@@ -659,7 +662,6 @@ impl Area {
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 next.add_mut(&Address::new(1, 0).rel().rotate(angle).double_rank());
                 if !next.has_jumped_out_of_the_board() {
-                    assert_in_board_as_absolute(&next, "桂馬☆（＾～＾）");
                     callback(next);
                 }
             }
@@ -668,7 +670,6 @@ impl Area {
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 next.add_mut(&Address::new(1, 0).rel().rotate(angle));
                 if !next.has_jumped_out_of_the_board() {
-                    assert_in_board_as_absolute(&next, "隣☆（＾～＾）");
                     callback(next);
                 }
             }
