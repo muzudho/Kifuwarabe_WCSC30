@@ -1,15 +1,254 @@
+//!
+//! 現局面を使った指し手生成☆（＾～＾）
+//!
+
+use crate::cosmic::shogi::playing::Game;
+use crate::cosmic::shogi::recording::Movement;
+use crate::cosmic::shogi::state::Person;
 use crate::cosmic::shogi::state::Phase;
 use crate::cosmic::smart::features::PieceType;
+use crate::cosmic::smart::features::{num_to_piece_type, HandPieces};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
+use crate::cosmic::toy_box::Board;
 use crate::law::diagnostic::{assert_in_board_as_absolute, assert_in_board_with_frame_as_absolute};
+use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
+
+/// 合法手☆（＾～＾）
+pub struct LegalMoves {}
+impl LegalMoves {
+    ///
+    /// 現局面の、任意の移動先升の、
+    /// - 盤上の駒の移動
+    /// - 打
+    /// の指し手を生成。
+    ///
+    /// 王手回避漏れや、千日手などのチェックは行っていない
+    ///
+    /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
+    ///
+    pub fn make_move<F1>(game: &Game, speed_of_light: &SpeedOfLight, callback: &mut F1)
+    where
+        F1: FnMut(u64),
+    {
+        let friend = game.history.get_phase(Person::Friend);
+        // 盤上の駒の移動。
+        LegalMoves::all_pieces_on_board(friend, &game.board, &speed_of_light, callback);
+        // 持ち駒の打。
+        LegalMoves::all_pieces_on_hand(friend, &game.board, &speed_of_light, callback);
+    }
+
+    /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    fn all_pieces_on_board<F1>(
+        friend: Phase,
+        board: &Board,
+        speed_of_light: &SpeedOfLight,
+        callback: &mut F1,
+    ) where
+        F1: FnMut(u64),
+    {
+        // 盤上の駒☆（＾～＾）
+        NextSquares::for_all(None, &mut |source| {
+            LegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
+        });
+    }
+
+    /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
+    /// * `source` - 移動元升だぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    fn a_piece_on_board<F1>(
+        friend: Phase,
+        source: &AbsoluteAddress,
+        board: &Board,
+        speed_of_light: &SpeedOfLight,
+        callback: &mut F1,
+    ) where
+        F1: FnMut(u64),
+    {
+        let callback_next =
+            &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
+                use crate::cosmic::toy_box::ThingsInTheSquare::*;
+                use crate::law::generate_move::Promotability::*;
+                let things_in_the_square =
+                    board.what_is_in_the_square(friend, &destination, speed_of_light);
+                match things_in_the_square {
+                    Space | Opponent => {
+                        // 成れるかどうかの判定☆（＾ｑ＾）
+                        let promotion = match &promotability {
+                            Forced => true,
+                            _ => false,
+                        };
+
+                        // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
+                        let forbidden = if let Some(move_permission_val) = move_permission {
+                            if move_permission_val.check(&destination) {
+                                false
+                            } else {
+                                true
+                            }
+                        } else {
+                            false
+                        };
+
+                        match &promotability {
+                            Any => {
+                                // 成ったり、成れなかったりできるとき。
+                                if !forbidden {
+                                    callback(
+                                        Movement {
+                                            source: source.clone(),
+                                            destination: destination.clone(),
+                                            promote: false,
+                                            drop: None,
+                                        }
+                                        .to_hash(speed_of_light),
+                                    );
+                                }
+                                callback(
+                                    Movement {
+                                        source: source.clone(),
+                                        destination: destination.clone(),
+                                        promote: true,
+                                        drop: None,
+                                    }
+                                    .to_hash(speed_of_light),
+                                );
+                            }
+                            _ => {
+                                // 成れるか、成れないかのどちらかのとき。
+                                if promotion || !forbidden {
+                                    callback(
+                                        Movement {
+                                            source: source.clone(),
+                                            destination: destination.clone(),
+                                            promote: promotion,
+                                            drop: None,
+                                        }
+                                        .to_hash(speed_of_light),
+                                    );
+                                }
+                            }
+                        };
+                    }
+                    Friend => {}
+                };
+
+                match things_in_the_square {
+                    Space => false,
+                    _ => true,
+                }
+            };
+
+        if let Some(piece) = board.piece_at(&source) {
+            if friend == piece.phase(speed_of_light) {
+                NextSquares::piece_of(piece.r#type(speed_of_light), friend, &source, callback_next);
+            }
+        }
+    }
+
+    /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    fn all_pieces_on_hand<F1>(
+        friend: Phase,
+        board: &Board,
+        speed_of_light: &SpeedOfLight,
+        callback: &mut F1,
+    ) where
+        F1: FnMut(u64),
+    {
+        HandPieces::for_all(&mut |any_piece_type| {
+            // 持ち駒
+            let hand = any_piece_type.add_phase(friend);
+            // 打つぜ☆（＾～＾）
+            let drop = &mut |destination| {
+                if let None = board.piece_at(&destination) {
+                    // 駒が無いところに打つ
+                    use crate::cosmic::toy_box::Piece::*;
+                    match hand {
+                        Pawn1 | Pawn2 => {
+                            // ひよこ　は２歩できない☆（＾～＾）
+                            if board.exists_pawn_on_file(friend, destination.file(), speed_of_light)
+                            {
+                                return;
+                            }
+                        }
+                        _ => {}
+                    }
+                    callback(
+                        Movement {
+                            source: Address::default().abs(), // 駒台
+                            destination: destination.clone(), // どの升へ行きたいか
+                            promote: false,                   // 打に成りは無し
+                            drop: num_to_piece_type(
+                                hand.r#type(speed_of_light).serial_number(speed_of_light),
+                            ), // 打った駒種類
+                        }
+                        .to_hash(speed_of_light),
+                    );
+                }
+            };
+            if 0 < board.get_hand(hand, speed_of_light) {
+                // 駒を持っていれば
+                use crate::cosmic::smart::features::PieceType::*;
+                match hand.r#type(speed_of_light) {
+                    // 歩、香
+                    Pawn | Lance => NextSquares::drop_pawn_lance(hand.phase(speed_of_light), drop),
+                    // 桂
+                    Knight => NextSquares::drop_knight(hand.phase(speed_of_light), drop),
+                    // それ以外の駒が打てる範囲は盤面全体。
+                    _ => NextSquares::for_all(None, drop),
+                }
+            }
+        });
+    }
+}
 
 /// 次の升☆（＾～＾）
 pub struct NextSquares {}
 impl NextSquares {
+    /// 全升の面積だぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `_friend` - 使わないぜ☆（＾～＾）
+    /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
+    fn for_all<F1>(_friend: Option<Phase>, callback: &mut F1)
+    where
+        F1: FnMut(AbsoluteAddress),
+    {
+        for rank in RANK_1..RANK_10 {
+            for file in (FILE_1..FILE_10).rev() {
+                callback(Address::new(file, rank).abs());
+            }
+        }
+    }
+
     /// 先手から見た盤上の駒の動けるマスだぜ☆（＾～＾）
     ///
     /// Arguments
@@ -19,7 +258,7 @@ impl NextSquares {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    pub fn piece_of<F1>(
+    fn piece_of<F1>(
         piece_type: PieceType,
         friend: Phase,
         source: &AbsoluteAddress,
@@ -407,7 +646,7 @@ impl NextSquares {
     /// * `agility` - 動き方☆（＾～＾）
     /// * `start` - 移動元升☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    pub fn r#move<F1>(angle: Angle, agility: Agility, start: &AbsoluteAddress, callback: &mut F1)
+    fn r#move<F1>(angle: Angle, agility: Agility, start: &AbsoluteAddress, callback: &mut F1)
     where
         F1: FnMut(AbsoluteAddress) -> bool,
     {
@@ -451,7 +690,7 @@ impl NextSquares {
 
 /// 機敏性。
 #[derive(Clone, Copy, Debug)]
-pub enum Agility {
+enum Agility {
     /// 隣へ１つ進む駒。
     Hopping,
     /// 長い利き。
@@ -460,7 +699,7 @@ pub enum Agility {
     Knight,
 }
 
-pub enum Promotability {
+enum Promotability {
     /// 成ることはできないぜ☆（＾～＾）
     Deny,
     /// 成る、成らない両方あるぜ☆（＾～＾）
@@ -471,12 +710,12 @@ pub enum Promotability {
 
 /// 行き先があるかないかのチェックに使うぜ☆（＾～＾）
 /// TODO 成れるときは要らないぜ☆（＾～＾）
-pub struct MovePermission {
+struct MovePermission {
     min_rank: i8,
     max_rank: i8,
 }
 impl MovePermission {
-    pub fn from_pawn_or_lance(friend: Phase) -> Self {
+    fn from_pawn_or_lance(friend: Phase) -> Self {
         // ▲P,▲L　は１段目(▽P,▽L　は９段目)には進めない
         match friend {
             Phase::First => MovePermission {
@@ -489,7 +728,7 @@ impl MovePermission {
             },
         }
     }
-    pub fn from_knight(friend: Phase) -> Self {
+    fn from_knight(friend: Phase) -> Self {
         // ▲N　は１、２段目(▽N　は８、９段目)には進めない
         match friend {
             Phase::First => MovePermission {
@@ -502,7 +741,7 @@ impl MovePermission {
             },
         }
     }
-    pub fn check(&self, destination: &AbsoluteAddress) -> bool {
+    fn check(&self, destination: &AbsoluteAddress) -> bool {
         if destination.rank() < self.min_rank || self.max_rank < destination.rank() {
             return false;
         }

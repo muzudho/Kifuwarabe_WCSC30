@@ -7,7 +7,7 @@ use crate::cosmic::shogi::recording::{Movement, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::Evaluation;
 use crate::cosmic::smart::features::PieceType::King;
 use crate::cosmic::universe::Universe;
-use crate::law::generate_move::movement_generator::generate_movement;
+use crate::law::generate_move::LegalMoves;
 use crate::law::speed_of_light::*;
 use crate::white_hole::io::IO;
 use std::collections::HashSet;
@@ -169,7 +169,11 @@ impl Tree {
             game.history.get_phase(&Person::Friend)
         ));
         */
-        generate_movement(game, speed_of_light, &mut movement_set);
+        // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
+        LegalMoves::make_move(&game, &speed_of_light, &mut |movement| {
+            &movement_set.insert(movement);
+        });
+
         // Commands::genmove(&speed_of_light, &game);
 
         // 指せる手が無ければ投了☆（＾～＾）
