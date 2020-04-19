@@ -63,7 +63,8 @@ impl DestinationDisplay {
         Beam::shoot(&format!(
             "info{}{}{} currmove {}{}",
             if let Some(num) = cur_depth {
-                format!(" depth {}", num)
+                // 初手が 0 手目というのも変だから 1 足すぜ☆（＾～＾）
+                format!(" depth {}", num + 1)
             } else {
                 "".to_string()
             },

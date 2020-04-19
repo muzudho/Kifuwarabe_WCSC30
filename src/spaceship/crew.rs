@@ -48,7 +48,7 @@ impl Kifuwarabe {
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print(
             None,
-            Some(ts.get_sum_state()),
+            None, // ここではタイムアップで途中抜けしてくるんで総ノード数は調べられないので表示しないぜ☆（＾～＾）
             Some(ts.get_value()),
             // ts.get_king_catch(),
             Some(ts.to_movement()),

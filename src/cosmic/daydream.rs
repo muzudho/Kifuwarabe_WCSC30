@@ -36,6 +36,7 @@ impl Tree {
     ) -> TreeState {
         universe.game.info.clear();
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
+        // 初手の３０手が葉になるぜ☆（＾～＾）
         let mut best_ts = self.search(0, 0, 0, &mut universe.game, speed_of_light, "");
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -74,13 +75,10 @@ impl Tree {
                 break;
             }
 
-            if best_ts.value <= ts.value {
-                let temp = best_ts.get_sum_state();
-                best_ts = ts.clone();
-                best_ts.add_state(temp);
-            } else {
-                best_ts.add_state(ts.get_sum_state());
-            }
+            // 無条件に更新だぜ☆（＾～＾）初手の高得点を引きずられて王手回避漏れされたら嫌だしな☆（＾～＾）
+            let temp = best_ts.get_sum_state();
+            best_ts = ts.clone();
+            best_ts.add_state(temp);
         }
 
         best_ts
@@ -101,7 +99,7 @@ impl Tree {
     fn search(
         &mut self,
         cur_depth: u8,
-        end_depth: u8,
+        max_depth: u8,
         parent_sum_state: u64,
         game: &mut Game,
         speed_of_light: &SpeedOfLight,
@@ -169,7 +167,7 @@ impl Tree {
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 ts.repetition_movement_hash = *movement_hash;
-            } else if end_depth <= cur_depth {
+            } else if max_depth <= cur_depth {
                 // ここを末端局面とするなら、変化した評価値を返すぜ☆（＾～＾）
                 let evaluation =
                     Evaluation::from_caputured_piece(cur_depth, captured_piece, speed_of_light);
@@ -180,7 +178,7 @@ impl Tree {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 let opponent_ts = self.search(
                     cur_depth + 1,
-                    end_depth,
+                    max_depth,
                     ts.get_sum_state() + parent_sum_state,
                     game,
                     speed_of_light,
@@ -190,6 +188,21 @@ impl Tree {
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 ts.add_turn_over(&opponent_ts, *movement_hash);
             }
+
+            if game.info.is_printable() {
+                // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
+                // 葉から根へ戻るタイミングでないと ts が更新されてないからな☆（＾～＾）
+                let movement = ts.to_movement();
+                game.info.print(
+                    Some(cur_depth),
+                    Some(ts.get_sum_state() + parent_sum_state),
+                    Some(ts.get_value()),
+                    Some(movement),
+                    Some(format!("{} {}", pv, movement)),
+                    None,
+                );
+            }
+
             // 1手戻すぜ☆（＾～＾）
             game.undo_move(speed_of_light);
             /*
@@ -204,19 +217,6 @@ impl Tree {
             ts.value = REPITITION_VALUE;
             ts.reason = "repetition better than resign".to_string();
         };
-
-        if game.info.is_printable() {
-            // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
-            let movement = ts.to_movement();
-            game.info.print(
-                Some(cur_depth),
-                Some(ts.get_sum_state() + parent_sum_state),
-                Some(ts.get_value()),
-                Some(movement),
-                Some(format!("{} {}", pv, movement)),
-                None,
-            );
-        }
 
         ts
     }
