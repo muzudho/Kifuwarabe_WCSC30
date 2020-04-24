@@ -148,11 +148,7 @@ impl Tree {
             // 後手が指すところだぜ☆（＾～＾）
             -1
         };
-        for movement_hash in movement_set.iter() {
-            game.board.control_board
-                [Movement::from_hash(*movement_hash).destination.address() as usize] +=
-                control_sign;
-        }
+        self.add_control(control_sign, game, &movement_set);
         for movement_hash in movement_set.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
@@ -217,8 +213,8 @@ impl Tree {
                         None,
                         None,
                         Some(PvString::String(format!(
-                            "board control={}",
-                            control_sign * game.board.control_value()
+                            "occupy control={}",
+                            control_sign * game.board.occupy_control_value()
                         ))),
                     );
                     game.info.print(
@@ -231,7 +227,7 @@ impl Tree {
                 }
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
-                let control_value: i16 = game.board.control_value();
+                let control_value: i16 = game.board.occupy_control_value();
 
                 ts.choice_friend(
                     &Value::CentiPawn(
@@ -266,11 +262,7 @@ impl Tree {
             Commands::pos(&game);
             */
         }
-        for movement_hash in movement_set.iter() {
-            game.board.control_board
-                [Movement::from_hash(*movement_hash).destination.address() as usize] -=
-                control_sign;
-        }
+        self.add_control(-1 * control_sign, game, &movement_set);
 
         if ts.get_movement_hash() == 0 && ts.repetition_movement_hash != 0 {
             // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
@@ -282,6 +274,13 @@ impl Tree {
         };
 
         ts
+    }
+
+    pub fn add_control(&mut self, sign: i16, game: &mut Game, movement_set: &HashSet<u64>) {
+        for movement_hash in movement_set.iter() {
+            game.board.occupy_control
+                [Movement::from_hash(*movement_hash).destination.address() as usize] += sign;
+        }
     }
 }
 

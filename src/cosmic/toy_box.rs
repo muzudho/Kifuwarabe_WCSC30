@@ -22,7 +22,7 @@ pub struct Board {
     /// 増減させたいので、u8 ではなく i8。
     pub hand: [i8; PIECE_LN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
-    pub control_board: [i16; BOARD_MEMORY_AREA as usize],
+    pub occupy_control: [i16; BOARD_MEMORY_AREA as usize],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -46,7 +46,7 @@ impl Default for Board {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
             ],
-            control_board: [0; BOARD_MEMORY_AREA as usize],
+            occupy_control: [0; BOARD_MEMORY_AREA as usize],
         }
     }
 }
@@ -170,8 +170,8 @@ impl Board {
         hash
     }
 
-    pub fn control_value(&self) -> i16 {
-        self.control_board.iter().sum()
+    pub fn occupy_control_value(&self) -> i16 {
+        self.occupy_control.iter().sum()
     }
 }
 
