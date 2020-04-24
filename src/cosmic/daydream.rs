@@ -141,6 +141,18 @@ impl Tree {
             return ts;
         }
 
+        let control_sign: i16 = if self.pv.len() % 2 == 0 {
+            // 先手が指すところだぜ☆（＾～＾）
+            1
+        } else {
+            // 後手が指すところだぜ☆（＾～＾）
+            -1
+        };
+        for movement_hash in movement_set.iter() {
+            game.board.control_board
+                [Movement::from_hash(*movement_hash).destination.address() as usize] +=
+                control_sign;
+        }
         for movement_hash in movement_set.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
@@ -194,11 +206,21 @@ impl Tree {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 ts.repetition_movement_hash = *movement_hash;
             } else if max_depth < self.pv.len() as u8 {
-                // 葉では取った駒の価値だけ見るぜ☆（＾～＾）
+                // 葉で評価しようぜ☆（＾～＾）
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
                     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
                     let movement = ts.bestmove.to_movement();
+                    game.info.print(
+                        None,
+                        None,
+                        None,
+                        None,
+                        Some(PvString::String(format!(
+                            "board control={}",
+                            control_sign * game.board.control_value()
+                        ))),
+                    );
                     game.info.print(
                         Some(self.pv.len() as u8),
                         Some(ts.get_sum_state() + parent_sum_state),
@@ -208,8 +230,13 @@ impl Tree {
                     );
                 }
 
+                // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
+                let control_value: i16 = game.board.control_value();
+
                 ts.choice_friend(
-                    &Value::CentiPawn(captured_piece_centi_pawn + promoted_bonus),
+                    &Value::CentiPawn(
+                        captured_piece_centi_pawn + promoted_bonus + (control_sign * control_value),
+                    ),
                     *movement_hash,
                 );
 
@@ -238,6 +265,11 @@ impl Tree {
             IO::debugln(&format!("n={} undo.", sum_nodes));
             Commands::pos(&game);
             */
+        }
+        for movement_hash in movement_set.iter() {
+            game.board.control_board
+                [Movement::from_hash(*movement_hash).destination.address() as usize] -=
+                control_sign;
         }
 
         if ts.get_movement_hash() == 0 && ts.repetition_movement_hash != 0 {

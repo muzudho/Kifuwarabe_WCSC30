@@ -21,6 +21,8 @@ pub struct Board {
     /// 持ち駒数。持ち駒に使える、成らずの駒の部分だけ使用。
     /// 増減させたいので、u8 ではなく i8。
     pub hand: [i8; PIECE_LN],
+    /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
+    pub control_board: [i16; BOARD_MEMORY_AREA as usize],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -44,6 +46,7 @@ impl Default for Board {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
                 0, 0,
             ],
+            control_board: [0; BOARD_MEMORY_AREA as usize],
         }
     }
 }
@@ -165,6 +168,10 @@ impl Board {
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）
 
         hash
+    }
+
+    pub fn control_value(&self) -> i16 {
+        self.control_board.iter().sum()
     }
 }
 
