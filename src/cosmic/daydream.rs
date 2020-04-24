@@ -6,6 +6,8 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceType::King;
+use crate::cosmic::smart::square::AbsoluteAddress;
+use crate::cosmic::smart::square::RelativeAddress;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::SpeedOfLight;
@@ -141,14 +143,14 @@ impl Tree {
             return ts;
         }
 
-        let control_sign: i16 = if self.pv.len() % 2 == 0 {
+        let occupy_control_sign: i16 = if self.pv.len() % 2 == 0 {
             // 先手が指すところだぜ☆（＾～＾）
             1
         } else {
             // 後手が指すところだぜ☆（＾～＾）
             -1
         };
-        self.add_control(control_sign, game, &movement_set);
+        self.add_control(occupy_control_sign, game, &movement_set);
         for movement_hash in movement_set.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
@@ -203,6 +205,103 @@ impl Tree {
                 ts.repetition_movement_hash = *movement_hash;
             } else if max_depth < self.pv.len() as u8 {
                 // 葉で評価しようぜ☆（＾～＾）
+
+                // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
+                let occupy_control_value: i16 = game.board.occupy_control_value();
+
+                // 玉の周囲２４近傍の利きを、重みを付けて集計するぜ☆（＾～＾）
+                let mut risk_value = 0.0f64;
+                let mut king_pos =
+                    game.board.king_pos[game.history.get_phase(Person::Friend) as usize].clone();
+                // 北
+                // .xx..
+                // ..x..
+                // .....
+                // .....
+                // .....
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+                // 北西
+                // x....
+                // xx...
+                // .....
+                // .....
+                // .....
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(1, -1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+                // 西
+                // .....
+                // .....
+                // xx...
+                // x....
+                // x....
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+                // 南西
+                // .....
+                // .....
+                // .....
+                // .x...
+                // .x...
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(1, 1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+                // 南
+                // .....
+                // .....
+                // .....
+                // ..x..
+                // ..xxx
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+                // 南東
+                // .....
+                // .....
+                // .....
+                // ...xx
+                // .....
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+                // 東
+                // ....x
+                // ....x
+                // ...xx
+                // .....
+                // .....
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+                // 北東
+                // ...x.
+                // ...x.
+                // .....
+                // .....
+                // .....
+                let mut next = Vec::<AbsoluteAddress>::new();
+                next.push(king_pos.add_mut(&RelativeAddress::new(-1, -1)).clone());
+                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
+                risk_value += self.risk(occupy_control_sign, next, game);
+
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
                     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
@@ -213,8 +312,12 @@ impl Tree {
                         None,
                         None,
                         Some(PvString::String(format!(
-                            "occupy control={}",
-                            control_sign * game.board.occupy_control_value()
+                            "occupy-control-value={} | risk={} | {} {} {}",
+                            occupy_control_sign * occupy_control_value,
+                            risk_value,
+                            game.board.occupy_control[68],
+                            game.board.occupy_control[58],
+                            game.board.occupy_control[48],
                         ))),
                     );
                     game.info.print(
@@ -226,12 +329,12 @@ impl Tree {
                     );
                 }
 
-                // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
-                let control_value: i16 = game.board.occupy_control_value();
-
                 ts.choice_friend(
                     &Value::CentiPawn(
-                        captured_piece_centi_pawn + promoted_bonus + (control_sign * control_value),
+                        captured_piece_centi_pawn
+                            + promoted_bonus
+                            + (occupy_control_sign * occupy_control_value)
+                            + risk_value as i16,
                     ),
                     *movement_hash,
                 );
@@ -262,7 +365,7 @@ impl Tree {
             Commands::pos(&game);
             */
         }
-        self.add_control(-1 * control_sign, game, &movement_set);
+        self.add_control(-1 * occupy_control_sign, game, &movement_set);
 
         if ts.get_movement_hash() == 0 && ts.repetition_movement_hash != 0 {
             // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
@@ -278,9 +381,28 @@ impl Tree {
 
     pub fn add_control(&mut self, sign: i16, game: &mut Game, movement_set: &HashSet<u64>) {
         for movement_hash in movement_set.iter() {
+            // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
             game.board.occupy_control
                 [Movement::from_hash(*movement_hash).destination.address() as usize] += sign;
         }
+    }
+
+    pub fn risk(&self, sign: i16, adr_vec: Vec<AbsoluteAddress>, game: &mut Game) -> f64 {
+        let mut risk = 0f64;
+        let friend = game.history.get_phase(Person::Friend);
+        let king_adr = game.board.king_pos[friend as usize];
+        for adr1 in adr_vec {
+            if adr1.has_jumped_out_of_the_board() {
+                break;
+            } else {
+                // どのマスも、玉から 1マス～16マス 離れている☆（＾～＾）玉に近いものを重くみようぜ☆（＾～＾）
+                let a: f64 = (16 - king_adr.manhattan_distance(&adr1)) as f64 / 16.0;
+                // println!("sign = {} | a = {}", sign, a);
+                let amount = sign as f64 * a;
+                risk += amount;
+            }
+        }
+        risk
     }
 }
 

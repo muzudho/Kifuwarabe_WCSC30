@@ -23,6 +23,8 @@ pub struct Board {
     pub hand: [i8; PIECE_LN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
     pub occupy_control: [i16; BOARD_MEMORY_AREA as usize],
+    /// 玉の座標☆（＾～＾）
+    pub king_pos: [AbsoluteAddress; 2],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -47,6 +49,7 @@ impl Default for Board {
                 0, 0,
             ],
             occupy_control: [0; BOARD_MEMORY_AREA as usize],
+            king_pos: [AbsoluteAddress::default(); 2],
         }
     }
 }
@@ -170,6 +173,7 @@ impl Board {
         hash
     }
 
+    /// 良ければ総量はプラスだぜ☆（＾～＾）
     pub fn occupy_control_value(&self) -> i16 {
         self.occupy_control.iter().sum()
     }

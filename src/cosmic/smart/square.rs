@@ -535,7 +535,7 @@ pub struct RelativeAddress {
     rank: i8,
 }
 impl RelativeAddress {
-    fn new(file1: i8, rank1: i8) -> Self {
+    pub fn new(file1: i8, rank1: i8) -> Self {
         RelativeAddress {
             file: file1,
             rank: rank1,
@@ -725,6 +725,11 @@ pub struct AbsoluteAddress {
     file: i8,
     rank: i8,
 }
+impl Default for AbsoluteAddress {
+    fn default() -> Self {
+        AbsoluteAddress { file: 0, rank: 0 }
+    }
+}
 impl AbsoluteAddress {
     fn new(file: i8, rank: i8) -> Self {
         debug_assert!(FILE_0 <= file && file < FILE_11, format!("file={}", file));
@@ -766,7 +771,7 @@ impl AbsoluteAddress {
         self.file % 10 == 0 || self.rank % 10 == 0
     }
 
-    pub fn add_mut(&mut self, rel_adr: &RelativeAddress) {
+    pub fn add_mut(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         let sum = self.address() + rel_adr.get_address();
         // Initialize.
@@ -792,10 +797,16 @@ impl AbsoluteAddress {
             RANK_0 <= self.rank && self.rank < RANK_11,
             format!("rank={}", self.rank)
         );
+        self
     }
 
     pub fn address(&self) -> i8 {
         self.file * 10 + self.rank
+    }
+
+    /// マンハッタン距離☆（＾～＾）
+    pub fn manhattan_distance(&self, b: &AbsoluteAddress) -> i8 {
+        (self.file - b.file).abs() + (self.rank - b.rank).abs()
     }
 }
 impl fmt::Debug for AbsoluteAddress {
