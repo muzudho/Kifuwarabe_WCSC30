@@ -69,7 +69,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
                 num
             } else {
                 panic!(Beam::trouble(&format!(
-                    "(1) '{}' だった。",
+                    "(Err.72)  '{}' だった。",
                     &line[*starts..=*starts]
                 )))
             };
@@ -87,7 +87,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
                 "i" => Source::Move(file, 9),
                 _ => {
                     panic!(Beam::trouble(&format!(
-                        "(2) '{}' だった。",
+                        "(Err.90)  '{}' だった。",
                         &line[*starts..=*starts]
                     )));
                 }
@@ -115,7 +115,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         num
     } else {
         panic!(Beam::trouble(&format!(
-            "(3) '{}' だった。",
+            "(Err.118)  '{}' だった。",
             &line[*starts..=*starts]
         )));
     };
@@ -133,7 +133,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         "i" => 9,
         _ => {
             panic!(Beam::trouble(&format!(
-                "(4) '{}' だった。",
+                "(Err.136)  '{}' だった。",
                 &line[*starts..=*starts]
             )));
         }
@@ -232,7 +232,7 @@ pub fn read_board(
                     "p" => BoardPart::Alphabet(Piece::PromotedPawn2),
                     _ => {
                         panic!(Beam::trouble(&format!(
-                            "盤部(0) '{}' だった。",
+                            "(Err.235)  盤部(0) '{}' だった。",
                             &line[*starts..=*starts]
                         )));
                     }
@@ -343,7 +343,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                                 "8" => HandCount::N2Digit(18),
                                 _ => {
                                     panic!(Beam::trouble(&format!(
-                                        "持駒部(0) '{}' だった。",
+                                        "(Err.346)  持駒部(0) '{}' だった。",
                                         &line[starts..(starts + 2)]
                                     )));
                                 }

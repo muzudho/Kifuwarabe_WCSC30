@@ -233,7 +233,9 @@ impl Game {
                     self.board.add_hand(&piece734, -1, speed_of_light);
                     Some(piece734)
                 } else {
-                    panic!(Beam::trouble("打なのに駒を指定してないぜ☆（＾～＾）"));
+                    panic!(Beam::trouble(
+                        "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"
+                    ));
                 }
             } else {
                 // 打でなければ、元の升に駒はあるので、それを消す。
@@ -243,7 +245,9 @@ impl Game {
                         // 成り駒をクローン。
                         Some(piece.promoted(speed_of_light))
                     } else {
-                        panic!(Beam::trouble("成ったのに、元の升に駒がなかった☆（＾～＾）"));
+                        panic!(Beam::trouble(
+                            "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）"
+                        ));
                     }
                 } else {
                     // 移動元の駒をクローン。
@@ -304,7 +308,9 @@ impl Game {
                         self.board.add_hand(&drop394, 1, speed_of_light);
                         Some(drop394)
                     } else {
-                        panic!(Beam::trouble("打なのに駒を指定していないぜ☆（＾～＾）！"))
+                        panic!(Beam::trouble(
+                            "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！"
+                        ))
                     }
                 } else {
                     // 打でなければ
@@ -313,7 +319,9 @@ impl Game {
                         if let Some(source_piece) = self.board.piece_at(&movement.destination) {
                             Some(source_piece.demoted(speed_of_light))
                         } else {
-                            panic!(Beam::trouble("成ったのに移動先に駒が無いぜ☆（＾～＾）！"))
+                            panic!(Beam::trouble(
+                                "(Err.322) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
+                            ))
                         }
                     } else {
                         self.board.piece_at(&movement.destination).clone()

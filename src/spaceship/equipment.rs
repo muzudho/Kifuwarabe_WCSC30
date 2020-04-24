@@ -145,7 +145,7 @@ impl Log {
             // write_allメソッドを使うには use std::io::Write; が必要
             if let Err(_why) = LOGFILE.lock().unwrap().write_all(s.as_bytes()) {
                 // 大会向けに、ログ書き込み失敗は出力しないことにする
-                //panic!("couldn't write log. : {}",Error::description(&why)),
+                // panic!("(Err.148) couldn't write log. : {}",Error::description(&why)),
             }
         }
     }

@@ -154,8 +154,24 @@ impl Tree {
             // 1手進めるぜ☆（＾～＾）
             ts.add_state(1);
             let movement = Movement::from_hash(*movement_hash);
+            let source_piece = game.board.piece_at(&movement.source);
             let captured_piece = game.do_move(&movement, speed_of_light);
             self.pv.push(&movement);
+
+            // pvリストに１手入れてから評価しろだぜ☆（＾～＾）0除算エラーを防げるぜ☆（＾～＾）
+            let promoted_bonus = if let Some(source_piece_val) = source_piece {
+                Evaluation::from_promotion(
+                    self.pv.len(),
+                    source_piece_val.r#type(&speed_of_light),
+                    &movement,
+                )
+            } else {
+                0
+            };
+            // 取った駒の価値を評価するぜ☆（＾～＾）
+            let captured_piece_centi_pawn =
+                Evaluation::from_caputured_piece(self.pv.len(), captured_piece, speed_of_light);
+
             /*
             IO::debugln(&format!("n={} do.", sum_nodes));
             Commands::pos(&game);
@@ -192,13 +208,10 @@ impl Tree {
                     );
                 }
 
-                // 取った駒の価値を評価するぜ☆（＾～＾）
-                let captured_piece_centi_pawn = Evaluation::from_caputured_piece(
-                    self.pv.len() as u8,
-                    captured_piece,
-                    speed_of_light,
+                ts.choice_friend(
+                    &Value::CentiPawn(captured_piece_centi_pawn + promoted_bonus),
+                    *movement_hash,
                 );
-                ts.choice_friend(&Value::CentiPawn(captured_piece_centi_pawn), *movement_hash);
 
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
@@ -210,14 +223,12 @@ impl Tree {
                     speed_of_light,
                 );
 
-                // 取った駒の価値を評価するぜ☆（＾～＾）
-                let captured_piece_value = Evaluation::from_caputured_piece(
-                    self.pv.len() as u8,
-                    captured_piece,
-                    speed_of_light,
-                );
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
-                ts.turn_over_and_choice(&opponent_ts, *movement_hash, captured_piece_value);
+                ts.turn_over_and_choice(
+                    &opponent_ts,
+                    *movement_hash,
+                    captured_piece_centi_pawn + promoted_bonus,
+                );
             }
 
             // 1手戻すぜ☆（＾～＾）
@@ -383,7 +394,7 @@ impl TreeState {
         } else {
             match self.bestmove.value {
                 Value::Win => panic!(Beam::trouble(
-                    "自分が勝つ手を読んでるなら、ここに来るのはおかしいぜ☆（＾～＾）"
+                    "(Err.397) 自分が勝つ手を読んでるなら、ここに来るのはおかしいぜ☆（＾～＾）"
                 )),
                 Value::Lose => {
                     // どんな評価値でも、負けるよりマシだろ☆（＾～＾）

@@ -25,14 +25,20 @@ impl Kifuwarabe {
         // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
         match std_io::stdin().read_line(&mut line) {
             Ok(_n) => {}
-            Err(e) => panic!(Beam::trouble(&format!("Failed to read line. / {}", e))),
+            Err(e) => panic!(Beam::trouble(&format!(
+                "(Err.28)  Failed to read line. / {}",
+                e
+            ))),
         };
 
         // 末尾の改行を除こうぜ☆（＾～＾）
         // trim すると空白も消えるぜ☆（＾～＾）
         let line: String = match line.trim().parse() {
             Ok(n) => n,
-            Err(e) => panic!(Beam::trouble(&format!("Failed to parse. / {}", e))),
+            Err(e) => panic!(Beam::trouble(&format!(
+                "(Err.38)  Failed to parse. / {}",
+                e
+            ))),
         };
 
         // 文字数を調べようぜ☆（＾～＾）
