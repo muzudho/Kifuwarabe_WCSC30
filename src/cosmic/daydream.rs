@@ -12,6 +12,7 @@ use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::{Beam, PvString};
+use rand::Rng;
 use std::collections::HashSet;
 use std::fmt;
 use std::time::Instant;
@@ -22,6 +23,9 @@ pub struct Tree {
 
     // Principal variation(読み筋)☆（＾～＾）
     pv: PrincipalVariation,
+
+    // 思考時間（秒）をランダムにすることで、指し手を変えるぜ☆（＾～＾）
+    think_sec: u64,
 }
 impl Default for Tree {
     fn default() -> Self {
@@ -29,6 +33,7 @@ impl Default for Tree {
         Tree {
             stopwatch: stopwatch1,
             pv: PrincipalVariation::default(),
+            think_sec: 0,
         }
     }
 }
@@ -40,6 +45,8 @@ impl Tree {
         universe: &mut Universe,
     ) -> TreeState {
         universe.game.info.clear();
+        self.think_sec = rand::thread_rng().gen_range(7, 20); // 適当☆（＾～＾）
+
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         let mut best_ts = self.search(0, 0, &mut universe.game, speed_of_light);
@@ -155,8 +162,8 @@ impl Tree {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
                 break;
-            } else if 15 < self.stopwatch.elapsed().as_secs() {
-                // とりあえず 15 秒で探索を打ち切ろうぜ☆（＾～＾）？
+            } else if self.think_sec < self.stopwatch.elapsed().as_secs() {
+                // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 ts.timeout = true;
                 break;
             }
