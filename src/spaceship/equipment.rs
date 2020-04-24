@@ -19,6 +19,12 @@ impl Telescope {
     }
 }
 
+/// PV表示、または 文字列表示だぜ☆（＾～＾）
+pub enum PvString {
+    PV(String),
+    String(String),
+}
+
 /// 行き先表示案内板だぜ☆（＾～＾）
 /// 読み筋とか表示されてるぜ☆（＾～＾）
 pub struct DestinationDisplay {
@@ -55,10 +61,8 @@ impl DestinationDisplay {
         cur_depth: Option<u8>,
         sum_nodes: Option<u64>,
         value: Option<Value>,
-        // lion_catch: Option<u16>,
         movement: Option<Movement>,
-        pv: Option<String>,
-        string: Option<String>,
+        pv_string: Option<PvString>,
     ) {
         // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
         Beam::shoot(&format!(
@@ -90,30 +94,16 @@ impl DestinationDisplay {
             } else {
                 "".to_string()
             },
-            /*
-            } else if let Some(lion_catch_num) = lion_catch {
-                let mate: i32 = if lion_catch_num % 2 == 0 {
-                    // 偶数ならマイナスにするぜ☆（＾～＾）
-                    -(lion_catch_num as i32)
-                } else {
-                    lion_catch_num as i32
-                };
-                format!(" score mate {}", mate)
-                */
-                /*
-            } else {
-                "".to_string()
-            },
-            */
             if let Some(movement_val) = movement {
                 format!("{}", movement_val)
             } else {
                 "".to_string()
             },
-            if let Some(pv_val) = pv {
-                format!(" pv {}", pv_val)
-            } else if let Some(string_val) = string {
-                format!(" string {}", string_val)
+            if let Some(pv_string_val) = pv_string {
+                match pv_string_val {
+                    PvString::PV(x) => format!(" pv {}", x),
+                    PvString::String(x) => format!(" string {}", x),
+                }
             } else {
                 "".to_string()
             }

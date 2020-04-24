@@ -8,7 +8,7 @@ use crate::law::cryptographic::*;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::*;
 use crate::law::usi::*;
-use crate::spaceship::equipment::{Beam, Telescope};
+use crate::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen};
 use rand::Rng;
 use std::collections::HashSet;
@@ -49,15 +49,14 @@ impl Kifuwarabe {
         universe.game.info.print(
             None,
             None, // ここではタイムアップで途中抜けしてくるんで総ノード数は調べられないので表示しないぜ☆（＾～＾）
-            Some(ts.value()),
+            Some(ts.bestmove.value),
             // ts.get_king_catch(),
-            Some(ts.to_movement()),
-            None,
-            Some(ts.reason.to_string()),
+            Some(ts.bestmove.to_movement()),
+            Some(PvString::String(ts.bestmove.reason.to_string())),
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
-        Beam::shoot(&format!("bestmove {}", ts.to_movement()));
+        Beam::shoot(&format!("bestmove {}", ts.bestmove.to_movement()));
     }
     pub fn isready() {
         Beam::shoot("readyok");
