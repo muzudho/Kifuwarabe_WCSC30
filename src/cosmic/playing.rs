@@ -272,11 +272,10 @@ impl Game {
             let movement = &self.get_move().clone();
             {
                 // 取った駒が有ったか。
-                let cap: Option<(PieceMeaning, PieceNum)> =
+                let captured_piece: Option<(PieceMeaning, PieceNum)> =
                     self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let old_source391_o: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop()
-                {
+                let moving_piece: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop() {
                     // 打なら
                     if let Some(_drp) = movement.drop {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
@@ -305,13 +304,16 @@ impl Game {
                     }
                 };
 
-                if let Some(captured_piece_val) = cap {
+                if let Some(captured_piece_val) = captured_piece {
                     // 自分の持ち駒を減らす
                     self.board
                         .pop_hand(captured_piece_val.0.captured(speed_of_light));
+                    // 移動先に取った駒を戻すぜ☆（＾～＾）
+                    self.board.push_piece(&movement.destination, captured_piece);
                 }
+
                 // 移動元升に、動かした駒を置く
-                self.board.push_piece(&movement.source, old_source391_o);
+                self.board.push_piece(&movement.source, moving_piece);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
