@@ -16,7 +16,7 @@ use num_traits::FromPrimitive;
 pub const PIECE_NUM_LEN: usize = 40;
 
 /// 駒に背番号を付けたものだぜ☆（＾～＾）
-#[derive(Clone, Copy, FromPrimitive)]
+#[derive(Clone, Copy, FromPrimitive, Debug)]
 pub enum PieceNum {
     // 1 先手玉
     King1,

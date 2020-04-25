@@ -175,6 +175,25 @@ impl Chiyuri {
         let s = universe.game.get_moves_history_text();
         Beam::shoot(&s);
     }
+    pub fn list40(universe: &Universe) {
+        Beam::shoot("----駒リスト40表示 ここから----");
+        universe
+            .game
+            .board
+            .for_all_pieces_on_board(&mut |i, adr, piece| {
+                Beam::shoot(&format!(
+                    "[{}] {:?}{}",
+                    i,
+                    adr,
+                    if let Some(piece_val) = piece {
+                        format!(" {} {:?}", piece_val.0, piece_val.1)
+                    } else {
+                        " --".to_string()
+                    }
+                ));
+            });
+        Beam::shoot("----駒リスト40表示 ここまで----");
+    }
     pub fn len0(universe: &mut Universe) {
         Beam::shoot("len==0");
         if !&universe.dialogue_mode {
