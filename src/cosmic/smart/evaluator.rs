@@ -30,18 +30,18 @@ impl Evaluation {
         cur.set(&king_adr);
         let rel = &mut RelativeAddress::new(0, -1);
         cur.offset(rel);
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, -1));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(1, 0));
-                if cur.legal() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                 }
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         // 北西
         // x....
         // xx...
@@ -51,18 +51,18 @@ impl Evaluation {
         cur.set(&game.board.king_pos[friend_index]);
         path.clear();
         cur.offset(rel.set(1, -1));
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(1, 0));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(0, -1));
-                if cur.legal() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                 }
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         // 西
         // .....
         // .....
@@ -72,22 +72,22 @@ impl Evaluation {
         cur.set(&game.board.king_pos[friend_index]);
         path.clear();
         cur.offset(rel.set(1, 0));
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(1, 0));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(0, 1));
-                if cur.legal() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                     cur.offset(rel.set(0, 1));
-                    if cur.legal() {
+                    if cur.legal_next() {
                         path.push(cur.clone());
                     }
                 }
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         // 南西
         // .....
         // .....
@@ -97,14 +97,14 @@ impl Evaluation {
         cur.set(&game.board.king_pos[friend_index]);
         path.clear();
         cur.offset(rel.set(1, 1));
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, 1));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         // 南
         // .....
         // .....
@@ -114,22 +114,22 @@ impl Evaluation {
         cur.set(&game.board.king_pos[friend_index]);
         path.clear();
         cur.offset(rel.set(0, 1));
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, 1));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(-1, 0));
-                if cur.legal() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                     cur.offset(rel.set(-1, 0));
-                    if cur.legal() {
+                    if cur.legal_next() {
                         path.push(cur.clone());
                     }
                 }
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         // 南東
         // .....
         // .....
@@ -139,14 +139,14 @@ impl Evaluation {
         cur.set(&game.board.king_pos[friend_index]);
         path.clear();
         cur.offset(rel.set(-1, 1));
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(-1, 0));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         // 東
         // ....x
         // ....x
@@ -156,22 +156,22 @@ impl Evaluation {
         cur.set(&game.board.king_pos[friend_index]);
         path.clear();
         cur.offset(rel.set(-1, 0));
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(-1, 0));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(0, -1));
-                if cur.legal() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                     cur.offset(rel.set(0, -1));
-                    if cur.legal() {
+                    if cur.legal_next() {
                         path.push(cur.clone());
                     }
                 }
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         // 北東
         // ...x.
         // ...x.
@@ -181,25 +181,31 @@ impl Evaluation {
         cur.set(&game.board.king_pos[friend_index]);
         path.clear();
         cur.offset(rel.set(-1, -1));
-        if cur.legal() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, -1));
-            if cur.legal() {
+            if cur.legal_next() {
                 path.push(cur.clone());
             }
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
         risk_value
     }
 
-    fn risk(sign: i16, adr_vec: Vec<AbsoluteAddress>, king_adr: &AbsoluteAddress) -> f64 {
+    fn risk(
+        sign: i16,
+        adr_vec: Vec<AbsoluteAddress>,
+        king_adr: &AbsoluteAddress,
+        game: &mut Game,
+    ) -> f64 {
         let mut risk = 0f64;
-        for adr1 in adr_vec {
-            if adr1.legal() {
+        for adr in adr_vec {
+            if adr.legal_board() {
                 // どのマスも、玉から 1マス～16マス 離れている☆（＾～＾）玉に近いものを重くみようぜ☆（＾～＾）
-                let a: f64 = (16 - king_adr.manhattan_distance(&adr1)) as f64 / 16.0;
+                let weight: f64 = (16 - king_adr.manhattan_distance(&adr)) as f64 / 16.0;
                 // println!("sign = {} | a = {}", sign, a);
-                let amount = sign as f64 * a;
+                let amount =
+                    sign as f64 * weight * game.board.control[adr.address() as usize] as f64;
                 risk += amount;
             } else {
                 break;

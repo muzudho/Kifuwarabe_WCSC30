@@ -769,10 +769,13 @@ impl AbsoluteAddress {
         AbsoluteAddress::new(FILE_11 - self.file, RANK_11 - self.rank)
     }
 
-    pub fn legal(&self) -> bool {
+    pub fn legal_next(&self) -> bool {
         self.file % 10 != 0 && self.rank % 10 != 0
     }
 
+    pub fn legal_board(&self) -> bool {
+        FILE_0 < self.file && self.file < FILE_10 && RANK_0 < self.rank && self.rank < RANK_10
+    }
     pub fn offset(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
@@ -793,7 +796,8 @@ impl AbsoluteAddress {
         }
 
         // 番兵込みの絶対番地に収めろだぜ☆（＾～＾）
-        debug_assert!(sum < 0, format!("negative address={}", sum));
+        /*
+        debug_assert!(0 <= sum, format!("negative address={}", sum));
         debug_assert!(
             FILE_0 <= self.file && self.file < FILE_11,
             format!("file={}", self.file)
@@ -802,6 +806,7 @@ impl AbsoluteAddress {
             RANK_0 <= self.rank && self.rank < RANK_11,
             format!("rank={}", self.rank)
         );
+        */
         self
     }
 
