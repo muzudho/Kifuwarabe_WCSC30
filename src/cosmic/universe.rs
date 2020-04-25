@@ -12,6 +12,10 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// 読みの最大深さ。最大で 255 だぜ☆（＾～＾） そんな要らんだろ☆（＾～＾）
     pub option_max_depth: u8,
+    /// 思考時間の最小秒☆（＾～＾）
+    pub option_min_think_sec: u64,
+    /// 思考時間の最大秒☆（＾～＾）
+    pub option_max_think_sec: u64,
 }
 impl Default for Universe {
     fn default() -> Self {
@@ -19,6 +23,8 @@ impl Default for Universe {
             game: Game::default(),
             dialogue_mode: false,
             option_max_depth: 1,
+            option_min_think_sec: 1,
+            option_max_think_sec: 1,
         }
     }
 }

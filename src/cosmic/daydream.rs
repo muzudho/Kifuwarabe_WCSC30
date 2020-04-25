@@ -42,7 +42,8 @@ impl Tree {
         universe: &mut Universe,
     ) -> TreeState {
         universe.game.info.clear();
-        self.think_sec = rand::thread_rng().gen_range(7, 17); // 適当☆（＾～＾）
+        self.think_sec = rand::thread_rng()
+            .gen_range(universe.option_min_think_sec, universe.option_max_think_sec); // 適当☆（＾～＾）
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）

@@ -73,13 +73,24 @@ impl Kifuwarabe {
     }
     pub fn setoption_name(universe: &mut Universe, line: &String) {
         // Example: setoption name USI_Ponder value true
-        if let Some(x) = line[15..].find(' ') {
-            let name = &line[15..(x + 15)];
+        let label1_width = "setoption name ".len(); // 15
+        if let Some(name_width) = line[label1_width..].find(' ') {
+            let name = &line[label1_width..(label1_width + name_width)];
             // IO::writeln(&format!("Debug name=|{}|", name));
-            let value = &line[(x + 22)..];
+            let label2_width = " value ".len(); // 7
+            let value = &line[(label1_width + name_width + label2_width)..];
             // IO::writeln(&format!("Debug value=|{}|", value));
-            if name == "MaxDepth" {
-                universe.option_max_depth = value.parse().unwrap();
+            match name {
+                "MaxDepth" => {
+                    universe.option_max_depth = value.parse().unwrap();
+                }
+                "MinThinkSec" => {
+                    universe.option_min_think_sec = value.parse().unwrap();
+                }
+                "MaxThinkSec" => {
+                    universe.option_max_think_sec = value.parse().unwrap();
+                }
+                _ => {}
             }
         };
     }
@@ -97,7 +108,8 @@ impl Kifuwarabe {
         IO::writeln("option name LearningFile type filename default <empty>");
         */
         Beam::shoot("option name MaxDepth type spin default 1 min 1 max 10");
-        Beam::shoot("option name MaxThinkSec type spin default 1 min 1 max 600");
+        Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");
+        Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
         Beam::shoot("usiok");
     }
     pub fn usinewgame(universe: &mut Universe) {
