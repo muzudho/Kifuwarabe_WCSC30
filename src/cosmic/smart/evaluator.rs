@@ -18,11 +18,7 @@ impl Evaluation {
     pub fn risk_king(game: &mut Game, control_sign: i16) -> f64 {
         let mut risk_value = 0.0f64;
         let friend_index = game.history.get_phase(Person::Friend) as usize;
-        let king_adr = game.board.address_of(if friend_index == 0 {
-            PieceNum::King1
-        } else {
-            PieceNum::King2
-        });
+        let king_adr = game.board.num_piece[friend_index];
         // 北
         // .xx..
         // ..x..

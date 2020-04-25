@@ -16,7 +16,7 @@ use num_traits::FromPrimitive;
 pub const PIECE_NUM_LEN: usize = 40;
 
 /// 駒に背番号を付けたものだぜ☆（＾～＾）
-#[derive(Clone, Copy, FromPrimitive, Debug)]
+#[derive(Clone, Copy, FromPrimitive)]
 pub enum PieceNum {
     // 1 先手玉
     King1,
@@ -107,7 +107,7 @@ pub enum PieceNum {
 pub struct Board {
     pieces: [Option<(PieceMeaning, PieceNum)>; BOARD_MEMORY_AREA as usize],
     /// 駒の絶対番地☆（＾～＾）
-    piece_num_adr: [AbsoluteAddress; PIECE_NUM_LEN],
+    pub num_piece: [AbsoluteAddress; PIECE_NUM_LEN],
     rook_index: usize,
     bishop_index: usize,
     gold_index: usize,
@@ -149,7 +149,7 @@ impl Default for Board {
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
                 None, None, None, None, None, None, None, None, None, None, None, None, None,
             ],
-            piece_num_adr: [AbsoluteAddress::default(); PIECE_NUM_LEN],
+            num_piece: [AbsoluteAddress::default(); PIECE_NUM_LEN],
             rook_index: PieceNum::Rook21 as usize,
             bishop_index: PieceNum::Bishop19 as usize,
             gold_index: PieceNum::Gold3 as usize,
@@ -190,7 +190,7 @@ impl Board {
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None, None, None, None,
         ];
-        self.piece_num_adr = [AbsoluteAddress::default(); PIECE_NUM_LEN];
+        self.num_piece = [AbsoluteAddress::default(); PIECE_NUM_LEN];
         self.rook_index = PieceNum::Rook21 as usize;
         self.bishop_index = PieceNum::Bishop19 as usize;
         self.gold_index = PieceNum::Gold3 as usize;
@@ -217,32 +217,7 @@ impl Board {
         self.hand_pawn2.clear();
     }
 
-    /// 開始盤面を、現盤面にコピーしたいときに使うぜ☆（＾～＾）
-    pub fn copy_from(&mut self, board: &Board) {
-        for rank in RANK_0..RANK_11 {
-            for file in (FILE_0..FILE_11).rev() {
-                let abs_adr = Address::new(file, rank).abs();
-                // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-                self.set_piece_at(&abs_adr, board.piece_at(&abs_adr));
-            }
-        }
-
-        self.piece_num_adr = board.piece_num_adr.clone();
-        self.hand_rook1 = board.hand_rook1.clone();
-        self.hand_bishop1 = board.hand_bishop1.clone();
-        self.hand_gold1 = board.hand_gold1.clone();
-        self.hand_silver1 = board.hand_silver1.clone();
-        self.hand_knight1 = board.hand_knight1.clone();
-        self.hand_lance1 = board.hand_lance1.clone();
-        self.hand_pawn1 = board.hand_pawn1.clone();
-        self.hand_rook2 = board.hand_rook2.clone();
-        self.hand_bishop2 = board.hand_bishop2.clone();
-        self.hand_gold2 = board.hand_gold2.clone();
-        self.hand_silver2 = board.hand_silver2.clone();
-        self.hand_knight2 = board.hand_knight2.clone();
-        self.hand_lance2 = board.hand_lance2.clone();
-        self.hand_pawn2 = board.hand_pawn2.clone();
-    }
+    // TODO pub fn update_piece_pos(&mut self, piece_num: &PieceNum, destination: &AbsoluteAddress) {}
 
     /// 歩が置いてあるか確認
     pub fn exists_pawn_on_file(
@@ -273,18 +248,18 @@ impl Board {
             let source = Address::new(file, rank).abs();
             let piece_num = match piece_meaning {
                 PieceMeaning::King1 => {
-                    self.piece_num_adr[PieceNum::King1 as usize] = source;
+                    self.num_piece[PieceNum::King1 as usize] = source;
                     PieceNum::King1
                 }
                 PieceMeaning::King2 => {
-                    self.piece_num_adr[PieceNum::King2 as usize] = source;
+                    self.num_piece[PieceNum::King2 as usize] = source;
                     PieceNum::King2
                 }
                 PieceMeaning::Rook1
                 | PieceMeaning::Rook2
                 | PieceMeaning::Dragon1
                 | PieceMeaning::Dragon2 => {
-                    self.piece_num_adr[self.rook_index] = source;
+                    self.num_piece[self.rook_index] = source;
                     let pn = PieceNum::from_usize(self.rook_index).unwrap();
                     self.rook_index += 1;
                     pn
@@ -293,13 +268,13 @@ impl Board {
                 | PieceMeaning::Bishop2
                 | PieceMeaning::Horse1
                 | PieceMeaning::Horse2 => {
-                    self.piece_num_adr[self.bishop_index] = source;
+                    self.num_piece[self.bishop_index] = source;
                     let pn = PieceNum::from_usize(self.bishop_index).unwrap();
                     self.bishop_index += 1;
                     pn
                 }
                 PieceMeaning::Gold1 | PieceMeaning::Gold2 => {
-                    self.piece_num_adr[self.gold_index] = source;
+                    self.num_piece[self.gold_index] = source;
                     let pn = PieceNum::from_usize(self.gold_index).unwrap();
                     self.gold_index += 1;
                     pn
@@ -308,7 +283,7 @@ impl Board {
                 | PieceMeaning::Silver2
                 | PieceMeaning::PromotedSilver1
                 | PieceMeaning::PromotedSilver2 => {
-                    self.piece_num_adr[self.silver_index] = source;
+                    self.num_piece[self.silver_index] = source;
                     let pn = PieceNum::from_usize(self.silver_index).unwrap();
                     self.silver_index += 1;
                     pn
@@ -317,7 +292,7 @@ impl Board {
                 | PieceMeaning::Knight2
                 | PieceMeaning::PromotedKnight1
                 | PieceMeaning::PromotedKnight2 => {
-                    self.piece_num_adr[self.knight_index] = source;
+                    self.num_piece[self.knight_index] = source;
                     let pn = PieceNum::from_usize(self.knight_index).unwrap();
                     self.knight_index += 1;
                     pn
@@ -326,7 +301,7 @@ impl Board {
                 | PieceMeaning::Lance2
                 | PieceMeaning::PromotedLance1
                 | PieceMeaning::PromotedLance2 => {
-                    self.piece_num_adr[self.lance_index] = source;
+                    self.num_piece[self.lance_index] = source;
                     let pn = PieceNum::from_usize(self.lance_index).unwrap();
                     self.lance_index += 1;
                     pn
@@ -335,7 +310,7 @@ impl Board {
                 | PieceMeaning::Pawn2
                 | PieceMeaning::PromotedPawn1
                 | PieceMeaning::PromotedPawn2 => {
-                    self.piece_num_adr[self.pawn_index] = source;
+                    self.num_piece[self.pawn_index] = source;
                     let pn = PieceNum::from_usize(self.pawn_index).unwrap();
                     self.pawn_index += 1;
                     pn
@@ -360,7 +335,7 @@ impl Board {
         for _i in 0..number {
             match piece_meaning {
                 PieceMeaning::Rook1 | PieceMeaning::Dragon1 => {
-                    self.piece_num_adr[self.rook_index].clear();
+                    self.num_piece[self.rook_index].clear();
                     self.hand_rook1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.rook_index).unwrap(),
@@ -368,7 +343,7 @@ impl Board {
                     self.rook_index += 1;
                 }
                 PieceMeaning::Rook2 | PieceMeaning::Dragon2 => {
-                    self.piece_num_adr[self.rook_index].clear();
+                    self.num_piece[self.rook_index].clear();
                     self.hand_rook2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.rook_index).unwrap(),
@@ -376,7 +351,7 @@ impl Board {
                     self.rook_index += 1;
                 }
                 PieceMeaning::Bishop1 | PieceMeaning::Horse1 => {
-                    self.piece_num_adr[self.bishop_index].clear();
+                    self.num_piece[self.bishop_index].clear();
                     self.hand_bishop1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.bishop_index).unwrap(),
@@ -384,7 +359,7 @@ impl Board {
                     self.bishop_index += 1;
                 }
                 PieceMeaning::Bishop2 | PieceMeaning::Horse2 => {
-                    self.piece_num_adr[self.bishop_index].clear();
+                    self.num_piece[self.bishop_index].clear();
                     self.hand_bishop2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.bishop_index).unwrap(),
@@ -392,7 +367,7 @@ impl Board {
                     self.bishop_index += 1;
                 }
                 PieceMeaning::Gold1 => {
-                    self.piece_num_adr[self.gold_index].clear();
+                    self.num_piece[self.gold_index].clear();
                     self.hand_gold1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.gold_index).unwrap(),
@@ -400,7 +375,7 @@ impl Board {
                     self.gold_index += 1;
                 }
                 PieceMeaning::Gold2 => {
-                    self.piece_num_adr[self.gold_index].clear();
+                    self.num_piece[self.gold_index].clear();
                     self.hand_gold2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.gold_index).unwrap(),
@@ -408,7 +383,7 @@ impl Board {
                     self.gold_index += 1;
                 }
                 PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => {
-                    self.piece_num_adr[self.silver_index].clear();
+                    self.num_piece[self.silver_index].clear();
                     self.hand_silver1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.silver_index).unwrap(),
@@ -416,7 +391,7 @@ impl Board {
                     self.silver_index += 1;
                 }
                 PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => {
-                    self.piece_num_adr[self.silver_index].clear();
+                    self.num_piece[self.silver_index].clear();
                     self.hand_silver2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.silver_index).unwrap(),
@@ -424,7 +399,7 @@ impl Board {
                     self.silver_index += 1;
                 }
                 PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => {
-                    self.piece_num_adr[self.knight_index].clear();
+                    self.num_piece[self.knight_index].clear();
                     self.hand_knight1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.knight_index).unwrap(),
@@ -432,7 +407,7 @@ impl Board {
                     self.knight_index += 1;
                 }
                 PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => {
-                    self.piece_num_adr[self.knight_index].clear();
+                    self.num_piece[self.knight_index].clear();
                     self.hand_knight2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.knight_index).unwrap(),
@@ -440,7 +415,7 @@ impl Board {
                     self.knight_index += 1;
                 }
                 PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => {
-                    self.piece_num_adr[self.lance_index].clear();
+                    self.num_piece[self.lance_index].clear();
                     self.hand_lance1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.lance_index).unwrap(),
@@ -448,7 +423,7 @@ impl Board {
                     self.lance_index += 1;
                 }
                 PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => {
-                    self.piece_num_adr[self.lance_index].clear();
+                    self.num_piece[self.lance_index].clear();
                     self.hand_lance2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.lance_index).unwrap(),
@@ -456,7 +431,7 @@ impl Board {
                     self.lance_index += 1;
                 }
                 PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => {
-                    self.piece_num_adr[self.pawn_index].clear();
+                    self.num_piece[self.pawn_index].clear();
                     self.hand_pawn1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.pawn_index).unwrap(),
@@ -464,7 +439,7 @@ impl Board {
                     self.pawn_index += 1;
                 }
                 PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => {
-                    self.piece_num_adr[self.pawn_index].clear();
+                    self.num_piece[self.pawn_index].clear();
                     self.hand_pawn2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.pawn_index).unwrap(),
@@ -597,45 +572,5 @@ impl Board {
     /// 良ければ総量はプラスだぜ☆（＾～＾）
     pub fn control_value(&self) -> i16 {
         self.control.iter().sum()
-    }
-
-    /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
-    pub fn for_all_pieces_on_board<F>(&self, piece_get: &mut F)
-    where
-        F: FnMut(usize, &AbsoluteAddress, Option<(PieceMeaning, PieceNum)>),
-    {
-        for (i, adr) in self.piece_num_adr.iter().enumerate() {
-            if let Some(piece) = self.piece_at(adr) {
-                // 盤上の駒☆（＾～＾）
-                piece_get(i, adr, Some(piece));
-            } else {
-                // 持ち駒☆（＾～＾）
-                piece_get(i, adr, None);
-            }
-        }
-    }
-    /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
-    pub fn for_some_pieces_on_board<F>(
-        &self,
-        friend: Phase,
-        speed_of_light: &SpeedOfLight,
-        piece_get: &mut F,
-    ) where
-        F: FnMut((PieceMeaning, PieceNum)),
-    {
-        for adr in self.piece_num_adr.iter() {
-            if let Some(piece) = self.piece_at(adr) {
-                // 盤上の駒☆（＾～＾）
-                if piece.0.phase(speed_of_light) == friend {
-                    piece_get(piece);
-                }
-            } else {
-                // 持ち駒なので無視☆（＾～＾）
-            }
-        }
-    }
-
-    pub fn address_of(&self, piece_num: PieceNum) -> AbsoluteAddress {
-        self.piece_num_adr[piece_num as usize]
     }
 }

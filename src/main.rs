@@ -93,9 +93,6 @@ fn help_chiyuri(
         Chiyuri::hash(universe);
     } else if 3 < len && &line[starts..4] == "kifu" {
         Chiyuri::kifu(universe);
-    // L
-    } else if 5 < len && &line[starts..6] == "list40" {
-        Chiyuri::list40(universe);
     // P
     } else if 3 < len && &line[starts..4] == "pos0" {
         Chiyuri::pos0(universe);

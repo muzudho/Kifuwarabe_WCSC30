@@ -3,14 +3,12 @@
 //!
 
 use crate::cosmic::recording::{Movement, Person, Phase};
-use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::{HandPieces, PieceType};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::cosmic::toy_box::Board;
-use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
@@ -66,8 +64,8 @@ impl PseudoLegalMoves {
     {
         // 盤上の駒☆（＾～＾）
         // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
-        board.for_some_pieces_on_board(friend, speed_of_light, &mut |piece| {
-            PseudoLegalMoves::a_piece_on_board(friend, &piece, board, speed_of_light, callback)
+        Area::for_all(&mut |source| {
+            PseudoLegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });
     }
 
@@ -83,7 +81,7 @@ impl PseudoLegalMoves {
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
     fn a_piece_on_board<F1>(
         friend: Phase,
-        piece: &(PieceMeaning, PieceNum),
+        source: &AbsoluteAddress,
         board: &Board,
         speed_of_light: &SpeedOfLight,
         callback: &mut F1,
@@ -127,7 +125,7 @@ impl PseudoLegalMoves {
                             if !forbidden {
                                 callback(
                                     Movement {
-                                        source: board.address_of(piece.1).clone(),
+                                        source: source.clone(),
                                         destination: destination.clone(),
                                         promote: false,
                                         drop: None,
@@ -137,7 +135,7 @@ impl PseudoLegalMoves {
                             }
                             callback(
                                 Movement {
-                                    source: board.address_of(piece.1).clone(),
+                                    source: source.clone(),
                                     destination: destination.clone(),
                                     promote: true,
                                     drop: None,
@@ -150,7 +148,7 @@ impl PseudoLegalMoves {
                             if promotion || !forbidden {
                                 callback(
                                     Movement {
-                                        source: board.address_of(piece.1).clone(),
+                                        source: source.clone(),
                                         destination: destination.clone(),
                                         promote: promotion,
                                         drop: None,
@@ -165,13 +163,15 @@ impl PseudoLegalMoves {
                 !space
             };
 
-        if friend == piece.0.phase(speed_of_light) {
-            Area::piece_of(
-                piece.0.r#type(speed_of_light),
-                friend,
-                &board.address_of(piece.1),
-                callback_next,
-            );
+        if let Some(piece) = board.piece_at(&source) {
+            if friend == piece.0.phase(speed_of_light) {
+                Area::piece_of(
+                    piece.0.r#type(speed_of_light),
+                    friend,
+                    &source,
+                    callback_next,
+                );
+            }
         }
     }
 
