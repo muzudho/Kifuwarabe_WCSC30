@@ -15,7 +15,7 @@ pub const REPITITION_VALUE: i16 = -300;
 pub struct Evaluation {}
 impl Evaluation {
     /// 玉のリスク計算だぜ☆（＾～＾）
-    pub fn risk_king(game: &mut Game, occupy_control_sign: i16) -> f64 {
+    pub fn risk_king(game: &mut Game, control_sign: i16) -> f64 {
         let mut risk_value = 0.0f64;
         let friend_index = game.history.get_phase(Person::Friend) as usize;
         let king_adr = game.board.king_pos[friend_index];
@@ -41,7 +41,7 @@ impl Evaluation {
                 }
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         // 北西
         // x....
         // xx...
@@ -56,13 +56,13 @@ impl Evaluation {
             cur.offset(rel.set(1, 0));
             if cur.legal() {
                 path.push(cur.clone());
+                cur.offset(rel.set(0, -1));
                 if cur.legal() {
-                    cur.offset(rel.set(0, -1));
                     path.push(cur.clone());
                 }
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         // 西
         // .....
         // .....
@@ -87,7 +87,7 @@ impl Evaluation {
                 }
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         // 南西
         // .....
         // .....
@@ -104,7 +104,7 @@ impl Evaluation {
                 path.push(cur.clone());
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         // 南
         // .....
         // .....
@@ -129,7 +129,7 @@ impl Evaluation {
                 }
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         // 南東
         // .....
         // .....
@@ -146,7 +146,7 @@ impl Evaluation {
                 path.push(cur.clone());
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         // 東
         // ....x
         // ....x
@@ -171,7 +171,7 @@ impl Evaluation {
                 }
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         // 北東
         // ...x.
         // ...x.
@@ -188,7 +188,7 @@ impl Evaluation {
                 path.push(cur.clone());
             }
         }
-        risk_value += Evaluation::risk(occupy_control_sign, path.to_vec(), &king_adr);
+        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr);
         risk_value
     }
 

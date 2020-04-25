@@ -148,14 +148,14 @@ impl Tree {
             return ts;
         }
 
-        let occupy_control_sign: i16 = if self.pv.len() % 2 == 0 {
+        let control_sign: i16 = if self.pv.len() % 2 == 0 {
             // 先手が指すところだぜ☆（＾～＾）
             1
         } else {
             // 後手が指すところだぜ☆（＾～＾）
             -1
         };
-        self.add_control(occupy_control_sign, game, &movement_set);
+        self.add_control(control_sign, game, &movement_set);
         for movement_hash in movement_set.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
@@ -212,10 +212,10 @@ impl Tree {
                 // 葉で評価しようぜ☆（＾～＾）
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
-                let occupy_control_value: i16 = game.board.occupy_control_value();
+                let control_value: i16 = game.board.control_value();
 
                 // 玉の周囲２４近傍の利きを、重みを付けて集計するぜ☆（＾～＾）
-                let risk_king = Evaluation::risk_king(game, occupy_control_sign);
+                let risk_king = Evaluation::risk_king(game, control_sign);
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
@@ -227,12 +227,12 @@ impl Tree {
                         None,
                         None,
                         Some(PvString::String(format!(
-                            "occupy-control-value={} | risk={} | {} {} {}",
-                            occupy_control_sign * occupy_control_value,
+                            "board-control={} | risk={} | {} {} {}",
+                            control_sign * control_value,
                             risk_king,
-                            game.board.occupy_control[68],
-                            game.board.occupy_control[58],
-                            game.board.occupy_control[48],
+                            game.board.control[68],
+                            game.board.control[58],
+                            game.board.control[48],
                         ))),
                     );
                     game.info.print(
@@ -248,7 +248,7 @@ impl Tree {
                     &Value::CentiPawn(
                         captured_piece_centi_pawn
                             + promoted_bonus
-                            + (occupy_control_sign * occupy_control_value)
+                            + (control_sign * control_value)
                             + risk_king as i16,
                     ),
                     *movement_hash,
@@ -280,7 +280,7 @@ impl Tree {
             Commands::pos(&game);
             */
         }
-        self.add_control(-1 * occupy_control_sign, game, &movement_set);
+        self.add_control(-1 * control_sign, game, &movement_set);
 
         if ts.get_movement_hash() == 0 && ts.repetition_movement_hash != 0 {
             // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
@@ -297,7 +297,7 @@ impl Tree {
     pub fn add_control(&mut self, sign: i16, game: &mut Game, movement_set: &HashSet<u64>) {
         for movement_hash in movement_set.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.occupy_control
+            game.board.control
                 [Movement::from_hash(*movement_hash).destination.address() as usize] += sign;
         }
     }
