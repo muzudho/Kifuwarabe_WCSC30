@@ -419,7 +419,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
     }
 
     // 初期局面を、現局面にコピーします
-    game.copy_starting_position_to_current_position();
+    game.board.copy_from(&game.starting_board);
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
     while read_sasite(line, &mut starts, len, game) {

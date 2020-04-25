@@ -1,9 +1,7 @@
 use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
 use crate::cosmic::smart::features::HAND_PIECE_LN;
 use crate::cosmic::smart::features::{PieceMeaning, HAND_MAX, PIECE_LN};
-use crate::cosmic::smart::square::{
-    Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_NONE,
-};
+use crate::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
 use crate::cosmic::toy_box::Board;
 use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
@@ -129,35 +127,6 @@ impl Game {
         self.starting_board.clear();
         self.board.clear();
         self.history.ply = 0;
-    }
-
-    /// 開始盤面を、現盤面にコピーします
-    pub fn copy_starting_position_to_current_position(&mut self) {
-        // 盤上の駒。
-        for rank in RANK_0..RANK_11 {
-            for file in (FILE_0..FILE_11).rev() {
-                let abs_adr = Address::new(file, rank).abs();
-                // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-                self.board
-                    .set_piece_at(&abs_adr, self.starting_board.piece_at(&abs_adr));
-            }
-        }
-
-        // 持ち駒
-        self.board.hand_rook1 = self.starting_board.hand_rook1.clone();
-        self.board.hand_bishop1 = self.starting_board.hand_bishop1.clone();
-        self.board.hand_gold1 = self.starting_board.hand_gold1.clone();
-        self.board.hand_silver1 = self.starting_board.hand_silver1.clone();
-        self.board.hand_knight1 = self.starting_board.hand_knight1.clone();
-        self.board.hand_lance1 = self.starting_board.hand_lance1.clone();
-        self.board.hand_pawn1 = self.starting_board.hand_pawn1.clone();
-        self.board.hand_rook2 = self.starting_board.hand_rook2.clone();
-        self.board.hand_bishop2 = self.starting_board.hand_bishop2.clone();
-        self.board.hand_gold2 = self.starting_board.hand_gold2.clone();
-        self.board.hand_silver2 = self.starting_board.hand_silver2.clone();
-        self.board.hand_knight2 = self.starting_board.hand_knight2.clone();
-        self.board.hand_lance2 = self.starting_board.hand_lance2.clone();
-        self.board.hand_pawn2 = self.starting_board.hand_pawn2.clone();
     }
 
     /// テスト用に局面ハッシュ☆（＾～＾）
