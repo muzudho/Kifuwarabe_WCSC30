@@ -297,7 +297,8 @@ impl Game {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
-                        if let Some(source_piece) = self.board.piece_at(&movement.destination) {
+                        if let Some(source_piece) = self.board.pop_from_board(&movement.destination)
+                        {
                             Some((source_piece.0.demoted(speed_of_light), source_piece.1))
                         } else {
                             panic!(Beam::trouble(
@@ -305,17 +306,16 @@ impl Game {
                             ))
                         }
                     } else {
-                        self.board.piece_at(&movement.destination).clone()
+                        self.board.pop_from_board(&movement.destination).clone()
                     }
                 };
 
-                // 移動先の駒を、取った駒（あるいは空）に戻す
-                self.board.push_to_board(&movement.destination, captured);
-
                 if let Some(captured_piece_val) = captured {
-                    let captured = captured_piece_val.0.captured(speed_of_light);
                     // 自分の持ち駒を減らす
-                    self.board.pop_hand(captured);
+                    self.board
+                        .pop_hand(captured_piece_val.0.captured(speed_of_light));
+                    // 移動先の駒を、取った駒（あるいは空）に戻す
+                    self.board.push_to_board(&movement.destination, captured);
                 }
                 // 移動元升に、動かした駒を置く
                 self.board.push_to_board(&movement.source, moveing_piece);
