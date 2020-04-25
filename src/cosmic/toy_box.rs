@@ -10,6 +10,90 @@ use crate::cosmic::smart::square::{
 };
 use crate::law::speed_of_light::SpeedOfLight;
 
+/// 駒に背番号を付けたものだぜ☆（＾～＾）
+pub enum PieceNum {
+    // 1 玉
+    King1,
+    // 2 玉
+    King2,
+    // 3 金
+    Gold3,
+    // 4 金
+    Gold4,
+    // 5 金
+    Gold5,
+    // 6 金
+    Gold6,
+    // 7 銀
+    Silver7,
+    // 8 銀
+    Silver8,
+    // 9 銀
+    Silver9,
+    // 10 銀
+    Silver10,
+    // 11 桂
+    Knight11,
+    // 12 桂
+    Knight12,
+    // 13 桂
+    Knight13,
+    // 14 桂
+    Knight14,
+    // 15 香
+    Lance15,
+    // 16 香
+    Lance16,
+    // 17 香
+    Lance17,
+    // 18 香
+    Lance18,
+    // 19 角
+    Bishop19,
+    // 20 角
+    Bishop20,
+    // 21 飛
+    Rook21,
+    // 22 飛
+    Rook22,
+    // 23 歩
+    Pawn23,
+    // 24 歩
+    Pawn24,
+    // 25 歩
+    Pawn25,
+    // 26 歩
+    Pawn26,
+    // 27 歩
+    Pawn27,
+    // 28 歩
+    Pawn28,
+    // 29 歩
+    Pawn29,
+    // 30 歩
+    Pawn30,
+    // 31 歩
+    Pawn31,
+    // 32 歩
+    Pawn32,
+    // 33 歩
+    Pawn33,
+    // 34 歩
+    Pawn34,
+    // 35 歩
+    Pawn35,
+    // 36 歩
+    Pawn36,
+    // 37 歩
+    Pawn37,
+    // 38 歩
+    Pawn38,
+    // 39 歩
+    Pawn39,
+    // 40 歩
+    Pawn40,
+}
+
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
 pub struct Board {
