@@ -276,10 +276,13 @@ impl Board {
             self.pieces[adr.address() as usize] = None;
         }
     }
-    /// 盤から駒を取り上げるぜ☆（＾～＾）
+    /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
     pub fn pop_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
         let piece = self.pieces[adr.address() as usize];
-        self.pieces[adr.address() as usize] = None;
+        if let Some(piece_val) = piece {
+            self.pieces[adr.address() as usize] = None;
+            self.piece_num_adr[piece_val.1 as usize].clear();
+        }
         piece
     }
     /// 盤に駒を置いていきます。
