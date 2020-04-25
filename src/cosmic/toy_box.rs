@@ -603,7 +603,7 @@ impl Board {
         }
     }
     pub fn pop_hand(&mut self, hand: PieceMeaning) -> Option<(PieceMeaning, PieceNum)> {
-        match hand {
+        let piece = match hand {
             PieceMeaning::King1 => self.hand_king1.pop(),
             PieceMeaning::King2 => self.hand_king2.pop(),
             PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.pop(),
@@ -620,7 +620,9 @@ impl Board {
             PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => self.hand_lance2.pop(),
             PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => self.hand_pawn1.pop(),
             PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.pop(),
-        }
+        };
+        self.location[piece.unwrap().1 as usize] = Location::Busy;
+        piece
     }
     pub fn count_hand(&self, hand: PieceMeaning) -> usize {
         match hand {
