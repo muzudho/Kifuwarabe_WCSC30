@@ -122,6 +122,14 @@ impl Game {
         &mut self.starting_board
     }
 
+    /// 初期局面、現局面ともにクリアーします。
+    /// 手目も 0 に戻します。
+    pub fn clear(&mut self) {
+        self.starting_board.clear();
+        self.board.clear();
+        self.history.ply = 0;
+    }
+
     /// テスト用に局面ハッシュ☆（＾～＾）
     pub fn get_positions_hash_text(&self) -> String {
         let mut s = String::new();

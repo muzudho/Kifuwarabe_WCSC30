@@ -148,6 +148,8 @@ impl Tree {
             },
         );
 
+        // Commands::genmove(&speed_of_light, &game);
+
         // 指せる手が無ければ投了☆（＾～＾）
         if movement_set.is_empty() {
             return ts;

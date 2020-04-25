@@ -42,14 +42,34 @@ impl PseudoLegalMoves {
     ) where
         F1: FnMut(u64),
     {
-        // 盤上の駒☆（＾～＾）
-        // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
-        board.for_some_pieces_on_list40(friend, speed_of_light, &mut |piece| {
-            PseudoLegalMoves::a_piece_on_board(friend, &piece, board, speed_of_light, callback)
-        });
-
+        // 盤上の駒の移動。
+        PseudoLegalMoves::all_pieces_on_board(friend, board, speed_of_light, callback);
         // 持ち駒の打。
         PseudoLegalMoves::all_pieces_on_hand(friend, board, speed_of_light, callback);
+    }
+
+    /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
+    ///
+    /// Arguments
+    /// ---------
+    ///
+    /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
+    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
+    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    fn all_pieces_on_board<F1>(
+        friend: Phase,
+        board: &Board,
+        speed_of_light: &SpeedOfLight,
+        callback: &mut F1,
+    ) where
+        F1: FnMut(u64),
+    {
+        // 盤上の駒☆（＾～＾）
+        // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
+        board.for_some_pieces_on_board(friend, speed_of_light, &mut |piece| {
+            PseudoLegalMoves::a_piece_on_board(friend, &piece, board, speed_of_light, callback)
+        });
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
