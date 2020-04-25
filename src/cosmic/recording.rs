@@ -8,6 +8,7 @@ use crate::cosmic::smart::features::{
     pop_piece_type_from_hash, push_piece_type_to_hash, PieceMeaning, PieceType,
 };
 use crate::cosmic::smart::square::{AbsoluteAddress, Address};
+use crate::cosmic::toy_box::PieceNum;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
@@ -31,7 +32,7 @@ pub struct History {
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hashs: [u64; PLY_LN],
     /// 取った駒
-    pub captured_pieces: [Option<PieceMeaning>; PLY_LN],
+    pub captured_pieces: [Option<(PieceMeaning, PieceNum)>; PLY_LN],
 }
 impl Default for History {
     fn default() -> History {

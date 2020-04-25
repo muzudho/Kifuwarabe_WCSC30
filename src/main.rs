@@ -9,6 +9,8 @@ extern crate rand;
 #[macro_use]
 extern crate lazy_static;
 extern crate atoi;
+extern crate num_derive;
+extern crate num_traits;
 
 // Rust言語の mod や ソース置き場の説明
 //     「Rust のモジュールシステム」

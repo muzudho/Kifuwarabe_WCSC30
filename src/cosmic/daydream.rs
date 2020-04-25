@@ -5,7 +5,9 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
+use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::PieceType::King;
+use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::SpeedOfLight;
@@ -49,9 +51,6 @@ impl Tree {
         self.think_sec = rand::thread_rng()
             .gen_range(universe.option_min_think_sec, universe.option_max_think_sec);
         self.king_risk_weight = universe.option_king_risk_weight;
-
-        // 盤面の駒に背番号を振っていくぜ☆（＾～＾）
-        universe.game.board.init_piece_pos();
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
@@ -178,14 +177,15 @@ impl Tree {
             ts.add_state(1);
             let movement = Movement::from_hash(*movement_hash);
             let source_piece = game.board.piece_at(&movement.source);
-            let captured_piece = game.do_move(&movement, speed_of_light);
+            let captured_piece: Option<(PieceMeaning, PieceNum)> =
+                game.do_move(&movement, speed_of_light);
             self.pv.push(&movement);
 
             // pvリストに１手入れてから評価しろだぜ☆（＾～＾）0除算エラーを防げるぜ☆（＾～＾）
             let promoted_bonus = if let Some(source_piece_val) = source_piece {
                 Evaluation::from_promotion(
                     self.pv.len(),
-                    source_piece_val.r#type(&speed_of_light),
+                    source_piece_val.0.r#type(&speed_of_light),
                     &movement,
                 )
             } else {
@@ -201,7 +201,7 @@ impl Tree {
             */
 
             if let Some(captured_piece_val) = captured_piece {
-                if captured_piece_val.r#type(speed_of_light) == King {
+                if captured_piece_val.0.r#type(speed_of_light) == King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！
                     ts.bestmove.catch_king(*movement_hash);
 

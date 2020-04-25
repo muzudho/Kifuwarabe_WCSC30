@@ -1,9 +1,10 @@
 use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
-use crate::cosmic::smart::features::{PieceMeaning, MG_MAX, PIECE_LN};
+use crate::cosmic::smart::features::{PieceMeaning, HAND_MAX, PIECE_LN};
 use crate::cosmic::smart::square::{
     Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_NONE,
 };
 use crate::cosmic::toy_box::Board;
+use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::{Beam, DestinationDisplay};
 use rand::Rng;
@@ -22,7 +23,7 @@ pub struct GameHashSeed {
     // 盤上の駒
     pub piece: [[u64; PIECE_LN]; BOARD_MEMORY_AREA as usize],
     // 持ち駒
-    pub hand: [[u64; MG_MAX]; PIECE_LN],
+    pub hand: [[u64; HAND_MAX]; PIECE_LN],
     // 先後
     pub phase: [u64; PHASE_LN],
 }
@@ -51,7 +52,7 @@ impl Default for Game {
                 // 盤上の駒
                 piece: [[0; PIECE_LN]; BOARD_MEMORY_AREA as usize],
                 // 持ち駒
-                hand: [[0; MG_MAX]; PIECE_LN],
+                hand: [[0; HAND_MAX]; PIECE_LN],
                 // 先後
                 phase: [0; PHASE_LN],
             },
@@ -75,7 +76,7 @@ impl Game {
         }
         // 持ち駒
         for i_km in 0..PIECE_LN {
-            for i_mg in 0..MG_MAX {
+            for i_mg in 0..HAND_MAX {
                 self.hash_seed.hand[i_km][i_mg] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
@@ -107,7 +108,7 @@ impl Game {
     pub fn set_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    pub fn set_captured(&mut self, ply1: usize, pc: Option<PieceMeaning>) {
+    pub fn set_captured(&mut self, ply1: usize, pc: Option<(PieceMeaning, PieceNum)>) {
         self.history.captured_pieces[ply1] = pc
     }
 
@@ -142,7 +143,20 @@ impl Game {
         }
 
         // 持ち駒
-        self.board.hand[..PIECE_LN].clone_from_slice(&self.starting_board.hand[..PIECE_LN]);
+        self.board.hand_rook1 = self.starting_board.hand_rook1.clone();
+        self.board.hand_bishop1 = self.starting_board.hand_bishop1.clone();
+        self.board.hand_gold1 = self.starting_board.hand_gold1.clone();
+        self.board.hand_silver1 = self.starting_board.hand_silver1.clone();
+        self.board.hand_knight1 = self.starting_board.hand_knight1.clone();
+        self.board.hand_lance1 = self.starting_board.hand_lance1.clone();
+        self.board.hand_pawn1 = self.starting_board.hand_pawn1.clone();
+        self.board.hand_rook2 = self.starting_board.hand_rook2.clone();
+        self.board.hand_bishop2 = self.starting_board.hand_bishop2.clone();
+        self.board.hand_gold2 = self.starting_board.hand_gold2.clone();
+        self.board.hand_silver2 = self.starting_board.hand_silver2.clone();
+        self.board.hand_knight2 = self.starting_board.hand_knight2.clone();
+        self.board.hand_lance2 = self.starting_board.hand_lance2.clone();
+        self.board.hand_pawn2 = self.starting_board.hand_pawn2.clone();
     }
 
     /// テスト用に局面ハッシュ☆（＾～＾）
@@ -221,22 +235,21 @@ impl Game {
         &mut self,
         movement: &Movement,
         speed_of_light: &SpeedOfLight,
-    ) -> Option<PieceMeaning> {
+    ) -> Option<(PieceMeaning, PieceNum)> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(movement);
         let friend = self.history.get_phase(Person::Friend);
 
         // 取った駒
-        let cap: Option<PieceMeaning>;
+        let cap: Option<(PieceMeaning, PieceNum)>;
         {
             // 動かす駒
-            let moveing_piece: Option<PieceMeaning> = if movement.source.is_drop() {
+            let moveing_piece: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop() {
                 // 打なら
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
-                    let piece734 = PieceMeaning::from_phase_and_piece_type(friend, drp);
-                    self.board.add_hand(&piece734, -1, speed_of_light);
-                    Some(piece734)
+                    let piece_meaning = PieceMeaning::from_phase_and_piece_type(friend, drp);
+                    self.board.pop_hand(piece_meaning)
                 } else {
                     panic!(Beam::trouble(
                         "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"
@@ -244,11 +257,11 @@ impl Game {
                 }
             } else {
                 // 打でなければ、元の升に駒はあるので、それを消す。
-                let piece152 = if movement.promote {
+                let piece152: Option<(PieceMeaning, PieceNum)> = if movement.promote {
                     // 成りなら
                     if let Some(piece) = self.board.piece_at(&movement.source) {
                         // 成り駒をクローン。
-                        Some(piece.promoted(speed_of_light))
+                        Some((piece.0.promoted(speed_of_light), piece.1))
                     } else {
                         panic!(Beam::trouble(
                             "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）"
@@ -271,8 +284,8 @@ impl Game {
                 let cap_o764 = { self.board.piece_at(&movement.destination) };
 
                 if let Some(captured_piece) = cap_o764 {
-                    let cap773 = captured_piece.captured(speed_of_light);
-                    self.board.add_hand(&cap773, 1, speed_of_light);
+                    let cap773 = (captured_piece.0.captured(speed_of_light), captured_piece.1);
+                    self.board.push_hand(&cap773);
                 };
                 cap_o764
             } else {
@@ -300,20 +313,20 @@ impl Game {
             self.history.ply -= 1;
             let movement = &self.get_move().clone();
             {
-                let phase = self.history.get_phase(Person::Friend);
+                // let phase = self.history.get_phase(Person::Friend);
                 // 取った駒が有ったか。
-                let cap_o: Option<PieceMeaning> =
+                let cap_o: Option<(PieceMeaning, PieceNum)> =
                     self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let old_source391_o: Option<PieceMeaning> = if movement.source.is_drop() {
+                let old_source391_o: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop()
+                {
                     // 打なら
-                    if let Some(drp) = movement.drop {
-                        let drop394 = PieceMeaning::from_phase_and_piece_type(phase, drp);
-                        // 自分の持ち駒を増やす
-                        //let mg = km_to_mg(km);
-                        //self.add_hand(mg,1);
-                        self.board.add_hand(&drop394, 1, speed_of_light);
-                        Some(drop394)
+                    if let Some(_drp) = movement.drop {
+                        // 打った場所に駒があるはずだぜ☆（＾～＾）
+                        let piece = self.board.piece_at(&movement.destination).unwrap();
+                        // 自分の持ち駒を増やそうぜ☆（＾～＾）！
+                        self.board.push_hand(&piece);
+                        Some(piece)
                     } else {
                         panic!(Beam::trouble(
                             "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！"
@@ -324,7 +337,7 @@ impl Game {
                     if movement.promote {
                         // 成ったなら、成る前へ
                         if let Some(source_piece) = self.board.piece_at(&movement.destination) {
-                            Some(source_piece.demoted(speed_of_light))
+                            Some((source_piece.0.demoted(speed_of_light), source_piece.1))
                         } else {
                             panic!(Beam::trouble(
                                 "(Err.322) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
@@ -339,9 +352,9 @@ impl Game {
                 self.board.set_piece_at(&movement.destination, cap_o);
 
                 if let Some(captured_piece_val) = cap_o {
-                    let captured = captured_piece_val.captured(speed_of_light);
+                    let captured = captured_piece_val.0.captured(speed_of_light);
                     // 自分の持ち駒を減らす
-                    self.board.add_hand(&captured, -1, speed_of_light);
+                    self.board.pop_hand(captured);
                 }
                 // 移動元升に、動かした駒を置く
                 self.board.set_piece_at(&movement.source, old_source391_o);

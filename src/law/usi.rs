@@ -163,6 +163,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
 }
 
 /// position コマンド 盤上部分のみ 読取
+/// 初期化は既に終わらせてあります。
 pub fn read_board(
     line: &str,
     starts: &mut usize,
@@ -170,7 +171,7 @@ pub fn read_board(
     game: &mut Game,
     speed_of_light: &SpeedOfLight,
 ) {
-    // 盤部
+    // 初期盤面
     let board = game.mut_starting();
     let mut file = FILE_9; //９筋から右方向へ読取
     let mut rank = RANK_1;
@@ -245,13 +246,13 @@ pub fn read_board(
         match board_part {
             BoardPart::Alphabet(piece) => {
                 *starts += 1;
-                board.set_piece(file, rank, Some(piece));
+                board.push_piece_on_init(file, rank, Some(piece));
                 file -= 1;
             }
             BoardPart::Number(space_num) => {
                 *starts += 1;
                 for _ in 0..space_num {
-                    board.set_piece(file, rank, None);
+                    board.push_piece_on_init(file, rank, None);
                     file -= 1;
                 }
             }
@@ -396,7 +397,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                     };
                     starts += 1;
 
-                    game.mut_starting().set_hand(hand, hand_num);
+                    game.mut_starting().push_hand_on_init(hand, hand_num);
                 } //if
             } //loop
         } //else

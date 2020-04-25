@@ -164,8 +164,13 @@ impl PseudoLegalMoves {
             };
 
         if let Some(piece) = board.piece_at(&source) {
-            if friend == piece.phase(speed_of_light) {
-                Area::piece_of(piece.r#type(speed_of_light), friend, &source, callback_next);
+            if friend == piece.0.phase(speed_of_light) {
+                Area::piece_of(
+                    piece.0.r#type(speed_of_light),
+                    friend,
+                    &source,
+                    callback_next,
+                );
             }
         }
     }
@@ -216,7 +221,7 @@ impl PseudoLegalMoves {
                     );
                 }
             };
-            if 0 < board.get_hand(hand, speed_of_light) {
+            if 0 < board.count_hand(hand) {
                 // 駒を持っていれば
                 use crate::cosmic::smart::features::PieceType::*;
                 match hand.r#type(speed_of_light) {

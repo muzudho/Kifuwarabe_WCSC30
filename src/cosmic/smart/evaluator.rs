@@ -6,6 +6,7 @@ use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
 use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{AbsoluteAddress, RelativeAddress};
+use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
 
 /// 千日手の価値☆（＾～＾）
@@ -17,7 +18,7 @@ impl Evaluation {
     pub fn risk_king(game: &mut Game, control_sign: i16) -> f64 {
         let mut risk_value = 0.0f64;
         let friend_index = game.history.get_phase(Person::Friend) as usize;
-        let king_adr = game.board.piece_pos[friend_index];
+        let king_adr = game.board.num_piece[friend_index];
         // 北
         // .xx..
         // ..x..
@@ -243,11 +244,11 @@ impl Evaluation {
     /// Centi pawn.
     pub fn from_caputured_piece(
         cur_depth: usize,
-        captured_piece: Option<PieceMeaning>,
+        captured_piece: Option<(PieceMeaning, PieceNum)>,
         speed_of_light: &SpeedOfLight,
     ) -> i16 {
         if let Some(captured_piece_val) = captured_piece {
-            (match captured_piece_val.r#type(speed_of_light) {
+            (match captured_piece_val.0.r#type(speed_of_light) {
                 // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
                 PieceType::King => 0,
                 PieceType::Rook => 1000,

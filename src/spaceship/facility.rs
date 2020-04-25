@@ -3,6 +3,7 @@ use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
 use crate::cosmic::smart::features::{PieceMeaning, PIECE_WHITE_SPACE};
 use crate::cosmic::smart::square::*;
+use crate::cosmic::toy_box::PieceNum;
 use crate::spaceship::equipment::Beam;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -49,9 +50,9 @@ impl CommandRoom {
 /// ゲームルームはこちらだぜ☆（＾～＾）！
 pub struct GameRoom {}
 impl GameRoom {
-    fn to_string2(piece_o: Option<PieceMeaning>) -> String {
-        if let Some(piece) = piece_o {
-            format!("{}", piece)
+    fn to_string2(piece: Option<(PieceMeaning, PieceNum)>) -> String {
+        if let Some(piece_val) = piece {
+            format!("{}", piece_val.0)
         } else {
             PIECE_WHITE_SPACE.to_string()
         }
@@ -171,21 +172,21 @@ P x{87:2}   |{63}|{64}|{65}|{66}|{67}|{68}|{69}|{70}|{71}| h8   p x{94:2}
             GameRoom::to_string2(board.piece_at(&Address::new(2, 9).abs())),
             GameRoom::to_string2(board.piece_at(&Address::new(1, 9).abs())),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            board.hand[PieceMeaning::Rook1 as usize],
-            board.hand[PieceMeaning::Bishop1 as usize],
-            board.hand[PieceMeaning::Gold1 as usize],
-            board.hand[PieceMeaning::Silver1 as usize],
-            board.hand[PieceMeaning::Knight1 as usize],
-            board.hand[PieceMeaning::Lance1 as usize],
-            board.hand[PieceMeaning::Pawn1 as usize],
+            board.count_hand(PieceMeaning::Rook1),
+            board.count_hand(PieceMeaning::Bishop1),
+            board.count_hand(PieceMeaning::Gold1),
+            board.count_hand(PieceMeaning::Silver1),
+            board.count_hand(PieceMeaning::Knight1),
+            board.count_hand(PieceMeaning::Lance1),
+            board.count_hand(PieceMeaning::Pawn1),
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            board.hand[PieceMeaning::Rook2 as usize],
-            board.hand[PieceMeaning::Bishop2 as usize],
-            board.hand[PieceMeaning::Gold2 as usize],
-            board.hand[PieceMeaning::Silver2 as usize],
-            board.hand[PieceMeaning::Knight2 as usize],
-            board.hand[PieceMeaning::Lance2 as usize],
-            board.hand[PieceMeaning::Pawn2 as usize],
+            board.count_hand(PieceMeaning::Rook2),
+            board.count_hand(PieceMeaning::Bishop2),
+            board.count_hand(PieceMeaning::Gold2),
+            board.count_hand(PieceMeaning::Silver2),
+            board.count_hand(PieceMeaning::Knight2),
+            board.count_hand(PieceMeaning::Lance2),
+            board.count_hand(PieceMeaning::Pawn2),
             ply,
             phase,
             same_pos_count
