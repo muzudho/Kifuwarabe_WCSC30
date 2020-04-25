@@ -17,7 +17,7 @@ impl Evaluation {
     pub fn risk_king(game: &mut Game, control_sign: i16) -> f64 {
         let mut risk_value = 0.0f64;
         let friend_index = game.history.get_phase(Person::Friend) as usize;
-        let king_adr = game.board.king_pos[friend_index];
+        let king_adr = game.board.piece_pos[friend_index];
         // 北
         // .xx..
         // ..x..
@@ -47,7 +47,7 @@ impl Evaluation {
         // .....
         // .....
         // .....
-        cur.set(&game.board.king_pos[friend_index]);
+        cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(1, -1));
         if cur.legal_next() {
@@ -68,7 +68,7 @@ impl Evaluation {
         // xx...
         // x....
         // x....
-        cur.set(&game.board.king_pos[friend_index]);
+        cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(1, 0));
         if cur.legal_next() {
@@ -93,7 +93,7 @@ impl Evaluation {
         // .....
         // .x...
         // .x...
-        cur.set(&game.board.king_pos[friend_index]);
+        cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(1, 1));
         if cur.legal_next() {
@@ -110,7 +110,7 @@ impl Evaluation {
         // .....
         // ..x..
         // ..xxx
-        cur.set(&game.board.king_pos[friend_index]);
+        cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(0, 1));
         if cur.legal_next() {
@@ -135,7 +135,7 @@ impl Evaluation {
         // .....
         // ...xx
         // .....
-        cur.set(&game.board.king_pos[friend_index]);
+        cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(-1, 1));
         if cur.legal_next() {
@@ -152,7 +152,7 @@ impl Evaluation {
         // ...xx
         // .....
         // .....
-        cur.set(&game.board.king_pos[friend_index]);
+        cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(-1, 0));
         if cur.legal_next() {
@@ -177,7 +177,7 @@ impl Evaluation {
         // .....
         // .....
         // .....
-        cur.set(&game.board.king_pos[friend_index]);
+        cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(-1, -1));
         if cur.legal_next() {

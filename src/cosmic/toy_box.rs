@@ -10,11 +10,14 @@ use crate::cosmic::smart::square::{
 };
 use crate::law::speed_of_light::SpeedOfLight;
 
+/// 背番号付きの駒の数。
+pub const PIECE_NUM_LEN: usize = 40;
+
 /// 駒に背番号を付けたものだぜ☆（＾～＾）
 pub enum PieceNum {
-    // 1 玉
+    // 1 先手玉
     King1,
-    // 2 玉
+    // 2 後手玉
     King2,
     // 3 金
     Gold3,
@@ -105,8 +108,8 @@ pub struct Board {
     pub hand: [i8; PIECE_LN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
     pub control: [i16; BOARD_MEMORY_AREA as usize],
-    /// 玉の座標☆（＾～＾）
-    pub king_pos: [AbsoluteAddress; 2],
+    /// 駒の絶対番地☆（＾～＾）
+    pub piece_pos: [AbsoluteAddress; PIECE_NUM_LEN],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -131,7 +134,7 @@ impl Default for Board {
                 0, 0,
             ],
             control: [0; BOARD_MEMORY_AREA as usize],
-            king_pos: [AbsoluteAddress::default(); 2],
+            piece_pos: [AbsoluteAddress::default(); PIECE_NUM_LEN],
         }
     }
 }

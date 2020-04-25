@@ -218,7 +218,7 @@ impl Tree {
                 // 玉のリスクを高くし過ぎると、盤コントロールが無茶苦茶になってしまう☆（＾～＾）
                 // かといって 玉のリスクは 歩１枚の価値より重いだろ☆（＾～＾）係数が難しいぜ☆（＾～＾）
                 let risk_king =
-                    (90.0 * Evaluation::risk_king(game, control_sign)) / self.pv.len() as f64;
+                    (105.0 * Evaluation::risk_king(game, control_sign)) / self.pv.len() as f64;
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
