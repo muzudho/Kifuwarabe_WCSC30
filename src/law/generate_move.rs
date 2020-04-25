@@ -12,7 +12,6 @@ use crate::cosmic::smart::square::{
 use crate::cosmic::toy_box::Board;
 use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
-use crate::spaceship::equipment::Beam;
 use std::fmt;
 
 /// Pseudo legal move(疑似合法手)☆（＾～＾）
@@ -648,22 +647,16 @@ impl Area {
     {
         match agility {
             Agility::Sliding => {
-                let mut cur = start.clone();
-
-                if !cur.legal_next() {
-                    panic!(Beam::trouble(
-                        "(Err.654) スライディング・ピースを動かす前から盤外だぜ☆（＾～＾）！"
-                    ));
-                }
-
+                let mut next = start.clone();
                 let rel = Address::new(1, 0).rel().rotate(angle);
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    cur.offset(&rel);
-                    if !cur.legal_next() {
+                    next.offset(&rel);
+                    if !next.legal_next() {
                         break;
                     }
-                    if callback(cur) {
+
+                    if callback(next) {
                         break;
                     }
                 }
