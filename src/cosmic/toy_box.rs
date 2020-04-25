@@ -134,7 +134,7 @@ pub enum Location {
 pub struct Board {
     pieces: [Option<(PieceMeaning, PieceNum)>; BOARD_MEMORY_AREA as usize],
     /// 駒の居場所☆（＾～＾）
-    pub location: [Location; PIECE_NUM_LEN],
+    location: [Location; PIECE_NUM_LEN],
     rook_index: usize,
     bishop_index: usize,
     gold_index: usize,
@@ -297,6 +297,35 @@ impl Board {
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
         self.pieces[adr.address() as usize]
     }
+    /// 升で指定して駒を置く
+    pub fn push_piece(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
+        if let Some(piece_val) = piece {
+            self.pieces[adr.address() as usize] = piece;
+            self.location[piece_val.1 as usize] = Location::Board(*adr);
+        } else {
+            self.pieces[adr.address() as usize] = None;
+        }
+    }
+    /*
+    /// TODO push_piece 升で指定して駒を置く
+    pub fn set_piece_at(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
+        if let Some(_x) = piece {
+            self.pieces[adr.address() as usize] = piece;
+        } else {
+            self.pieces[adr.address() as usize] = None;
+        }
+    }
+    */
+    /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
+    pub fn pop_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
+        // 取り出すピースは複製するぜ☆（＾～＾）
+        let piece = self.pieces[adr.address() as usize].clone();
+        if let Some(piece_val) = piece {
+            self.pieces[adr.address() as usize] = None;
+            self.location[piece_val.1 as usize] = Location::Busy;
+        }
+        piece
+    }
     /// 盤に駒を置いていきます。
     pub fn push_piece_on_init(&mut self, file: i8, rank: i8, piece: Option<PieceMeaning>) {
         if let Some(piece_meaning) = piece {
@@ -371,18 +400,10 @@ impl Board {
                     pn
                 }
             };
-            self.set_piece_at(
+            self.push_piece(
                 &Address::new(file, rank).abs(),
                 Some((piece_meaning, piece_num)),
             );
-        }
-    }
-    /// 升で指定して駒を置く
-    pub fn set_piece_at(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
-        if let Some(_x) = piece {
-            self.pieces[adr.address() as usize] = piece;
-        } else {
-            self.pieces[adr.address() as usize] = None;
         }
     }
     /// 駒台に置く
@@ -518,7 +539,7 @@ impl Board {
             PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.push(*hand),
             PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.push(*hand),
             PieceMeaning::Gold1 => self.hand_gold1.push(*hand),
-            PieceMeaning::Gold2 => self.hand_gold1.push(*hand),
+            PieceMeaning::Gold2 => self.hand_gold2.push(*hand),
             PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.push(*hand),
             PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.push(*hand),
             PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.push(*hand),
@@ -538,7 +559,7 @@ impl Board {
             PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.pop(),
             PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.pop(),
             PieceMeaning::Gold1 => self.hand_gold1.pop(),
-            PieceMeaning::Gold2 => self.hand_gold1.pop(),
+            PieceMeaning::Gold2 => self.hand_gold2.pop(),
             PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.pop(),
             PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.pop(),
             PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.pop(),
@@ -558,7 +579,7 @@ impl Board {
             PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.len(),
             PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.len(),
             PieceMeaning::Gold1 => self.hand_gold1.len(),
-            PieceMeaning::Gold2 => self.hand_gold1.len(),
+            PieceMeaning::Gold2 => self.hand_gold2.len(),
             PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.len(),
             PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.len(),
             PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.len(),
@@ -627,5 +648,59 @@ impl Board {
     /// 良ければ総量はプラスだぜ☆（＾～＾）
     pub fn control_value(&self) -> i16 {
         self.control.iter().sum()
+    }
+
+    /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
+    pub fn for_all_pieces_on_board<F>(&self, piece_get: &mut F)
+    where
+        F: FnMut(usize, &AbsoluteAddress, Option<(PieceMeaning, PieceNum)>),
+    {
+        for (i, location) in self.location.iter().enumerate() {
+            match location {
+                Location::Board(adr) => {
+                    // 盤上の駒☆（＾～＾）
+                    let piece = self.piece_at(adr).unwrap();
+                    piece_get(i, adr, Some(piece));
+                }
+                Location::Hand(_adr) => {
+                    // TODO 持ち駒☆（＾～＾）
+                    piece_get(i, &AbsoluteAddress::default(), None);
+                }
+                Location::Busy => panic!(Beam::trouble(
+                    "(Err.624) なんで駒が作業中なんだぜ☆（＾～＾）！"
+                )),
+            }
+        }
+    }
+    /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
+    pub fn for_some_pieces_on_list40<F>(
+        &self,
+        friend: Phase,
+        speed_of_light: &SpeedOfLight,
+        piece_get: &mut F,
+    ) where
+        F: FnMut((PieceMeaning, PieceNum)),
+    {
+        for location in self.location.iter() {
+            match location {
+                Location::Board(adr) => {
+                    // 盤上の駒☆（＾～＾）
+                    let piece = self.piece_at(adr).unwrap();
+                    if piece.0.phase(speed_of_light) == friend {
+                        piece_get(piece);
+                    }
+                }
+                Location::Hand(_adr) => {
+                    // 持ち駒なので無視☆（＾～＾）
+                }
+                Location::Busy => panic!(Beam::trouble(
+                    "(Err.650) なんで駒が作業中なんだぜ☆（＾～＾）！"
+                )),
+            }
+        }
+    }
+
+    pub fn location_of(&self, piece_num: PieceNum) -> Location {
+        self.location[piece_num as usize]
     }
 }

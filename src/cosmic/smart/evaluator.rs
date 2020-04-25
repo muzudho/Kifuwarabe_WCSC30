@@ -21,11 +21,11 @@ impl Evaluation {
         let friend_index = game.history.get_phase(Person::Friend) as usize;
 
         // TODO 玉の位置、計算できてないぜ☆（＾～＾）
-        let king_location = game.board.location[if friend_index == 0 {
-            PieceNum::King1 as usize
+        let king_location = game.board.location_of(if friend_index == 0 {
+            PieceNum::King1
         } else {
-            PieceNum::King2 as usize
-        }];
+            PieceNum::King2
+        });
         let king_adr = match king_location {
             Location::Board(adr) => adr,
             Location::Hand(_adr) => panic!(Beam::trouble(
