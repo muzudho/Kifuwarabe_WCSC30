@@ -773,44 +773,35 @@ impl AbsoluteAddress {
         self.file % 10 == 0 || self.rank % 10 == 0
     }
 
-    fn add_mut_any(adr: &mut AbsoluteAddress, rel_adr: &RelativeAddress) {
+    pub fn offset(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
-        let sum = adr.address() + rel_adr.get_address();
+        // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
+        let sum = self.address() + rel_adr.get_address();
+
         // Initialize.
-        adr.rank = sum % 10;
-        adr.file = 0;
+        self.rank = sum % 10;
+        self.file = 0;
         // Carry.
-        if 9 < adr.rank {
-            adr.rank = adr.rank % 10;
-            adr.file += 1;
+        if 9 < self.rank {
+            self.rank = self.rank % 10;
+            self.file += 1;
         }
-        adr.file += sum / 10 % 10;
+        self.file += sum / 10 % 10;
         // Carry over flow.
-        if 9 < adr.file {
-            adr.file = adr.file % 10;
+        if 9 < self.file {
+            self.file = self.file % 10;
         }
 
         // 番兵込みの絶対番地に収めろだぜ☆（＾～＾）
+        debug_assert!(sum < 0, format!("negative address={}", sum));
         debug_assert!(
-            FILE_0 <= adr.file && adr.file < FILE_11,
-            format!("file={}", adr.file)
+            FILE_0 <= self.file && self.file < FILE_11,
+            format!("file={}", self.file)
         );
         debug_assert!(
-            RANK_0 <= adr.rank && adr.rank < RANK_11,
-            format!("rank={}", adr.rank)
+            RANK_0 <= self.rank && self.rank < RANK_11,
+            format!("rank={}", self.rank)
         );
-    }
-
-    /*
-    pub fn add(&self, rel_adr: &RelativeAddress) -> Self {
-        let mut adr = AbsoluteAddress::default();
-        AbsoluteAddress::add_mut_any(&mut adr, rel_adr);
-        adr
-    }
-    */
-
-    pub fn add_mut(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
-        AbsoluteAddress::add_mut_any(self, rel_adr);
         self
     }
 

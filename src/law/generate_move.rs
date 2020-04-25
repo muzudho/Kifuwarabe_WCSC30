@@ -645,9 +645,10 @@ impl Area {
         match agility {
             Agility::Sliding => {
                 let mut next = start.clone();
+                let rel = Address::new(1, 0).rel().rotate(angle);
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    next.add_mut(&Address::new(1, 0).rel().rotate(angle));
+                    next.offset(&rel);
                     if next.has_jumped_out_of_the_board() {
                         break;
                     }
@@ -661,7 +662,7 @@ impl Area {
             Agility::Knight => {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                next.add_mut(&Address::new(1, 0).rel().rotate(angle).double_rank());
+                next.offset(&Address::new(1, 0).rel().rotate(angle).double_rank());
                 if !next.has_jumped_out_of_the_board() {
                     callback(next);
                 }
@@ -669,7 +670,7 @@ impl Area {
             Agility::Hopping => {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                next.add_mut(&Address::new(1, 0).rel().rotate(angle));
+                next.offset(&Address::new(1, 0).rel().rotate(angle));
                 if !next.has_jumped_out_of_the_board() {
                     callback(next);
                 }

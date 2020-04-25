@@ -29,9 +29,9 @@ impl Evaluation {
         let cur = &mut AbsoluteAddress::default();
         cur.set(&king_adr);
         let rel = &mut RelativeAddress::new(0, -1);
-        next.push(cur.add_mut(rel).clone());
-        next.push(cur.add_mut(rel.set(0, -1)).clone());
-        next.push(cur.add_mut(rel.set(1, 0)).clone());
+        next.push(cur.offset(rel).clone());
+        next.push(cur.offset(rel.set(0, -1)).clone());
+        next.push(cur.offset(rel.set(1, 0)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         // 北西
         // x....
@@ -41,9 +41,9 @@ impl Evaluation {
         // .....
         cur.set(&game.board.king_pos[friend_index]);
         next.clear();
-        next.push(cur.add_mut(rel.set(1, -1)).clone());
-        next.push(cur.add_mut(rel.set(1, 0)).clone());
-        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        next.push(cur.offset(rel.set(1, -1)).clone());
+        next.push(cur.offset(rel.set(1, 0)).clone());
+        next.push(cur.offset(rel.set(0, -1)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         // 西
         // .....
@@ -53,10 +53,10 @@ impl Evaluation {
         // x....
         cur.set(&game.board.king_pos[friend_index]);
         next.clear();
-        next.push(cur.add_mut(rel.set(1, 0)).clone());
-        next.push(cur.add_mut(rel.set(1, 0)).clone());
-        next.push(cur.add_mut(rel.set(0, 1)).clone());
-        next.push(cur.add_mut(rel.set(0, 1)).clone());
+        next.push(cur.offset(rel.set(1, 0)).clone());
+        next.push(cur.offset(rel.set(1, 0)).clone());
+        next.push(cur.offset(rel.set(0, 1)).clone());
+        next.push(cur.offset(rel.set(0, 1)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         // 南西
         // .....
@@ -66,8 +66,8 @@ impl Evaluation {
         // .x...
         cur.set(&game.board.king_pos[friend_index]);
         next.clear();
-        next.push(cur.add_mut(rel.set(1, 1)).clone());
-        next.push(cur.add_mut(rel.set(0, 1)).clone());
+        next.push(cur.offset(rel.set(1, 1)).clone());
+        next.push(cur.offset(rel.set(0, 1)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         // 南
         // .....
@@ -77,10 +77,10 @@ impl Evaluation {
         // ..xxx
         cur.set(&game.board.king_pos[friend_index]);
         next.clear();
-        next.push(cur.add_mut(rel.set(0, 1)).clone());
-        next.push(cur.add_mut(rel.set(0, 1)).clone());
-        next.push(cur.add_mut(rel.set(-1, 0)).clone());
-        next.push(cur.add_mut(rel.set(-1, 0)).clone());
+        next.push(cur.offset(rel.set(0, 1)).clone());
+        next.push(cur.offset(rel.set(0, 1)).clone());
+        next.push(cur.offset(rel.set(-1, 0)).clone());
+        next.push(cur.offset(rel.set(-1, 0)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         // 南東
         // .....
@@ -90,8 +90,8 @@ impl Evaluation {
         // .....
         cur.set(&game.board.king_pos[friend_index]);
         next.clear();
-        next.push(cur.add_mut(rel.set(-1, 1)).clone());
-        next.push(cur.add_mut(rel.set(-1, 0)).clone());
+        next.push(cur.offset(rel.set(-1, 1)).clone());
+        next.push(cur.offset(rel.set(-1, 0)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         // 東
         // ....x
@@ -101,10 +101,10 @@ impl Evaluation {
         // .....
         cur.set(&game.board.king_pos[friend_index]);
         next.clear();
-        next.push(cur.add_mut(rel.set(-1, 0)).clone());
-        next.push(cur.add_mut(rel.set(-1, 0)).clone());
-        next.push(cur.add_mut(rel.set(0, -1)).clone());
-        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        next.push(cur.offset(rel.set(-1, 0)).clone());
+        next.push(cur.offset(rel.set(-1, 0)).clone());
+        next.push(cur.offset(rel.set(0, -1)).clone());
+        next.push(cur.offset(rel.set(0, -1)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         // 北東
         // ...x.
@@ -114,8 +114,8 @@ impl Evaluation {
         // .....
         cur.set(&game.board.king_pos[friend_index]);
         next.clear();
-        next.push(cur.add_mut(rel.set(-1, -1)).clone());
-        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        next.push(cur.offset(rel.set(-1, -1)).clone());
+        next.push(cur.offset(rel.set(0, -1)).clone());
         risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
         risk_value
     }
