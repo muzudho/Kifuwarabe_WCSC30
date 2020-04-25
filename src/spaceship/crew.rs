@@ -58,7 +58,7 @@ impl Kifuwarabe {
             Some(ts.bestmove.value),
             // ts.get_king_catch(),
             Some(ts.bestmove.to_movement()),
-            Some(PvString::String(ts.bestmove.reason.to_string())),
+            &Some(PvString::String(ts.bestmove.reason.to_string())),
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
@@ -97,6 +97,7 @@ impl Kifuwarabe {
         IO::writeln("option name LearningFile type filename default <empty>");
         */
         Beam::shoot("option name MaxDepth type spin default 1 min 1 max 10");
+        Beam::shoot("option name MaxThinkSec type spin default 1 min 1 max 600");
         Beam::shoot("usiok");
     }
     pub fn usinewgame(universe: &mut Universe) {

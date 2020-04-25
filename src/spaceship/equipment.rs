@@ -21,7 +21,8 @@ impl Telescope {
 
 /// PV表示、または 文字列表示だぜ☆（＾～＾）
 pub enum PvString {
-    PV(String),
+    /// 思考を開始してからのミリ秒と、読み筋。
+    PV(u128, String),
     String(String),
 }
 
@@ -62,11 +63,20 @@ impl DestinationDisplay {
         sum_nodes: Option<u64>,
         value: Option<Value>,
         movement: Option<Movement>,
-        pv_string: Option<PvString>,
+        pv_string: &Option<PvString>,
     ) {
         // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
         Beam::shoot(&format!(
-            "info{}{}{} currmove {}{}",
+            "info{}{}{}{} currmove {}{}",
+            // 思考を開始してからのミリ秒☆（＾～＾）
+            if let Some(pv_string_val) = pv_string {
+                match pv_string_val {
+                    PvString::PV(msec, _pv) => format!(" time {}", msec),
+                    PvString::String(_x) => "".to_string(),
+                }
+            } else {
+                "".to_string()
+            },
             if let Some(num) = cur_depth {
                 // 単に読み筋の長さ☆（＾～＾）
                 format!(" depth {}", num)
@@ -101,7 +111,7 @@ impl DestinationDisplay {
             },
             if let Some(pv_string_val) = pv_string {
                 match pv_string_val {
-                    PvString::PV(x) => format!(" pv {}", x),
+                    PvString::PV(_sec, pv) => format!(" pv {}", pv),
                     PvString::String(x) => format!(" string {}", x),
                 }
             } else {

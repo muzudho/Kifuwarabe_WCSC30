@@ -27,9 +27,8 @@ pub struct Tree {
 }
 impl Default for Tree {
     fn default() -> Self {
-        let stopwatch1 = Instant::now();
         Tree {
-            stopwatch: stopwatch1,
+            stopwatch: Instant::now(),
             pv: PrincipalVariation::default(),
             think_sec: 0,
         }
@@ -58,7 +57,7 @@ impl Tree {
                 Some(best_ts.get_sum_state()),
                 Some(best_ts.bestmove.value),
                 Some(movement),
-                Some(PvString::PV(format!("{}", movement,))), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
+                &Some(PvString::PV(self.msec(), format!("{}", movement,))), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
             );
 
             if movement.resign() {
@@ -72,7 +71,7 @@ impl Tree {
                 None,
                 None,
                 None,
-                Some(PvString::String(format!(
+                &Some(PvString::String(format!(
                     "----------Iteration deeping----------"
                 ))),
             );
@@ -160,7 +159,7 @@ impl Tree {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
                 break;
-            } else if self.think_sec < self.stopwatch.elapsed().as_secs() {
+            } else if self.think_sec < self.sec() {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 ts.timeout = true;
                 break;
@@ -229,7 +228,7 @@ impl Tree {
                         None,
                         None,
                         None,
-                        Some(PvString::String(format!(
+                        &Some(PvString::String(format!(
                             "board-control={} | risk={} | {} {} {}",
                             control_sign * control_value,
                             risk_king,
@@ -243,7 +242,7 @@ impl Tree {
                         Some(ts.get_sum_state() + parent_sum_state),
                         Some(ts.bestmove.value),
                         Some(movement),
-                        Some(PvString::PV(format!("{}", self.pv))),
+                        &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
 
@@ -303,6 +302,14 @@ impl Tree {
             game.board.control
                 [Movement::from_hash(*movement_hash).destination.address() as usize] += sign;
         }
+    }
+
+    pub fn sec(&self) -> u64 {
+        self.stopwatch.elapsed().as_secs()
+    }
+
+    pub fn msec(&self) -> u128 {
+        self.stopwatch.elapsed().as_millis()
     }
 }
 
