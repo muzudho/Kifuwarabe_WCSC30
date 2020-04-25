@@ -215,7 +215,10 @@ impl Tree {
                 let control_value: i16 = game.board.control_value();
 
                 // 玉の周囲２４近傍の利きを、重みを付けて集計するぜ☆（＾～＾）
-                let risk_king = Evaluation::risk_king(game, control_sign);
+                // 玉のリスクを高くし過ぎると、盤コントロールが無茶苦茶になってしまう☆（＾～＾）
+                // かといって 玉のリスクは 歩１枚の価値より重いだろ☆（＾～＾）係数が難しいぜ☆（＾～＾）
+                let risk_king =
+                    (50.0 * Evaluation::risk_king(game, control_sign)) / self.pv.len() as f64;
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
