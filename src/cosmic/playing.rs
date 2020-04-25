@@ -241,22 +241,18 @@ impl Game {
                     self.board.pop_from_board(&movement.source).clone()
                 };
 
-                // 移動元を空に。
-                // self.board.push_piece(&movement.source, None);
-
                 piece152
             };
 
             // 移動先升に駒があるかどうか
-            cap = if let Some(_) = self.board.piece_at(&movement.destination) {
+            cap = if let Some(collision_piece) = self.board.pop_from_board(&movement.destination) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                let cap_o764 = { self.board.piece_at(&movement.destination) };
-
-                if let Some(captured_piece) = cap_o764 {
-                    let cap773 = (captured_piece.0.captured(speed_of_light), captured_piece.1);
-                    self.board.push_hand(&cap773);
-                };
-                cap_o764
+                let captured_piece = (
+                    collision_piece.0.captured(speed_of_light),
+                    collision_piece.1,
+                );
+                self.board.push_hand(&captured_piece);
+                Some(collision_piece)
             } else {
                 None
             };
@@ -272,7 +268,6 @@ impl Game {
         self.set_position_hash(ky_hash);
 
         self.history.ply += 1;
-        // TODO self.board.update_piece_pos(&movement.source, &movement.destination);
         cap
     }
 
@@ -329,7 +324,6 @@ impl Game {
                 self.board.push_to_board(&movement.source, old_source391_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
-            // TODO self.board.update_piece_pos(&movement.destination, &movement.source);
             true
         } else {
             false

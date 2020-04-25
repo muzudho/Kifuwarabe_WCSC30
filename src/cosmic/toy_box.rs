@@ -102,7 +102,7 @@ pub enum PieceNum {
 
 #[derive(Clone, Copy)]
 pub enum HandAddress {
-    _King1,
+    King1,
     Rook1,
     Bishop1,
     Gold1,
@@ -110,7 +110,7 @@ pub enum HandAddress {
     Knight1,
     Lance1,
     Pawn1,
-    _King2,
+    King2,
     Rook2,
     Bishop2,
     Gold2,
@@ -536,22 +536,70 @@ impl Board {
     pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum)) {
         match hand.0 {
             // 探索中に玉を取ってしまうので、玉も持てるようにするぜ☆（＾～＾）
-            PieceMeaning::King1 => self.hand_king1.push(*hand),
-            PieceMeaning::King2 => self.hand_king2.push(*hand),
-            PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.push(*hand),
-            PieceMeaning::Rook2 | PieceMeaning::Dragon2 => self.hand_rook2.push(*hand),
-            PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.push(*hand),
-            PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.push(*hand),
-            PieceMeaning::Gold1 => self.hand_gold1.push(*hand),
-            PieceMeaning::Gold2 => self.hand_gold2.push(*hand),
-            PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.push(*hand),
-            PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.push(*hand),
-            PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.push(*hand),
-            PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => self.hand_knight2.push(*hand),
-            PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => self.hand_lance1.push(*hand),
-            PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => self.hand_lance2.push(*hand),
-            PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => self.hand_pawn1.push(*hand),
-            PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.push(*hand),
+            PieceMeaning::King1 => {
+                self.hand_king1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::King1);
+            }
+            PieceMeaning::King2 => {
+                self.hand_king2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::King2);
+            }
+            PieceMeaning::Rook1 | PieceMeaning::Dragon1 => {
+                self.hand_rook1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Rook1);
+            }
+            PieceMeaning::Rook2 | PieceMeaning::Dragon2 => {
+                self.hand_rook2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Rook2);
+            }
+            PieceMeaning::Bishop1 | PieceMeaning::Horse1 => {
+                self.hand_bishop1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Bishop1);
+            }
+            PieceMeaning::Bishop2 | PieceMeaning::Horse2 => {
+                self.hand_bishop2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Bishop2);
+            }
+            PieceMeaning::Gold1 => {
+                self.hand_gold1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Gold1);
+            }
+            PieceMeaning::Gold2 => {
+                self.hand_gold2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Gold2);
+            }
+            PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => {
+                self.hand_silver1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Silver1);
+            }
+            PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => {
+                self.hand_silver2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Silver2);
+            }
+            PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => {
+                self.hand_knight1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Knight1);
+            }
+            PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => {
+                self.hand_knight2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Knight2);
+            }
+            PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => {
+                self.hand_lance1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Lance1);
+            }
+            PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => {
+                self.hand_lance2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Lance2);
+            }
+            PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => {
+                self.hand_pawn1.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Pawn1);
+            }
+            PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => {
+                self.hand_pawn2.push(*hand);
+                self.location[hand.1 as usize] = Location::Hand(HandAddress::Pawn2);
+            }
         }
     }
     pub fn pop_hand(&mut self, hand: PieceMeaning) -> Option<(PieceMeaning, PieceNum)> {
