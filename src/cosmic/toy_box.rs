@@ -3,8 +3,8 @@
 //!
 
 use crate::cosmic::playing::Game;
-use crate::cosmic::recording::{Person, Phase};
-use crate::cosmic::smart::features::{Piece, PieceType, Pieces, MG_MAX, PIECE_LN};
+use crate::cosmic::recording::{Person, Phase, Phases};
+use crate::cosmic::smart::features::{HandPieces, Piece, PieceType, Pieces, MG_MAX, PIECE_LN};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_1, RANK_10, RANK_11,
 };
@@ -217,6 +217,43 @@ impl Board {
                     }
                 }
             }
+        });
+        // 持ち駒
+        HandPieces::for_all(&mut |any_piece_type| {
+            Phases::for_all(&mut |any_phase| {
+                let friend_hand = any_piece_type.add_phase(any_phase);
+                match friend_hand {
+                    Piece::Rook1 | Piece::Rook2 => {
+                        self.piece_pos[rook_index].clear();
+                        rook_index += 1;
+                    }
+                    Piece::Bishop1 | Piece::Bishop2 => {
+                        self.piece_pos[bishop_index].clear();
+                        bishop_index += 1;
+                    }
+                    Piece::Gold1 | Piece::Gold2 => {
+                        self.piece_pos[gold_index].clear();
+                        gold_index += 1;
+                    }
+                    Piece::Silver1 | Piece::Silver2 => {
+                        self.piece_pos[silver_index].clear();
+                        silver_index += 1;
+                    }
+                    Piece::Knight1 | Piece::Knight2 => {
+                        self.piece_pos[knight_index].clear();
+                        knight_index += 1;
+                    }
+                    Piece::Lance1 | Piece::Lance2 => {
+                        self.piece_pos[lance_index].clear();
+                        lance_index += 1;
+                    }
+                    Piece::Pawn1 | Piece::Pawn2 => {
+                        self.piece_pos[pawn_index].clear();
+                        pawn_index += 1;
+                    }
+                    _ => {}
+                }
+            });
         });
     }
 

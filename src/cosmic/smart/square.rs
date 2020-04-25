@@ -743,6 +743,11 @@ impl AbsoluteAddress {
         self
     }
 
+    pub fn clear(&mut self) {
+        self.file = 0;
+        self.rank = 0;
+    }
+
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...
     pub fn file(&self) -> i8 {
         self.file
