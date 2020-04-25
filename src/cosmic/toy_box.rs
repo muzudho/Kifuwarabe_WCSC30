@@ -116,6 +116,7 @@ pub struct Board {
     lance_index: usize,
     pawn_index: usize,
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
+    pub hand_king1: Vec<(PieceMeaning, PieceNum)>,
     pub hand_rook1: Vec<(PieceMeaning, PieceNum)>,
     pub hand_bishop1: Vec<(PieceMeaning, PieceNum)>,
     pub hand_gold1: Vec<(PieceMeaning, PieceNum)>,
@@ -123,6 +124,7 @@ pub struct Board {
     pub hand_knight1: Vec<(PieceMeaning, PieceNum)>,
     pub hand_lance1: Vec<(PieceMeaning, PieceNum)>,
     pub hand_pawn1: Vec<(PieceMeaning, PieceNum)>,
+    pub hand_king2: Vec<(PieceMeaning, PieceNum)>,
     pub hand_rook2: Vec<(PieceMeaning, PieceNum)>,
     pub hand_bishop2: Vec<(PieceMeaning, PieceNum)>,
     pub hand_gold2: Vec<(PieceMeaning, PieceNum)>,
@@ -156,6 +158,7 @@ impl Default for Board {
             lance_index: PieceNum::Lance15 as usize,
             pawn_index: PieceNum::Pawn23 as usize,
             // 持ち駒
+            hand_king1: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_rook1: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_bishop1: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_gold1: Vec::<(PieceMeaning, PieceNum)>::new(),
@@ -163,6 +166,7 @@ impl Default for Board {
             hand_knight1: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_lance1: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_pawn1: Vec::<(PieceMeaning, PieceNum)>::new(),
+            hand_king2: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_rook2: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_bishop2: Vec::<(PieceMeaning, PieceNum)>::new(),
             hand_gold2: Vec::<(PieceMeaning, PieceNum)>::new(),
@@ -195,6 +199,7 @@ impl Board {
         self.lance_index = PieceNum::Lance15 as usize;
         self.pawn_index = PieceNum::Pawn23 as usize;
         // 持ち駒☆（＾～＾）
+        self.hand_king1.clear();
         self.hand_rook1.clear();
         self.hand_bishop1.clear();
         self.hand_gold1.clear();
@@ -202,6 +207,7 @@ impl Board {
         self.hand_knight1.clear();
         self.hand_lance1.clear();
         self.hand_pawn1.clear();
+        self.hand_king2.clear();
         self.hand_rook2.clear();
         self.hand_bishop2.clear();
         self.hand_gold2.clear();
@@ -449,6 +455,9 @@ impl Board {
     }
     pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum)) {
         match hand.0 {
+            // 探索中に玉を取ってしまうので、玉も持てるようにするぜ☆（＾～＾）
+            PieceMeaning::King1 => self.hand_king1.push(*hand),
+            PieceMeaning::King2 => self.hand_king2.push(*hand),
             PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.push(*hand),
             PieceMeaning::Rook2 | PieceMeaning::Dragon2 => self.hand_rook2.push(*hand),
             PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.push(*hand),
@@ -463,78 +472,32 @@ impl Board {
             PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => self.hand_lance2.push(*hand),
             PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => self.hand_pawn1.push(*hand),
             PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.push(*hand),
-            _ => panic!(Beam::trouble(&format!(
-                "(Err.470) 持てない駒が指定されたぜ☆（＾～＾）！ {}",
-                hand.0
-            ))),
         }
     }
     pub fn pop_hand(&mut self, hand: PieceMeaning) -> Option<(PieceMeaning, PieceNum)> {
         match hand {
-            PieceMeaning::Rook1 | PieceMeaning::Dragon1 => {
-                self.rook_index -= 1;
-                self.hand_rook1.pop()
-            }
-            PieceMeaning::Rook2 | PieceMeaning::Dragon2 => {
-                self.rook_index -= 1;
-                self.hand_rook2.pop()
-            }
-            PieceMeaning::Bishop1 | PieceMeaning::Horse1 => {
-                self.bishop_index -= 1;
-                self.hand_bishop1.pop()
-            }
-            PieceMeaning::Bishop2 | PieceMeaning::Horse2 => {
-                self.bishop_index -= 1;
-                self.hand_bishop2.pop()
-            }
-            PieceMeaning::Gold1 => {
-                self.gold_index -= 1;
-                self.hand_gold1.pop()
-            }
-            PieceMeaning::Gold2 => {
-                self.gold_index -= 1;
-                self.hand_gold1.pop()
-            }
-            PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => {
-                self.silver_index -= 1;
-                self.hand_silver1.pop()
-            }
-            PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => {
-                self.silver_index -= 1;
-                self.hand_silver2.pop()
-            }
-            PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => {
-                self.knight_index -= 1;
-                self.hand_knight1.pop()
-            }
-            PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => {
-                self.knight_index -= 1;
-                self.hand_knight2.pop()
-            }
-            PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => {
-                self.lance_index -= 1;
-                self.hand_lance1.pop()
-            }
-            PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => {
-                self.lance_index -= 1;
-                self.hand_lance2.pop()
-            }
-            PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => {
-                self.pawn_index -= 1;
-                self.hand_pawn1.pop()
-            }
-            PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => {
-                self.pawn_index -= 1;
-                self.hand_pawn2.pop()
-            }
-            _ => panic!(Beam::trouble(&format!(
-                "(Err.535) 持てない駒が指定されたぜ☆（＾～＾）！ {}",
-                hand
-            ))),
+            PieceMeaning::King1 => self.hand_king1.pop(),
+            PieceMeaning::King2 => self.hand_king2.pop(),
+            PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.pop(),
+            PieceMeaning::Rook2 | PieceMeaning::Dragon2 => self.hand_rook2.pop(),
+            PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.pop(),
+            PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.pop(),
+            PieceMeaning::Gold1 => self.hand_gold1.pop(),
+            PieceMeaning::Gold2 => self.hand_gold1.pop(),
+            PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.pop(),
+            PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.pop(),
+            PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.pop(),
+            PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => self.hand_knight2.pop(),
+            PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => self.hand_lance1.pop(),
+            PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => self.hand_lance2.pop(),
+            PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => self.hand_pawn1.pop(),
+            PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.pop(),
         }
     }
     pub fn count_hand(&self, hand: PieceMeaning) -> usize {
         match hand {
+            PieceMeaning::King1 => self.hand_king1.len(),
+            PieceMeaning::King2 => self.hand_king2.len(),
             PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.len(),
             PieceMeaning::Rook2 | PieceMeaning::Dragon2 => self.hand_rook2.len(),
             PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.len(),
@@ -549,10 +512,6 @@ impl Board {
             PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => self.hand_lance2.len(),
             PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => self.hand_pawn1.len(),
             PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.len(),
-            _ => panic!(Beam::trouble(&format!(
-                "(Err.557) 持てない駒が指定されたぜ☆（＾～＾）！ {}",
-                hand
-            ))),
         }
     }
 
@@ -590,11 +549,9 @@ impl Board {
         }
 
         // 持ち駒ハッシュ
-        HandPieces::for_all(&mut |any_piece_type| {
-            Phases::for_all(&mut |any_phase| {
+        Phases::for_all(&mut |any_phase| {
+            HandPieces::for_all(&mut |any_piece_type| {
                 let hand = any_piece_type.add_phase(any_phase);
-
-                let piece_num = any_piece_type.serial_number(speed_of_light);
                 let count = self.count_hand(hand);
                 debug_assert!(
                     count <= HAND_MAX,
@@ -603,7 +560,7 @@ impl Board {
                     count,
                     HAND_MAX
                 );
-                hash ^= game.hash_seed.hand[piece_num][count as usize];
+                hash ^= game.hash_seed.hands[hand.hand_index(speed_of_light)][count as usize];
             });
         });
 

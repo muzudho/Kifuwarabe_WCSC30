@@ -158,6 +158,7 @@ impl PieceMeaning {
     }
 }
 
+/*
 pub struct Pieces {}
 impl Pieces {
     /// すべての駒☆（＾～＾）
@@ -200,6 +201,7 @@ impl Pieces {
         }
     }
 }
+*/
 
 pub const NONE_SERIAL_PIECE_TYPE_NUMBER: u64 = 14;
 

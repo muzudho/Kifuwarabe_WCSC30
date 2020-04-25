@@ -1,4 +1,5 @@
 use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
+use crate::cosmic::smart::features::HAND_PIECE_LN;
 use crate::cosmic::smart::features::{PieceMeaning, HAND_MAX, PIECE_LN};
 use crate::cosmic::smart::square::{
     Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_NONE,
@@ -23,7 +24,7 @@ pub struct GameHashSeed {
     // 盤上の駒
     pub piece: [[u64; PIECE_LN]; BOARD_MEMORY_AREA as usize],
     // 持ち駒
-    pub hand: [[u64; HAND_MAX]; PIECE_LN],
+    pub hands: [[u64; HAND_MAX]; HAND_PIECE_LN],
     // 先後
     pub phase: [u64; PHASE_LN],
 }
@@ -52,7 +53,7 @@ impl Default for Game {
                 // 盤上の駒
                 piece: [[0; PIECE_LN]; BOARD_MEMORY_AREA as usize],
                 // 持ち駒
-                hand: [[0; HAND_MAX]; PIECE_LN],
+                hands: [[0; HAND_MAX]; HAND_PIECE_LN],
                 // 先後
                 phase: [0; PHASE_LN],
             },
@@ -75,9 +76,9 @@ impl Game {
             }
         }
         // 持ち駒
-        for i_km in 0..PIECE_LN {
-            for i_mg in 0..HAND_MAX {
-                self.hash_seed.hand[i_km][i_mg] =
+        for i_piece in 0..HAND_PIECE_LN {
+            for i_count in 0..HAND_MAX {
+                self.hash_seed.hands[i_piece][i_count] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
