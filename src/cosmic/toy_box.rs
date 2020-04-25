@@ -223,7 +223,7 @@ impl Board {
             for file in (FILE_0..FILE_11).rev() {
                 let abs_adr = Address::new(file, rank).abs();
                 // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-                self.push_piece(&abs_adr, board.piece_at(&abs_adr));
+                self.set_piece_at(&abs_adr, board.piece_at(&abs_adr));
             }
         }
 
@@ -266,21 +266,6 @@ impl Board {
     /// 升で指定して駒を取得
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
         self.pieces[adr.address() as usize]
-    }
-    /// 升で指定して駒を置く
-    pub fn push_piece(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
-        if let Some(piece_val) = piece {
-            self.pieces[adr.address() as usize] = piece;
-            self.piece_num_adr[piece_val.1 as usize] = *adr;
-        } else {
-            self.pieces[adr.address() as usize] = None;
-        }
-    }
-    /// 盤から駒を取り上げるぜ☆（＾～＾）
-    pub fn pop_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
-        let piece = self.pieces[adr.address() as usize];
-        self.pieces[adr.address() as usize] = None;
-        piece
     }
     /// 盤に駒を置いていきます。
     pub fn push_piece_on_init(&mut self, file: i8, rank: i8, piece: Option<PieceMeaning>) {
@@ -356,10 +341,18 @@ impl Board {
                     pn
                 }
             };
-            self.push_piece(
+            self.set_piece_at(
                 &Address::new(file, rank).abs(),
                 Some((piece_meaning, piece_num)),
             );
+        }
+    }
+    /// 升で指定して駒を置く
+    pub fn set_piece_at(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
+        if let Some(_x) = piece {
+            self.pieces[adr.address() as usize] = piece;
+        } else {
+            self.pieces[adr.address() as usize] = None;
         }
     }
     /// 駒台に置く

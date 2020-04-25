@@ -215,8 +215,9 @@ impl Game {
         {
             // 動かす駒
             let moveing_piece: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop() {
+                // 打なら
+                // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
-                    // 打ったのなら、駒台から取り出すぜ☆（＾～＾）
                     let piece_meaning = PieceMeaning::from_phase_and_piece_type(friend, drp);
                     self.board.pop_hand(piece_meaning)
                 } else {
@@ -226,9 +227,10 @@ impl Game {
                 }
             } else {
                 // 打でなければ、元の升に駒はあるので、それを消す。
-                if movement.promote {
-                    if let Some(piece) = self.board.pop_board(&movement.source) {
-                        // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
+                let piece152: Option<(PieceMeaning, PieceNum)> = if movement.promote {
+                    // 成りなら
+                    if let Some(piece) = self.board.piece_at(&movement.source) {
+                        // 成り駒をクローン。
                         Some((piece.0.promoted(speed_of_light), piece.1))
                     } else {
                         panic!(Beam::trouble(
@@ -237,22 +239,32 @@ impl Game {
                     }
                 } else {
                     // 移動元の駒をクローン。
-                    self.board.pop_board(&movement.source)
-                }
+                    self.board.piece_at(&movement.source).clone()
+                };
+
+                // 移動元を空に。
+                self.board.set_piece_at(&movement.source, None);
+
+                piece152
             };
 
             // 移動先升に駒があるかどうか
-            cap = if let Some(captured_piece) = self.board.pop_board(&movement.destination) {
+            cap = if let Some(_) = self.board.piece_at(&movement.destination) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                self.board
-                    .push_hand(&(captured_piece.0.captured(speed_of_light), captured_piece.1));
-                Some(captured_piece)
+                let cap_o764 = { self.board.piece_at(&movement.destination) };
+
+                if let Some(captured_piece) = cap_o764 {
+                    let cap773 = (captured_piece.0.captured(speed_of_light), captured_piece.1);
+                    self.board.push_hand(&cap773);
+                };
+                cap_o764
             } else {
                 None
             };
 
             // 移動先升に駒を置く
-            self.board.push_piece(&movement.destination, moveing_piece);
+            self.board
+                .set_piece_at(&movement.destination, moveing_piece);
         }
         self.set_captured(self.history.ply as usize, cap);
 
@@ -261,6 +273,7 @@ impl Game {
         self.set_position_hash(ky_hash);
 
         self.history.ply += 1;
+        // TODO self.board.update_piece_pos(&movement.source, &movement.destination);
         cap
     }
 
@@ -270,8 +283,9 @@ impl Game {
             self.history.ply -= 1;
             let movement = &self.get_move().clone();
             {
+                // let phase = self.history.get_phase(Person::Friend);
                 // 取った駒が有ったか。
-                let cap: Option<(PieceMeaning, PieceNum)> =
+                let cap_o: Option<(PieceMeaning, PieceNum)> =
                     self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
                 let old_source391_o: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop()
@@ -279,7 +293,7 @@ impl Game {
                     // 打なら
                     if let Some(_drp) = movement.drop {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        let piece = self.board.pop_board(&movement.destination).unwrap();
+                        let piece = self.board.piece_at(&movement.destination).unwrap();
                         // 自分の持ち駒を増やそうぜ☆（＾～＾）！
                         self.board.push_hand(&piece);
                         Some(piece)
@@ -292,7 +306,7 @@ impl Game {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
-                        if let Some(source_piece) = self.board.pop_board(&movement.destination) {
+                        if let Some(source_piece) = self.board.piece_at(&movement.destination) {
                             Some((source_piece.0.demoted(speed_of_light), source_piece.1))
                         } else {
                             panic!(Beam::trouble(
@@ -300,19 +314,23 @@ impl Game {
                             ))
                         }
                     } else {
-                        self.board.pop_board(&movement.destination)
+                        self.board.piece_at(&movement.destination).clone()
                     }
                 };
 
-                if let Some(captured_piece_val) = cap {
+                // 移動先の駒を、取った駒（あるいは空）に戻す
+                self.board.set_piece_at(&movement.destination, cap_o);
+
+                if let Some(captured_piece_val) = cap_o {
+                    let captured = captured_piece_val.0.captured(speed_of_light);
                     // 自分の持ち駒を減らす
-                    self.board
-                        .pop_hand(captured_piece_val.0.captured(speed_of_light));
+                    self.board.pop_hand(captured);
                 }
                 // 移動元升に、動かした駒を置く
-                self.board.push_piece(&movement.source, old_source391_o);
+                self.board.set_piece_at(&movement.source, old_source391_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
+            // TODO self.board.update_piece_pos(&movement.destination, &movement.source);
             true
         } else {
             false
