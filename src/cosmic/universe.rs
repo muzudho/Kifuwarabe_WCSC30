@@ -25,8 +25,9 @@ impl Default for Universe {
             game: Game::default(),
             dialogue_mode: false,
             option_max_depth: 1,
-            option_min_think_sec: 1,
-            option_max_think_sec: 1,
+            /// min < max にしろだぜ☆（＾～＾）
+            option_min_think_sec: 7,
+            option_max_think_sec: 17,
             option_king_risk_weight: 0.0,
         }
     }

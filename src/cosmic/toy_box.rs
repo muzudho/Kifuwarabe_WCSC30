@@ -625,6 +625,27 @@ impl Board {
         self.location[piece.unwrap().1 as usize] = Location::Busy;
         piece
     }
+    /// 指し手生成で使うぜ☆（＾～＾）
+    pub fn last_hand(&self, hand: HandAddress) -> Option<&(PieceMeaning, PieceNum)> {
+        match hand {
+            HandAddress::King1 => self.hand_king1.last(),
+            HandAddress::King2 => self.hand_king2.last(),
+            HandAddress::Rook1 => self.hand_rook1.last(),
+            HandAddress::Rook2 => self.hand_rook2.last(),
+            HandAddress::Bishop1 => self.hand_bishop1.last(),
+            HandAddress::Bishop2 => self.hand_bishop2.last(),
+            HandAddress::Gold1 => self.hand_gold1.last(),
+            HandAddress::Gold2 => self.hand_gold2.last(),
+            HandAddress::Silver1 => self.hand_silver1.last(),
+            HandAddress::Silver2 => self.hand_silver2.last(),
+            HandAddress::Knight1 => self.hand_knight1.last(),
+            HandAddress::Knight2 => self.hand_knight2.last(),
+            HandAddress::Lance1 => self.hand_lance1.last(),
+            HandAddress::Lance2 => self.hand_lance2.last(),
+            HandAddress::Pawn1 => self.hand_pawn1.last(),
+            HandAddress::Pawn2 => self.hand_pawn2.last(),
+        }
+    }
     pub fn count_hand(&self, hand: PieceMeaning) -> usize {
         match hand {
             PieceMeaning::King1 => self.hand_king1.len(),
@@ -727,6 +748,7 @@ impl Board {
             }
         }
     }
+
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
     pub fn for_some_pieces_on_list40<F>(
         &self,
@@ -734,7 +756,7 @@ impl Board {
         speed_of_light: &SpeedOfLight,
         piece_get: &mut F,
     ) where
-        F: FnMut((PieceMeaning, PieceNum)),
+        F: FnMut(Location, (PieceMeaning, PieceNum)),
     {
         for location in self.location.iter() {
             match location {
@@ -742,15 +764,41 @@ impl Board {
                     // 盤上の駒☆（＾～＾）
                     let piece = self.piece_at(adr).unwrap();
                     if piece.0.phase(speed_of_light) == friend {
-                        piece_get(piece);
+                        piece_get(*location, piece);
                     }
                 }
                 Location::Hand(_adr) => {
-                    // 持ち駒なので無視☆（＾～＾）
+                    // 持ち駒はここで調べるのは無駄な気がするよな☆（＾～＾）持ち駒に歩が１８個とか☆（＾～＾）
                 }
                 Location::Busy => panic!(Beam::trouble(
                     "(Err.650) なんで駒が作業中なんだぜ☆（＾～＾）！"
                 )),
+            }
+        }
+
+        let list = match friend {
+            Phase::First => [
+                HandAddress::Rook1,
+                HandAddress::Bishop1,
+                HandAddress::Gold1,
+                HandAddress::Silver1,
+                HandAddress::Knight1,
+                HandAddress::Lance1,
+                HandAddress::Pawn1,
+            ],
+            Phase::Second => [
+                HandAddress::Rook2,
+                HandAddress::Bishop2,
+                HandAddress::Gold2,
+                HandAddress::Silver2,
+                HandAddress::Knight2,
+                HandAddress::Lance2,
+                HandAddress::Pawn2,
+            ],
+        };
+        for adr in &list {
+            if let Some(piece) = self.last_hand(*adr) {
+                piece_get(Location::Hand(*adr), *piece);
             }
         }
     }

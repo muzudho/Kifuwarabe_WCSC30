@@ -8,8 +8,9 @@ use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
-use crate::cosmic::toy_box::Board;
+use crate::cosmic::toy_box::{Board, Location};
 use crate::law::speed_of_light::SpeedOfLight;
+use crate::spaceship::equipment::Beam;
 use std::fmt;
 
 /// Pseudo legal move(疑似合法手)☆（＾～＾）
@@ -62,6 +63,27 @@ impl PseudoLegalMoves {
     ) where
         F1: FnMut(u64),
     {
+        // 盤面スキャン☆（＾～＾）
+        Area::for_all(&mut |source| {
+            let piece = board.piece_at(&source);
+            if let Some(piece_val) = piece {
+                match board.location_of(piece_val.1) {
+                    Location::Board(adr) => {
+                        if source.address() != adr.address() {
+                            panic!(Beam::trouble(
+                                &format!("(Err.73) なんで背番号リストと盤上で違いがあるんだぜ☆（＾～＾）！ {}!={}",source.address() , adr.address())
+                            ))
+                        }
+                    }
+                    Location::Hand(_adr) => panic!(Beam::trouble(
+                        "(Err.73) なんで盤上をスキャンして持ち駒が見つかるんだぜ☆（＾～＾）！"
+                    )),
+                    Location::Busy => panic!(Beam::trouble(
+                        "(Err.76) なんで駒が作業中なんだぜ☆（＾～＾）！"
+                    )),
+                }
+            }
+        });
         // 盤上の駒☆（＾～＾）
         // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
         Area::for_all(&mut |source| {
