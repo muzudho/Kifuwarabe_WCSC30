@@ -6,8 +6,9 @@ use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
 use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{AbsoluteAddress, RelativeAddress};
-use crate::cosmic::toy_box::PieceNum;
+use crate::cosmic::toy_box::{Location, PieceNum};
 use crate::law::speed_of_light::SpeedOfLight;
+use crate::spaceship::equipment::Beam;
 
 /// 千日手の価値☆（＾～＾）
 pub const REPITITION_VALUE: i16 = -300;
@@ -18,7 +19,27 @@ impl Evaluation {
     pub fn risk_king(game: &mut Game, control_sign: i16) -> f64 {
         let mut risk_value = 0.0f64;
         let friend_index = game.history.get_phase(Person::Friend) as usize;
-        let king_adr = game.board.num_piece[friend_index];
+
+        // TODO 玉の位置、計算できてないぜ☆（＾～＾）
+        let king_location = game.board.location[if friend_index == 0 {
+            PieceNum::King1 as usize
+        } else {
+            PieceNum::King2 as usize
+        }];
+        let king_adr = match king_location {
+            Location::Board(adr) => adr,
+            Location::Hand(_adr) => panic!(Beam::trouble(
+                "(Err.30) なんで玉が駒台に乗ってるんだぜ☆（＾～＾）！"
+            )),
+            Location::Busy => {
+                AbsoluteAddress::default()
+                /*
+                panic!(Beam::trouble(
+                    "(Err.32) なんで玉が作業中なんだぜ☆（＾～＾）！"
+                ))
+                // */
+            }
+        };
         // 北
         // .xx..
         // ..x..
