@@ -32,8 +32,8 @@ impl Evaluation {
                 "(Err.30) なんで玉が駒台に乗ってるんだぜ☆（＾～＾）！"
             )),
             Location::Busy => {
-                AbsoluteAddress::default()
-                /*
+                // AbsoluteAddress::default()
+                //*
                 panic!(Beam::trouble(
                     "(Err.32) なんで玉が作業中なんだぜ☆（＾～＾）！"
                 ))
