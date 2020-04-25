@@ -228,9 +228,8 @@ impl Game {
             } else {
                 // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152: Option<(PieceMeaning, PieceNum)> = if movement.promote {
-                    // 成りなら
-                    if let Some(piece) = self.board.piece_at(&movement.source) {
-                        // 成り駒をクローン。
+                    if let Some(piece) = self.board.pop_from_board(&movement.source) {
+                        // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
                         Some((piece.0.promoted(speed_of_light), piece.1))
                     } else {
                         panic!(Beam::trouble(
@@ -238,12 +237,12 @@ impl Game {
                         ));
                     }
                 } else {
-                    // 移動元の駒をクローン。
-                    self.board.piece_at(&movement.source).clone()
+                    // 移動元の駒。
+                    self.board.pop_from_board(&movement.source).clone()
                 };
 
                 // 移動元を空に。
-                self.board.push_piece(&movement.source, None);
+                // self.board.push_piece(&movement.source, None);
 
                 piece152
             };
@@ -263,7 +262,8 @@ impl Game {
             };
 
             // 移動先升に駒を置く
-            self.board.push_piece(&movement.destination, moveing_piece);
+            self.board
+                .push_to_board(&movement.destination, moveing_piece);
         }
         self.set_captured(self.history.ply as usize, cap);
 
@@ -318,7 +318,7 @@ impl Game {
                 };
 
                 // 移動先の駒を、取った駒（あるいは空）に戻す
-                self.board.push_piece(&movement.destination, cap_o);
+                self.board.push_to_board(&movement.destination, cap_o);
 
                 if let Some(captured_piece_val) = cap_o {
                     let captured = captured_piece_val.0.captured(speed_of_light);
@@ -326,7 +326,7 @@ impl Game {
                     self.board.pop_hand(captured);
                 }
                 // 移動元升に、動かした駒を置く
-                self.board.push_piece(&movement.source, old_source391_o);
+                self.board.push_to_board(&movement.source, old_source391_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             // TODO self.board.update_piece_pos(&movement.destination, &movement.source);

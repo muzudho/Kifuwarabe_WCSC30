@@ -298,7 +298,11 @@ impl Board {
         self.pieces[adr.address() as usize]
     }
     /// 升で指定して駒を置く
-    pub fn push_piece(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
+    pub fn push_to_board(
+        &mut self,
+        adr: &AbsoluteAddress,
+        piece: Option<(PieceMeaning, PieceNum)>,
+    ) {
         if let Some(piece_val) = piece {
             self.pieces[adr.address() as usize] = piece;
             self.location[piece_val.1 as usize] = Location::Board(*adr);
@@ -317,7 +321,7 @@ impl Board {
     }
     */
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
-    pub fn pop_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
+    pub fn pop_from_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
         // 取り出すピースは複製するぜ☆（＾～＾）
         let piece = self.pieces[adr.address() as usize].clone();
         if let Some(piece_val) = piece {
@@ -400,7 +404,7 @@ impl Board {
                     pn
                 }
             };
-            self.push_piece(
+            self.push_to_board(
                 &Address::new(file, rank).abs(),
                 Some((piece_meaning, piece_num)),
             );
