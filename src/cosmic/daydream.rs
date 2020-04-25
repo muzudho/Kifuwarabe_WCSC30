@@ -45,7 +45,7 @@ impl Tree {
         universe: &mut Universe,
     ) -> TreeState {
         universe.game.info.clear();
-        self.think_sec = rand::thread_rng().gen_range(7, 20); // 適当☆（＾～＾）
+        self.think_sec = rand::thread_rng().gen_range(7, 17); // 適当☆（＾～＾）
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
@@ -218,96 +218,104 @@ impl Tree {
 
                 // 玉の周囲２４近傍の利きを、重みを付けて集計するぜ☆（＾～＾）
                 let mut risk_value = 0.0f64;
-                let mut king_pos =
-                    game.board.king_pos[game.history.get_phase(Person::Friend) as usize].clone();
                 // 北
                 // .xx..
                 // ..x..
                 // .....
                 // .....
                 // .....
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                let next = &mut Vec::<AbsoluteAddress>::new();
+                let cur = &mut AbsoluteAddress::default();
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                let rel = &mut RelativeAddress::new(0, -1);
+                next.push(cur.add_mut(rel).clone());
+                next.push(cur.add_mut(rel.set(0, -1)).clone());
+                next.push(cur.add_mut(rel.set(1, 0)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
                 // 北西
                 // x....
                 // xx...
                 // .....
                 // .....
                 // .....
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(1, -1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                next.clear();
+                next.push(cur.add_mut(rel.set(1, -1)).clone());
+                next.push(cur.add_mut(rel.set(1, 0)).clone());
+                next.push(cur.add_mut(rel.set(0, -1)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
                 // 西
                 // .....
                 // .....
                 // xx...
                 // x....
                 // x....
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(1, 0)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                next.clear();
+                next.push(cur.add_mut(rel.set(1, 0)).clone());
+                next.push(cur.add_mut(rel.set(1, 0)).clone());
+                next.push(cur.add_mut(rel.set(0, 1)).clone());
+                next.push(cur.add_mut(rel.set(0, 1)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
                 // 南西
                 // .....
                 // .....
                 // .....
                 // .x...
                 // .x...
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(1, 1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                next.clear();
+                next.push(cur.add_mut(rel.set(1, 1)).clone());
+                next.push(cur.add_mut(rel.set(0, 1)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
                 // 南
                 // .....
                 // .....
                 // .....
                 // ..x..
                 // ..xxx
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, 1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                next.clear();
+                next.push(cur.add_mut(rel.set(0, 1)).clone());
+                next.push(cur.add_mut(rel.set(0, 1)).clone());
+                next.push(cur.add_mut(rel.set(-1, 0)).clone());
+                next.push(cur.add_mut(rel.set(-1, 0)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
                 // 南東
                 // .....
                 // .....
                 // .....
                 // ...xx
                 // .....
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                next.clear();
+                next.push(cur.add_mut(rel.set(-1, 1)).clone());
+                next.push(cur.add_mut(rel.set(-1, 0)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
                 // 東
                 // ....x
                 // ....x
                 // ...xx
                 // .....
                 // .....
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(-1, 0)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                next.clear();
+                next.push(cur.add_mut(rel.set(-1, 0)).clone());
+                next.push(cur.add_mut(rel.set(-1, 0)).clone());
+                next.push(cur.add_mut(rel.set(0, -1)).clone());
+                next.push(cur.add_mut(rel.set(0, -1)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
                 // 北東
                 // ...x.
                 // ...x.
                 // .....
                 // .....
                 // .....
-                let mut next = Vec::<AbsoluteAddress>::new();
-                next.push(king_pos.add_mut(&RelativeAddress::new(-1, -1)).clone());
-                next.push(king_pos.add_mut(&RelativeAddress::new(0, -1)).clone());
-                risk_value += self.risk(occupy_control_sign, next, game);
+                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
+                next.clear();
+                next.push(cur.add_mut(rel.set(-1, -1)).clone());
+                next.push(cur.add_mut(rel.set(0, -1)).clone());
+                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
