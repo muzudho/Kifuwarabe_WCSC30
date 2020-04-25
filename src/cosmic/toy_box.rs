@@ -244,7 +244,35 @@ impl Board {
         self.hand_pawn2.clear();
     }
 
-    // TODO pub fn update_piece_pos(&mut self, piece_num: &PieceNum, destination: &AbsoluteAddress) {}
+    /// 開始盤面を、現盤面にコピーしたいときに使うぜ☆（＾～＾）
+    pub fn copy_from(&mut self, board: &Board) {
+        self.pieces = board.pieces.clone();
+        self.location = board.location.clone();
+        self.rook_index = board.rook_index.clone();
+        self.bishop_index = board.bishop_index.clone();
+        self.gold_index = board.gold_index.clone();
+        self.silver_index = board.silver_index.clone();
+        self.knight_index = board.knight_index.clone();
+        self.lance_index = board.lance_index.clone();
+        self.pawn_index = board.pawn_index.clone();
+        self.hand_king1 = board.hand_king1.clone();
+        self.hand_rook1 = board.hand_rook1.clone();
+        self.hand_bishop1 = board.hand_bishop1.clone();
+        self.hand_gold1 = board.hand_gold1.clone();
+        self.hand_silver1 = board.hand_silver1.clone();
+        self.hand_knight1 = board.hand_knight1.clone();
+        self.hand_lance1 = board.hand_lance1.clone();
+        self.hand_pawn1 = board.hand_pawn1.clone();
+        self.hand_king2 = board.hand_king2.clone();
+        self.hand_rook2 = board.hand_rook2.clone();
+        self.hand_bishop2 = board.hand_bishop2.clone();
+        self.hand_gold2 = board.hand_gold2.clone();
+        self.hand_silver2 = board.hand_silver2.clone();
+        self.hand_knight2 = board.hand_knight2.clone();
+        self.hand_lance2 = board.hand_lance2.clone();
+        self.hand_pawn2 = board.hand_pawn2.clone();
+        self.control = board.control.clone();
+    }
 
     /// 歩が置いてあるか確認
     pub fn exists_pawn_on_file(
