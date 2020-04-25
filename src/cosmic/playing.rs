@@ -277,17 +277,14 @@ impl Game {
             self.history.ply -= 1;
             let movement = &self.get_move().clone();
             {
-                // let phase = self.history.get_phase(Person::Friend);
                 // 取った駒が有ったか。
-                let cap_o: Option<(PieceMeaning, PieceNum)> =
+                let captured: Option<(PieceMeaning, PieceNum)> =
                     self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let old_source391_o: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop()
-                {
-                    // 打なら
+                let moveing_piece: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop() {
                     if let Some(_drp) = movement.drop {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        let piece = self.board.piece_at(&movement.destination).unwrap();
+                        let piece = self.board.pop_from_board(&movement.destination).unwrap();
                         // 自分の持ち駒を増やそうぜ☆（＾～＾）！
                         self.board.push_hand(&piece);
                         Some(piece)
@@ -313,15 +310,15 @@ impl Game {
                 };
 
                 // 移動先の駒を、取った駒（あるいは空）に戻す
-                self.board.push_to_board(&movement.destination, cap_o);
+                self.board.push_to_board(&movement.destination, captured);
 
-                if let Some(captured_piece_val) = cap_o {
+                if let Some(captured_piece_val) = captured {
                     let captured = captured_piece_val.0.captured(speed_of_light);
                     // 自分の持ち駒を減らす
                     self.board.pop_hand(captured);
                 }
                 // 移動元升に、動かした駒を置く
-                self.board.push_to_board(&movement.source, old_source391_o);
+                self.board.push_to_board(&movement.source, moveing_piece);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
