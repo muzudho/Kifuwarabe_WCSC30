@@ -64,7 +64,7 @@ impl PseudoLegalMoves {
     {
         // 盤上の駒☆（＾～＾）
         // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
-        Area::for_all(None, &mut |source| {
+        Area::for_all(&mut |source| {
             PseudoLegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });
     }
@@ -225,7 +225,7 @@ impl PseudoLegalMoves {
                     // 桂
                     Knight => Area::drop_knight(friend, drop),
                     // それ以外の駒が打てる範囲は盤面全体。
-                    _ => Area::for_all(None, drop),
+                    _ => Area::for_all(drop),
                 }
             }
         });
@@ -239,10 +239,8 @@ impl Area {
     ///
     /// Arguments
     /// ---------
-    ///
-    /// * `_friend` - 使わないぜ☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn for_all<F1>(_friend: Option<Phase>, callback: &mut F1)
+    pub fn for_all<F1>(callback: &mut F1)
     where
         F1: FnMut(AbsoluteAddress),
     {

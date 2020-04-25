@@ -5,9 +5,11 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
+use crate::cosmic::smart::features::Piece;
 use crate::cosmic::smart::features::PieceType::King;
+use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
-use crate::law::generate_move::PseudoLegalMoves;
+use crate::law::generate_move::{Area, PseudoLegalMoves};
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
@@ -44,6 +46,65 @@ impl Tree {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng()
             .gen_range(universe.option_min_think_sec, universe.option_max_think_sec); // 適当☆（＾～＾）
+
+        /// 盤面の駒に背番号を振っていくぜ☆（＾～＾）
+        use crate::cosmic::toy_box::PieceNum::*;
+        let mut rook_index = PieceNum::Rook21 as usize;
+        let mut bishop_index = PieceNum::Bishop19 as usize;
+        let mut gold_index = PieceNum::Gold3 as usize;
+        let mut silver_index = PieceNum::Silver7 as usize;
+        let mut knight_index = PieceNum::Knight11 as usize;
+        let mut lance_index = PieceNum::Lance15 as usize;
+        let mut pawn_index = PieceNum::Pawn23 as usize;
+        Area::for_all(&mut |source| {
+            if let Some(piece_val) = universe.game.board.piece_at(&source) {
+                match piece_val {
+                    Piece::King1 => {
+                        universe.game.board.piece_pos[PieceNum::King1 as usize] = source;
+                    }
+                    Piece::King2 => {
+                        universe.game.board.piece_pos[PieceNum::King2 as usize] = source;
+                    }
+                    Piece::Rook1 | Piece::Rook2 | Piece::Dragon1 | Piece::Dragon2 => {
+                        universe.game.board.piece_pos[rook_index] = source;
+                        rook_index += 1;
+                    }
+                    Piece::Bishop1 | Piece::Bishop2 | Piece::Horse1 | Piece::Horse2 => {
+                        universe.game.board.piece_pos[bishop_index] = source;
+                        bishop_index += 1;
+                    }
+                    Piece::Gold1 | Piece::Gold2 => {
+                        universe.game.board.piece_pos[gold_index] = source;
+                        gold_index += 1;
+                    }
+                    Piece::Silver1
+                    | Piece::Silver2
+                    | Piece::PromotedSilver1
+                    | Piece::PromotedSilver2 => {
+                        universe.game.board.piece_pos[silver_index] = source;
+                        silver_index += 1;
+                    }
+                    Piece::Knight1
+                    | Piece::Knight2
+                    | Piece::PromotedKnight1
+                    | Piece::PromotedKnight2 => {
+                        universe.game.board.piece_pos[knight_index] = source;
+                        knight_index += 1;
+                    }
+                    Piece::Lance1
+                    | Piece::Lance2
+                    | Piece::PromotedLance1
+                    | Piece::PromotedLance2 => {
+                        universe.game.board.piece_pos[lance_index] = source;
+                        lance_index += 1;
+                    }
+                    Piece::Pawn1 | Piece::Pawn2 | Piece::PromotedPawn1 | Piece::PromotedPawn2 => {
+                        universe.game.board.piece_pos[pawn_index] = source;
+                        pawn_index += 1;
+                    }
+                }
+            }
+        });
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
@@ -218,7 +279,7 @@ impl Tree {
                 // 玉のリスクを高くし過ぎると、盤コントロールが無茶苦茶になってしまう☆（＾～＾）
                 // かといって 玉のリスクは 歩１枚の価値より重いだろ☆（＾～＾）係数が難しいぜ☆（＾～＾）
                 let risk_king =
-                    (105.0 * Evaluation::risk_king(game, control_sign)) / self.pv.len() as f64;
+                    (10.0 * Evaluation::risk_king(game, control_sign)) / self.pv.len() as f64;
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
@@ -230,7 +291,7 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "board-control={} | risk={} | {} {} {}",
+                            "board control={} | king risk={} | {} {} {}",
                             control_sign * control_value,
                             risk_king,
                             game.board.control[68],
