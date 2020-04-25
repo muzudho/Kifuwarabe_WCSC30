@@ -107,9 +107,9 @@ impl Game {
     pub fn set_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    /// 駒を取ったぜ☆（＾～＾）
-    pub fn caputure_piece(&mut self, ply1: usize, pc: Option<(PieceMeaning, PieceNum)>) {
-        self.history.captured_pieces[ply1] = pc
+    /// 棋譜に取った駒を記録するぜ☆（＾～＾）
+    pub fn record_caputure_piece(&mut self, ply1: usize, piece: Option<(PieceMeaning, PieceNum)>) {
+        self.history.captured_pieces[ply1] = piece
     }
 
     pub fn get_board(&self, num: &PosNums) -> &Board {
@@ -237,7 +237,7 @@ impl Game {
                         ));
                     }
                 } else {
-                    // 移動元の駒をクローン。
+                    // 移動元の駒。
                     self.board.pop_board(&movement.source)
                 }
             };
@@ -252,10 +252,12 @@ impl Game {
                 None
             };
 
-            // 移動先升に駒を置く
+            // （空いた）移動先升に駒を置く
             self.board.push_piece(&movement.destination, moveing_piece);
         }
-        self.caputure_piece(self.history.ply as usize, cap);
+
+        // 棋譜に取った駒を記録するぜ☆（＾～＾）
+        self.record_caputure_piece(self.history.ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_current_position_hash(speed_of_light);
@@ -271,9 +273,6 @@ impl Game {
             self.history.ply -= 1;
             let movement = &self.get_move().clone();
             {
-                // 取った駒が有ったか。
-                let captured_piece: Option<(PieceMeaning, PieceNum)> =
-                    self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
                 let moving_piece: Option<(PieceMeaning, PieceNum)> = if movement.source.is_drop() {
                     // 打なら
@@ -304,17 +303,29 @@ impl Game {
                     }
                 };
 
-                if let Some(captured_piece_val) = captured_piece {
-                    // 自分の持ち駒を減らす
-                    self.board
-                        .pop_hand(captured_piece_val.0.captured(speed_of_light));
-                    // 移動先に取った駒を戻すぜ☆（＾～＾）
-                    self.board.push_piece(&movement.destination, captured_piece);
-                }
-
                 // 移動元升に、動かした駒を置く
                 self.board.push_piece(&movement.source, moving_piece);
             }
+
+            // 取った駒があれば戻すぜ☆（＾～＾）
+            {
+                // 取った駒が有ったか。
+                let captured_piece_on_history: Option<(PieceMeaning, PieceNum)> =
+                    self.history.captured_pieces[self.history.ply as usize];
+
+                if let Some(captured_piece_on_history_val) = captured_piece_on_history {
+                    // 取った駒があったようだぜ☆（＾～＾）
+
+                    // 駒台の駒は元位置を覚えてないし、先後がひっくり返ってるから使わないぜ☆（＾～＾）
+                    let _captured_piece = self
+                        .board
+                        .pop_hand(captured_piece_on_history_val.0.captured(speed_of_light));
+                    // 移動先に取った駒を戻すぜ☆（＾～＾）
+                    self.board
+                        .push_piece(&movement.destination, captured_piece_on_history);
+                }
+            }
+
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
         } else {

@@ -650,17 +650,18 @@ impl Area {
             Agility::Sliding => {
                 let mut cur = start.clone();
 
-                if !cur.legal_next() {
-                    panic!(Beam::trouble(
-                        "(Err.654) スライディング・ピースを動かす前から盤外だぜ☆（＾～＾）！"
-                    ));
+                if !cur.legal_cur() {
+                    panic!(Beam::trouble(&format!(
+                        "(Err.654) スライディング・ピースを動かす前から盤外だぜ☆（＾～＾）！ {:?}",
+                        cur
+                    )));
                 }
 
                 let rel = Address::new(1, 0).rel().rotate(angle);
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
                     cur.offset(&rel);
-                    if !cur.legal_next() {
+                    if !cur.legal_cur() {
                         break;
                     }
                     if callback(cur) {
@@ -673,7 +674,7 @@ impl Area {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 next.offset(&Address::new(1, 0).rel().rotate(angle).double_rank());
-                if next.legal_next() {
+                if next.legal_cur() {
                     callback(next);
                 }
             }
@@ -681,7 +682,7 @@ impl Area {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 next.offset(&Address::new(1, 0).rel().rotate(angle));
-                if next.legal_next() {
+                if next.legal_cur() {
                     callback(next);
                 }
             }
