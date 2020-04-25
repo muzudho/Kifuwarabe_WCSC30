@@ -271,7 +271,7 @@ impl Board {
     pub fn push_piece(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
         if let Some(piece_val) = piece {
             self.pieces[adr.address() as usize] = piece;
-            self.piece_num_adr[piece_val.1 as usize].set(adr);
+            self.piece_num_adr[piece_val.1 as usize] = *adr;
         } else {
             self.pieces[adr.address() as usize] = None;
         }
@@ -291,18 +291,18 @@ impl Board {
             let source = Address::new(file, rank).abs();
             let piece_num = match piece_meaning {
                 PieceMeaning::King1 => {
-                    self.piece_num_adr[PieceNum::King1 as usize].set(&source);
+                    self.piece_num_adr[PieceNum::King1 as usize] = source;
                     PieceNum::King1
                 }
                 PieceMeaning::King2 => {
-                    self.piece_num_adr[PieceNum::King2 as usize].set(&source);
+                    self.piece_num_adr[PieceNum::King2 as usize] = source;
                     PieceNum::King2
                 }
                 PieceMeaning::Rook1
                 | PieceMeaning::Rook2
                 | PieceMeaning::Dragon1
                 | PieceMeaning::Dragon2 => {
-                    self.piece_num_adr[self.rook_index].set(&source);
+                    self.piece_num_adr[self.rook_index] = source;
                     let pn = PieceNum::from_usize(self.rook_index).unwrap();
                     self.rook_index += 1;
                     pn
@@ -311,13 +311,13 @@ impl Board {
                 | PieceMeaning::Bishop2
                 | PieceMeaning::Horse1
                 | PieceMeaning::Horse2 => {
-                    self.piece_num_adr[self.bishop_index].set(&source);
+                    self.piece_num_adr[self.bishop_index] = source;
                     let pn = PieceNum::from_usize(self.bishop_index).unwrap();
                     self.bishop_index += 1;
                     pn
                 }
                 PieceMeaning::Gold1 | PieceMeaning::Gold2 => {
-                    self.piece_num_adr[self.gold_index].set(&source);
+                    self.piece_num_adr[self.gold_index] = source;
                     let pn = PieceNum::from_usize(self.gold_index).unwrap();
                     self.gold_index += 1;
                     pn
@@ -326,7 +326,7 @@ impl Board {
                 | PieceMeaning::Silver2
                 | PieceMeaning::PromotedSilver1
                 | PieceMeaning::PromotedSilver2 => {
-                    self.piece_num_adr[self.silver_index].set(&source);
+                    self.piece_num_adr[self.silver_index] = source;
                     let pn = PieceNum::from_usize(self.silver_index).unwrap();
                     self.silver_index += 1;
                     pn
@@ -335,7 +335,7 @@ impl Board {
                 | PieceMeaning::Knight2
                 | PieceMeaning::PromotedKnight1
                 | PieceMeaning::PromotedKnight2 => {
-                    self.piece_num_adr[self.knight_index].set(&source);
+                    self.piece_num_adr[self.knight_index] = source;
                     let pn = PieceNum::from_usize(self.knight_index).unwrap();
                     self.knight_index += 1;
                     pn
@@ -344,7 +344,7 @@ impl Board {
                 | PieceMeaning::Lance2
                 | PieceMeaning::PromotedLance1
                 | PieceMeaning::PromotedLance2 => {
-                    self.piece_num_adr[self.lance_index].set(&source);
+                    self.piece_num_adr[self.lance_index] = source;
                     let pn = PieceNum::from_usize(self.lance_index).unwrap();
                     self.lance_index += 1;
                     pn
@@ -353,7 +353,7 @@ impl Board {
                 | PieceMeaning::Pawn2
                 | PieceMeaning::PromotedPawn1
                 | PieceMeaning::PromotedPawn2 => {
-                    self.piece_num_adr[self.pawn_index].set(&source);
+                    self.piece_num_adr[self.pawn_index] = source;
                     let pn = PieceNum::from_usize(self.pawn_index).unwrap();
                     self.pawn_index += 1;
                     pn
@@ -488,10 +488,9 @@ impl Board {
             }
         }
     }
-    /// 駒台に駒を置くぜ☆（＾～＾） 成ってるか、成ってないかは気にせず指定していいぜ☆（＾～＾）
-    /// 探索中に玉を取ってしまうので、玉も持てるようにするぜ☆（＾～＾）
     pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum)) {
         match hand.0 {
+            // 探索中に玉を取ってしまうので、玉も持てるようにするぜ☆（＾～＾）
             PieceMeaning::King1 => self.hand_king1.push(*hand),
             PieceMeaning::King2 => self.hand_king2.push(*hand),
             PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.push(*hand),
@@ -499,7 +498,7 @@ impl Board {
             PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.push(*hand),
             PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.push(*hand),
             PieceMeaning::Gold1 => self.hand_gold1.push(*hand),
-            PieceMeaning::Gold2 => self.hand_gold2.push(*hand),
+            PieceMeaning::Gold2 => self.hand_gold1.push(*hand),
             PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.push(*hand),
             PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.push(*hand),
             PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.push(*hand),
@@ -510,7 +509,6 @@ impl Board {
             PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.push(*hand),
         }
     }
-    /// 駒台から駒を取りだすぜ☆（＾～＾） 成ってるか、成ってないかは気にせず指定していいぜ☆（＾～＾）
     pub fn pop_hand(&mut self, hand: PieceMeaning) -> Option<(PieceMeaning, PieceNum)> {
         match hand {
             PieceMeaning::King1 => self.hand_king1.pop(),
@@ -520,7 +518,7 @@ impl Board {
             PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.pop(),
             PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.pop(),
             PieceMeaning::Gold1 => self.hand_gold1.pop(),
-            PieceMeaning::Gold2 => self.hand_gold2.pop(),
+            PieceMeaning::Gold2 => self.hand_gold1.pop(),
             PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.pop(),
             PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.pop(),
             PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.pop(),

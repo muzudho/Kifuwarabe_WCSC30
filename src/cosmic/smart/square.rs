@@ -774,7 +774,7 @@ impl AbsoluteAddress {
         AbsoluteAddress::new(FILE_11 - self.file, RANK_11 - self.rank)
     }
 
-    pub fn legal_cur(&self) -> bool {
+    pub fn legal_next(&self) -> bool {
         self.file % 10 != 0 && self.rank % 10 != 0
     }
 

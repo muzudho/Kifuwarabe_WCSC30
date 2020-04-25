@@ -34,13 +34,13 @@ impl Evaluation {
         cur.set(&king_adr);
         let rel = &mut RelativeAddress::new(0, -1);
         cur.offset(rel);
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, -1));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(1, 0));
-                if cur.legal_cur() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                 }
             }
@@ -55,13 +55,13 @@ impl Evaluation {
         cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(1, -1));
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(1, 0));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(0, -1));
-                if cur.legal_cur() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                 }
             }
@@ -76,16 +76,16 @@ impl Evaluation {
         cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(1, 0));
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(1, 0));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(0, 1));
-                if cur.legal_cur() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                     cur.offset(rel.set(0, 1));
-                    if cur.legal_cur() {
+                    if cur.legal_next() {
                         path.push(cur.clone());
                     }
                 }
@@ -101,10 +101,10 @@ impl Evaluation {
         cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(1, 1));
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, 1));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
             }
         }
@@ -118,16 +118,16 @@ impl Evaluation {
         cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(0, 1));
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, 1));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(-1, 0));
-                if cur.legal_cur() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                     cur.offset(rel.set(-1, 0));
-                    if cur.legal_cur() {
+                    if cur.legal_next() {
                         path.push(cur.clone());
                     }
                 }
@@ -143,10 +143,10 @@ impl Evaluation {
         cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(-1, 1));
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(-1, 0));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
             }
         }
@@ -160,16 +160,16 @@ impl Evaluation {
         cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(-1, 0));
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(-1, 0));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
                 cur.offset(rel.set(0, -1));
-                if cur.legal_cur() {
+                if cur.legal_next() {
                     path.push(cur.clone());
                     cur.offset(rel.set(0, -1));
-                    if cur.legal_cur() {
+                    if cur.legal_next() {
                         path.push(cur.clone());
                     }
                 }
@@ -185,10 +185,10 @@ impl Evaluation {
         cur.set(&king_adr);
         path.clear();
         cur.offset(rel.set(-1, -1));
-        if cur.legal_cur() {
+        if cur.legal_next() {
             path.push(cur.clone());
             cur.offset(rel.set(0, -1));
-            if cur.legal_cur() {
+            if cur.legal_next() {
                 path.push(cur.clone());
             }
         }
