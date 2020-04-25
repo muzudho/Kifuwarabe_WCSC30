@@ -194,7 +194,7 @@ impl PseudoLegalMoves {
             let drop = &mut |destination| {
                 if let None = board.piece_at(&destination) {
                     // 駒が無いところに打つ
-                    use crate::cosmic::toy_box::Piece::*;
+                    use crate::cosmic::smart::features::Piece::*;
                     match hand {
                         Pawn1 | Pawn2 => {
                             // ひよこ　は２歩できない☆（＾～＾）

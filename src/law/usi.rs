@@ -3,9 +3,8 @@
 //!
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
-use crate::cosmic::smart::features::PieceType;
+use crate::cosmic::smart::features::{Piece, PieceType};
 use crate::cosmic::smart::square::{Address, FILE_9, RANK_1};
-use crate::cosmic::toy_box::Piece;
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use atoi::atoi;
@@ -375,7 +374,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                         }
                     };
 
-                    use crate::cosmic::toy_box::Piece::*;
+                    use crate::cosmic::smart::features::Piece::*;
                     let hand = match &line[starts..=starts] {
                         "R" => Rook1,
                         "B" => Bishop1,

@@ -4,9 +4,8 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
-use crate::cosmic::smart::features::PieceType;
+use crate::cosmic::smart::features::{Piece, PieceType};
 use crate::cosmic::smart::square::{AbsoluteAddress, RelativeAddress};
-use crate::cosmic::toy_box::Piece;
 use crate::law::speed_of_light::SpeedOfLight;
 
 /// 千日手の価値☆（＾～＾）

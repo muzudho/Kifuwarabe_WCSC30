@@ -1,8 +1,9 @@
 use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
+use crate::cosmic::smart::features::{Piece, MG_MAX, PIECE_LN};
 use crate::cosmic::smart::square::{
     Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_NONE,
 };
-use crate::cosmic::toy_box::{Board, Piece, MG_MAX, PIECE_LN};
+use crate::cosmic::toy_box::Board;
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::{Beam, DestinationDisplay};
 use rand::Rng;

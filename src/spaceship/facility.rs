@@ -1,8 +1,8 @@
 use crate::cosmic::playing::{Game, PosNums};
 use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
+use crate::cosmic::smart::features::{Piece, PIECE_WHITE_SPACE};
 use crate::cosmic::smart::square::*;
-use crate::cosmic::toy_box::{Piece, PIECE_WHITE_SPACE};
 use crate::spaceship::equipment::Beam;
 use std::collections::HashSet;
 use std::hash::BuildHasher;

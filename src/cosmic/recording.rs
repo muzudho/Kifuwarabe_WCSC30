@@ -5,10 +5,9 @@
 //! * Person (先手,後手)
 //!
 use crate::cosmic::smart::features::{
-    pop_piece_type_from_hash, push_piece_type_to_hash, PieceType,
+    pop_piece_type_from_hash, push_piece_type_to_hash, Piece, PieceType,
 };
 use crate::cosmic::smart::square::{AbsoluteAddress, Address};
-use crate::cosmic::toy_box::Piece;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
