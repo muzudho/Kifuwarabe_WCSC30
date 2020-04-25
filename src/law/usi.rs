@@ -5,6 +5,7 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Address, FILE_9, RANK_1};
+use crate::cosmic::universe::Universe;
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use atoi::atoi;
@@ -270,14 +271,14 @@ pub fn read_board(
 }
 
 /// position コマンド読取
-pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) {
+pub fn set_position(line: &str, universe: &mut Universe, speed_of_light: &SpeedOfLight) {
     let mut starts = 0;
 
     // 全体の長さ
     let len = line.chars().count();
 
-    // 局面をクリアー。手目も 0 に戻します。
-    game.clear();
+    // 対局をクリアー。
+    universe.game = Game::default();
 
     if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
         // 'position startpos' を読み飛ばし
@@ -288,7 +289,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
             &STARTPOS.to_string(),
             &mut local_starts,
             STARTPOS_LN,
-            game,
+            &mut universe.game,
             speed_of_light,
         );
 
@@ -298,7 +299,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_board(line, &mut starts, len, game, speed_of_light);
+        read_board(line, &mut starts, len, &mut universe.game, speed_of_light);
 
         if 0 < (len - starts) && &line[starts..=starts] == " " {
             starts += 1;
@@ -397,7 +398,10 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                     };
                     starts += 1;
 
-                    game.mut_starting().push_hand_on_init(hand, hand_num);
+                    universe
+                        .game
+                        .mut_starting()
+                        .push_hand_on_init(hand, hand_num);
                 } //if
             } //loop
         } //else
@@ -419,16 +423,16 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
     }
 
     // 初期局面を、現局面にコピーします
-    game.board.copy_from(&game.starting_board);
+    universe.game.board.copy_from(&universe.game.starting_board);
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
-    while read_sasite(line, &mut starts, len, game) {
+    while read_sasite(line, &mut starts, len, &mut universe.game) {
         // 手目を戻す
-        game.history.ply -= 1;
+        universe.game.history.ply -= 1;
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = game.history.ply;
-        game.do_move(
-            &game.history.movements[ply as usize].clone(),
+        let ply = universe.game.history.ply;
+        universe.game.do_move(
+            &universe.game.history.movements[ply as usize].clone(),
             speed_of_light,
         );
     }

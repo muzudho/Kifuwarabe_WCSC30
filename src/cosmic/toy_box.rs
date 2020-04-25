@@ -179,55 +179,18 @@ impl Default for Board {
     }
 }
 impl Board {
-    pub fn clear(&mut self) {
-        self.pieces = [
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None,
-        ];
-        self.piece_num_adr = [AbsoluteAddress::default(); PIECE_NUM_LEN];
-        self.rook_index = PieceNum::Rook21 as usize;
-        self.bishop_index = PieceNum::Bishop19 as usize;
-        self.gold_index = PieceNum::Gold3 as usize;
-        self.silver_index = PieceNum::Silver7 as usize;
-        self.knight_index = PieceNum::Knight11 as usize;
-        self.lance_index = PieceNum::Lance15 as usize;
-        self.pawn_index = PieceNum::Pawn23 as usize;
-        // 持ち駒☆（＾～＾）
-        self.hand_king1.clear();
-        self.hand_rook1.clear();
-        self.hand_bishop1.clear();
-        self.hand_gold1.clear();
-        self.hand_silver1.clear();
-        self.hand_knight1.clear();
-        self.hand_lance1.clear();
-        self.hand_pawn1.clear();
-        self.hand_king2.clear();
-        self.hand_rook2.clear();
-        self.hand_bishop2.clear();
-        self.hand_gold2.clear();
-        self.hand_silver2.clear();
-        self.hand_knight2.clear();
-        self.hand_lance2.clear();
-        self.hand_pawn2.clear();
-    }
-
     /// 開始盤面を、現盤面にコピーしたいときに使うぜ☆（＾～＾）
     pub fn copy_from(&mut self, board: &Board) {
-        for rank in RANK_0..RANK_11 {
-            for file in (FILE_0..FILE_11).rev() {
-                let abs_adr = Address::new(file, rank).abs();
-                // TODO 取得→設定　するとエラーになってしまうので、今んとこ 作成→設定　するぜ☆（＾～＾）
-                self.push_piece(&abs_adr, board.piece_at(&abs_adr));
-            }
-        }
-
+        self.pieces = board.pieces.clone();
         self.piece_num_adr = board.piece_num_adr.clone();
+        self.rook_index = board.rook_index.clone();
+        self.bishop_index = board.bishop_index.clone();
+        self.gold_index = board.gold_index.clone();
+        self.silver_index = board.silver_index.clone();
+        self.knight_index = board.knight_index.clone();
+        self.lance_index = board.lance_index.clone();
+        self.pawn_index = board.pawn_index.clone();
+        self.hand_king1 = board.hand_king1.clone();
         self.hand_rook1 = board.hand_rook1.clone();
         self.hand_bishop1 = board.hand_bishop1.clone();
         self.hand_gold1 = board.hand_gold1.clone();
@@ -235,6 +198,7 @@ impl Board {
         self.hand_knight1 = board.hand_knight1.clone();
         self.hand_lance1 = board.hand_lance1.clone();
         self.hand_pawn1 = board.hand_pawn1.clone();
+        self.hand_king2 = board.hand_king2.clone();
         self.hand_rook2 = board.hand_rook2.clone();
         self.hand_bishop2 = board.hand_bishop2.clone();
         self.hand_gold2 = board.hand_gold2.clone();
@@ -242,6 +206,7 @@ impl Board {
         self.hand_knight2 = board.hand_knight2.clone();
         self.hand_lance2 = board.hand_lance2.clone();
         self.hand_pawn2 = board.hand_pawn2.clone();
+        self.control = board.control.clone();
     }
 
     /// 歩が置いてあるか確認
@@ -278,7 +243,8 @@ impl Board {
     }
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
     pub fn pop_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
-        let piece = self.pieces[adr.address() as usize];
+        // 取り出すピースは複製するぜ☆（＾～＾）
+        let piece = self.pieces[adr.address() as usize].clone();
         if let Some(piece_val) = piece {
             self.pieces[adr.address() as usize] = None;
             self.piece_num_adr[piece_val.1 as usize].clear();
@@ -627,7 +593,7 @@ impl Board {
         }
     }
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
-    pub fn for_some_pieces_on_board<F>(
+    pub fn for_some_pieces_on_list40<F>(
         &self,
         friend: Phase,
         speed_of_light: &SpeedOfLight,
