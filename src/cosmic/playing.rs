@@ -107,8 +107,7 @@ impl Game {
     pub fn set_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    /// 駒を取ったぜ☆（＾～＾）
-    pub fn caputure_piece(&mut self, ply1: usize, pc: Option<(PieceMeaning, PieceNum)>) {
+    pub fn set_captured(&mut self, ply1: usize, pc: Option<(PieceMeaning, PieceNum)>) {
         self.history.captured_pieces[ply1] = pc
     }
 
@@ -255,7 +254,7 @@ impl Game {
             // 移動先升に駒を置く
             self.board.push_piece(&movement.destination, moveing_piece);
         }
-        self.caputure_piece(self.history.ply as usize, cap);
+        self.set_captured(self.history.ply as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_current_position_hash(speed_of_light);
