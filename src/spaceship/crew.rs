@@ -81,6 +81,9 @@ impl Kifuwarabe {
             let value = &line[(label1_width + name_width + label2_width)..];
             // IO::writeln(&format!("Debug value=|{}|", value));
             match name {
+                "KingRiskWeight" => {
+                    universe.option_king_risk_weight = value.parse().unwrap();
+                }
                 "MaxDepth" => {
                     universe.option_max_depth = value.parse().unwrap();
                 }
@@ -107,9 +110,10 @@ impl Kifuwarabe {
         IO::writeln("option name ResetLearning type button");
         IO::writeln("option name LearningFile type filename default <empty>");
         */
+        Beam::shoot("option name KingRiskWeight type spin default 50 min -1000 max 1000");
         Beam::shoot("option name MaxDepth type spin default 1 min 1 max 10");
-        Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");
         Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
+        Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");
         Beam::shoot("usiok");
     }
     pub fn usinewgame(universe: &mut Universe) {

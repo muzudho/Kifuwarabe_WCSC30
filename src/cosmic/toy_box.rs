@@ -8,6 +8,7 @@ use crate::cosmic::smart::features::{Piece, PieceType, Pieces, MG_MAX, PIECE_LN}
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_1, RANK_10, RANK_11,
 };
+use crate::law::generate_move::Area;
 use crate::law::speed_of_light::SpeedOfLight;
 
 /// 背番号付きの駒の数。
@@ -157,6 +158,66 @@ impl Board {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 空マス, 終わり,
             0, 0,
         ];
+    }
+
+    /// 盤面の駒に背番号を振っていくぜ☆（＾～＾）
+    pub fn init_piece_pos(&mut self) {
+        let mut rook_index = PieceNum::Rook21 as usize;
+        let mut bishop_index = PieceNum::Bishop19 as usize;
+        let mut gold_index = PieceNum::Gold3 as usize;
+        let mut silver_index = PieceNum::Silver7 as usize;
+        let mut knight_index = PieceNum::Knight11 as usize;
+        let mut lance_index = PieceNum::Lance15 as usize;
+        let mut pawn_index = PieceNum::Pawn23 as usize;
+        Area::for_all(&mut |source| {
+            if let Some(piece_val) = self.piece_at(&source) {
+                match piece_val {
+                    Piece::King1 => {
+                        self.piece_pos[PieceNum::King1 as usize] = source;
+                    }
+                    Piece::King2 => {
+                        self.piece_pos[PieceNum::King2 as usize] = source;
+                    }
+                    Piece::Rook1 | Piece::Rook2 | Piece::Dragon1 | Piece::Dragon2 => {
+                        self.piece_pos[rook_index] = source;
+                        rook_index += 1;
+                    }
+                    Piece::Bishop1 | Piece::Bishop2 | Piece::Horse1 | Piece::Horse2 => {
+                        self.piece_pos[bishop_index] = source;
+                        bishop_index += 1;
+                    }
+                    Piece::Gold1 | Piece::Gold2 => {
+                        self.piece_pos[gold_index] = source;
+                        gold_index += 1;
+                    }
+                    Piece::Silver1
+                    | Piece::Silver2
+                    | Piece::PromotedSilver1
+                    | Piece::PromotedSilver2 => {
+                        self.piece_pos[silver_index] = source;
+                        silver_index += 1;
+                    }
+                    Piece::Knight1
+                    | Piece::Knight2
+                    | Piece::PromotedKnight1
+                    | Piece::PromotedKnight2 => {
+                        self.piece_pos[knight_index] = source;
+                        knight_index += 1;
+                    }
+                    Piece::Lance1
+                    | Piece::Lance2
+                    | Piece::PromotedLance1
+                    | Piece::PromotedLance2 => {
+                        self.piece_pos[lance_index] = source;
+                        lance_index += 1;
+                    }
+                    Piece::Pawn1 | Piece::Pawn2 | Piece::PromotedPawn1 | Piece::PromotedPawn2 => {
+                        self.piece_pos[pawn_index] = source;
+                        pawn_index += 1;
+                    }
+                }
+            }
+        });
     }
 
     /// 歩が置いてあるか確認
