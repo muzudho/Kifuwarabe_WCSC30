@@ -1,16 +1,141 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
+use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
+use crate::cosmic::recording::Person;
 use crate::cosmic::smart::features::PieceType;
+use crate::cosmic::smart::square::{AbsoluteAddress, RelativeAddress};
 use crate::cosmic::toy_box::Piece;
-use crate::law::speed_of_light::*;
+use crate::law::speed_of_light::SpeedOfLight;
 
 /// 千日手の価値☆（＾～＾）
 pub const REPITITION_VALUE: i16 = -300;
 
 pub struct Evaluation {}
 impl Evaluation {
+    /// 玉のリスク計算だぜ☆（＾～＾）
+    pub fn risk_king(game: &mut Game, occupy_control_sign: i16) -> f64 {
+        let mut risk_value = 0.0f64;
+        let friend_index = game.history.get_phase(Person::Friend) as usize;
+        let king_adr = game.board.king_pos[friend_index];
+        // 北
+        // .xx..
+        // ..x..
+        // .....
+        // .....
+        // .....
+        let next = &mut Vec::<AbsoluteAddress>::new();
+        let cur = &mut AbsoluteAddress::default();
+        cur.set(&king_adr);
+        let rel = &mut RelativeAddress::new(0, -1);
+        next.push(cur.add_mut(rel).clone());
+        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        next.push(cur.add_mut(rel.set(1, 0)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        // 北西
+        // x....
+        // xx...
+        // .....
+        // .....
+        // .....
+        cur.set(&game.board.king_pos[friend_index]);
+        next.clear();
+        next.push(cur.add_mut(rel.set(1, -1)).clone());
+        next.push(cur.add_mut(rel.set(1, 0)).clone());
+        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        // 西
+        // .....
+        // .....
+        // xx...
+        // x....
+        // x....
+        cur.set(&game.board.king_pos[friend_index]);
+        next.clear();
+        next.push(cur.add_mut(rel.set(1, 0)).clone());
+        next.push(cur.add_mut(rel.set(1, 0)).clone());
+        next.push(cur.add_mut(rel.set(0, 1)).clone());
+        next.push(cur.add_mut(rel.set(0, 1)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        // 南西
+        // .....
+        // .....
+        // .....
+        // .x...
+        // .x...
+        cur.set(&game.board.king_pos[friend_index]);
+        next.clear();
+        next.push(cur.add_mut(rel.set(1, 1)).clone());
+        next.push(cur.add_mut(rel.set(0, 1)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        // 南
+        // .....
+        // .....
+        // .....
+        // ..x..
+        // ..xxx
+        cur.set(&game.board.king_pos[friend_index]);
+        next.clear();
+        next.push(cur.add_mut(rel.set(0, 1)).clone());
+        next.push(cur.add_mut(rel.set(0, 1)).clone());
+        next.push(cur.add_mut(rel.set(-1, 0)).clone());
+        next.push(cur.add_mut(rel.set(-1, 0)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        // 南東
+        // .....
+        // .....
+        // .....
+        // ...xx
+        // .....
+        cur.set(&game.board.king_pos[friend_index]);
+        next.clear();
+        next.push(cur.add_mut(rel.set(-1, 1)).clone());
+        next.push(cur.add_mut(rel.set(-1, 0)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        // 東
+        // ....x
+        // ....x
+        // ...xx
+        // .....
+        // .....
+        cur.set(&game.board.king_pos[friend_index]);
+        next.clear();
+        next.push(cur.add_mut(rel.set(-1, 0)).clone());
+        next.push(cur.add_mut(rel.set(-1, 0)).clone());
+        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        // 北東
+        // ...x.
+        // ...x.
+        // .....
+        // .....
+        // .....
+        cur.set(&game.board.king_pos[friend_index]);
+        next.clear();
+        next.push(cur.add_mut(rel.set(-1, -1)).clone());
+        next.push(cur.add_mut(rel.set(0, -1)).clone());
+        risk_value += Evaluation::risk(occupy_control_sign, next.to_vec(), &king_adr);
+        risk_value
+    }
+
+    fn risk(sign: i16, adr_vec: Vec<AbsoluteAddress>, king_adr: &AbsoluteAddress) -> f64 {
+        let mut risk = 0f64;
+        for adr1 in adr_vec {
+            if adr1.has_jumped_out_of_the_board() {
+                break;
+            } else {
+                // どのマスも、玉から 1マス～16マス 離れている☆（＾～＾）玉に近いものを重くみようぜ☆（＾～＾）
+                let a: f64 = (16 - king_adr.manhattan_distance(&adr1)) as f64 / 16.0;
+                // println!("sign = {} | a = {}", sign, a);
+                let amount = sign as f64 * a;
+                risk += amount;
+            }
+        }
+        risk
+    }
+
     /// 成ったら評価に加点するぜ☆（＾～＾）
     /// 駒得より 評価は下げた方が良さげ☆（＾～＾）
     pub fn from_promotion(cur_depth: usize, source: PieceType, movement: &Movement) -> i16 {

@@ -6,8 +6,6 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceType::King;
-use crate::cosmic::smart::square::AbsoluteAddress;
-use crate::cosmic::smart::square::RelativeAddress;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::SpeedOfLight;
@@ -217,105 +215,7 @@ impl Tree {
                 let occupy_control_value: i16 = game.board.occupy_control_value();
 
                 // 玉の周囲２４近傍の利きを、重みを付けて集計するぜ☆（＾～＾）
-                let mut risk_value = 0.0f64;
-                // 北
-                // .xx..
-                // ..x..
-                // .....
-                // .....
-                // .....
-                let next = &mut Vec::<AbsoluteAddress>::new();
-                let cur = &mut AbsoluteAddress::default();
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                let rel = &mut RelativeAddress::new(0, -1);
-                next.push(cur.add_mut(rel).clone());
-                next.push(cur.add_mut(rel.set(0, -1)).clone());
-                next.push(cur.add_mut(rel.set(1, 0)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
-                // 北西
-                // x....
-                // xx...
-                // .....
-                // .....
-                // .....
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                next.clear();
-                next.push(cur.add_mut(rel.set(1, -1)).clone());
-                next.push(cur.add_mut(rel.set(1, 0)).clone());
-                next.push(cur.add_mut(rel.set(0, -1)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
-                // 西
-                // .....
-                // .....
-                // xx...
-                // x....
-                // x....
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                next.clear();
-                next.push(cur.add_mut(rel.set(1, 0)).clone());
-                next.push(cur.add_mut(rel.set(1, 0)).clone());
-                next.push(cur.add_mut(rel.set(0, 1)).clone());
-                next.push(cur.add_mut(rel.set(0, 1)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
-                // 南西
-                // .....
-                // .....
-                // .....
-                // .x...
-                // .x...
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                next.clear();
-                next.push(cur.add_mut(rel.set(1, 1)).clone());
-                next.push(cur.add_mut(rel.set(0, 1)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
-                // 南
-                // .....
-                // .....
-                // .....
-                // ..x..
-                // ..xxx
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                next.clear();
-                next.push(cur.add_mut(rel.set(0, 1)).clone());
-                next.push(cur.add_mut(rel.set(0, 1)).clone());
-                next.push(cur.add_mut(rel.set(-1, 0)).clone());
-                next.push(cur.add_mut(rel.set(-1, 0)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
-                // 南東
-                // .....
-                // .....
-                // .....
-                // ...xx
-                // .....
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                next.clear();
-                next.push(cur.add_mut(rel.set(-1, 1)).clone());
-                next.push(cur.add_mut(rel.set(-1, 0)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
-                // 東
-                // ....x
-                // ....x
-                // ...xx
-                // .....
-                // .....
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                next.clear();
-                next.push(cur.add_mut(rel.set(-1, 0)).clone());
-                next.push(cur.add_mut(rel.set(-1, 0)).clone());
-                next.push(cur.add_mut(rel.set(0, -1)).clone());
-                next.push(cur.add_mut(rel.set(0, -1)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
-                // 北東
-                // ...x.
-                // ...x.
-                // .....
-                // .....
-                // .....
-                cur.set(&game.board.king_pos[game.history.get_phase(Person::Friend) as usize]);
-                next.clear();
-                next.push(cur.add_mut(rel.set(-1, -1)).clone());
-                next.push(cur.add_mut(rel.set(0, -1)).clone());
-                risk_value += self.risk(occupy_control_sign, next.to_vec(), game);
+                let risk_king = Evaluation::risk_king(game, occupy_control_sign);
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
@@ -329,7 +229,7 @@ impl Tree {
                         Some(PvString::String(format!(
                             "occupy-control-value={} | risk={} | {} {} {}",
                             occupy_control_sign * occupy_control_value,
-                            risk_value,
+                            risk_king,
                             game.board.occupy_control[68],
                             game.board.occupy_control[58],
                             game.board.occupy_control[48],
@@ -349,7 +249,7 @@ impl Tree {
                         captured_piece_centi_pawn
                             + promoted_bonus
                             + (occupy_control_sign * occupy_control_value)
-                            + risk_value as i16,
+                            + risk_king as i16,
                     ),
                     *movement_hash,
                 );
@@ -400,24 +300,6 @@ impl Tree {
             game.board.occupy_control
                 [Movement::from_hash(*movement_hash).destination.address() as usize] += sign;
         }
-    }
-
-    pub fn risk(&self, sign: i16, adr_vec: Vec<AbsoluteAddress>, game: &mut Game) -> f64 {
-        let mut risk = 0f64;
-        let friend = game.history.get_phase(Person::Friend);
-        let king_adr = game.board.king_pos[friend as usize];
-        for adr1 in adr_vec {
-            if adr1.has_jumped_out_of_the_board() {
-                break;
-            } else {
-                // どのマスも、玉から 1マス～16マス 離れている☆（＾～＾）玉に近いものを重くみようぜ☆（＾～＾）
-                let a: f64 = (16 - king_adr.manhattan_distance(&adr1)) as f64 / 16.0;
-                // println!("sign = {} | a = {}", sign, a);
-                let amount = sign as f64 * a;
-                risk += amount;
-            }
-        }
-        risk
     }
 }
 
