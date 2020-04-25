@@ -123,14 +123,14 @@ impl Evaluation {
     fn risk(sign: i16, adr_vec: Vec<AbsoluteAddress>, king_adr: &AbsoluteAddress) -> f64 {
         let mut risk = 0f64;
         for adr1 in adr_vec {
-            if adr1.has_jumped_out_of_the_board() {
-                break;
-            } else {
+            if adr1.legal() {
                 // どのマスも、玉から 1マス～16マス 離れている☆（＾～＾）玉に近いものを重くみようぜ☆（＾～＾）
                 let a: f64 = (16 - king_adr.manhattan_distance(&adr1)) as f64 / 16.0;
                 // println!("sign = {} | a = {}", sign, a);
                 let amount = sign as f64 * a;
                 risk += amount;
+            } else {
+                break;
             }
         }
         risk

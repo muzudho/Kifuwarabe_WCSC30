@@ -769,8 +769,8 @@ impl AbsoluteAddress {
         AbsoluteAddress::new(FILE_11 - self.file, RANK_11 - self.rank)
     }
 
-    pub fn has_jumped_out_of_the_board(&self) -> bool {
-        self.file % 10 == 0 || self.rank % 10 == 0
+    pub fn legal(&self) -> bool {
+        self.file % 10 != 0 && self.rank % 10 != 0
     }
 
     pub fn offset(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
