@@ -4,7 +4,7 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
-use crate::cosmic::smart::features::{Piece, PieceType};
+use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{AbsoluteAddress, RelativeAddress};
 use crate::law::speed_of_light::SpeedOfLight;
 
@@ -243,7 +243,7 @@ impl Evaluation {
     /// Centi pawn.
     pub fn from_caputured_piece(
         cur_depth: usize,
-        captured_piece: Option<Piece>,
+        captured_piece: Option<PieceMeaning>,
         speed_of_light: &SpeedOfLight,
     ) -> i16 {
         if let Some(captured_piece_val) = captured_piece {

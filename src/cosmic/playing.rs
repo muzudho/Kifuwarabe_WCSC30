@@ -1,5 +1,5 @@
 use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
-use crate::cosmic::smart::features::{Piece, MG_MAX, PIECE_LN};
+use crate::cosmic::smart::features::{PieceMeaning, MG_MAX, PIECE_LN};
 use crate::cosmic::smart::square::{
     Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_11, SQUARE_NONE,
 };
@@ -107,7 +107,7 @@ impl Game {
     pub fn set_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    pub fn set_captured(&mut self, ply1: usize, pc: Option<Piece>) {
+    pub fn set_captured(&mut self, ply1: usize, pc: Option<PieceMeaning>) {
         self.history.captured_pieces[ply1] = pc
     }
 
@@ -217,20 +217,24 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(&mut self, movement: &Movement, speed_of_light: &SpeedOfLight) -> Option<Piece> {
+    pub fn do_move(
+        &mut self,
+        movement: &Movement,
+        speed_of_light: &SpeedOfLight,
+    ) -> Option<PieceMeaning> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(movement);
         let friend = self.history.get_phase(Person::Friend);
 
         // 取った駒
-        let cap: Option<Piece>;
+        let cap: Option<PieceMeaning>;
         {
             // 動かす駒
-            let moveing_piece: Option<Piece> = if movement.source.is_drop() {
+            let moveing_piece: Option<PieceMeaning> = if movement.source.is_drop() {
                 // 打なら
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
-                    let piece734 = Piece::from_phase_and_piece_type(friend, drp);
+                    let piece734 = PieceMeaning::from_phase_and_piece_type(friend, drp);
                     self.board.add_hand(&piece734, -1, speed_of_light);
                     Some(piece734)
                 } else {
@@ -286,6 +290,7 @@ impl Game {
         self.set_position_hash(ky_hash);
 
         self.history.ply += 1;
+        // TODO self.board.update_piece_pos(&movement.source, &movement.destination);
         cap
     }
 
@@ -297,12 +302,13 @@ impl Game {
             {
                 let phase = self.history.get_phase(Person::Friend);
                 // 取った駒が有ったか。
-                let cap_o: Option<Piece> = self.history.captured_pieces[self.history.ply as usize];
+                let cap_o: Option<PieceMeaning> =
+                    self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let old_source391_o: Option<Piece> = if movement.source.is_drop() {
+                let old_source391_o: Option<PieceMeaning> = if movement.source.is_drop() {
                     // 打なら
                     if let Some(drp) = movement.drop {
-                        let drop394 = Piece::from_phase_and_piece_type(phase, drp);
+                        let drop394 = PieceMeaning::from_phase_and_piece_type(phase, drp);
                         // 自分の持ち駒を増やす
                         //let mg = km_to_mg(km);
                         //self.add_hand(mg,1);
@@ -341,6 +347,7 @@ impl Game {
                 self.board.set_piece_at(&movement.source, old_source391_o);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
+            // TODO self.board.update_piece_pos(&movement.destination, &movement.source);
             true
         } else {
             false

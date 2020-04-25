@@ -3,7 +3,7 @@
 //!
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
-use crate::cosmic::smart::features::{Piece, PieceType};
+use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Address, FILE_9, RANK_1};
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
@@ -182,7 +182,7 @@ pub fn read_board(
         /// スペース数☆（＾～＾）
         Number(i8),
         /// 駒☆（＾～＾）+で始まるものもこっちだぜ☆（＾～＾）
-        Alphabet(Piece),
+        Alphabet(PieceMeaning),
     }
 
     'ban: while 0 < (len - *starts) {
@@ -197,38 +197,38 @@ pub fn read_board(
             "7" => BoardPart::Number(7),
             "8" => BoardPart::Number(8),
             "9" => BoardPart::Number(9),
-            "K" => BoardPart::Alphabet(Piece::King1),
-            "R" => BoardPart::Alphabet(Piece::Rook1),
-            "B" => BoardPart::Alphabet(Piece::Bishop1),
-            "G" => BoardPart::Alphabet(Piece::Gold1),
-            "S" => BoardPart::Alphabet(Piece::Silver1),
-            "N" => BoardPart::Alphabet(Piece::Knight1),
-            "L" => BoardPart::Alphabet(Piece::Lance1),
-            "P" => BoardPart::Alphabet(Piece::Pawn1),
-            "k" => BoardPart::Alphabet(Piece::King2),
-            "r" => BoardPart::Alphabet(Piece::Rook2),
-            "b" => BoardPart::Alphabet(Piece::Bishop2),
-            "g" => BoardPart::Alphabet(Piece::Gold2),
-            "s" => BoardPart::Alphabet(Piece::Silver2),
-            "n" => BoardPart::Alphabet(Piece::Knight2),
-            "l" => BoardPart::Alphabet(Piece::Lance2),
-            "p" => BoardPart::Alphabet(Piece::Pawn2),
+            "K" => BoardPart::Alphabet(PieceMeaning::King1),
+            "R" => BoardPart::Alphabet(PieceMeaning::Rook1),
+            "B" => BoardPart::Alphabet(PieceMeaning::Bishop1),
+            "G" => BoardPart::Alphabet(PieceMeaning::Gold1),
+            "S" => BoardPart::Alphabet(PieceMeaning::Silver1),
+            "N" => BoardPart::Alphabet(PieceMeaning::Knight1),
+            "L" => BoardPart::Alphabet(PieceMeaning::Lance1),
+            "P" => BoardPart::Alphabet(PieceMeaning::Pawn1),
+            "k" => BoardPart::Alphabet(PieceMeaning::King2),
+            "r" => BoardPart::Alphabet(PieceMeaning::Rook2),
+            "b" => BoardPart::Alphabet(PieceMeaning::Bishop2),
+            "g" => BoardPart::Alphabet(PieceMeaning::Gold2),
+            "s" => BoardPart::Alphabet(PieceMeaning::Silver2),
+            "n" => BoardPart::Alphabet(PieceMeaning::Knight2),
+            "l" => BoardPart::Alphabet(PieceMeaning::Lance2),
+            "p" => BoardPart::Alphabet(PieceMeaning::Pawn2),
             "+" => {
                 *starts += 1;
                 // 次に必ず１文字が来るぜ☆（＾～＾）
                 match &line[*starts..=*starts] {
-                    "R" => BoardPart::Alphabet(Piece::Dragon1),
-                    "B" => BoardPart::Alphabet(Piece::Horse1),
-                    "S" => BoardPart::Alphabet(Piece::PromotedSilver1),
-                    "N" => BoardPart::Alphabet(Piece::PromotedKnight1),
-                    "L" => BoardPart::Alphabet(Piece::PromotedLance1),
-                    "P" => BoardPart::Alphabet(Piece::PromotedPawn1),
-                    "r" => BoardPart::Alphabet(Piece::Dragon2),
-                    "b" => BoardPart::Alphabet(Piece::Horse2),
-                    "s" => BoardPart::Alphabet(Piece::PromotedSilver2),
-                    "n" => BoardPart::Alphabet(Piece::PromotedKnight2),
-                    "l" => BoardPart::Alphabet(Piece::PromotedLance2),
-                    "p" => BoardPart::Alphabet(Piece::PromotedPawn2),
+                    "R" => BoardPart::Alphabet(PieceMeaning::Dragon1),
+                    "B" => BoardPart::Alphabet(PieceMeaning::Horse1),
+                    "S" => BoardPart::Alphabet(PieceMeaning::PromotedSilver1),
+                    "N" => BoardPart::Alphabet(PieceMeaning::PromotedKnight1),
+                    "L" => BoardPart::Alphabet(PieceMeaning::PromotedLance1),
+                    "P" => BoardPart::Alphabet(PieceMeaning::PromotedPawn1),
+                    "r" => BoardPart::Alphabet(PieceMeaning::Dragon2),
+                    "b" => BoardPart::Alphabet(PieceMeaning::Horse2),
+                    "s" => BoardPart::Alphabet(PieceMeaning::PromotedSilver2),
+                    "n" => BoardPart::Alphabet(PieceMeaning::PromotedKnight2),
+                    "l" => BoardPart::Alphabet(PieceMeaning::PromotedLance2),
+                    "p" => BoardPart::Alphabet(PieceMeaning::PromotedPawn2),
                     _ => {
                         panic!(Beam::trouble(&format!(
                             "(Err.235)  盤部(0) '{}' だった。",
@@ -374,7 +374,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                         }
                     };
 
-                    use crate::cosmic::smart::features::Piece::*;
+                    use crate::cosmic::smart::features::PieceMeaning::*;
                     let hand = match &line[starts..=starts] {
                         "R" => Rook1,
                         "B" => Bishop1,

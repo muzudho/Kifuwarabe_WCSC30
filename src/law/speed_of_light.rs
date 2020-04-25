@@ -8,7 +8,7 @@
 //! 駒種類早見表 (PieceTypeChart).
 //!
 use crate::cosmic::recording::Phase;
-use crate::cosmic::smart::features::{Piece, PieceType};
+use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
@@ -61,7 +61,7 @@ pub struct SpeedOfLight {
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
-        use crate::cosmic::smart::features::Piece::*;
+        use crate::cosmic::smart::features::PieceMeaning::*;
         use crate::cosmic::smart::features::PieceType::*;
         SpeedOfLight {
             king1: PieceChart::from_piece(King1),
@@ -112,8 +112,8 @@ impl Default for SpeedOfLight {
 
 impl SpeedOfLight {
     /// 駒の属性を参照するぜ☆（＾～＾）
-    fn piece_chart(&self, piece: &Piece) -> &PieceChart {
-        use crate::cosmic::smart::features::Piece::*;
+    fn piece_chart(&self, piece: &PieceMeaning) -> &PieceChart {
+        use crate::cosmic::smart::features::PieceMeaning::*;
 
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
@@ -183,7 +183,7 @@ impl SpeedOfLight {
 /// アプリ起動時に全種類作って Enum型 で取得するようにした方がよくないか☆（＾～＾）？
 #[derive(Clone)]
 pub struct PieceChart {
-    pub piece: Piece,
+    pub piece: PieceMeaning,
 
     /// 先後
     phase: Phase,
@@ -192,23 +192,23 @@ pub struct PieceChart {
     piece_type: PieceType,
 
     /// 駒→成駒　（成れない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    promoted: Piece,
+    promoted: PieceMeaning,
 
     /// 成駒→駒　（成っていない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    demoted: Piece,
+    demoted: PieceMeaning,
 
     /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
-    captured: Piece,
+    captured: PieceMeaning,
 
     /// 先後付き駒の配列のインデックス
     serial_number: usize,
 }
 impl PieceChart {
     /// ピースの生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
-    fn from_piece(p: Piece) -> Self {
+    fn from_piece(p: PieceMeaning) -> Self {
         use crate::cosmic::recording::Phase::*;
-        use crate::cosmic::smart::features::Piece::*;
+        use crate::cosmic::smart::features::PieceMeaning::*;
         use crate::cosmic::smart::features::PieceType::*;
         match p {
             King1 => PieceChart {
@@ -467,7 +467,7 @@ impl PieceChart {
     }
 }
 /// コーディングを短くするためのものだぜ☆（＾～＾）
-impl Piece {
+impl PieceMeaning {
     pub fn phase(&self, speed_of_light: &SpeedOfLight) -> Phase {
         speed_of_light.piece_chart(self).phase
     }
@@ -476,15 +476,15 @@ impl Piece {
         speed_of_light.piece_chart(self).piece_type
     }
 
-    pub fn promoted(&self, speed_of_light: &SpeedOfLight) -> Piece {
+    pub fn promoted(&self, speed_of_light: &SpeedOfLight) -> PieceMeaning {
         speed_of_light.piece_chart(self).promoted
     }
 
-    pub fn demoted(&self, speed_of_light: &SpeedOfLight) -> Piece {
+    pub fn demoted(&self, speed_of_light: &SpeedOfLight) -> PieceMeaning {
         speed_of_light.piece_chart(self).demoted
     }
 
-    pub fn captured(&self, speed_of_light: &SpeedOfLight) -> Piece {
+    pub fn captured(&self, speed_of_light: &SpeedOfLight) -> PieceMeaning {
         speed_of_light.piece_chart(self).captured
     }
 
@@ -613,8 +613,8 @@ impl PieceType {
     pub fn _slider(&self, speed_of_light: &SpeedOfLight) -> bool {
         speed_of_light.piece_type_chart(self)._slider
     }
-    pub fn add_phase(&self, phase: Phase) -> Piece {
-        use crate::cosmic::smart::features::Piece::*;
+    pub fn add_phase(&self, phase: Phase) -> PieceMeaning {
+        use crate::cosmic::smart::features::PieceMeaning::*;
         use crate::cosmic::smart::features::PieceType::*;
         match phase {
             Phase::First => match self {
