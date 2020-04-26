@@ -27,6 +27,7 @@
 //!              Source
 //!
 //! None is 0.
+use crate::spaceship::equipment::Beam;
 use std::cmp::max;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
@@ -499,7 +500,10 @@ impl Address {
     }
 
     pub fn from_absolute_address(address: i8) -> AbsoluteAddress {
-        AbsoluteAddress::new(address as i8 / 10 % 10, address as i8 % 10)
+        AbsoluteAddress::new(
+            ((address / 10).abs() % 10) as u8,
+            (address.abs() % 10) as u8,
+        )
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
@@ -511,7 +515,7 @@ impl Address {
             RANK_0 <= self.rank && self.rank < RANK_11,
             format!("rank={}", self.rank)
         );
-        AbsoluteAddress::new(self.file, self.rank)
+        AbsoluteAddress::new(self.file as u8, self.rank as u8)
     }
 
     pub fn rel(&self) -> RelativeAddress {
@@ -718,8 +722,8 @@ pub struct AbsoluteAddress {
     ///   98 88 78 68 58 48 38 28 18
     ///   99 89 79 69 59 49 39 29 19
     ///           Source
-    file: i8,
-    rank: i8,
+    file: u8,
+    rank: u8,
 }
 impl Default for AbsoluteAddress {
     fn default() -> Self {
@@ -727,9 +731,15 @@ impl Default for AbsoluteAddress {
     }
 }
 impl AbsoluteAddress {
-    fn new(file: i8, rank: i8) -> Self {
-        debug_assert!(FILE_0 <= file && file < FILE_11, format!("file={}", file));
-        debug_assert!(RANK_0 <= rank && rank < RANK_11, format!("rank={}", rank));
+    fn new(file: u8, rank: u8) -> Self {
+        debug_assert!(
+            FILE_0 as u8 <= file && file < FILE_11 as u8,
+            format!("file={}", file)
+        );
+        debug_assert!(
+            RANK_0 as u8 <= rank && rank < RANK_11 as u8,
+            format!("rank={}", rank)
+        );
         let ab_adr = AbsoluteAddress {
             file: file,
             rank: rank,
@@ -737,20 +747,14 @@ impl AbsoluteAddress {
         ab_adr
     }
 
-    pub fn set(&mut self, source: &AbsoluteAddress) -> &mut Self {
-        self.file = source.file;
-        self.rank = source.rank;
-        self
-    }
-
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...
     pub fn file(&self) -> i8 {
-        self.file
+        self.file as i8
     }
 
     /// 行番号。いわゆる段。上から 1, 2, 3 ...
     pub fn rank(&self) -> i8 {
-        self.rank
+        self.rank as i8
     }
 
     pub fn to_file_rank(&self) -> (i8, i8) {
@@ -766,7 +770,7 @@ impl AbsoluteAddress {
     }
 
     pub fn rotate_180(&self) -> Self {
-        AbsoluteAddress::new(FILE_11 - self.file, RANK_11 - self.rank)
+        AbsoluteAddress::new(FILE_11 as u8 - self.file, RANK_11 as u8 - self.rank)
     }
 
     pub fn legal_cur(&self) -> bool {
@@ -774,22 +778,44 @@ impl AbsoluteAddress {
     }
 
     pub fn legal_board(&self) -> bool {
-        FILE_0 < self.file && self.file < FILE_10 && RANK_0 < self.rank && self.rank < RANK_10
+        /* FILE_0 as u8 < self.file && */
+        self.file < FILE_10 as u8 && /* RANK_0 as u8 < self.rank && */ self.rank < RANK_10 as u8
     }
+
+    pub fn address(&self) -> i8 {
+        (self.file * 10 + self.rank) as i8
+    }
+
+    /// マンハッタン距離☆（＾～＾）
+    pub fn manhattan_distance(&self, b: &AbsoluteAddress) -> i8 {
+        (self.file - b.file + self.rank - b.rank) as i8
+    }
+
+    pub fn set(&mut self, source: &AbsoluteAddress) -> &mut Self {
+        self.file = source.file;
+        self.rank = source.rank;
+        self
+    }
+
     pub fn offset(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
         let sum = self.address() + rel_adr.get_address();
+        if sum < 0 {
+            panic!(Beam::trouble(
+                "(Err.801) 絶対番地が負数になってはいけないんだぜ☆（＾～＾）！"
+            ))
+        }
 
         // Initialize.
-        self.rank = sum % 10;
+        self.rank = sum as u8 % 10;
         self.file = 0;
         // Carry.
         if 9 < self.rank {
             self.rank = self.rank % 10;
             self.file += 1;
         }
-        self.file += sum / 10 % 10;
+        self.file += sum as u8 / 10 % 10;
         // Carry over flow.
         if 9 < self.file {
             self.file = self.file % 10;
@@ -808,15 +834,6 @@ impl AbsoluteAddress {
         );
         */
         self
-    }
-
-    pub fn address(&self) -> i8 {
-        self.file * 10 + self.rank
-    }
-
-    /// マンハッタン距離☆（＾～＾）
-    pub fn manhattan_distance(&self, b: &AbsoluteAddress) -> i8 {
-        (self.file - b.file).abs() + (self.rank - b.rank).abs()
     }
 }
 impl fmt::Debug for AbsoluteAddress {
