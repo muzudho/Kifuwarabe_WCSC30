@@ -84,11 +84,32 @@ impl PseudoLegalMoves {
                 }
             }
         });
+        /* Bug
+        board.for_some_pieces_on_list40(friend, speed_of_light, &mut |location, piece| {
+            match location {
+                Location::Board(source) => PseudoLegalMoves::a_piece_on_board(
+                    friend,
+                    &source,
+                    board,
+                    speed_of_light,
+                    callback,
+                ),
+                Location::Hand(_adr) => {
+                    // 無視するぜ☆（＾～＾）
+                }
+                Location::Busy => panic!(Beam::trouble(
+                    "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
+                )),
+            }
+        });
+        // */
+        //*
         // 盤上の駒☆（＾～＾）
         // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
         Area::for_all(&mut |source| {
             PseudoLegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
         });
+        // */
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
@@ -951,16 +972,22 @@ impl Area {
     {
         match agility {
             Agility::Sliding => {
-                let mut next = start.clone();
+                let mut cur = start.clone();
                 let rel = Address::new(1, 0).rel().rotate(angle);
                 loop {
+                    if !cur.legal_cur() {
+                        panic!(Beam::trouble(
+                            "(Err.980) なんで動かす前からスライダー・ピースが盤の枠の上にあるんだぜ☆（＾～＾）！"
+                        ))
+                    }
+
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    next.offset(&rel);
-                    if !next.legal_next() {
+                    cur.offset(&rel);
+                    if !cur.legal_cur() {
                         break;
                     }
 
-                    if callback(next) {
+                    if callback(cur) {
                         break;
                     }
                 }
@@ -970,7 +997,7 @@ impl Area {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 next.offset(&Address::new(1, 0).rel().rotate(angle).double_rank());
-                if next.legal_next() {
+                if next.legal_cur() {
                     callback(next);
                 }
             }
@@ -978,7 +1005,7 @@ impl Area {
                 let mut next = start.clone();
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 next.offset(&Address::new(1, 0).rel().rotate(angle));
-                if next.legal_next() {
+                if next.legal_cur() {
                     callback(next);
                 }
             }

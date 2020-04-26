@@ -44,7 +44,7 @@ impl Default for Tree {
     }
 }
 impl Tree {
-    /// TODO 反復深化探索を入れようと思うんだが、大変だぜ☆（＾～＾）
+    /// 反復深化探索だぜ☆（＾～＾）
     pub fn iteration_deeping(
         &mut self,
         speed_of_light: &SpeedOfLight,
