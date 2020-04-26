@@ -260,6 +260,59 @@ impl fmt::Display for PieceType {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
+pub enum HandAddress {
+    King1,
+    Rook1,
+    Bishop1,
+    Gold1,
+    Silver1,
+    Knight1,
+    Lance1,
+    Pawn1,
+    King2,
+    Rook2,
+    Bishop2,
+    Gold2,
+    Silver2,
+    Knight2,
+    Lance2,
+    Pawn2,
+}
+pub struct HandAddresses {}
+impl HandAddresses {
+    /// 持駒種類
+    pub fn for_phase<F1>(phase: Phase, callback: &mut F1)
+    where
+        F1: FnMut(HandAddress),
+    {
+        let list = match phase {
+            Phase::First => [
+                HandAddress::Rook1,
+                HandAddress::Bishop1,
+                HandAddress::Gold1,
+                HandAddress::Silver1,
+                HandAddress::Knight1,
+                HandAddress::Lance1,
+                HandAddress::Pawn1,
+            ],
+            Phase::Second => [
+                HandAddress::Rook2,
+                HandAddress::Bishop2,
+                HandAddress::Gold2,
+                HandAddress::Silver2,
+                HandAddress::Knight2,
+                HandAddress::Lance2,
+                HandAddress::Pawn2,
+            ],
+        };
+
+        for adr in &list {
+            callback(*adr);
+        }
+    }
+}
+
 pub struct HandPieces {}
 impl HandPieces {
     pub fn for_all<F1>(callback: &mut F1)

@@ -3,7 +3,7 @@
 //!
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Person, Phase, Phases};
-use crate::cosmic::smart::features::{HandPieces, PieceMeaning, PieceType, HAND_MAX};
+use crate::cosmic::smart::features::{HandAddress, HandPieces, PieceMeaning, PieceType, HAND_MAX};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_1, RANK_10, RANK_11,
 };
@@ -100,25 +100,6 @@ pub enum PieceNum {
     Pawn40,
 }
 
-#[derive(Clone, Copy)]
-pub enum HandAddress {
-    King1,
-    Rook1,
-    Bishop1,
-    Gold1,
-    Silver1,
-    Knight1,
-    Lance1,
-    Pawn1,
-    King2,
-    Rook2,
-    Bishop2,
-    Gold2,
-    Silver2,
-    Knight2,
-    Lance2,
-    Pawn2,
-}
 #[derive(Clone, Copy)]
 pub enum Location {
     Board(AbsoluteAddress),
