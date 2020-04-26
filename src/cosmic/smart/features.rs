@@ -262,6 +262,18 @@ impl fmt::Display for PieceType {
 }
 
 #[derive(Clone, Copy, Debug)]
+pub enum HandAddressType {
+    King,
+    Rook,
+    Bishop,
+    Gold,
+    Silver,
+    Knight,
+    Lance,
+    Pawn,
+}
+
+#[derive(Clone, Copy, Debug)]
 pub enum HandAddress {
     King1,
     Rook1,
