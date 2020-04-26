@@ -451,6 +451,52 @@ impl PseudoLegalMoves {
             }
         });
 
+        HandAddresses::for_phase(friend, &mut |adr| {
+            if let Some(piece) = board.last_hand(adr) {
+                // 打つぜ☆（＾～＾）
+                let drop = &mut |destination| {
+                    if let None = board.piece_at(&destination) {
+                        // 駒が無いところに打つ
+                        use crate::cosmic::smart::features::PieceMeaning::*;
+                        match piece.0 {
+                            Pawn1 | Pawn2 => {
+                                // ひよこ　は２歩できない☆（＾～＾）
+                                if board.exists_pawn_on_file(
+                                    friend,
+                                    destination.file(),
+                                    speed_of_light,
+                                ) {
+                                    return;
+                                }
+                            }
+                            _ => {}
+                        }
+                        callback(
+                            Movement {
+                                source: Address::default().abs(),           // 駒台
+                                destination: destination.clone(),           // どの升へ行きたいか
+                                promote: false,                             // 打に成りは無し
+                                drop: Some(piece.0.r#type(speed_of_light)), // 打った駒種類
+                            }
+                            .to_hash(speed_of_light),
+                        );
+                    }
+                };
+
+                // 駒を持っていれば
+                use crate::cosmic::smart::features::PieceType::*;
+                match piece.0.r#type(speed_of_light) {
+                    // 歩、香
+                    Pawn | Lance => Area::drop_pawn_lance(friend, drop),
+                    // 桂
+                    Knight => Area::drop_knight(friend, drop),
+                    // それ以外の駒が打てる範囲は盤面全体。
+                    _ => Area::for_all(drop),
+                }
+            }
+        });
+
+        /*
         HandPieces::for_all(&mut |any_piece_type| {
             // 持ち駒
             let hand = any_piece_type.add_phase(friend);
@@ -493,6 +539,7 @@ impl PseudoLegalMoves {
                 }
             }
         });
+        */
     }
 }
 
