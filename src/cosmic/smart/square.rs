@@ -504,18 +504,6 @@ impl Address {
         if address == 0 {
             None
         } else {
-            /*
-            if !((FILE_0 as u8) < file
-                && file < FILE_10 as u8
-                && (RANK_0 as u8) < rank
-                && rank < RANK_10 as u8)
-            {
-                panic!(Beam::trouble(&format!(
-                "(Err.514) 絶対番地の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
-                file, rank
-            )))
-            }
-            */
             debug_assert!(
                 (FILE_0 as u8) < file && file < (FILE_10 as u8),
                 format!("file={}", file)
@@ -529,15 +517,6 @@ impl Address {
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
-        /*
-        if !(FILE_0 < self.file && self.file < FILE_10 && RANK_0 < self.rank && self.rank < RANK_10)
-        {
-            panic!(Beam::trouble(&format!(
-                "(Err.520) 負数の相対番地を絶対番地に変換するのは止めろだぜ☆（＾～＾）！ ({}, {})",
-                self.file, self.rank
-            )))
-        }
-        */
         debug_assert!(
             FILE_0 < self.file && self.file < FILE_10,
             format!("file={}", self.file)
@@ -727,19 +706,6 @@ pub struct AbsoluteAddress {
 }
 impl AbsoluteAddress {
     fn new(file: u8, rank: u8) -> Self {
-        /*
-        // TODO Debug消す☆（＾～＾）
-        if !((FILE_0 as u8) < file
-            && file < FILE_10 as u8
-            && (RANK_0 as u8) < rank
-            && rank < RANK_10 as u8)
-        {
-            panic!(Beam::trouble(&format!(
-                "(Err.744) 絶対番地の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
-                file, rank
-            )))
-        }
-        */
         debug_assert!(
             FILE_0 as u8 <= file && file < FILE_11 as u8,
             format!("file={}", file)
@@ -772,18 +738,6 @@ impl AbsoluteAddress {
     pub fn rotate_180(&self) -> Self {
         let file = FILE_10 as u8 - self.file;
         let rank = RANK_10 as u8 - self.rank;
-        /*
-        if !((FILE_0 as u8) < file
-            && file < FILE_10 as u8
-            && (RANK_0 as u8) < rank
-            && rank < RANK_10 as u8)
-        {
-            panic!(Beam::trouble(&format!(
-                "(Err.744) 絶対番地の回転で盤の外を指定するのは止めろだぜ☆（＾～＾）！ before change=({}, {}) after change=({}, {})",
-                self.file, self.rank,file, rank
-            )))
-        }
-        */
         debug_assert!(
             (FILE_0 as u8) < file && file < (FILE_10 as u8),
             format!("file={}", file)
@@ -800,42 +754,14 @@ impl AbsoluteAddress {
         self.file % 10 != 0 && self.rank % 10 != 0
     }
 
-    /*
-    pub fn legal_board(&self) -> bool {
-        // FILE_0 as u8 < self.file &&
-        self.file < FILE_10 as u8 && // RANK_0 as u8 < self.rank &&
-         self.rank < RANK_10 as u8
-    }
-    */
-
     pub fn address(&self) -> i8 {
         (self.file * 10 + self.rank) as i8
     }
-
-    /*
-    /// マンハッタン距離☆（＾～＾）
-    pub fn manhattan_distance(&self, b: &AbsoluteAddress) -> i8 {
-        (self.file as i8 - b.file as i8) + (self.rank as i8 - b.rank as i8)
-    }
-
-    pub fn set(&mut self, source: &AbsoluteAddress) -> &mut Self {
-        self.file = source.file;
-        self.rank = source.rank;
-        self
-    }
-    */
 
     pub fn offset(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
         let sum = self.address() + rel_adr.get_address();
-        /*
-        if sum < 0 {
-            panic!(Beam::trouble(
-                "(Err.801) 絶対番地が負数になってはいけないんだぜ☆（＾～＾）！"
-            ))
-        }
-        */
 
         // Initialize.
         self.rank = sum as u8 % 10;

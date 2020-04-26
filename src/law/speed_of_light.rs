@@ -560,104 +560,25 @@ impl PieceMeaning {
 pub struct PieceTypeChart {
     /// 成り駒か。
     promoted: bool,
-    /// 成れる駒種類か。
-    _can_promote: bool,
-
-    /// 打てる駒種類か。
-    _can_drop: bool,
-
-    /// スライダー（長い利きのある駒種類）か☆（＾～＾）
-    /// 合い駒で、進路を防ぎえる可能性があれば真
-    _slider: bool,
 }
 impl PieceTypeChart {
     fn from_piece_type(piece_type: PieceType) -> Self {
         use crate::cosmic::smart::features::PieceType::*;
         match piece_type {
-            King => PieceTypeChart {
-                promoted: false,
-                _can_promote: false,
-                _can_drop: false,
-                _slider: false,
-            },
-            Rook => PieceTypeChart {
-                promoted: false,
-                _can_promote: true,
-                _can_drop: true,
-                _slider: true,
-            },
-            Bishop => PieceTypeChart {
-                promoted: false,
-                _can_promote: true,
-                _can_drop: true,
-                _slider: true,
-            },
-            Gold => PieceTypeChart {
-                promoted: false,
-                _can_promote: false,
-                _can_drop: true,
-                _slider: false,
-            },
-            Silver => PieceTypeChart {
-                promoted: false,
-                _can_promote: true,
-                _can_drop: true,
-                _slider: false,
-            },
-            Knight => PieceTypeChart {
-                promoted: false,
-                _can_promote: true,
-                _can_drop: true,
-                _slider: false,
-            },
-            Lance => PieceTypeChart {
-                promoted: false,
-                _can_promote: true,
-                _can_drop: true,
-                _slider: true,
-            },
-            Pawn => PieceTypeChart {
-                promoted: false,
-                _can_promote: true,
-                _can_drop: true,
-                _slider: false,
-            },
-            Dragon => PieceTypeChart {
-                promoted: true,
-                _can_promote: false,
-                _can_drop: false,
-                _slider: true,
-            },
-            Horse => PieceTypeChart {
-                promoted: true,
-                _can_promote: false,
-                _can_drop: false,
-                _slider: true,
-            },
-            PromotedSilver => PieceTypeChart {
-                promoted: true,
-                _can_promote: false,
-                _can_drop: false,
-                _slider: false,
-            },
-            PromotedKnight => PieceTypeChart {
-                promoted: true,
-                _can_promote: false,
-                _can_drop: false,
-                _slider: false,
-            },
-            PromotedLance => PieceTypeChart {
-                promoted: true,
-                _can_promote: false,
-                _can_drop: false,
-                _slider: false,
-            },
-            PromotedPawn => PieceTypeChart {
-                promoted: true,
-                _can_promote: false,
-                _can_drop: false,
-                _slider: false,
-            },
+            King => PieceTypeChart { promoted: false },
+            Rook => PieceTypeChart { promoted: false },
+            Bishop => PieceTypeChart { promoted: false },
+            Gold => PieceTypeChart { promoted: false },
+            Silver => PieceTypeChart { promoted: false },
+            Knight => PieceTypeChart { promoted: false },
+            Lance => PieceTypeChart { promoted: false },
+            Pawn => PieceTypeChart { promoted: false },
+            Dragon => PieceTypeChart { promoted: true },
+            Horse => PieceTypeChart { promoted: true },
+            PromotedSilver => PieceTypeChart { promoted: true },
+            PromotedKnight => PieceTypeChart { promoted: true },
+            PromotedLance => PieceTypeChart { promoted: true },
+            PromotedPawn => PieceTypeChart { promoted: true },
         }
     }
 }
@@ -667,55 +588,6 @@ impl PieceType {
     pub fn promoted(&self, speed_of_light: &SpeedOfLight) -> bool {
         speed_of_light.piece_type_chart(self).promoted
     }
-    pub fn _can_promote(&self, speed_of_light: &SpeedOfLight) -> bool {
-        speed_of_light.piece_type_chart(self)._can_promote
-    }
-    pub fn _can_drop(&self, speed_of_light: &SpeedOfLight) -> bool {
-        speed_of_light.piece_type_chart(self)._can_drop
-    }
-    pub fn _slider(&self, speed_of_light: &SpeedOfLight) -> bool {
-        speed_of_light.piece_type_chart(self)._slider
-    }
-    /*
-    pub fn add_phase(&self, phase: Phase) -> PieceMeaning {
-        use crate::cosmic::smart::features::PieceMeaning::*;
-        use crate::cosmic::smart::features::PieceType::*;
-        match phase {
-            Phase::First => match self {
-                King => King1,
-                Rook => Rook1,
-                Bishop => Bishop1,
-                Gold => Gold1,
-                Silver => Silver1,
-                Knight => Knight1,
-                Lance => Lance1,
-                Pawn => Pawn1,
-                Dragon => Dragon1,
-                Horse => Horse1,
-                PromotedSilver => PromotedSilver1,
-                PromotedKnight => PromotedKnight1,
-                PromotedLance => PromotedLance1,
-                PromotedPawn => PromotedPawn1,
-            },
-            Phase::Second => match self {
-                King => King2,
-                Rook => Rook2,
-                Bishop => Bishop2,
-                Gold => Gold2,
-                Silver => Silver2,
-                Knight => Knight2,
-                Lance => Lance2,
-                Pawn => Pawn2,
-                Dragon => Dragon2,
-                Horse => Horse2,
-                PromotedSilver => PromotedSilver2,
-                PromotedKnight => PromotedKnight2,
-                PromotedLance => PromotedLance2,
-                PromotedPawn => PromotedPawn2,
-            },
-        }
-    }
-    */
 }
 
 pub struct HandAddressChart {

@@ -253,19 +253,3 @@ impl Phase {
     }
 }
 */
-/*
-pub struct Phases {}
-impl Phases {
-    pub fn for_all<F1>(callback: &mut F1)
-    where
-        F1: FnMut(Phase),
-    {
-        // 持駒種類
-        const PHASES: [Phase; 2] = [Phase::First, Phase::Second];
-
-        for phase in PHASES.iter() {
-            callback(*phase);
-        }
-    }
-}
-*/

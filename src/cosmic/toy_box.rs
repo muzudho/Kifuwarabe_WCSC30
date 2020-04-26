@@ -263,16 +263,6 @@ impl Board {
             self.pieces[adr.address() as usize] = None;
         }
     }
-    /*
-    /// TODO push_piece 升で指定して駒を置く
-    pub fn set_piece_at(&mut self, adr: &AbsoluteAddress, piece: Option<(PieceMeaning, PieceNum)>) {
-        if let Some(_x) = piece {
-            self.pieces[adr.address() as usize] = piece;
-        } else {
-            self.pieces[adr.address() as usize] = None;
-        }
-    }
-    */
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
     pub fn pop_from_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
         // 取り出すピースは複製するぜ☆（＾～＾）
@@ -497,10 +487,4 @@ impl Board {
             }
         }
     }
-
-    /*
-    pub fn location_of(&self, piece_num: PieceNum) -> Location {
-        self.location[piece_num as usize]
-    }
-    */
 }

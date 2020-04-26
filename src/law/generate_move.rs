@@ -401,25 +401,20 @@ impl Area {
         } else {
             Angle::Ccw90
         };
-        // println!("銀1={:?}", angle);
         Area::r#move(source, angle, Agility::Hopping, promoting);
-        // println!("銀2={:?}", angle.rotate45ccw());
         Area::r#move(source, angle.rotate45ccw(), Agility::Hopping, promoting);
-        // println!("銀3={:?}", angle.rotate90ccw().rotate45ccw());
         Area::r#move(
             source,
             angle.rotate90ccw().rotate45ccw(),
             Agility::Hopping,
             promoting,
         );
-        // println!("銀4={:?}", angle.rotate90cw().rotate45cw());
         Area::r#move(
             source,
             angle.rotate90cw().rotate45cw(),
             Agility::Hopping,
             promoting,
         );
-        // println!("銀5={:?}", angle.rotate45cw());
         Area::r#move(source, angle.rotate45cw(), Agility::Hopping, promoting);
     }
 

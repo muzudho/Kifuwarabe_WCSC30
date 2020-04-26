@@ -125,13 +125,6 @@ impl Tree {
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
         let mut movement_set = HashSet::<u64>::new();
 
-        /*
-        IO::debugln(&format!(
-            "n={} friend={}.",
-            sum_nodes,
-            game.history.get_phase(&Person::Friend)
-        ));
-        */
         // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
         PseudoLegalMoves::make_move(
             game.history.get_phase(Person::Friend),
@@ -141,8 +134,6 @@ impl Tree {
                 &movement_set.insert(movement);
             },
         );
-
-        // Commands::genmove(&speed_of_light, &game);
 
         // 指せる手が無ければ投了☆（＾～＾）
         if movement_set.is_empty() {
@@ -185,11 +176,6 @@ impl Tree {
                 movement.promote,
                 speed_of_light,
             );
-
-            /*
-            IO::debugln(&format!("n={} do.", sum_nodes));
-            Commands::pos(&game);
-            */
 
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.0.r#type(speed_of_light) == King {
@@ -237,8 +223,6 @@ impl Tree {
                             self.evaluation.promotion()
                         ))),
                     );
-                    // king safety={} |
-                    // risk_safety,
                     game.info.print(
                         Some(self.pv.len() as u8),
                         Some((self.state_nodes, self.nps())),
@@ -247,8 +231,6 @@ impl Tree {
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
-
-            // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.evaluation.before_search();
@@ -267,10 +249,6 @@ impl Tree {
                 .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
             game.undo_move(speed_of_light);
-            /*
-            IO::debugln(&format!("n={} undo.", sum_nodes));
-            Commands::pos(&game);
-            */
         }
         self.add_control(-1 * coverage_sign, game, &movement_set);
 

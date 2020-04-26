@@ -177,10 +177,8 @@ impl Game {
         let mut count = 0;
         let last_ply = self.history.ply - 1;
         let new_ply = self.history.ply;
-        // g_writeln( &format!( "Ｃount_same_ky last_ply={} new_ply={}", last_ply ,new_ply ) );
         for i_ply in 0..new_ply {
             let t = last_ply - i_ply;
-            // g_writeln( &format!( "i_ply={} t={}", i_ply, t ) );
             if self.history.position_hashs[t as usize]
                 == self.history.position_hashs[last_ply as usize]
             {
