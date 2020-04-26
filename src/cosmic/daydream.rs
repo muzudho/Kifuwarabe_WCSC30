@@ -213,6 +213,10 @@ impl Tree {
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
                 let board_coverage_value: i16 = coverage_sign * game.board.coverage_value();
+                ts.choice_friend(
+                    &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
+                    *movement_hash,
+                );
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
@@ -243,11 +247,6 @@ impl Tree {
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
-
-                ts.choice_friend(
-                    &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
-                    *movement_hash,
-                );
 
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
