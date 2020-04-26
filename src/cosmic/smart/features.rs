@@ -345,6 +345,7 @@ impl HandAddresses {
             callback(*adr);
         }
     }
+    /*
     pub fn for_phase<F1>(phase: Phase, callback: &mut F1)
     where
         F1: FnMut(HandAddress),
@@ -374,6 +375,7 @@ impl HandAddresses {
             callback(*adr);
         }
     }
+    */
 }
 
 /*
