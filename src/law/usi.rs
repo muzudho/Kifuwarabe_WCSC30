@@ -173,15 +173,15 @@ pub fn read_board(
 ) {
     // 初期盤面
     let board = game.mut_starting();
-    let mut file = FILE_9; //９筋から右方向へ読取
-    let mut rank = RANK_1;
+    let mut file = FILE_9 as u8; //９筋から右方向へ読取
+    let mut rank = RANK_1 as u8;
 
     // `/` か、`+`か、1桁の数か、1文字のアルファベットのいずれかだぜ☆（＾～＾）それ以外なら盤パート終了☆（＾～＾）
     enum BoardPart {
         /// 改行のようなものだぜ☆（＾～＾）
         NewLine,
         /// スペース数☆（＾～＾）
-        Number(i8),
+        Number(u8),
         /// 駒☆（＾～＾）+で始まるものもこっちだぜ☆（＾～＾）
         Alphabet(PieceMeaning),
     }
@@ -251,14 +251,18 @@ pub fn read_board(
             }
             BoardPart::Number(space_num) => {
                 *starts += 1;
+                // もともと空升なんで、飛ばそうぜ☆（＾～＾）
+                file -= space_num;
+                /*
                 for _ in 0..space_num {
                     board.push_piece_on_init(file, rank, None);
                     file -= 1;
                 }
+                */
             }
             BoardPart::NewLine => {
                 *starts += 1;
-                file = FILE_9;
+                file = FILE_9 as u8;
                 rank += 1;
             }
         }

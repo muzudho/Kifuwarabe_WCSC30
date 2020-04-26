@@ -5,7 +5,8 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Person, Phase, Phases};
 use crate::cosmic::smart::features::{HandAddress, HandPieces, PieceMeaning, PieceType, HAND_MAX};
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_11, RANK_0, RANK_1, RANK_10, RANK_11,
+    AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_10, FILE_11, RANK_0, RANK_1, RANK_10,
+    RANK_11,
 };
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
@@ -311,10 +312,21 @@ impl Board {
         }
         piece
     }
-    /// 盤に駒を置いていきます。
-    pub fn push_piece_on_init(&mut self, file: i8, rank: i8, piece: Option<PieceMeaning>) {
+    /// 盤に駒か空升を置いていきます。
+    pub fn push_piece_on_init(&mut self, file: u8, rank: u8, piece: Option<PieceMeaning>) {
+        if !((FILE_0 as u8) < file
+            && file < FILE_10 as u8
+            && (RANK_0 as u8) < rank
+            && rank < RANK_10 as u8)
+        {
+            panic!(Beam::trouble(&format!(
+                "(Err.323) 盤上の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
+                file, rank
+            )))
+        }
+
         if let Some(piece_meaning) = piece {
-            let source = Address::new(file, rank).abs();
+            let source = Address::new(file as i8, rank as i8).abs();
             let piece_num = match piece_meaning {
                 PieceMeaning::King1 => {
                     self.location[PieceNum::King1 as usize] = Location::Board(source);
@@ -386,7 +398,7 @@ impl Board {
                 }
             };
             self.push_to_board(
-                &Address::new(file, rank).abs(),
+                &Address::new(file as i8, rank as i8).abs(),
                 Some((piece_meaning, piece_num)),
             );
         }

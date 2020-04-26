@@ -302,7 +302,7 @@ impl Game {
                             Some((source_piece.0.demoted(speed_of_light), source_piece.1))
                         } else {
                             panic!(Beam::trouble(
-                                "(Err.322) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
+                                "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
                             ))
                         }
                     } else {

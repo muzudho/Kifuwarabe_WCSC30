@@ -500,19 +500,33 @@ impl Address {
     }
 
     pub fn from_absolute_address(address: i8) -> AbsoluteAddress {
-        AbsoluteAddress::new(
-            ((address / 10).abs() % 10) as u8,
-            (address.abs() % 10) as u8,
-        )
+        let file = ((address / 10).abs() % 10) as u8;
+        let rank = (address.abs() % 10) as u8;
+        debug_assert!(
+            (FILE_0 as u8) < file && file < (FILE_10 as u8),
+            format!("file={}", file)
+        );
+        debug_assert!(
+            (RANK_0 as u8) < rank && rank < (RANK_10 as u8),
+            format!("rank={}", rank)
+        );
+        AbsoluteAddress::new(file, rank)
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
+        if !(FILE_0 < self.file && self.file < FILE_10 && RANK_0 < self.rank && self.rank < RANK_10)
+        {
+            panic!(Beam::trouble(&format!(
+                "(Err.520) 負数の相対番地を絶対番地に変換するのは止めろだぜ☆（＾～＾）！ ({}, {})",
+                self.file, self.rank
+            )))
+        }
         debug_assert!(
-            FILE_0 <= self.file && self.file < FILE_11,
+            FILE_0 < self.file && self.file < FILE_10,
             format!("file={}", self.file)
         );
         debug_assert!(
-            RANK_0 <= self.rank && self.rank < RANK_11,
+            RANK_0 < self.rank && self.rank < RANK_10,
             format!("rank={}", self.rank)
         );
         AbsoluteAddress::new(self.file as u8, self.rank as u8)
@@ -734,6 +748,17 @@ impl AbsoluteAddress {
     }
 
     fn new(file: u8, rank: u8) -> Self {
+        // TODO Debug消す☆（＾～＾）
+        if !((FILE_0 as u8) < file
+            && file < FILE_10 as u8
+            && (RANK_0 as u8) < rank
+            && rank < RANK_10 as u8)
+        {
+            panic!(Beam::trouble(&format!(
+                "(Err.744) 絶対番地の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
+                file, rank
+            )))
+        }
         debug_assert!(
             FILE_0 as u8 <= file && file < FILE_11 as u8,
             format!("file={}", file)
@@ -772,7 +797,18 @@ impl AbsoluteAddress {
     }
 
     pub fn rotate_180(&self) -> Self {
-        AbsoluteAddress::new(FILE_11 as u8 - self.file, RANK_11 as u8 - self.rank)
+        let file = FILE_11 as u8 - self.file;
+        let rank = RANK_11 as u8 - self.rank;
+        debug_assert!(
+            (FILE_0 as u8) < file && file < (FILE_10 as u8),
+            format!("file={}", file)
+        );
+        debug_assert!(
+            (RANK_0 as u8) < rank && rank < (RANK_10 as u8),
+            format!("rank={}", rank)
+        );
+
+        AbsoluteAddress::new(file, rank)
     }
 
     pub fn legal_cur(&self) -> bool {
