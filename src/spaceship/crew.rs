@@ -183,9 +183,13 @@ impl Chiyuri {
             .board
             .for_all_pieces_on_board(&mut |i, adr, piece| {
                 Beam::shoot(&format!(
-                    "[{}] {:?}{}",
+                    "[{}]{}{}",
                     i,
-                    adr,
+                    if let Some(adr_val) = adr {
+                        format!(" {:?}", adr_val)
+                    } else {
+                        " --".to_string()
+                    },
                     if let Some(piece_val) = piece {
                         format!(" {} {:?}", piece_val.0, piece_val.1)
                     } else {
