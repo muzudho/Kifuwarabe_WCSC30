@@ -3,6 +3,7 @@
 //!
 
 use crate::cosmic::recording::{Movement, Person, Phase};
+use crate::cosmic::smart::features::HandAddress;
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::{HandAddresses, PieceType};
 use crate::cosmic::smart::square::{
@@ -34,30 +35,13 @@ impl PseudoLegalMoves {
     ///
     /// https://doc.rust-lang.org/std/ops/trait.FnMut.html
     ///
-    pub fn make_move<F1>(
-        friend: Phase,
-        board: &Board,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
-        F1: FnMut(u64),
-    {
-        // 盤上の駒の移動。
-        PseudoLegalMoves::all_pieces_on_board(friend, board, speed_of_light, callback);
-        // 持ち駒の打。
-        PseudoLegalMoves::all_pieces_on_hand(friend, board, speed_of_light, callback);
-    }
-
-    /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
-    ///
     /// Arguments
     /// ---------
-    ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
-    fn all_pieces_on_board<F1>(
+    pub fn make_move<F1>(
         friend: Phase,
         board: &Board,
         speed_of_light: &SpeedOfLight,
@@ -75,14 +59,27 @@ impl PseudoLegalMoves {
                     speed_of_light,
                     callback,
                 ),
-                Location::Hand(_adr) => {
-                    // 無視するぜ☆（＾～＾）
+                Location::Hand(adr) => {
+                    PseudoLegalMoves::all_pieces_on_hand(
+                        friend,
+                        adr,
+                        board,
+                        speed_of_light,
+                        callback,
+                    );
                 }
                 Location::Busy => panic!(Beam::trouble(
                     "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
                 )),
             }
         });
+
+        /*
+        // 盤上の駒の移動。
+        PseudoLegalMoves::all_pieces_on_board(friend, board, speed_of_light, callback);
+        // 持ち駒の打。
+        PseudoLegalMoves::all_pieces_on_hand(friend, board, speed_of_light, callback);
+        */
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
@@ -200,6 +197,7 @@ impl PseudoLegalMoves {
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
     fn all_pieces_on_hand<F1>(
         friend: Phase,
+        adr: HandAddress,
         board: &Board,
         speed_of_light: &SpeedOfLight,
         callback: &mut F1,

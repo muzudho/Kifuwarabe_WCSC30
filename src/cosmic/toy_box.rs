@@ -305,6 +305,7 @@ impl Board {
         if let Some(piece_meaning) = piece {
             let source = Address::new(file as i8, rank as i8).abs();
             let piece_num = match piece_meaning {
+                // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 PieceMeaning::King1 => {
                     self.location[PieceNum::King1 as usize] = Location::Board(source);
                     PieceNum::King1
