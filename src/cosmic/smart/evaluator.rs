@@ -40,8 +40,7 @@ impl Evaluation {
         // .....
         // .....
         let path = &mut Vec::<AbsoluteAddress>::new();
-        let cur = &mut AbsoluteAddress::default();
-        cur.set(&king_adr);
+        let cur = &mut AbsoluteAddress::copy_from(&king_adr);
         let rel = &mut RelativeAddress::new(0, -1);
         cur.offset(rel);
         if cur.legal_cur() {

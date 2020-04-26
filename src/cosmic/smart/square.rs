@@ -725,12 +725,14 @@ pub struct AbsoluteAddress {
     file: u8,
     rank: u8,
 }
-impl Default for AbsoluteAddress {
-    fn default() -> Self {
-        AbsoluteAddress { file: 0, rank: 0 }
-    }
-}
 impl AbsoluteAddress {
+    pub fn copy_from(source: &AbsoluteAddress) -> Self {
+        AbsoluteAddress {
+            file: source.file,
+            rank: source.rank,
+        }
+    }
+
     fn new(file: u8, rank: u8) -> Self {
         debug_assert!(
             FILE_0 as u8 <= file && file < FILE_11 as u8,

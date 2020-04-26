@@ -710,18 +710,18 @@ impl Board {
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
     pub fn for_all_pieces_on_board<F>(&self, piece_get: &mut F)
     where
-        F: FnMut(usize, &AbsoluteAddress, Option<(PieceMeaning, PieceNum)>),
+        F: FnMut(usize, Option<&AbsoluteAddress>, Option<(PieceMeaning, PieceNum)>),
     {
         for (i, location) in self.location.iter().enumerate() {
             match location {
                 Location::Board(adr) => {
                     // 盤上の駒☆（＾～＾）
                     let piece = self.piece_at(adr).unwrap();
-                    piece_get(i, adr, Some(piece));
+                    piece_get(i, Some(adr), Some(piece));
                 }
                 Location::Hand(_adr) => {
                     // TODO 持ち駒☆（＾～＾）
-                    piece_get(i, &AbsoluteAddress::default(), None);
+                    piece_get(i, None, None);
                 }
                 Location::Busy => panic!(Beam::trouble(
                     "(Err.624) なんで駒が作業中なんだぜ☆（＾～＾）！"
