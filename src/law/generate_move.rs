@@ -3,11 +3,13 @@
 //!
 
 use crate::cosmic::recording::{Movement, Person, Phase};
-use crate::cosmic::smart::features::{HandAddress, HandAddresses, PieceMeaning, PieceType};
+use crate::cosmic::smart::features::PieceMeaning;
+use crate::cosmic::smart::features::{HandAddresses, PieceType};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
+use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
@@ -63,45 +65,16 @@ impl PseudoLegalMoves {
     ) where
         F1: FnMut(u64),
     {
-        // 盤面スキャン☆（＾～＾）
-        Area::for_all(&mut |source| {
-            let piece = board.piece_at(&source);
-            if let Some(piece_val) = piece {
-                match board.location_of(piece_val.1) {
-                    Location::Board(adr) => {
-                        if source.address() != adr.address() {
-                            panic!(Beam::trouble(
-                                &format!("(Err.73) なんで背番号リストと盤上で違いがあるんだぜ☆（＾～＾）！ {}!={}",source.address() , adr.address())
-                            ))
-                        }
-                    }
-                    Location::Hand(_adr) => panic!(Beam::trouble(
-                        "(Err.73) なんで盤上をスキャンして持ち駒が見つかるんだぜ☆（＾～＾）！"
-                    )),
-                    Location::Busy => panic!(Beam::trouble(
-                        "(Err.76) なんで駒が作業中なんだぜ☆（＾～＾）！"
-                    )),
-                }
-            }
-        });
-        /* Bug
         board.for_some_pieces_on_list40(friend, speed_of_light, &mut |location, piece| {
             match location {
-                Location::Board(source) => {
-                    if !source.legal_cur() {
-                        panic!(Beam::trouble(
-                            &format!("(Err.93) なんで動かす前から駒が盤の枠の上にあるんだぜ☆（＾～＾）！ friend={} piece={} {:?} source={:?}",friend, piece.0, piece.1, source)
-                        ))
-                    }
-
-                    PseudoLegalMoves::a_piece_on_board(
-                        friend,
-                        &source,
-                        board,
-                        speed_of_light,
-                        callback,
-                    )
-                }
+                Location::Board(source) => PseudoLegalMoves::a_piece_on_board(
+                    friend,
+                    &source,
+                    &piece,
+                    board,
+                    speed_of_light,
+                    callback,
+                ),
                 Location::Hand(_adr) => {
                     // 無視するぜ☆（＾～＾）
                 }
@@ -110,14 +83,6 @@ impl PseudoLegalMoves {
                 )),
             }
         });
-        // */
-        //*
-        // 盤上の駒☆（＾～＾）
-        // TODO 盤面をスキャンするのは無駄くさいよな☆（＾～＾）自駒だけをイテレーションできないかだぜ☆（＾～＾）？
-        Area::for_all(&mut |source| {
-            PseudoLegalMoves::a_piece_on_board(friend, &source, board, speed_of_light, callback)
-        });
-        // */
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
@@ -127,12 +92,14 @@ impl PseudoLegalMoves {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
+    /// * `piece` - 駒だぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
     fn a_piece_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
+        piece: &(PieceMeaning, PieceNum),
         board: &Board,
         speed_of_light: &SpeedOfLight,
         callback: &mut F1,
@@ -214,16 +181,12 @@ impl PseudoLegalMoves {
                 !space
             };
 
-        if let Some(piece) = board.piece_at(&source) {
-            if friend == piece.0.phase(speed_of_light) {
-                Area::piece_of(
-                    piece.0.r#type(speed_of_light),
-                    friend,
-                    &source,
-                    callback_next,
-                );
-            }
-        }
+        Area::piece_of(
+            piece.0.r#type(speed_of_light),
+            friend,
+            &source,
+            callback_next,
+        );
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -243,241 +206,6 @@ impl PseudoLegalMoves {
     ) where
         F1: FnMut(u64),
     {
-        HandAddresses::for_phase(friend, &mut |adr| {
-            let piece = board.last_hand(adr);
-            if let Some(_piece_val) = piece {
-                match adr {
-                    HandAddress::King1 => {
-                        if board.count_hand(PieceMeaning::King1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.226) 持ち駒の ▲玉 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Rook1 => {
-                        if board.count_hand(PieceMeaning::Rook1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.233) 持ち駒の ▲飛 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Bishop1 => {
-                        if board.count_hand(PieceMeaning::Bishop1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.240) 持ち駒の ▲角 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Gold1 => {
-                        if board.count_hand(PieceMeaning::Gold1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.247) 持ち駒の ▲金 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Silver1 => {
-                        if board.count_hand(PieceMeaning::Silver1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.254) 持ち駒の ▲銀 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Knight1 => {
-                        if board.count_hand(PieceMeaning::Knight1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.261) 持ち駒の ▲桂 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Lance1 => {
-                        if board.count_hand(PieceMeaning::Lance1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.268) 持ち駒の ▲香 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Pawn1 => {
-                        if board.count_hand(PieceMeaning::Pawn1) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.275) 持ち駒の ▲歩 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::King2 => {
-                        if board.count_hand(PieceMeaning::King2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.282) 持ち駒の ▽玉 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Rook2 => {
-                        if board.count_hand(PieceMeaning::Rook2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.289) 持ち駒の ▽飛 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Bishop2 => {
-                        if board.count_hand(PieceMeaning::Bishop2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.296) 持ち駒の ▽角 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Gold2 => {
-                        if board.count_hand(PieceMeaning::Gold2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.303) 持ち駒の ▽金 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Silver2 => {
-                        if board.count_hand(PieceMeaning::Silver2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.310) 持ち駒の ▽銀 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Knight2 => {
-                        if board.count_hand(PieceMeaning::Knight2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.317) 持ち駒の ▽桂 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Lance2 => {
-                        if board.count_hand(PieceMeaning::Lance2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.324) 持ち駒の ▽香 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Pawn2 => {
-                        if board.count_hand(PieceMeaning::Pawn2) < 1 {
-                            panic!(Beam::trouble(
-                                "(Err.331) 持ち駒の ▽歩 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                }
-            } else {
-                match adr {
-                    HandAddress::King1 => {
-                        if 0 < board.count_hand(PieceMeaning::King1) {
-                            panic!(Beam::trouble(
-                                "(Err.341) 持ち駒の ▲玉 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Rook1 => {
-                        if 0 < board.count_hand(PieceMeaning::Rook1) {
-                            panic!(Beam::trouble(
-                                "(Err.348) 持ち駒の ▲飛 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Bishop1 => {
-                        if 0 < board.count_hand(PieceMeaning::Bishop1) {
-                            panic!(Beam::trouble(
-                                "(Err.355) 持ち駒の ▲角 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Gold1 => {
-                        if 0 < board.count_hand(PieceMeaning::Gold1) {
-                            panic!(Beam::trouble(
-                                "(Err.362) 持ち駒の ▲金 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Silver1 => {
-                        if 0 < board.count_hand(PieceMeaning::Silver1) {
-                            panic!(Beam::trouble(
-                                "(Err.369) 持ち駒の ▲銀 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Knight1 => {
-                        if 0 < board.count_hand(PieceMeaning::Knight1) {
-                            panic!(Beam::trouble(
-                                "(Err.376) 持ち駒の ▲桂 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Lance1 => {
-                        if 0 < board.count_hand(PieceMeaning::Lance1) {
-                            panic!(Beam::trouble(
-                                "(Err.383) 持ち駒の ▲香 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Pawn1 => {
-                        if 0 < board.count_hand(PieceMeaning::Pawn1) {
-                            panic!(Beam::trouble(
-                                "(Err.390) 持ち駒の ▲歩 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::King2 => {
-                        if 0 < board.count_hand(PieceMeaning::King2) {
-                            panic!(Beam::trouble(
-                                "(Err.397) 持ち駒の ▽玉 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Rook2 => {
-                        if 0 < board.count_hand(PieceMeaning::Rook2) {
-                            panic!(Beam::trouble(
-                                "(Err.404) 持ち駒の ▽飛 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Bishop2 => {
-                        if 0 < board.count_hand(PieceMeaning::Bishop2) {
-                            panic!(Beam::trouble(
-                                "(Err.411) 持ち駒の ▽角 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Gold2 => {
-                        if 0 < board.count_hand(PieceMeaning::Gold2) {
-                            panic!(Beam::trouble(
-                                "(Err.418) 持ち駒の ▽金 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Silver2 => {
-                        if 0 < board.count_hand(PieceMeaning::Silver2) {
-                            panic!(Beam::trouble(
-                                "(Err.425) 持ち駒の ▽銀 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Knight2 => {
-                        if 0 < board.count_hand(PieceMeaning::Knight2) {
-                            panic!(Beam::trouble(
-                                "(Err.432) 持ち駒の ▽桂 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Lance2 => {
-                        if 0 < board.count_hand(PieceMeaning::Lance2) {
-                            panic!(Beam::trouble(
-                                "(Err.439) 持ち駒の ▽香 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                    HandAddress::Pawn2 => {
-                        if 0 < board.count_hand(PieceMeaning::Pawn2) {
-                            panic!(Beam::trouble(
-                                "(Err.446) 持ち駒の ▽歩 の数が合ってないぜ☆（＾～＾）！"
-                            ))
-                        }
-                    }
-                }
-            }
-        });
-
         HandAddresses::for_phase(friend, &mut |adr| {
             if let Some(piece) = board.last_hand(adr) {
                 // 打つぜ☆（＾～＾）
@@ -522,51 +250,6 @@ impl PseudoLegalMoves {
                 }
             }
         });
-
-        /*
-        HandPieces::for_all(&mut |any_piece_type| {
-            // 持ち駒
-            let hand = any_piece_type.add_phase(friend);
-            // 打つぜ☆（＾～＾）
-            let drop = &mut |destination| {
-                if let None = board.piece_at(&destination) {
-                    // 駒が無いところに打つ
-                    use crate::cosmic::smart::features::PieceMeaning::*;
-                    match hand {
-                        Pawn1 | Pawn2 => {
-                            // ひよこ　は２歩できない☆（＾～＾）
-                            if board.exists_pawn_on_file(friend, destination.file(), speed_of_light)
-                            {
-                                return;
-                            }
-                        }
-                        _ => {}
-                    }
-                    callback(
-                        Movement {
-                            source: Address::default().abs(),        // 駒台
-                            destination: destination.clone(),        // どの升へ行きたいか
-                            promote: false,                          // 打に成りは無し
-                            drop: Some(hand.r#type(speed_of_light)), // 打った駒種類
-                        }
-                        .to_hash(speed_of_light),
-                    );
-                }
-            };
-            if 0 < board.count_hand(hand) {
-                // 駒を持っていれば
-                use crate::cosmic::smart::features::PieceType::*;
-                match hand.r#type(speed_of_light) {
-                    // 歩、香
-                    Pawn | Lance => Area::drop_pawn_lance(friend, drop),
-                    // 桂
-                    Knight => Area::drop_knight(friend, drop),
-                    // それ以外の駒が打てる範囲は盤面全体。
-                    _ => Area::for_all(drop),
-                }
-            }
-        });
-        */
     }
 }
 
@@ -983,11 +666,13 @@ impl Area {
                 let mut cur = start.clone();
                 let rel = Address::new(1, 0).rel().rotate(angle);
                 loop {
+                    /*
                     if !cur.legal_cur() {
                         panic!(Beam::trouble(
                             "(Err.980) なんで動かす前からスライダー・ピースが盤の枠の上にあるんだぜ☆（＾～＾）！"
                         ))
                     }
+                    */
 
                     // 西隣から反時計回りだぜ☆（＾～＾）
                     cur.offset(&rel);
@@ -1003,11 +688,13 @@ impl Area {
             // 桂馬専用☆（＾～＾）行き先の無いところに置いてないはずだぜ☆（＾～＾）
             Agility::Knight => {
                 let mut cur = start.clone();
+                /*
                 if !cur.legal_cur() {
                     panic!(Beam::trouble(
                         "(Err.980) なんで動かす前から桂馬が盤の枠の上にあるんだぜ☆（＾～＾）！"
                     ))
                 }
+                */
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 cur.offset(&Address::new(1, 0).rel().rotate(angle).double_rank());
@@ -1017,11 +704,13 @@ impl Area {
             }
             Agility::Hopping => {
                 let mut cur = start.clone();
+                /*
                 if !cur.legal_cur() {
                     panic!(Beam::trouble(
                         "(Err.980) なんで動かす前からホッピング駒が盤の枠の上にあるんだぜ☆（＾～＾）！"
                     ))
                 }
+                */
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 cur.offset(&Address::new(1, 0).rel().rotate(angle));

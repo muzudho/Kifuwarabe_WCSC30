@@ -2,8 +2,10 @@
 //! 駒 と 盤
 //!
 use crate::cosmic::playing::Game;
-use crate::cosmic::recording::{Person, Phase, Phases};
-use crate::cosmic::smart::features::{HandAddress, HandPieces, PieceMeaning, PieceType, HAND_MAX};
+use crate::cosmic::recording::{Person, Phase};
+use crate::cosmic::smart::features::{
+    HandAddress, HandAddresses, PieceMeaning, PieceType, HAND_MAX,
+};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
@@ -403,11 +405,17 @@ impl Board {
         }
     }
     /// 駒台に置く
-    pub fn push_hand_on_init(&mut self, piece_meaning: PieceMeaning, number: i8) {
+    pub fn push_hand_on_init(
+        &mut self,
+        piece_meaning: PieceMeaning,
+        number: i8,
+        speed_of_light: &SpeedOfLight,
+    ) {
         for _i in 0..number {
+            let adr = piece_meaning.hand_address(speed_of_light);
             match piece_meaning {
                 PieceMeaning::Rook1 | PieceMeaning::Dragon1 => {
-                    self.location[self.rook_index] = Location::Hand(HandAddress::Rook1);
+                    self.location[self.rook_index] = Location::Hand(adr);
                     self.hand_rook1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.rook_index).unwrap(),
@@ -415,7 +423,7 @@ impl Board {
                     self.rook_index += 1;
                 }
                 PieceMeaning::Rook2 | PieceMeaning::Dragon2 => {
-                    self.location[self.rook_index] = Location::Hand(HandAddress::Rook2);
+                    self.location[self.rook_index] = Location::Hand(adr);
                     self.hand_rook2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.rook_index).unwrap(),
@@ -423,7 +431,7 @@ impl Board {
                     self.rook_index += 1;
                 }
                 PieceMeaning::Bishop1 | PieceMeaning::Horse1 => {
-                    self.location[self.bishop_index] = Location::Hand(HandAddress::Bishop1);
+                    self.location[self.bishop_index] = Location::Hand(adr);
                     self.hand_bishop1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.bishop_index).unwrap(),
@@ -431,7 +439,7 @@ impl Board {
                     self.bishop_index += 1;
                 }
                 PieceMeaning::Bishop2 | PieceMeaning::Horse2 => {
-                    self.location[self.bishop_index] = Location::Hand(HandAddress::Bishop2);
+                    self.location[self.bishop_index] = Location::Hand(adr);
                     self.hand_bishop2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.bishop_index).unwrap(),
@@ -439,7 +447,7 @@ impl Board {
                     self.bishop_index += 1;
                 }
                 PieceMeaning::Gold1 => {
-                    self.location[self.gold_index] = Location::Hand(HandAddress::Gold1);
+                    self.location[self.gold_index] = Location::Hand(adr);
                     self.hand_gold1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.gold_index).unwrap(),
@@ -447,7 +455,7 @@ impl Board {
                     self.gold_index += 1;
                 }
                 PieceMeaning::Gold2 => {
-                    self.location[self.gold_index] = Location::Hand(HandAddress::Gold2);
+                    self.location[self.gold_index] = Location::Hand(adr);
                     self.hand_gold2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.gold_index).unwrap(),
@@ -455,7 +463,7 @@ impl Board {
                     self.gold_index += 1;
                 }
                 PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => {
-                    self.location[self.silver_index] = Location::Hand(HandAddress::Silver1);
+                    self.location[self.silver_index] = Location::Hand(adr);
                     self.hand_silver1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.silver_index).unwrap(),
@@ -463,7 +471,7 @@ impl Board {
                     self.silver_index += 1;
                 }
                 PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => {
-                    self.location[self.silver_index] = Location::Hand(HandAddress::Silver2);
+                    self.location[self.silver_index] = Location::Hand(adr);
                     self.hand_silver2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.silver_index).unwrap(),
@@ -471,7 +479,7 @@ impl Board {
                     self.silver_index += 1;
                 }
                 PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => {
-                    self.location[self.knight_index] = Location::Hand(HandAddress::Knight1);
+                    self.location[self.knight_index] = Location::Hand(adr);
                     self.hand_knight1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.knight_index).unwrap(),
@@ -479,7 +487,7 @@ impl Board {
                     self.knight_index += 1;
                 }
                 PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => {
-                    self.location[self.knight_index] = Location::Hand(HandAddress::Knight2);
+                    self.location[self.knight_index] = Location::Hand(adr);
                     self.hand_knight2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.knight_index).unwrap(),
@@ -487,7 +495,7 @@ impl Board {
                     self.knight_index += 1;
                 }
                 PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => {
-                    self.location[self.lance_index] = Location::Hand(HandAddress::Lance1);
+                    self.location[self.lance_index] = Location::Hand(adr);
                     self.hand_lance1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.lance_index).unwrap(),
@@ -495,7 +503,7 @@ impl Board {
                     self.lance_index += 1;
                 }
                 PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => {
-                    self.location[self.lance_index] = Location::Hand(HandAddress::Lance2);
+                    self.location[self.lance_index] = Location::Hand(adr);
                     self.hand_lance2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.lance_index).unwrap(),
@@ -503,7 +511,7 @@ impl Board {
                     self.lance_index += 1;
                 }
                 PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => {
-                    self.location[self.pawn_index] = Location::Hand(HandAddress::Pawn1);
+                    self.location[self.pawn_index] = Location::Hand(adr);
                     self.hand_pawn1.push((
                         piece_meaning,
                         PieceNum::from_usize(self.pawn_index).unwrap(),
@@ -511,7 +519,7 @@ impl Board {
                     self.pawn_index += 1;
                 }
                 PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => {
-                    self.location[self.pawn_index] = Location::Hand(HandAddress::Pawn2);
+                    self.location[self.pawn_index] = Location::Hand(adr);
                     self.hand_pawn2.push((
                         piece_meaning,
                         PieceNum::from_usize(self.pawn_index).unwrap(),
@@ -638,24 +646,24 @@ impl Board {
             HandAddress::Pawn2 => self.hand_pawn2.last(),
         }
     }
-    pub fn count_hand(&self, hand: PieceMeaning) -> usize {
-        match hand {
-            PieceMeaning::King1 => self.hand_king1.len(),
-            PieceMeaning::King2 => self.hand_king2.len(),
-            PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.len(),
-            PieceMeaning::Rook2 | PieceMeaning::Dragon2 => self.hand_rook2.len(),
-            PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.len(),
-            PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.len(),
-            PieceMeaning::Gold1 => self.hand_gold1.len(),
-            PieceMeaning::Gold2 => self.hand_gold2.len(),
-            PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.len(),
-            PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.len(),
-            PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.len(),
-            PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => self.hand_knight2.len(),
-            PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => self.hand_lance1.len(),
-            PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => self.hand_lance2.len(),
-            PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => self.hand_pawn1.len(),
-            PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.len(),
+    pub fn count_hand(&self, adr: HandAddress) -> usize {
+        match adr {
+            HandAddress::King1 => self.hand_king1.len(),
+            HandAddress::King2 => self.hand_king2.len(),
+            HandAddress::Rook1 => self.hand_rook1.len(),
+            HandAddress::Rook2 => self.hand_rook2.len(),
+            HandAddress::Bishop1 => self.hand_bishop1.len(),
+            HandAddress::Bishop2 => self.hand_bishop2.len(),
+            HandAddress::Gold1 => self.hand_gold1.len(),
+            HandAddress::Gold2 => self.hand_gold2.len(),
+            HandAddress::Silver1 => self.hand_silver1.len(),
+            HandAddress::Silver2 => self.hand_silver2.len(),
+            HandAddress::Knight1 => self.hand_knight1.len(),
+            HandAddress::Knight2 => self.hand_knight2.len(),
+            HandAddress::Lance1 => self.hand_lance1.len(),
+            HandAddress::Lance2 => self.hand_lance2.len(),
+            HandAddress::Pawn1 => self.hand_pawn1.len(),
+            HandAddress::Pawn2 => self.hand_pawn2.len(),
         }
     }
 
@@ -693,19 +701,16 @@ impl Board {
         }
 
         // 持ち駒ハッシュ
-        Phases::for_all(&mut |any_phase| {
-            HandPieces::for_all(&mut |any_piece_type| {
-                let hand = any_piece_type.add_phase(any_phase);
-                let count = self.count_hand(hand);
-                debug_assert!(
-                    count <= HAND_MAX,
-                    "持ち駒 {} の枚数 {} <= {}",
-                    &any_piece_type,
-                    count,
-                    HAND_MAX
-                );
-                hash ^= game.hash_seed.hands[hand.hand_index(speed_of_light)][count as usize];
-            });
+        HandAddresses::for_all(&mut |adr| {
+            let count = self.count_hand(adr);
+            debug_assert!(
+                count <= HAND_MAX,
+                "持ち駒 {:?} の枚数 {} <= {}",
+                adr,
+                count,
+                HAND_MAX
+            );
+            hash ^= game.hash_seed.hands[adr as usize][count as usize];
         });
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）

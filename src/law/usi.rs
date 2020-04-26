@@ -401,7 +401,8 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                     };
                     starts += 1;
 
-                    game.mut_starting().push_hand_on_init(hand, hand_num);
+                    game.mut_starting()
+                        .push_hand_on_init(hand, hand_num, speed_of_light);
                 } //if
             } //loop
         } //else

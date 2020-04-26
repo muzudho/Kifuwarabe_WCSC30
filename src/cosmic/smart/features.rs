@@ -76,7 +76,8 @@ pub enum PieceMeaning {
 // 持ち駒の駒のうち、最大の枚数は歩の 18。
 pub const HAND_MAX: usize = 18;
 pub const PIECE_LN: usize = 30;
-pub const HAND_PIECE_LN: usize = 14;
+// Note: 持ち駒には玉も含むぜ☆（＾～＾）
+pub const HAND_ADDRESS_LN: usize = 16;
 pub static PIECE_WHITE_SPACE: &str = "    ";
 impl fmt::Display for PieceMeaning {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -279,9 +280,32 @@ pub enum HandAddress {
     Lance2,
     Pawn2,
 }
+/// 持駒種類
 pub struct HandAddresses {}
 impl HandAddresses {
-    /// 持駒種類
+    pub fn for_all<F1>(callback: &mut F1)
+    where
+        F1: FnMut(HandAddress),
+    {
+        for adr in &[
+            HandAddress::Rook1,
+            HandAddress::Bishop1,
+            HandAddress::Gold1,
+            HandAddress::Silver1,
+            HandAddress::Knight1,
+            HandAddress::Lance1,
+            HandAddress::Pawn1,
+            HandAddress::Rook2,
+            HandAddress::Bishop2,
+            HandAddress::Gold2,
+            HandAddress::Silver2,
+            HandAddress::Knight2,
+            HandAddress::Lance2,
+            HandAddress::Pawn2,
+        ] {
+            callback(*adr);
+        }
+    }
     pub fn for_phase<F1>(phase: Phase, callback: &mut F1)
     where
         F1: FnMut(HandAddress),
@@ -313,6 +337,7 @@ impl HandAddresses {
     }
 }
 
+/*
 pub struct HandPieces {}
 impl HandPieces {
     pub fn for_all<F1>(callback: &mut F1)
@@ -335,6 +360,7 @@ impl HandPieces {
         }
     }
 }
+*/
 
 /// 数値から駒種類を作るぜ☆（＾～＾）ハッシュを使うときに使うぜ☆（＾～＾）
 pub fn num_to_piece_type(n: usize) -> Option<PieceType> {

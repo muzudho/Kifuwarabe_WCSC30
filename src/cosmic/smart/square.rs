@@ -27,7 +27,6 @@
 //!              Source
 //!
 //! None is 0.
-use crate::spaceship::equipment::Beam;
 use std::cmp::max;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
@@ -505,6 +504,7 @@ impl Address {
         if address == 0 {
             None
         } else {
+            /*
             if !((FILE_0 as u8) < file
                 && file < FILE_10 as u8
                 && (RANK_0 as u8) < rank
@@ -515,6 +515,7 @@ impl Address {
                 file, rank
             )))
             }
+            */
             debug_assert!(
                 (FILE_0 as u8) < file && file < (FILE_10 as u8),
                 format!("file={}", file)
@@ -528,6 +529,7 @@ impl Address {
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
+        /*
         if !(FILE_0 < self.file && self.file < FILE_10 && RANK_0 < self.rank && self.rank < RANK_10)
         {
             panic!(Beam::trouble(&format!(
@@ -535,6 +537,7 @@ impl Address {
                 self.file, self.rank
             )))
         }
+        */
         debug_assert!(
             FILE_0 < self.file && self.file < FILE_10,
             format!("file={}", self.file)
@@ -762,6 +765,7 @@ impl AbsoluteAddress {
     }
 
     fn new(file: u8, rank: u8) -> Self {
+        /*
         // TODO Debug消す☆（＾～＾）
         if !((FILE_0 as u8) < file
             && file < FILE_10 as u8
@@ -773,6 +777,7 @@ impl AbsoluteAddress {
                 file, rank
             )))
         }
+        */
         debug_assert!(
             FILE_0 as u8 <= file && file < FILE_11 as u8,
             format!("file={}", file)
@@ -805,6 +810,7 @@ impl AbsoluteAddress {
     pub fn rotate_180(&self) -> Self {
         let file = FILE_10 as u8 - self.file;
         let rank = RANK_10 as u8 - self.rank;
+        /*
         if !((FILE_0 as u8) < file
             && file < FILE_10 as u8
             && (RANK_0 as u8) < rank
@@ -815,6 +821,7 @@ impl AbsoluteAddress {
                 self.file, self.rank,file, rank
             )))
         }
+        */
         debug_assert!(
             (FILE_0 as u8) < file && file < (FILE_10 as u8),
             format!("file={}", file)
@@ -855,11 +862,13 @@ impl AbsoluteAddress {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
         let sum = self.address() + rel_adr.get_address();
+        /*
         if sum < 0 {
             panic!(Beam::trouble(
                 "(Err.801) 絶対番地が負数になってはいけないんだぜ☆（＾～＾）！"
             ))
         }
+        */
 
         // Initialize.
         self.rank = sum as u8 % 10;

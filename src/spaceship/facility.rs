@@ -1,7 +1,7 @@
 use crate::cosmic::playing::{Game, PosNums};
 use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
-use crate::cosmic::smart::features::{PieceMeaning, PIECE_WHITE_SPACE};
+use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PIECE_WHITE_SPACE};
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::PieceNum;
 use crate::spaceship::equipment::Beam;
@@ -172,21 +172,21 @@ P x{87:2}   |{63}|{64}|{65}|{66}|{67}|{68}|{69}|{70}|{71}| h8   p x{94:2}
             GameRoom::to_string2(board.piece_at(&Address::new(2, 9).abs())),
             GameRoom::to_string2(board.piece_at(&Address::new(1, 9).abs())),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            board.count_hand(PieceMeaning::Rook1),
-            board.count_hand(PieceMeaning::Bishop1),
-            board.count_hand(PieceMeaning::Gold1),
-            board.count_hand(PieceMeaning::Silver1),
-            board.count_hand(PieceMeaning::Knight1),
-            board.count_hand(PieceMeaning::Lance1),
-            board.count_hand(PieceMeaning::Pawn1),
+            board.count_hand(HandAddress::Rook1),
+            board.count_hand(HandAddress::Bishop1),
+            board.count_hand(HandAddress::Gold1),
+            board.count_hand(HandAddress::Silver1),
+            board.count_hand(HandAddress::Knight1),
+            board.count_hand(HandAddress::Lance1),
+            board.count_hand(HandAddress::Pawn1),
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            board.count_hand(PieceMeaning::Rook2),
-            board.count_hand(PieceMeaning::Bishop2),
-            board.count_hand(PieceMeaning::Gold2),
-            board.count_hand(PieceMeaning::Silver2),
-            board.count_hand(PieceMeaning::Knight2),
-            board.count_hand(PieceMeaning::Lance2),
-            board.count_hand(PieceMeaning::Pawn2),
+            board.count_hand(HandAddress::Rook2),
+            board.count_hand(HandAddress::Bishop2),
+            board.count_hand(HandAddress::Gold2),
+            board.count_hand(HandAddress::Silver2),
+            board.count_hand(HandAddress::Knight2),
+            board.count_hand(HandAddress::Lance2),
+            board.count_hand(HandAddress::Pawn2),
             ply,
             phase,
             same_pos_count
