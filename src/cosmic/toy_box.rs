@@ -385,7 +385,7 @@ impl Board {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_hash(&self, game: &Game, speed_of_light: &SpeedOfLight) -> u64 {
+    pub fn create_hash(&self, game: &Game) -> u64 {
         let mut hash: u64 = 0;
 
         // 盤上の駒
@@ -393,8 +393,7 @@ impl Board {
             for file in (FILE_1..FILE_10).rev() {
                 let ab_adr = &Address::new(file, rank).abs();
                 if let Some(piece) = self.piece_at(ab_adr) {
-                    hash ^= game.hash_seed.piece[ab_adr.address() as usize]
-                        [piece.0.serial_number(speed_of_light)];
+                    hash ^= game.hash_seed.piece[ab_adr.address() as usize][piece.0 as usize];
                 }
             }
         }

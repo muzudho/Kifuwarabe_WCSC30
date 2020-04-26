@@ -13,7 +13,7 @@ use std::fmt;
 /// 接尾辞の 1 は先手、 2 は後手。
 ///
 // Copy: 配列の要素の初期化のために利用。
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, FromPrimitive)]
 pub enum PieceMeaning {
     // ▲玉
     King1,

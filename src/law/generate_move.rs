@@ -51,7 +51,7 @@ impl PseudoLegalMoves {
     {
         board.for_some_pieces_on_list40(friend, speed_of_light, &mut |location, piece| {
             match location {
-                Location::Board(source) => PseudoLegalMoves::a_piece_on_board(
+                Location::Board(source) => PseudoLegalMoves::make_on_board(
                     friend,
                     &source,
                     &piece,
@@ -60,26 +60,13 @@ impl PseudoLegalMoves {
                     callback,
                 ),
                 Location::Hand(adr) => {
-                    PseudoLegalMoves::all_pieces_on_hand(
-                        friend,
-                        adr,
-                        board,
-                        speed_of_light,
-                        callback,
-                    );
+                    PseudoLegalMoves::make_drop(friend, adr, board, speed_of_light, callback);
                 }
                 Location::Busy => panic!(Beam::trouble(
                     "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
                 )),
             }
         });
-
-        /*
-        // 盤上の駒の移動。
-        PseudoLegalMoves::all_pieces_on_board(friend, board, speed_of_light, callback);
-        // 持ち駒の打。
-        PseudoLegalMoves::all_pieces_on_hand(friend, board, speed_of_light, callback);
-        */
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
@@ -93,7 +80,7 @@ impl PseudoLegalMoves {
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
-    fn a_piece_on_board<F1>(
+    fn make_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
         piece: &(PieceMeaning, PieceNum),
@@ -195,7 +182,7 @@ impl PseudoLegalMoves {
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
-    fn all_pieces_on_hand<F1>(
+    fn make_drop<F1>(
         friend: Phase,
         adr: HandAddress,
         board: &Board,
@@ -250,7 +237,7 @@ impl PseudoLegalMoves {
 /// 次の升☆（＾～＾）
 pub struct Area {}
 impl Area {
-    /// 全升の面積だぜ☆（＾～＾）
+    /// 全升の面積だぜ☆（＾～＾）駒を打つときに使うぜ☆（＾～＾）
     ///
     /// Arguments
     /// ---------
@@ -329,14 +316,6 @@ impl Area {
         };
 
         Area::r#move(source, angle, Agility::Hopping, promoting);
-        /*
-        IO::debugln(&format!(
-            "歩の動き source={:?} angle={:?} forbidden={:?}",
-            source,
-            angle,
-            MovePermission::from_pawn_or_lance(friend),
-        ));
-        */
     }
 
     /// 先手から見た盤上の香の動けるマスだぜ☆（＾～＾）
@@ -660,14 +639,6 @@ impl Area {
                 let mut cur = start.clone();
                 let rel = Address::new(1, 0).rel().rotate(angle);
                 loop {
-                    /*
-                    if !cur.legal_cur() {
-                        panic!(Beam::trouble(
-                            "(Err.980) なんで動かす前からスライダー・ピースが盤の枠の上にあるんだぜ☆（＾～＾）！"
-                        ))
-                    }
-                    */
-
                     // 西隣から反時計回りだぜ☆（＾～＾）
                     cur.offset(&rel);
                     if !cur.legal_cur() {
@@ -682,13 +653,6 @@ impl Area {
             // 桂馬専用☆（＾～＾）行き先の無いところに置いてないはずだぜ☆（＾～＾）
             Agility::Knight => {
                 let mut cur = start.clone();
-                /*
-                if !cur.legal_cur() {
-                    panic!(Beam::trouble(
-                        "(Err.980) なんで動かす前から桂馬が盤の枠の上にあるんだぜ☆（＾～＾）！"
-                    ))
-                }
-                */
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 cur.offset(&Address::new(1, 0).rel().rotate(angle).double_rank());
@@ -698,13 +662,6 @@ impl Area {
             }
             Agility::Hopping => {
                 let mut cur = start.clone();
-                /*
-                if !cur.legal_cur() {
-                    panic!(Beam::trouble(
-                        "(Err.980) なんで動かす前からホッピング駒が盤の枠の上にあるんだぜ☆（＾～＾）！"
-                    ))
-                }
-                */
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 cur.offset(&Address::new(1, 0).rel().rotate(angle));

@@ -594,41 +594,16 @@ impl RelativeAddress {
             },
             Ccw45 => self.rotate_45_countercrockwise(),
             Ccw90 => self.rotate_90_countercrockwise(),
-            Ccw135 => {
-                let r90 = self.rotate_90_countercrockwise();
-                // println!("> r90={:?}", r90);
-                let r90_45 = r90.rotate_45_countercrockwise();
-                // println!("> r90_45={:?}", r90_45);
-                r90_45
-            }
+            Ccw135 => self
+                .rotate_90_countercrockwise()
+                .rotate_45_countercrockwise(),
             Ccw180 => self.rotate_180(),
-            Ccw225 => {
-                /*
-                let r180 = self.rotation_180();
-                println!("> r180={:?}", r180);
-                let r180_45 = r180.rotation_45_countercrockwise();
-                println!("> r180+45={:?}", r180_45);
-                r180_45
-                */
-                self.rotate_180().rotate_45_countercrockwise()
-            }
+            Ccw225 => self.rotate_180().rotate_45_countercrockwise(),
             Ccw270 => self.rotate_180().rotate_90_countercrockwise(),
-            Ccw315 => {
-                //*
-                let r180 = self.rotate_180();
-                // println!("> r180={:?}", r180);
-                let r180_90 = r180.rotate_90_countercrockwise();
-                // println!("> r180+90={:?}", r180_90);
-                let r180_90_45 = r180_90.rotate_45_countercrockwise();
-                // println!("> r180+90+45={:?}", r180_90_45);
-                r180_90_45
-                // */
-                /*
-                self.rotation_180()
-                    .rotation_90_countercrockwise()
-                    .rotation_45_countercrockwise()
-                */
-            }
+            Ccw315 => self
+                .rotate_180()
+                .rotate_90_countercrockwise()
+                .rotate_45_countercrockwise(),
         }
     }
 

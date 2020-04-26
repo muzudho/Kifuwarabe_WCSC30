@@ -265,9 +265,6 @@ pub struct PieceChart {
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
     captured: PieceMeaning,
 
-    /// 先後付き駒の配列のインデックス
-    serial_number: usize,
-
     /// 配列のインデックス用☆（＾～＾）
     hand_address: HandAddress,
 }
@@ -285,7 +282,6 @@ impl PieceChart {
                 promoted: King1,
                 demoted: King1,
                 captured: King2,
-                serial_number: 0,
                 hand_address: HandAddress::King1,
             },
             Rook1 => PieceChart {
@@ -295,7 +291,6 @@ impl PieceChart {
                 promoted: Dragon1,
                 demoted: Rook1,
                 captured: Rook2,
-                serial_number: 1,
                 hand_address: HandAddress::Rook1,
             },
             Bishop1 => PieceChart {
@@ -305,7 +300,6 @@ impl PieceChart {
                 promoted: Horse1,
                 demoted: Bishop1,
                 captured: Bishop2,
-                serial_number: 2,
                 hand_address: HandAddress::Bishop1,
             },
             Gold1 => PieceChart {
@@ -315,7 +309,6 @@ impl PieceChart {
                 promoted: Gold1,
                 demoted: Gold1,
                 captured: Gold2,
-                serial_number: 3,
                 hand_address: HandAddress::Gold1,
             },
             Silver1 => PieceChart {
@@ -325,7 +318,6 @@ impl PieceChart {
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
-                serial_number: 4,
                 hand_address: HandAddress::Silver1,
             },
             Knight1 => PieceChart {
@@ -335,7 +327,6 @@ impl PieceChart {
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
-                serial_number: 5,
                 hand_address: HandAddress::Knight1,
             },
             Lance1 => PieceChart {
@@ -345,7 +336,6 @@ impl PieceChart {
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
-                serial_number: 6,
                 hand_address: HandAddress::Lance1,
             },
             Pawn1 => PieceChart {
@@ -355,7 +345,6 @@ impl PieceChart {
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
-                serial_number: 7,
                 hand_address: HandAddress::Pawn1,
             },
             Dragon1 => PieceChart {
@@ -365,7 +354,6 @@ impl PieceChart {
                 promoted: Dragon1,
                 demoted: Rook1,
                 captured: Rook2,
-                serial_number: 8,
                 hand_address: HandAddress::Rook1,
             },
             Horse1 => PieceChart {
@@ -375,7 +363,6 @@ impl PieceChart {
                 promoted: Horse1,
                 demoted: Bishop1,
                 captured: Bishop2,
-                serial_number: 9,
                 hand_address: HandAddress::Bishop1,
             },
             PromotedSilver1 => PieceChart {
@@ -385,7 +372,6 @@ impl PieceChart {
                 promoted: PromotedSilver1,
                 demoted: Silver1,
                 captured: Silver2,
-                serial_number: 10,
                 hand_address: HandAddress::Silver1,
             },
             PromotedKnight1 => PieceChart {
@@ -395,7 +381,6 @@ impl PieceChart {
                 promoted: PromotedKnight1,
                 demoted: Knight1,
                 captured: Knight2,
-                serial_number: 11,
                 hand_address: HandAddress::Knight1,
             },
             PromotedLance1 => PieceChart {
@@ -405,7 +390,6 @@ impl PieceChart {
                 promoted: PromotedLance1,
                 demoted: Lance1,
                 captured: Lance2,
-                serial_number: 12,
                 hand_address: HandAddress::Lance1,
             },
             PromotedPawn1 => PieceChart {
@@ -415,7 +399,6 @@ impl PieceChart {
                 promoted: PromotedPawn1,
                 demoted: Pawn1,
                 captured: Pawn2,
-                serial_number: 13,
                 hand_address: HandAddress::Pawn1,
             },
             King2 => PieceChart {
@@ -425,7 +408,6 @@ impl PieceChart {
                 promoted: King2,
                 demoted: King2,
                 captured: King1,
-                serial_number: 14,
                 hand_address: HandAddress::King2,
             },
             Rook2 => PieceChart {
@@ -435,7 +417,6 @@ impl PieceChart {
                 promoted: Dragon2,
                 demoted: Rook2,
                 captured: Rook1,
-                serial_number: 15,
                 hand_address: HandAddress::Rook2,
             },
             Bishop2 => PieceChart {
@@ -445,7 +426,6 @@ impl PieceChart {
                 promoted: Horse2,
                 demoted: Bishop2,
                 captured: Bishop1,
-                serial_number: 16,
                 hand_address: HandAddress::Bishop2,
             },
             Gold2 => PieceChart {
@@ -455,7 +435,6 @@ impl PieceChart {
                 promoted: Gold2,
                 demoted: Gold2,
                 captured: Gold1,
-                serial_number: 17,
                 hand_address: HandAddress::Gold2,
             },
             Silver2 => PieceChart {
@@ -465,7 +444,6 @@ impl PieceChart {
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
-                serial_number: 18,
                 hand_address: HandAddress::Silver2,
             },
             Knight2 => PieceChart {
@@ -475,7 +453,6 @@ impl PieceChart {
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
-                serial_number: 19,
                 hand_address: HandAddress::Knight2,
             },
             Lance2 => PieceChart {
@@ -485,7 +462,6 @@ impl PieceChart {
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
-                serial_number: 20,
                 hand_address: HandAddress::Lance2,
             },
             Pawn2 => PieceChart {
@@ -495,7 +471,6 @@ impl PieceChart {
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,
-                serial_number: 21,
                 hand_address: HandAddress::Pawn2,
             },
             Dragon2 => PieceChart {
@@ -505,7 +480,6 @@ impl PieceChart {
                 promoted: Dragon2,
                 demoted: Rook2,
                 captured: Rook1,
-                serial_number: 22,
                 hand_address: HandAddress::Rook2,
             },
             Horse2 => PieceChart {
@@ -515,7 +489,6 @@ impl PieceChart {
                 promoted: Horse2,
                 demoted: Bishop2,
                 captured: Bishop1,
-                serial_number: 23,
                 hand_address: HandAddress::Bishop2,
             },
             PromotedSilver2 => PieceChart {
@@ -525,7 +498,6 @@ impl PieceChart {
                 promoted: PromotedSilver2,
                 demoted: Silver2,
                 captured: Silver1,
-                serial_number: 24,
                 hand_address: HandAddress::Silver2,
             },
             PromotedKnight2 => PieceChart {
@@ -535,7 +507,6 @@ impl PieceChart {
                 promoted: PromotedKnight2,
                 demoted: Knight2,
                 captured: Knight1,
-                serial_number: 25,
                 hand_address: HandAddress::Knight2,
             },
             PromotedLance2 => PieceChart {
@@ -545,7 +516,6 @@ impl PieceChart {
                 promoted: PromotedLance2,
                 demoted: Lance2,
                 captured: Lance1,
-                serial_number: 26,
                 hand_address: HandAddress::Lance2,
             },
             PromotedPawn2 => PieceChart {
@@ -555,7 +525,6 @@ impl PieceChart {
                 promoted: PromotedPawn2,
                 demoted: Pawn2,
                 captured: Pawn1,
-                serial_number: 27,
                 hand_address: HandAddress::Pawn2,
             },
         }
@@ -581,10 +550,6 @@ impl PieceMeaning {
 
     pub fn captured(&self, speed_of_light: &SpeedOfLight) -> PieceMeaning {
         speed_of_light.piece_chart(self).captured
-    }
-
-    pub fn serial_number(&self, speed_of_light: &SpeedOfLight) -> usize {
-        speed_of_light.piece_chart(self).serial_number
     }
 
     pub fn hand_address(&self, speed_of_light: &SpeedOfLight) -> HandAddress {

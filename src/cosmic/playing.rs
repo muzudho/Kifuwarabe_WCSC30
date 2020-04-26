@@ -143,8 +143,8 @@ impl Game {
     }
 
     /// 初期局面ハッシュを作り直す
-    pub fn create_starting_position_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
-        let mut hash = self.starting_board.create_hash(&self, speed_of_light);
+    pub fn create_starting_position_hash(&self) -> u64 {
+        let mut hash = self.starting_board.create_hash(&self);
 
         // 手番ハッシュ（後手固定）
         hash ^= self.hash_seed.phase[PHASE_SECOND];
@@ -153,8 +153,8 @@ impl Game {
     }
 
     /// 局面ハッシュを作り直す
-    pub fn create_current_position_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
-        let mut hash = self.board.create_hash(&self, speed_of_light);
+    pub fn create_current_position_hash(&self) -> u64 {
+        let mut hash = self.board.create_hash(&self);
 
         // 手番ハッシュ
         use crate::cosmic::recording::Phase::*;
@@ -267,7 +267,7 @@ impl Game {
         self.set_captured(self.history.ply as usize, cap);
 
         // 局面ハッシュを作り直す
-        let ky_hash = self.create_current_position_hash(speed_of_light);
+        let ky_hash = self.create_current_position_hash();
         self.set_position_hash(ky_hash);
 
         self.history.ply += 1;
