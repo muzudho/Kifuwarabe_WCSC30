@@ -261,6 +261,7 @@ impl fmt::Display for PieceType {
     }
 }
 
+pub const HAND_ADDRESS_TYPE_LEN: usize = 8;
 #[derive(Clone, Copy, Debug)]
 pub enum HandAddressType {
     King,

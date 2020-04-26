@@ -246,19 +246,13 @@ pub fn read_board(
         match board_part {
             BoardPart::Alphabet(piece) => {
                 *starts += 1;
-                board.push_piece_on_init(file, rank, Some(piece));
+                board.push_piece_on_init(file, rank, Some(piece), speed_of_light);
                 file -= 1;
             }
             BoardPart::Number(space_num) => {
                 *starts += 1;
                 // もともと空升なんで、飛ばそうぜ☆（＾～＾）
                 file -= space_num;
-                /*
-                for _ in 0..space_num {
-                    board.push_piece_on_init(file, rank, None);
-                    file -= 1;
-                }
-                */
             }
             BoardPart::NewLine => {
                 *starts += 1;
