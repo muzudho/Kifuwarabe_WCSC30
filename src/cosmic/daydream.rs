@@ -32,13 +32,13 @@ pub struct Tree {
     pub evaluation: Evaluation,
 }
 impl Tree {
-    pub fn new(board_coverage_weight: i32, option_komawari_weight: i32) -> Self {
+    pub fn new(board_coverage_weight: i32, komawari_weight: i32, promotion_weight: i32) -> Self {
         Tree {
             stopwatch: Instant::now(),
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
-            evaluation: Evaluation::new(board_coverage_weight, option_komawari_weight),
+            evaluation: Evaluation::new(board_coverage_weight, komawari_weight, promotion_weight),
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
@@ -170,8 +170,8 @@ impl Tree {
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
             let movement = Movement::from_hash(*movement_hash);
-            let source_piece_on_board = if let Some(source_val) = &movement.source {
-                Some(game.board.piece_at(source_val))
+            let source_piece = if let Some(source_val) = &movement.source {
+                game.board.piece_at(source_val)
             } else {
                 // 打
                 None
@@ -179,25 +179,12 @@ impl Tree {
             let captured_piece: Option<(PieceMeaning, PieceNum)> =
                 game.do_move(&movement, speed_of_light);
             self.pv.push(&movement);
-            let captured_piece_centi_pawn = self
-                .evaluation
-                .after_do_move(&captured_piece, speed_of_light);
-
-            // pvリストに１手入れてから評価しろだぜ☆（＾～＾）0除算エラーを防げるぜ☆（＾～＾）
-            let promoted_bonus = if let Some(source_piece_on_board_val) = source_piece_on_board {
-                if let Some(source_piece_val) = source_piece_on_board_val {
-                    Evaluation::from_promotion(
-                        self.pv.len(),
-                        source_piece_val.0.r#type(&speed_of_light),
-                        &movement,
-                    )
-                } else {
-                    0
-                }
-            } else {
-                // 打なら成りは無いぜ☆（＾～＾）
-                0
-            };
+            let (captured_piece_centi_pawn, delta_promotion_bonus) = self.evaluation.after_do_move(
+                &source_piece,
+                &captured_piece,
+                movement.promote,
+                speed_of_light,
+            );
 
             /*
             IO::debugln(&format!("n={} do.", sum_nodes));
@@ -209,7 +196,8 @@ impl Tree {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！
                     ts.bestmove.catch_king(*movement_hash);
 
-                    self.evaluation.before_undo_move(captured_piece_centi_pawn);
+                    self.evaluation
+                        .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
                     self.pv.pop();
                     game.undo_move(speed_of_light);
                     break;
@@ -236,12 +224,13 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "board coverage={} | {} {} {} | komawari={}",
+                            "board coverage={} | {} {} {} | komawari={} | promotion={}",
                             self.evaluation.board_coverage(board_coverage_value),
                             game.board.control[68],
                             game.board.control[58],
                             game.board.control[48],
-                            self.evaluation.komawari()
+                            self.evaluation.komawari(),
+                            self.evaluation.promotion()
                         ))),
                     );
                     // king safety={} |
@@ -256,9 +245,7 @@ impl Tree {
                 }
 
                 ts.choice_friend(
-                    &Value::CentiPawn(
-                        self.evaluation.centi_pawn(board_coverage_value) + promoted_bonus,
-                    ),
+                    &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
                     *movement_hash,
                 );
 
@@ -273,11 +260,12 @@ impl Tree {
                 ts.turn_over_and_choice(
                     &opponent_ts,
                     *movement_hash,
-                    self.evaluation.centi_pawn(0) + promoted_bonus,
+                    self.evaluation.centi_pawn(0),
                 );
             }
 
-            self.evaluation.before_undo_move(captured_piece_centi_pawn);
+            self.evaluation
+                .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
             game.undo_move(speed_of_light);
             /*

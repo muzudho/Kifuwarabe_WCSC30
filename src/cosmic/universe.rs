@@ -20,6 +20,8 @@ pub struct Universe {
     pub option_board_coverage_weight: i32,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
     pub option_komawari_weight: i32,
+    /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
+    pub option_promotion_weight: i32,
 }
 impl Default for Universe {
     fn default() -> Self {
@@ -32,6 +34,7 @@ impl Default for Universe {
             option_max_think_sec: 17,
             option_board_coverage_weight: 1000,
             option_komawari_weight: 1000,
+            option_promotion_weight: 1000,
         }
     }
 }

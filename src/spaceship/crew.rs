@@ -53,6 +53,7 @@ impl Kifuwarabe {
         let mut tree = Tree::new(
             universe.option_board_coverage_weight,
             universe.option_komawari_weight,
+            universe.option_promotion_weight,
         );
         let ts = tree.iteration_deeping(universe, speed_of_light);
         // その手を選んだ理由☆（＾～＾）
@@ -91,6 +92,9 @@ impl Kifuwarabe {
                 "KomawariWeightPer1000" => {
                     universe.option_komawari_weight = value.parse().unwrap();
                 }
+                "PromotionWeightPer1000" => {
+                    universe.option_promotion_weight = value.parse().unwrap();
+                }
                 "MaxDepth" => {
                     universe.option_max_depth = value.parse().unwrap();
                 }
@@ -122,6 +126,9 @@ impl Kifuwarabe {
         );
         Beam::shoot(
             "option name KomawariWeightPer1000 type spin default 1000 min -100000 max 100000",
+        );
+        Beam::shoot(
+            "option name PromotionWeightPer1000 type spin default 1000 min -100000 max 100000",
         );
         Beam::shoot("option name MaxDepth type spin default 1 min 1 max 15");
         Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
