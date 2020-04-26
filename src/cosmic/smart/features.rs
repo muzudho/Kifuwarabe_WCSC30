@@ -116,6 +116,7 @@ impl fmt::Display for PieceMeaning {
         }
     }
 }
+/*
 impl PieceMeaning {
     /// TODO これを宇宙に移動したいぜ☆（＾～＾）
     /// 先後＆駒種類→先後付き駒
@@ -158,7 +159,7 @@ impl PieceMeaning {
         }
     }
 }
-
+*/
 /*
 pub struct Pieces {}
 impl Pieces {
@@ -205,7 +206,7 @@ impl Pieces {
 */
 
 /// USIでCopyするので、Copyが要る。
-#[derive(Copy, Clone, PartialEq, FromPrimitive)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum PieceType {
     // 玉
     King,
@@ -260,7 +261,7 @@ impl fmt::Display for PieceType {
 }
 
 pub const HAND_ADDRESS_TYPE_LEN: usize = 8;
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, FromPrimitive)]
 pub enum HandAddressType {
     King,
     Rook,
@@ -291,6 +292,33 @@ pub enum HandAddress {
     Lance2,
     Pawn2,
 }
+impl HandAddress {
+    pub fn from_phase_and_type(phase: Phase, adr: HandAddressType) -> Self {
+        match phase {
+            Phase::First => match adr {
+                HandAddressType::King => HandAddress::King1,
+                HandAddressType::Rook => HandAddress::Rook1,
+                HandAddressType::Bishop => HandAddress::Bishop1,
+                HandAddressType::Gold => HandAddress::Gold1,
+                HandAddressType::Silver => HandAddress::Silver1,
+                HandAddressType::Knight => HandAddress::Knight1,
+                HandAddressType::Lance => HandAddress::Lance1,
+                HandAddressType::Pawn => HandAddress::Pawn1,
+            },
+            Phase::Second => match adr {
+                HandAddressType::King => HandAddress::King2,
+                HandAddressType::Rook => HandAddress::Rook2,
+                HandAddressType::Bishop => HandAddress::Bishop2,
+                HandAddressType::Gold => HandAddress::Gold2,
+                HandAddressType::Silver => HandAddress::Silver2,
+                HandAddressType::Knight => HandAddress::Knight2,
+                HandAddressType::Lance => HandAddress::Lance2,
+                HandAddressType::Pawn => HandAddress::Pawn2,
+            },
+        }
+    }
+}
+
 /// 持駒種類
 pub struct HandAddresses {}
 impl HandAddresses {

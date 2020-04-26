@@ -3,7 +3,8 @@
 //!
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
-use crate::cosmic::smart::features::{PieceMeaning, PieceType};
+use crate::cosmic::smart::features::HandAddressType;
+use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::square::{Address, FILE_9, RANK_1};
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
@@ -49,18 +50,18 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     // 移動元とドロップ。
     enum Source {
         Move(u8, i8),
-        Drop(PieceType),
+        Drop(HandAddressType),
     }
 
     let source = match &line[*starts..=*starts] {
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
-        "R" => Source::Drop(PieceType::Rook),
-        "B" => Source::Drop(PieceType::Bishop),
-        "G" => Source::Drop(PieceType::Gold),
-        "S" => Source::Drop(PieceType::Silver),
-        "N" => Source::Drop(PieceType::Knight),
-        "L" => Source::Drop(PieceType::Lance),
-        "P" => Source::Drop(PieceType::Pawn),
+        "R" => Source::Drop(HandAddressType::Rook),
+        "B" => Source::Drop(HandAddressType::Bishop),
+        "G" => Source::Drop(HandAddressType::Gold),
+        "S" => Source::Drop(HandAddressType::Silver),
+        "N" => Source::Drop(HandAddressType::Knight),
+        "L" => Source::Drop(HandAddressType::Lance),
+        "P" => Source::Drop(HandAddressType::Pawn),
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
             // 数字じゃないものが入ったら強制終了するんじゃないか☆（＾～＾）

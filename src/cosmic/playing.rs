@@ -1,6 +1,6 @@
 use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
 use crate::cosmic::smart::features::HAND_ADDRESS_LN;
-use crate::cosmic::smart::features::{PieceMeaning, HAND_MAX, PIECE_LN};
+use crate::cosmic::smart::features::{HandAddress, PieceMeaning, HAND_MAX, PIECE_LN};
 use crate::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
 use crate::cosmic::toy_box::Board;
 use crate::cosmic::toy_box::PieceNum;
@@ -236,8 +236,8 @@ impl Game {
                     // 打なら
                     // 自分の持ち駒を減らす
                     if let Some(drp) = movement.drop {
-                        let piece_meaning = PieceMeaning::from_phase_and_piece_type(friend, drp);
-                        self.board.pop_hand(piece_meaning, speed_of_light)
+                        self.board
+                            .pop_hand(HandAddress::from_phase_and_type(friend, drp))
                     } else {
                         panic!(Beam::trouble(
                             "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"
@@ -321,8 +321,10 @@ impl Game {
                 if let Some(captured_piece_val) = captured {
                     // 自分の持ち駒を減らす
                     self.board.pop_hand(
-                        captured_piece_val.0.captured(speed_of_light),
-                        speed_of_light,
+                        captured_piece_val
+                            .0
+                            .captured(speed_of_light)
+                            .hand_address(speed_of_light),
                     );
                     // 移動先の駒を、取った駒（あるいは空）に戻す
                     self.board

@@ -4,13 +4,14 @@
 //! * Phase (先後。手番,相手番)
 //! * Person (先手,後手)
 //!
-use crate::cosmic::smart::features::{PieceMeaning, PieceType};
+use crate::cosmic::smart::features::HandAddressType;
+use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::square::AbsoluteAddress;
 use crate::cosmic::toy_box::PieceNum;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
-use crate::law::speed_of_light::{pop_piece_type_from_hash, push_piece_type_to_hash};
+use crate::law::speed_of_light::{pop_drop_from_hash, push_drop_to_hash};
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。
@@ -80,7 +81,7 @@ pub struct Movement {
     // 移動後に成るなら真
     pub promote: bool,
     // 打の場合、打った駒種類
-    pub drop: Option<PieceType>,
+    pub drop: Option<HandAddressType>,
 }
 impl Default for Movement {
     fn default() -> Self {
@@ -98,7 +99,7 @@ impl Movement {
         let (hash, src52) = pop_sq_from_hash(hash);
         let (hash, dst53) = pop_sq_from_hash(hash);
         let (hash, pro54) = pop_bool_from_hash(hash);
-        let (_hash, drop55) = pop_piece_type_from_hash(hash);
+        let (_hash, drop55) = pop_drop_from_hash(hash);
         Movement {
             source: src52,
             destination: dst53,
@@ -110,7 +111,7 @@ impl Movement {
     pub fn to_hash(&self) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_piece_type_to_hash(hash, self.drop);
+        hash = push_drop_to_hash(hash, self.drop);
         hash = push_bool_to_hash(hash, self.promote);
         hash = push_sq_to_hash(hash, self.destination.as_ref());
         push_sq_to_hash(hash, self.source.as_ref())
@@ -142,12 +143,13 @@ impl fmt::Display for Movement {
                 if self.promote { "+" } else { "" }
             )
         } else {
-            use crate::cosmic::smart::features::PieceType::*;
+            use crate::cosmic::smart::features::HandAddressType::*;
             write!(
                 f,
                 "{}*{}{}{}",
                 if let Some(drp) = self.drop {
                     match drp {
+                        King => "?",
                         Rook => "R",
                         Bishop => "B",
                         Gold => "G",
@@ -155,7 +157,6 @@ impl fmt::Display for Movement {
                         Knight => "N",
                         Lance => "L",
                         Pawn => "P",
-                        _ => "?",
                     }
                 } else {
                     "?"
@@ -180,7 +181,7 @@ impl fmt::Debug for Movement {
             self.destination.unwrap().address(),
             self.promote,
             if let Some(drp) = self.drop {
-                format!("{}", drp)
+                format!("{:?}", drp)
             } else {
                 "-".to_string()
             }

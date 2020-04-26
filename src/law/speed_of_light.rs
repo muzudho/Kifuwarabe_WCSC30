@@ -796,21 +796,19 @@ impl HandAddress {
 }
 
 /// ハッシュ値を作る
-pub fn push_piece_type_to_hash(hash: u64, piece_type_o: Option<PieceType>) -> u64 {
+pub fn push_drop_to_hash(hash: u64, piece_type_o: Option<HandAddressType>) -> u64 {
     let num = if let Some(piece_type) = piece_type_o {
-        // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
+        // 持ち駒の型は 7つ ＋ 持ち駒無しの 1つ なんで、8(=2^3) で OK
         piece_type as u64
     } else {
-        NONE_PIECE_TYPE_NUMBER
+        // None の変わりに 玉を使うぜ☆（＾～＾）
+        HandAddressType::King as u64
     };
-    (hash << 4) + num
+    (hash << 3) + num
 }
 
 /// ハッシュ値から作る
-pub fn pop_piece_type_from_hash(hash: u64) -> (u64, Option<PieceType>) {
-    // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
-    (hash >> 4, PieceType::from_u64(hash & 0b1111))
+pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
+    // 使ってるのは8種類なんで、8(=2^3) で OK
+    (hash >> 3, HandAddressType::from_u64(hash & 0b111))
 }
-
-/// None が無いので、追加するぜ☆（＾～＾）
-pub const NONE_PIECE_TYPE_NUMBER: u64 = 14;

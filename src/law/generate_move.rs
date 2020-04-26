@@ -228,10 +228,12 @@ impl PseudoLegalMoves {
                         }
                         callback(
                             Movement {
-                                source: None,                               // 駒台
-                                destination: Some(destination),             // どの升へ行きたいか
-                                promote: false,                             // 打に成りは無し
-                                drop: Some(piece.0.r#type(speed_of_light)), // 打った駒種類
+                                source: None,                   // 駒台
+                                destination: Some(destination), // どの升へ行きたいか
+                                promote: false,                 // 打に成りは無し
+                                drop: Some(
+                                    piece.0.hand_address(speed_of_light).r#type(speed_of_light),
+                                ), // 打った駒種類
                             }
                             .to_hash(),
                         );

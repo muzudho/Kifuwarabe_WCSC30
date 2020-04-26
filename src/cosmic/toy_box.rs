@@ -352,12 +352,7 @@ impl Board {
         self.hands[adr as usize].push(*hand);
         self.location[hand.1 as usize] = Location::Hand(adr);
     }
-    pub fn pop_hand(
-        &mut self,
-        hand: PieceMeaning,
-        speed_of_light: &SpeedOfLight,
-    ) -> Option<(PieceMeaning, PieceNum)> {
-        let adr = hand.hand_address(speed_of_light);
+    pub fn pop_hand(&mut self, adr: HandAddress) -> Option<(PieceMeaning, PieceNum)> {
         let piece = self.hands[adr as usize].pop();
         self.location[piece.unwrap().1 as usize] = Location::Busy;
         piece
