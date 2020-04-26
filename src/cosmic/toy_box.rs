@@ -5,8 +5,7 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Person, Phase, Phases};
 use crate::cosmic::smart::features::{HandAddress, HandPieces, PieceMeaning, PieceType, HAND_MAX};
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_10, FILE_11, RANK_0, RANK_1, RANK_10,
-    RANK_11,
+    AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
@@ -683,8 +682,8 @@ impl Board {
         let mut hash: u64 = 0;
 
         // 盤上の駒
-        for rank in RANK_0..RANK_11 {
-            for file in (FILE_0..FILE_11).rev() {
+        for rank in RANK_1..RANK_10 {
+            for file in (FILE_1..FILE_10).rev() {
                 let ab_adr = &Address::new(file, rank).abs();
                 if let Some(piece) = self.piece_at(ab_adr) {
                     hash ^= game.hash_seed.piece[ab_adr.address() as usize]

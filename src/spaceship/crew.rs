@@ -244,14 +244,14 @@ impl Chiyuri {
         for ms in 1..9 {
             for hash in 0..10 {
                 let sq = Address::new(FILE_1, ms).abs();
-                let next = push_sq_to_hash(hash, &sq);
+                let next = push_sq_to_hash(hash, Some(&sq));
                 let (hash_orig, square_orig) = pop_sq_from_hash(next);
                 Beam::shoot( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
                     ,hash
                     ,ms
                     ,next
                     ,hash_orig
-                    ,square_orig.address()
+                    ,if let Some(square_orig_val) = square_orig{ square_orig_val.address()}else{0}
                 ));
             }
         }

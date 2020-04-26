@@ -7,7 +7,7 @@
 use crate::cosmic::smart::features::{
     pop_piece_type_from_hash, push_piece_type_to_hash, PieceMeaning, PieceType,
 };
-use crate::cosmic::smart::square::{AbsoluteAddress, Address};
+use crate::cosmic::smart::square::AbsoluteAddress;
 use crate::cosmic::toy_box::PieceNum;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
@@ -75,10 +75,10 @@ impl History {
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy)]
 pub struct Movement {
-    // 移動元升。打った場合は 0。
-    pub source: AbsoluteAddress,
-    // 移動先升。これが 0 なら投了とするぜ☆（＾～＾）
-    pub destination: AbsoluteAddress,
+    // 移動元升。
+    pub source: Option<AbsoluteAddress>,
+    // 移動先升。これが None なら投了とするぜ☆（＾～＾）
+    pub destination: Option<AbsoluteAddress>,
     // 移動後に成るなら真
     pub promote: bool,
     // 打の場合、打った駒種類
@@ -87,8 +87,8 @@ pub struct Movement {
 impl Default for Movement {
     fn default() -> Self {
         Movement {
-            source: Address::default().abs(),
-            destination: Address::default().abs(),
+            source: None,
+            destination: None,
             promote: false,
             drop: None,
         }
@@ -114,8 +114,8 @@ impl Movement {
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_piece_type_to_hash(hash, self.drop, speed_of_light);
         hash = push_bool_to_hash(hash, self.promote);
-        hash = push_sq_to_hash(hash, &self.destination);
-        push_sq_to_hash(hash, &self.source)
+        hash = push_sq_to_hash(hash, self.destination.as_ref());
+        push_sq_to_hash(hash, self.source.as_ref())
     }
 
     pub fn resign(&self) -> bool {
@@ -130,9 +130,20 @@ impl fmt::Display for Movement {
             return write!(f, "resign");
         }
 
-        let (dx, dy) = self.destination.to_file_rank();
+        let (dx, dy) = self.destination.unwrap().to_file_rank();
 
-        if self.source.is_drop() {
+        if let Some(source_val) = self.source {
+            let (sx, sy) = source_val.to_file_rank();
+            write!(
+                f,
+                "{}{}{}{}{}",
+                sx,
+                num_to_lower_case(sy),
+                dx,
+                num_to_lower_case(dy),
+                if self.promote { "+" } else { "" }
+            )
+        } else {
             use crate::cosmic::smart::features::PieceType::*;
             write!(
                 f,
@@ -155,22 +166,6 @@ impl fmt::Display for Movement {
                 num_to_lower_case(dy),
                 if self.promote { "+" } else { "" }
             )
-        } else {
-            let (sx, sy) = if self.source.is_none() {
-                // エラー・データも表示したい
-                (0, 0)
-            } else {
-                self.source.to_file_rank()
-            };
-            write!(
-                f,
-                "{}{}{}{}{}",
-                sx,
-                num_to_lower_case(sy),
-                dx,
-                num_to_lower_case(dy),
-                if self.promote { "+" } else { "" }
-            )
         }
     }
 }
@@ -179,8 +174,12 @@ impl fmt::Debug for Movement {
         write!(
             f,
             "Movement({}{}{}{})",
-            self.source.address(),
-            self.destination.address(),
+            if let Some(source_val) = self.source {
+                source_val.address()
+            } else {
+                0
+            },
+            self.destination.unwrap().address(),
             self.promote,
             if let Some(drp) = self.drop {
                 format!("{}", drp)

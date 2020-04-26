@@ -499,18 +499,32 @@ impl Address {
         }
     }
 
-    pub fn from_absolute_address(address: i8) -> AbsoluteAddress {
+    pub fn from_absolute_address(address: i8) -> Option<AbsoluteAddress> {
         let file = ((address / 10).abs() % 10) as u8;
         let rank = (address.abs() % 10) as u8;
-        debug_assert!(
-            (FILE_0 as u8) < file && file < (FILE_10 as u8),
-            format!("file={}", file)
-        );
-        debug_assert!(
-            (RANK_0 as u8) < rank && rank < (RANK_10 as u8),
-            format!("rank={}", rank)
-        );
-        AbsoluteAddress::new(file, rank)
+        if address == 0 {
+            None
+        } else {
+            if !((FILE_0 as u8) < file
+                && file < FILE_10 as u8
+                && (RANK_0 as u8) < rank
+                && rank < RANK_10 as u8)
+            {
+                panic!(Beam::trouble(&format!(
+                "(Err.514) 絶対番地の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
+                file, rank
+            )))
+            }
+            debug_assert!(
+                (FILE_0 as u8) < file && file < (FILE_10 as u8),
+                format!("file={}", file)
+            );
+            debug_assert!(
+                (RANK_0 as u8) < rank && rank < (RANK_10 as u8),
+                format!("rank={}", rank)
+            );
+            Some(AbsoluteAddress::new(file, rank))
+        }
     }
 
     pub fn abs(&self) -> AbsoluteAddress {
@@ -788,17 +802,19 @@ impl AbsoluteAddress {
         (self.file(), self.rank())
     }
 
-    pub fn is_drop(&self) -> bool {
-        self.file == 0 && self.rank == 0
-    }
-
-    pub fn is_none(&self) -> bool {
-        self.file == 0 && self.rank == 0
-    }
-
     pub fn rotate_180(&self) -> Self {
-        let file = FILE_11 as u8 - self.file;
-        let rank = RANK_11 as u8 - self.rank;
+        let file = FILE_10 as u8 - self.file;
+        let rank = RANK_10 as u8 - self.rank;
+        if !((FILE_0 as u8) < file
+            && file < FILE_10 as u8
+            && (RANK_0 as u8) < rank
+            && rank < RANK_10 as u8)
+        {
+            panic!(Beam::trouble(&format!(
+                "(Err.744) 絶対番地の回転で盤の外を指定するのは止めろだぜ☆（＾～＾）！ before change=({}, {}) after change=({}, {})",
+                self.file, self.rank,file, rank
+            )))
+        }
         debug_assert!(
             (FILE_0 as u8) < file && file < (FILE_10 as u8),
             format!("file={}", file)
@@ -826,7 +842,7 @@ impl AbsoluteAddress {
 
     /// マンハッタン距離☆（＾～＾）
     pub fn manhattan_distance(&self, b: &AbsoluteAddress) -> i8 {
-        (self.file - b.file + self.rank - b.rank) as i8
+        (self.file as i8 - b.file as i8) + (self.rank as i8 - b.rank as i8)
     }
 
     pub fn set(&mut self, source: &AbsoluteAddress) -> &mut Self {

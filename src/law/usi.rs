@@ -97,12 +97,12 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     match source {
         Source::Move(file, rank) => {
             *starts += 1;
-            buffer.source = Address::new(file as i8, rank).abs();
+            buffer.source = Some(Address::new(file as i8, rank).abs());
             buffer.drop = None;
         }
         Source::Drop(hand) => {
             *starts += 2;
-            buffer.source = Address::default().abs();
+            buffer.source = None;
             buffer.drop = Some(hand);
         }
     }
@@ -140,7 +140,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     *starts += 1;
 
     // 行き先。
-    buffer.destination = Address::new(file as i8, rank).abs();
+    buffer.destination = Some(Address::new(file as i8, rank).abs());
 
     // 5文字に「+」があれば成り。
     buffer.promote = if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {

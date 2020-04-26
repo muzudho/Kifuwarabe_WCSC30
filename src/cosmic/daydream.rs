@@ -171,19 +171,29 @@ impl Tree {
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
             let movement = Movement::from_hash(*movement_hash);
-            let source_piece = game.board.piece_at(&movement.source);
+            let source_piece_on_board = if let Some(source_val) = &movement.source {
+                Some(game.board.piece_at(source_val))
+            } else {
+                // 打
+                None
+            };
             let captured_piece: Option<(PieceMeaning, PieceNum)> =
                 game.do_move(&movement, speed_of_light);
             self.pv.push(&movement);
 
             // pvリストに１手入れてから評価しろだぜ☆（＾～＾）0除算エラーを防げるぜ☆（＾～＾）
-            let promoted_bonus = if let Some(source_piece_val) = source_piece {
-                Evaluation::from_promotion(
-                    self.pv.len(),
-                    source_piece_val.0.r#type(&speed_of_light),
-                    &movement,
-                )
+            let promoted_bonus = if let Some(source_piece_on_board_val) = source_piece_on_board {
+                if let Some(source_piece_val) = source_piece_on_board_val {
+                    Evaluation::from_promotion(
+                        self.pv.len(),
+                        source_piece_val.0.r#type(&speed_of_light),
+                        &movement,
+                    )
+                } else {
+                    0
+                }
             } else {
+                // 打なら成りは無いぜ☆（＾～＾）
                 0
             };
             // 取った駒の価値を評価するぜ☆（＾～＾）
@@ -299,8 +309,10 @@ impl Tree {
     pub fn add_control(&mut self, sign: i16, game: &mut Game, movement_set: &HashSet<u64>) {
         for movement_hash in movement_set.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.control
-                [Movement::from_hash(*movement_hash).destination.address() as usize] += sign;
+            game.board.control[Movement::from_hash(*movement_hash)
+                .destination
+                .unwrap()
+                .address() as usize] += sign;
         }
     }
 

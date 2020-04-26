@@ -22,17 +22,22 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
 }
 
 /// ハッシュ値を作る
-pub fn push_sq_to_hash(hash: u64, square: &AbsoluteAddress) -> u64 {
+pub fn push_sq_to_hash(hash: u64, square: Option<&AbsoluteAddress>) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    (hash << 7) + square.address() as u64
+    (hash << 7)
+        + if let Some(square_val) = square {
+            square_val.address()
+        } else {
+            0
+        } as u64
 }
 /// ハッシュ値から作る
-pub fn pop_sq_from_hash(hash: u64) -> (u64, AbsoluteAddress) {
+pub fn pop_sq_from_hash(hash: u64) -> (u64, Option<AbsoluteAddress>) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let sq_num = Address::from_absolute_address((hash & 0b111_1111) as i8);
-    (hash >> 7, sq_num)
+    let adr = Address::from_absolute_address((hash & 0b111_1111) as i8);
+    (hash >> 7, adr)
 }
 
 /// 指し手のために、段をアルファベットにすることを想定
