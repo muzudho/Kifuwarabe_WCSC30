@@ -273,7 +273,7 @@ impl Tree {
                 ts.turn_over_and_choice(
                     &opponent_ts,
                     *movement_hash,
-                    self.evaluation.komawari() as i16 + promoted_bonus,
+                    self.evaluation.centi_pawn(0) + promoted_bonus,
                 );
             }
 
@@ -380,7 +380,7 @@ impl TreeState {
         &mut self,
         opponent_ts: &TreeState,
         friend_movement_hash: u64,
-        friend_captured_piece_centi_pawn: i16,
+        friend_centi_pawn1: i16,
     ) {
         // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
 
@@ -397,13 +397,13 @@ impl TreeState {
             }
             Value::CentiPawn(num) => {
                 // 評価値は ひっくり返します。この指し手の駒の交換値も足します。
-                let friend_centi_pawn = -num + friend_captured_piece_centi_pawn;
+                let friend_centi_pawn2 = -num + friend_centi_pawn1;
                 if self.bestmove.movement_hash == 0 {
                     // どんな手も 投了より良いだろ☆（＾～＾）
                     (
                         true,
                         "this better than resign".to_string(),
-                        Value::CentiPawn(friend_centi_pawn),
+                        Value::CentiPawn(friend_centi_pawn2),
                     )
                 } else {
                     match self.bestmove.value {
@@ -416,16 +416,16 @@ impl TreeState {
                             (
                                 true,
                                 "any move more than lose".to_string(),
-                                Value::CentiPawn(friend_centi_pawn),
+                                Value::CentiPawn(friend_centi_pawn2),
                             )
                         }
                         Value::CentiPawn(best_centi_pawn) => {
-                            if best_centi_pawn < friend_centi_pawn {
+                            if best_centi_pawn < friend_centi_pawn2 {
                                 // 上方修正
                                 (
                                     true,
                                     "update value".to_string(),
-                                    Value::CentiPawn(friend_centi_pawn),
+                                    Value::CentiPawn(friend_centi_pawn2),
                                 )
                             } else {
                                 (false, "".to_string(), self.bestmove.value)

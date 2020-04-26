@@ -85,10 +85,10 @@ impl Kifuwarabe {
             let value = &line[(label1_width + name_width + label2_width)..];
             // IO::writeln(&format!("Debug value=|{}|", value));
             match name {
-                "BoardCoverageWeight" => {
+                "BoardCoverageWeightPer1000" => {
                     universe.option_board_coverage_weight = value.parse().unwrap();
                 }
-                "KomawariWeight" => {
+                "KomawariWeightPer1000" => {
                     universe.option_komawari_weight = value.parse().unwrap();
                 }
                 "MaxDepth" => {
@@ -117,8 +117,12 @@ impl Kifuwarabe {
         IO::writeln("option name ResetLearning type button");
         IO::writeln("option name LearningFile type filename default <empty>");
         */
-        Beam::shoot("option name BoardCoverageWeight type spin default 1000 min -1000 max 1000");
-        Beam::shoot("option name KomawariWeight type spin default 1000 min -1000 max 1000");
+        Beam::shoot(
+            "option name BoardCoverageWeightPer1000 type spin default 1000 min -100000 max 100000",
+        );
+        Beam::shoot(
+            "option name KomawariWeightPer1000 type spin default 1000 min -100000 max 100000",
+        );
         Beam::shoot("option name MaxDepth type spin default 1 min 1 max 15");
         Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
         Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");
