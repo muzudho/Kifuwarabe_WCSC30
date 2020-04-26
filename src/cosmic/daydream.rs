@@ -149,14 +149,14 @@ impl Tree {
             return ts;
         }
 
-        let control_sign: i16 = if self.pv.len() % 2 == 0 {
+        let coverage_sign: i16 = if self.pv.len() % 2 == 0 {
             // 先手が指すところだぜ☆（＾～＾）
             1
         } else {
             // 後手が指すところだぜ☆（＾～＾）
             -1
         };
-        self.add_control(control_sign, game, &movement_set);
+        self.add_control(coverage_sign, game, &movement_set);
         for movement_hash in movement_set.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
@@ -224,7 +224,7 @@ impl Tree {
                 // 葉で評価しようぜ☆（＾～＾）
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
-                let control_value: i16 = game.board.control_value();
+                let board_coverage_value: i16 = coverage_sign * game.board.coverage_value();
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
@@ -237,9 +237,7 @@ impl Tree {
                         None,
                         &Some(PvString::String(format!(
                             "board coverage={} | {} {} {} | komawari={}",
-                            (control_sign
-                                * ((self.evaluation.board_coverage_weight() * control_value as i32)
-                                    / 1000) as i16),
+                            self.evaluation.board_coverage(board_coverage_value),
                             game.board.control[68],
                             game.board.control[58],
                             game.board.control[48],
@@ -259,11 +257,7 @@ impl Tree {
 
                 ts.choice_friend(
                     &Value::CentiPawn(
-                        self.evaluation.centi_pawn()
-                            + promoted_bonus
-                            + (control_sign
-                                * ((self.evaluation.board_coverage_weight() * control_value as i32)
-                                    / 1000) as i16),
+                        self.evaluation.centi_pawn(board_coverage_value) + promoted_bonus,
                     ),
                     *movement_hash,
                 );
@@ -291,7 +285,7 @@ impl Tree {
             Commands::pos(&game);
             */
         }
-        self.add_control(-1 * control_sign, game, &movement_set);
+        self.add_control(-1 * coverage_sign, game, &movement_set);
 
         if ts.get_movement_hash() == 0 && ts.repetition_movement_hash != 0 {
             // 投了するぐらいなら千日手を選ぶぜ☆（＾～＾）

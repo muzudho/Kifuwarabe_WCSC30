@@ -421,8 +421,8 @@ impl Board {
         hash
     }
 
-    /// 良ければ総量はプラスだぜ☆（＾～＾）
-    pub fn control_value(&self) -> i16 {
+    /// 盤面の全升への利きだぜ☆（＾～＾） 良ければ総量はプラスだぜ☆（＾～＾）
+    pub fn coverage_value(&self) -> i16 {
         self.control.iter().sum()
     }
 

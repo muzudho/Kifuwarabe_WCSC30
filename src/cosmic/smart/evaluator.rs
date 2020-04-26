@@ -25,11 +25,11 @@ impl Evaluation {
             komawari_weight: komawari_weight,
         }
     }
-    pub fn centi_pawn(&self) -> i16 {
-        self.komawari()
+    pub fn centi_pawn(&self, board_coverage_value: i16) -> i16 {
+        self.komawari() + self.board_coverage(board_coverage_value)
     }
-    pub fn board_coverage_weight(&self) -> i32 {
-        self.board_coverage_weight
+    pub fn board_coverage(&self, board_coverage_value: i16) -> i16 {
+        ((self.board_coverage_weight * board_coverage_value as i32) / 1000) as i16
     }
     pub fn komawari_weight(&self) -> i32 {
         self.komawari_weight
@@ -63,8 +63,6 @@ impl Evaluation {
     pub fn before_undo_move(&mut self, captured_piece_centi_pawn: i16) {
         // 1手戻すぜ☆（＾～＾）
         self.piece_allocation_value -= captured_piece_centi_pawn;
-        // ひっくり返すぜ☆（＾～＾）
-        self.piece_allocation_value *= -1;
     }
 
     /// 成ったら評価に加点するぜ☆（＾～＾）
