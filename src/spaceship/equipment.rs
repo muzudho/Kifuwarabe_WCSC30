@@ -60,7 +60,7 @@ impl DestinationDisplay {
     pub fn print(
         &mut self,
         cur_depth: Option<u8>,
-        sum_nodes: Option<u64>,
+        state_nodes_nps: Option<(u64, u64)>,
         value: Option<Value>,
         movement: Option<Movement>,
         pv_string: &Option<PvString>,
@@ -83,8 +83,8 @@ impl DestinationDisplay {
             } else {
                 "".to_string()
             },
-            if let Some(num) = sum_nodes {
-                format!(" nodes {}", num)
+            if let Some((state_node, nps)) = state_nodes_nps {
+                format!(" nodes {} nps {}", state_node, nps)
             } else {
                 "".to_string()
             },

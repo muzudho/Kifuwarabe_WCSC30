@@ -3,9 +3,7 @@
 //!
 
 use crate::cosmic::recording::{Movement, Person, Phase};
-use crate::cosmic::smart::features::{
-    HandAddress, HandAddresses, HandPieces, PieceMeaning, PieceType,
-};
+use crate::cosmic::smart::features::{HandAddress, HandAddresses, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Address, Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,

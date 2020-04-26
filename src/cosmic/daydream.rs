@@ -21,7 +21,7 @@ pub struct Tree {
     // この木を生成したと同時にストップ・ウォッチを開始するぜ☆（＾～＾）
     stopwatch: Instant,
     // 状態ノード数☆（＾～＾）
-    state_nodes: u64,
+    pub state_nodes: u64,
 
     // Principal variation(読み筋)☆（＾～＾）
     pv: PrincipalVariation,
@@ -65,7 +65,7 @@ impl Tree {
             let movement = best_ts.bestmove.to_movement();
             universe.game.info.print(
                 Some(max_depth),
-                Some(self.state_nodes),
+                Some((self.state_nodes, self.nps())),
                 Some(best_ts.bestmove.value),
                 Some(movement),
                 &Some(PvString::PV(self.msec(), format!("{}", movement,))), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
@@ -243,7 +243,7 @@ impl Tree {
                     );
                     game.info.print(
                         Some(self.pv.len() as u8),
-                        Some(self.state_nodes),
+                        Some((self.state_nodes, self.nps())),
                         Some(ts.bestmove.value),
                         Some(movement),
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
@@ -309,6 +309,15 @@ impl Tree {
 
     pub fn msec(&self) -> u128 {
         self.stopwatch.elapsed().as_millis()
+    }
+
+    pub fn nps(&self) -> u64 {
+        let sec = self.sec();
+        if 0 < sec {
+            self.state_nodes / sec
+        } else {
+            0
+        }
     }
 }
 
