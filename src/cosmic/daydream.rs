@@ -29,8 +29,8 @@ pub struct Tree {
     // 思考時間（秒）をランダムにすることで、指し手を変えるぜ☆（＾～＾）
     think_sec: u64,
 
-    // 玉のリスクの重み☆（＾～＾）
-    king_risk_weight: f64,
+    // 玉の安全度の重み☆（＾～＾）
+    king_safety_weight: f64,
 }
 impl Default for Tree {
     fn default() -> Self {
@@ -39,7 +39,7 @@ impl Default for Tree {
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
-            king_risk_weight: 0.0,
+            king_safety_weight: 0.0,
         }
     }
 }
@@ -53,7 +53,7 @@ impl Tree {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng()
             .gen_range(universe.option_min_think_sec, universe.option_max_think_sec);
-        self.king_risk_weight = universe.option_king_risk_weight;
+        self.king_safety_weight = universe.option_king_risk_weight;
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
@@ -220,7 +220,8 @@ impl Tree {
                 // 玉の周囲２４近傍の利きを、重みを付けて集計するぜ☆（＾～＾）
                 // 玉のリスクを高くし過ぎると、盤コントロールが無茶苦茶になってしまう☆（＾～＾）
                 // かといって 玉のリスクは 歩１枚の価値より重いだろ☆（＾～＾）係数が難しいぜ☆（＾～＾）
-                let risk_king = (self.king_risk_weight * Evaluation::risk_king(game, control_sign))
+                let risk_safety = (self.king_safety_weight
+                    * Evaluation::king_safety(game, control_sign))
                     / self.pv.len() as f64;
 
                 if game.info.is_printable() {
@@ -233,9 +234,9 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "board control={} | king risk={} | {} {} {}",
+                            "board control={} | king safety={} | {} {} {}",
                             control_sign * control_value,
-                            risk_king,
+                            risk_safety,
                             game.board.control[68],
                             game.board.control[58],
                             game.board.control[48],
@@ -255,7 +256,7 @@ impl Tree {
                         captured_piece_centi_pawn
                             + promoted_bonus
                             + (control_sign * control_value)
-                            + risk_king as i16,
+                            + risk_safety as i16,
                     ),
                     *movement_hash,
                 );

@@ -15,12 +15,10 @@ pub const REPITITION_VALUE: i16 = -300;
 
 pub struct Evaluation {}
 impl Evaluation {
-    /// 玉のリスク計算だぜ☆（＾～＾）
-    pub fn risk_king(game: &mut Game, control_sign: i16) -> f64 {
+    /// 玉の安全度計算だぜ☆（＾～＾）
+    pub fn king_safety(game: &mut Game, control_sign: i16) -> f64 {
         let mut risk_value = 0.0f64;
         let friend_index = game.history.get_phase(Person::Friend) as usize;
-
-        // TODO 玉の位置、計算できてないぜ☆（＾～＾）
         let king_location = game.board.location_of(if friend_index == 0 {
             PieceNum::King1
         } else {
@@ -31,14 +29,9 @@ impl Evaluation {
             Location::Hand(_adr) => panic!(Beam::trouble(
                 "(Err.30) なんで玉が駒台に乗ってるんだぜ☆（＾～＾）！"
             )),
-            Location::Busy => {
-                // AbsoluteAddress::default()
-                //*
-                panic!(Beam::trouble(
-                    "(Err.32) なんで玉が作業中なんだぜ☆（＾～＾）！"
-                ))
-                // */
-            }
+            Location::Busy => panic!(Beam::trouble(
+                "(Err.32) なんで玉が作業中なんだぜ☆（＾～＾）！"
+            )),
         };
         // 北
         // .xx..
