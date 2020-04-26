@@ -4,14 +4,13 @@
 //! * Phase (先後。手番,相手番)
 //! * Person (先手,後手)
 //!
-use crate::cosmic::smart::features::{
-    pop_piece_type_from_hash, push_piece_type_to_hash, PieceMeaning, PieceType,
-};
+use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::smart::square::AbsoluteAddress;
 use crate::cosmic::toy_box::PieceNum;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
+use crate::law::speed_of_light::{pop_piece_type_from_hash, push_piece_type_to_hash};
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。

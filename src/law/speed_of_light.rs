@@ -11,6 +11,7 @@ use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::HandAddress;
 use crate::cosmic::smart::features::HandAddressType;
 use crate::cosmic::smart::features::{PieceMeaning, PieceType};
+use num_traits::FromPrimitive;
 
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
@@ -793,3 +794,23 @@ impl HandAddress {
         speed_of_light.hand_address_chart(self).r#type
     }
 }
+
+/// ハッシュ値を作る
+pub fn push_piece_type_to_hash(hash: u64, piece_type_o: Option<PieceType>) -> u64 {
+    let num = if let Some(piece_type) = piece_type_o {
+        // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
+        piece_type as u64
+    } else {
+        NONE_PIECE_TYPE_NUMBER
+    };
+    (hash << 4) + num
+}
+
+/// ハッシュ値から作る
+pub fn pop_piece_type_from_hash(hash: u64) -> (u64, Option<PieceType>) {
+    // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
+    (hash >> 4, PieceType::from_u64(hash & 0b1111))
+}
+
+/// None が無いので、追加するぜ☆（＾～＾）
+pub const NONE_PIECE_TYPE_NUMBER: u64 = 14;
