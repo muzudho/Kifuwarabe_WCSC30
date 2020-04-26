@@ -48,10 +48,10 @@ impl Kifuwarabe {
         (line, len, starts)
     }
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
-    pub fn go(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
+    pub fn go(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let mut tree = Tree::default();
-        let ts = tree.iteration_deeping(speed_of_light, universe);
+        let ts = tree.iteration_deeping(universe, speed_of_light);
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print(
             None,
@@ -68,7 +68,7 @@ impl Kifuwarabe {
     pub fn isready() {
         Beam::shoot("readyok");
     }
-    pub fn position(speed_of_light: &SpeedOfLight, universe: &mut Universe, line: &String) {
+    pub fn position(universe: &mut Universe, line: &String, speed_of_light: &SpeedOfLight) {
         // positionコマンドの読取を丸投げ
         set_position(&line, &mut universe.game, &speed_of_light);
     }
@@ -128,11 +128,11 @@ impl Kifuwarabe {
 pub struct Chiyuri {}
 impl Chiyuri {
     pub fn do_(
-        speed_of_light: &SpeedOfLight,
         universe: &mut Universe,
         line: &str,
         len: usize,
         mut starts: usize,
+        speed_of_light: &SpeedOfLight,
     ) {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える
@@ -145,7 +145,7 @@ impl Chiyuri {
             universe.game.do_move(&ss, speed_of_light);
         }
     }
-    pub fn genmove(speed_of_light: &SpeedOfLight, game: &Game) {
+    pub fn genmove(game: &Game, speed_of_light: &SpeedOfLight) {
         // Generation move.
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
@@ -199,7 +199,7 @@ impl Chiyuri {
             });
         Beam::shoot("----駒リスト40表示 ここまで----");
     }
-    pub fn len0(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
+    pub fn len0(universe: &mut Universe) {
         Beam::shoot("len==0");
         if !&universe.dialogue_mode {
             // 空打ち１回目なら、対話モードへ☆（＾～＾）
@@ -210,18 +210,18 @@ impl Chiyuri {
             CommandRoom::print_title();
         } else {
             // 局面表示
-            let s = GameRoom::to_string(&universe.game, &PosNums::Current, speed_of_light);
+            let s = GameRoom::to_string(&universe.game, &PosNums::Current);
             Beam::shoot(&s);
         }
     }
-    pub fn pos(speed_of_light: &SpeedOfLight, universe: &Universe) {
+    pub fn pos(universe: &Universe) {
         // 現局面表示
-        let s = GameRoom::to_string(&universe.game, &PosNums::Current, speed_of_light);
+        let s = GameRoom::to_string(&universe.game, &PosNums::Current);
         Beam::shoot(&s);
     }
-    pub fn pos0(speed_of_light: &SpeedOfLight, universe: &Universe) {
+    pub fn pos0(universe: &Universe) {
         // 初期局面表示
-        let s = GameRoom::to_string(&universe.game, &PosNums::Start, speed_of_light);
+        let s = GameRoom::to_string(&universe.game, &PosNums::Start);
         Beam::shoot(&s);
     }
     pub fn rand() {
@@ -234,7 +234,7 @@ impl Chiyuri {
         let count = universe.game.count_same_position();
         Beam::shoot(&format!("同一局面調べ count={}", count));
     }
-    pub fn startpos(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
+    pub fn startpos(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
         // 平手初期局面
         set_position(&POS_1.to_string(), &mut universe.game, &speed_of_light);
     }
@@ -256,7 +256,7 @@ impl Chiyuri {
             }
         }
     }
-    pub fn undo(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
+    pub fn undo(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
         if !universe.game.undo_move(&speed_of_light) {
             Beam::shoot(&format!(
                 "ply={} を、これより戻せません",

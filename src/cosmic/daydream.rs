@@ -47,8 +47,8 @@ impl Tree {
     /// 反復深化探索だぜ☆（＾～＾）
     pub fn iteration_deeping(
         &mut self,
-        speed_of_light: &SpeedOfLight,
         universe: &mut Universe,
+        speed_of_light: &SpeedOfLight,
     ) -> TreeState {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng()
@@ -108,10 +108,9 @@ impl Tree {
     ///
     /// # Arguments
     ///
-    /// * `depth` - 0 なら末端局面、1 なら末端局面の1歩手前☆（＾～＾）
-    /// * `universe` - (宇宙)
+    /// * `max_depth` - 読みの深さ☆（＾～＾）
+    /// * `game` - 対局。
     /// * `speed_of_light` - (光速)
-    /// * `pv` - 読み筋
     ///
     /// # Returns
     ///

@@ -366,7 +366,7 @@ impl Board {
     pub fn last_hand(&self, adr: HandAddress) -> Option<&(PieceMeaning, PieceNum)> {
         self.hands[adr as usize].last()
     }
-    pub fn count_hand(&self, adr: HandAddress, speed_of_light: &SpeedOfLight) -> usize {
+    pub fn count_hand(&self, adr: HandAddress) -> usize {
         self.hands[adr as usize].len()
     }
 
@@ -405,7 +405,7 @@ impl Board {
 
         // 持ち駒ハッシュ
         HandAddresses::for_all(&mut |adr| {
-            let count = self.count_hand(adr, speed_of_light);
+            let count = self.count_hand(adr);
             debug_assert!(
                 count <= HAND_MAX,
                 "持ち駒 {:?} の枚数 {} <= {}",
