@@ -16,8 +16,8 @@ pub struct Universe {
     pub option_min_think_sec: u64,
     /// 思考時間の最大秒☆（＾～＾）
     pub option_max_think_sec: u64,
-    /// 玉のリスクの重み☆（＾～＾）
-    pub option_king_risk_weight: f64,
+    /// 盤面をカバーする利きの多さ☆（＾～＾）
+    pub option_board_coverage_weight: f64,
 }
 impl Default for Universe {
     fn default() -> Self {
@@ -28,7 +28,7 @@ impl Default for Universe {
             /// min < max にしろだぜ☆（＾～＾）
             option_min_think_sec: 7,
             option_max_think_sec: 17,
-            option_king_risk_weight: 0.0,
+            option_board_coverage_weight: 1.0,
         }
     }
 }

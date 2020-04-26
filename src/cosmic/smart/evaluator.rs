@@ -1,230 +1,64 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
-use crate::cosmic::recording::Person;
 use crate::cosmic::smart::features::{HandAddressType, PieceMeaning, PieceType};
-use crate::cosmic::smart::square::{AbsoluteAddress, RelativeAddress};
-use crate::cosmic::toy_box::{Location, PieceNum};
+use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
-use crate::spaceship::equipment::Beam;
 
 /// 千日手の価値☆（＾～＾）
 pub const REPITITION_VALUE: i16 = -300;
 
-pub struct Evaluation {}
+pub struct Evaluation {
+    // 駒割だぜ☆（＾～＾）
+    piece_allocation_value: i16,
+    // 盤面をカバーする利きの多さ☆（＾～＾）
+    board_coverage_weight: f64,
+}
 impl Evaluation {
-    /// 玉の安全度計算だぜ☆（＾～＾）
-    pub fn king_safety(game: &mut Game, control_sign: i16) -> f64 {
-        let mut risk_value = 0.0f64;
-        let friend_index = game.history.get_phase(Person::Friend) as usize;
-        let king_location = game.board.location_of(if friend_index == 0 {
-            PieceNum::King1
-        } else {
-            PieceNum::King2
-        });
-        let king_adr = match king_location {
-            Location::Board(adr) => adr,
-            Location::Hand(_adr) => panic!(Beam::trouble(
-                "(Err.30) なんで玉が駒台に乗ってるんだぜ☆（＾～＾）！"
-            )),
-            Location::Busy => panic!(Beam::trouble(
-                "(Err.32) なんで玉が作業中なんだぜ☆（＾～＾）！"
-            )),
-        };
-        // 北
-        // .xx..
-        // ..x..
-        // .....
-        // .....
-        // .....
-        let path = &mut Vec::<AbsoluteAddress>::new();
-        let cur = &mut AbsoluteAddress::copy_from(&king_adr);
-        let rel = &mut RelativeAddress::new(0, -1);
-        cur.offset(rel);
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(0, -1));
-            if cur.legal_cur() {
-                path.push(*cur);
-                cur.offset(rel.set(1, 0));
-                if cur.legal_cur() {
-                    path.push(*cur);
-                }
-            }
+    pub fn new(board_coverage_weight: f64) -> Self {
+        Evaluation {
+            piece_allocation_value: 0,
+            board_coverage_weight: board_coverage_weight,
         }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        // 北西
-        // x....
-        // xx...
-        // .....
-        // .....
-        // .....
-        cur.set(&king_adr);
-        path.clear();
-        cur.offset(rel.set(1, -1));
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(1, 0));
-            if cur.legal_cur() {
-                path.push(*cur);
-                cur.offset(rel.set(0, -1));
-                if cur.legal_cur() {
-                    path.push(*cur);
-                }
-            }
-        }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        // 西
-        // .....
-        // .....
-        // xx...
-        // x....
-        // x....
-        cur.set(&king_adr);
-        path.clear();
-        cur.offset(rel.set(1, 0));
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(1, 0));
-            if cur.legal_cur() {
-                path.push(*cur);
-                cur.offset(rel.set(0, 1));
-                if cur.legal_cur() {
-                    path.push(*cur);
-                    cur.offset(rel.set(0, 1));
-                    if cur.legal_cur() {
-                        path.push(*cur);
-                    }
-                }
-            }
-        }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        // 南西
-        // .....
-        // .....
-        // .....
-        // .x...
-        // .x...
-        cur.set(&king_adr);
-        path.clear();
-        cur.offset(rel.set(1, 1));
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(0, 1));
-            if cur.legal_cur() {
-                path.push(*cur);
-            }
-        }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        // 南
-        // .....
-        // .....
-        // .....
-        // ..x..
-        // ..xxx
-        cur.set(&king_adr);
-        path.clear();
-        cur.offset(rel.set(0, 1));
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(0, 1));
-            if cur.legal_cur() {
-                path.push(*cur);
-                cur.offset(rel.set(-1, 0));
-                if cur.legal_cur() {
-                    path.push(*cur);
-                    cur.offset(rel.set(-1, 0));
-                    if cur.legal_cur() {
-                        path.push(*cur);
-                    }
-                }
-            }
-        }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        // 南東
-        // .....
-        // .....
-        // .....
-        // ...xx
-        // .....
-        cur.set(&king_adr);
-        path.clear();
-        cur.offset(rel.set(-1, 1));
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(-1, 0));
-            if cur.legal_cur() {
-                path.push(*cur);
-            }
-        }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        // 東
-        // ....x
-        // ....x
-        // ...xx
-        // .....
-        // .....
-        cur.set(&king_adr);
-        path.clear();
-        cur.offset(rel.set(-1, 0));
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(-1, 0));
-            if cur.legal_cur() {
-                path.push(*cur);
-                cur.offset(rel.set(0, -1));
-                if cur.legal_cur() {
-                    path.push(*cur);
-                    cur.offset(rel.set(0, -1));
-                    if cur.legal_cur() {
-                        path.push(*cur);
-                    }
-                }
-            }
-        }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        // 北東
-        // ...x.
-        // ...x.
-        // .....
-        // .....
-        // .....
-        cur.set(&king_adr);
-        path.clear();
-        cur.offset(rel.set(-1, -1));
-        if cur.legal_cur() {
-            path.push(*cur);
-            cur.offset(rel.set(0, -1));
-            if cur.legal_cur() {
-                path.push(*cur);
-            }
-        }
-        risk_value += Evaluation::risk(control_sign, path.to_vec(), &king_adr, game);
-        risk_value
+    }
+    pub fn centi_pawn(&self) -> i16 {
+        self.piece_allocation_value
+    }
+    pub fn board_coverage_weight(&self) -> f64 {
+        self.board_coverage_weight
+    }
+    pub fn komawari(&self) -> i16 {
+        self.piece_allocation_value
     }
 
-    fn risk(
-        sign: i16,
-        adr_vec: Vec<AbsoluteAddress>,
-        king_adr: &AbsoluteAddress,
-        game: &mut Game,
-    ) -> f64 {
-        let mut risk = 0f64;
-        for adr in adr_vec {
-            if adr.legal_board() {
-                // どのマスも、玉から 1マス～16マス 離れている☆（＾～＾）玉に近いものを重くみようぜ☆（＾～＾）
-                let weight: f64 = (16 - king_adr.manhattan_distance(&adr)) as f64 / 16.0;
-                // println!("sign = {} | a = {}", sign, a);
-                let amount =
-                    sign as f64 * weight * game.board.control[adr.address() as usize] as f64;
-                risk += amount;
-            } else {
-                break;
-            }
-        }
-        risk
+    pub fn before_search(&mut self) {
+        // ひっくり返すぜ☆（＾～＾）
+        self.piece_allocation_value *= -1;
+    }
+
+    pub fn after_search(&mut self) {
+        // ひっくり返すぜ☆（＾～＾）
+        self.piece_allocation_value *= -1;
+    }
+
+    pub fn after_do_move(
+        &mut self,
+        captured_piece: &Option<(PieceMeaning, PieceNum)>,
+        speed_of_light: &SpeedOfLight,
+    ) -> i16 {
+        // 取った駒の価値を評価するぜ☆（＾～＾）
+        let captured_piece_centi_pawn =
+            Evaluation::from_caputured_piece(captured_piece, speed_of_light);
+        self.piece_allocation_value += captured_piece_centi_pawn;
+        captured_piece_centi_pawn
+    }
+
+    pub fn before_undo_move(&mut self, captured_piece_centi_pawn: i16) {
+        // 1手戻すぜ☆（＾～＾）
+        self.piece_allocation_value -= captured_piece_centi_pawn;
+        // ひっくり返すぜ☆（＾～＾）
+        self.piece_allocation_value *= -1;
     }
 
     /// 成ったら評価に加点するぜ☆（＾～＾）
@@ -255,9 +89,8 @@ impl Evaluation {
     /// Returns
     /// -------
     /// Centi pawn.
-    pub fn from_caputured_piece(
-        _cur_depth: usize,
-        captured_piece: Option<(PieceMeaning, PieceNum)>,
+    fn from_caputured_piece(
+        captured_piece: &Option<(PieceMeaning, PieceNum)>,
         speed_of_light: &SpeedOfLight,
     ) -> i16 {
         if let Some(captured_piece_val) = captured_piece {
@@ -276,7 +109,7 @@ impl Evaluation {
                 HandAddressType::Knight => 300,
                 HandAddressType::Lance => 200,
                 HandAddressType::Pawn => 100,
-            } /* / (cur_depth as i16) */
+            }
         } else {
             0
         }

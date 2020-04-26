@@ -503,7 +503,9 @@ impl Board {
         }
     }
 
+    /*
     pub fn location_of(&self, piece_num: PieceNum) -> Location {
         self.location[piece_num as usize]
     }
+    */
 }

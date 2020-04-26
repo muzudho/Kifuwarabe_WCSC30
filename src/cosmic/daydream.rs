@@ -29,25 +29,18 @@ pub struct Tree {
     // 思考時間（秒）をランダムにすることで、指し手を変えるぜ☆（＾～＾）
     think_sec: u64,
 
-    // 玉の安全度の重み☆（＾～＾）
-    king_safety_weight: f64,
-
-    // 駒割だぜ☆（＾～＾）
-    pub piece_allocation_value: i16,
+    pub evaluation: Evaluation,
 }
-impl Default for Tree {
-    fn default() -> Self {
+impl Tree {
+    pub fn new(board_coverage_weight: f64) -> Self {
         Tree {
             stopwatch: Instant::now(),
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
-            king_safety_weight: 0.0,
-            piece_allocation_value: 0,
+            evaluation: Evaluation::new(board_coverage_weight),
         }
     }
-}
-impl Tree {
     /// 反復深化探索だぜ☆（＾～＾）
     pub fn iteration_deeping(
         &mut self,
@@ -57,11 +50,12 @@ impl Tree {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng()
             .gen_range(universe.option_min_think_sec, universe.option_max_think_sec);
-        self.king_safety_weight = universe.option_king_risk_weight;
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
+        self.evaluation.before_search();
         let mut best_ts = self.search(0, &mut universe.game, speed_of_light);
+        self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
         for max_depth in 1..universe.option_max_depth {
@@ -95,7 +89,9 @@ impl Tree {
             self.pv.clear();
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
+            self.evaluation.before_search();
             let ts = self.search(max_depth, &mut universe.game, speed_of_light);
+            self.evaluation.after_search();
             if ts.timeout {
                 // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
@@ -183,8 +179,9 @@ impl Tree {
             let captured_piece: Option<(PieceMeaning, PieceNum)> =
                 game.do_move(&movement, speed_of_light);
             self.pv.push(&movement);
-            // ひっくり返すぜ☆（＾～＾）
-            self.piece_allocation_value *= -1;
+            let captured_piece_centi_pawn = self
+                .evaluation
+                .after_do_move(&captured_piece, speed_of_light);
 
             // pvリストに１手入れてから評価しろだぜ☆（＾～＾）0除算エラーを防げるぜ☆（＾～＾）
             let promoted_bonus = if let Some(source_piece_on_board_val) = source_piece_on_board {
@@ -201,10 +198,6 @@ impl Tree {
                 // 打なら成りは無いぜ☆（＾～＾）
                 0
             };
-            // 取った駒の価値を評価するぜ☆（＾～＾）
-            let captured_piece_centi_pawn =
-                Evaluation::from_caputured_piece(self.pv.len(), captured_piece, speed_of_light);
-            self.piece_allocation_value += captured_piece_centi_pawn;
 
             /*
             IO::debugln(&format!("n={} do.", sum_nodes));
@@ -216,8 +209,7 @@ impl Tree {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！
                     ts.bestmove.catch_king(*movement_hash);
 
-                    // 1手戻すぜ☆（＾～＾）
-                    self.piece_allocation_value -= captured_piece_centi_pawn;
+                    self.evaluation.before_undo_move(captured_piece_centi_pawn);
                     self.pv.pop();
                     game.undo_move(speed_of_light);
                     break;
@@ -234,13 +226,6 @@ impl Tree {
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
                 let control_value: i16 = game.board.control_value();
 
-                // 玉の周囲２４近傍の利きを、重みを付けて集計するぜ☆（＾～＾）
-                // 玉のリスクを高くし過ぎると、盤コントロールが無茶苦茶になってしまう☆（＾～＾）
-                // かといって 玉のリスクは 歩１枚の価値より重いだろ☆（＾～＾）係数が難しいぜ☆（＾～＾）
-                let risk_safety = (self.king_safety_weight
-                    * Evaluation::king_safety(game, control_sign))
-                    / self.pv.len() as f64;
-
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
                     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
@@ -251,15 +236,18 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "board control={} | king safety={} | {} {} {} | komawari={}",
-                            control_sign * control_value,
-                            risk_safety,
+                            "board coverage={} | {} {} {} | komawari={}",
+                            (control_sign as f64
+                                * self.evaluation.board_coverage_weight()
+                                * control_value as f64) as i16,
                             game.board.control[68],
                             game.board.control[58],
                             game.board.control[48],
-                            self.piece_allocation_value
+                            self.evaluation.komawari()
                         ))),
                     );
+                    // king safety={} |
+                    // risk_safety,
                     game.info.print(
                         Some(self.pv.len() as u8),
                         Some((self.state_nodes, self.nps())),
@@ -271,10 +259,11 @@ impl Tree {
 
                 ts.choice_friend(
                     &Value::CentiPawn(
-                        self.piece_allocation_value
+                        self.evaluation.centi_pawn()
                             + promoted_bonus
-                            + (control_sign * control_value)
-                            + risk_safety as i16,
+                            + (control_sign as f64
+                                * self.evaluation.board_coverage_weight()
+                                * control_value as f64) as i16,
                     ),
                     *movement_hash,
                 );
@@ -282,18 +271,19 @@ impl Tree {
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
+                self.evaluation.before_search();
                 let opponent_ts = self.search(max_depth, game, speed_of_light);
+                self.evaluation.after_search();
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 ts.turn_over_and_choice(
                     &opponent_ts,
                     *movement_hash,
-                    self.piece_allocation_value + promoted_bonus,
+                    self.evaluation.komawari() + promoted_bonus,
                 );
             }
 
-            // 1手戻すぜ☆（＾～＾）
-            self.piece_allocation_value -= captured_piece_centi_pawn;
+            self.evaluation.before_undo_move(captured_piece_centi_pawn);
             self.pv.pop();
             game.undo_move(speed_of_light);
             /*

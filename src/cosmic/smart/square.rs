@@ -577,12 +577,6 @@ impl RelativeAddress {
         }
     }
 
-    pub fn set(&mut self, file1: i8, rank1: i8) -> &mut Self {
-        self.file = file1;
-        self.rank = rank1;
-        self
-    }
-
     pub fn get_address(&self) -> i8 {
         10 * self.file + self.rank
     }
@@ -757,13 +751,6 @@ pub struct AbsoluteAddress {
     rank: u8,
 }
 impl AbsoluteAddress {
-    pub fn copy_from(source: &AbsoluteAddress) -> Self {
-        AbsoluteAddress {
-            file: source.file,
-            rank: source.rank,
-        }
-    }
-
     fn new(file: u8, rank: u8) -> Self {
         /*
         // TODO Debug消す☆（＾～＾）
@@ -838,15 +825,19 @@ impl AbsoluteAddress {
         self.file % 10 != 0 && self.rank % 10 != 0
     }
 
+    /*
     pub fn legal_board(&self) -> bool {
-        /* FILE_0 as u8 < self.file && */
-        self.file < FILE_10 as u8 && /* RANK_0 as u8 < self.rank && */ self.rank < RANK_10 as u8
+        // FILE_0 as u8 < self.file &&
+        self.file < FILE_10 as u8 && // RANK_0 as u8 < self.rank &&
+         self.rank < RANK_10 as u8
     }
+    */
 
     pub fn address(&self) -> i8 {
         (self.file * 10 + self.rank) as i8
     }
 
+    /*
     /// マンハッタン距離☆（＾～＾）
     pub fn manhattan_distance(&self, b: &AbsoluteAddress) -> i8 {
         (self.file as i8 - b.file as i8) + (self.rank as i8 - b.rank as i8)
@@ -857,6 +848,7 @@ impl AbsoluteAddress {
         self.rank = source.rank;
         self
     }
+    */
 
     pub fn offset(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
