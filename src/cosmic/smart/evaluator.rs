@@ -12,24 +12,30 @@ pub const REPITITION_VALUE: i16 = -300;
 pub struct Evaluation {
     // 駒割だぜ☆（＾～＾）
     piece_allocation_value: i16,
-    // 盤面をカバーする利きの多さ☆（＾～＾）
-    board_coverage_weight: f64,
+    // 盤面をカバーする利きの多さの重み☆（＾～＾）1000分率☆（＾～＾）
+    board_coverage_weight: i32,
+    /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
+    komawari_weight: i32,
 }
 impl Evaluation {
-    pub fn new(board_coverage_weight: f64) -> Self {
+    pub fn new(board_coverage_weight: i32, komawari_weight: i32) -> Self {
         Evaluation {
             piece_allocation_value: 0,
             board_coverage_weight: board_coverage_weight,
+            komawari_weight: komawari_weight,
         }
     }
     pub fn centi_pawn(&self) -> i16 {
-        self.piece_allocation_value
+        self.komawari()
     }
-    pub fn board_coverage_weight(&self) -> f64 {
+    pub fn board_coverage_weight(&self) -> i32 {
         self.board_coverage_weight
     }
+    pub fn komawari_weight(&self) -> i32 {
+        self.komawari_weight
+    }
     pub fn komawari(&self) -> i16 {
-        self.piece_allocation_value
+        (self.komawari_weight() * self.piece_allocation_value as i32 / 1000) as i16
     }
 
     pub fn before_search(&mut self) {

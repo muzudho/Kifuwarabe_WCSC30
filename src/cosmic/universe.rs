@@ -16,8 +16,10 @@ pub struct Universe {
     pub option_min_think_sec: u64,
     /// 思考時間の最大秒☆（＾～＾）
     pub option_max_think_sec: u64,
-    /// 盤面をカバーする利きの多さ☆（＾～＾）
-    pub option_board_coverage_weight: f64,
+    /// 盤面をカバーする利きの多さ☆（＾～＾）1000分率☆（＾～＾）
+    pub option_board_coverage_weight: i32,
+    /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
+    pub option_komawari_weight: i32,
 }
 impl Default for Universe {
     fn default() -> Self {
@@ -28,7 +30,8 @@ impl Default for Universe {
             /// min < max にしろだぜ☆（＾～＾）
             option_min_think_sec: 7,
             option_max_think_sec: 17,
-            option_board_coverage_weight: 1.0,
+            option_board_coverage_weight: 1000,
+            option_komawari_weight: 1000,
         }
     }
 }

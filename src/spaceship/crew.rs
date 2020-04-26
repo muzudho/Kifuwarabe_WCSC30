@@ -50,7 +50,10 @@ impl Kifuwarabe {
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
     pub fn go(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
-        let mut tree = Tree::new(universe.option_board_coverage_weight);
+        let mut tree = Tree::new(
+            universe.option_board_coverage_weight,
+            universe.option_komawari_weight,
+        );
         let ts = tree.iteration_deeping(universe, speed_of_light);
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print(
@@ -85,6 +88,9 @@ impl Kifuwarabe {
                 "BoardCoverageWeight" => {
                     universe.option_board_coverage_weight = value.parse().unwrap();
                 }
+                "KomawariWeight" => {
+                    universe.option_komawari_weight = value.parse().unwrap();
+                }
                 "MaxDepth" => {
                     universe.option_max_depth = value.parse().unwrap();
                 }
@@ -111,7 +117,8 @@ impl Kifuwarabe {
         IO::writeln("option name ResetLearning type button");
         IO::writeln("option name LearningFile type filename default <empty>");
         */
-        Beam::shoot("option name BoardCoverageWeight type spin default 1 min -1000 max 1000");
+        Beam::shoot("option name BoardCoverageWeight type spin default 1000 min -1000 max 1000");
+        Beam::shoot("option name KomawariWeight type spin default 1000 min -1000 max 1000");
         Beam::shoot("option name MaxDepth type spin default 1 min 1 max 15");
         Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
         Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");

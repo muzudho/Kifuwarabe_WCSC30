@@ -32,13 +32,13 @@ pub struct Tree {
     pub evaluation: Evaluation,
 }
 impl Tree {
-    pub fn new(board_coverage_weight: f64) -> Self {
+    pub fn new(board_coverage_weight: i32, option_komawari_weight: i32) -> Self {
         Tree {
             stopwatch: Instant::now(),
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
-            evaluation: Evaluation::new(board_coverage_weight),
+            evaluation: Evaluation::new(board_coverage_weight, option_komawari_weight),
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
@@ -237,9 +237,9 @@ impl Tree {
                         None,
                         &Some(PvString::String(format!(
                             "board coverage={} | {} {} {} | komawari={}",
-                            (control_sign as f64
-                                * self.evaluation.board_coverage_weight()
-                                * control_value as f64) as i16,
+                            (control_sign
+                                * ((self.evaluation.board_coverage_weight() * control_value as i32)
+                                    / 1000) as i16),
                             game.board.control[68],
                             game.board.control[58],
                             game.board.control[48],
@@ -261,9 +261,9 @@ impl Tree {
                     &Value::CentiPawn(
                         self.evaluation.centi_pawn()
                             + promoted_bonus
-                            + (control_sign as f64
-                                * self.evaluation.board_coverage_weight()
-                                * control_value as f64) as i16,
+                            + (control_sign
+                                * ((self.evaluation.board_coverage_weight() * control_value as i32)
+                                    / 1000) as i16),
                     ),
                     *movement_hash,
                 );
@@ -279,7 +279,7 @@ impl Tree {
                 ts.turn_over_and_choice(
                     &opponent_ts,
                     *movement_hash,
-                    self.evaluation.komawari() + promoted_bonus,
+                    self.evaluation.komawari() as i16 + promoted_bonus,
                 );
             }
 
