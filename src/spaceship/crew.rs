@@ -199,7 +199,7 @@ impl Chiyuri {
             });
         Beam::shoot("----駒リスト40表示 ここまで----");
     }
-    pub fn len0(universe: &mut Universe) {
+    pub fn len0(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
         Beam::shoot("len==0");
         if !&universe.dialogue_mode {
             // 空打ち１回目なら、対話モードへ☆（＾～＾）
@@ -210,18 +210,18 @@ impl Chiyuri {
             CommandRoom::print_title();
         } else {
             // 局面表示
-            let s = GameRoom::to_string(&universe.game, &PosNums::Current);
+            let s = GameRoom::to_string(&universe.game, &PosNums::Current, speed_of_light);
             Beam::shoot(&s);
         }
     }
-    pub fn pos(universe: &Universe) {
+    pub fn pos(speed_of_light: &SpeedOfLight, universe: &Universe) {
         // 現局面表示
-        let s = GameRoom::to_string(&universe.game, &PosNums::Current);
+        let s = GameRoom::to_string(&universe.game, &PosNums::Current, speed_of_light);
         Beam::shoot(&s);
     }
-    pub fn pos0(universe: &Universe) {
+    pub fn pos0(speed_of_light: &SpeedOfLight, universe: &Universe) {
         // 初期局面表示
-        let s = GameRoom::to_string(&universe.game, &PosNums::Start);
+        let s = GameRoom::to_string(&universe.game, &PosNums::Start, speed_of_light);
         Beam::shoot(&s);
     }
     pub fn rand() {

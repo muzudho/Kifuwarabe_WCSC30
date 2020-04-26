@@ -4,6 +4,7 @@ use crate::cosmic::recording::Person;
 use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PIECE_WHITE_SPACE};
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::PieceNum;
+use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
@@ -58,7 +59,7 @@ impl GameRoom {
         }
     }
     /// 表示
-    pub fn to_string(game: &Game, pos_nums: &PosNums) -> String {
+    pub fn to_string(game: &Game, pos_nums: &PosNums, speed_of_light: &SpeedOfLight) -> String {
         let board = game.get_board(pos_nums);
         let ply = game.history.ply;
         let phase = game.history.get_phase(Person::Friend);
@@ -172,21 +173,21 @@ P x{87:2}   |{63}|{64}|{65}|{66}|{67}|{68}|{69}|{70}|{71}| h8   p x{94:2}
             GameRoom::to_string2(board.piece_at(&Address::new(2, 9).abs())),
             GameRoom::to_string2(board.piece_at(&Address::new(1, 9).abs())),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            board.count_hand(HandAddress::Rook1),
-            board.count_hand(HandAddress::Bishop1),
-            board.count_hand(HandAddress::Gold1),
-            board.count_hand(HandAddress::Silver1),
-            board.count_hand(HandAddress::Knight1),
-            board.count_hand(HandAddress::Lance1),
-            board.count_hand(HandAddress::Pawn1),
+            board.count_hand(HandAddress::Rook1, speed_of_light),
+            board.count_hand(HandAddress::Bishop1, speed_of_light),
+            board.count_hand(HandAddress::Gold1, speed_of_light),
+            board.count_hand(HandAddress::Silver1, speed_of_light),
+            board.count_hand(HandAddress::Knight1, speed_of_light),
+            board.count_hand(HandAddress::Lance1, speed_of_light),
+            board.count_hand(HandAddress::Pawn1, speed_of_light),
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            board.count_hand(HandAddress::Rook2),
-            board.count_hand(HandAddress::Bishop2),
-            board.count_hand(HandAddress::Gold2),
-            board.count_hand(HandAddress::Silver2),
-            board.count_hand(HandAddress::Knight2),
-            board.count_hand(HandAddress::Lance2),
-            board.count_hand(HandAddress::Pawn2),
+            board.count_hand(HandAddress::Rook2, speed_of_light),
+            board.count_hand(HandAddress::Bishop2, speed_of_light),
+            board.count_hand(HandAddress::Gold2, speed_of_light),
+            board.count_hand(HandAddress::Silver2, speed_of_light),
+            board.count_hand(HandAddress::Knight2, speed_of_light),
+            board.count_hand(HandAddress::Lance2, speed_of_light),
+            board.count_hand(HandAddress::Pawn2, speed_of_light),
             ply,
             phase,
             same_pos_count

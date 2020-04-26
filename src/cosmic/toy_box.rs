@@ -3,6 +3,7 @@
 //!
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Person, Phase};
+use crate::cosmic::smart::features::HAND_ADDRESS_LN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::{
     HandAddress, HandAddresses, PieceMeaning, PieceType, HAND_MAX,
@@ -121,22 +122,7 @@ pub struct Board {
     location: [Location; PIECE_NUM_LEN],
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
-    pub hand_king1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_rook1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_bishop1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_gold1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_silver1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_knight1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_lance1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_pawn1: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_king2: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_rook2: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_bishop2: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_gold2: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_silver2: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_knight2: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_lance2: Vec<(PieceMeaning, PieceNum)>,
-    pub hand_pawn2: Vec<(PieceMeaning, PieceNum)>,
+    pub hands: [Vec<(PieceMeaning, PieceNum)>; HAND_ADDRESS_LN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
     pub control: [i16; BOARD_MEMORY_AREA as usize],
 }
@@ -166,22 +152,24 @@ impl Default for Board {
                 PieceNum::Pawn23 as usize,
             ],
             // 持ち駒
-            hand_king1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_rook1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_bishop1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_gold1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_silver1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_knight1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_lance1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_pawn1: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_king2: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_rook2: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_bishop2: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_gold2: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_silver2: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_knight2: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_lance2: Vec::<(PieceMeaning, PieceNum)>::new(),
-            hand_pawn2: Vec::<(PieceMeaning, PieceNum)>::new(),
+            hands: [
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+                Vec::<(PieceMeaning, PieceNum)>::new(),
+            ],
             control: [0; BOARD_MEMORY_AREA as usize],
         }
     }
@@ -210,22 +198,24 @@ impl Board {
             PieceNum::Pawn23 as usize,
         ];
         // 持ち駒☆（＾～＾）
-        self.hand_king1.clear();
-        self.hand_rook1.clear();
-        self.hand_bishop1.clear();
-        self.hand_gold1.clear();
-        self.hand_silver1.clear();
-        self.hand_knight1.clear();
-        self.hand_lance1.clear();
-        self.hand_pawn1.clear();
-        self.hand_king2.clear();
-        self.hand_rook2.clear();
-        self.hand_bishop2.clear();
-        self.hand_gold2.clear();
-        self.hand_silver2.clear();
-        self.hand_knight2.clear();
-        self.hand_lance2.clear();
-        self.hand_pawn2.clear();
+        self.hands = [
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+            Vec::<(PieceMeaning, PieceNum)>::new(),
+        ];
     }
 
     /// 開始盤面を、現盤面にコピーしたいときに使うぜ☆（＾～＾）
@@ -233,22 +223,7 @@ impl Board {
         self.pieces = board.pieces.clone();
         self.location = board.location.clone();
         self.hand_index = board.hand_index.clone();
-        self.hand_king1 = board.hand_king1.clone();
-        self.hand_rook1 = board.hand_rook1.clone();
-        self.hand_bishop1 = board.hand_bishop1.clone();
-        self.hand_gold1 = board.hand_gold1.clone();
-        self.hand_silver1 = board.hand_silver1.clone();
-        self.hand_knight1 = board.hand_knight1.clone();
-        self.hand_lance1 = board.hand_lance1.clone();
-        self.hand_pawn1 = board.hand_pawn1.clone();
-        self.hand_king2 = board.hand_king2.clone();
-        self.hand_rook2 = board.hand_rook2.clone();
-        self.hand_bishop2 = board.hand_bishop2.clone();
-        self.hand_gold2 = board.hand_gold2.clone();
-        self.hand_silver2 = board.hand_silver2.clone();
-        self.hand_knight2 = board.hand_knight2.clone();
-        self.hand_lance2 = board.hand_lance2.clone();
-        self.hand_pawn2 = board.hand_pawn2.clone();
+        self.hands = board.hands.clone();
         self.control = board.control.clone();
     }
 
@@ -366,258 +341,33 @@ impl Board {
             let hand_type = piece_meaning
                 .hand_address(speed_of_light)
                 .r#type(speed_of_light);
-            match piece_meaning {
-                PieceMeaning::Rook1 | PieceMeaning::Dragon1 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_rook1.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Rook2 | PieceMeaning::Dragon2 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_rook2.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Bishop1 | PieceMeaning::Horse1 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_bishop1.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Bishop2 | PieceMeaning::Horse2 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_bishop2.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Gold1 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_gold1.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Gold2 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_gold2.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_silver1.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_silver2.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_knight1.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_knight2.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_lance1.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_lance2.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_pawn1.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => {
-                    self.location[self.hand_index[hand_type as usize]] = Location::Hand(adr);
-                    self.hand_pawn2.push((
-                        piece_meaning,
-                        PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap(),
-                    ));
-                    self.hand_index[hand_type as usize] += 1;
-                }
-                _ => panic!(Beam::trouble(&format!(
-                    "(Err.447) 持てない駒が指定されたぜ☆（＾～＾）！ {}",
-                    piece_meaning
-                ))),
-            }
+            let cursor = self.hand_index[hand_type as usize];
+            self.location[cursor] = Location::Hand(adr);
+            self.hands[cursor].push((piece_meaning, PieceNum::from_usize(cursor).unwrap()));
+            self.hand_index[hand_type as usize] += 1;
         }
     }
-    pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum)) {
-        let location = match hand.0 {
-            // 探索中に玉を取ってしまうので、玉も持てるようにするぜ☆（＾～＾）
-            PieceMeaning::King1 => {
-                self.hand_king1.push(*hand);
-                Location::Hand(HandAddress::King1)
-            }
-            PieceMeaning::King2 => {
-                self.hand_king2.push(*hand);
-                Location::Hand(HandAddress::King2)
-            }
-            PieceMeaning::Rook1 | PieceMeaning::Dragon1 => {
-                self.hand_rook1.push(*hand);
-                Location::Hand(HandAddress::Rook1)
-            }
-            PieceMeaning::Rook2 | PieceMeaning::Dragon2 => {
-                self.hand_rook2.push(*hand);
-                Location::Hand(HandAddress::Rook2)
-            }
-            PieceMeaning::Bishop1 | PieceMeaning::Horse1 => {
-                self.hand_bishop1.push(*hand);
-                Location::Hand(HandAddress::Bishop1)
-            }
-            PieceMeaning::Bishop2 | PieceMeaning::Horse2 => {
-                self.hand_bishop2.push(*hand);
-                Location::Hand(HandAddress::Bishop2)
-            }
-            PieceMeaning::Gold1 => {
-                self.hand_gold1.push(*hand);
-                Location::Hand(HandAddress::Gold1)
-            }
-            PieceMeaning::Gold2 => {
-                self.hand_gold2.push(*hand);
-                Location::Hand(HandAddress::Gold2)
-            }
-            PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => {
-                self.hand_silver1.push(*hand);
-                Location::Hand(HandAddress::Silver1)
-            }
-            PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => {
-                self.hand_silver2.push(*hand);
-                Location::Hand(HandAddress::Silver2)
-            }
-            PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => {
-                self.hand_knight1.push(*hand);
-                Location::Hand(HandAddress::Knight1)
-            }
-            PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => {
-                self.hand_knight2.push(*hand);
-                Location::Hand(HandAddress::Knight2)
-            }
-            PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => {
-                self.hand_lance1.push(*hand);
-                Location::Hand(HandAddress::Lance1)
-            }
-            PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => {
-                self.hand_lance2.push(*hand);
-                Location::Hand(HandAddress::Lance2)
-            }
-            PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => {
-                self.hand_pawn1.push(*hand);
-                Location::Hand(HandAddress::Pawn1)
-            }
-            PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => {
-                self.hand_pawn2.push(*hand);
-                Location::Hand(HandAddress::Pawn2)
-            }
-        };
-        self.location[hand.1 as usize] = location;
+    pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum), speed_of_light: &SpeedOfLight) {
+        let adr = hand.0.hand_address(speed_of_light);
+        self.hands[adr as usize].push(*hand);
+        self.location[hand.1 as usize] = Location::Hand(adr);
     }
-    pub fn pop_hand(&mut self, hand: PieceMeaning) -> Option<(PieceMeaning, PieceNum)> {
-        let piece = match hand {
-            PieceMeaning::King1 => self.hand_king1.pop(),
-            PieceMeaning::King2 => self.hand_king2.pop(),
-            PieceMeaning::Rook1 | PieceMeaning::Dragon1 => self.hand_rook1.pop(),
-            PieceMeaning::Rook2 | PieceMeaning::Dragon2 => self.hand_rook2.pop(),
-            PieceMeaning::Bishop1 | PieceMeaning::Horse1 => self.hand_bishop1.pop(),
-            PieceMeaning::Bishop2 | PieceMeaning::Horse2 => self.hand_bishop2.pop(),
-            PieceMeaning::Gold1 => self.hand_gold1.pop(),
-            PieceMeaning::Gold2 => self.hand_gold2.pop(),
-            PieceMeaning::Silver1 | PieceMeaning::PromotedSilver1 => self.hand_silver1.pop(),
-            PieceMeaning::Silver2 | PieceMeaning::PromotedSilver2 => self.hand_silver2.pop(),
-            PieceMeaning::Knight1 | PieceMeaning::PromotedKnight1 => self.hand_knight1.pop(),
-            PieceMeaning::Knight2 | PieceMeaning::PromotedKnight2 => self.hand_knight2.pop(),
-            PieceMeaning::Lance1 | PieceMeaning::PromotedLance1 => self.hand_lance1.pop(),
-            PieceMeaning::Lance2 | PieceMeaning::PromotedLance2 => self.hand_lance2.pop(),
-            PieceMeaning::Pawn1 | PieceMeaning::PromotedPawn1 => self.hand_pawn1.pop(),
-            PieceMeaning::Pawn2 | PieceMeaning::PromotedPawn2 => self.hand_pawn2.pop(),
-        };
+    pub fn pop_hand(
+        &mut self,
+        hand: PieceMeaning,
+        speed_of_light: &SpeedOfLight,
+    ) -> Option<(PieceMeaning, PieceNum)> {
+        let adr = hand.hand_address(speed_of_light);
+        let piece = self.hands[adr as usize].pop();
         self.location[piece.unwrap().1 as usize] = Location::Busy;
         piece
     }
     /// 指し手生成で使うぜ☆（＾～＾）
-    pub fn last_hand(&self, hand: HandAddress) -> Option<&(PieceMeaning, PieceNum)> {
-        match hand {
-            HandAddress::King1 => self.hand_king1.last(),
-            HandAddress::King2 => self.hand_king2.last(),
-            HandAddress::Rook1 => self.hand_rook1.last(),
-            HandAddress::Rook2 => self.hand_rook2.last(),
-            HandAddress::Bishop1 => self.hand_bishop1.last(),
-            HandAddress::Bishop2 => self.hand_bishop2.last(),
-            HandAddress::Gold1 => self.hand_gold1.last(),
-            HandAddress::Gold2 => self.hand_gold2.last(),
-            HandAddress::Silver1 => self.hand_silver1.last(),
-            HandAddress::Silver2 => self.hand_silver2.last(),
-            HandAddress::Knight1 => self.hand_knight1.last(),
-            HandAddress::Knight2 => self.hand_knight2.last(),
-            HandAddress::Lance1 => self.hand_lance1.last(),
-            HandAddress::Lance2 => self.hand_lance2.last(),
-            HandAddress::Pawn1 => self.hand_pawn1.last(),
-            HandAddress::Pawn2 => self.hand_pawn2.last(),
-        }
+    pub fn last_hand(&self, adr: HandAddress) -> Option<&(PieceMeaning, PieceNum)> {
+        self.hands[adr as usize].last()
     }
-    pub fn count_hand(&self, adr: HandAddress) -> usize {
-        match adr {
-            HandAddress::King1 => self.hand_king1.len(),
-            HandAddress::King2 => self.hand_king2.len(),
-            HandAddress::Rook1 => self.hand_rook1.len(),
-            HandAddress::Rook2 => self.hand_rook2.len(),
-            HandAddress::Bishop1 => self.hand_bishop1.len(),
-            HandAddress::Bishop2 => self.hand_bishop2.len(),
-            HandAddress::Gold1 => self.hand_gold1.len(),
-            HandAddress::Gold2 => self.hand_gold2.len(),
-            HandAddress::Silver1 => self.hand_silver1.len(),
-            HandAddress::Silver2 => self.hand_silver2.len(),
-            HandAddress::Knight1 => self.hand_knight1.len(),
-            HandAddress::Knight2 => self.hand_knight2.len(),
-            HandAddress::Lance1 => self.hand_lance1.len(),
-            HandAddress::Lance2 => self.hand_lance2.len(),
-            HandAddress::Pawn1 => self.hand_pawn1.len(),
-            HandAddress::Pawn2 => self.hand_pawn2.len(),
-        }
+    pub fn count_hand(&self, adr: HandAddress, speed_of_light: &SpeedOfLight) -> usize {
+        self.hands[adr as usize].len()
     }
 
     /// 升には何がありますか？
@@ -655,7 +405,7 @@ impl Board {
 
         // 持ち駒ハッシュ
         HandAddresses::for_all(&mut |adr| {
-            let count = self.count_hand(adr);
+            let count = self.count_hand(adr, speed_of_light);
             debug_assert!(
                 count <= HAND_MAX,
                 "持ち駒 {:?} の枚数 {} <= {}",

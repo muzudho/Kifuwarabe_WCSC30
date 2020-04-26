@@ -49,7 +49,7 @@ fn main_loop(speed_of_light: &SpeedOfLight, universe: &mut Universe) {
 
         if len == 0 {
             // 任せろだぜ☆（＾～＾）
-            Chiyuri::len0(universe);
+            Chiyuri::len0(speed_of_light, universe);
         // 文字数の長いものからチェック
         } else if 9 < len && &line[starts..10] == "usinewgame" {
             Kifuwarabe::usinewgame(universe);
@@ -98,9 +98,9 @@ fn help_chiyuri(
         Chiyuri::list40(universe);
     // P
     } else if 3 < len && &line[starts..4] == "pos0" {
-        Chiyuri::pos0(universe);
+        Chiyuri::pos0(speed_of_light, universe);
     } else if 2 < len && &line[starts..3] == "pos" {
-        Chiyuri::pos(universe);
+        Chiyuri::pos(speed_of_light, universe);
     // S
     } else if 7 < len && &line[starts..8] == "startpos" {
         Chiyuri::startpos(speed_of_light, universe);

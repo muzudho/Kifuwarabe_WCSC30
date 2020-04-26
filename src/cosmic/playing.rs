@@ -237,7 +237,7 @@ impl Game {
                     // 自分の持ち駒を減らす
                     if let Some(drp) = movement.drop {
                         let piece_meaning = PieceMeaning::from_phase_and_piece_type(friend, drp);
-                        self.board.pop_hand(piece_meaning)
+                        self.board.pop_hand(piece_meaning, speed_of_light)
                     } else {
                         panic!(Beam::trouble(
                             "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"
@@ -254,7 +254,7 @@ impl Game {
                     collision_piece.0.captured(speed_of_light),
                     collision_piece.1,
                 );
-                self.board.push_hand(&captured_piece);
+                self.board.push_hand(&captured_piece, speed_of_light);
                 Some(collision_piece)
             } else {
                 None
@@ -309,7 +309,7 @@ impl Game {
                                 .pop_from_board(&movement.destination.unwrap())
                                 .unwrap();
                             // 自分の持ち駒を増やそうぜ☆（＾～＾）！
-                            self.board.push_hand(&piece);
+                            self.board.push_hand(&piece, speed_of_light);
                             Some(piece)
                         } else {
                             panic!(Beam::trouble(
@@ -320,8 +320,10 @@ impl Game {
 
                 if let Some(captured_piece_val) = captured {
                     // 自分の持ち駒を減らす
-                    self.board
-                        .pop_hand(captured_piece_val.0.captured(speed_of_light));
+                    self.board.pop_hand(
+                        captured_piece_val.0.captured(speed_of_light),
+                        speed_of_light,
+                    );
                     // 移動先の駒を、取った駒（あるいは空）に戻す
                     self.board
                         .push_to_board(&movement.destination.unwrap(), captured);
