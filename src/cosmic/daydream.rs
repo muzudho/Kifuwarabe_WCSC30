@@ -20,6 +20,8 @@ use std::time::Instant;
 pub struct Tree {
     // この木を生成したと同時にストップ・ウォッチを開始するぜ☆（＾～＾）
     stopwatch: Instant,
+    // 状態ノード数☆（＾～＾）
+    state_nodes: u64,
 
     // Principal variation(読み筋)☆（＾～＾）
     pv: PrincipalVariation,
@@ -34,6 +36,7 @@ impl Default for Tree {
     fn default() -> Self {
         Tree {
             stopwatch: Instant::now(),
+            state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
             king_risk_weight: 0.0,
@@ -54,7 +57,7 @@ impl Tree {
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
-        let mut best_ts = self.search(0, 0, &mut universe.game, speed_of_light);
+        let mut best_ts = self.search(0, &mut universe.game, speed_of_light);
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
         for max_depth in 1..universe.option_max_depth {
@@ -62,7 +65,7 @@ impl Tree {
             let movement = best_ts.bestmove.to_movement();
             universe.game.info.print(
                 Some(max_depth),
-                Some(best_ts.get_sum_state()),
+                Some(self.state_nodes),
                 Some(best_ts.bestmove.value),
                 Some(movement),
                 &Some(PvString::PV(self.msec(), format!("{}", movement,))), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
@@ -88,21 +91,14 @@ impl Tree {
             self.pv.clear();
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
-            let ts = self.search(
-                max_depth,
-                best_ts.get_sum_state(),
-                &mut universe.game,
-                speed_of_light,
-            );
+            let ts = self.search(max_depth, &mut universe.game, speed_of_light);
             if ts.timeout {
                 // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
             }
 
             // 無条件に更新だぜ☆（＾～＾）初手の高得点を引きずられて王手回避漏れされたら嫌だしな☆（＾～＾）
-            let temp = best_ts.get_sum_state();
             best_ts = ts.clone();
-            best_ts.add_state(temp);
         }
 
         best_ts
@@ -123,7 +119,6 @@ impl Tree {
     fn search(
         &mut self,
         max_depth: u8,
-        parent_sum_state: u64,
         game: &mut Game,
         speed_of_light: &SpeedOfLight,
     ) -> TreeState {
@@ -174,7 +169,7 @@ impl Tree {
             }
 
             // 1手進めるぜ☆（＾～＾）
-            ts.add_state(1);
+            self.state_nodes += 1;
             let movement = Movement::from_hash(*movement_hash);
             let source_piece = game.board.piece_at(&movement.source);
             let captured_piece: Option<(PieceMeaning, PieceNum)> =
@@ -248,7 +243,7 @@ impl Tree {
                     );
                     game.info.print(
                         Some(self.pv.len() as u8),
-                        Some(ts.get_sum_state() + parent_sum_state),
+                        Some(self.state_nodes),
                         Some(ts.bestmove.value),
                         Some(movement),
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
@@ -268,12 +263,7 @@ impl Tree {
             // IO::debugln(&format!("n={} Value={}.", sum_nodes, evaluation.value));
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                let opponent_ts = self.search(
-                    max_depth,
-                    ts.get_sum_state() + parent_sum_state,
-                    game,
-                    speed_of_light,
-                );
+                let opponent_ts = self.search(max_depth, game, speed_of_light);
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 ts.turn_over_and_choice(
@@ -356,7 +346,6 @@ impl Bestmove {
 }
 #[derive(Clone)]
 pub struct TreeState {
-    sum_state: u64,
     pub bestmove: Bestmove,
     // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     pub repetition_movement_hash: u64,
@@ -365,7 +354,6 @@ pub struct TreeState {
 impl Default for TreeState {
     fn default() -> Self {
         TreeState {
-            sum_state: 0,
             bestmove: Bestmove::default(),
             repetition_movement_hash: 0u64,
             timeout: false,
@@ -373,22 +361,12 @@ impl Default for TreeState {
     }
 }
 impl TreeState {
-    pub fn get_sum_state(&self) -> u64 {
-        self.sum_state
-    }
-
-    pub fn add_state(&mut self, val: u64) {
-        self.sum_state += val;
-    }
-
     pub fn turn_over_and_choice(
         &mut self,
         opponent_ts: &TreeState,
         friend_movement_hash: u64,
         friend_captured_piece_centi_pawn: i16,
     ) {
-        self.sum_state += opponent_ts.get_sum_state();
-
         // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
 
         // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
