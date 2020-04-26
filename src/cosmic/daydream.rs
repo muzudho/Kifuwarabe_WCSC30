@@ -31,6 +31,9 @@ pub struct Tree {
 
     // 玉の安全度の重み☆（＾～＾）
     king_safety_weight: f64,
+
+    // 駒割だぜ☆（＾～＾）
+    pub piece_allocation_value: i16,
 }
 impl Default for Tree {
     fn default() -> Self {
@@ -40,6 +43,7 @@ impl Default for Tree {
             pv: PrincipalVariation::default(),
             think_sec: 0,
             king_safety_weight: 0.0,
+            piece_allocation_value: 0,
         }
     }
 }
@@ -179,6 +183,8 @@ impl Tree {
             let captured_piece: Option<(PieceMeaning, PieceNum)> =
                 game.do_move(&movement, speed_of_light);
             self.pv.push(&movement);
+            // ひっくり返すぜ☆（＾～＾）
+            self.piece_allocation_value *= -1;
 
             // pvリストに１手入れてから評価しろだぜ☆（＾～＾）0除算エラーを防げるぜ☆（＾～＾）
             let promoted_bonus = if let Some(source_piece_on_board_val) = source_piece_on_board {
@@ -198,6 +204,7 @@ impl Tree {
             // 取った駒の価値を評価するぜ☆（＾～＾）
             let captured_piece_centi_pawn =
                 Evaluation::from_caputured_piece(self.pv.len(), captured_piece, speed_of_light);
+            self.piece_allocation_value += captured_piece_centi_pawn;
 
             /*
             IO::debugln(&format!("n={} do.", sum_nodes));
@@ -210,6 +217,7 @@ impl Tree {
                     ts.bestmove.catch_king(*movement_hash);
 
                     // 1手戻すぜ☆（＾～＾）
+                    self.piece_allocation_value -= captured_piece_centi_pawn;
                     self.pv.pop();
                     game.undo_move(speed_of_light);
                     break;
@@ -243,12 +251,13 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "board control={} | king safety={} | {} {} {}",
+                            "board control={} | king safety={} | {} {} {} | komawari={}",
                             control_sign * control_value,
                             risk_safety,
                             game.board.control[68],
                             game.board.control[58],
                             game.board.control[48],
+                            self.piece_allocation_value
                         ))),
                     );
                     game.info.print(
@@ -262,7 +271,7 @@ impl Tree {
 
                 ts.choice_friend(
                     &Value::CentiPawn(
-                        captured_piece_centi_pawn
+                        self.piece_allocation_value
                             + promoted_bonus
                             + (control_sign * control_value)
                             + risk_safety as i16,
@@ -279,11 +288,12 @@ impl Tree {
                 ts.turn_over_and_choice(
                     &opponent_ts,
                     *movement_hash,
-                    captured_piece_centi_pawn + promoted_bonus,
+                    self.piece_allocation_value + promoted_bonus,
                 );
             }
 
             // 1手戻すぜ☆（＾～＾）
+            self.piece_allocation_value -= captured_piece_centi_pawn;
             self.pv.pop();
             game.undo_move(speed_of_light);
             /*

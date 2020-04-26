@@ -4,7 +4,7 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Person;
-use crate::cosmic::smart::features::{PieceMeaning, PieceType};
+use crate::cosmic::smart::features::{HandAddressType, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{AbsoluteAddress, RelativeAddress};
 use crate::cosmic::toy_box::{Location, PieceNum};
 use crate::law::speed_of_light::SpeedOfLight;
@@ -256,28 +256,27 @@ impl Evaluation {
     /// -------
     /// Centi pawn.
     pub fn from_caputured_piece(
-        cur_depth: usize,
+        _cur_depth: usize,
         captured_piece: Option<(PieceMeaning, PieceNum)>,
         speed_of_light: &SpeedOfLight,
     ) -> i16 {
         if let Some(captured_piece_val) = captured_piece {
-            (match captured_piece_val.0.r#type(speed_of_light) {
+            match captured_piece_val
+                .0
+                .hand_address(speed_of_light)
+                .r#type(speed_of_light)
+            {
                 // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
-                PieceType::King => 0,
-                PieceType::Rook => 1000,
-                PieceType::Bishop => 900,
-                PieceType::Gold => 600,
-                PieceType::Silver => 500,
-                PieceType::Knight => 300,
-                PieceType::Lance => 200,
-                PieceType::Pawn => 100,
-                PieceType::Dragon => 2000,
-                PieceType::Horse => 1900,
-                PieceType::PromotedSilver => 500,
-                PieceType::PromotedKnight => 300,
-                PieceType::PromotedLance => 200,
-                PieceType::PromotedPawn => 100,
-            }) / (cur_depth as i16)
+                HandAddressType::King => 0,
+                // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
+                HandAddressType::Rook => 1000,
+                HandAddressType::Bishop => 900,
+                HandAddressType::Gold => 600,
+                HandAddressType::Silver => 500,
+                HandAddressType::Knight => 300,
+                HandAddressType::Lance => 200,
+                HandAddressType::Pawn => 100,
+            } /* / (cur_depth as i16) */
         } else {
             0
         }
