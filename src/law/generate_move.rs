@@ -87,13 +87,21 @@ impl PseudoLegalMoves {
         /* Bug
         board.for_some_pieces_on_list40(friend, speed_of_light, &mut |location, piece| {
             match location {
-                Location::Board(source) => PseudoLegalMoves::a_piece_on_board(
-                    friend,
-                    &source,
-                    board,
-                    speed_of_light,
-                    callback,
-                ),
+                Location::Board(source) => {
+                    if !source.legal_cur() {
+                        panic!(Beam::trouble(
+                            &format!("(Err.93) なんで動かす前から駒が盤の枠の上にあるんだぜ☆（＾～＾）！ friend={} piece={} {:?} source={:?}",friend, piece.0, piece.1, source)
+                        ))
+                    }
+
+                    PseudoLegalMoves::a_piece_on_board(
+                        friend,
+                        &source,
+                        board,
+                        speed_of_light,
+                        callback,
+                    )
+                }
                 Location::Hand(_adr) => {
                     // 無視するぜ☆（＾～＾）
                 }
@@ -994,19 +1002,31 @@ impl Area {
             }
             // 桂馬専用☆（＾～＾）行き先の無いところに置いてないはずだぜ☆（＾～＾）
             Agility::Knight => {
-                let mut next = start.clone();
+                let mut cur = start.clone();
+                if !cur.legal_cur() {
+                    panic!(Beam::trouble(
+                        "(Err.980) なんで動かす前から桂馬が盤の枠の上にあるんだぜ☆（＾～＾）！"
+                    ))
+                }
+
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                next.offset(&Address::new(1, 0).rel().rotate(angle).double_rank());
-                if next.legal_cur() {
-                    callback(next);
+                cur.offset(&Address::new(1, 0).rel().rotate(angle).double_rank());
+                if cur.legal_cur() {
+                    callback(cur);
                 }
             }
             Agility::Hopping => {
-                let mut next = start.clone();
+                let mut cur = start.clone();
+                if !cur.legal_cur() {
+                    panic!(Beam::trouble(
+                        "(Err.980) なんで動かす前からホッピング駒が盤の枠の上にあるんだぜ☆（＾～＾）！"
+                    ))
+                }
+
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                next.offset(&Address::new(1, 0).rel().rotate(angle));
-                if next.legal_cur() {
-                    callback(next);
+                cur.offset(&Address::new(1, 0).rel().rotate(angle));
+                if cur.legal_cur() {
+                    callback(cur);
                 }
             }
         }
