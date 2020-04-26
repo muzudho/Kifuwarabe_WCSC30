@@ -12,7 +12,6 @@ use crate::cosmic::toy_box::PieceNum;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
-use crate::law::speed_of_light::SpeedOfLight;
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。
@@ -109,10 +108,10 @@ impl Movement {
         }
     }
 
-    pub fn to_hash(&self, speed_of_light: &SpeedOfLight) -> u64 {
+    pub fn to_hash(&self) -> u64 {
         let mut hash = 0;
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_piece_type_to_hash(hash, self.drop, speed_of_light);
+        hash = push_piece_type_to_hash(hash, self.drop);
         hash = push_bool_to_hash(hash, self.promote);
         hash = push_sq_to_hash(hash, self.destination.as_ref());
         push_sq_to_hash(hash, self.source.as_ref())

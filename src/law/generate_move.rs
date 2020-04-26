@@ -148,7 +148,7 @@ impl PseudoLegalMoves {
                                         promote: false,
                                         drop: None,
                                     }
-                                    .to_hash(speed_of_light),
+                                    .to_hash(),
                                 );
                             }
                             callback(
@@ -158,7 +158,7 @@ impl PseudoLegalMoves {
                                     promote: true,
                                     drop: None,
                                 }
-                                .to_hash(speed_of_light),
+                                .to_hash(),
                             );
                         }
                         _ => {
@@ -171,7 +171,7 @@ impl PseudoLegalMoves {
                                         promote: promotion,
                                         drop: None,
                                     }
-                                    .to_hash(speed_of_light),
+                                    .to_hash(),
                                 );
                             }
                         }
@@ -233,7 +233,7 @@ impl PseudoLegalMoves {
                                 promote: false,                             // 打に成りは無し
                                 drop: Some(piece.0.r#type(speed_of_light)), // 打った駒種類
                             }
-                            .to_hash(speed_of_light),
+                            .to_hash(),
                         );
                     }
                 };

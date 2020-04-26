@@ -5,7 +5,7 @@
 //!
 
 use crate::cosmic::recording::Phase;
-use crate::law::speed_of_light::SpeedOfLight;
+use num_derive::FromPrimitive;
 use std::fmt;
 
 ///
@@ -204,10 +204,10 @@ impl Pieces {
 }
 */
 
-pub const NONE_SERIAL_PIECE_TYPE_NUMBER: u64 = 14;
+pub const NONE_SERIAL_PIECE_TYPE_NUMBER: usize = 14;
 
 /// USIでCopyするので、Copyが要る。
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, FromPrimitive)]
 pub enum PieceType {
     // 玉
     King,
@@ -398,18 +398,14 @@ pub fn num_to_piece_type(n: usize) -> Option<PieceType> {
 }
 
 /// ハッシュ値を作る
-pub fn push_piece_type_to_hash(
-    hash: u64,
-    piece_type_o: Option<PieceType>,
-    speed_of_light: &SpeedOfLight,
-) -> u64 {
+pub fn push_piece_type_to_hash(hash: u64, piece_type_o: Option<PieceType>) -> u64 {
     let num = if let Some(piece_type) = piece_type_o {
         // 使ってるのは16駒種類番号ぐらいなんで、16(=2^4) あれば十分
-        piece_type.serial_number(speed_of_light) as u64
+        piece_type as usize
     } else {
         NONE_SERIAL_PIECE_TYPE_NUMBER
     };
-    (hash << 4) + num
+    (hash << 4) + num as u64
 }
 
 /// ハッシュ値から作る

@@ -592,9 +592,6 @@ impl PieceMeaning {
 }
 
 pub struct PieceTypeChart {
-    /// 配列のインデックス用☆（＾～＾）
-    serial_number: usize,
-
     /// 成り駒か。
     promoted: bool,
     /// 成れる駒種類か。
@@ -612,98 +609,84 @@ impl PieceTypeChart {
         use crate::cosmic::smart::features::PieceType::*;
         match piece_type {
             King => PieceTypeChart {
-                serial_number: 0,
                 promoted: false,
                 _can_promote: false,
                 _can_drop: false,
                 _slider: false,
             },
             Rook => PieceTypeChart {
-                serial_number: 1,
                 promoted: false,
                 _can_promote: true,
                 _can_drop: true,
                 _slider: true,
             },
             Bishop => PieceTypeChart {
-                serial_number: 2,
                 promoted: false,
                 _can_promote: true,
                 _can_drop: true,
                 _slider: true,
             },
             Gold => PieceTypeChart {
-                serial_number: 3,
                 promoted: false,
                 _can_promote: false,
                 _can_drop: true,
                 _slider: false,
             },
             Silver => PieceTypeChart {
-                serial_number: 4,
                 promoted: false,
                 _can_promote: true,
                 _can_drop: true,
                 _slider: false,
             },
             Knight => PieceTypeChart {
-                serial_number: 5,
                 promoted: false,
                 _can_promote: true,
                 _can_drop: true,
                 _slider: false,
             },
             Lance => PieceTypeChart {
-                serial_number: 6,
                 promoted: false,
                 _can_promote: true,
                 _can_drop: true,
                 _slider: true,
             },
             Pawn => PieceTypeChart {
-                serial_number: 7,
                 promoted: false,
                 _can_promote: true,
                 _can_drop: true,
                 _slider: false,
             },
             Dragon => PieceTypeChart {
-                serial_number: 8,
                 promoted: true,
                 _can_promote: false,
                 _can_drop: false,
                 _slider: true,
             },
             Horse => PieceTypeChart {
-                serial_number: 9,
                 promoted: true,
                 _can_promote: false,
                 _can_drop: false,
                 _slider: true,
             },
             PromotedSilver => PieceTypeChart {
-                serial_number: 10,
                 promoted: true,
                 _can_promote: false,
                 _can_drop: false,
                 _slider: false,
             },
             PromotedKnight => PieceTypeChart {
-                serial_number: 11,
                 promoted: true,
                 _can_promote: false,
                 _can_drop: false,
                 _slider: false,
             },
             PromotedLance => PieceTypeChart {
-                serial_number: 12,
                 promoted: true,
                 _can_promote: false,
                 _can_drop: false,
                 _slider: false,
             },
             PromotedPawn => PieceTypeChart {
-                serial_number: 13,
                 promoted: true,
                 _can_promote: false,
                 _can_drop: false,
@@ -715,9 +698,6 @@ impl PieceTypeChart {
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceType {
-    pub fn serial_number(&self, speed_of_light: &SpeedOfLight) -> usize {
-        speed_of_light.piece_type_chart(self).serial_number
-    }
     pub fn promoted(&self, speed_of_light: &SpeedOfLight) -> bool {
         speed_of_light.piece_type_chart(self).promoted
     }
