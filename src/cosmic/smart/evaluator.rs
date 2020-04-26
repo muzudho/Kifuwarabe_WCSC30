@@ -1,7 +1,7 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::cosmic::smart::features::{HandAddressType, PieceMeaning, PieceType};
+use crate::cosmic::smart::features::{HandAddressType, PieceMeaning};
 use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
 
@@ -31,10 +31,10 @@ impl Evaluation {
         }
     }
     pub fn centi_pawn(&self, board_coverage_value: i16) -> i16 {
-        self.komawari() + self.board_coverage(board_coverage_value) + self.promotion()
+        self.board_coverage(board_coverage_value) + self.komawari() + self.promotion()
     }
     pub fn board_coverage(&self, board_coverage_value: i16) -> i16 {
-        ((self.board_coverage_weight * board_coverage_value as i32) / 1000) as i16
+        (self.board_coverage_weight * board_coverage_value as i32 / 1000) as i16
     }
     pub fn komawari(&self) -> i16 {
         (self.komawari_weight * self.piece_allocation_value as i32 / 1000) as i16
@@ -63,57 +63,69 @@ impl Evaluation {
         speed_of_light: &SpeedOfLight,
     ) -> (i16, i16) {
         // 取った駒の価値を評価するぜ☆（＾～＾）
-        let captured_piece_centi_pawn =
-            Evaluation::from_caputured_piece(captured_piece, speed_of_light);
-        self.piece_allocation_value += captured_piece_centi_pawn;
+        let delta_captured_piece =
+            Evaluation::caputured_piece_value(captured_piece, speed_of_light);
+        self.piece_allocation_value += delta_captured_piece;
 
-        // pvリストに１手入れてから評価しろだぜ☆（＾～＾）0除算エラーを防げるぜ☆（＾～＾）
-        let delta_promotion_bonus = if let Some(source_piece_val) = source_piece {
-            Evaluation::from_promotion(source_piece_val.0.r#type(&speed_of_light), promotion)
-        } else {
-            // 打なら成りは無いぜ☆（＾～＾）
-            0
-        };
-        self.promotion_value += delta_promotion_bonus;
-
-        (captured_piece_centi_pawn, delta_promotion_bonus)
-    }
-
-    pub fn before_undo_move(&mut self, captured_piece_centi_pawn: i16, delta_promotion_bonus: i16) {
-        // 1手戻すぜ☆（＾～＾）
-        self.piece_allocation_value -= captured_piece_centi_pawn;
-        self.promotion_value -= delta_promotion_bonus;
-    }
-
-    /// 成ったら評価に加点するぜ☆（＾～＾）
-    /// 駒得より 評価は下げた方が良さげ☆（＾～＾）
-    pub fn from_promotion(source: PieceType, promotion: bool) -> i16 {
-        if promotion {
-            match source {
-                PieceType::Bishop => 90,
-                PieceType::Knight => 20,
-                PieceType::Lance => 10,
-                PieceType::Pawn => 50,
-                PieceType::Rook => 100,
-                PieceType::Silver => 40,
-                _ => 0,
+        // 成り駒を取って降格させたら、成り駒評価値追加だぜ☆（＾～＾）
+        let delta_promotion = if let Some(captured_piece_val) = captured_piece {
+            if captured_piece_val
+                .0
+                .r#type(speed_of_light)
+                .promoted(speed_of_light)
+            {
+                Evaluation::promotion_value(captured_piece_val.0.hand_address(&speed_of_light).r#type(&speed_of_light))
+            } else {
+                0
             }
         } else {
             0
         }
+        // 進めた駒が成っても、評価値追加だぜ☆（＾～＾）
+        +
+        if let Some(source_piece_val) = source_piece {
+            if promotion {
+                Evaluation::promotion_value(source_piece_val.0.hand_address(speed_of_light).r#type(&speed_of_light))
+            } else {
+                0
+            }
+        } else {
+            // 打なら成りは無いぜ☆（＾～＾）
+            0
+        };
+        self.promotion_value += delta_promotion;
+
+        (delta_captured_piece, delta_promotion)
+    }
+
+    pub fn before_undo_move(&mut self, delta_captured_piece: i16, delta_promotion: i16) {
+        // 1手戻すぜ☆（＾～＾）
+        self.piece_allocation_value -= delta_captured_piece;
+        self.promotion_value -= delta_promotion;
+    }
+
+    /// 成ったら評価に加点するぜ☆（＾～＾）
+    /// 駒得より 評価は下げた方が良さげ☆（＾～＾）
+    pub fn promotion_value(adr: HandAddressType) -> i16 {
+        match adr {
+            HandAddressType::King => 0,
+            HandAddressType::Rook => 100,
+            HandAddressType::Bishop => 90,
+            HandAddressType::Gold => 0,
+            HandAddressType::Silver => 40,
+            HandAddressType::Knight => 20,
+            HandAddressType::Lance => 10,
+            HandAddressType::Pawn => 50,
+        }
     }
 
     /// 取った駒は相手の駒に決まってるぜ☆（＾～＾）
-    ///
-    /// 読みを深めていくと、当たってる駒を　あとで取っても同じだろ、とか思って取らないんで、
-    /// 読みの深い所の駒の価値は減らしてやろうぜ☆（＾～＾）？
-    ///
-    /// * `cur_depth` - １手指すから葉に進めるわけで、必ず 1 は有るから 0除算エラー は心配しなくていいぜ☆（＾～＾）
+    /// 読みを深めていくと、当たってる駒を　あとで取っても同じだろ、とか思って取らないのは、駒割ではなく、別の方法で対応してくれだぜ☆（＾～＾）
     ///
     /// Returns
     /// -------
     /// Centi pawn.
-    fn from_caputured_piece(
+    fn caputured_piece_value(
         captured_piece: &Option<(PieceMeaning, PieceNum)>,
         speed_of_light: &SpeedOfLight,
     ) -> i16 {
