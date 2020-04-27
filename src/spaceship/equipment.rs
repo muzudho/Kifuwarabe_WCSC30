@@ -59,7 +59,7 @@ impl DestinationDisplay {
     /// 情報表示
     pub fn print(
         &mut self,
-        cur_depth: Option<u8>,
+        cur_depth: Option<usize>,
         state_nodes_nps: Option<(u64, u64)>,
         value: Option<Value>,
         movement: Option<Movement>,

@@ -54,6 +54,7 @@ impl Kifuwarabe {
             universe.option_board_coverage_weight,
             universe.option_komawari_weight,
             universe.option_promotion_weight,
+            universe.option_depth_not_to_give_up,
         );
         let ts = tree.iteration_deeping(universe, speed_of_light);
         // その手を選んだ理由☆（＾～＾）

@@ -33,17 +33,22 @@ pub struct Tree {
     pub evaluation: Evaluation,
 
     // 反復深化探索の１回目だけ真☆（＾～＾）
-    pub first_iteration_deeping: bool,
+    pub depth_not_to_give_up: usize,
 }
 impl Tree {
-    pub fn new(board_coverage_weight: i32, komawari_weight: i32, promotion_weight: i32) -> Self {
+    pub fn new(
+        board_coverage_weight: i32,
+        komawari_weight: i32,
+        promotion_weight: i32,
+        depth_not_to_give_up: usize,
+    ) -> Self {
         Tree {
             stopwatch: Instant::now(),
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
             evaluation: Evaluation::new(board_coverage_weight, komawari_weight, promotion_weight),
-            first_iteration_deeping: true,
+            depth_not_to_give_up: depth_not_to_give_up,
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
@@ -67,7 +72,7 @@ impl Tree {
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for max_depth in universe.option_depth_not_to_give_up..universe.option_max_depth {
+        for max_depth in 1..universe.option_max_depth {
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             let movement = best_ts.bestmove.to_movement();
             universe.game.info.print(
@@ -112,14 +117,13 @@ impl Tree {
                 /*std::i16::MAX,*/ speed_of_light,
             );
             self.evaluation.after_search();
-            if ts.timeout {
-                // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
+            if ts.timeout && self.depth_not_to_give_up <= max_depth {
+                // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
             }
 
             // 無条件に更新だぜ☆（＾～＾）初手の高得点を引きずられて王手回避漏れされたら嫌だしな☆（＾～＾）
             best_ts = ts.clone();
-            self.first_iteration_deeping = false;
         }
 
         best_ts
@@ -139,7 +143,7 @@ impl Tree {
     /// Best movement, Value, Sum nodes
     fn node(
         &mut self,
-        max_depth: u8,
+        max_depth: usize,
         game: &mut Game,
         // sibling_best: i16,
         speed_of_light: &SpeedOfLight,
@@ -176,11 +180,10 @@ impl Tree {
         self.add_control(coverage_sign, game, &movement_set);
         for movement_hash in movement_set.iter() {
             // 時間を見ようぜ☆（＾～＾）？
-            if ts.timeout && !self.first_iteration_deeping {
-                // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
-                // 反復深化探索の１回目はタイムアウトしない☆（＾～＾）考え続けるぜ☆（＾～＾）
+            if ts.timeout {
+                // すでにタイムアウトしていたのなら、さっさと抜けるぜ☆（＾～＾）
                 break;
-            } else if self.think_sec < self.sec() {
+            } else if self.think_sec < self.sec() && self.depth_not_to_give_up < max_depth {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 ts.timeout = true;
                 break;
@@ -222,7 +225,7 @@ impl Tree {
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 ts.repetition_movement_hash = *movement_hash;
-            } else if max_depth < self.pv.len() as u8 {
+            } else if max_depth < self.pv.len() {
                 // 葉で評価しようぜ☆（＾～＾）
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
@@ -252,7 +255,7 @@ impl Tree {
                         ))),
                     );
                     game.info.print(
-                        Some(self.pv.len() as u8),
+                        Some(self.pv.len()),
                         Some((self.state_nodes, self.nps())),
                         Some(ts.bestmove.value),
                         movement,
