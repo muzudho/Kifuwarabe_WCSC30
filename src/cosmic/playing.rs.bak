@@ -322,7 +322,8 @@ impl Game {
                             .hand_address(speed_of_light),
                     );
                     // 移動先の駒を、取った駒（あるいは空）に戻す
-                    self.board.push_to_board(&movement.destination, captured);
+                    self.board
+                        .push_to_board(&movement.destination.unwrap(), captured);
                 }
 
                 if let Some(source_val) = movement.source {

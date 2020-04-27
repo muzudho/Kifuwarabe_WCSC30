@@ -74,11 +74,21 @@ impl Tree {
                 Some(max_depth),
                 Some((self.state_nodes, self.nps())),
                 Some(best_ts.bestmove.value),
-                Some(movement),
-                &Some(PvString::PV(self.msec(), format!("{}", movement,))), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
+                movement,
+                &Some(PvString::PV(
+                    self.msec(),
+                    format!(
+                        "{}",
+                        if let Some(movement_val) = movement {
+                            format!("{}", movement_val)
+                        } else {
+                            "resign".to_string()
+                        },
+                    ),
+                )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
             );
 
-            if movement.resign() {
+            if let None = movement {
                 // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
                 break;
             }
@@ -137,6 +147,7 @@ impl Tree {
         let mut ts = TreeState::default();
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
+
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
         let mut movement_set = HashSet::<u64>::new();
 
@@ -177,7 +188,7 @@ impl Tree {
 
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
-            let movement = Movement::from_hash(*movement_hash);
+            let movement = Movement::from_hash(*movement_hash).unwrap();
             let source_piece = if let Some(source_val) = &movement.source {
                 game.board.piece_at(source_val)
             } else {
@@ -196,7 +207,7 @@ impl Tree {
 
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.0.r#type(speed_of_light) == King {
-                    // 玉を取る手より強い手はないぜ☆（＾～＾）！
+                    // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     ts.bestmove.catch_king(*movement_hash);
 
                     self.evaluation
@@ -244,7 +255,7 @@ impl Tree {
                         Some(self.pv.len() as u8),
                         Some((self.state_nodes, self.nps())),
                         Some(ts.bestmove.value),
-                        Some(movement),
+                        movement,
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
@@ -329,8 +340,8 @@ impl Tree {
         for movement_hash in movement_set.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
             game.board.control[Movement::from_hash(*movement_hash)
-                .destination
                 .unwrap()
+                .destination
                 .address() as usize] += sign;
         }
     }
@@ -370,7 +381,7 @@ impl Default for Bestmove {
     }
 }
 impl Bestmove {
-    pub fn to_movement(&self) -> Movement {
+    pub fn to_movement(&self) -> Option<Movement> {
         Movement::from_hash(self.movement_hash)
     }
     pub fn catch_king(&mut self, movement_hash: u64) {
@@ -540,7 +551,7 @@ pub struct PrincipalVariation {
 impl Default for PrincipalVariation {
     fn default() -> Self {
         PrincipalVariation {
-            // 投了で埋めるぜ☆（＾～＾）
+            // ゴミの値で埋めるぜ☆（＾～＾）
             moves: [Movement::default(); PLY_LEN],
             ply: 0,
         }
@@ -554,7 +565,7 @@ impl PrincipalVariation {
 
     fn pop(&mut self) {
         self.ply -= 1;
-        self.moves[self.ply].clear();
+        // ゴミの値は消さないぜ☆（＾～＾）
     }
 
     fn len(&self) -> usize {

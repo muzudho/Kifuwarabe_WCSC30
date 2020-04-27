@@ -189,7 +189,7 @@ impl fmt::Debug for Movement {
             } else {
                 0
             },
-            self.destination.address(),
+            self.destination.unwrap().address(),
             self.promote,
             if let Some(drp) = self.drop {
                 format!("{:?}", drp)

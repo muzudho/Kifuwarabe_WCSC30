@@ -720,10 +720,11 @@ impl AbsoluteAddress {
             RANK_0 as u8 <= rank && rank < RANK_11 as u8,
             format!("rank={}", rank)
         );
-        AbsoluteAddress {
+        let ab_adr = AbsoluteAddress {
             file: file,
             rank: rank,
-        }
+        };
+        ab_adr
     }
 
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...

@@ -232,9 +232,9 @@ impl Kitchen {
             // Returns Ordering::Greater, Ordering::Less, Ordering::Equal.
             x_arr.len().cmp(&y_arr.len())
         });
-        move_names.reverse();
+        vec_ss_str.reverse();
 
-        for (i, ss_str) in move_names.into_iter().enumerate() {
+        for (i, ss_str) in vec_ss_str.into_iter().enumerate() {
             Beam::shoot(&format!("[{}] {}", i, ss_str));
         }
     }

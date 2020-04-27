@@ -75,6 +75,7 @@ impl Kifuwarabe {
                 "resign".to_string()
             }
         ));
+
     }
     pub fn isready() {
         Beam::shoot("readyok");
