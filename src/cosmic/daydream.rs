@@ -68,7 +68,7 @@ impl Tree {
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.evaluation.before_search();
         self.max_depth0 = 0;
-        let mut best_ts = self.node(&mut universe.game, /*std::i16::MAX,*/ speed_of_light);
+        let mut best_ts = self.node(&mut universe.game, Value::Win, speed_of_light);
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -112,7 +112,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
-            let ts = self.node(&mut universe.game, /*std::i16::MAX,*/ speed_of_light);
+            let ts = self.node(&mut universe.game, Value::Win, speed_of_light);
             self.evaluation.after_search();
             if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -140,7 +140,7 @@ impl Tree {
     fn node(
         &mut self,
         game: &mut Game,
-        // sibling_best: i16,
+        another_branch_best: Value,
         speed_of_light: &SpeedOfLight,
     ) -> TreeState {
         let mut ts = TreeState::default();
@@ -262,13 +262,11 @@ impl Tree {
                 self.evaluation.before_search();
                 let opponent_ts = self.node(
                     game,
-                    /*
-                    if let Value::CentiPawn(centi_pawn) = ts.bestmove.value {
-                        -centi_pawn
-                    } else {
-                        std::i16::MAX
+                    match ts.bestmove.value {
+                        Value::CentiPawn(centi_pawn) => Value::CentiPawn(-centi_pawn),
+                        Value::Win => Value::Lose,
+                        Value::Lose => Value::Win,
                     },
-                    */
                     speed_of_light,
                 );
                 self.evaluation.after_search();
@@ -294,28 +292,26 @@ impl Tree {
                 Value::Lose => {
                     // この手について、次の相手の番で王さまを取られたか、３手先以上の奇数番で詰められたんだろ☆（＾～＾）詰められてない別の手を探すんだぜ、続行☆（＾～＾）！
                 }
-                Value::CentiPawn(_current_centi_pawn) => {
-                    /*
+                Value::CentiPawn(current_centi_pawn) => {
                     // ベータカット判定☆（＾～＾）
-                            match previous_friend_best {
-                                Value::CentiPawn(previous_friend_centi_pawn) => {
-                                    // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
-                                    // これが　いわゆるベータカットだぜ☆（＾～＾）
-                                    if previous_friend_centi_pawn <= current_centi_pawn {
-                                        break;
-                                    }
-                                }
-                                Value::Win => {
-                                    // 初手に、ゴミの最大値として入っているか、兄弟局面で勝ちの手があったようだぜ☆（＾～＾）
-                                    // ベータカットは起こらないぜ☆（＾～＾）
-                                }
-                                Value::Lose => {
-                                    // 兄弟局面に負けがあるんだったら、この
-                                    // 負けに比べればどんな手でも良いぜ☆（＾～＾）ベータカットな☆（＾～＾）！
-                                    break;
-                                }
+                    match another_branch_best {
+                        Value::CentiPawn(another_branch_best_centi_pawn) => {
+                            // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
+                            // これが　いわゆるベータカットだぜ☆（＾～＾）
+                            if another_branch_best_centi_pawn <= current_centi_pawn {
+                                break;
                             }
-                    */
+                        }
+                        Value::Win => {
+                            // 初手に、ゴミの最大値として入っているか、兄弟局面で勝ちの手があったようだぜ☆（＾～＾）
+                            // ベータカットは起こらないぜ☆（＾～＾）
+                        }
+                        Value::Lose => {
+                            // 兄弟局面に負けがあるんだったら、この
+                            // 負けに比べればどんな手でも良いぜ☆（＾～＾）ベータカットな☆（＾～＾）！
+                            break;
+                        }
+                    }
                 }
             }
         }
