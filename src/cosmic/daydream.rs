@@ -387,7 +387,7 @@ impl TreeState {
         let (update, reason, friend_value) = match opponent_ts.bestmove.value {
             Value::Win => {
                 // 相手が勝ったので、自分は負けてるぜ☆（＾～＾）
-                (false, "opponent win".to_string(), Value::Lose)
+                (true, "opponent win".to_string(), Value::Lose)
             }
             Value::Lose => {
                 // 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
