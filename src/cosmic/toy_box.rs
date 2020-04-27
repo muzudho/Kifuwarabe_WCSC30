@@ -3,7 +3,7 @@
 //!
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Person, Phase};
-use crate::cosmic::smart::features::HAND_ADDRESS_LN;
+use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::{
     HandAddress, HandAddresses, PieceMeaning, PieceType, HAND_MAX,
@@ -122,7 +122,7 @@ pub struct Board {
     location: [Location; PIECE_NUM_LEN],
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
-    pub hands: [Vec<(PieceMeaning, PieceNum)>; HAND_ADDRESS_LN],
+    pub hands: [Vec<(PieceMeaning, PieceNum)>; HAND_ADDRESS_LEN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
     pub control: [i16; BOARD_MEMORY_AREA as usize],
 }

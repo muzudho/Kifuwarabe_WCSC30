@@ -75,9 +75,9 @@ pub enum PieceMeaning {
 
 // 持ち駒の駒のうち、最大の枚数は歩の 18。
 pub const HAND_MAX: usize = 18;
-pub const PIECE_LN: usize = 30;
+pub const PIECE_LEN: usize = 30;
 // Note: 持ち駒には玉も含むぜ☆（＾～＾）
-pub const HAND_ADDRESS_LN: usize = 16;
+pub const HAND_ADDRESS_LEN: usize = 16;
 pub static PIECE_WHITE_SPACE: &str = "    ";
 impl fmt::Display for PieceMeaning {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

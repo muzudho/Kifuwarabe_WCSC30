@@ -17,7 +17,7 @@ use std::fmt;
 /// 手目数。何手目まで指せるか。
 /// 棋譜を残す配列のサイズでもある。
 /// 大会ルールで 320手が上限なので、終端子として投了を１個入れておけるように +1 する。
-pub const PLY_LN: usize = 321;
+pub const PLY_LEN: usize = 321;
 
 /// 同一局面何回で千日手
 pub const SENNTITE_NUM: i8 = 4;
@@ -27,20 +27,20 @@ pub struct History {
     pub ply: i16,
     /// 棋譜
     /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
-    pub movements: [Movement; PLY_LN],
+    pub movements: [Movement; PLY_LEN],
     /// 棋譜に対応した各局面の局面ハッシュ
-    pub position_hashs: [u64; PLY_LN],
+    pub position_hashs: [u64; PLY_LEN],
     /// 取った駒
-    pub captured_pieces: [Option<(PieceMeaning, PieceNum)>; PLY_LN],
+    pub captured_pieces: [Option<(PieceMeaning, PieceNum)>; PLY_LEN],
 }
 impl Default for History {
     fn default() -> History {
         History {
             ply: 0,
-            movements: [Movement::default(); PLY_LN],
-            position_hashs: [0; PLY_LN],
+            movements: [Movement::default(); PLY_LEN],
+            position_hashs: [0; PLY_LEN],
             /// 取った駒
-            captured_pieces: [None; PLY_LN],
+            captured_pieces: [None; PLY_LEN],
         }
     }
 }
@@ -119,6 +119,19 @@ impl Movement {
 
     pub fn resign(&self) -> bool {
         self.destination.is_none()
+    }
+
+    pub fn clear(&mut self) {
+        self.source = None;
+        self.destination = None;
+        self.promote = false;
+        self.drop = None;
+    }
+    pub fn set(&mut self, b: &Movement) {
+        self.source = b.source;
+        self.destination = b.destination;
+        self.promote = b.promote;
+        self.drop = b.drop;
     }
 }
 impl fmt::Display for Movement {
@@ -221,7 +234,7 @@ pub fn turn_person(person: &Person) -> Person {
 /// 局面ハッシュを作るときに、フェーズ用に配列があって、それのサイズに使ってるぜ☆（＾～＾）
 pub const PHASE_FIRST: usize = 0;
 pub const PHASE_SECOND: usize = 1;
-pub const PHASE_LN: usize = 2;
+pub const PHASE_LEN: usize = 2;
 
 /// 先後。単純にプレイヤー１を先手、プレイヤー２を後手とする。
 /// 駒落ち戦での通称　上手／下手　の場合、上手は先手、下手は後手とする。

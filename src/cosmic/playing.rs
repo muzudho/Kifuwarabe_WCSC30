@@ -1,6 +1,6 @@
-use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LN, PHASE_SECOND};
-use crate::cosmic::smart::features::HAND_ADDRESS_LN;
-use crate::cosmic::smart::features::{HandAddress, PieceMeaning, HAND_MAX, PIECE_LN};
+use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
+use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
+use crate::cosmic::smart::features::{HandAddress, PieceMeaning, HAND_MAX, PIECE_LEN};
 use crate::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
 use crate::cosmic::toy_box::Board;
 use crate::cosmic::toy_box::PieceNum;
@@ -20,11 +20,11 @@ pub enum PosNums {
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
 pub struct GameHashSeed {
     // 盤上の駒
-    pub piece: [[u64; PIECE_LN]; BOARD_MEMORY_AREA as usize],
+    pub piece: [[u64; PIECE_LEN]; BOARD_MEMORY_AREA as usize],
     // 持ち駒
-    pub hands: [[u64; HAND_MAX]; HAND_ADDRESS_LN],
+    pub hands: [[u64; HAND_MAX]; HAND_ADDRESS_LEN],
     // 先後
-    pub phase: [u64; PHASE_LN],
+    pub phase: [u64; PHASE_LEN],
 }
 
 pub struct Game {
@@ -49,11 +49,11 @@ impl Default for Game {
             starting_board: Board::default(),
             hash_seed: GameHashSeed {
                 // 盤上の駒
-                piece: [[0; PIECE_LN]; BOARD_MEMORY_AREA as usize],
+                piece: [[0; PIECE_LEN]; BOARD_MEMORY_AREA as usize],
                 // 持ち駒
-                hands: [[0; HAND_MAX]; HAND_ADDRESS_LN],
+                hands: [[0; HAND_MAX]; HAND_ADDRESS_LEN],
                 // 先後
-                phase: [0; PHASE_LN],
+                phase: [0; PHASE_LEN],
             },
             board: Board::default(),
             info: DestinationDisplay::default(),
@@ -67,21 +67,21 @@ impl Game {
 
         // 盤上の駒
         for i_square in SQUARE_NONE..BOARD_MEMORY_AREA {
-            for i_km in 0..PIECE_LN {
+            for i_km in 0..PIECE_LEN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
                 self.hash_seed.piece[i_square as usize][i_km] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 持ち駒
-        for i_piece in 0..HAND_ADDRESS_LN {
+        for i_piece in 0..HAND_ADDRESS_LEN {
             for i_count in 0..HAND_MAX {
                 self.hash_seed.hands[i_piece][i_count] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
         // 先後
-        for i_phase in 0..PHASE_LN {
+        for i_phase in 0..PHASE_LEN {
             self.hash_seed.phase[i_phase] =
                 rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
         }

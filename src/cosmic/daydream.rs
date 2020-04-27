@@ -3,6 +3,7 @@
 //!
 
 use crate::cosmic::playing::Game;
+use crate::cosmic::recording::PLY_LEN;
 use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceMeaning;
@@ -84,9 +85,6 @@ impl Tree {
                     "----------Iteration deeping----------"
                 ))),
             );
-
-            // リセット
-            self.pv.clear();
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
@@ -401,8 +399,9 @@ impl TreeState {
                 } else {
                     match self.bestmove.value {
                         Value::Win => {
-                            // 自分が勝つ手を既に読んでるのに、ここに来るのはおかしいぜ☆（＾～＾）
-                            (false, "".to_string(), self.bestmove.value)
+                            panic!(Beam::trouble(
+                                "(Err.405) 自分が勝つ手を既に読んでるのに、ここに来るのはおかしいぜ☆（＾～＾）"
+                            ))
                         }
                         Value::Lose => {
                             // 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
@@ -510,37 +509,38 @@ pub enum Value {
 
 #[derive(Clone)]
 pub struct PrincipalVariation {
-    /// 根っこに戻ると、中身が空っぽになっているので困るぜ（＾～＾）
-    moves: Vec<Movement>,
+    moves: [Movement; PLY_LEN],
+    ply: usize,
 }
 impl Default for PrincipalVariation {
     fn default() -> Self {
         PrincipalVariation {
-            moves: Vec::default(),
+            // 投了で埋めるぜ☆（＾～＾）
+            moves: [Movement::default(); PLY_LEN],
+            ply: 0,
         }
     }
 }
 impl PrincipalVariation {
-    fn clear(&mut self) {
-        self.moves.clear();
-    }
     fn push(&mut self, movement: &Movement) {
-        self.moves.push(*movement);
+        self.moves[self.ply].set(movement);
+        self.ply += 1;
     }
 
     fn pop(&mut self) {
-        self.moves.pop();
+        self.ply -= 1;
+        self.moves[self.ply].clear();
     }
 
     fn len(&self) -> usize {
-        self.moves.len()
+        self.ply
     }
 }
 impl fmt::Display for PrincipalVariation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
-        for r#move in &self.moves {
-            buffer.push_str(&format!("{} ", r#move));
+        for i in 0..=self.ply {
+            buffer.push_str(&format!("{} ", self.moves[i]));
         }
         write!(f, "{}", buffer.trim_end())
     }
