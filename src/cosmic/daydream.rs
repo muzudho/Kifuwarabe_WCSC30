@@ -34,6 +34,8 @@ pub struct Tree {
 
     // 反復深化探索の１回目だけ真☆（＾～＾）
     pub depth_not_to_give_up: usize,
+    // 読みの深さの上限☆（＾～＾）１手を読み切るなら 0 を指定しろだぜ☆（＾～＾）
+    max_depth0: usize,
 }
 impl Tree {
     pub fn new(
@@ -49,6 +51,7 @@ impl Tree {
             think_sec: 0,
             evaluation: Evaluation::new(board_coverage_weight, komawari_weight, promotion_weight),
             depth_not_to_give_up: depth_not_to_give_up,
+            max_depth0: 0,
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
@@ -64,19 +67,17 @@ impl Tree {
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.evaluation.before_search();
-        let mut best_ts = self.node(
-            0,
-            &mut universe.game,
-            /*std::i16::MAX,*/ speed_of_light,
-        );
+        self.max_depth0 = 0;
+        let mut best_ts = self.node(&mut universe.game, /*std::i16::MAX,*/ speed_of_light);
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for max_depth in 1..universe.option_max_depth {
+        for id in 1..universe.option_max_depth {
+            self.max_depth0 = id;
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             let movement = best_ts.bestmove.to_movement();
             universe.game.info.print(
-                Some(max_depth),
+                Some(self.max_depth0),
                 Some((self.state_nodes, self.nps())),
                 Some(best_ts.bestmove.value),
                 movement,
@@ -111,13 +112,9 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
-            let ts = self.node(
-                max_depth,
-                &mut universe.game,
-                /*std::i16::MAX,*/ speed_of_light,
-            );
+            let ts = self.node(&mut universe.game, /*std::i16::MAX,*/ speed_of_light);
             self.evaluation.after_search();
-            if ts.timeout && self.depth_not_to_give_up <= max_depth {
+            if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
             }
@@ -133,7 +130,6 @@ impl Tree {
     ///
     /// # Arguments
     ///
-    /// * `max_depth` - 読みの深さ☆（＾～＾）
     /// * `game` - 対局。
     /// * `sibling_best` - アルファベータ探索のベータ値。兄弟で一番良い評価値。
     /// * `speed_of_light` - (光速)
@@ -143,7 +139,6 @@ impl Tree {
     /// Best movement, Value, Sum nodes
     fn node(
         &mut self,
-        max_depth: usize,
         game: &mut Game,
         // sibling_best: i16,
         speed_of_light: &SpeedOfLight,
@@ -183,7 +178,7 @@ impl Tree {
             if ts.timeout {
                 // すでにタイムアウトしていたのなら、さっさと抜けるぜ☆（＾～＾）
                 break;
-            } else if self.think_sec < self.sec() && self.depth_not_to_give_up < max_depth {
+            } else if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 ts.timeout = true;
                 break;
@@ -225,7 +220,7 @@ impl Tree {
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 ts.repetition_movement_hash = *movement_hash;
-            } else if max_depth < self.pv.len() {
+            } else if self.max_depth0 < self.pv.len() {
                 // 葉で評価しようぜ☆（＾～＾）
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
@@ -266,7 +261,6 @@ impl Tree {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.evaluation.before_search();
                 let opponent_ts = self.node(
-                    max_depth,
                     game,
                     /*
                     if let Value::CentiPawn(centi_pawn) = ts.bestmove.value {
@@ -295,7 +289,7 @@ impl Tree {
             match ts.bestmove.value {
                 Value::Win => {
                     // この手について、次の手ではなく、２手以上先で勝ったんだろ☆（＾～＾）もう探索しなくていいぜ☆（＾～＾）この手にしようぜ☆（＾～＾）！
-                    // TODO break;
+                    break;
                 }
                 Value::Lose => {
                     // この手について、次の相手の番で王さまを取られたか、３手先以上の奇数番で詰められたんだろ☆（＾～＾）詰められてない別の手を探すんだぜ、続行☆（＾～＾）！
