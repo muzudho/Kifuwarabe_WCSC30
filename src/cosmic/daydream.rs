@@ -59,7 +59,7 @@ impl Tree {
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.evaluation.before_search();
-        let mut best_ts = self.node(0, &mut universe.game, /*Value::Win,*/ speed_of_light);
+        let mut best_ts = self.node(0, &mut universe.game, std::i16::MAX, speed_of_light);
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -102,11 +102,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
-            let ts = self.node(
-                max_depth,
-                &mut universe.game,
-                /* Value::Win, */ speed_of_light,
-            );
+            let ts = self.node(max_depth, &mut universe.game, std::i16::MAX, speed_of_light);
             self.evaluation.after_search();
             if ts.timeout {
                 // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -137,7 +133,7 @@ impl Tree {
         &mut self,
         max_depth: u8,
         game: &mut Game,
-        //previous_friend_best: Value,
+        sibling_best: i16,
         speed_of_light: &SpeedOfLight,
     ) -> TreeState {
         let mut ts = TreeState::default();
@@ -200,7 +196,7 @@ impl Tree {
 
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.0.r#type(speed_of_light) == King {
-                    // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
+                    // 玉を取る手より強い手はないぜ☆（＾～＾）！
                     ts.bestmove.catch_king(*movement_hash);
 
                     self.evaluation
@@ -258,13 +254,11 @@ impl Tree {
                 let opponent_ts = self.node(
                     max_depth,
                     game,
-                    /*
-                    match ts.bestmove.value {
-                        Value::CentiPawn(centi_pawn) => Value::CentiPawn(-centi_pawn),
-                        Value::Win => Value::Lose,
-                        Value::Lose => Value::Win,
+                    if let Value::CentiPawn(centi_pawn) = ts.bestmove.value {
+                        -centi_pawn
+                    } else {
+                        std::i16::MAX
                     },
-                    */
                     speed_of_light,
                 );
                 self.evaluation.after_search();
@@ -283,35 +277,19 @@ impl Tree {
             game.undo_move(speed_of_light);
 
             match ts.bestmove.value {
+                Value::CentiPawn(centi_pawn) => {
+                    if sibling_best <= centi_pawn {
+                        // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
+                        // これが　いわゆるベータカットだぜ☆（＾～＾）
+                        break;
+                    }
+                }
                 Value::Win => {
-                    // この手について、次の手ではなく、２手以上先で勝ったんだろ☆（＾～＾）もう探索しなくていいぜ☆（＾～＾）この手にしようぜ☆（＾～＾）！
+                    // 勝った手を見つけたのなら、もう探索しなくていいぜ☆（＾～＾）
                     break;
                 }
-                Value::Lose => {
-                    // この手について、次の相手の番で王さまを取られたか、３手先以上の奇数番で詰められたんだろ☆（＾～＾）詰められてない別の手を探すんだぜ、続行☆（＾～＾）！
-                }
-                Value::CentiPawn(_current_centi_pawn) => {
-                    /*
-                    // ベータカット判定☆（＾～＾）
-                            match previous_friend_best {
-                                Value::CentiPawn(previous_friend_centi_pawn) => {
-                                    // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
-                                    // これが　いわゆるベータカットだぜ☆（＾～＾）
-                                    if previous_friend_centi_pawn <= current_centi_pawn {
-                                        break;
-                                    }
-                                }
-                                Value::Win => {
-                                    // 初手に、ゴミの最大値として入っているか、兄弟局面で勝ちの手があったようだぜ☆（＾～＾）
-                                    // ベータカットは起こらないぜ☆（＾～＾）
-                                }
-                                Value::Lose => {
-                                    // 兄弟局面に負けがあるんだったら、この
-                                    // 負けに比べればどんな手でも良いぜ☆（＾～＾）ベータカットな☆（＾～＾）！
-                                    break;
-                                }
-                            }
-                    */
+                _ => {
+                    // 続行☆（＾～＾）
                 }
             }
         }
@@ -416,25 +394,25 @@ impl TreeState {
 
         // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
 
-        match opponent_ts.bestmove.value {
+        let (update, reason, friend_value) = match opponent_ts.bestmove.value {
             Value::Win => {
-                // 相手が勝ったので、自分は負けてるぜ☆（＾～＾）この手は選んではいけないぜ☆（＾～＾）
+                // 相手が勝ったので、自分は負けてるぜ☆（＾～＾）
+                (true, "opponent win".to_string(), Value::Lose)
             }
             Value::Lose => {
                 // 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
-                self.bestmove
-                    .update(friend_movement_hash, &Value::Win, "friend win".to_string());
+                (true, "friend win".to_string(), Value::Win)
             }
             Value::CentiPawn(num) => {
                 // 評価値は ひっくり返します。この指し手の駒の交換値も足します。
                 let friend_centi_pawn2 = -num + friend_centi_pawn1;
                 if self.bestmove.movement_hash == 0 {
-                    // どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
-                    self.bestmove.update(
-                        friend_movement_hash,
-                        &Value::CentiPawn(friend_centi_pawn2),
+                    // どんな手も 投了より良いだろ☆（＾～＾）
+                    (
+                        true,
                         "this better than resign".to_string(),
-                    );
+                        Value::CentiPawn(friend_centi_pawn2),
+                    )
                 } else {
                     match self.bestmove.value {
                         Value::Win => {
@@ -444,19 +422,32 @@ impl TreeState {
                         }
                         Value::Lose => {
                             // 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
-                            self.bestmove
-                            .update(friend_movement_hash, &Value::CentiPawn(friend_centi_pawn2), "any move more than lose".to_string());
+                            (
+                                true,
+                                "any move more than lose".to_string(),
+                                Value::CentiPawn(friend_centi_pawn2),
+                            )
                         }
                         Value::CentiPawn(best_centi_pawn) => {
                             if best_centi_pawn < friend_centi_pawn2 {
                                 // 上方修正
-                                self.bestmove
-                                .update(friend_movement_hash, &Value::CentiPawn(friend_centi_pawn2), "value up".to_string());
+                                (
+                                    true,
+                                    "update value".to_string(),
+                                    Value::CentiPawn(friend_centi_pawn2),
+                                )
+                            } else {
+                                (false, "".to_string(), self.bestmove.value)
                             }
                         }
                     }
                 }
             }
+        };
+
+        if update {
+            self.bestmove
+                .update(friend_movement_hash, &friend_value, reason);
         }
     }
 
