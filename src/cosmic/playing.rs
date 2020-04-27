@@ -234,8 +234,10 @@ impl Game {
                     // 打なら
                     // 自分の持ち駒を減らす
                     if let Some(drp) = movement.drop {
-                        self.board
-                            .pop_hand(HandAddress::from_phase_and_type(friend, drp))
+                        Some(
+                            self.board
+                                .pop_hand(HandAddress::from_phase_and_type(friend, drp)),
+                        )
                     } else {
                         panic!(Beam::trouble(
                             "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"

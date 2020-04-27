@@ -15,6 +15,7 @@ use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
+use std::fmt;
 
 /// 背番号付きの駒の数。
 pub const PIECE_NUM_LEN: usize = 40;
@@ -122,7 +123,7 @@ pub struct Board {
     location: [Location; PIECE_NUM_LEN],
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
-    pub hands: [Vec<(PieceMeaning, PieceNum)>; HAND_ADDRESS_LEN],
+    pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
     pub control: [i16; BOARD_MEMORY_AREA as usize],
 }
@@ -153,22 +154,22 @@ impl Default for Board {
             ],
             // 持ち駒
             hands: [
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
-                Vec::<(PieceMeaning, PieceNum)>::new(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
+                HandAddressTypeStack::default(),
             ],
             control: [0; BOARD_MEMORY_AREA as usize],
         }
@@ -199,22 +200,22 @@ impl Board {
         ];
         // 持ち駒☆（＾～＾）
         self.hands = [
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
-            Vec::<(PieceMeaning, PieceNum)>::new(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
+            HandAddressTypeStack::default(),
         ];
     }
 
@@ -334,18 +335,18 @@ impl Board {
                 .r#type(speed_of_light);
             let cursor = self.hand_index[hand_type as usize];
             self.location[cursor] = Location::Hand(adr);
-            self.hands[cursor].push((piece_meaning, PieceNum::from_usize(cursor).unwrap()));
+            self.hands[cursor].push(&(piece_meaning, PieceNum::from_usize(cursor).unwrap()));
             self.hand_index[hand_type as usize] += 1;
         }
     }
     pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum), speed_of_light: &SpeedOfLight) {
         let adr = hand.0.hand_address(speed_of_light);
-        self.hands[adr as usize].push(*hand);
+        self.hands[adr as usize].push(hand);
         self.location[hand.1 as usize] = Location::Hand(adr);
     }
-    pub fn pop_hand(&mut self, adr: HandAddress) -> Option<(PieceMeaning, PieceNum)> {
+    pub fn pop_hand(&mut self, adr: HandAddress) -> (PieceMeaning, PieceNum) {
         let piece = self.hands[adr as usize].pop();
-        self.location[piece.unwrap().1 as usize] = Location::Busy;
+        self.location[piece.1 as usize] = Location::Busy;
         piece
     }
     /// 指し手生成で使うぜ☆（＾～＾）
@@ -486,5 +487,54 @@ impl Board {
                 piece_get(Location::Hand(*adr), *piece);
             }
         }
+    }
+}
+
+#[derive(Clone)]
+pub struct HandAddressTypeStack {
+    items: [(PieceMeaning, PieceNum); HAND_MAX],
+    count: usize,
+}
+impl Default for HandAddressTypeStack {
+    fn default() -> Self {
+        HandAddressTypeStack {
+            // ゴミ値で埋めるぜ☆（＾～＾）
+            items: [(PieceMeaning::King1, PieceNum::King1); HAND_MAX],
+            count: 0,
+        }
+    }
+}
+impl HandAddressTypeStack {
+    fn push(&mut self, piece: &(PieceMeaning, PieceNum)) {
+        self.items[self.count] = *piece;
+        self.count += 1;
+    }
+
+    fn pop(&mut self) -> (PieceMeaning, PieceNum) {
+        self.count -= 1;
+        let piece = self.items[self.count];
+        // ゴミ値は消さないぜ☆（＾～＾）
+        piece
+    }
+
+    fn last(&self) -> Option<&(PieceMeaning, PieceNum)> {
+        if 0 < self.count {
+            Some(&self.items[self.count - 1])
+        } else {
+            None
+        }
+    }
+
+    fn len(&self) -> usize {
+        self.count
+    }
+}
+impl fmt::Display for HandAddressTypeStack {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut buffer = String::new();
+        for i in 0..=self.count {
+            buffer.push_str(&format!("({}, {:?}) ", self.items[i].0, self.items[i].1));
+        }
+        write!(f, "{}", buffer.trim_end())
     }
 }
