@@ -59,11 +59,7 @@ impl Tree {
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.evaluation.before_search();
-        let mut best_ts = self.node(
-            0,
-            &mut universe.game,
-            /*std::i16::MAX,*/ speed_of_light,
-        );
+        let mut best_ts = self.node(0, &mut universe.game, std::i16::MAX, speed_of_light);
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -96,11 +92,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
-            let ts = self.node(
-                max_depth,
-                &mut universe.game,
-                /*std::i16::MAX,*/ speed_of_light,
-            );
+            let ts = self.node(max_depth, &mut universe.game, std::i16::MAX, speed_of_light);
             self.evaluation.after_search();
             if ts.timeout {
                 // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -131,7 +123,7 @@ impl Tree {
         &mut self,
         max_depth: u8,
         game: &mut Game,
-        // sibling_best: i16,
+        sibling_best: i16,
         speed_of_light: &SpeedOfLight,
     ) -> TreeState {
         let mut ts = TreeState::default();
@@ -254,13 +246,11 @@ impl Tree {
                 let opponent_ts = self.node(
                     max_depth,
                     game,
-                    /*
                     if let Value::CentiPawn(centi_pawn) = ts.bestmove.value {
                         -centi_pawn
                     } else {
                         std::i16::MAX
                     },
-                    */
                     speed_of_light,
                 );
                 self.evaluation.after_search();
@@ -308,6 +298,8 @@ impl Tree {
                                 }
                             }
                     */
+                }
+
                 }
             }
         }

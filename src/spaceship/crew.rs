@@ -129,7 +129,7 @@ impl Kifuwarabe {
         Beam::shoot("option name DepthNotToGiveUp type spin default 2 min 1 max 5");
         Beam::shoot("option name MaxDepth type spin default 1 min 1 max 15");
         // 思考時間関連☆（＾～＾）
-        Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");
+        Beam::shoot("option name MinThinkSec type spin default 5 min 0 max 599");
         Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
         // 評価値関連☆（＾～＾）
         Beam::shoot(
