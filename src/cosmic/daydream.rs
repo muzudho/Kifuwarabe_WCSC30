@@ -54,7 +54,7 @@ impl Tree {
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.evaluation.before_search();
-        let mut best_ts = self.search(0, &mut universe.game, speed_of_light);
+        let mut best_ts = self.node(0, &mut universe.game, std::i16::MAX, speed_of_light);
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -90,7 +90,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
-            let ts = self.search(max_depth, &mut universe.game, speed_of_light);
+            let ts = self.node(max_depth, &mut universe.game, std::i16::MAX, speed_of_light);
             self.evaluation.after_search();
             if ts.timeout {
                 // 時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -110,15 +110,17 @@ impl Tree {
     ///
     /// * `max_depth` - 読みの深さ☆（＾～＾）
     /// * `game` - 対局。
+    /// * `sibling_best` - アルファベータ探索のベータ値。兄弟で一番良い評価値。
     /// * `speed_of_light` - (光速)
     ///
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn search(
+    fn node(
         &mut self,
         max_depth: u8,
         game: &mut Game,
+        sibling_best: i16,
         speed_of_light: &SpeedOfLight,
     ) -> TreeState {
         let mut ts = TreeState::default();
@@ -234,7 +236,16 @@ impl Tree {
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.evaluation.before_search();
-                let opponent_ts = self.search(max_depth, game, speed_of_light);
+                let opponent_ts = self.node(
+                    max_depth,
+                    game,
+                    if let Value::CentiPawn(centi_pawn) = ts.bestmove.value {
+                        -centi_pawn
+                    } else {
+                        std::i16::MAX
+                    },
+                    speed_of_light,
+                );
                 self.evaluation.after_search();
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
@@ -249,6 +260,23 @@ impl Tree {
                 .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
             game.undo_move(speed_of_light);
+
+            match ts.bestmove.value {
+                Value::CentiPawn(centi_pawn) => {
+                    if sibling_best <= centi_pawn {
+                        // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
+                        // これが　いわゆるベータカットだぜ☆（＾～＾）
+                        break;
+                    }
+                }
+                Value::Win => {
+                    // 勝った手を見つけたのなら、もう探索しなくていいぜ☆（＾～＾）
+                    break;
+                }
+                _ => {
+                    // 続行☆（＾～＾）
+                }
+            }
         }
         self.add_control(-1 * coverage_sign, game, &movement_set);
 

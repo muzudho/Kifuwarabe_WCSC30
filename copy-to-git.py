@@ -3,6 +3,7 @@
 """
 import os
 import shutil
+import subprocess
 
 source = 'C:/Users/むずでょ/source/repos/rust-kifuwarabe-wcsc30'
 destination = 'C:/Users/むずでょ/Documents/GitHub/rust-kifuwarabe-wcsc30'
@@ -26,6 +27,11 @@ def go():
     copy_file('/copy-to-git.py')
     copy_file('/LICENSE')
     copy_file('/README.md')
+
+    print('Trace   | Git hub.')
+    subprocess.run(
+        r"C:\Users\むずでょ\AppData\Local\GitHubDesktop\GitHubDesktop.exe")
+
     print('Trace   | Finished.')
 
 
