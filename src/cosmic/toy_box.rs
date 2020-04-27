@@ -330,12 +330,11 @@ impl Board {
     ) {
         for _i in 0..number {
             let adr = piece_meaning.hand_address(speed_of_light);
-            let hand_type = piece_meaning
-                .hand_address(speed_of_light)
-                .r#type(speed_of_light);
+            let hand = piece_meaning.hand_address(speed_of_light);
+            let hand_type = hand.r#type(speed_of_light);
             let cursor = self.hand_index[hand_type as usize];
             self.location[cursor] = Location::Hand(adr);
-            self.hands[cursor].push(&(piece_meaning, PieceNum::from_usize(cursor).unwrap()));
+            self.hands[hand as usize].push(&(piece_meaning, PieceNum::from_usize(cursor).unwrap()));
             self.hand_index[hand_type as usize] += 1;
         }
     }
