@@ -4,7 +4,7 @@
 
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::PLY_LEN;
-use crate::cosmic::recording::{Movement, Person, SENNTITE_NUM};
+use crate::cosmic::recording::{Movement, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::PieceType::King;
@@ -152,7 +152,7 @@ impl Tree {
 
         // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
         PseudoLegalMoves::make_move(
-            game.history.get_phase(Person::Friend),
+            game.history.get_friend(),
             &game.board,
             &speed_of_light,
             &mut |movement| {
@@ -164,6 +164,8 @@ impl Tree {
         if movement_set.is_empty() {
             return ts;
         }
+
+        // 指し手のオーダリングをしたいぜ☆（＾～＾） TODO 取った駒は指し手生成の段階で調べているし☆（＾～＾）
 
         let coverage_sign: i16 = if self.pv.len() % 2 == 0 {
             // 先手が指すところだぜ☆（＾～＾）

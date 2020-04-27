@@ -2,7 +2,7 @@
 //! 現局面を使った指し手生成☆（＾～＾）
 //!
 
-use crate::cosmic::recording::{Movement, Person, Phase};
+use crate::cosmic::recording::{Movement, Phase};
 use crate::cosmic::smart::features::HandAddress;
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::PieceType;
@@ -51,7 +51,7 @@ impl PseudoLegalMoves {
     {
         board.for_some_pieces_on_list40(friend, speed_of_light, &mut |location, piece| {
             match location {
-                Location::Board(source) => PseudoLegalMoves::make_on_board(
+                Location::Board(source) => PseudoLegalMoves::start_on_board(
                     friend,
                     &source,
                     &piece,
@@ -80,7 +80,7 @@ impl PseudoLegalMoves {
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
-    fn make_on_board<F1>(
+    fn start_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
         piece: &(PieceMeaning, PieceNum),
@@ -92,16 +92,19 @@ impl PseudoLegalMoves {
     {
         let callback_next =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
-                let (ok, space) = if let Some(person) =
-                    board.what_is_in_the_square(friend, &destination, speed_of_light)
-                {
-                    match person {
-                        Person::Friend => (false, false),
-                        Person::Opponent => (true, false),
+                let pseudo_captured = board.piece_at(&destination);
+
+                let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
+                    if pseudo_captured_val.0.phase(speed_of_light) == friend {
+                        // 味方の駒を取った☆（＾～＾）
+                        (false, false)
+                    } else {
+                        (true, false)
                     }
                 } else {
                     (true, true)
                 };
+
                 if ok {
                     // 成れるかどうかの判定☆（＾ｑ＾）
                     use crate::law::generate_move::Promotability::*;

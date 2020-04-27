@@ -1,6 +1,5 @@
 use crate::cosmic::playing::{Game, PosNums};
 use crate::cosmic::recording::Movement;
-use crate::cosmic::recording::Person;
 use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PIECE_WHITE_SPACE};
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::PieceNum;
@@ -61,7 +60,7 @@ impl GameRoom {
     pub fn to_string(game: &Game, pos_nums: &PosNums) -> String {
         let board = game.get_board(pos_nums);
         let ply = game.history.ply;
-        let phase = game.history.get_phase(Person::Friend);
+        let phase = game.history.get_friend();
         let same_pos_count = game.count_same_position();
 
         // 局面表示

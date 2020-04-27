@@ -46,25 +46,12 @@ impl Default for History {
 }
 impl History {
     /// 手番
-    pub fn get_phase(&self, person: Person) -> Phase {
-        use crate::cosmic::recording::Person::*;
-        match person {
-            Friend => {
-                // 手番
-                if self.ply % 2 == 0 {
-                    Phase::First
-                } else {
-                    Phase::Second
-                }
-            }
-            Opponent => {
-                // 相手番
-                if self.ply % 2 == 0 {
-                    Phase::Second
-                } else {
-                    Phase::First
-                }
-            }
+    pub fn get_friend(&self) -> Phase {
+        // 手番
+        if self.ply % 2 == 0 {
+            Phase::First
+        } else {
+            Phase::Second
         }
     }
 }
@@ -200,6 +187,7 @@ impl fmt::Debug for Movement {
     }
 }
 
+/*
 ///
 /// 先後。単純にプレイヤー１を先手、プレイヤー２を後手とする。
 /// 駒落ち戦での通称　上手／下手　の場合、上手は先手、下手は後手とする。
@@ -207,18 +195,18 @@ impl fmt::Debug for Movement {
 /// #[derive(PartialEq)]
 pub enum Person {
     Friend,
-    Opponent,
+    _Opponent,
 }
 impl fmt::Display for Person {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use self::Person::*;
         match *self {
             Friend => write!(f, "Fr"),
-            Opponent => write!(f, "Op"),
+            _Opponent => write!(f, "Op"),
         }
     }
 }
-
+*/
 /*
 pub fn turn_person(person: &Person) -> Person {
     use self::Person::*;

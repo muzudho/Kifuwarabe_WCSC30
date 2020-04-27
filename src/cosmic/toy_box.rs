@@ -2,7 +2,7 @@
 //! 駒 と 盤
 //!
 use crate::cosmic::playing::Game;
-use crate::cosmic::recording::{Person, Phase};
+use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::{
@@ -251,6 +251,7 @@ impl Board {
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
         self.pieces[adr.address() as usize]
     }
+
     /// 升で指定して駒を置く
     pub fn push_to_board(
         &mut self,
@@ -354,24 +355,6 @@ impl Board {
     }
     pub fn count_hand(&self, adr: HandAddress) -> usize {
         self.hands[adr as usize].len()
-    }
-
-    /// 升には何がありますか？
-    pub fn what_is_in_the_square(
-        &self,
-        phase: Phase,
-        adr: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-    ) -> Option<Person> {
-        // TODO 範囲外チェックは？行わない？
-        if let Some(piece) = self.piece_at(&adr) {
-            if piece.0.phase(speed_of_light) == phase {
-                return Some(Person::Friend);
-            }
-            Some(Person::Opponent)
-        } else {
-            None
-        }
     }
 
     /// 局面ハッシュを作り直す

@@ -1,4 +1,4 @@
-use crate::cosmic::recording::{History, Movement, Person, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
+use crate::cosmic::recording::{History, Movement, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::{HandAddress, PieceMeaning, HAND_MAX, PIECE_LEN};
 use crate::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
@@ -158,7 +158,7 @@ impl Game {
 
         // 手番ハッシュ
         use crate::cosmic::recording::Phase::*;
-        match self.history.get_phase(Person::Friend) {
+        match self.history.get_friend() {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],
         }
@@ -206,7 +206,7 @@ impl Game {
     ) -> Option<(PieceMeaning, PieceNum)> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(movement);
-        let friend = self.history.get_phase(Person::Friend);
+        let friend = self.history.get_friend();
 
         // 取った駒
         let cap: Option<(PieceMeaning, PieceNum)>;

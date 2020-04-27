@@ -1,7 +1,6 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::playing::{Game, PosNums};
-use crate::cosmic::recording::Person;
 use crate::cosmic::smart::square::{Address, FILE_1};
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
@@ -184,7 +183,7 @@ impl Chiyuri {
         // FIXME 合法手とは限らない
         let mut ss_potential_hashset = HashSet::<u64>::new();
         PseudoLegalMoves::make_move(
-            game.history.get_phase(Person::Friend),
+            game.history.get_friend(),
             &game.board,
             &speed_of_light,
             &mut |movement_hash| {
