@@ -201,14 +201,20 @@ impl Kitchen {
     pub fn print_move_hashset<S: BuildHasher>(move_hashset: &HashSet<u64, S>) {
         Beam::shoot(&format!("ss_hashset.len()={}", move_hashset.len()));
         // 辞書順ソート
-        let mut vec_ss_str = Vec::new();
+        let mut move_names = Vec::new();
         for ss_hash in move_hashset {
-            let ss = Movement::from_hash(*ss_hash);
-            let ss_str = format!("{}", ss);
-            vec_ss_str.push(ss_str);
+            let ss_str = format!(
+                "{}",
+                if let Some(r#move) = Movement::from_hash(*ss_hash) {
+                    format!("{}", r#move)
+                } else {
+                    "".to_string()
+                }
+            );
+            move_names.push(ss_str);
         }
-        //vec_ss_str.sort();
-        vec_ss_str.sort_by(|y_str, x_str| {
+        // move_names.sort();
+        move_names.sort_by(|y_str, x_str| {
             let y_arr: Vec<_> = y_str.chars().collect();
             let x_arr: Vec<_> = x_str.chars().collect();
             use std::cmp::min;
@@ -226,9 +232,9 @@ impl Kitchen {
             // Returns Ordering::Greater, Ordering::Less, Ordering::Equal.
             x_arr.len().cmp(&y_arr.len())
         });
-        vec_ss_str.reverse();
+        move_names.reverse();
 
-        for (i, ss_str) in vec_ss_str.into_iter().enumerate() {
+        for (i, ss_str) in move_names.into_iter().enumerate() {
             Beam::shoot(&format!("[{}] {}", i, ss_str));
         }
     }

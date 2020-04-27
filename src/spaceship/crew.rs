@@ -62,12 +62,19 @@ impl Kifuwarabe {
             Some((tree.state_nodes, tree.nps())),
             Some(ts.bestmove.value),
             // ts.get_king_catch(),
-            Some(ts.bestmove.to_movement()),
+            ts.bestmove.to_movement(),
             &Some(PvString::String(ts.bestmove.reason.to_string())),
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
-        Beam::shoot(&format!("bestmove {}", ts.bestmove.to_movement()));
+        Beam::shoot(&format!(
+            "bestmove {}",
+            if let Some(bestmove) = ts.bestmove.to_movement() {
+                format!("{}", bestmove)
+            } else {
+                "resign".to_string()
+            }
+        ));
     }
     pub fn isready() {
         Beam::shoot("readyok");
