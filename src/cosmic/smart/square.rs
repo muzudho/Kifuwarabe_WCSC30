@@ -704,12 +704,6 @@ pub struct AbsoluteAddress {
     file: u8,
     rank: u8,
 }
-impl Default for AbsoluteAddress {
-    /// ゴミの値を作るぜ☆（＾～＾）
-    fn default() -> Self {
-        AbsoluteAddress { file: 1, rank: 1 }
-    }
-}
 impl AbsoluteAddress {
     fn new(file: u8, rank: u8) -> Self {
         debug_assert!(
@@ -720,10 +714,11 @@ impl AbsoluteAddress {
             RANK_0 as u8 <= rank && rank < RANK_11 as u8,
             format!("rank={}", rank)
         );
-        AbsoluteAddress {
+        let ab_adr = AbsoluteAddress {
             file: file,
             rank: rank,
-        }
+        };
+        ab_adr
     }
 
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...

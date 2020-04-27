@@ -70,21 +70,11 @@ impl Tree {
                 Some(max_depth),
                 Some((self.state_nodes, self.nps())),
                 Some(best_ts.bestmove.value),
-                movement,
-                &Some(PvString::PV(
-                    self.msec(),
-                    format!(
-                        "{}",
-                        if let Some(movement_val) = movement {
-                            format!("{}", movement_val)
-                        } else {
-                            "resign".to_string()
-                        },
-                    ),
-                )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
+                Some(movement),
+                &Some(PvString::PV(self.msec(), format!("{}", movement,))), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
             );
 
-            if let None = movement {
+            if movement.resign() {
                 // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
                 break;
             }
@@ -177,7 +167,7 @@ impl Tree {
 
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
-            let movement = Movement::from_hash(*movement_hash).unwrap();
+            let movement = Movement::from_hash(*movement_hash);
             let source_piece = if let Some(source_val) = &movement.source {
                 game.board.piece_at(source_val)
             } else {
@@ -244,7 +234,7 @@ impl Tree {
                         Some(self.pv.len() as u8),
                         Some((self.state_nodes, self.nps())),
                         Some(ts.bestmove.value),
-                        movement,
+                        Some(movement),
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
@@ -311,8 +301,8 @@ impl Tree {
         for movement_hash in movement_set.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
             game.board.control[Movement::from_hash(*movement_hash)
-                .unwrap()
                 .destination
+                .unwrap()
                 .address() as usize] += sign;
         }
     }
@@ -352,7 +342,7 @@ impl Default for Bestmove {
     }
 }
 impl Bestmove {
-    pub fn to_movement(&self) -> Option<Movement> {
+    pub fn to_movement(&self) -> Movement {
         Movement::from_hash(self.movement_hash)
     }
     pub fn catch_king(&mut self, movement_hash: u64) {
@@ -532,7 +522,7 @@ pub struct PrincipalVariation {
 impl Default for PrincipalVariation {
     fn default() -> Self {
         PrincipalVariation {
-            // ゴミの値で埋めるぜ☆（＾～＾）
+            // 投了で埋めるぜ☆（＾～＾）
             moves: [Movement::default(); PLY_LEN],
             ply: 0,
         }
@@ -546,7 +536,7 @@ impl PrincipalVariation {
 
     fn pop(&mut self) {
         self.ply -= 1;
-        // ゴミの値は消さないぜ☆（＾～＾）
+        self.moves[self.ply].clear();
     }
 
     fn len(&self) -> usize {
@@ -556,7 +546,7 @@ impl PrincipalVariation {
 impl fmt::Display for PrincipalVariation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
-        for i in 0..self.ply {
+        for i in 0..=self.ply {
             buffer.push_str(&format!("{} ", self.moves[i]));
         }
         write!(f, "{}", buffer.trim_end())

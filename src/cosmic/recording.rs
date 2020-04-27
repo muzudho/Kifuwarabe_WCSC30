@@ -70,47 +70,41 @@ impl History {
 }
 
 /// 棋譜にも使うので、取った駒の情報を記憶しておくんだぜ☆（＾～＾）
-/// 投了なら これを使わず、None にしろだぜ☆（＾～＾）
 ///
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy)]
 pub struct Movement {
-    // 移動元升。Dropのときは None だぜ☆（＾～＾）
+    // 移動元升。
     pub source: Option<AbsoluteAddress>,
-    // 移動先升。
-    pub destination: AbsoluteAddress,
+    // 移動先升。これが None なら投了とするぜ☆（＾～＾）
+    pub destination: Option<AbsoluteAddress>,
     // 移動後に成るなら真
     pub promote: bool,
     // 打の場合、打った駒種類
     pub drop: Option<HandAddressType>,
 }
 impl Default for Movement {
-    /// ゴミの値を作るぜ☆（＾～＾）
     fn default() -> Self {
         Movement {
             source: None,
-            destination: AbsoluteAddress::default(),
+            destination: None,
             promote: false,
             drop: None,
         }
     }
 }
 impl Movement {
-    pub fn from_hash(hash: u64) -> Option<Movement> {
-        if hash == 0 {
-            None
-        } else {
-            // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-            let (hash, src52) = pop_sq_from_hash(hash);
-            let (hash, dst53) = pop_sq_from_hash(hash);
-            let (hash, pro54) = pop_bool_from_hash(hash);
-            let (_hash, drop55) = pop_drop_from_hash(hash);
-            Some(Movement {
-                source: src52,
-                destination: dst53.unwrap(),
-                promote: pro54,
-                drop: drop55,
-            })
+    pub fn from_hash(hash: u64) -> Movement {
+        // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
+        let (hash, src52) = pop_sq_from_hash(hash);
+        let (hash, dst53) = pop_sq_from_hash(hash);
+        let (hash, pro54) = pop_bool_from_hash(hash);
+        let (_hash, drop55) = pop_drop_from_hash(hash);
+        Movement {
+            source: src52,
+            destination: dst53,
+            promote: pro54,
+            drop: drop55,
         }
     }
 
@@ -119,18 +113,20 @@ impl Movement {
         // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
         hash = push_drop_to_hash(hash, self.drop);
         hash = push_bool_to_hash(hash, self.promote);
-        hash = push_sq_to_hash(hash, Some(&self.destination));
+        hash = push_sq_to_hash(hash, self.destination.as_ref());
         push_sq_to_hash(hash, self.source.as_ref())
     }
 
-    /*
+    pub fn resign(&self) -> bool {
+        self.destination.is_none()
+    }
+
     pub fn clear(&mut self) {
         self.source = None;
         self.destination = None;
         self.promote = false;
         self.drop = None;
     }
-    */
     pub fn set(&mut self, b: &Movement) {
         self.source = b.source;
         self.destination = b.destination;
@@ -140,7 +136,13 @@ impl Movement {
 }
 impl fmt::Display for Movement {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let (dx, dy) = self.destination.to_file_rank();
+        // 手が何もない、ぐらいの意味だが、
+        // その手を指す場合、投了表示
+        if self.resign() {
+            return write!(f, "resign");
+        }
+
+        let (dx, dy) = self.destination.unwrap().to_file_rank();
 
         if let Some(source_val) = self.source {
             let (sx, sy) = source_val.to_file_rank();
@@ -189,7 +191,7 @@ impl fmt::Debug for Movement {
             } else {
                 0
             },
-            self.destination.address(),
+            self.destination.unwrap().address(),
             self.promote,
             if let Some(drp) = self.drop {
                 format!("{:?}", drp)

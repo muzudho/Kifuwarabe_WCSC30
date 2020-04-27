@@ -246,7 +246,9 @@ impl Game {
                 };
 
             // 移動先升に駒があるかどうか
-            cap = if let Some(collision_piece) = self.board.pop_from_board(&movement.destination) {
+            cap = if let Some(collision_piece) =
+                self.board.pop_from_board(&movement.destination.unwrap())
+            {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let captured_piece = (
                     collision_piece.0.captured(speed_of_light),
@@ -260,7 +262,7 @@ impl Game {
 
             // 移動先升に駒を置く
             self.board
-                .push_to_board(&movement.destination, moveing_piece);
+                .push_to_board(&movement.destination.unwrap(), moveing_piece);
         }
         self.set_captured(self.history.ply as usize, cap);
 
@@ -282,36 +284,39 @@ impl Game {
                 let captured: Option<(PieceMeaning, PieceNum)> =
                     self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let moveing_piece: Option<(PieceMeaning, PieceNum)> = if let Some(_source_val) =
-                    movement.source
-                {
-                    // 打でなければ
-                    if movement.promote {
-                        // 成ったなら、成る前へ
-                        if let Some(source_piece) = self.board.pop_from_board(&movement.destination)
-                        {
-                            Some((source_piece.0.demoted(speed_of_light), source_piece.1))
+                let moveing_piece: Option<(PieceMeaning, PieceNum)> =
+                    if let Some(_source_val) = movement.source {
+                        // 打でなければ
+                        if movement.promote {
+                            // 成ったなら、成る前へ
+                            if let Some(source_piece) =
+                                self.board.pop_from_board(&movement.destination.unwrap())
+                            {
+                                Some((source_piece.0.demoted(speed_of_light), source_piece.1))
+                            } else {
+                                panic!(Beam::trouble(
+                                    "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
+                                ))
+                            }
                         } else {
-                            panic!(Beam::trouble(
-                                "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
-                            ))
+                            self.board.pop_from_board(&movement.destination.unwrap())
                         }
                     } else {
-                        self.board.pop_from_board(&movement.destination)
-                    }
-                } else {
-                    if let Some(_drp) = movement.drop {
-                        // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        let piece = self.board.pop_from_board(&movement.destination).unwrap();
-                        // 自分の持ち駒を増やそうぜ☆（＾～＾）！
-                        self.board.push_hand(&piece, speed_of_light);
-                        Some(piece)
-                    } else {
-                        panic!(Beam::trouble(
-                            "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！"
-                        ))
-                    }
-                };
+                        if let Some(_drp) = movement.drop {
+                            // 打った場所に駒があるはずだぜ☆（＾～＾）
+                            let piece = self
+                                .board
+                                .pop_from_board(&movement.destination.unwrap())
+                                .unwrap();
+                            // 自分の持ち駒を増やそうぜ☆（＾～＾）！
+                            self.board.push_hand(&piece, speed_of_light);
+                            Some(piece)
+                        } else {
+                            panic!(Beam::trouble(
+                                "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！"
+                            ))
+                        }
+                    };
 
                 if let Some(captured_piece_val) = captured {
                     // 自分の持ち駒を減らす
@@ -322,7 +327,8 @@ impl Game {
                             .hand_address(speed_of_light),
                     );
                     // 移動先の駒を、取った駒（あるいは空）に戻す
-                    self.board.push_to_board(&movement.destination, captured);
+                    self.board
+                        .push_to_board(&movement.destination.unwrap(), captured);
                 }
 
                 if let Some(source_val) = movement.source {
