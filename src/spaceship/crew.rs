@@ -89,6 +89,9 @@ impl Kifuwarabe {
                 "BoardCoverageWeightPer1000" => {
                     universe.option_board_coverage_weight = value.parse().unwrap();
                 }
+                "DepthNotToGiveUp" => {
+                    universe.option_depth_not_to_give_up = value.parse().unwrap();
+                }
                 "KomawariWeightPer1000" => {
                     universe.option_komawari_weight = value.parse().unwrap();
                 }
@@ -121,18 +124,23 @@ impl Kifuwarabe {
         IO::writeln("option name ResetLearning type button");
         IO::writeln("option name LearningFile type filename default <empty>");
         */
-        Beam::shoot(
-            "option name BoardCoverageWeightPer1000 type spin default 1000 min -100000 max 100000",
-        );
+        // アルファベット順ではなく、将棋所のダイアログボックスが見やすくなるように並べろだぜ☆（＾～＾）
+        // 読みの深さ関連☆（＾～＾）
+        Beam::shoot("option name DepthNotToGiveUp type spin default 2 min 1 max 5");
+        Beam::shoot("option name MaxDepth type spin default 1 min 1 max 15");
+        // 思考時間関連☆（＾～＾）
+        Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");
+        Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
+        // 評価値関連☆（＾～＾）
         Beam::shoot(
             "option name KomawariWeightPer1000 type spin default 1000 min -100000 max 100000",
         );
         Beam::shoot(
+            "option name BoardCoverageWeightPer1000 type spin default 1000 min -100000 max 100000",
+        );
+        Beam::shoot(
             "option name PromotionWeightPer1000 type spin default 1000 min -100000 max 100000",
         );
-        Beam::shoot("option name MaxDepth type spin default 1 min 1 max 15");
-        Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
-        Beam::shoot("option name MinThinkSec type spin default 5 min 1 max 600");
         Beam::shoot("usiok");
     }
     pub fn usinewgame(universe: &mut Universe) {

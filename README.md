@@ -6,10 +6,6 @@ Rust言語だぜ☆（＾～＾）　今回は　他のコンピューター将�
 
 (^_^)
 
-## Check
-
-* [v] 256手制限ルールから、320手制限ルールに変更☆（＾～＾）
-
 ## Compile
 
 Visual Studio Code `[Terminal] - [New Terminal]`.  
@@ -23,13 +19,26 @@ cargo build --release
 Shogidokoro `[対局(G)] - [エンジン管理...] - [追加...]`  
 `./target/release/rust-kifuwarabe-wcsc30.exe`
 
-## Start on the terminal
+## Debug on the terminal
 
 Visual Studio Code `[Terminal] - [New Terminal]`.  
 
 ```Shell
-cargo run --release
+cargo run
 ```
+
+## Engin options
+
+* `BoardCoverageWeightPer1000` - 千分率。相手と比べて、盤面に利かせている数。
+* `DepthNotToGiveUp` - 思考時間の上限を無視して考え続ける深さ。MaxThinkSec より強い。
+* `KomawariWeightPer1000` - 千分率。駒割。
+* `MaxDepth` - この深さを読んだら決断。
+* `MaxThinkSec` - 秒。１手にかける思考時間の上限。
+* `MinThinkSec` - 秒。１手にかける思考時間の下限。MaxDepth より弱い。
+
+## Done
+
+* [x] 320手制限ルールに対応☆（＾～＾）
 
 ## エラーが出た局面
 

@@ -18,6 +18,8 @@ pub struct Universe {
     pub option_max_think_sec: u64,
     /// 盤面をカバーする利きの多さ☆（＾～＾）1000分率☆（＾～＾）
     pub option_board_coverage_weight: i32,
+    /// 諦めない深さ☆（＾～＾）読み終わるまで、思考時間を無視するぜ☆（＾～＾）max_depth - 1 より小さくしろだぜ☆（＾～＾）
+    pub option_depth_not_to_give_up: u8,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
     pub option_komawari_weight: i32,
     /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
@@ -29,6 +31,7 @@ impl Default for Universe {
             game: Game::default(),
             dialogue_mode: false,
             option_max_depth: 1,
+            option_depth_not_to_give_up: 2,
             /// min < max にしろだぜ☆（＾～＾）
             option_min_think_sec: 7,
             option_max_think_sec: 17,
