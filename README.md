@@ -30,8 +30,9 @@ cargo run
 ## Engin options
 
 * `BoardCoverageWeightPer1000` - 千分率。相手と比べて、盤面に利かせている数。
-* `DepthNotToGiveUp` - 思考時間の上限を無視して考え続ける深さ。MaxThinkSec より強い。
+* `DepthNotToGiveUp` - 思考時間の上限を無視して考え続ける深さ。MaxThinkSec より強い。玉を取られたら負けと判定しているので、王手放置漏れを回避するために最低４手は探索する必要があるぜ☆（＾～＾）そして５手は読まないと王手のために角をすぐ切るぜ☆（＾～＾）
 * `KomawariWeightPer1000` - 千分率。駒割。
+* `PromotionWeightPer1000` - 千分率。成らないよりは成った方がお得だぜ、ということを教えるだけだぜ☆（＾～＾）大きくすると、歩と交換で角が成り込むぜ☆（＾～＾）
 * `MaxDepth` - この深さを読んだら決断。
 * `MaxThinkSec` - 秒。１手にかける思考時間の上限。
 * `MinThinkSec` - 秒。１手にかける思考時間の下限。MaxDepth より弱い。

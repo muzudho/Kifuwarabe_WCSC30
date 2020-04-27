@@ -104,18 +104,18 @@ impl Evaluation {
         self.promotion_value -= delta_promotion;
     }
 
-    /// 成ったら評価に加点するぜ☆（＾～＾）
-    /// 駒得より 評価は下げた方が良さげ☆（＾～＾）
+    /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
+    /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
     pub fn promotion_value(adr: HandAddressType) -> i16 {
         match adr {
             HandAddressType::King => 0,
-            HandAddressType::Rook => 100,
-            HandAddressType::Bishop => 90,
+            HandAddressType::Rook => 1,
+            HandAddressType::Bishop => 1,
             HandAddressType::Gold => 0,
-            HandAddressType::Silver => 40,
-            HandAddressType::Knight => 20,
-            HandAddressType::Lance => 10,
-            HandAddressType::Pawn => 50,
+            HandAddressType::Silver => 0,
+            HandAddressType::Knight => 1,
+            HandAddressType::Lance => 1,
+            HandAddressType::Pawn => 1,
         }
     }
 

@@ -126,8 +126,8 @@ impl Kifuwarabe {
         */
         // アルファベット順ではなく、将棋所のダイアログボックスが見やすくなるように並べろだぜ☆（＾～＾）
         // 読みの深さ関連☆（＾～＾）
-        Beam::shoot("option name DepthNotToGiveUp type spin default 2 min 1 max 5");
-        Beam::shoot("option name MaxDepth type spin default 1 min 1 max 15");
+        Beam::shoot("option name DepthNotToGiveUp type spin default 5 min 1 max 8");
+        Beam::shoot("option name MaxDepth type spin default 7 min 1 max 15");
         // 思考時間関連☆（＾～＾）
         Beam::shoot("option name MinThinkSec type spin default 5 min 0 max 599");
         Beam::shoot("option name MaxThinkSec type spin default 17 min 1 max 600");
