@@ -914,7 +914,7 @@ impl Area {
         angle: Angle,
         agility: Agility,
         speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
+        adr_get: &mut F1,
     ) where
         F1: FnMut(AbsoluteAddress) -> bool,
     {
@@ -930,7 +930,7 @@ impl Area {
                         break;
                     }
 
-                    if callback(cur) {
+                    if adr_get(cur) {
                         break;
                     }
                 }
@@ -943,7 +943,7 @@ impl Area {
                 cur.offset(speed_of_light.west_ccw_double_rank(angle));
 
                 if cur.legal_cur() {
-                    callback(cur);
+                    adr_get(cur);
                 }
             }
             Agility::Hopping => {
@@ -953,7 +953,7 @@ impl Area {
                 cur.offset(speed_of_light.west_ccw(angle));
 
                 if cur.legal_cur() {
-                    callback(cur);
+                    adr_get(cur);
                 }
             }
         }
