@@ -163,21 +163,30 @@ impl Tree {
             return ts;
         }
 
-        // 指し手のオーダリングをしたいぜ☆（＾～＾） TODO 取った駒は指し手生成の段階で調べているし☆（＾～＾）
+        // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
         if 1 < ways.len() {
-            let mut head = 0;
-            for i in 1..ways.len() {
-                if let Some(captured) = ways[i].1 {
-                    match captured.0.r#type(speed_of_light) {
-                        PieceType::King => {
-                            // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
-                            let temp = ways[head];
-                            ways[head] = ways[i];
-                            ways[i] = temp;
-                            head += 1;
-                        }
-                        _ => {}
+            let mut cap = 0;
+            for i in 0..ways.len() {
+                if let Some(_captured) = ways[i].1 {
+                    // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
+                    let temp = ways[cap];
+                    ways[cap] = ways[i];
+                    ways[i] = temp;
+                    cap += 1;
+                }
+            }
+            // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
+            let mut king = 0;
+            for i in 0..cap {
+                match ways[i].1.unwrap().0.r#type(speed_of_light) {
+                    PieceType::King => {
+                        // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
+                        let temp = ways[king];
+                        ways[king] = ways[i];
+                        ways[i] = temp;
+                        king += 1;
                     }
+                    _ => {}
                 }
             }
         }
