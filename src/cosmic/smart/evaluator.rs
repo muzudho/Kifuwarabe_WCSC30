@@ -1,11 +1,11 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::cosmic::smart::features::{HandAddressType, PieceMeaning};
+use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
 
-/// 千日手の価値☆（＾～＾）
+/// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: isize = -300;
 
 pub struct Evaluation {
@@ -78,7 +78,7 @@ impl Evaluation {
                 .r#type(speed_of_light)
                 .promoted(speed_of_light)
             {
-                Evaluation::promotion_value(captured_piece_val.0.hand_address(&speed_of_light).r#type(&speed_of_light))
+                speed_of_light.promotion_value[captured_piece_val.0.hand_address(&speed_of_light).r#type(&speed_of_light)as usize]
             } else {
                 0
             }
@@ -89,7 +89,7 @@ impl Evaluation {
         +
         if let Some(source_piece_val) = source_piece {
             if promotion {
-                Evaluation::promotion_value(source_piece_val.0.hand_address(speed_of_light).r#type(&speed_of_light))
+                speed_of_light.promotion_value[source_piece_val.0.hand_address(speed_of_light).r#type(&speed_of_light)as usize]
             } else {
                 0
             }
@@ -108,21 +108,6 @@ impl Evaluation {
         self.promotion_value -= delta_promotion;
     }
 
-    /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
-    /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
-    pub fn promotion_value(adr: HandAddressType) -> isize {
-        match adr {
-            HandAddressType::King => 0,
-            HandAddressType::Rook => 1,
-            HandAddressType::Bishop => 1,
-            HandAddressType::Gold => 0,
-            HandAddressType::Silver => 0,
-            HandAddressType::Knight => 1,
-            HandAddressType::Lance => 1,
-            HandAddressType::Pawn => 1,
-        }
-    }
-
     /// 取った駒は相手の駒に決まってるぜ☆（＾～＾）
     /// 読みを深めていくと、当たってる駒を　あとで取っても同じだろ、とか思って取らないのは、駒割ではなく、別の方法で対応してくれだぜ☆（＾～＾）
     ///
@@ -134,22 +119,10 @@ impl Evaluation {
         speed_of_light: &SpeedOfLight,
     ) -> isize {
         if let Some(captured_piece_val) = captured_piece {
-            match captured_piece_val
+            speed_of_light.caputured_piece_value[captured_piece_val
                 .0
                 .hand_address(speed_of_light)
-                .r#type(speed_of_light)
-            {
-                // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
-                HandAddressType::King => 0,
-                // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
-                HandAddressType::Rook => 1000,
-                HandAddressType::Bishop => 900,
-                HandAddressType::Gold => 600,
-                HandAddressType::Silver => 500,
-                HandAddressType::Knight => 300,
-                HandAddressType::Lance => 200,
-                HandAddressType::Pawn => 100,
-            }
+                .r#type(speed_of_light) as usize]
         } else {
             0
         }

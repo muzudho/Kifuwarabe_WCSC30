@@ -9,6 +9,7 @@
 //!
 use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
+use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::PIECE_MEANING_LEN;
 use crate::cosmic::smart::features::PIECE_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
@@ -30,6 +31,12 @@ pub struct SpeedOfLight {
     // 相対番地と角度☆（＾～＾）
     pub west_ccw: [RelAdr; ANGLE_LEN],
     pub west_ccw_double_rank: [RelAdr; ANGLE_LEN],
+
+    /// 評価値☆（＾～＾）
+    /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
+    /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
+    pub promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
+    pub caputured_piece_value: [isize; HAND_ADDRESS_TYPE_LEN],
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
@@ -367,6 +374,15 @@ impl Default for SpeedOfLight {
                     .rotate(Angle::Ccw315)
                     .double_rank()
                     .clone(),
+            ],
+
+            // 評価値☆（＾～＾）
+            promotion_value: [0, 1, 1, 0, 0, 1, 1, 1],
+            caputured_piece_value: [
+                // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
+                0,
+                // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
+                1000, 900, 600, 500, 300, 200, 100,
             ],
         }
     }
