@@ -7,8 +7,8 @@ use crate::cosmic::smart::features::HandAddress;
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Address, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,
-    RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
+    AbsoluteAddress, Address, Angle, Degree45Orthant, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10,
+    RANK_2, RANK_3, RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
@@ -651,7 +651,12 @@ impl Area {
             Agility::Sliding => {
                 let mut cur = start.clone();
                 let rel1 = Address::new(1, 0).rel();
-                let rel = RelAdr::rotate(rel1.get_degree45_orthant(), angle, rel1.to_rel_adr());
+                let rel = RelAdr::rotate(
+                    Degree45Orthant::new(rel1.to_rel_adr()),
+                    angle,
+                    rel1.to_rel_adr(),
+                );
+
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
                     cur.offset(rel);
@@ -671,7 +676,7 @@ impl Area {
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 let rel1 = Address::new(1, 0).rel();
                 cur.offset(RelAdr::double_rank(RelAdr::rotate(
-                    rel1.get_degree45_orthant(),
+                    Degree45Orthant::new(rel1.to_rel_adr()),
                     angle,
                     rel1.to_rel_adr(),
                 )));
@@ -686,7 +691,7 @@ impl Area {
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 let rel1 = Address::new(1, 0).rel();
                 cur.offset(RelAdr::rotate(
-                    rel1.get_degree45_orthant(),
+                    Degree45Orthant::new(rel1.to_rel_adr()),
                     angle,
                     rel1.to_rel_adr(),
                 ));
