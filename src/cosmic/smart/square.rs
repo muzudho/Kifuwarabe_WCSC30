@@ -297,10 +297,10 @@ pub fn test_rotation() {
 // pub type isquare = i8;
 
 // 枠も使う☆（＾～＾）配列サイズなので 1 大きめだぜ☆（＾～＾）
-pub const BOARD_MEMORY_AREA: i8 = 111;
+pub const BOARD_MEMORY_AREA: usize = 111;
 
 /// 筋、段は 1 から始まる、という明示。
-/// 増減はよく使うので u8 ではなく i8 にした。
+/// usize が速い☆（＾～＾）
 pub const FILE_0: usize = 0;
 pub const FILE_1: usize = 1;
 pub const FILE_9: usize = 9;
@@ -320,7 +320,7 @@ pub const RANK_10: usize = 10;
 pub const RANK_11: usize = 11;
 
 /// 升の検索等で、該当なしの場合
-pub const SQUARE_NONE: i8 = 0;
+pub const SQUARE_NONE: usize = 0;
 
 #[derive(Debug)]
 pub enum DictOrthant {
@@ -534,11 +534,11 @@ impl Address {
 /// メモリを使わないようにしようぜ☆（＾～＾）
 #[derive(Clone)]
 pub struct RelAdr {
-    file: i8,
-    rank: i8,
+    file: isize,
+    rank: isize,
 }
 impl RelAdr {
-    pub fn new(file: i8, rank: i8) -> Self {
+    pub fn new(file: isize, rank: isize) -> Self {
         RelAdr {
             file: file,
             rank: rank,
@@ -548,7 +548,7 @@ impl RelAdr {
     /// Arguments
     /// ---------
     /// * `r` - (Relative file, relative rank).
-    pub fn get_address(&self) -> i8 {
+    pub fn get_address(&self) -> isize {
         10 * self.file + self.rank
     }
 
@@ -764,7 +764,7 @@ impl AbsoluteAddress {
     pub fn offset(&mut self, r: &RelAdr) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
-        let sum = (self.address() as i8 + r.get_address()) as usize;
+        let sum = (self.address() as isize + r.get_address()) as usize;
 
         // Initialize.
         self.rank = sum % 10;
