@@ -8,6 +8,8 @@ use crate::cosmic::recording::Phase;
 use num_derive::FromPrimitive;
 use std::fmt;
 
+pub const PIECE_MEANING_LEN: usize = 28;
+
 ///
 /// 先後付きの駒と空白。
 /// 接尾辞の 1 は先手、 2 は後手。
@@ -75,7 +77,6 @@ pub enum PieceMeaning {
 
 // 持ち駒の駒のうち、最大の枚数は歩の 18。
 pub const HAND_MAX: usize = 18;
-pub const PIECE_LEN: usize = 30;
 // Note: 持ち駒には玉も含むぜ☆（＾～＾）
 pub const HAND_ADDRESS_LEN: usize = 16;
 pub static PIECE_WHITE_SPACE: &str = "    ";
