@@ -117,6 +117,8 @@ impl fmt::Display for PieceMeaning {
     }
 }
 
+pub const PIECE_TYPE_LEN: usize = 14;
+
 /// USIでCopyするので、Copyが要る。
 #[derive(Copy, Clone, PartialEq)]
 pub enum PieceType {

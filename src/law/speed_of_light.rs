@@ -9,6 +9,7 @@
 //!
 use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
+use crate::cosmic::smart::features::PIECE_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use num_traits::FromPrimitive;
@@ -47,21 +48,9 @@ pub struct SpeedOfLight {
     pub promoted_pawn2: PieceChart,
 
     /// 駒種類☆（＾～＾）
-    pub king: PieceTypeChart,
-    pub rook: PieceTypeChart,
-    pub bishop: PieceTypeChart,
-    pub gold: PieceTypeChart,
-    pub silver: PieceTypeChart,
-    pub knight: PieceTypeChart,
-    pub lance: PieceTypeChart,
-    pub pawn: PieceTypeChart,
-    pub promoted_rook: PieceTypeChart,
-    pub promoted_bishop: PieceTypeChart,
-    pub promoted_silver: PieceTypeChart,
-    pub promoted_knight: PieceTypeChart,
-    pub promoted_lance: PieceTypeChart,
-    pub promoted_pawn: PieceTypeChart,
+    pub piece_type_table: [PieceTypeChart; PIECE_TYPE_LEN],
 
+    /// 持ち駒数☆（＾～＾）
     pub hand_address_table: [HandAddressChart; HAND_ADDRESS_LEN],
 
     // 相対番地と角度☆（＾～＾）
@@ -101,21 +90,26 @@ impl Default for SpeedOfLight {
             promoted_knight2: PieceChart::from_piece(PromotedKnight2),
             promoted_lance2: PieceChart::from_piece(PromotedLance2),
             promoted_pawn2: PieceChart::from_piece(PromotedPawn2),
-            king: PieceTypeChart::from_piece_type(King),
-            rook: PieceTypeChart::from_piece_type(Rook),
-            bishop: PieceTypeChart::from_piece_type(Bishop),
-            gold: PieceTypeChart::from_piece_type(Gold),
-            silver: PieceTypeChart::from_piece_type(Silver),
-            knight: PieceTypeChart::from_piece_type(Knight),
-            lance: PieceTypeChart::from_piece_type(Lance),
-            pawn: PieceTypeChart::from_piece_type(Pawn),
-            promoted_rook: PieceTypeChart::from_piece_type(Dragon),
-            promoted_bishop: PieceTypeChart::from_piece_type(Horse),
-            promoted_silver: PieceTypeChart::from_piece_type(PromotedSilver),
-            promoted_knight: PieceTypeChart::from_piece_type(PromotedKnight),
-            promoted_lance: PieceTypeChart::from_piece_type(PromotedLance),
-            promoted_pawn: PieceTypeChart::from_piece_type(PromotedPawn),
 
+            // 駒種類☆（＾～＾）
+            piece_type_table: [
+                PieceTypeChart::from_piece_type(King),
+                PieceTypeChart::from_piece_type(Rook),
+                PieceTypeChart::from_piece_type(Bishop),
+                PieceTypeChart::from_piece_type(Gold),
+                PieceTypeChart::from_piece_type(Silver),
+                PieceTypeChart::from_piece_type(Knight),
+                PieceTypeChart::from_piece_type(Lance),
+                PieceTypeChart::from_piece_type(Pawn),
+                PieceTypeChart::from_piece_type(Dragon),
+                PieceTypeChart::from_piece_type(Horse),
+                PieceTypeChart::from_piece_type(PromotedSilver),
+                PieceTypeChart::from_piece_type(PromotedKnight),
+                PieceTypeChart::from_piece_type(PromotedLance),
+                PieceTypeChart::from_piece_type(PromotedPawn),
+            ],
+
+            // 持ち駒数☆（＾～＾）
             hand_address_table: [
                 HandAddressChart::new(HandAddress::King1),
                 HandAddressChart::new(HandAddress::Rook1),
@@ -220,36 +214,12 @@ impl SpeedOfLight {
     /// 駒の属性を参照するぜ☆（＾～＾）
     fn piece_type_chart(&self, piece_type: &PieceType) -> &PieceTypeChart {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
-        // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
-        // &self.pieces[(*piece).clone() as usize]
-
-        // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::cosmic::smart::features::PieceType::*;
-        match *piece_type {
-            King => &self.king,
-            Rook => &self.rook,
-            Bishop => &self.bishop,
-            Gold => &self.gold,
-            Silver => &self.silver,
-            Knight => &self.knight,
-            Lance => &self.lance,
-            Pawn => &self.pawn,
-            Dragon => &self.promoted_rook,
-            Horse => &self.promoted_bishop,
-            PromotedSilver => &self.promoted_silver,
-            PromotedKnight => &self.promoted_knight,
-            PromotedLance => &self.promoted_lance,
-            PromotedPawn => &self.promoted_pawn,
-        }
+        &self.piece_type_table[*piece_type as usize]
     }
 
     /// 持ち駒の型☆（＾～＾）
     fn hand_address_chart(&self, adr: HandAddress) -> &HandAddressChart {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
-        // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
-        // &self.pieces[(*piece).clone() as usize]
-
-        // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
         &self.hand_address_table[adr as usize]
     }
 
