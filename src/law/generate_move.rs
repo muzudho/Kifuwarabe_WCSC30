@@ -650,12 +650,11 @@ impl Area {
         match agility {
             Agility::Sliding => {
                 let mut cur = start.clone();
-                let r = (1, 0);
-                let r = RelAdr::rotate(angle, r);
+                let r = RelAdr::new(1, 0).rotate(angle).clone();
 
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    cur.offset(r);
+                    cur.offset(&r);
                     if !cur.legal_cur() {
                         break;
                     }
@@ -670,8 +669,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                let r = (1, 0);
-                cur.offset(RelAdr::double_rank(RelAdr::rotate(angle, r)));
+                cur.offset(RelAdr::new(1, 0).rotate(angle).double_rank());
 
                 if cur.legal_cur() {
                     callback(cur);
@@ -681,8 +679,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                let r = (1, 0);
-                cur.offset(RelAdr::rotate(angle, r));
+                cur.offset(RelAdr::new(1, 0).rotate(angle));
 
                 if cur.legal_cur() {
                     callback(cur);
