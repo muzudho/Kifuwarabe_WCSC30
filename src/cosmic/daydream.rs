@@ -249,12 +249,24 @@ impl Tree {
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
+                /*
                 if let Some(_captured) = way.1 {
+                    // TODO SEE. Static exchange variation.
                     // 葉で駒を取ったら、取り返されるのも考慮しないとな☆（＾～＾）
 
-                    // TODO 行ってこいだぜ☆（＾～＾）
-                    {}
+                    // 移動先升に利きのある駒が無くなるまで繰り返すぜ☆（＾～＾）
+                    loop {
+                        let mut cur =
+                            Address::from_absolute_address(movement.destination.address()).unwrap();
+                        // 西
+                        cur.offset(&RelativeAddress::new(&RelAdr::new(1, 0)));
+                        if cur.legal_cur() {
+                            let piece = game.board.piece_at(&cur);
+                        }
+                        break;
+                    }
                 }
+                */
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
                 let board_coverage_value: i16 = coverage_sign * game.board.coverage_value();

@@ -135,77 +135,117 @@ pub fn test_rotation() {
     {
         let mut rsq = Address::new(0, -1).rel();
         test_rsq("a1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a2", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a3", "(1x 0y 10adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a4", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a5", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a6", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a7", "(-1x 0y -10adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a8", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.rotate_45_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_45_countercrockwise(
+            rsq.get_degree45_orthant(),
+            rsq.to_rel_adr(),
+        ));
         test_rsq("a9", "(0x -1y -1adr)", &rsq);
     }
     // 90°回転のテスト＜その１＞
     {
         let mut rsq = Address::new(0, -1).rel();
         test_rsq("c1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("c2", "(1x 0y 10adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("c3", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("c4", "(-1x 0y -10adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("c5", "(0x -1y -1adr)", &rsq);
     }
     // 90°回転のテスト＜その２＞
     {
         let mut rsq = Address::new(1, -1).rel();
         test_rsq("d1", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("d2", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("d3", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("d4", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.rotate_90_countercrockwise();
+        rsq = RelativeAddress::new(&RelAdr::rotate_90_countercrockwise(rsq.to_rel_adr()));
         test_rsq("d5", "(1x -1y 9adr)", &rsq);
     }
     // 桂馬のテスト
     {
         let mut rsq = Address::new(0, -1).rel();
         test_rsq("g1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw45);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw45,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("g2", "(1x -1y 9adr)", &rsq);
-        rsq = rsq.double_rank();
+        rsq = RelativeAddress::new(&RelAdr::double_rank(rsq.to_rel_adr()));
         test_rsq("g3", "(1x -2y 8adr)", &rsq);
 
         let mut rsq = Address::new(0, -1).rel();
         test_rsq("g4", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw315);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw315,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("g5", "(-1x -1y -11adr)", &rsq);
-        rsq = rsq.double_rank();
+        rsq = RelativeAddress::new(&RelAdr::double_rank(rsq.to_rel_adr()));
         test_rsq("g6", "(-1x -2y -12adr)", &rsq);
 
         let mut rsq = Address::new(0, 1).rel();
         test_rsq("g7", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw45);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw45,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("g8", "(-1x 1y -9adr)", &rsq);
-        rsq = rsq.double_rank();
+        rsq = RelativeAddress::new(&RelAdr::double_rank(rsq.to_rel_adr()));
         test_rsq("g9", "(-1x 2y -8adr)", &rsq);
 
         let mut rsq = Address::new(0, 1).rel();
         test_rsq("g10", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw315);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw315,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("g11", "(1x 1y 11adr)", &rsq);
-        rsq = rsq.double_rank();
+        rsq = RelativeAddress::new(&RelAdr::double_rank(rsq.to_rel_adr()));
         test_rsq("g12", "(1x 2y 12adr)", &rsq);
     }
     // 角度指定回転のテスト(北から)
@@ -213,42 +253,74 @@ pub fn test_rotation() {
         // 0
         let mut rsq = Address::new(0, -1).rel();
         test_rsq("h1", "(0x -1y -1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw0);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw0,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h2", "(0x -1y -1adr)", &rsq);
 
         // 45
         rsq = Address::new(0, -1).rel();
-        rsq = rsq.rotate(Angle::Ccw45);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw45,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h3", "(1x -1y 9adr)", &rsq);
 
         // 90
         rsq = Address::new(0, -1).rel();
-        rsq = rsq.rotate(Angle::Ccw90);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw90,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h4", "(1x 0y 10adr)", &rsq);
 
         // 135
         rsq = Address::new(0, -1).rel();
-        rsq = rsq.rotate(Angle::Ccw135);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw135,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h5", "(1x 1y 11adr)", &rsq);
 
         // 180
         rsq = Address::new(0, -1).rel();
-        rsq = rsq.rotate(Angle::Ccw180);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw180,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h6", "(0x 1y 1adr)", &rsq);
 
         // 225
         rsq = Address::new(0, -1).rel();
-        rsq = rsq.rotate(Angle::Ccw225);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw225,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h7", "(-1x 1y -9adr)", &rsq);
 
         // 270
         rsq = Address::new(0, -1).rel();
-        rsq = rsq.rotate(Angle::Ccw270);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw270,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h8", "(-1x 0y -10adr)", &rsq);
 
         // 315
         rsq = Address::new(0, -1).rel();
-        rsq = rsq.rotate(Angle::Ccw315);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw315,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h9", "(-1x -1y -11adr)", &rsq);
     }
     // 角度指定回転のテスト(南から)
@@ -256,42 +328,74 @@ pub fn test_rotation() {
         // 0
         let mut rsq = Address::new(0, 1).rel();
         test_rsq("h1", "(0x 1y 1adr)", &rsq);
-        rsq = rsq.rotate(Angle::Ccw0);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw0,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h2", "(0x 1y 1adr)", &rsq);
 
         // 45
         rsq = Address::new(0, 1).rel();
-        rsq = rsq.rotate(Angle::Ccw45);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw45,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h3", "(-1x 1y -9adr)", &rsq);
 
         // 90
         rsq = Address::new(0, 1).rel();
-        rsq = rsq.rotate(Angle::Ccw90);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw90,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h4", "(-1x 0y -10adr)", &rsq);
 
         // 135
         rsq = Address::new(0, 1).rel();
-        rsq = rsq.rotate(Angle::Ccw135);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw135,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h5", "(-1x -1y -11adr)", &rsq);
 
         // 180
         rsq = Address::new(0, 1).rel();
-        rsq = rsq.rotate(Angle::Ccw180);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw180,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h6", "(0x -1y -1adr)", &rsq);
 
         // 225
         rsq = Address::new(0, 1).rel();
-        rsq = rsq.rotate(Angle::Ccw225);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw225,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h7", "(1x -1y 9adr)", &rsq);
 
         // 270
         rsq = Address::new(0, 1).rel();
-        rsq = rsq.rotate(Angle::Ccw270);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw270,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h8", "(1x 0y 10adr)", &rsq);
 
         // 315
         rsq = Address::new(0, 1).rel();
-        rsq = rsq.rotate(Angle::Ccw315);
+        rsq = RelativeAddress::new(&RelAdr::rotate(
+            rsq.get_degree45_orthant(),
+            Angle::Ccw315,
+            rsq.to_rel_adr(),
+        ));
         test_rsq("h9", "(1x 1y 11adr)", &rsq);
     }
 }
@@ -529,7 +633,7 @@ impl Address {
     }
 
     pub fn rel(&self) -> RelativeAddress {
-        RelativeAddress::new(self.file, self.rank)
+        RelativeAddress::new(&RelAdr::new(self.file, self.rank))
     }
 }
 
@@ -543,87 +647,35 @@ impl Address {
 ///
 /// file, rank から 相対番地は作れますが、相対番地から file, rank を作ることはできません(不定)。
 /// そこから、 file, rank で持ちます。
-#[derive(Clone)]
-pub struct RelativeAddress {
-    file: i8,
-    rank: i8,
-}
-impl RelativeAddress {
-    pub fn new(file1: i8, rank1: i8) -> Self {
-        RelativeAddress {
-            file: file1,
-            rank: rank1,
-        }
+///
+/// メモリを使わないようにしようぜ☆（＾～＾）
+pub struct RelAdr {}
+impl RelAdr {
+    pub fn new(file1: i8, rank1: i8) -> (i8, i8) {
+        (file1, rank1)
     }
 
-    pub fn get_address(&self) -> i8 {
-        10 * self.file + self.rank
+    pub fn get_address(rel_adr: (i8, i8)) -> i8 {
+        10 * rel_adr.0 + rel_adr.1
+    }
+    pub fn rotate_180(rel_adr: (i8, i8)) -> (i8, i8) {
+        (-rel_adr.0, -rel_adr.1)
     }
 
-    pub fn get_degree45_orthant(&self) -> Degree45Orthant {
-        Degree45Orthant::from_file_and_rank(self.file, self.rank)
-    }
-
-    pub fn rotate(&self, angle: Angle) -> Self {
-        use crate::cosmic::smart::square::Angle::*;
-        match angle {
-            Ccw0 => RelativeAddress {
-                file: self.file,
-                rank: self.rank,
-            },
-            Ccw45 => self.rotate_45_countercrockwise(),
-            Ccw90 => self.rotate_90_countercrockwise(),
-            Ccw135 => self
-                .rotate_90_countercrockwise()
-                .rotate_45_countercrockwise(),
-            Ccw180 => self.rotate_180(),
-            Ccw225 => self.rotate_180().rotate_45_countercrockwise(),
-            Ccw270 => self.rotate_180().rotate_90_countercrockwise(),
-            Ccw315 => self
-                .rotate_180()
-                .rotate_90_countercrockwise()
-                .rotate_45_countercrockwise(),
-        }
-    }
-
-    /// 段を２倍にします。桂馬に使います。
-    pub fn double_rank(&self) -> Self {
-        let new_rank = 2 * self.rank;
-        let carry = new_rank / 10;
-        let new_file = if carry != 0 {
-            self.file + carry
-        } else {
-            self.file
-        };
-        RelativeAddress {
-            file: new_file,
-            rank: new_rank,
-        }
-    }
-
-    pub fn rotate_180(&self) -> Self {
-        RelativeAddress {
-            file: -self.file,
-            rank: -self.rank,
-        }
-    }
-
-    pub fn rotate_90_countercrockwise(&self) -> Self {
+    pub fn rotate_90_countercrockwise(rel_adr: (i8, i8)) -> (i8, i8) {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
         // でも、 90°回転のときは 象限は１つしかないけどな☆（＾～＾）全象限同じ式だぜ☆（*＾～＾*）
-        let new_file = -self.rank;
-        let new_rank = self.file;
-        RelativeAddress::new(new_file, new_rank)
+        (-rel_adr.1, rel_adr.0)
     }
 
-    pub fn rotate_45_countercrockwise(&self) -> Self {
+    pub fn rotate_45_countercrockwise(orthant: Degree45Orthant, rel_adr: (i8, i8)) -> (i8, i8) {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
-        let orthant = self.get_degree45_orthant();
-        let (new_file, new_rank) = match orthant {
+        // let orthant = self.get_degree45_orthant();
+        match orthant {
             Degree45Orthant::IVOrI => {
-                let distance = self.file;
-                let mut new_file = self.file;
-                let mut new_rank = self.rank + distance;
+                let distance = rel_adr.0;
+                let mut new_file = rel_adr.0;
+                let mut new_rank = rel_adr.1 + distance;
                 let over = new_rank.abs() - distance.abs();
                 if 0 < over {
                     new_rank = distance;
@@ -632,9 +684,9 @@ impl RelativeAddress {
                 (new_file, new_rank)
             }
             Degree45Orthant::IIOrIII => {
-                let distance = self.file;
-                let mut new_file = self.file;
-                let mut new_rank = self.rank + distance;
+                let distance = rel_adr.0;
+                let mut new_file = rel_adr.0;
+                let mut new_rank = rel_adr.1 + distance;
                 let over = new_rank.abs() - distance.abs();
                 if 0 < over {
                     new_rank = distance;
@@ -643,9 +695,9 @@ impl RelativeAddress {
                 (new_file, new_rank)
             }
             Degree45Orthant::CoIOrCoII => {
-                let distance = self.rank;
-                let mut new_file = self.file - distance;
-                let mut new_rank = self.rank;
+                let distance = rel_adr.1;
+                let mut new_file = rel_adr.0 - distance;
+                let mut new_rank = rel_adr.1;
                 let over = new_rank.abs() - distance.abs();
                 if 0 < over {
                     new_file = distance;
@@ -654,9 +706,9 @@ impl RelativeAddress {
                 (new_file, new_rank)
             }
             Degree45Orthant::CoIIIOrCoIV => {
-                let distance = self.rank;
-                let mut new_file = self.file - distance;
-                let mut new_rank = self.rank;
+                let distance = rel_adr.1;
+                let mut new_file = rel_adr.0 - distance;
+                let mut new_rank = rel_adr.1;
                 let over = new_rank.abs() - distance.abs();
                 if 0 < over {
                     new_file = distance;
@@ -664,9 +716,65 @@ impl RelativeAddress {
                 }
                 (new_file, new_rank)
             }
-        };
+        }
+    }
 
-        RelativeAddress::new(new_file, new_rank)
+    pub fn rotate(orthant: Degree45Orthant, angle: Angle, rel_adr: (i8, i8)) -> (i8, i8) {
+        // self.get_degree45_orthant()
+        use crate::cosmic::smart::square::Angle::*;
+        match angle {
+            Ccw0 => (rel_adr.0, rel_adr.1),
+            Ccw45 => RelAdr::rotate_45_countercrockwise(orthant, rel_adr),
+            Ccw90 => RelAdr::rotate_90_countercrockwise((rel_adr.0, rel_adr.1)),
+            Ccw135 => RelAdr::rotate_45_countercrockwise(
+                orthant,
+                RelAdr::rotate_90_countercrockwise(rel_adr),
+            ),
+            Ccw180 => RelAdr::rotate_180(rel_adr),
+            Ccw225 => RelAdr::rotate_45_countercrockwise(orthant, RelAdr::rotate_180(rel_adr)),
+            Ccw270 => RelAdr::rotate_90_countercrockwise(RelAdr::rotate_180(rel_adr)),
+            Ccw315 => RelAdr::rotate_45_countercrockwise(
+                orthant,
+                RelAdr::rotate_90_countercrockwise(RelAdr::rotate_180(rel_adr)),
+            ),
+        }
+    }
+
+    /// 段を２倍にします。桂馬に使います。
+    pub fn double_rank(rel_adr: (i8, i8)) -> (i8, i8) {
+        let new_rank = 2 * rel_adr.1;
+        let carry = new_rank / 10;
+        let new_file = if carry != 0 {
+            rel_adr.0 + carry
+        } else {
+            rel_adr.0
+        };
+        (new_file, new_rank)
+    }
+}
+/// デバッグ文字列を出すオブジェクトだぜ☆（＾～＾）
+#[derive(Clone)]
+pub struct RelativeAddress {
+    file: i8,
+    rank: i8,
+}
+impl RelativeAddress {
+    pub fn new(rel_adr: &(i8, i8)) -> Self {
+        RelativeAddress {
+            file: rel_adr.0,
+            rank: rel_adr.1,
+        }
+    }
+
+    pub fn to_rel_adr(&self) -> (i8, i8) {
+        (self.file, self.rank)
+    }
+    pub fn get_address(&self) -> i8 {
+        RelAdr::get_address((self.file, self.rank))
+    }
+
+    pub fn get_degree45_orthant(&self) -> Degree45Orthant {
+        Degree45Orthant::from_file_and_rank(self.file, self.rank)
     }
 }
 
@@ -763,10 +871,10 @@ impl AbsoluteAddress {
         (self.file * 10 + self.rank) as i8
     }
 
-    pub fn offset(&mut self, rel_adr: &RelativeAddress) -> &mut Self {
+    pub fn offset(&mut self, rel_adr: (i8, i8)) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
-        let sum = self.address() + rel_adr.get_address();
+        let sum = self.address() + RelAdr::get_address(rel_adr);
 
         // Initialize.
         self.rank = sum as u8 % 10;
