@@ -5,7 +5,7 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::features::HandAddressType;
 use crate::cosmic::smart::features::PieceMeaning;
-use crate::cosmic::smart::square::{Address, FILE_9, RANK_1};
+use crate::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use atoi::atoi;
@@ -49,7 +49,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     // 1文字目と2文字目
     // 移動元とドロップ。
     enum Source {
-        Move(u8, i8),
+        Move(usize, usize),
         Drop(HandAddressType),
     }
 
@@ -65,7 +65,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
             // 数字じゃないものが入ったら強制終了するんじゃないか☆（＾～＾）
-            let file = if let Some(num) = atoi::<u8>(line[*starts..=*starts].as_bytes()) {
+            let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
                 num
             } else {
                 panic!(Beam::trouble(&format!(
@@ -98,7 +98,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     match source {
         Source::Move(file, rank) => {
             *starts += 1;
-            buffer.source = Some(Address::new(file as i8, rank).abs());
+            buffer.source = Some(AbsoluteAddress::new(file, rank));
             buffer.drop = None;
         }
         Source::Drop(hand) => {
@@ -111,7 +111,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     // 残りは「筋の数字」、「段のアルファベット」のはず。
 
     // 3文字目
-    let file = if let Some(num) = atoi::<u8>(line[*starts..=*starts].as_bytes()) {
+    let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
         num
     } else {
         panic!(Beam::trouble(&format!(
@@ -141,7 +141,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     *starts += 1;
 
     // 行き先。
-    buffer.destination = Address::new(file as i8, rank).abs();
+    buffer.destination = AbsoluteAddress::new(file, rank);
 
     // 5文字に「+」があれば成り。
     buffer.promote = if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
@@ -174,15 +174,15 @@ pub fn read_board(
 ) {
     // 初期盤面
     let board = game.mut_starting();
-    let mut file = FILE_9 as u8; //９筋から右方向へ読取
-    let mut rank = RANK_1 as u8;
+    let mut file = FILE_9; //９筋から右方向へ読取
+    let mut rank = RANK_1;
 
     // `/` か、`+`か、1桁の数か、1文字のアルファベットのいずれかだぜ☆（＾～＾）それ以外なら盤パート終了☆（＾～＾）
     enum BoardPart {
         /// 改行のようなものだぜ☆（＾～＾）
         NewLine,
         /// スペース数☆（＾～＾）
-        Number(u8),
+        Number(usize),
         /// 駒☆（＾～＾）+で始まるものもこっちだぜ☆（＾～＾）
         Alphabet(PieceMeaning),
     }
@@ -257,7 +257,7 @@ pub fn read_board(
             }
             BoardPart::NewLine => {
                 *starts += 1;
-                file = FILE_9 as u8;
+                file = FILE_9;
                 rank += 1;
             }
         }

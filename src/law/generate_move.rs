@@ -7,8 +7,8 @@ use crate::cosmic::smart::features::HandAddress;
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Address, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,
-    RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
+    AbsoluteAddress, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
+    RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
@@ -267,7 +267,7 @@ impl Area {
     {
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                callback(Address::new(file, rank).abs());
+                callback(AbsoluteAddress::new(file, rank));
             }
         }
     }
@@ -872,7 +872,7 @@ impl Area {
 
         for rank in min_rank..max_rank {
             for file in (FILE_1..FILE_10).rev() {
-                callback(Address::new(file, rank).abs());
+                callback(AbsoluteAddress::new(file, rank));
             }
         }
     }
@@ -890,7 +890,7 @@ impl Area {
     {
         for rank in RANK_3..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                let mut ab_adr = Address::new(file, rank).abs();
+                let mut ab_adr = AbsoluteAddress::new(file, rank);
                 if phase == Phase::Second {
                     ab_adr = ab_adr.rotate_180();
                 }
@@ -983,8 +983,8 @@ enum Promotability {
 /// 行き先があるかないかのチェックに使うぜ☆（＾～＾）
 /// 成れるときは使わないぜ☆（＾～＾）
 struct MovePermission {
-    min_rank: i8,
-    max_rank: i8,
+    min_rank: usize,
+    max_rank: usize,
 }
 impl MovePermission {
     fn from_pawn_or_lance(friend: Phase) -> Self {

@@ -36,12 +36,12 @@ pub fn push_sq_to_hash(hash: u64, square: Option<&AbsoluteAddress>) -> u64 {
 pub fn pop_sq_from_hash(hash: u64) -> (u64, Option<AbsoluteAddress>) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let adr = Address::from_absolute_address((hash & 0b111_1111) as i8);
+    let adr = Address::from_absolute_address((hash & 0b111_1111) as usize);
     (hash >> 7, adr)
 }
 
 /// 指し手のために、段をアルファベットにすることを想定
-pub fn num_to_lower_case(num: i8) -> &'static str {
+pub fn num_to_lower_case(num: usize) -> &'static str {
     match num {
         1 => "a",
         2 => "b",

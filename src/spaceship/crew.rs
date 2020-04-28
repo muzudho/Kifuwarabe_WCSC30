@@ -2,7 +2,7 @@ use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::playing::{Game, PosNums};
 use crate::cosmic::smart::features::PieceMeaning;
-use crate::cosmic::smart::square::{Address, FILE_1};
+use crate::cosmic::smart::square::{AbsoluteAddress, FILE_1};
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
@@ -277,7 +277,7 @@ impl Chiyuri {
 
         for ms in 1..9 {
             for hash in 0..10 {
-                let sq = Address::new(FILE_1, ms).abs();
+                let sq = AbsoluteAddress::new(FILE_1, ms);
                 let next = push_sq_to_hash(hash, Some(&sq));
                 let (hash_orig, square_orig) = pop_sq_from_hash(next);
                 Beam::shoot( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"

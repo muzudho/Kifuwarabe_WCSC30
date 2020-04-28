@@ -9,7 +9,7 @@ use crate::cosmic::smart::features::{
     HandAddress, HandAddresses, PieceMeaning, PieceType, HAND_MAX,
 };
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Address, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
+    AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
@@ -232,11 +232,11 @@ impl Board {
     pub fn exists_pawn_on_file(
         &self,
         phase: Phase,
-        file: i8,
+        file: usize,
         speed_of_light: &SpeedOfLight,
     ) -> bool {
         for rank in RANK_1..RANK_10 {
-            let adr = Address::new(file, rank).abs();
+            let adr = AbsoluteAddress::new(file, rank);
             if let Some(piece) = self.piece_at(&adr) {
                 if piece.0.phase(speed_of_light) == phase
                     && piece.0.r#type(speed_of_light) == PieceType::Pawn
@@ -278,16 +278,12 @@ impl Board {
     /// 盤に駒か空升を置いていきます。
     pub fn push_piece_on_init(
         &mut self,
-        file: u8,
-        rank: u8,
+        file: usize,
+        rank: usize,
         piece: Option<PieceMeaning>,
         speed_of_light: &SpeedOfLight,
     ) {
-        if !((FILE_0 as u8) < file
-            && file < FILE_10 as u8
-            && (RANK_0 as u8) < rank
-            && rank < RANK_10 as u8)
-        {
+        if !(FILE_0 < file && file < FILE_10 && RANK_0 < rank && rank < RANK_10) {
             panic!(Beam::trouble(&format!(
                 "(Err.323) 盤上の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
                 file, rank
@@ -295,7 +291,7 @@ impl Board {
         }
 
         if let Some(piece_meaning) = piece {
-            let source = Address::new(file as i8, rank as i8).abs();
+            let source = AbsoluteAddress::new(file, rank);
             let piece_num = match piece_meaning {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 PieceMeaning::King1 => {
@@ -317,7 +313,7 @@ impl Board {
                 }
             };
             self.push_to_board(
-                &Address::new(file as i8, rank as i8).abs(),
+                &AbsoluteAddress::new(file, rank),
                 Some((piece_meaning, piece_num)),
             );
         }
@@ -364,7 +360,7 @@ impl Board {
         // 盤上の駒
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                let ab_adr = &Address::new(file, rank).abs();
+                let ab_adr = &AbsoluteAddress::new(file, rank);
                 if let Some(piece) = self.piece_at(ab_adr) {
                     hash ^= game.hash_seed.piece[ab_adr.address() as usize][piece.0 as usize];
                 }
