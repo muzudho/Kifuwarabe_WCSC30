@@ -128,75 +128,75 @@ pub fn test_rotation() {
     {
         let mut r = (0, -1);
         test_rsq("a1", "(0x -1y -1adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a2", "(1x -1y 9adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a3", "(1x 0y 10adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a4", "(1x 1y 11adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a5", "(0x 1y 1adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a6", "(-1x 1y -9adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a7", "(-1x 0y -10adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a8", "(-1x -1y -11adr)", r);
-        r = RelAdr::rotate_45_countercrockwise(Degree45Orthant::new(r), r);
+        r = RelAdr::rotate_45_ccw(r);
         test_rsq("a9", "(0x -1y -1adr)", r);
     }
     // 90°回転のテスト＜その１＞
     {
         let mut r = (0, -1);
         test_rsq("c1", "(0x -1y -1adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("c2", "(1x 0y 10adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("c3", "(0x 1y 1adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("c4", "(-1x 0y -10adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("c5", "(0x -1y -1adr)", r);
     }
     // 90°回転のテスト＜その２＞
     {
         let mut r = (1, -1);
         test_rsq("d1", "(1x -1y 9adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("d2", "(1x 1y 11adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("d3", "(-1x 1y -9adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("d4", "(-1x -1y -11adr)", r);
-        r = RelAdr::rotate_90_countercrockwise(r);
+        r = RelAdr::rotate_90_ccw(r);
         test_rsq("d5", "(1x -1y 9adr)", r);
     }
     // 桂馬のテスト
     {
         let mut r = (0, -1);
         test_rsq("g1", "(0x -1y -1adr)", r);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw45, r);
+        r = RelAdr::rotate(Angle::Ccw45, r);
         test_rsq("g2", "(1x -1y 9adr)", r);
         r = RelAdr::double_rank(r);
         test_rsq("g3", "(1x -2y 8adr)", r);
 
         let mut r = (0, -1);
         test_rsq("g4", "(0x -1y -1adr)", r);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw315, r);
+        r = RelAdr::rotate(Angle::Ccw315, r);
         test_rsq("g5", "(-1x -1y -11adr)", r);
         r = RelAdr::double_rank(r);
         test_rsq("g6", "(-1x -2y -12adr)", r);
 
         let mut r = (0, 1);
         test_rsq("g7", "(0x 1y 1adr)", r);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw45, r);
+        r = RelAdr::rotate(Angle::Ccw45, r);
         test_rsq("g8", "(-1x 1y -9adr)", r);
         r = RelAdr::double_rank(r);
         test_rsq("g9", "(-1x 2y -8adr)", r);
 
         let mut r = (0, 1);
         test_rsq("g10", "(0x 1y 1adr)", r);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw315, r);
+        r = RelAdr::rotate(Angle::Ccw315, r);
         test_rsq("g11", "(1x 1y 11adr)", r);
         r = RelAdr::double_rank(r);
         test_rsq("g12", "(1x 2y 12adr)", r);
@@ -206,42 +206,42 @@ pub fn test_rotation() {
         // 0
         let mut r = (0, -1);
         test_rsq("h1", "(0x -1y -1adr)", r);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw0, r);
+        r = RelAdr::rotate(Angle::Ccw0, r);
         test_rsq("h2", "(0x -1y -1adr)", r);
 
         // 45
         r = (0, -1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw45, r);
+        r = RelAdr::rotate(Angle::Ccw45, r);
         test_rsq("h3", "(1x -1y 9adr)", r);
 
         // 90
         r = (0, -1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw90, r);
+        r = RelAdr::rotate(Angle::Ccw90, r);
         test_rsq("h4", "(1x 0y 10adr)", r);
 
         // 135
         r = (0, -1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw135, r);
+        r = RelAdr::rotate(Angle::Ccw135, r);
         test_rsq("h5", "(1x 1y 11adr)", r);
 
         // 180
         r = (0, -1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw180, r);
+        r = RelAdr::rotate(Angle::Ccw180, r);
         test_rsq("h6", "(0x 1y 1adr)", r);
 
         // 225
         r = (0, -1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw225, r);
+        r = RelAdr::rotate(Angle::Ccw225, r);
         test_rsq("h7", "(-1x 1y -9adr)", r);
 
         // 270
         r = (0, -1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw270, r);
+        r = RelAdr::rotate(Angle::Ccw270, r);
         test_rsq("h8", "(-1x 0y -10adr)", r);
 
         // 315
         r = (0, -1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw315, r);
+        r = RelAdr::rotate(Angle::Ccw315, r);
         test_rsq("h9", "(-1x -1y -11adr)", r);
     }
     // 角度指定回転のテスト(南から)
@@ -249,42 +249,42 @@ pub fn test_rotation() {
         // 0
         let mut r = (0, 1);
         test_rsq("h1", "(0x 1y 1adr)", r);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw0, r);
+        r = RelAdr::rotate(Angle::Ccw0, r);
         test_rsq("h2", "(0x 1y 1adr)", r);
 
         // 45
         r = (0, 1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw45, r);
+        r = RelAdr::rotate(Angle::Ccw45, r);
         test_rsq("h3", "(-1x 1y -9adr)", r);
 
         // 90
         r = (0, 1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw90, r);
+        r = RelAdr::rotate(Angle::Ccw90, r);
         test_rsq("h4", "(-1x 0y -10adr)", r);
 
         // 135
         r = (0, 1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw135, r);
+        r = RelAdr::rotate(Angle::Ccw135, r);
         test_rsq("h5", "(-1x -1y -11adr)", r);
 
         // 180
         r = (0, 1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw180, r);
+        r = RelAdr::rotate(Angle::Ccw180, r);
         test_rsq("h6", "(0x -1y -1adr)", r);
 
         // 225
         r = (0, 1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw225, r);
+        r = RelAdr::rotate(Angle::Ccw225, r);
         test_rsq("h7", "(1x -1y 9adr)", r);
 
         // 270
         r = (0, 1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw270, r);
+        r = RelAdr::rotate(Angle::Ccw270, r);
         test_rsq("h8", "(1x 0y 10adr)", r);
 
         // 315
         r = (0, 1);
-        r = RelAdr::rotate(Degree45Orthant::new(r), Angle::Ccw315, r);
+        r = RelAdr::rotate(Angle::Ccw315, r);
         test_rsq("h9", "(1x 1y 11adr)", r);
     }
 }
@@ -521,10 +521,6 @@ impl Address {
         );
         AbsoluteAddress::new(self.file as u8, self.rank as u8)
     }
-
-    pub fn rel(&self) -> RelativeAddress {
-        RelativeAddress::new((self.file, self.rank))
-    }
 }
 
 /// 相対番地。絶対番地と同じだが、回転の中心を原点に固定した操作が行われるぜ☆（＾～＾）
@@ -548,15 +544,17 @@ impl RelAdr {
         (-rel_adr.0, -rel_adr.1)
     }
 
-    pub fn rotate_90_countercrockwise(rel_adr: (i8, i8)) -> (i8, i8) {
+    /// Counterclockwise
+    pub fn rotate_90_ccw(rel_adr: (i8, i8)) -> (i8, i8) {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
         // でも、 90°回転のときは 象限は１つしかないけどな☆（＾～＾）全象限同じ式だぜ☆（*＾～＾*）
         (-rel_adr.1, rel_adr.0)
     }
 
-    pub fn rotate_45_countercrockwise(orthant: Degree45Orthant, rel_adr: (i8, i8)) -> (i8, i8) {
+    /// Counterclockwise
+    pub fn rotate_45_ccw(rel_adr: (i8, i8)) -> (i8, i8) {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
-        // let orthant = self.get_degree45_orthant();
+        let orthant = Degree45Orthant::new(rel_adr);
         match orthant {
             Degree45Orthant::IVOrI => {
                 let distance = rel_adr.0;
@@ -605,24 +603,17 @@ impl RelAdr {
         }
     }
 
-    pub fn rotate(orthant: Degree45Orthant, angle: Angle, rel_adr: (i8, i8)) -> (i8, i8) {
-        // self.get_degree45_orthant()
+    pub fn rotate(angle: Angle, rel_adr: (i8, i8)) -> (i8, i8) {
         use crate::cosmic::smart::square::Angle::*;
         match angle {
             Ccw0 => (rel_adr.0, rel_adr.1),
-            Ccw45 => RelAdr::rotate_45_countercrockwise(orthant, rel_adr),
-            Ccw90 => RelAdr::rotate_90_countercrockwise((rel_adr.0, rel_adr.1)),
-            Ccw135 => RelAdr::rotate_45_countercrockwise(
-                orthant,
-                RelAdr::rotate_90_countercrockwise(rel_adr),
-            ),
+            Ccw45 => RelAdr::rotate_45_ccw(rel_adr),
+            Ccw90 => RelAdr::rotate_90_ccw(rel_adr),
+            Ccw135 => RelAdr::rotate_90_ccw(RelAdr::rotate_45_ccw(rel_adr)),
             Ccw180 => RelAdr::rotate_180(rel_adr),
-            Ccw225 => RelAdr::rotate_45_countercrockwise(orthant, RelAdr::rotate_180(rel_adr)),
-            Ccw270 => RelAdr::rotate_90_countercrockwise(RelAdr::rotate_180(rel_adr)),
-            Ccw315 => RelAdr::rotate_45_countercrockwise(
-                orthant,
-                RelAdr::rotate_90_countercrockwise(RelAdr::rotate_180(rel_adr)),
-            ),
+            Ccw225 => RelAdr::rotate_180(RelAdr::rotate_45_ccw(rel_adr)),
+            Ccw270 => RelAdr::rotate_180(RelAdr::rotate_90_ccw(rel_adr)),
+            Ccw315 => RelAdr::rotate_180(RelAdr::rotate_90_ccw(RelAdr::rotate_45_ccw(rel_adr))),
         }
     }
 

@@ -7,8 +7,8 @@ use crate::cosmic::smart::features::HandAddress;
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, Address, Angle, Degree45Orthant, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10,
-    RANK_2, RANK_3, RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
+    AbsoluteAddress, Address, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3,
+    RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
@@ -650,16 +650,12 @@ impl Area {
         match agility {
             Agility::Sliding => {
                 let mut cur = start.clone();
-                let rel1 = Address::new(1, 0).rel();
-                let rel = RelAdr::rotate(
-                    Degree45Orthant::new(rel1.to_rel_adr()),
-                    angle,
-                    rel1.to_rel_adr(),
-                );
+                let r = (1, 0);
+                let r = RelAdr::rotate(angle, r);
 
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    cur.offset(rel);
+                    cur.offset(r);
                     if !cur.legal_cur() {
                         break;
                     }
@@ -674,12 +670,8 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                let rel1 = Address::new(1, 0).rel();
-                cur.offset(RelAdr::double_rank(RelAdr::rotate(
-                    Degree45Orthant::new(rel1.to_rel_adr()),
-                    angle,
-                    rel1.to_rel_adr(),
-                )));
+                let r = (1, 0);
+                cur.offset(RelAdr::double_rank(RelAdr::rotate(angle, r)));
 
                 if cur.legal_cur() {
                     callback(cur);
@@ -689,12 +681,8 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                let rel1 = Address::new(1, 0).rel();
-                cur.offset(RelAdr::rotate(
-                    Degree45Orthant::new(rel1.to_rel_adr()),
-                    angle,
-                    rel1.to_rel_adr(),
-                ));
+                let r = (1, 0);
+                cur.offset(RelAdr::rotate(angle, r));
 
                 if cur.legal_cur() {
                     callback(cur);
