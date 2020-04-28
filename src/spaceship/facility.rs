@@ -4,8 +4,6 @@ use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PIECE_WHITE_SPAC
 use crate::cosmic::smart::square::*;
 use crate::cosmic::toy_box::PieceNum;
 use crate::spaceship::equipment::Beam;
-use std::collections::HashSet;
-use std::hash::BuildHasher;
 
 /// 指令室はこちらだぜ☆（＾～＾）！
 pub struct CommandRoom {}
@@ -196,18 +194,23 @@ P x{87:2}   |{63}|{64}|{65}|{66}|{67}|{68}|{69}|{70}|{71}| h8   p x{94:2}
 /// 台所はこちらだぜ☆（＾～＾）！指し手の一覧が見れるぜ☆（＾～＾）！
 pub struct Kitchen {}
 impl Kitchen {
-    /// 指し手
-    pub fn print_move_hashset<S: BuildHasher>(move_hashset: &HashSet<u64, S>) {
-        Beam::shoot(&format!("ss_hashset.len()={}", move_hashset.len()));
+    /// 現在の局面での、指し手の一覧を表示するぜ☆（＾～＾）
+    pub fn print_ways(ways: &Vec<(u64, Option<(PieceMeaning, PieceNum)>)>) {
+        Beam::shoot(&format!("Moves count={}", ways.len()));
         // 辞書順ソート
         let mut move_names = Vec::new();
-        for ss_hash in move_hashset {
+        for way in ways {
             let ss_str = format!(
-                "{}",
-                if let Some(r#move) = Movement::from_hash(*ss_hash) {
+                "{}{}",
+                if let Some(r#move) = Movement::from_hash(way.0) {
                     format!("{}", r#move)
                 } else {
                     "resign".to_string()
+                },
+                if let Some(psuedo_captured) = way.1 {
+                    format!(" ({})", psuedo_captured.0)
+                } else {
+                    "".to_string()
                 }
             );
             move_names.push(ss_str);
@@ -233,8 +236,8 @@ impl Kitchen {
         });
         move_names.reverse();
 
-        for (i, ss_str) in move_names.into_iter().enumerate() {
-            Beam::shoot(&format!("[{}] {}", i, ss_str));
+        for (i, move_name) in move_names.into_iter().enumerate() {
+            Beam::shoot(&format!("[{}] {}", i, move_name));
         }
     }
 }

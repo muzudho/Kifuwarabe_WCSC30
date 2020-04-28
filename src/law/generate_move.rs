@@ -41,13 +41,19 @@ impl PseudoLegalMoves {
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    ///
+    /// Returns
+    /// -------
+    /// F1:
+    /// * 指し手ハッシュ
+    /// * 移動先にあった駒
     pub fn make_move<F1>(
         friend: Phase,
         board: &Board,
         speed_of_light: &SpeedOfLight,
         callback: &mut F1,
     ) where
-        F1: FnMut(u64),
+        F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
     {
         board.for_some_pieces_on_list40(friend, speed_of_light, &mut |location, piece| {
             match location {
@@ -73,13 +79,18 @@ impl PseudoLegalMoves {
     ///
     /// Arguments
     /// ---------
-    ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `piece` - 駒だぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    ///
+    /// Returns
+    /// -------
+    /// F1:
+    /// * 指し手ハッシュ
+    /// * 移動先にあった駒
     fn start_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
@@ -88,7 +99,7 @@ impl PseudoLegalMoves {
         speed_of_light: &SpeedOfLight,
         callback: &mut F1,
     ) where
-        F1: FnMut(u64),
+        F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
     {
         let callback_next =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
@@ -136,6 +147,7 @@ impl PseudoLegalMoves {
                                         drop: None,
                                     }
                                     .to_hash(),
+                                    pseudo_captured,
                                 );
                             }
                             callback(
@@ -146,6 +158,7 @@ impl PseudoLegalMoves {
                                     drop: None,
                                 }
                                 .to_hash(),
+                                pseudo_captured,
                             );
                         }
                         _ => {
@@ -159,6 +172,7 @@ impl PseudoLegalMoves {
                                         drop: None,
                                     }
                                     .to_hash(),
+                                    pseudo_captured,
                                 );
                             }
                         }
@@ -192,7 +206,7 @@ impl PseudoLegalMoves {
         speed_of_light: &SpeedOfLight,
         callback: &mut F1,
     ) where
-        F1: FnMut(u64),
+        F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
     {
         if let Some(piece) = board.last_hand(adr) {
             // 打つぜ☆（＾～＾）
@@ -218,6 +232,7 @@ impl PseudoLegalMoves {
                             drop: Some(piece.0.hand_address(speed_of_light).r#type(speed_of_light)), // 打った駒種類
                         }
                         .to_hash(),
+                        None,
                     );
                 }
             };

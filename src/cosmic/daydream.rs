@@ -14,7 +14,6 @@ use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
-use std::collections::HashSet;
 use std::fmt;
 use std::time::Instant;
 
@@ -148,20 +147,20 @@ impl Tree {
         let mut exists_lose = false;
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let mut movement_set = HashSet::<u64>::new();
+        let mut ways = Vec::<(u64, Option<(PieceMeaning, PieceNum)>)>::new();
 
         // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
         PseudoLegalMoves::make_move(
             game.history.get_friend(),
             &game.board,
             &speed_of_light,
-            &mut |movement| {
-                &movement_set.insert(movement);
+            &mut |movement, pseudo_captured| {
+                &ways.push((movement, pseudo_captured));
             },
         );
 
         // 指せる手が無ければ投了☆（＾～＾）
-        if movement_set.is_empty() {
+        if ways.is_empty() {
             return ts;
         }
 
@@ -174,8 +173,8 @@ impl Tree {
             // 後手が指すところだぜ☆（＾～＾）
             -1
         };
-        self.add_control(coverage_sign, game, &movement_set);
-        for movement_hash in movement_set.iter() {
+        self.add_control(coverage_sign, game, &ways);
+        for way in ways.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
                 // すでにタイムアウトしていたのなら、さっさと抜けるぜ☆（＾～＾）
@@ -188,7 +187,7 @@ impl Tree {
 
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
-            let movement = Movement::from_hash(*movement_hash).unwrap();
+            let movement = Movement::from_hash(way.0).unwrap();
             let source_piece = if let Some(source_val) = &movement.source {
                 game.board.piece_at(source_val)
             } else {
@@ -208,7 +207,7 @@ impl Tree {
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.0.r#type(speed_of_light) == King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(*movement_hash);
+                    ts.bestmove.catch_king(way.0);
 
                     self.evaluation
                         .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
@@ -221,7 +220,7 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_movement_hash = *movement_hash;
+                ts.repetition_movement_hash = way.0;
             } else if self.max_depth0 < self.pv.len() {
                 // 葉で評価しようぜ☆（＾～＾）
 
@@ -229,7 +228,7 @@ impl Tree {
                 let board_coverage_value: i16 = coverage_sign * game.board.coverage_value();
                 ts.choice_friend(
                     &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
-                    *movement_hash,
+                    way.0,
                 );
 
                 if game.info.is_printable() {
@@ -274,11 +273,8 @@ impl Tree {
                 self.evaluation.after_search();
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
-                exists_lose = ts.turn_over_and_choice(
-                    &opponent_ts,
-                    *movement_hash,
-                    self.evaluation.centi_pawn(0),
-                );
+                exists_lose =
+                    ts.turn_over_and_choice(&opponent_ts, way.0, self.evaluation.centi_pawn(0));
             }
 
             self.evaluation
@@ -317,7 +313,7 @@ impl Tree {
                 }
             }
         }
-        self.add_control(-1 * coverage_sign, game, &movement_set);
+        self.add_control(-1 * coverage_sign, game, &ways);
 
         if !exists_lose && ts.get_movement_hash() == 0 && ts.repetition_movement_hash != 0 {
             // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
@@ -331,13 +327,16 @@ impl Tree {
         ts
     }
 
-    pub fn add_control(&mut self, sign: i16, game: &mut Game, movement_set: &HashSet<u64>) {
-        for movement_hash in movement_set.iter() {
+    pub fn add_control(
+        &mut self,
+        sign: i16,
+        game: &mut Game,
+        ways: &Vec<(u64, Option<(PieceMeaning, PieceNum)>)>,
+    ) {
+        for way in ways.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.control[Movement::from_hash(*movement_hash)
-                .unwrap()
-                .destination
-                .address() as usize] += sign;
+            game.board.control
+                [Movement::from_hash(way.0).unwrap().destination.address() as usize] += sign;
         }
     }
 

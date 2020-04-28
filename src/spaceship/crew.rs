@@ -1,7 +1,9 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::playing::{Game, PosNums};
+use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::square::{Address, FILE_1};
+use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
 use crate::law::generate_move::PseudoLegalMoves;
@@ -10,7 +12,6 @@ use crate::law::usi::*;
 use crate::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen};
 use rand::Rng;
-use std::collections::HashSet;
 use std::io as std_io;
 
 /// 船長：きふわらべ
@@ -181,17 +182,17 @@ impl Chiyuri {
     pub fn genmove(game: &Game, speed_of_light: &SpeedOfLight) {
         // Generation move.
         // FIXME 合法手とは限らない
-        let mut ss_potential_hashset = HashSet::<u64>::new();
+        let mut ways = Vec::<(u64, Option<(PieceMeaning, PieceNum)>)>::new();
         PseudoLegalMoves::make_move(
             game.history.get_friend(),
             &game.board,
             &speed_of_light,
-            &mut |movement_hash| {
-                ss_potential_hashset.insert(movement_hash);
+            &mut |movement_hash, pseudo_captured| {
+                ways.push((movement_hash, pseudo_captured));
             },
         );
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
-        Kitchen::print_move_hashset(&ss_potential_hashset);
+        Kitchen::print_ways(&ways);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
     }
     pub fn hash(universe: &Universe) {
