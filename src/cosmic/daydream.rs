@@ -6,8 +6,7 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::PLY_LEN;
 use crate::cosmic::recording::{Movement, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
-use crate::cosmic::smart::features::PieceMeaning;
-use crate::cosmic::smart::features::PieceType::King;
+use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
@@ -165,6 +164,23 @@ impl Tree {
         }
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） TODO 取った駒は指し手生成の段階で調べているし☆（＾～＾）
+        if 1 < ways.len() {
+            let mut head = 0;
+            for i in 1..ways.len() {
+                if let Some(captured) = ways[i].1 {
+                    match captured.0.r#type(speed_of_light) {
+                        PieceType::King => {
+                            // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
+                            let temp = ways[head];
+                            ways[head] = ways[i];
+                            ways[i] = temp;
+                            head += 1;
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
 
         let coverage_sign: i16 = if self.pv.len() % 2 == 0 {
             // 先手が指すところだぜ☆（＾～＾）
@@ -205,7 +221,7 @@ impl Tree {
             );
 
             if let Some(captured_piece_val) = captured_piece {
-                if captured_piece_val.0.r#type(speed_of_light) == King {
+                if captured_piece_val.0.r#type(speed_of_light) == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     ts.bestmove.catch_king(way.0);
 
