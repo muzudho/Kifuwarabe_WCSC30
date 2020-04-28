@@ -8,6 +8,7 @@
 //! 駒種類早見表 (PieceTypeChart).
 //!
 use crate::cosmic::recording::Phase;
+use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use num_traits::FromPrimitive;
@@ -61,22 +62,7 @@ pub struct SpeedOfLight {
     pub promoted_lance: PieceTypeChart,
     pub promoted_pawn: PieceTypeChart,
 
-    pub hand_king1: HandAddressChart,
-    pub hand_rook1: HandAddressChart,
-    pub hand_bishop1: HandAddressChart,
-    pub hand_gold1: HandAddressChart,
-    pub hand_silver1: HandAddressChart,
-    pub hand_knight1: HandAddressChart,
-    pub hand_lance1: HandAddressChart,
-    pub hand_pawn1: HandAddressChart,
-    pub hand_king2: HandAddressChart,
-    pub hand_rook2: HandAddressChart,
-    pub hand_bishop2: HandAddressChart,
-    pub hand_gold2: HandAddressChart,
-    pub hand_silver2: HandAddressChart,
-    pub hand_knight2: HandAddressChart,
-    pub hand_lance2: HandAddressChart,
-    pub hand_pawn2: HandAddressChart,
+    pub hand_address_table: [HandAddressChart; HAND_ADDRESS_LEN],
 
     // 相対番地と角度☆（＾～＾）
     pub west_ccw: [RelAdr; ANGLE_LEN],
@@ -129,22 +115,25 @@ impl Default for SpeedOfLight {
             promoted_knight: PieceTypeChart::from_piece_type(PromotedKnight),
             promoted_lance: PieceTypeChart::from_piece_type(PromotedLance),
             promoted_pawn: PieceTypeChart::from_piece_type(PromotedPawn),
-            hand_king1: HandAddressChart::new(HandAddress::King1),
-            hand_rook1: HandAddressChart::new(HandAddress::Rook1),
-            hand_bishop1: HandAddressChart::new(HandAddress::Bishop1),
-            hand_gold1: HandAddressChart::new(HandAddress::Gold1),
-            hand_silver1: HandAddressChart::new(HandAddress::Silver1),
-            hand_knight1: HandAddressChart::new(HandAddress::Knight1),
-            hand_lance1: HandAddressChart::new(HandAddress::Lance1),
-            hand_pawn1: HandAddressChart::new(HandAddress::Pawn1),
-            hand_king2: HandAddressChart::new(HandAddress::King2),
-            hand_rook2: HandAddressChart::new(HandAddress::Rook2),
-            hand_bishop2: HandAddressChart::new(HandAddress::Bishop2),
-            hand_gold2: HandAddressChart::new(HandAddress::Gold2),
-            hand_silver2: HandAddressChart::new(HandAddress::Silver2),
-            hand_knight2: HandAddressChart::new(HandAddress::Knight2),
-            hand_lance2: HandAddressChart::new(HandAddress::Lance2),
-            hand_pawn2: HandAddressChart::new(HandAddress::Pawn2),
+
+            hand_address_table: [
+                HandAddressChart::new(HandAddress::King1),
+                HandAddressChart::new(HandAddress::Rook1),
+                HandAddressChart::new(HandAddress::Bishop1),
+                HandAddressChart::new(HandAddress::Gold1),
+                HandAddressChart::new(HandAddress::Silver1),
+                HandAddressChart::new(HandAddress::Knight1),
+                HandAddressChart::new(HandAddress::Lance1),
+                HandAddressChart::new(HandAddress::Pawn1),
+                HandAddressChart::new(HandAddress::King2),
+                HandAddressChart::new(HandAddress::Rook2),
+                HandAddressChart::new(HandAddress::Bishop2),
+                HandAddressChart::new(HandAddress::Gold2),
+                HandAddressChart::new(HandAddress::Silver2),
+                HandAddressChart::new(HandAddress::Knight2),
+                HandAddressChart::new(HandAddress::Lance2),
+                HandAddressChart::new(HandAddress::Pawn2),
+            ],
 
             // よく使う、角度の付いた相対番地☆（＾～＾）
             west_ccw: [
@@ -255,31 +244,13 @@ impl SpeedOfLight {
     }
 
     /// 持ち駒の型☆（＾～＾）
-    fn hand_address_chart(&self, adr: &HandAddress) -> &HandAddressChart {
+    fn hand_address_chart(&self, adr: HandAddress) -> &HandAddressChart {
         // 列挙型を配列のインデックスとして使用☆（＾～＾）
         // ここでクローンするの　もったいないが……☆（＾～＾）match構文の方がいいのか☆（＾～＾）？
         // &self.pieces[(*piece).clone() as usize]
 
         // match構文の方がいいのか☆（＾～＾）？ 不便くさいが……☆（＾～＾）
-        use crate::cosmic::smart::features::HandAddress::*;
-        match *adr {
-            King1 => &self.hand_king1,
-            Rook1 => &self.hand_rook1,
-            Bishop1 => &self.hand_bishop1,
-            Gold1 => &self.hand_gold1,
-            Silver1 => &self.hand_silver1,
-            Knight1 => &self.hand_knight1,
-            Lance1 => &self.hand_lance1,
-            Pawn1 => &self.hand_pawn1,
-            King2 => &self.hand_king2,
-            Rook2 => &self.hand_rook2,
-            Bishop2 => &self.hand_bishop2,
-            Gold2 => &self.hand_gold2,
-            Silver2 => &self.hand_silver2,
-            Knight2 => &self.hand_knight2,
-            Lance2 => &self.hand_lance2,
-            Pawn2 => &self.hand_pawn2,
-        }
+        &self.hand_address_table[adr as usize]
     }
 
     pub fn west_ccw(&self, angle: Angle) -> &RelAdr {
@@ -676,7 +647,7 @@ impl HandAddressChart {
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddress {
     pub fn r#type(&self, speed_of_light: &SpeedOfLight) -> HandAddressType {
-        speed_of_light.hand_address_chart(self).r#type
+        speed_of_light.hand_address_chart(*self).r#type
     }
 }
 
