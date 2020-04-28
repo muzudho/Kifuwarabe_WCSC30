@@ -8,9 +8,8 @@
 //! 駒種類早見表 (PieceTypeChart).
 //!
 use crate::cosmic::recording::Phase;
-use crate::cosmic::smart::features::HandAddress;
-use crate::cosmic::smart::features::HandAddressType;
-use crate::cosmic::smart::features::{PieceMeaning, PieceType};
+use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
+use crate::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use num_traits::FromPrimitive;
 
 pub struct SpeedOfLight {
@@ -78,6 +77,10 @@ pub struct SpeedOfLight {
     pub hand_knight2: HandAddressChart,
     pub hand_lance2: HandAddressChart,
     pub hand_pawn2: HandAddressChart,
+
+    // 相対番地と角度☆（＾～＾）
+    pub west_ccw: [RelAdr; ANGLE_LEN],
+    pub west_ccw_double_rank: [RelAdr; ANGLE_LEN],
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
@@ -142,6 +145,43 @@ impl Default for SpeedOfLight {
             hand_knight2: HandAddressChart::new(HandAddress::Knight2),
             hand_lance2: HandAddressChart::new(HandAddress::Lance2),
             hand_pawn2: HandAddressChart::new(HandAddress::Pawn2),
+
+            // よく使う、角度の付いた相対番地☆（＾～＾）
+            west_ccw: [
+                RelAdr::new(1, 0),
+                RelAdr::new(1, 0).rotate(Angle::Ccw45).clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw90).clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw135).clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw180).clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw225).clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw270).clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw315).clone(),
+            ],
+            west_ccw_double_rank: [
+                RelAdr::new(1, 0).double_rank().clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw45).double_rank().clone(),
+                RelAdr::new(1, 0).rotate(Angle::Ccw90).double_rank().clone(),
+                RelAdr::new(1, 0)
+                    .rotate(Angle::Ccw135)
+                    .double_rank()
+                    .clone(),
+                RelAdr::new(1, 0)
+                    .rotate(Angle::Ccw180)
+                    .double_rank()
+                    .clone(),
+                RelAdr::new(1, 0)
+                    .rotate(Angle::Ccw225)
+                    .double_rank()
+                    .clone(),
+                RelAdr::new(1, 0)
+                    .rotate(Angle::Ccw270)
+                    .double_rank()
+                    .clone(),
+                RelAdr::new(1, 0)
+                    .rotate(Angle::Ccw315)
+                    .double_rank()
+                    .clone(),
+            ],
         }
     }
 }
@@ -240,6 +280,14 @@ impl SpeedOfLight {
             Lance2 => &self.hand_lance2,
             Pawn2 => &self.hand_pawn2,
         }
+    }
+
+    pub fn west_ccw(&self, angle: Angle) -> &RelAdr {
+        &self.west_ccw[angle as usize]
+    }
+
+    pub fn west_ccw_double_rank(&self, angle: Angle) -> &RelAdr {
+        &self.west_ccw_double_rank[angle as usize]
     }
 }
 

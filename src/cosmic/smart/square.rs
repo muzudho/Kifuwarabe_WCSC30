@@ -372,7 +372,8 @@ impl Degree45Orthant {
     }
 }
 
-/// Counterclockwise(反時計回り)での回転方向。
+pub const ANGLE_LEN: usize = 8;
+/// Counterclockwise(反時計回り)での回転方向。 45°ずつ☆（＾～＾）
 #[derive(Clone, Copy, Debug)]
 pub enum Angle {
     /// 西。
