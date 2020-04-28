@@ -20,11 +20,11 @@ use std::fmt;
 pub const PLY_LEN: usize = 321;
 
 /// 同一局面何回で千日手
-pub const SENNTITE_NUM: i8 = 4;
+pub const SENNTITE_NUM: isize = 4;
 
 pub struct History {
     /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
-    pub ply: i16,
+    pub ply: isize,
     /// 棋譜
     /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
     pub movements: [Movement; PLY_LEN],

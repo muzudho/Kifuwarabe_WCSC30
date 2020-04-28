@@ -37,9 +37,9 @@ pub struct Tree {
 }
 impl Tree {
     pub fn new(
-        board_coverage_weight: i32,
-        komawari_weight: i32,
-        promotion_weight: i32,
+        board_coverage_weight: isize,
+        komawari_weight: isize,
+        promotion_weight: isize,
         depth_not_to_give_up: usize,
     ) -> Self {
         Tree {
@@ -59,8 +59,10 @@ impl Tree {
         speed_of_light: &SpeedOfLight,
     ) -> TreeState {
         universe.game.info.clear();
-        self.think_sec = rand::thread_rng()
-            .gen_range(universe.option_min_think_sec, universe.option_max_think_sec);
+        self.think_sec = rand::thread_rng().gen_range(
+            universe.option_min_think_sec as u64,
+            universe.option_max_think_sec as u64,
+        );
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
@@ -191,7 +193,7 @@ impl Tree {
             }
         }
 
-        let coverage_sign: i16 = if self.pv.len() % 2 == 0 {
+        let coverage_sign = if self.pv.len() % 2 == 0 {
             // 先手が指すところだぜ☆（＾～＾）
             1
         } else {
@@ -269,7 +271,7 @@ impl Tree {
                 */
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
-                let board_coverage_value: i16 = coverage_sign * game.board.coverage_value();
+                let board_coverage_value = coverage_sign * game.board.coverage_value();
                 ts.choice_friend(
                     &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
                     way.0,
@@ -373,7 +375,7 @@ impl Tree {
 
     pub fn add_control(
         &mut self,
-        sign: i16,
+        sign: isize,
         game: &mut Game,
         ways: &Vec<(u64, Option<(PieceMeaning, PieceNum)>)>,
     ) {
@@ -456,7 +458,7 @@ impl TreeState {
         &mut self,
         opponent_ts: &TreeState,
         friend_movement_hash: u64,
-        friend_centi_pawn1: i16,
+        friend_centi_pawn1: isize,
     ) -> bool {
         // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
 
@@ -563,7 +565,7 @@ pub enum Value {
     /// 歩１枚の交換値を 100 とするぜ☆（＾～＾）
     /// 将棋は、相手は駒を取られて損、自分は駒を取って得という風に痛手が２倍広がるので、
     /// 交換値が 100 ということは、200点差が開くということだぜ☆（＾～＾）
-    CentiPawn(i16),
+    CentiPawn(isize),
 
     /// 勝ち☆（＾～＾）
     Win,

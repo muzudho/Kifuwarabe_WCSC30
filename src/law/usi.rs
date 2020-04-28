@@ -319,9 +319,9 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                 // 数字なし
                 N0Digit,
                 // 1桁の数
-                N1Digit(i8),
+                N1Digit(isize),
                 // 2桁の数
-                N2Digit(i8),
+                N2Digit(isize),
             }
             'mg: loop {
                 if 0 < (len - starts) {

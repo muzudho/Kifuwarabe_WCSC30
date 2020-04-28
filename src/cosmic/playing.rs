@@ -169,7 +169,7 @@ impl Game {
     /// 千日手を調べるために、
     /// 現局面は、同一局面が何回目かを調べるぜ☆（＾～＾）
     /// TODO 初期局面を何に使ってるのか☆（＾～＾）？
-    pub fn count_same_position(&self) -> i8 {
+    pub fn count_same_position(&self) -> isize {
         if self.history.ply < 1 {
             return 0;
         }

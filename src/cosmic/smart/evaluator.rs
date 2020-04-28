@@ -6,22 +6,26 @@ use crate::cosmic::toy_box::PieceNum;
 use crate::law::speed_of_light::SpeedOfLight;
 
 /// 千日手の価値☆（＾～＾）
-pub const REPITITION_VALUE: i16 = -300;
+pub const REPITITION_VALUE: isize = -300;
 
 pub struct Evaluation {
     // 盤面をカバーする利きの多さの重み☆（＾～＾）1000分率☆（＾～＾）
-    board_coverage_weight: i32,
+    board_coverage_weight: isize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
-    komawari_weight: i32,
+    komawari_weight: isize,
     /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
-    promotion_weight: i32,
+    promotion_weight: isize,
     // 駒割だぜ☆（＾～＾）
-    piece_allocation_value: i16,
+    piece_allocation_value: isize,
     /// 成り駒ボーナスだぜ☆（＾～＾）
-    promotion_value: i16,
+    promotion_value: isize,
 }
 impl Evaluation {
-    pub fn new(board_coverage_weight: i32, komawari_weight: i32, promotion_weight: i32) -> Self {
+    pub fn new(
+        board_coverage_weight: isize,
+        komawari_weight: isize,
+        promotion_weight: isize,
+    ) -> Self {
         Evaluation {
             board_coverage_weight: board_coverage_weight,
             komawari_weight: komawari_weight,
@@ -30,17 +34,17 @@ impl Evaluation {
             promotion_value: 0,
         }
     }
-    pub fn centi_pawn(&self, board_coverage_value: i16) -> i16 {
+    pub fn centi_pawn(&self, board_coverage_value: isize) -> isize {
         self.board_coverage(board_coverage_value) + self.komawari() + self.promotion()
     }
-    pub fn board_coverage(&self, board_coverage_value: i16) -> i16 {
-        (self.board_coverage_weight * board_coverage_value as i32 / 1000) as i16
+    pub fn board_coverage(&self, board_coverage_value: isize) -> isize {
+        self.board_coverage_weight * board_coverage_value / 1000
     }
-    pub fn komawari(&self) -> i16 {
-        (self.komawari_weight * self.piece_allocation_value as i32 / 1000) as i16
+    pub fn komawari(&self) -> isize {
+        self.komawari_weight * self.piece_allocation_value / 1000
     }
-    pub fn promotion(&self) -> i16 {
-        (self.promotion_weight * self.promotion_value as i32 / 1000) as i16
+    pub fn promotion(&self) -> isize {
+        self.promotion_weight * self.promotion_value / 1000
     }
 
     pub fn before_search(&mut self) {
@@ -61,7 +65,7 @@ impl Evaluation {
         captured_piece: &Option<(PieceMeaning, PieceNum)>,
         promotion: bool,
         speed_of_light: &SpeedOfLight,
-    ) -> (i16, i16) {
+    ) -> (isize, isize) {
         // 取った駒の価値を評価するぜ☆（＾～＾）
         let delta_captured_piece =
             Evaluation::caputured_piece_value(captured_piece, speed_of_light);
@@ -98,7 +102,7 @@ impl Evaluation {
         (delta_captured_piece, delta_promotion)
     }
 
-    pub fn before_undo_move(&mut self, delta_captured_piece: i16, delta_promotion: i16) {
+    pub fn before_undo_move(&mut self, delta_captured_piece: isize, delta_promotion: isize) {
         // 1手戻すぜ☆（＾～＾）
         self.piece_allocation_value -= delta_captured_piece;
         self.promotion_value -= delta_promotion;
@@ -106,7 +110,7 @@ impl Evaluation {
 
     /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
     /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
-    pub fn promotion_value(adr: HandAddressType) -> i16 {
+    pub fn promotion_value(adr: HandAddressType) -> isize {
         match adr {
             HandAddressType::King => 0,
             HandAddressType::Rook => 1,
@@ -128,7 +132,7 @@ impl Evaluation {
     fn caputured_piece_value(
         captured_piece: &Option<(PieceMeaning, PieceNum)>,
         speed_of_light: &SpeedOfLight,
-    ) -> i16 {
+    ) -> isize {
         if let Some(captured_piece_val) = captured_piece {
             match captured_piece_val
                 .0

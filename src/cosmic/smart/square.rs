@@ -294,7 +294,7 @@ pub fn test_rotation() {
 //
 
 // #[allow(non_camel_case_types)]
-// pub type isquare = i8;
+// pub type isquare = isize;
 
 // 枠も使う☆（＾～＾）配列サイズなので 1 大きめだぜ☆（＾～＾）
 pub const BOARD_MEMORY_AREA: usize = 111;
@@ -332,7 +332,7 @@ pub enum DictOrthant {
     IOrIII,
 }
 impl DictOrthant {
-    pub fn from_file_and_rank(file: i8, rank: i8) -> Self {
+    pub fn from_file_and_rank(file: isize, rank: isize) -> Self {
         if 0 <= file * rank {
             DictOrthant::IOrIII
         } else if file < 0 {

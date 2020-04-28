@@ -13,17 +13,17 @@ pub struct Universe {
     /// 読みの最大深さ。
     pub option_max_depth: usize,
     /// 思考時間の最小秒☆（＾～＾）
-    pub option_min_think_sec: u64,
+    pub option_min_think_sec: usize,
     /// 思考時間の最大秒☆（＾～＾）
-    pub option_max_think_sec: u64,
+    pub option_max_think_sec: usize,
     /// 盤面をカバーする利きの多さ☆（＾～＾）1000分率☆（＾～＾）
-    pub option_board_coverage_weight: i32,
+    pub option_board_coverage_weight: isize,
     /// 諦めない深さ☆（＾～＾）読み終わるまで、思考時間を無視するぜ☆（＾～＾）max_depth - 1 より小さくしろだぜ☆（＾～＾）
     pub option_depth_not_to_give_up: usize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_komawari_weight: i32,
+    pub option_komawari_weight: isize,
     /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_promotion_weight: i32,
+    pub option_promotion_weight: isize,
 }
 impl Default for Universe {
     fn default() -> Self {

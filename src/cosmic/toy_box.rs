@@ -125,7 +125,7 @@ pub struct Board {
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
     pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
-    pub control: [i16; BOARD_MEMORY_AREA as usize],
+    pub control: [isize; BOARD_MEMORY_AREA as usize],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -322,7 +322,7 @@ impl Board {
     pub fn push_hand_on_init(
         &mut self,
         piece_meaning: PieceMeaning,
-        number: i8,
+        number: isize,
         speed_of_light: &SpeedOfLight,
     ) {
         for _i in 0..number {
@@ -386,7 +386,7 @@ impl Board {
     }
 
     /// 盤面の全升への利きだぜ☆（＾～＾） 良ければ総量はプラスだぜ☆（＾～＾）
-    pub fn coverage_value(&self) -> i16 {
+    pub fn coverage_value(&self) -> isize {
         self.control.iter().sum()
     }
 
