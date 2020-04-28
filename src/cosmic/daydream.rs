@@ -164,8 +164,8 @@ impl Tree {
         }
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
+        let mut cap = 0;
         if 1 < ways.len() {
-            let mut cap = 0;
             for i in 0..ways.len() {
                 if let Some(_captured) = ways[i].1 {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
@@ -247,7 +247,14 @@ impl Tree {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 ts.repetition_movement_hash = way.0;
             } else if self.max_depth0 < self.pv.len() {
-                // 葉で評価しようぜ☆（＾～＾）
+                // 葉だぜ☆（＾～＾）
+
+                if let Some(_captured) = way.1 {
+                    // 葉で駒を取ったら、取り返されるのも考慮しないとな☆（＾～＾）
+
+                    // TODO 行ってこいだぜ☆（＾～＾）
+                    {}
+                }
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
                 let board_coverage_value: i16 = coverage_sign * game.board.coverage_value();
@@ -345,7 +352,7 @@ impl Tree {
             ts.bestmove.update(
                 ts.repetition_movement_hash,
                 &Value::CentiPawn(REPITITION_VALUE),
-                "repetition better than resign".to_string(),
+                Reason::RepetitionBetterThanResign,
             );
         };
 
@@ -388,14 +395,15 @@ pub struct Bestmove {
     pub value: Value,
     movement_hash: u64,
     /// この指し手を選んだ理由☆（＾～＾）
-    pub reason: String,
+    pub reason: Reason,
 }
 impl Default for Bestmove {
     fn default() -> Self {
         Bestmove {
             value: Value::Lose,
             movement_hash: 0u64,
-            reason: "no update".to_string(),
+            // なんの手も無かったぜ☆（＾～＾）
+            reason: Reason::NoUpdate,
         }
     }
 }
@@ -407,9 +415,9 @@ impl Bestmove {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
         self.movement_hash = movement_hash;
         self.value = Value::Win;
-        self.reason = "king catch is strongest".to_string();
+        self.reason = Reason::KingCatchIsStrongest;
     }
-    pub fn update(&mut self, hash: u64, value: &Value, reason: String) {
+    pub fn update(&mut self, hash: u64, value: &Value, reason: Reason) {
         self.movement_hash = hash;
         self.value = *value;
         self.reason = reason;
@@ -450,7 +458,7 @@ impl TreeState {
             Value::Lose => {
                 // 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
                 self.bestmove
-                    .update(friend_movement_hash, &Value::Win, "friend win".to_string());
+                    .update(friend_movement_hash, &Value::Win, Reason::FriendWin);
                 false
             }
             Value::CentiPawn(num) => {
@@ -461,7 +469,7 @@ impl TreeState {
                     self.bestmove.update(
                         friend_movement_hash,
                         &Value::CentiPawn(friend_centi_pawn2),
-                        "this better than resign".to_string(),
+                        Reason::ThisBetterThanResign,
                     );
                 } else {
                     match self.bestmove.value {
@@ -473,13 +481,13 @@ impl TreeState {
                         Value::Lose => {
                             // 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
                             self.bestmove
-                            .update(friend_movement_hash, &Value::CentiPawn(friend_centi_pawn2), "any move more than lose".to_string());
+                            .update(friend_movement_hash, &Value::CentiPawn(friend_centi_pawn2), Reason::AnyMoveMoreThanLose);
                         }
                         Value::CentiPawn(best_centi_pawn) => {
                             if best_centi_pawn < friend_centi_pawn2 {
                                 // 上方修正
                                 self.bestmove
-                                .update(friend_movement_hash, &Value::CentiPawn(friend_centi_pawn2), "value up".to_string());
+                                .update(friend_movement_hash, &Value::CentiPawn(friend_centi_pawn2), Reason::ValueUp);
                             }
                         }
                     }
@@ -493,12 +501,9 @@ impl TreeState {
     pub fn choice_friend(&mut self, value: &Value, movement_hash: u64) {
         if self.bestmove.movement_hash == 0 {
             // どんな葉も 投了より良いだろ☆（＾～＾）
-            // TODO 王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
-            self.bestmove.update(
-                movement_hash,
-                value,
-                "any leaf better than resign".to_string(),
-            );
+            // TODO でも、王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
+            self.bestmove
+                .update(movement_hash, value, Reason::AnyLeafBetterThanResign);
             return;
         } else {
             match self.bestmove.value {
@@ -507,19 +512,15 @@ impl TreeState {
                 )),
                 Value::Lose => {
                     // どんな評価値でも、負けるよりマシだろ☆（＾～＾）
-                    self.bestmove.update(
-                        movement_hash,
-                        value,
-                        "any leaf more than lose".to_string(),
-                    );
+                    self.bestmove
+                        .update(movement_hash, value, Reason::AnyLeafMoreThanLose);
                     return;
                 }
                 Value::CentiPawn(best_centi_pawn) => {
                     match value {
                         Value::Win => {
                             // 勝つんだから更新するぜ☆（＾～＾）
-                            self.bestmove
-                                .update(movement_hash, value, "win".to_string());
+                            self.bestmove.update(movement_hash, value, Reason::Win);
                             return;
                         }
                         Value::Lose => {
@@ -527,12 +528,9 @@ impl TreeState {
                         }
                         Value::CentiPawn(leaf_centi_pawn) => {
                             if best_centi_pawn < *leaf_centi_pawn {
-                                // 更新☆（＾～＾）
-                                self.bestmove.update(
-                                    movement_hash,
-                                    value,
-                                    "good position".to_string(),
-                                );
+                                // 評価値が良かったから更新☆（＾～＾）
+                                self.bestmove
+                                    .update(movement_hash, value, Reason::GoodPosition);
                                 return;
                             }
                         }
@@ -598,5 +596,52 @@ impl fmt::Display for PrincipalVariation {
             buffer.push_str(&format!("{} ", self.moves[i]));
         }
         write!(f, "{}", buffer.trim_end())
+    }
+}
+
+#[derive(Clone)]
+pub enum Reason {
+    /// 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
+    RepetitionBetterThanResign,
+    /// なんの手も無かったぜ☆（＾～＾）
+    NoUpdate,
+    /// 玉を取る手より強い手はないぜ☆（＾～＾）！
+    KingCatchIsStrongest,
+    /// 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
+    FriendWin,
+    /// どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
+    ThisBetterThanResign,
+    /// どんな葉も 投了より良いだろ☆（＾～＾）でも、王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
+    AnyLeafBetterThanResign,
+    /// どんな評価値でも、負けるよりマシだろ☆（＾～＾）
+    AnyLeafMoreThanLose,
+    /// 勝つんだから更新するぜ☆（＾～＾）
+    Win,
+    /// 評価値が良かったから更新☆（＾～＾）
+    GoodPosition,
+    /// 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
+    AnyMoveMoreThanLose,
+    /// 上方修正
+    ValueUp,
+}
+impl fmt::Display for Reason {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Reason::RepetitionBetterThanResign => "RepetitionBetterThanResign",
+                Reason::NoUpdate => "NoUpdate",
+                Reason::KingCatchIsStrongest => "KingCatchIsStrongest",
+                Reason::FriendWin => "FriendWin",
+                Reason::ThisBetterThanResign => "ThisBetterThanResign",
+                Reason::AnyLeafBetterThanResign => "AnyLeafBetterThanResign",
+                Reason::AnyLeafMoreThanLose => "AnyLeafMoreThanLose",
+                Reason::Win => "Win",
+                Reason::GoodPosition => "GoodPosition",
+                Reason::AnyMoveMoreThanLose => "AnyMoveMoreThanLose",
+                Reason::ValueUp => "ValueUp",
+            }
+        )
     }
 }
