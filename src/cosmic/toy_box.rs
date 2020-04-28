@@ -440,8 +440,9 @@ impl Board {
             }
         }
 
-        let list = match friend {
-            Phase::First => [
+        const FIRST_SECOND: [[HandAddress; HAND_ADDRESS_TYPE_LEN - 1]; 2] = [
+            [
+                // King なし
                 HandAddress::Rook1,
                 HandAddress::Bishop1,
                 HandAddress::Gold1,
@@ -450,7 +451,8 @@ impl Board {
                 HandAddress::Lance1,
                 HandAddress::Pawn1,
             ],
-            Phase::Second => [
+            [
+                // King なし
                 HandAddress::Rook2,
                 HandAddress::Bishop2,
                 HandAddress::Gold2,
@@ -459,8 +461,8 @@ impl Board {
                 HandAddress::Lance2,
                 HandAddress::Pawn2,
             ],
-        };
-        for adr in &list {
+        ];
+        for adr in &FIRST_SECOND[friend as usize] {
             if let Some(piece) = self.last_hand(*adr) {
                 piece_get(Location::Hand(*adr), *piece);
             }

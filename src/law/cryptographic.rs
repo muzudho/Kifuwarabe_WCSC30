@@ -42,16 +42,7 @@ pub fn pop_sq_from_hash(hash: u64) -> (u64, Option<AbsoluteAddress>) {
 
 /// 指し手のために、段をアルファベットにすることを想定
 pub fn num_to_lower_case(num: usize) -> &'static str {
-    match num {
-        1 => "a",
-        2 => "b",
-        3 => "c",
-        4 => "d",
-        5 => "e",
-        6 => "f",
-        7 => "g",
-        8 => "h",
-        9 => "i",
-        _ => "?", // 返却型が &'static str なので、エラー値を動的に作れない
-    }
+    const ALPHABETS: [&str; 9] = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
+    // 配列の範囲外は強制終了だぜ☆（＾～＾）
+    ALPHABETS[num - 1]
 }

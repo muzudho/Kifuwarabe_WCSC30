@@ -110,14 +110,6 @@ impl Movement {
         push_sq_to_hash(hash, self.source.as_ref())
     }
 
-    /*
-    pub fn clear(&mut self) {
-        self.source = None;
-        self.destination = None;
-        self.promote = false;
-        self.drop = None;
-    }
-    */
     pub fn set(&mut self, b: &Movement) {
         self.source = b.source;
         self.destination = b.destination;
@@ -141,21 +133,12 @@ impl fmt::Display for Movement {
                 if self.promote { "+" } else { "" }
             )
         } else {
-            use crate::cosmic::smart::features::HandAddressType::*;
+            const DROPS: [&str; 8] = ["?", "R", "B", "G", "S", "N", "L", "P"];
             write!(
                 f,
                 "{}*{}{}{}",
                 if let Some(drp) = self.drop {
-                    match drp {
-                        King => "?",
-                        Rook => "R",
-                        Bishop => "B",
-                        Gold => "G",
-                        Silver => "S",
-                        Knight => "N",
-                        Lance => "L",
-                        Pawn => "P",
-                    }
+                    DROPS[drp as usize]
                 } else {
                     "?"
                 },
