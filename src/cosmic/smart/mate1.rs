@@ -26,6 +26,8 @@ pub struct Mate1 {
     pub lioncatch: bool,
     /// TODO 空き王手になって、自玉が逆に王手回避放置になるぜ☆（＾～＾）！
     pub counter: bool,
+    /// 上下反転させるのに使うぜ☆（＾～＾）
+    pub sign: isize,
 }
 impl Mate1 {
     pub fn new(game: &Game) -> Self {
@@ -39,15 +41,17 @@ impl Mate1 {
             pinned_pieces: None,
             lioncatch: false,
             counter: false,
+            sign: 1,
         }
     }
 
-    pub fn end(&mut self) {
+    pub fn end(&mut self) -> &mut Self {
         if let Some(pinned_pieces_val) = &mut self.pinned_pieces {
             if let Some(checkers_val) = &mut self.checkers {
                 checkers_val.retain(|x| !(*pinned_pieces_val).contains(&x))
             }
         }
+        self
     }
     pub fn init(&mut self, game: &Game) -> &mut Self {
         // 自玉の場所☆（＾～＾）
@@ -56,16 +60,11 @@ impl Mate1 {
             Phase::Second => PieceNum::King2,
         }) {
             Location::Board(adr) => adr,
-            Location::Hand(_adr) => {
-                // TODO らいおんキャッチするのはおかしいぜ☆（＾～＾）！
-                self.lioncatch = true;
-                return self;
-                // panic!(Beam::trouble(
-                //     "(Err.48) なんで敵玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
-                // ))
-            }
+            Location::Hand(_adr) => panic!(Beam::trouble(
+                "(Err.62) なんで自玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
+            )),
             Location::Busy => panic!(Beam::trouble(
-                "(Err.51) なんで敵玉が作業中なんだぜ☆（＾～＾）！"
+                "(Err.66) なんで自玉が作業中なんだぜ☆（＾～＾）！"
             )),
         };
 
@@ -84,26 +83,30 @@ impl Mate1 {
                 // ))
             }
             Location::Busy => panic!(Beam::trouble(
-                "(Err.51) なんで敵玉が作業中なんだぜ☆（＾～＾）！"
+                "(Err.83) なんで敵玉が作業中なんだぜ☆（＾～＾）！"
             )),
         };
+
+        self.sign = if self.friend == Phase::Second { -1 } else { 1 };
+
         self
     }
-    /// TODO 動かしてはいけない駒の一覧を作るぜ☆（＾～＾）
+
+    /// 動かしてはいけない駒の一覧を作るぜ☆（＾～＾）
     pub fn pinned_pieces(&mut self, game: &Game) -> &mut Self {
         // 自玉の８方向を調べようぜ☆（＾～＾）
         // 味方の駒、相手の香飛角の順で駒が現れたらピン確定だぜ☆（＾～＾）
         // TODO speed of light に入れたいぜ☆（＾～＾）
-        let sign = if self.friend == Phase::Second { -1 } else { 1 };
+        // (自玉からスキャンする方向, 敵駒から見て自玉の方を向いているモビリティ)
         let recipes = [
-            (RelAdr::new(1, sign * 0), Movility::SideBackSlider), // 西
-            (RelAdr::new(1, sign * 1), Movility::SlideDiagonally), // 南西
-            (RelAdr::new(0, sign * 1), Movility::SideBackSlider), // 南
-            (RelAdr::new(-1, sign * 1), Movility::SlideDiagonally), // 南東
-            (RelAdr::new(-1, sign * 0), Movility::SideBackSlider), // 東
-            (RelAdr::new(-1, sign * -1), Movility::SlideDiagonally), // 北東
-            (RelAdr::new(0, sign * -1), Movility::FrontSlider),   // 北
-            (RelAdr::new(1, sign * -1), Movility::SlideDiagonally), // 北西
+            (RelAdr::new(1, self.sign * 0), Movility::SideBackSlider), // 西
+            (RelAdr::new(1, self.sign * 1), Movility::SlideDiagonally), // 南西
+            (RelAdr::new(0, self.sign * 1), Movility::SideBackSlider), // 南
+            (RelAdr::new(-1, self.sign * 1), Movility::SlideDiagonally), // 南東
+            (RelAdr::new(-1, self.sign * 0), Movility::SideBackSlider), // 東
+            (RelAdr::new(-1, self.sign * -1), Movility::SlideDiagonally), // 北東
+            (RelAdr::new(0, self.sign * -1), Movility::FrontSlider),   // 北
+            (RelAdr::new(1, self.sign * -1), Movility::SlideDiagonally), // 北西
         ];
 
         let mut pinned_pieces = Vec::<PieceNum>::new();
@@ -119,7 +122,7 @@ impl Mate1 {
                             // 味方の駒か☆（＾～＾）？
                             if any_piece_val.meaning.phase() == self.friend {
                                 // そうだぜ☆（＾～＾）
-                                friend_piece = any_piece;
+                                friend_piece = Some(any_piece_val);
                             } else {
                                 // おわり☆（＾～＾）
                                 break;
@@ -134,7 +137,7 @@ impl Mate1 {
                                     .contains(&recipe.1)
                                 {
                                     // そうだぜ☆（＾～＾）ピンされている方確定だな☆（＾～＾）
-                                    pinned_pieces.push(any_piece_val.num);
+                                    pinned_pieces.push(friend_piece.unwrap().num);
                                 } else {
                                     // おわり☆（＾～＾）
                                     break;
@@ -160,77 +163,75 @@ impl Mate1 {
     /// ただし、自玉に空き王手がかかる形では この手は使えないぜ☆（＾～＾）
     pub fn checkers(&mut self, game: &Game) -> &mut Self {
         // TODO speed of light に入れたいぜ☆（＾～＾）
-        let sign = if self.friend == Phase::Second { -1 } else { 1 };
         let recipes = [
-            (RelAdr::new(-1, sign * 2), Movility::Knight),  // 桂馬
-            (RelAdr::new(1, sign * 2), Movility::Knight),   // 桂馬
-            (RelAdr::new(1, sign * 0), Movility::SideBack), // 西
-            (RelAdr::new(1, sign * 1), Movility::BackDiagonally), // 南西
-            (RelAdr::new(0, sign * 1), Movility::SideBack), // 南
-            (RelAdr::new(-1, sign * 1), Movility::BackDiagonally), // 南東
-            (RelAdr::new(-1, sign * 0), Movility::SideBack), // 東
-            (RelAdr::new(-1, sign * -1), Movility::FrontDiagonally), // 北東
-            (RelAdr::new(0, sign * -1), Movility::Front),   // 北
-            (RelAdr::new(1, sign * -1), Movility::FrontDiagonally), // 北西
+            // (相手玉から見て隣へ, 自駒から見て相手玉に当たっている方)
+            (RelAdr::new(-1, self.sign * 2), Movility::Knight), // 桂馬
+            (RelAdr::new(1, self.sign * 2), Movility::Knight),  // 桂馬
+            (RelAdr::new(1, self.sign * 0), Movility::SideBack), // 西
+            (RelAdr::new(1, self.sign * 1), Movility::FrontDiagonally), // 南西
+            (RelAdr::new(0, self.sign * 1), Movility::Front),   // 南
+            (RelAdr::new(-1, self.sign * 1), Movility::FrontDiagonally), // 南東
+            (RelAdr::new(-1, self.sign * 0), Movility::SideBack), // 東
+            (RelAdr::new(-1, self.sign * -1), Movility::BackDiagonally), // 北東
+            (RelAdr::new(0, self.sign * -1), Movility::SideBack), // 北
+            (RelAdr::new(1, self.sign * -1), Movility::BackDiagonally), // 北西
         ];
 
         let mut checkers = Vec::<PieceNum>::new();
         // 王手を掛けている駒を全部挙げろだぜ☆（＾～＾）
         for recipe in &recipes {
+            // 相手玉をスタート地点にするぜ☆（＾～＾）
             let mut cur = self.opponent_king_adr.clone();
-            // Beam::shoot(&format!("Mate1 | cur={:?}", cur));
-
             if cur.offset(&recipe.0).legal_cur() {
-                // Beam::shoot(&format!("Mate1 | legal cur={:?}", cur));
-                let piece = game.board.piece_at(&cur);
-                if let Some(piece_val) = piece {
-                    // Beam::shoot(&format!("Mate1 | piece={:?}", piece_val));
-                    // Beam::shoot(&format!(
-                    //     "Mate1 | piece.phase={}",
-                    //     piece_val.meaning.phase()
-                    // ));
-                    // Beam::shoot(&format!(
-                    //     "Mate1 | contains recipe={}",
-                    //     piece_val.meaning.r#type().movility().contains(&recipe.1)
-                    // ));
-                    if piece_val.meaning.phase() == self.friend
-                        && piece_val.meaning.r#type().movility().contains(&recipe.1)
+                // 1つ隣に駒があるか確認だぜ☆（＾～＾）
+                if let Some(any_piece_val) = game.board.piece_at(&cur) {
+                    if any_piece_val.meaning.phase() == self.friend
+                        && any_piece_val
+                            .meaning
+                            .r#type()
+                            .movility()
+                            .contains(&recipe.1)
                     {
-                        // Beam::shoot("Mate1 | mate!");
-                        // 敵玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                        checkers.push(piece_val.num);
+                        // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
+                        checkers.push(any_piece_val.num);
                     }
                 }
             }
         }
 
-        // TODO スライダー駒も判定しようぜ☆（＾～＾）？
+        // スライダー駒も判定しようぜ☆（＾～＾）？
         // TODO speed of light に入れたいぜ☆（＾～＾）
         let recipes = [
-            (RelAdr::new(1, sign * 0), Movility::SideBackSlider), // 西
-            (RelAdr::new(1, sign * 1), Movility::SlideDiagonally), // 南西
-            (RelAdr::new(0, sign * 1), Movility::SideBackSlider), // 南
-            (RelAdr::new(-1, sign * 1), Movility::SlideDiagonally), // 南東
-            (RelAdr::new(-1, sign * 0), Movility::SideBackSlider), // 東
-            (RelAdr::new(-1, sign * -1), Movility::SlideDiagonally), // 北東
-            (RelAdr::new(0, sign * -1), Movility::FrontSlider),   // 北
-            (RelAdr::new(1, sign * -1), Movility::SlideDiagonally), // 北西
+            // (相手玉から見て隣へ, 自駒から見て相手玉に当たっている方)
+            (RelAdr::new(1, self.sign * 0), Movility::SideBackSlider), // 西
+            (RelAdr::new(1, self.sign * 1), Movility::SlideDiagonally), // 南西
+            (RelAdr::new(0, self.sign * 1), Movility::FrontSlider),    // 南
+            (RelAdr::new(-1, self.sign * 1), Movility::SlideDiagonally), // 南東
+            (RelAdr::new(-1, self.sign * 0), Movility::SideBackSlider), // 東
+            (RelAdr::new(-1, self.sign * -1), Movility::SlideDiagonally), // 北東
+            (RelAdr::new(0, self.sign * -1), Movility::SideBackSlider), // 北
+            (RelAdr::new(1, self.sign * -1), Movility::SlideDiagonally), // 北西
         ];
 
         for recipe in &recipes {
+            // 相手玉をスタート地点にするぜ☆（＾～＾）
             let mut cur = self.opponent_king_adr.clone();
 
             for i in 0..8 {
                 if cur.offset(&recipe.0).legal_cur() {
-                    let piece = game.board.piece_at(&cur);
-                    if let Some(piece_val) = piece {
-                        if piece_val.meaning.phase() == self.friend
-                            && piece_val.meaning.r#type().movility().contains(&recipe.1)
+                    // 1つ隣に駒があるか確認だぜ☆（＾～＾）
+                    if let Some(any_piece_val) = game.board.piece_at(&cur) {
+                        if any_piece_val.meaning.phase() == self.friend
+                            && any_piece_val
+                                .meaning
+                                .r#type()
+                                .movility()
+                                .contains(&recipe.1)
                         {
+                            // 隣接している駒は、さっき入れたはずだぜ☆（＾～＾）
                             if i != 0 {
-                                // Beam::shoot("Mate1 | mate!");
                                 // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                                checkers.push(piece_val.num);
+                                checkers.push(any_piece_val.num);
                             }
                         }
                         // なんか駒に当たったよな☆（＾～＾） スライダー終わり☆（＾～＾）

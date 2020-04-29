@@ -58,7 +58,6 @@ struct SpeedOfLight {
     piece_meaning_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
 
     /// 駒種類☆（＾～＾）
-    piece_type_to_sliding_table: [bool; PIECE_TYPE_LEN],
     piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
     piece_type_to_movility_table: [Vec<Movility>; PIECE_TYPE_LEN],
     piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
@@ -324,22 +323,6 @@ impl Default for SpeedOfLight {
             ],
 
             // 成り駒か☆（＾～＾）？
-            piece_type_to_sliding_table: [
-                false, // King
-                true,  // Rook
-                true,  // Bishop
-                false, // Gold
-                false, // Silver
-                false, // Knight
-                true,  // Lance
-                false, // Pawn
-                true,  // Dragon
-                true,  // Horse
-                false, // PromotedSilver
-                false, // PromotedKnight
-                false, // PromotedLance
-                false, // PromotedPawn
-            ],
             piece_type_to_promoted_table: [
                 false, // King
                 false, // Rook
@@ -639,9 +622,6 @@ impl PieceMeaning {
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceType {
-    pub fn sliding(self) -> bool {
-        NINE_299792458.piece_type_to_sliding_table[self as usize]
-    }
     pub fn promoted(self) -> bool {
         NINE_299792458.piece_type_to_promoted_table[self as usize]
     }

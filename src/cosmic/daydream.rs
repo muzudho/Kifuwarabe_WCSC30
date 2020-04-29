@@ -137,6 +137,7 @@ impl Tree {
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
+        // 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
         let mut mate1 = Mate1::new(game);
         mate1.init(game).pinned_pieces(game).checkers(game).end();
 
