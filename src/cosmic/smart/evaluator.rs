@@ -117,7 +117,7 @@ impl Evaluation {
                 .0
                 .hand_address()
                 .r#type()
-                .caputured_piece_value()
+                .captured_value()
         } else {
             0
         }

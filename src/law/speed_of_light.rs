@@ -44,7 +44,7 @@ struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
 
     /// 先後付きの駒☆（＾～＾）
-    piece_meaning_phase_table: [Phase; PIECE_MEANING_LEN],
+    piece_meaning_to_phase_table: [Phase; PIECE_MEANING_LEN],
     piece_meaning_type_table: [PieceType; PIECE_MEANING_LEN],
     /// 駒→成駒　（成れない駒は、そのまま）
     piece_meaning_promoted_table: [PieceMeaning; PIECE_MEANING_LEN],
@@ -57,12 +57,14 @@ struct SpeedOfLight {
 
     /// 駒種類☆（＾～＾）
     piece_type_promoted_table: [bool; PIECE_TYPE_LEN],
+    piece_type_to_movility_table: [Vec<Movility>; PIECE_TYPE_LEN],
 
     /// 持ち駒☆（＾～＾）
     /// 玉２枚引く☆（＾～＾）
     hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
     hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
     hand_address_to_type_table: [HandAddressType; HAND_ADDRESS_LEN],
+    hand_address_to_captured_value: [isize; HAND_ADDRESS_TYPE_LEN],
 
     // 相対番地と角度☆（＾～＾）
     west_ccw: [RelAdr; ANGLE_LEN],
@@ -83,7 +85,6 @@ struct SpeedOfLight {
     /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
     /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
     promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
-    caputured_piece_value: [isize; HAND_ADDRESS_TYPE_LEN],
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
@@ -93,7 +94,7 @@ impl Default for SpeedOfLight {
         SpeedOfLight {
             /// ピースの早見表の生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
             /// 先後付きの駒☆（＾～＾）
-            piece_meaning_phase_table: [
+            piece_meaning_to_phase_table: [
                 First,  // King1
                 First,  // Rook1
                 First,  // Bishop1
@@ -279,6 +280,73 @@ impl Default for SpeedOfLight {
                 false, false, false, false, false, false, false, false, true, true, true, true,
                 true, true,
             ],
+            piece_type_to_movility_table: [
+                vec![
+                    Movility::BackDiagonally,
+                    Movility::FrontDiagonally,
+                    Movility::SideBackSlider,
+                    Movility::FrontDiagonally,
+                ], // King
+                vec![
+                    Movility::SideBackSlider,
+                    Movility::FrontSlider,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // Rook
+                vec![
+                    Movility::SlideDiagonally,
+                    Movility::BackDiagonally,
+                    Movility::FrontDiagonally,
+                ], // Bishop
+                vec![
+                    Movility::FrontDiagonally,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // Gold
+                vec![
+                    Movility::BackDiagonally,
+                    Movility::FrontDiagonally,
+                    Movility::Front,
+                ], // Silver
+                vec![Movility::Knight],                       // Knight
+                vec![Movility::FrontSlider, Movility::Front], // Lance
+                vec![Movility::Front],                        // Pawn
+                vec![
+                    Movility::SideBackSlider,
+                    Movility::FrontSlider,
+                    Movility::BackDiagonally,
+                    Movility::FrontDiagonally,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // Dragon
+                vec![
+                    Movility::SlideDiagonally,
+                    Movility::BackDiagonally,
+                    Movility::FrontDiagonally,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // Horse
+                vec![
+                    Movility::FrontDiagonally,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // PromotedSilver
+                vec![
+                    Movility::FrontDiagonally,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // PromotedKnight
+                vec![
+                    Movility::FrontDiagonally,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // PromotedLance
+                vec![
+                    Movility::FrontDiagonally,
+                    Movility::SideBack,
+                    Movility::Front,
+                ], // PromotedPawn
+            ],
 
             // 持ち駒☆（＾～＾）
             hand_addresses_legal_all: [
@@ -433,7 +501,7 @@ impl Default for SpeedOfLight {
 
             // 評価値☆（＾～＾）
             promotion_value: [0, 1, 1, 0, 0, 1, 1, 1],
-            caputured_piece_value: [
+            hand_address_to_captured_value: [
                 // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
                 0,
                 // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
@@ -446,7 +514,7 @@ impl Default for SpeedOfLight {
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceMeaning {
     pub fn phase(self) -> Phase {
-        NINE_299792458.piece_meaning_phase_table[self as usize]
+        NINE_299792458.piece_meaning_to_phase_table[self as usize]
     }
 
     pub fn r#type(self) -> PieceType {
@@ -475,6 +543,9 @@ impl PieceType {
     pub fn promoted(self) -> bool {
         NINE_299792458.piece_type_promoted_table[self as usize]
     }
+    pub fn movility(self) -> &'static Vec<Movility> {
+        &NINE_299792458.piece_type_to_movility_table[self as usize]
+    }
 }
 
 /// 持駒種類
@@ -490,14 +561,11 @@ impl HandAddresses {
     }
 }
 
+/// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddress {
     pub fn from_phase_and_type(phase: Phase, adr: HandAddressType) -> Self {
         NINE_299792458.hand_addresses[phase as usize][adr as usize]
     }
-}
-
-/// コーディングを短くするためのものだぜ☆（＾～＾）
-impl HandAddress {
     pub fn r#type(self) -> HandAddressType {
         NINE_299792458.hand_address_to_type_table[self as usize]
     }
@@ -526,11 +594,12 @@ impl HandAddressType {
     pub fn promotion_value(self) -> isize {
         NINE_299792458.promotion_value[self as usize]
     }
-    pub fn caputured_piece_value(self) -> isize {
-        NINE_299792458.caputured_piece_value[self as usize]
+    pub fn captured_value(self) -> isize {
+        NINE_299792458.hand_address_to_captured_value[self as usize]
     }
 }
 
+/// コーディングを短くするためのものだぜ☆（＾～＾）
 impl Angle {
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate90cw(self) -> Angle {
@@ -560,6 +629,7 @@ impl Angle {
     }
 }
 
+/*
 /// 駒の利き☆（＾～＾）
 pub enum RelativePieceControl66 {
     West0,
@@ -630,9 +700,11 @@ pub enum RelativePieceControl66 {
     Knight0,
     Knight1,
 }
+*/
 
 /// ミーシーな駒の機動性☆（＾～＾）
-pub enum Movility7 {
+#[derive(PartialEq)]
+pub enum Movility {
     Knight,
     SlideDiagonally,
     SideBackSlider,
