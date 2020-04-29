@@ -12,31 +12,27 @@ use crate::cosmic::smart::square::{
 };
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
-use crate::law::usi::MAX_WAYS;
 use crate::spaceship::equipment::Beam;
 use std::fmt;
 
 /// ソートを高速にするためのものだぜ☆（＾～＾）
 pub struct Ways {
     /// スワップしても割と速いだろ☆（＾～＾）
-    pub indexes: [usize; MAX_WAYS],
+    pub indexes: Vec<usize>,
     /// こいつをスワップすると遅くなるぜ☆（＾～＾）
-    body: [Way; MAX_WAYS],
-    cursor: usize,
+    body: Vec<Way>,
 }
 impl Ways {
     /// この初期化が遅いかどうかだな☆（＾～＾）
     pub fn new() -> Self {
         Ways {
-            indexes: [0; MAX_WAYS],
-            body: [Way::default(); MAX_WAYS],
-            cursor: 0,
+            indexes: Vec::<usize>::new(),
+            body: Vec::<Way>::new(),
         }
     }
     pub fn push(&mut self, way: &Way) {
-        self.indexes[self.cursor] = self.cursor;
-        self.body[self.cursor].set(way.move_hash, way.captured);
-        self.cursor += 1;
+        self.indexes.push(self.indexes.len());
+        self.body.push(*way);
     }
     /// usize型のコピーなら、オブジェクトのコピーより少しは速いだろ☆（＾～＾）
     pub fn swap(&mut self, a: usize, b: usize) {
@@ -78,10 +74,6 @@ impl Way {
             move_hash: mov,
             captured: cap,
         }
-    }
-    pub fn set(&mut self, mov: u64, cap: Option<(PieceMeaning, PieceNum)>) {
-        self.move_hash = mov;
-        self.captured = cap;
     }
 }
 

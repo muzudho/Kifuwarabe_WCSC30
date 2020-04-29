@@ -67,9 +67,7 @@ impl Tree {
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for id in 1..5
-        /*TODO universe.option_max_depth*/
-        {
+        for id in 1..universe.option_max_depth {
             self.max_depth0 = id;
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             let movement = best_ts.bestmove.to_movement();
