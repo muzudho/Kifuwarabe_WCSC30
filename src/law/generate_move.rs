@@ -12,16 +12,65 @@ use crate::cosmic::smart::square::{
 };
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
+use crate::law::usi::MAX_WAYS;
 use crate::spaceship::equipment::Beam;
 use std::fmt;
 
+/// ソートを高速にするためのものだぜ☆（＾～＾）
+pub struct Ways {
+    /// スワップしても割と速いだろ☆（＾～＾）
+    pub indexes: [usize; MAX_WAYS],
+    /// こいつをスワップすると遅くなるぜ☆（＾～＾）
+    body: [Way; MAX_WAYS],
+    cursor: usize,
+}
+impl Ways {
+    /// この初期化が遅いかどうかだな☆（＾～＾）
+    pub fn new() -> Self {
+        Ways {
+            indexes: [0; MAX_WAYS],
+            body: [Way::default(); MAX_WAYS],
+            cursor: 0,
+        }
+    }
+    pub fn push(&mut self, way: &Way) {
+        self.indexes[self.cursor] = self.cursor;
+        self.body[self.cursor].set(way.move_hash, way.captured);
+        self.cursor += 1;
+    }
+    /// usize型のコピーなら、オブジェクトのコピーより少しは速いだろ☆（＾～＾）
+    pub fn swap(&mut self, a: usize, b: usize) {
+        let temp = self.indexes[a];
+        self.indexes[a] = self.indexes[b];
+        self.indexes[b] = temp;
+    }
+    pub fn get(&self, index: usize) -> Way {
+        self.body[self.indexes[index]]
+    }
+    pub fn len(&self) -> usize {
+        self.body.len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.body.is_empty()
+    }
+}
+
 /// 局面の差分だぜ☆（＾～＾）
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Way {
     /// 指し手☆（＾～＾）
     pub move_hash: u64,
     /// 取った駒☆（＾～＾）
     pub captured: Option<(PieceMeaning, PieceNum)>,
+}
+impl Default for Way {
+    /// ゴミ値☆（＾～＾）
+    fn default() -> Self {
+        Way {
+            move_hash: 0,
+            captured: None,
+        }
+    }
 }
 impl Way {
     pub fn new(mov: u64, cap: Option<(PieceMeaning, PieceNum)>) -> Self {
@@ -29,6 +78,10 @@ impl Way {
             move_hash: mov,
             captured: cap,
         }
+    }
+    pub fn set(&mut self, mov: u64, cap: Option<(PieceMeaning, PieceNum)>) {
+        self.move_hash = mov;
+        self.captured = cap;
     }
 }
 

@@ -9,8 +9,7 @@ use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
-use crate::law::generate_move::PseudoLegalMoves;
-use crate::law::generate_move::Way;
+use crate::law::generate_move::{PseudoLegalMoves, Ways};
 use crate::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
@@ -68,7 +67,9 @@ impl Tree {
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for id in 1..universe.option_max_depth {
+        for id in 1..5
+        /*TODO universe.option_max_depth*/
+        {
             self.max_depth0 = id;
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             let movement = best_ts.bestmove.to_movement();
@@ -138,11 +139,11 @@ impl Tree {
         let mut exists_lose = false;
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let mut ways = Vec::<Way>::new();
+        let mut ways = Ways::new();
 
         // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
         PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
-            &ways.push(way);
+            ways.push(&way);
         });
 
         // 指せる手が無ければ投了☆（＾～＾）
@@ -154,25 +155,21 @@ impl Tree {
         let mut cap = 0;
         if 1 < ways.len() {
             for i in 0..ways.len() {
-                if let Some(_captured) = ways[i].captured {
+                if let Some(_captured) = ways.get(i).captured {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                    let temp = ways[cap].clone();
-                    ways[cap] = ways[i].clone();
-                    ways[i] = temp;
+                    ways.swap(cap, i);
                     cap += 1;
                 }
             }
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                match ways[i].captured.unwrap().0.r#type() {
+                match ways.get(i).captured.unwrap().0.r#type() {
                     PieceType::King => {
                         // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                         // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                        let temp = ways[king].clone();
-                        ways[king] = ways[i].clone();
-                        ways[i] = temp;
+                        ways.swap(king, i);
                         king += 1;
                     }
                     _ => {}
@@ -188,7 +185,8 @@ impl Tree {
             -1
         };
         self.add_control(coverage_sign, game, &ways);
-        for way in ways.iter() {
+        for index in ways.indexes.iter() {
+            let way = ways.get(*index);
             // 時間を見ようぜ☆（＾～＾）？
             if ts.timeout {
                 // すでにタイムアウトしていたのなら、さっさと抜けるぜ☆（＾～＾）
@@ -358,10 +356,10 @@ impl Tree {
         ts
     }
 
-    pub fn add_control(&mut self, sign: isize, game: &mut Game, ways: &Vec<Way>) {
-        for way in ways.iter() {
+    pub fn add_control(&mut self, sign: isize, game: &mut Game, ways: &Ways) {
+        for index in ways.indexes.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.control[Movement::from_hash(way.move_hash)
+            game.board.control[Movement::from_hash(ways.get(*index).move_hash)
                 .unwrap()
                 .destination
                 .address() as usize] += sign;

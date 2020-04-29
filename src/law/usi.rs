@@ -9,8 +9,11 @@ use crate::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
 use crate::spaceship::equipment::Beam;
 use atoi::atoi;
 
+/// 局面の最多合法手５９３手
+pub const MAX_WAYS: usize = 593;
+
 /*
-/// USIプロトコル表記: 最多合法手５９３手局面
+/// USIプロトコル表記: 最多合法手５９３手の局面
 /// https://ameblo.jp/professionalhearts/entry-10001031814.html
 pub const POS_593: &str = "position sfen R8/2K1S1SSk/4B4/9/9/9/9/9/1L1L1L3 w RBGSNLP3g3n17p 1";
 */
