@@ -30,6 +30,11 @@ impl Piece {
         }
     }
 }
+impl fmt::Debug for Piece {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Piece({} {:?})", self.meaning, self.num)
+    }
+}
 
 /// ソートを高速にするためのものだぜ☆（＾～＾）
 pub struct Ways {
@@ -705,8 +710,7 @@ impl Area {
 
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    cur.offset(&r);
-                    if !cur.legal_cur() {
+                    if !cur.offset(&r).legal_cur() {
                         break;
                     }
 
@@ -720,9 +724,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                cur.offset(&angle.west_ccw_double_rank());
-
-                if cur.legal_cur() {
+                if cur.offset(&angle.west_ccw_double_rank()).legal_cur() {
                     adr_get(cur);
                 }
             }
@@ -730,9 +732,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                cur.offset(&angle.west_ccw());
-
-                if cur.legal_cur() {
+                if cur.offset(&angle.west_ccw()).legal_cur() {
                     adr_get(cur);
                 }
             }

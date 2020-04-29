@@ -211,6 +211,15 @@ pub enum Phase {
     First,
     Second,
 }
+impl Phase {
+    pub fn turn(self) -> Phase {
+        use self::Phase::*;
+        match self {
+            First => Second,
+            Second => First,
+        }
+    }
+}
 /// 後手（上手）を盤の下側に持ってきて表示するのを基本とするぜ☆（＾～＾）
 impl fmt::Display for Phase {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -223,14 +232,3 @@ impl fmt::Display for Phase {
         }
     }
 }
-/*
-impl Phase {
-    pub fn turn(&self) -> Phase {
-        use self::Phase::*;
-        match self {
-            First => Second,
-            Second => First,
-        }
-    }
-}
-*/

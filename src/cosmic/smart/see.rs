@@ -5,9 +5,10 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::smart::square::AbsoluteAddress;
 /*
 use crate::cosmic::smart::square::RelAdr;
+use crate::law::generate_move::Piece;
 use crate::law::speed_of_light::Movility;
 use crate::spaceship::equipment::Beam;
-*/
+// */
 
 pub struct SEE {}
 impl SEE {
@@ -36,22 +37,35 @@ impl SEE {
         for i in 0..102 {
             let mut next_target_piece = None;
             // TODO 相手の駒が、自分の駒を取る全てのケースを一覧しろだぜ☆（＾～＾）
-            // let attackers = Vec::new();
-            // for recipe in &recipes {}
+            let attackers = Vec::<Piece>::new();
+            for recipe in &recipes {
+                let mut cur = adr.clone();
+                if cur.offset(&recipe.0).legal_cur() {
+                    let piece = game.board.piece_at(&cur);
+                    if let Some(piece_val) = piece {
+                        if piece_val.meaning.phase() != current_target_piece.meaning.phase()
+                            || piece_val.meaning.r#type().movility().contains(&recipe.1)
+                        {
+                            // 敵の駒も西に動けるんだったら、利かされているぜ☆（＾～＾）
+                            // 自分の駒が取られるということだぜ☆（＾～＾）
+                            attackers.push(piece_val);
+                        }
+                    }
+                }
+            }
 
             for recipe in &recipes {
                 let mut cur = adr.clone();
-                cur.offset(&recipe.0);
-                if cur.legal_cur() {
+                if cur.offset(&recipe.0).legal_cur() {
                     let piece = game.board.piece_at(&cur);
                     if let Some(piece_val) = piece {
-                        if piece_val.0.phase() != current_target_piece.0.phase()
-                            || piece_val.0.r#type().movility().contains(&recipe.1)
+                        if piece_val.meaning.phase() != current_target_piece.meaning.phase()
+                            || piece_val.meaning.r#type().movility().contains(&recipe.1)
                         {
                             // 敵の駒も西に動けるんだったら、利かされているぜ☆（＾～＾）
                             // 自分の駒が取られるということだぜ☆（＾～＾）
                             centi_pawn -= current_target_piece
-                                .0
+                                .meaning
                                 .hand_address()
                                 .r#type()
                                 .captured_value();
@@ -75,7 +89,7 @@ impl SEE {
             }
         }
         Value::CentiPawn(centi_pawn)
-        */
+        // */
         Value::CentiPawn(0)
     }
 }

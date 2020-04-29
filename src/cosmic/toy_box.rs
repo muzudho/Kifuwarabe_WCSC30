@@ -3,6 +3,7 @@
 //!
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Phase;
+use crate::cosmic::recording::PHASE_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_MAX};
@@ -124,7 +125,8 @@ pub struct Board {
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
     pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
-    pub control: [isize; BOARD_MEMORY_AREA as usize],
+    pub control_sum: isize,
+    pub controls: [[isize; BOARD_MEMORY_AREA as usize]; PHASE_LEN],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -170,7 +172,8 @@ impl Default for Board {
                 HandAddressTypeStack::default(),
                 HandAddressTypeStack::default(),
             ],
-            control: [0; BOARD_MEMORY_AREA as usize],
+            control_sum: 0,
+            controls: [[0; BOARD_MEMORY_AREA as usize]; PHASE_LEN],
         }
     }
 }
@@ -224,7 +227,8 @@ impl Board {
         self.location = board.location.clone();
         self.hand_index = board.hand_index.clone();
         self.hands = board.hands.clone();
-        self.control = board.control.clone();
+        self.control_sum = board.control_sum;
+        self.controls = board.controls.clone();
     }
 
     /// 歩が置いてあるか確認
@@ -242,6 +246,10 @@ impl Board {
     /// 升で指定して駒を取得
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<Piece> {
         self.pieces[adr.address() as usize]
+    }
+    /// 駒の背番号で指定して場所を取得
+    pub fn location_at(&self, adr: PieceNum) -> Location {
+        self.location[adr as usize]
     }
 
     /// 升で指定して駒を置く
@@ -365,7 +373,7 @@ impl Board {
 
     /// 盤面の全升への利きだぜ☆（＾～＾） 良ければ総量はプラスだぜ☆（＾～＾）
     pub fn coverage_value(&self) -> isize {
-        self.control.iter().sum()
+        self.control_sum
     }
 
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）

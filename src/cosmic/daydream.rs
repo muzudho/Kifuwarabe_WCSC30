@@ -6,6 +6,7 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceType;
+use crate::cosmic::smart::mate1::{Mate1, Mate1Result};
 use crate::cosmic::smart::see::SEE;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::{Piece, PseudoLegalMoves, Ways};
@@ -132,6 +133,7 @@ impl Tree {
     /// Best movement, Value, Sum nodes
     fn node(&mut self, game: &mut Game, another_branch_best: Value) -> TreeState {
         let mut ts = TreeState::default();
+
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
@@ -207,6 +209,44 @@ impl Tree {
                 self.evaluation
                     .after_do_move(&source_piece, &captured_piece, movement.promote);
 
+            match Mate1::was_checked(game) {
+                Mate1Result::Checked => {
+                    // 相手玉に王手がかかってるぜ☆（＾～＾）！
+                    if !Mate1::can_evasion(game) {
+                        // 相手玉が詰んでたら、勝ちだぜ☆（＾～＾）！
+                        ts.bestmove.mate(way.move_hash);
+
+                        self.evaluation
+                            .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                        self.pv.pop();
+                        game.undo_move();
+                        break;
+                    }
+                    // 相手玉は逃げれるぜ☆（＾～＾）
+                }
+                Mate1Result::Counter => {
+                    // こんなクソ手を指してはいけないぜ☆（＾～＾）！ 戻せ☆（＾～＾）！
+                    self.evaluation
+                        .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                    self.pv.pop();
+                    game.undo_move();
+                    break;
+                }
+                Mate1Result::Lioncatch => {
+                    // TODO 廃止方針☆（＾～＾）
+                    // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
+                    ts.bestmove.catch_king(way.move_hash);
+
+                    self.evaluation
+                        .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                    self.pv.pop();
+                    game.undo_move();
+                    break;
+                }
+                Mate1Result::NoMate => {}
+            }
+            /*
+            // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.meaning.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
@@ -219,6 +259,7 @@ impl Tree {
                     break;
                 }
             }
+            */
 
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
@@ -249,13 +290,14 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "board coverage={} | {} {} {} | komawari={} | promotion={}",
+                            "board coverage={} | komawari={} | promotion={} | {} {} {} |",
                             self.evaluation.board_coverage(board_coverage_value),
-                            game.board.control[68],
-                            game.board.control[58],
-                            game.board.control[48],
                             self.evaluation.komawari(),
-                            self.evaluation.promotion()
+                            self.evaluation.promotion(),
+                            // サンプルを見ているだけだぜ☆（＾～＾）
+                            game.board.controls[game.history.get_friend() as usize][68],
+                            game.board.controls[game.history.get_friend() as usize][58],
+                            game.board.controls[game.history.get_friend() as usize][48],
                         ))),
                     );
                     game.info.print(
@@ -343,12 +385,14 @@ impl Tree {
     }
 
     pub fn add_control(&mut self, sign: isize, game: &mut Game, ways: &Ways) {
+        let friend_index = game.history.get_friend() as usize;
         for index in ways.indexes.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.control[Movement::from_hash(ways.get(*index).move_hash)
+            game.board.controls[friend_index][Movement::from_hash(ways.get(*index).move_hash)
                 .unwrap()
                 .destination
                 .address() as usize] += sign;
+            game.board.control_sum += sign;
         }
     }
 
@@ -391,6 +435,13 @@ impl Bestmove {
     pub fn to_movement(&self) -> Option<Movement> {
         Movement::from_hash(self.movement_hash)
     }
+    pub fn mate(&mut self, movement_hash: u64) {
+        // 詰ませる手より強い手はないぜ☆（＾～＾）！
+        self.movement_hash = movement_hash;
+        self.value = Value::Win;
+        self.reason = Reason::Mate;
+    }
+    /// TODO 廃止予定☆（＾～＾）
     pub fn catch_king(&mut self, movement_hash: u64) {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
         self.movement_hash = movement_hash;
@@ -587,6 +638,8 @@ pub enum Reason {
     NoUpdate,
     /// 玉を取る手より強い手はないぜ☆（＾～＾）！
     KingCatchIsStrongest,
+    /// 詰ませる手より強い手はないぜ☆（＾～＾）！
+    Mate,
     /// 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
     FriendWin,
     /// どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
@@ -613,6 +666,7 @@ impl fmt::Display for Reason {
                 Reason::RepetitionBetterThanResign => "RepetitionBetterThanResign",
                 Reason::NoUpdate => "NoUpdate",
                 Reason::KingCatchIsStrongest => "KingCatchIsStrongest",
+                Reason::Mate => "Mate",
                 Reason::FriendWin => "FriendWin",
                 Reason::ThisBetterThanResign => "ThisBetterThanResign",
                 Reason::AnyLeafBetterThanResign => "AnyLeafBetterThanResign",
