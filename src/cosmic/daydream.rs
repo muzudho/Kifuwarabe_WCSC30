@@ -146,7 +146,7 @@ impl Tree {
             if !lioncatch.checks.is_empty() {
                 lioncatch.checks
             } else {
-                */
+                //   */
             let mut ways = Ways::new();
 
             // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
@@ -155,7 +155,7 @@ impl Tree {
             });
 
             ways
-            // }
+            //}
         };
 
         // 指せる手が無ければ投了☆（＾～＾）

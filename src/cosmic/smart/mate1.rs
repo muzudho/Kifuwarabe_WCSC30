@@ -9,7 +9,7 @@ use crate::cosmic::smart::square::RelAdr;
 use crate::cosmic::toy_box::{Location, PieceNum};
 use crate::law::generate_move::{Way, Ways};
 use crate::law::speed_of_light::Movility;
-use crate::spaceship::equipment::Beam;
+use crate::spaceship::equipment::{Beam, Log};
 
 /// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？
 pub struct Lioncatch {
@@ -85,16 +85,23 @@ impl Lioncatch {
         // 味方の駒、相手の香飛角の順で駒が現れたらピン確定だぜ☆（＾～＾）
         // TODO speed of light に入れたいぜ☆（＾～＾）
         // (自玉からスキャンする方向, 敵駒から見て自玉の方を向いているモビリティ)
-        let recipes = [
-            (RelAdr::new(1, self.sign * 0), Movility::SideBackSlider), // 西
-            (RelAdr::new(1, self.sign * 1), Movility::SlideDiagonally), // 南西
-            (RelAdr::new(0, self.sign * 1), Movility::SideBackSlider), // 南
-            (RelAdr::new(-1, self.sign * 1), Movility::SlideDiagonally), // 南東
-            (RelAdr::new(-1, self.sign * 0), Movility::SideBackSlider), // 東
-            (RelAdr::new(-1, self.sign * -1), Movility::SlideDiagonally), // 北東
-            (RelAdr::new(0, self.sign * -1), Movility::FrontSlider),   // 北
-            (RelAdr::new(1, self.sign * -1), Movility::SlideDiagonally), // 北西
+        let mut recipes = [
+            (RelAdr::new(1, 0), Movility::SideBackSlider),    // 西
+            (RelAdr::new(1, 1), Movility::SlideDiagonally),   // 南西
+            (RelAdr::new(0, 1), Movility::SideBackSlider),    // 南
+            (RelAdr::new(-1, 1), Movility::SlideDiagonally),  // 南東
+            (RelAdr::new(-1, 0), Movility::SideBackSlider),   // 東
+            (RelAdr::new(-1, -1), Movility::SlideDiagonally), // 北東
+            (RelAdr::new(0, -1), Movility::FrontSlider),      // 北
+            (RelAdr::new(1, -1), Movility::SlideDiagonally),  // 北西
         ];
+
+        // 上下反転ではなく、１８０°回転しろだぜ☆（＾～＾）
+        if self.sign < 1 {
+            for recipe in &mut recipes {
+                recipe.0.rotate_180();
+            }
+        }
 
         let mut pinned_pieces = Vec::<PieceNum>::new();
         for recipe in &recipes {
@@ -151,25 +158,33 @@ impl Lioncatch {
     /// ただし、自玉に空き王手がかかる形では この手は使えないぜ☆（＾～＾）
     pub fn checkers(&mut self, game: &Game) -> &mut Self {
         // TODO speed of light に入れたいぜ☆（＾～＾）
-        let recipes = [
+        let mut recipes = [
             // (相手玉から見て隣へ, 自駒から見て相手玉に当たっている方)
-            (RelAdr::new(-1, self.sign * 2), Movility::Knight), // 桂馬
-            (RelAdr::new(1, self.sign * 2), Movility::Knight),  // 桂馬
-            (RelAdr::new(1, self.sign * 0), Movility::SideBack), // 西
-            (RelAdr::new(1, self.sign * 1), Movility::FrontDiagonally), // 南西
-            (RelAdr::new(0, self.sign * 1), Movility::Front),   // 南
-            (RelAdr::new(-1, self.sign * 1), Movility::FrontDiagonally), // 南東
-            (RelAdr::new(-1, self.sign * 0), Movility::SideBack), // 東
-            (RelAdr::new(-1, self.sign * -1), Movility::BackDiagonally), // 北東
-            (RelAdr::new(0, self.sign * -1), Movility::SideBack), // 北
-            (RelAdr::new(1, self.sign * -1), Movility::BackDiagonally), // 北西
+            (RelAdr::new(-1, 2), Movility::Knight),  // 桂馬
+            (RelAdr::new(1, 2), Movility::Knight),   // 桂馬
+            (RelAdr::new(1, 0), Movility::SideBack), // 西
+            (RelAdr::new(1, 1), Movility::FrontDiagonally), // 南西
+            (RelAdr::new(0, 1), Movility::Front),    // 南
+            (RelAdr::new(-1, 1), Movility::FrontDiagonally), // 南東
+            (RelAdr::new(-1, 0), Movility::SideBack), // 東
+            (RelAdr::new(-1, -1), Movility::BackDiagonally), // 北東
+            (RelAdr::new(0, -1), Movility::SideBack), // 北
+            (RelAdr::new(1, -1), Movility::BackDiagonally), // 北西
         ];
 
+        // 上下反転ではなく、１８０°回転しろだぜ☆（＾～＾）
+        if self.sign < 1 {
+            for recipe in &mut recipes {
+                recipe.0.rotate_180();
+            }
+        }
         // 王手を掛けている駒を全部挙げろだぜ☆（＾～＾）
         for recipe in &recipes {
             // 相手玉をスタート地点にするぜ☆（＾～＾）
             let mut cur = self.opponent_king_adr.clone();
+            Log::write(&format!("cur1={:?}", cur));
             if cur.offset(&recipe.0).legal_cur() {
+                Log::write(&format!("cur2={:?}", cur));
                 // 1つ隣に駒があるか確認だぜ☆（＾～＾）
                 if let Some(any_piece_val) = game.board.piece_at(&cur) {
                     if any_piece_val.meaning.phase() == self.friend
@@ -203,17 +218,24 @@ impl Lioncatch {
 
         // スライダー駒も判定しようぜ☆（＾～＾）？
         // TODO speed of light に入れたいぜ☆（＾～＾）
-        let recipes = [
+        let mut recipes = [
             // (相手玉から見て隣へ, 自駒から見て相手玉に当たっている方)
-            (RelAdr::new(1, self.sign * 0), Movility::SideBackSlider), // 西
-            (RelAdr::new(1, self.sign * 1), Movility::SlideDiagonally), // 南西
-            (RelAdr::new(0, self.sign * 1), Movility::FrontSlider),    // 南
-            (RelAdr::new(-1, self.sign * 1), Movility::SlideDiagonally), // 南東
-            (RelAdr::new(-1, self.sign * 0), Movility::SideBackSlider), // 東
-            (RelAdr::new(-1, self.sign * -1), Movility::SlideDiagonally), // 北東
-            (RelAdr::new(0, self.sign * -1), Movility::SideBackSlider), // 北
-            (RelAdr::new(1, self.sign * -1), Movility::SlideDiagonally), // 北西
+            (RelAdr::new(1, 0), Movility::SideBackSlider), // 西
+            (RelAdr::new(1, 1), Movility::SlideDiagonally), // 南西
+            (RelAdr::new(0, 1), Movility::FrontSlider),    // 南
+            (RelAdr::new(-1, 1), Movility::SlideDiagonally), // 南東
+            (RelAdr::new(-1, 0), Movility::SideBackSlider), // 東
+            (RelAdr::new(-1, -1), Movility::SlideDiagonally), // 北東
+            (RelAdr::new(0, -1), Movility::SideBackSlider), // 北
+            (RelAdr::new(1, -1), Movility::SlideDiagonally), // 北西
         ];
+
+        // 上下反転ではなく、１８０°回転しろだぜ☆（＾～＾）
+        if self.sign < 1 {
+            for recipe in &mut recipes {
+                recipe.0.rotate_180();
+            }
+        }
 
         for recipe in &recipes {
             // 相手玉をスタート地点にするぜ☆（＾～＾）
@@ -221,8 +243,9 @@ impl Lioncatch {
 
             for i in 0..8 {
                 if cur.offset(&recipe.0).legal_cur() {
-                    // 1つ隣に駒があるか確認だぜ☆（＾～＾）
+                    // 1つ隣になんか駒があるか確認だぜ☆（＾～＾）
                     if let Some(any_piece_val) = game.board.piece_at(&cur) {
+                        // それがスライディング自駒か確認だぜ☆（＾～＾）
                         if any_piece_val.meaning.phase() == self.friend
                             && any_piece_val
                                 .meaning
@@ -230,13 +253,13 @@ impl Lioncatch {
                                 .movility()
                                 .contains(&recipe.1)
                         {
-                            // 隣接している駒は、さっき入れたはずだぜ☆（＾～＾）
-                            if i != 0 {
-                                if let Some(pinned_pieces_val) = &mut self.pinned_pieces {
-                                    if pinned_pieces_val.contains(&any_piece_val.num) {
-                                        // ピンされてる駒だった☆（＾～＾）動かせないぜ☆（＾～＾）！
-                                    } else {
-                                        // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
+                            if let Some(pinned_pieces_val) = &mut self.pinned_pieces {
+                                if pinned_pieces_val.contains(&any_piece_val.num) {
+                                    // ピンされてる駒だった☆（＾～＾）動かせないぜ☆（＾～＾）！
+                                } else {
+                                    // 隣接している駒は、さっき入れたはずだぜ☆（＾～＾）
+                                    if i != 0 {
+                                        // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                         self.checks.push(&Way::new(
                                             Movement::new(
                                                 Some(cur),
@@ -247,8 +270,12 @@ impl Lioncatch {
                                             Some(any_piece_val),
                                         ));
                                     }
-                                } else {
-                                    // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
+                                }
+                            } else {
+                                // ピンされている駒はないんだって☆（＾～＾）！
+                                // 隣接している駒は、さっき入れたはずだぜ☆（＾～＾）
+                                if i != 0 {
+                                    // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                     self.checks.push(&Way::new(
                                         Movement::new(
                                             Some(cur),

@@ -88,6 +88,8 @@ struct SpeedOfLight {
     /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
     /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
     promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
+
+    west: RelAdr,
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
@@ -582,6 +584,9 @@ impl Default for SpeedOfLight {
                 // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
                 1000, 900, 600, 500, 300, 200, 100,
             ],
+
+            // 座標☆（＾～＾）
+            west: RelAdr::new(1, 0),
         }
     }
 }
@@ -590,6 +595,9 @@ pub struct Nine299792458 {}
 impl Nine299792458 {
     pub fn piece_numbers() -> &'static Vec<PieceNum> {
         &NINE_299792458.piece_numbers
+    }
+    pub fn west() -> RelAdr {
+        NINE_299792458.west
     }
 }
 

@@ -27,6 +27,7 @@
 //!              Source
 //!
 //! None is 0.
+use crate::law::speed_of_light::Nine299792458;
 use std::cmp::max;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
@@ -100,7 +101,7 @@ pub fn test_rotation() {
         test_d45ort("f1", "CoIIIOrCoIV", &ort);
         ort = Degree45Orthant::new(&RelAdr::new(1, -1));
         test_d45ort("f2", "IVOrI", &ort);
-        ort = Degree45Orthant::new(&RelAdr::new(1, 0));
+        ort = Degree45Orthant::new(&Nine299792458::west());
         test_d45ort("f3", "IVOrI", &ort);
         ort = Degree45Orthant::new(&RelAdr::new(1, 1));
         test_d45ort("f4", "IVOrI", &ort);
@@ -117,7 +118,7 @@ pub fn test_rotation() {
     {
         test_rsq("b1", "(0x -1y -1adr)", &RelAdr::new(0, -1));
         test_rsq("b2", "(1x -1y 9adr)", &RelAdr::new(1, -1));
-        test_rsq("b3", "(1x 0y 10adr)", &RelAdr::new(1, 0));
+        test_rsq("b3", "(1x 0y 10adr)", &Nine299792458::west());
         test_rsq("b4", "(1x 1y 11adr)", &RelAdr::new(1, 1));
         test_rsq("b5", "(0x 1y 1adr)", &RelAdr::new(0, 1));
         test_rsq("b6", "(-1x 1y -9adr)", &RelAdr::new(-1, 1));
