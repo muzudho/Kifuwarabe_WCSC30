@@ -9,6 +9,7 @@ use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_
 use crate::cosmic::smart::square::{
     AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
+use crate::law::generate_move::Piece;
 use crate::law::speed_of_light::HandAddresses;
 use crate::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
@@ -116,7 +117,7 @@ pub enum Location {
 /// 10の位を筋、1の位を段とする。
 /// 0筋、0段は未使用
 pub struct Board {
-    pieces: [Option<(PieceMeaning, PieceNum)>; BOARD_MEMORY_AREA as usize],
+    pieces: [Option<Piece>; BOARD_MEMORY_AREA as usize],
     /// 駒の居場所☆（＾～＾）
     location: [Location; PIECE_NUM_LEN],
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
@@ -231,7 +232,7 @@ impl Board {
         for rank in RANK_1..RANK_10 {
             let adr = AbsoluteAddress::new(file, rank);
             if let Some(piece) = self.piece_at(&adr) {
-                if piece.0.phase() == phase && piece.0.r#type() == PieceType::Pawn {
+                if piece.meaning.phase() == phase && piece.meaning.r#type() == PieceType::Pawn {
                     return true;
                 }
             }
@@ -239,30 +240,26 @@ impl Board {
         false
     }
     /// 升で指定して駒を取得
-    pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
+    pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<Piece> {
         self.pieces[adr.address() as usize]
     }
 
     /// 升で指定して駒を置く
-    pub fn push_to_board(
-        &mut self,
-        adr: &AbsoluteAddress,
-        piece: Option<(PieceMeaning, PieceNum)>,
-    ) {
+    pub fn push_to_board(&mut self, adr: &AbsoluteAddress, piece: Option<Piece>) {
         if let Some(piece_val) = piece {
             self.pieces[adr.address() as usize] = piece;
-            self.location[piece_val.1 as usize] = Location::Board(*adr);
+            self.location[piece_val.num as usize] = Location::Board(*adr);
         } else {
             self.pieces[adr.address() as usize] = None;
         }
     }
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
-    pub fn pop_from_board(&mut self, adr: &AbsoluteAddress) -> Option<(PieceMeaning, PieceNum)> {
+    pub fn pop_from_board(&mut self, adr: &AbsoluteAddress) -> Option<Piece> {
         // 取り出すピースは複製するぜ☆（＾～＾）
         let piece = self.pieces[adr.address() as usize].clone();
         if let Some(piece_val) = piece {
             self.pieces[adr.address() as usize] = None;
-            self.location[piece_val.1 as usize] = Location::Busy;
+            self.location[piece_val.num as usize] = Location::Busy;
         }
         piece
     }
@@ -297,7 +294,7 @@ impl Board {
             };
             self.push_to_board(
                 &AbsoluteAddress::new(file, rank),
-                Some((piece_meaning, piece_num)),
+                Some(Piece::new(piece_meaning, piece_num)),
             );
         }
     }
@@ -309,22 +306,25 @@ impl Board {
             let hand_type = hand.r#type();
             let cursor = self.hand_index[hand_type as usize];
             self.location[cursor] = Location::Hand(adr);
-            self.hands[hand as usize].push(&(piece_meaning, PieceNum::from_usize(cursor).unwrap()));
+            self.hands[hand as usize].push(&Piece::new(
+                piece_meaning,
+                PieceNum::from_usize(cursor).unwrap(),
+            ));
             self.hand_index[hand_type as usize] += 1;
         }
     }
-    pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum)) {
-        let adr = hand.0.hand_address();
+    pub fn push_hand(&mut self, hand: &Piece) {
+        let adr = hand.meaning.hand_address();
         self.hands[adr as usize].push(hand);
-        self.location[hand.1 as usize] = Location::Hand(adr);
+        self.location[hand.num as usize] = Location::Hand(adr);
     }
-    pub fn pop_hand(&mut self, adr: HandAddress) -> (PieceMeaning, PieceNum) {
+    pub fn pop_hand(&mut self, adr: HandAddress) -> Piece {
         let piece = self.hands[adr as usize].pop();
-        self.location[piece.1 as usize] = Location::Busy;
+        self.location[piece.num as usize] = Location::Busy;
         piece
     }
     /// 指し手生成で使うぜ☆（＾～＾）
-    pub fn last_hand(&self, adr: HandAddress) -> Option<&(PieceMeaning, PieceNum)> {
+    pub fn last_hand(&self, adr: HandAddress) -> Option<&Piece> {
         self.hands[adr as usize].last()
     }
     pub fn count_hand(&self, adr: HandAddress) -> usize {
@@ -340,7 +340,7 @@ impl Board {
             for file in (FILE_1..FILE_10).rev() {
                 let ab_adr = &AbsoluteAddress::new(file, rank);
                 if let Some(piece) = self.piece_at(ab_adr) {
-                    hash ^= game.hash_seed.piece[ab_adr.address() as usize][piece.0 as usize];
+                    hash ^= game.hash_seed.piece[ab_adr.address() as usize][piece.meaning as usize];
                 }
             }
         }
@@ -371,7 +371,7 @@ impl Board {
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
     pub fn for_all_pieces_on_board<F>(&self, piece_get: &mut F)
     where
-        F: FnMut(usize, Option<&AbsoluteAddress>, Option<(PieceMeaning, PieceNum)>),
+        F: FnMut(usize, Option<&AbsoluteAddress>, Option<Piece>),
     {
         for (i, location) in self.location.iter().enumerate() {
             match location {
@@ -394,14 +394,14 @@ impl Board {
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
     pub fn for_some_pieces_on_list40<F>(&self, friend: Phase, piece_get: &mut F)
     where
-        F: FnMut(Location, (PieceMeaning, PieceNum)),
+        F: FnMut(Location, Piece),
     {
         for location in self.location.iter() {
             match location {
                 Location::Board(adr) => {
                     // 盤上の駒☆（＾～＾）
                     let piece = self.piece_at(adr).unwrap();
-                    if piece.0.phase() == friend {
+                    if piece.meaning.phase() == friend {
                         piece_get(*location, piece);
                     }
                 }
@@ -446,32 +446,32 @@ impl Board {
 
 #[derive(Clone)]
 pub struct HandAddressTypeStack {
-    items: [(PieceMeaning, PieceNum); HAND_MAX],
+    items: [Piece; HAND_MAX],
     count: usize,
 }
 impl Default for HandAddressTypeStack {
     fn default() -> Self {
         HandAddressTypeStack {
             // ゴミ値で埋めるぜ☆（＾～＾）
-            items: [(PieceMeaning::King1, PieceNum::King1); HAND_MAX],
+            items: [Piece::new(PieceMeaning::King1, PieceNum::King1); HAND_MAX],
             count: 0,
         }
     }
 }
 impl HandAddressTypeStack {
-    fn push(&mut self, piece: &(PieceMeaning, PieceNum)) {
+    fn push(&mut self, piece: &Piece) {
         self.items[self.count] = *piece;
         self.count += 1;
     }
 
-    fn pop(&mut self) -> (PieceMeaning, PieceNum) {
+    fn pop(&mut self) -> Piece {
         self.count -= 1;
         let piece = self.items[self.count];
         // ゴミ値は消さないぜ☆（＾～＾）
         piece
     }
 
-    fn last(&self) -> Option<&(PieceMeaning, PieceNum)> {
+    fn last(&self) -> Option<&Piece> {
         if 0 < self.count {
             Some(&self.items[self.count - 1])
         } else {
@@ -487,7 +487,10 @@ impl fmt::Display for HandAddressTypeStack {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
         for i in 0..=self.count {
-            buffer.push_str(&format!("({}, {:?}) ", self.items[i].0, self.items[i].1));
+            buffer.push_str(&format!(
+                "({}, {:?}) ",
+                self.items[i].meaning, self.items[i].num
+            ));
         }
         write!(f, "{}", buffer.trim_end())
     }

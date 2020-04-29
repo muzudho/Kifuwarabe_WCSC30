@@ -1,8 +1,8 @@
 use crate::cosmic::playing::{Game, PosNums};
 use crate::cosmic::recording::Movement;
-use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PIECE_WHITE_SPACE};
+use crate::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
 use crate::cosmic::smart::square::*;
-use crate::cosmic::toy_box::PieceNum;
+use crate::law::generate_move::Piece;
 use crate::law::generate_move::Way;
 use crate::spaceship::equipment::Beam;
 
@@ -48,9 +48,9 @@ impl CommandRoom {
 /// ゲームルームはこちらだぜ☆（＾～＾）！
 pub struct GameRoom {}
 impl GameRoom {
-    fn to_string2(piece: Option<(PieceMeaning, PieceNum)>) -> String {
+    fn to_string2(piece: Option<Piece>) -> String {
         if let Some(piece_val) = piece {
-            format!("{}", piece_val.0)
+            format!("{}", piece_val.meaning)
         } else {
             PIECE_WHITE_SPACE.to_string()
         }
@@ -209,7 +209,7 @@ impl Kitchen {
                     "resign".to_string()
                 },
                 if let Some(psuedo_captured) = way.captured {
-                    format!(" ({})", psuedo_captured.0)
+                    format!(" ({})", psuedo_captured.meaning)
                 } else {
                     "".to_string()
                 }

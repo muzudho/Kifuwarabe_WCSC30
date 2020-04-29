@@ -3,14 +3,12 @@
 //!
 
 use crate::cosmic::playing::Game;
-use crate::cosmic::recording::PLY_LEN;
-use crate::cosmic::recording::{Movement, SENNTITE_NUM};
+use crate::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
-use crate::cosmic::smart::features::{PieceMeaning, PieceType};
+use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::see::SEE;
-use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
-use crate::law::generate_move::{PseudoLegalMoves, Ways};
+use crate::law::generate_move::{Piece, PseudoLegalMoves, Ways};
 use crate::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
@@ -164,7 +162,7 @@ impl Tree {
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                match ways.get(i).captured.unwrap().0.r#type() {
+                match ways.get(i).captured.unwrap().meaning.r#type() {
                     PieceType::King => {
                         // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                         // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
@@ -203,14 +201,14 @@ impl Tree {
                 // 打
                 None
             };
-            let captured_piece: Option<(PieceMeaning, PieceNum)> = game.do_move(&movement);
+            let captured_piece: Option<Piece> = game.do_move(&movement);
             self.pv.push(&movement);
             let (captured_piece_centi_pawn, delta_promotion_bonus) =
                 self.evaluation
                     .after_do_move(&source_piece, &captured_piece, movement.promote);
 
             if let Some(captured_piece_val) = captured_piece {
-                if captured_piece_val.0.r#type() == PieceType::King {
+                if captured_piece_val.meaning.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     ts.bestmove.catch_king(way.move_hash);
 

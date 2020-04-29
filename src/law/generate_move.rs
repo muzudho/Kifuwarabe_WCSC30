@@ -15,6 +15,22 @@ use crate::cosmic::toy_box::{Board, Location};
 use crate::spaceship::equipment::Beam;
 use std::fmt;
 
+#[derive(Clone, Copy)]
+pub struct Piece {
+    /// Stockfish系コンピューター将棋ソフトが言う Piece は、きふわらべでは PieceMeaning に名前を変えているぜ☆（＾～＾）
+    pub meaning: PieceMeaning,
+    /// 将棋の駒の背番号だぜ☆（＾～＾）
+    pub num: PieceNum,
+}
+impl Piece {
+    pub fn new(meaning: PieceMeaning, num: PieceNum) -> Self {
+        Piece {
+            meaning: meaning,
+            num: num,
+        }
+    }
+}
+
 /// ソートを高速にするためのものだぜ☆（＾～＾）
 pub struct Ways {
     /// スワップしても割と速いだろ☆（＾～＾）
@@ -57,7 +73,7 @@ pub struct Way {
     /// 指し手☆（＾～＾）
     pub move_hash: u64,
     /// 取った駒☆（＾～＾）
-    pub captured: Option<(PieceMeaning, PieceNum)>,
+    pub captured: Option<Piece>,
 }
 impl Default for Way {
     /// ゴミ値☆（＾～＾）
@@ -69,7 +85,7 @@ impl Default for Way {
     }
 }
 impl Way {
-    pub fn new(mov: u64, cap: Option<(PieceMeaning, PieceNum)>) -> Self {
+    pub fn new(mov: u64, cap: Option<Piece>) -> Self {
         Way {
             move_hash: mov,
             captured: cap,
@@ -142,7 +158,7 @@ impl PseudoLegalMoves {
     fn start_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
-        piece: &(PieceMeaning, PieceNum),
+        piece: &Piece,
         board: &Board,
         callback: &mut F1,
     ) where
@@ -153,7 +169,7 @@ impl PseudoLegalMoves {
                 let pseudo_captured = board.piece_at(&destination);
 
                 let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
-                    if pseudo_captured_val.0.phase() == friend {
+                    if pseudo_captured_val.meaning.phase() == friend {
                         // 味方の駒を取った☆（＾～＾）なしだぜ☆（＾～＾）！
                         (false, false)
                     } else {
@@ -229,7 +245,7 @@ impl PseudoLegalMoves {
                 !space
             };
 
-        Area::piece_of(piece.0.r#type(), friend, &source, callback_next);
+        Area::piece_of(piece.meaning.r#type(), friend, &source, callback_next);
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -250,7 +266,7 @@ impl PseudoLegalMoves {
                 if let None = board.piece_at(&destination) {
                     // 駒が無いところに打つ
                     use crate::cosmic::smart::features::PieceMeaning::*;
-                    match piece.0 {
+                    match piece.meaning {
                         Pawn1 | Pawn2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
                             if board.exists_pawn_on_file(friend, destination.file()) {
@@ -261,10 +277,10 @@ impl PseudoLegalMoves {
                     }
                     callback(Way::new(
                         Movement {
-                            source: None,                                // 駒台
-                            destination: destination,                    // どの升へ行きたいか
-                            promote: false,                              // 打に成りは無し
-                            drop: Some(piece.0.hand_address().r#type()), // 打った駒種類
+                            source: None,                                      // 駒台
+                            destination: destination,                          // どの升へ行きたいか
+                            promote: false,                                    // 打に成りは無し
+                            drop: Some(piece.meaning.hand_address().r#type()), // 打った駒種類
                         }
                         .to_hash(),
                         None,

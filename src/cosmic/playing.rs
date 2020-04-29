@@ -1,9 +1,8 @@
 use crate::cosmic::recording::{History, Movement, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
-use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
-use crate::cosmic::smart::features::{HandAddress, PieceMeaning, HAND_MAX, PIECE_MEANING_LEN};
+use crate::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX, PIECE_MEANING_LEN};
 use crate::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
 use crate::cosmic::toy_box::Board;
-use crate::cosmic::toy_box::PieceNum;
+use crate::law::generate_move::Piece;
 use crate::spaceship::equipment::{Beam, DestinationDisplay};
 use rand::Rng;
 
@@ -106,7 +105,7 @@ impl Game {
     pub fn set_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    pub fn set_captured(&mut self, ply1: usize, pc: Option<(PieceMeaning, PieceNum)>) {
+    pub fn set_captured(&mut self, ply1: usize, pc: Option<Piece>) {
         self.history.captured_pieces[ply1] = pc
     }
 
@@ -198,52 +197,51 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(&mut self, movement: &Movement) -> Option<(PieceMeaning, PieceNum)> {
+    pub fn do_move(&mut self, movement: &Movement) -> Option<Piece> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(movement);
         let friend = self.history.get_friend();
 
         // 取った駒
-        let cap: Option<(PieceMeaning, PieceNum)>;
+        let cap: Option<Piece>;
         {
             // 動かす駒
-            let moveing_piece: Option<(PieceMeaning, PieceNum)> =
-                if let Some(source_val) = movement.source {
-                    // 打でなければ、元の升に駒はあるので、それを消す。
-                    let piece152: Option<(PieceMeaning, PieceNum)> = if movement.promote {
-                        if let Some(piece) = self.board.pop_from_board(&source_val) {
-                            // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
-                            Some((piece.0.promoted(), piece.1))
-                        } else {
-                            panic!(Beam::trouble(
-                                "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）"
-                            ));
-                        }
-                    } else {
-                        // 移動元の駒。
-                        self.board.pop_from_board(&source_val)
-                    };
-
-                    piece152
-                } else {
-                    // 打なら
-                    // 自分の持ち駒を減らす
-                    if let Some(drp) = movement.drop {
-                        Some(
-                            self.board
-                                .pop_hand(HandAddress::from_phase_and_type(friend, drp)),
-                        )
+            let moveing_piece: Option<Piece> = if let Some(source_val) = movement.source {
+                // 打でなければ、元の升に駒はあるので、それを消す。
+                let piece152: Option<Piece> = if movement.promote {
+                    if let Some(piece) = self.board.pop_from_board(&source_val) {
+                        // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
+                        Some(Piece::new(piece.meaning.promoted(), piece.num))
                     } else {
                         panic!(Beam::trouble(
-                            "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"
+                            "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）"
                         ));
                     }
+                } else {
+                    // 移動元の駒。
+                    self.board.pop_from_board(&source_val)
                 };
 
+                piece152
+            } else {
+                // 打なら
+                // 自分の持ち駒を減らす
+                if let Some(drp) = movement.drop {
+                    Some(
+                        self.board
+                            .pop_hand(HandAddress::from_phase_and_type(friend, drp)),
+                    )
+                } else {
+                    panic!(Beam::trouble(
+                        "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"
+                    ));
+                }
+            };
             // 移動先升に駒があるかどうか
             cap = if let Some(collision_piece) = self.board.pop_from_board(&movement.destination) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                let captured_piece = (collision_piece.0.captured(), collision_piece.1);
+                let captured_piece =
+                    Piece::new(collision_piece.meaning.captured(), collision_piece.num);
                 self.board.push_hand(&captured_piece);
                 Some(collision_piece)
             } else {
@@ -271,18 +269,16 @@ impl Game {
             let movement = &self.get_move().clone();
             {
                 // 取った駒が有ったか。
-                let captured: Option<(PieceMeaning, PieceNum)> =
+                let captured: Option<Piece> =
                     self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let moveing_piece: Option<(PieceMeaning, PieceNum)> = if let Some(_source_val) =
-                    movement.source
-                {
+                let moveing_piece: Option<Piece> = if let Some(_source_val) = movement.source {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
                         if let Some(source_piece) = self.board.pop_from_board(&movement.destination)
                         {
-                            Some((source_piece.0.demoted(), source_piece.1))
+                            Some(Piece::new(source_piece.meaning.demoted(), source_piece.num))
                         } else {
                             panic!(Beam::trouble(
                                 "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
@@ -308,7 +304,7 @@ impl Game {
                 if let Some(captured_piece_val) = captured {
                     // 自分の持ち駒を減らす
                     self.board
-                        .pop_hand(captured_piece_val.0.captured().hand_address());
+                        .pop_hand(captured_piece_val.meaning.captured().hand_address());
                     // 移動先の駒を、取った駒（あるいは空）に戻す
                     self.board.push_to_board(&movement.destination, captured);
                 }

@@ -1,8 +1,7 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::cosmic::smart::features::PieceMeaning;
-use crate::cosmic::toy_box::PieceNum;
+use crate::law::generate_move::Piece;
 
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: isize = -300;
@@ -60,8 +59,8 @@ impl Evaluation {
 
     pub fn after_do_move(
         &mut self,
-        source_piece: &Option<(PieceMeaning, PieceNum)>,
-        captured_piece: &Option<(PieceMeaning, PieceNum)>,
+        source_piece: &Option<Piece>,
+        captured_piece: &Option<Piece>,
         promotion: bool,
     ) -> (isize, isize) {
         // 取った駒の価値を評価するぜ☆（＾～＾）
@@ -70,12 +69,11 @@ impl Evaluation {
 
         // 成り駒を取って降格させたら、成り駒評価値追加だぜ☆（＾～＾）
         let delta_promotion = if let Some(captured_piece_val) = captured_piece {
-            if captured_piece_val
-                .0
+            if captured_piece_val.meaning
                 .r#type()
                 .promoted()
             {
-                captured_piece_val.0.hand_address().r#type().promotion_value()
+                captured_piece_val.meaning.hand_address().r#type().promotion_value()
             } else {
                 0
             }
@@ -86,7 +84,7 @@ impl Evaluation {
         +
         if let Some(source_piece_val) = source_piece {
             if promotion {
-                source_piece_val.0.hand_address().r#type().promotion_value()
+                source_piece_val.meaning.hand_address().r#type().promotion_value()
             } else {
                 0
             }
@@ -111,10 +109,10 @@ impl Evaluation {
     /// Returns
     /// -------
     /// Centi pawn.
-    fn caputured_piece_value(captured_piece: &Option<(PieceMeaning, PieceNum)>) -> isize {
+    fn caputured_piece_value(captured_piece: &Option<Piece>) -> isize {
         if let Some(captured_piece_val) = captured_piece {
             captured_piece_val
-                .0
+                .meaning
                 .hand_address()
                 .r#type()
                 .captured_value()

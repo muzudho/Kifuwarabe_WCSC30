@@ -5,12 +5,11 @@
 //! * Person (先手,後手)
 //!
 use crate::cosmic::smart::features::HandAddressType;
-use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::square::AbsoluteAddress;
-use crate::cosmic::toy_box::PieceNum;
 use crate::law::cryptographic::{
     num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
 };
+use crate::law::generate_move::Piece;
 use crate::law::speed_of_light::{pop_drop_from_hash, push_drop_to_hash};
 use std::fmt;
 
@@ -31,7 +30,7 @@ pub struct History {
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hashs: [u64; PLY_LEN],
     /// 取った駒
-    pub captured_pieces: [Option<(PieceMeaning, PieceNum)>; PLY_LEN],
+    pub captured_pieces: [Option<Piece>; PLY_LEN],
 }
 impl Default for History {
     fn default() -> History {

@@ -212,7 +212,7 @@ impl Chiyuri {
                         " --".to_string()
                     },
                     if let Some(piece_val) = piece {
-                        format!(" {} {:?}", piece_val.0, piece_val.1)
+                        format!(" {} {:?}", piece_val.meaning, piece_val.num)
                     } else {
                         " --".to_string()
                     }
