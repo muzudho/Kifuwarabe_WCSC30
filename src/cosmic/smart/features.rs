@@ -4,7 +4,6 @@
 //! 先後なしの駒と空白
 //!
 
-use crate::cosmic::recording::Phase;
 use num_derive::FromPrimitive;
 use std::fmt;
 
@@ -206,32 +205,6 @@ pub enum HandAddress {
     Knight2,
     Lance2,
     Pawn2,
-}
-impl HandAddress {
-    pub fn from_phase_and_type(phase: Phase, adr: HandAddressType) -> Self {
-        match phase {
-            Phase::First => match adr {
-                HandAddressType::King => HandAddress::King1,
-                HandAddressType::Rook => HandAddress::Rook1,
-                HandAddressType::Bishop => HandAddress::Bishop1,
-                HandAddressType::Gold => HandAddress::Gold1,
-                HandAddressType::Silver => HandAddress::Silver1,
-                HandAddressType::Knight => HandAddress::Knight1,
-                HandAddressType::Lance => HandAddress::Lance1,
-                HandAddressType::Pawn => HandAddress::Pawn1,
-            },
-            Phase::Second => match adr {
-                HandAddressType::King => HandAddress::King2,
-                HandAddressType::Rook => HandAddress::Rook2,
-                HandAddressType::Bishop => HandAddress::Bishop2,
-                HandAddressType::Gold => HandAddress::Gold2,
-                HandAddressType::Silver => HandAddress::Silver2,
-                HandAddressType::Knight => HandAddress::Knight2,
-                HandAddressType::Lance => HandAddress::Lance2,
-                HandAddressType::Pawn => HandAddress::Pawn2,
-            },
-        }
-    }
 }
 
 /// 持駒種類

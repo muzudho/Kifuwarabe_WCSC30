@@ -8,6 +8,7 @@
 //! 駒種類早見表 (PieceTypeChart).
 //!
 use crate::cosmic::recording::Phase;
+use crate::cosmic::recording::PHASE_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::PIECE_MEANING_LEN;
@@ -55,7 +56,8 @@ pub struct SpeedOfLight {
     /// 駒種類☆（＾～＾）
     pub piece_type_table: [PieceTypeChart; PIECE_TYPE_LEN],
 
-    /// 持ち駒数☆（＾～＾）
+    /// 持ち駒☆（＾～＾）
+    pub hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
     pub hand_address_table: [HandAddressChart; HAND_ADDRESS_LEN],
 
     // 相対番地と角度☆（＾～＾）
@@ -360,7 +362,30 @@ impl Default for SpeedOfLight {
                 PieceTypeChart { promoted: true },
             ],
 
-            // 持ち駒数☆（＾～＾）
+            // 持ち駒☆（＾～＾）
+            hand_addresses: [
+                [
+                    HandAddress::King1,
+                    HandAddress::Rook1,
+                    HandAddress::Bishop1,
+                    HandAddress::Gold1,
+                    HandAddress::Silver1,
+                    HandAddress::Knight1,
+                    HandAddress::Lance1,
+                    HandAddress::Pawn1,
+                ],
+                [
+                    HandAddress::King2,
+                    HandAddress::Rook2,
+                    HandAddress::Bishop2,
+                    HandAddress::Gold2,
+                    HandAddress::Silver2,
+                    HandAddress::Knight2,
+                    HandAddress::Lance2,
+                    HandAddress::Pawn2,
+                ],
+            ],
+
             hand_address_table: [
                 HandAddressChart::new(HandAddress::King1),
                 HandAddressChart::new(HandAddress::Rook1),
@@ -543,6 +568,12 @@ pub struct PieceTypeChart {
 impl PieceType {
     pub fn promoted(self) -> bool {
         NINE_299792458.piece_type_table[self as usize].promoted
+    }
+}
+
+impl HandAddress {
+    pub fn from_phase_and_type(phase: Phase, adr: HandAddressType) -> Self {
+        NINE_299792458.hand_addresses[phase as usize][adr as usize]
     }
 }
 
