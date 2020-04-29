@@ -36,13 +36,11 @@ use num_traits::FromPrimitive;
 // https://users.rust-lang.org/t/how-can-i-use-mutable-lazy-static/3751/3
 lazy_static! {
     /// ９桁の有効数字☆（＾～＾）
-    static ref NINE_299792458: SpeedOfLight = {
-        SpeedOfLight::default()
-    };
+    static ref NINE_299792458: SpeedOfLight = SpeedOfLight::default();
 }
 
 /// こいつが早引き表なわけだぜ☆（＾～＾）
-pub struct SpeedOfLight {
+struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
 
     /// 先後付きの駒☆（＾～＾）
@@ -58,13 +56,13 @@ pub struct SpeedOfLight {
     piece_meaning_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
 
     /// 駒種類☆（＾～＾）
-    piece_type_table: [PieceTypeChart; PIECE_TYPE_LEN],
+    piece_type_promoted_table: [bool; PIECE_TYPE_LEN],
 
     /// 持ち駒☆（＾～＾）
     /// 玉２枚引く☆（＾～＾）
     hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
     hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
-    hand_address_table: [HandAddressChart; HAND_ADDRESS_LEN],
+    hand_address_to_type_table: [HandAddressType; HAND_ADDRESS_LEN],
 
     // 相対番地と角度☆（＾～＾）
     west_ccw: [RelAdr; ANGLE_LEN],
@@ -276,22 +274,10 @@ impl Default for SpeedOfLight {
                 HandAddress::Pawn2,   // PromotedPawn2
             ],
 
-            // 駒種類☆（＾～＾）
-            piece_type_table: [
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: false },
-                PieceTypeChart { promoted: true },
-                PieceTypeChart { promoted: true },
-                PieceTypeChart { promoted: true },
-                PieceTypeChart { promoted: true },
-                PieceTypeChart { promoted: true },
-                PieceTypeChart { promoted: true },
+            // 成り駒か☆（＾～＾）？
+            piece_type_promoted_table: [
+                false, false, false, false, false, false, false, false, true, true, true, true,
+                true, true,
             ],
 
             // 持ち駒☆（＾～＾）
@@ -334,23 +320,23 @@ impl Default for SpeedOfLight {
                 ],
             ],
 
-            hand_address_table: [
-                HandAddressChart::new(HandAddress::King1),
-                HandAddressChart::new(HandAddress::Rook1),
-                HandAddressChart::new(HandAddress::Bishop1),
-                HandAddressChart::new(HandAddress::Gold1),
-                HandAddressChart::new(HandAddress::Silver1),
-                HandAddressChart::new(HandAddress::Knight1),
-                HandAddressChart::new(HandAddress::Lance1),
-                HandAddressChart::new(HandAddress::Pawn1),
-                HandAddressChart::new(HandAddress::King2),
-                HandAddressChart::new(HandAddress::Rook2),
-                HandAddressChart::new(HandAddress::Bishop2),
-                HandAddressChart::new(HandAddress::Gold2),
-                HandAddressChart::new(HandAddress::Silver2),
-                HandAddressChart::new(HandAddress::Knight2),
-                HandAddressChart::new(HandAddress::Lance2),
-                HandAddressChart::new(HandAddress::Pawn2),
+            hand_address_to_type_table: [
+                HandAddressType::King,
+                HandAddressType::Rook,
+                HandAddressType::Bishop,
+                HandAddressType::Gold,
+                HandAddressType::Silver,
+                HandAddressType::Knight,
+                HandAddressType::Lance,
+                HandAddressType::Pawn,
+                HandAddressType::King,
+                HandAddressType::Rook,
+                HandAddressType::Bishop,
+                HandAddressType::Gold,
+                HandAddressType::Silver,
+                HandAddressType::Knight,
+                HandAddressType::Lance,
+                HandAddressType::Pawn,
             ],
 
             // よく使う、角度の付いた相対番地☆（＾～＾）
@@ -484,14 +470,10 @@ impl PieceMeaning {
     }
 }
 
-pub struct PieceTypeChart {
-    /// 成り駒か。
-    promoted: bool,
-}
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceType {
     pub fn promoted(self) -> bool {
-        NINE_299792458.piece_type_table[self as usize].promoted
+        NINE_299792458.piece_type_promoted_table[self as usize]
     }
 }
 
@@ -514,45 +496,10 @@ impl HandAddress {
     }
 }
 
-pub struct HandAddressChart {
-    /// 配列のインデックス用☆（＾～＾）
-    r#type: HandAddressType,
-}
-impl HandAddressChart {
-    fn new(adr: HandAddress) -> Self {
-        use crate::cosmic::smart::features::HandAddress::*;
-        match adr {
-            King1 | King2 => HandAddressChart {
-                r#type: HandAddressType::King,
-            },
-            Rook1 | Rook2 => HandAddressChart {
-                r#type: HandAddressType::Rook,
-            },
-            Bishop1 | Bishop2 => HandAddressChart {
-                r#type: HandAddressType::Bishop,
-            },
-            Gold1 | Gold2 => HandAddressChart {
-                r#type: HandAddressType::Gold,
-            },
-            Silver1 | Silver2 => HandAddressChart {
-                r#type: HandAddressType::Silver,
-            },
-            Knight1 | Knight2 => HandAddressChart {
-                r#type: HandAddressType::Knight,
-            },
-            Lance1 | Lance2 => HandAddressChart {
-                r#type: HandAddressType::Lance,
-            },
-            Pawn1 | Pawn2 => HandAddressChart {
-                r#type: HandAddressType::Pawn,
-            },
-        }
-    }
-}
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddress {
     pub fn r#type(self) -> HandAddressType {
-        NINE_299792458.hand_address_table[self as usize].r#type
+        NINE_299792458.hand_address_to_type_table[self as usize]
     }
 }
 
