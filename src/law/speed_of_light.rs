@@ -15,7 +15,7 @@ use crate::cosmic::smart::features::PIECE_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use num_traits::FromPrimitive;
-use std::sync::Mutex;
+// use std::sync::Mutex;
 
 // グローバル定数
 //
@@ -35,9 +35,14 @@ use std::sync::Mutex;
 // https://users.rust-lang.org/t/how-can-i-use-mutable-lazy-static/3751/3
 lazy_static! {
     /// ９桁の有効数字☆（＾～＾）
+    static ref NINE_299792458: SpeedOfLight = {
+        SpeedOfLight::default()
+    };
+    /*
     static ref NINE_299792458: Mutex<SpeedOfLight> = {
         Mutex::new(SpeedOfLight::default())
     };
+    */
 }
 
 /// こいつが早引き表なわけだぜ☆（＾～＾）
@@ -506,27 +511,27 @@ pub struct PieceMeaningChart {
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceMeaning {
     pub fn phase(self) -> Phase {
-        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].phase
+        NINE_299792458.piece_meaning_table[self as usize].phase
     }
 
     pub fn r#type(self) -> PieceType {
-        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].piece_type
+        NINE_299792458.piece_meaning_table[self as usize].piece_type
     }
 
     pub fn promoted(self) -> PieceMeaning {
-        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].promoted
+        NINE_299792458.piece_meaning_table[self as usize].promoted
     }
 
     pub fn demoted(self) -> PieceMeaning {
-        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].demoted
+        NINE_299792458.piece_meaning_table[self as usize].demoted
     }
 
     pub fn captured(self) -> PieceMeaning {
-        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].captured
+        NINE_299792458.piece_meaning_table[self as usize].captured
     }
 
     pub fn hand_address(self) -> HandAddress {
-        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].hand_address
+        NINE_299792458.piece_meaning_table[self as usize].hand_address
     }
 }
 
@@ -537,7 +542,7 @@ pub struct PieceTypeChart {
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceType {
     pub fn promoted(self) -> bool {
-        NINE_299792458.lock().unwrap().piece_type_table[self as usize].promoted
+        NINE_299792458.piece_type_table[self as usize].promoted
     }
 }
 
@@ -579,7 +584,7 @@ impl HandAddressChart {
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddress {
     pub fn r#type(self) -> HandAddressType {
-        NINE_299792458.lock().unwrap().hand_address_table[self as usize].r#type
+        NINE_299792458.hand_address_table[self as usize].r#type
     }
 }
 
@@ -604,38 +609,38 @@ pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddressType {
     pub fn promotion_value(self) -> isize {
-        NINE_299792458.lock().unwrap().promotion_value[self as usize]
+        NINE_299792458.promotion_value[self as usize]
     }
     pub fn caputured_piece_value(self) -> isize {
-        NINE_299792458.lock().unwrap().caputured_piece_value[self as usize]
+        NINE_299792458.caputured_piece_value[self as usize]
     }
 }
 
 impl Angle {
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate90cw(self) -> Angle {
-        NINE_299792458.lock().unwrap().rotate90cw[self as usize]
+        NINE_299792458.rotate90cw[self as usize]
     }
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate45cw(self) -> Angle {
-        NINE_299792458.lock().unwrap().rotate45cw[self as usize]
+        NINE_299792458.rotate45cw[self as usize]
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate45ccw(self) -> Angle {
-        NINE_299792458.lock().unwrap().rotate45ccw[self as usize]
+        NINE_299792458.rotate45ccw[self as usize]
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
     pub fn rotate90ccw(self) -> Angle {
-        NINE_299792458.lock().unwrap().rotate90ccw[self as usize]
+        NINE_299792458.rotate90ccw[self as usize]
     }
     /// 点対称☆（＾～＾）
     pub fn rotate180(self) -> Angle {
-        NINE_299792458.lock().unwrap().rotate180[self as usize]
+        NINE_299792458.rotate180[self as usize]
     }
     pub fn west_ccw_double_rank(self) -> RelAdr {
-        NINE_299792458.lock().unwrap().west_ccw_double_rank[self as usize]
+        NINE_299792458.west_ccw_double_rank[self as usize]
     }
     pub fn west_ccw(self) -> RelAdr {
-        NINE_299792458.lock().unwrap().west_ccw[self as usize]
+        NINE_299792458.west_ccw[self as usize]
     }
 }
