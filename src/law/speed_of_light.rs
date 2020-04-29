@@ -15,6 +15,7 @@ use crate::cosmic::smart::features::PIECE_MEANING_LEN;
 use crate::cosmic::smart::features::PIECE_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
+use crate::cosmic::toy_box::PieceNum;
 use num_traits::FromPrimitive;
 // use std::sync::Mutex;
 
@@ -42,6 +43,7 @@ lazy_static! {
 /// こいつが早引き表なわけだぜ☆（＾～＾）
 struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
+    piece_numbers: Vec<PieceNum>,
 
     /// 先後付きの駒☆（＾～＾）
     piece_meaning_to_phase_table: [Phase; PIECE_MEANING_LEN],
@@ -56,6 +58,7 @@ struct SpeedOfLight {
     piece_meaning_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
 
     /// 駒種類☆（＾～＾）
+    piece_type_to_sliding_table: [bool; PIECE_TYPE_LEN],
     piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
     piece_type_to_movility_table: [Vec<Movility>; PIECE_TYPE_LEN],
     piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
@@ -94,6 +97,50 @@ impl Default for SpeedOfLight {
         use crate::cosmic::smart::features::PieceType::*;
         SpeedOfLight {
             /// ピースの早見表の生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
+            piece_numbers: [
+                PieceNum::King1,    // 1 先手玉
+                PieceNum::King2,    // 2 後手玉
+                PieceNum::Gold3,    // 3 金
+                PieceNum::Gold4,    // 4 金
+                PieceNum::Gold5,    // 5 金
+                PieceNum::Gold6,    // 6 金
+                PieceNum::Silver7,  // 7 銀
+                PieceNum::Silver8,  // 8 銀
+                PieceNum::Silver9,  // 9 銀
+                PieceNum::Silver10, // 10 銀
+                PieceNum::Knight11, // 11 桂
+                PieceNum::Knight12, // 12 桂
+                PieceNum::Knight13, // 13 桂
+                PieceNum::Knight14, // 14 桂
+                PieceNum::Lance15,  // 15 香
+                PieceNum::Lance16,  // 16 香
+                PieceNum::Lance17,  // 17 香
+                PieceNum::Lance18,  // 18 香
+                PieceNum::Bishop19, // 19 角
+                PieceNum::Bishop20, // 20 角
+                PieceNum::Rook21,   // 21 飛
+                PieceNum::Rook22,   // 22 飛
+                PieceNum::Pawn23,   // 23 歩
+                PieceNum::Pawn24,   // 24 歩
+                PieceNum::Pawn25,   // 25 歩
+                PieceNum::Pawn26,   // 26 歩
+                PieceNum::Pawn27,   // 27 歩
+                PieceNum::Pawn28,   // 28 歩
+                PieceNum::Pawn29,   // 29 歩
+                PieceNum::Pawn30,   // 30 歩
+                PieceNum::Pawn31,   // 31 歩
+                PieceNum::Pawn32,   // 32 歩
+                PieceNum::Pawn33,   // 33 歩
+                PieceNum::Pawn34,   // 34 歩
+                PieceNum::Pawn35,   // 35 歩
+                PieceNum::Pawn36,   // 36 歩
+                PieceNum::Pawn37,   // 37 歩
+                PieceNum::Pawn38,   // 38 歩
+                PieceNum::Pawn39,   // 39 歩
+                PieceNum::Pawn40,   // 40 歩
+            ]
+            .to_vec(),
+
             /// 先後付きの駒☆（＾～＾）
             piece_meaning_to_phase_table: [
                 First,  // King1
@@ -277,9 +324,37 @@ impl Default for SpeedOfLight {
             ],
 
             // 成り駒か☆（＾～＾）？
+            piece_type_to_sliding_table: [
+                false, // King
+                true,  // Rook
+                true,  // Bishop
+                false, // Gold
+                false, // Silver
+                false, // Knight
+                true,  // Lance
+                false, // Pawn
+                true,  // Dragon
+                true,  // Horse
+                false, // PromotedSilver
+                false, // PromotedKnight
+                false, // PromotedLance
+                false, // PromotedPawn
+            ],
             piece_type_to_promoted_table: [
-                false, false, false, false, false, false, false, false, true, true, true, true,
-                true, true,
+                false, // King
+                false, // Rook
+                false, // Bishop
+                false, // Gold
+                false, // Silver
+                false, // Knight
+                false, // Lance
+                false, // Pawn
+                true,  // Dragon
+                true,  // Horse
+                true,  // PromotedSilver
+                true,  // PromotedKnight
+                true,  // PromotedLance
+                true,  // PromotedPawn
             ],
             piece_type_to_movility_table: [
                 vec![
@@ -527,6 +602,13 @@ impl Default for SpeedOfLight {
         }
     }
 }
+/// コーディングを短くするためのものだぜ☆（＾～＾）
+pub struct Nine299792458 {}
+impl Nine299792458 {
+    pub fn piece_numbers() -> &'static Vec<PieceNum> {
+        &NINE_299792458.piece_numbers
+    }
+}
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceMeaning {
@@ -557,6 +639,9 @@ impl PieceMeaning {
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceType {
+    pub fn sliding(self) -> bool {
+        NINE_299792458.piece_type_to_sliding_table[self as usize]
+    }
     pub fn promoted(self) -> bool {
         NINE_299792458.piece_type_to_promoted_table[self as usize]
     }

@@ -6,7 +6,7 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceType;
-use crate::cosmic::smart::mate1::{Mate1, Mate1Result};
+use crate::cosmic::smart::mate1::Mate1;
 use crate::cosmic::smart::see::SEE;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::{Piece, PseudoLegalMoves, Ways};
@@ -137,13 +137,21 @@ impl Tree {
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
+        let mut mate1 = Mate1::new(game);
+        mate1.init(game).pinned_pieces(game).checkers(game).end();
+
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
         let mut ways = Ways::new();
 
         // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-        PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
-            ways.push(&way);
-        });
+        PseudoLegalMoves::make_move(
+            game.history.get_friend(),
+            &game.board,
+            Some(&mate1),
+            &mut |way| {
+                ways.push(&way);
+            },
+        );
 
         // 指せる手が無ければ投了☆（＾～＾）
         if ways.is_empty() {
@@ -209,43 +217,41 @@ impl Tree {
                 self.evaluation
                     .after_do_move(&source_piece, &captured_piece, movement.promote);
 
-            match Mate1::was_checked(game) {
-                Mate1Result::Checked => {
-                    // 相手玉に王手がかかってるぜ☆（＾～＾）！
-                    if !Mate1::can_evasion(game) {
-                        // 相手玉が詰んでたら、勝ちだぜ☆（＾～＾）！
-                        ts.bestmove.mate(way.move_hash);
+            if mate1.lioncatch {
+                // TODO 廃止方針☆（＾～＾）
+                // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
+                ts.bestmove.catch_king(way.move_hash);
 
-                        self.evaluation
-                            .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
-                        self.pv.pop();
-                        game.undo_move();
-                        break;
-                    }
-                    // 相手玉は逃げれるぜ☆（＾～＾）
-                }
-                Mate1Result::Counter => {
-                    // こんなクソ手を指してはいけないぜ☆（＾～＾）！ 戻せ☆（＾～＾）！
-                    self.evaluation
-                        .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
-                    self.pv.pop();
-                    game.undo_move();
-                    break;
-                }
-                Mate1Result::Lioncatch => {
-                    // TODO 廃止方針☆（＾～＾）
-                    // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(way.move_hash);
-
-                    self.evaluation
-                        .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
-                    self.pv.pop();
-                    game.undo_move();
-                    break;
-                }
-                Mate1Result::NoMate => {}
+                self.evaluation
+                    .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                self.pv.pop();
+                game.undo_move();
+                break;
+            } else if mate1.counter {
+                // こんなクソ手を指してはいけないぜ☆（＾～＾）！ 戻せ☆（＾～＾）！
+                self.evaluation
+                    .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                self.pv.pop();
+                game.undo_move();
+                break;
             }
+            // else if 0 < mate1.checkers.len() {
+            // 相手玉に王手がかかってるぜ☆（＾～＾）！
             /*
+            if !mate1.can_evasion(game) {
+                // 相手玉が詰んでたら、勝ちだぜ☆（＾～＾）！
+                ts.bestmove.mate(way.move_hash);
+
+                self.evaluation
+                    .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                self.pv.pop();
+                game.undo_move();
+                break;
+            }
+            */
+            // 相手玉は逃げれるぜ☆（＾～＾）
+            //}
+
             // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.meaning.r#type() == PieceType::King {
@@ -259,7 +265,6 @@ impl Tree {
                     break;
                 }
             }
-            */
 
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
@@ -434,12 +439,6 @@ impl Default for Bestmove {
 impl Bestmove {
     pub fn to_movement(&self) -> Option<Movement> {
         Movement::from_hash(self.movement_hash)
-    }
-    pub fn mate(&mut self, movement_hash: u64) {
-        // 詰ませる手より強い手はないぜ☆（＾～＾）！
-        self.movement_hash = movement_hash;
-        self.value = Value::Win;
-        self.reason = Reason::Mate;
     }
     /// TODO 廃止予定☆（＾～＾）
     pub fn catch_king(&mut self, movement_hash: u64) {
@@ -638,8 +637,6 @@ pub enum Reason {
     NoUpdate,
     /// 玉を取る手より強い手はないぜ☆（＾～＾）！
     KingCatchIsStrongest,
-    /// 詰ませる手より強い手はないぜ☆（＾～＾）！
-    Mate,
     /// 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
     FriendWin,
     /// どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
@@ -666,7 +663,6 @@ impl fmt::Display for Reason {
                 Reason::RepetitionBetterThanResign => "RepetitionBetterThanResign",
                 Reason::NoUpdate => "NoUpdate",
                 Reason::KingCatchIsStrongest => "KingCatchIsStrongest",
-                Reason::Mate => "Mate",
                 Reason::FriendWin => "FriendWin",
                 Reason::ThisBetterThanResign => "ThisBetterThanResign",
                 Reason::AnyLeafBetterThanResign => "AnyLeafBetterThanResign",

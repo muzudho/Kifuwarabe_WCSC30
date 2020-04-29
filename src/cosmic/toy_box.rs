@@ -21,7 +21,7 @@ use std::fmt;
 pub const PIECE_NUM_LEN: usize = 40;
 
 /// 駒に背番号を付けたものだぜ☆（＾～＾）
-#[derive(Clone, Copy, FromPrimitive, Debug)]
+#[derive(Clone, Copy, FromPrimitive, Debug, PartialEq)]
 pub enum PieceNum {
     // 1 先手玉
     King1,
@@ -400,17 +400,22 @@ impl Board {
     }
 
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
-    pub fn for_some_pieces_on_list40<F>(&self, friend: Phase, piece_get: &mut F)
-    where
+    pub fn for_some_pieces_on_list40<F>(
+        &self,
+        friend: Phase,
+        piece_numbers: &Vec<PieceNum>,
+        piece_get: &mut F,
+    ) where
         F: FnMut(Location, Piece),
     {
-        for location in self.location.iter() {
+        for piece_num in piece_numbers {
+            let location = self.location[*piece_num as usize];
             match location {
                 Location::Board(adr) => {
                     // 盤上の駒☆（＾～＾）
-                    let piece = self.piece_at(adr).unwrap();
+                    let piece = self.piece_at(&adr).unwrap();
                     if piece.meaning.phase() == friend {
-                        piece_get(*location, piece);
+                        piece_get(location, piece);
                     }
                 }
                 Location::Hand(_adr) => {
