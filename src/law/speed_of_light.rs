@@ -39,11 +39,6 @@ lazy_static! {
     static ref NINE_299792458: SpeedOfLight = {
         SpeedOfLight::default()
     };
-    /*
-    static ref NINE_299792458: Mutex<SpeedOfLight> = {
-        Mutex::new(SpeedOfLight::default())
-    };
-    */
 }
 
 /// こいつが早引き表なわけだぜ☆（＾～＾）
@@ -51,37 +46,46 @@ pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
 
     /// 先後付きの駒☆（＾～＾）
-    pub piece_meaning_table: [PieceMeaningChart; PIECE_MEANING_LEN],
+    piece_meaning_phase_table: [Phase; PIECE_MEANING_LEN],
+    piece_meaning_type_table: [PieceType; PIECE_MEANING_LEN],
+    /// 駒→成駒　（成れない駒は、そのまま）
+    piece_meaning_promoted_table: [PieceMeaning; PIECE_MEANING_LEN],
+    /// 成駒→駒　（成っていない駒は、そのまま）
+    piece_meaning_demoted_table: [PieceMeaning; PIECE_MEANING_LEN],
+    /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
+    /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
+    piece_meaning_captured_table: [PieceMeaning; PIECE_MEANING_LEN],
+    piece_meaning_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
 
     /// 駒種類☆（＾～＾）
-    pub piece_type_table: [PieceTypeChart; PIECE_TYPE_LEN],
+    piece_type_table: [PieceTypeChart; PIECE_TYPE_LEN],
 
     /// 持ち駒☆（＾～＾）
     /// 玉２枚引く☆（＾～＾）
-    pub hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
-    pub hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
-    pub hand_address_table: [HandAddressChart; HAND_ADDRESS_LEN],
+    hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
+    hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
+    hand_address_table: [HandAddressChart; HAND_ADDRESS_LEN],
 
     // 相対番地と角度☆（＾～＾）
-    pub west_ccw: [RelAdr; ANGLE_LEN],
-    pub west_ccw_double_rank: [RelAdr; ANGLE_LEN],
+    west_ccw: [RelAdr; ANGLE_LEN],
+    west_ccw_double_rank: [RelAdr; ANGLE_LEN],
 
     /// 時計回り(Clockwise)☆（＾～＾）
-    pub rotate90cw: [Angle; ANGLE_LEN],
+    rotate90cw: [Angle; ANGLE_LEN],
     /// 時計回り(Clockwise)☆（＾～＾）
-    pub rotate45cw: [Angle; ANGLE_LEN],
+    rotate45cw: [Angle; ANGLE_LEN],
     /// 反時計回り(Counterclockwise)☆（＾～＾）
-    pub rotate45ccw: [Angle; ANGLE_LEN],
+    rotate45ccw: [Angle; ANGLE_LEN],
     /// 反時計回り(Counterclockwise)☆（＾～＾）
-    pub rotate90ccw: [Angle; ANGLE_LEN],
+    rotate90ccw: [Angle; ANGLE_LEN],
     /// 点対称☆（＾～＾）
-    pub rotate180: [Angle; ANGLE_LEN],
+    rotate180: [Angle; ANGLE_LEN],
 
     /// 評価値☆（＾～＾）
     /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
     /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
-    pub promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
-    pub caputured_piece_value: [isize; HAND_ADDRESS_TYPE_LEN],
+    promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
+    caputured_piece_value: [isize; HAND_ADDRESS_TYPE_LEN],
 }
 impl Default for SpeedOfLight {
     fn default() -> Self {
@@ -91,259 +95,185 @@ impl Default for SpeedOfLight {
         SpeedOfLight {
             /// ピースの早見表の生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
             /// 先後付きの駒☆（＾～＾）
-            piece_meaning_table: [
-                // King1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: King,
-                    promoted: King1,
-                    demoted: King1,
-                    captured: King2,
-                    hand_address: HandAddress::King1,
-                },
-                // Rook1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Rook,
-                    promoted: Dragon1,
-                    demoted: Rook1,
-                    captured: Rook2,
-                    hand_address: HandAddress::Rook1,
-                },
-                // Bishop1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Bishop,
-                    promoted: Horse1,
-                    demoted: Bishop1,
-                    captured: Bishop2,
-                    hand_address: HandAddress::Bishop1,
-                },
-                // Gold1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Gold,
-                    promoted: Gold1,
-                    demoted: Gold1,
-                    captured: Gold2,
-                    hand_address: HandAddress::Gold1,
-                },
-                // Silver1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Silver,
-                    promoted: PromotedSilver1,
-                    demoted: Silver1,
-                    captured: Silver2,
-                    hand_address: HandAddress::Silver1,
-                },
-                // Knight1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Knight,
-                    promoted: PromotedKnight1,
-                    demoted: Knight1,
-                    captured: Knight2,
-                    hand_address: HandAddress::Knight1,
-                },
-                // Lance1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Lance,
-                    promoted: PromotedLance1,
-                    demoted: Lance1,
-                    captured: Lance2,
-                    hand_address: HandAddress::Lance1,
-                },
-                // Pawn1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Pawn,
-                    promoted: PromotedPawn1,
-                    demoted: Pawn1,
-                    captured: Pawn2,
-                    hand_address: HandAddress::Pawn1,
-                },
-                // Dragon1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Dragon,
-                    promoted: Dragon1,
-                    demoted: Rook1,
-                    captured: Rook2,
-                    hand_address: HandAddress::Rook1,
-                },
-                // Horse1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: Horse,
-                    promoted: Horse1,
-                    demoted: Bishop1,
-                    captured: Bishop2,
-                    hand_address: HandAddress::Bishop1,
-                },
-                // PromotedSilver1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: PromotedSilver,
-                    promoted: PromotedSilver1,
-                    demoted: Silver1,
-                    captured: Silver2,
-                    hand_address: HandAddress::Silver1,
-                },
-                // PromotedKnight1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: PromotedKnight,
-                    promoted: PromotedKnight1,
-                    demoted: Knight1,
-                    captured: Knight2,
-                    hand_address: HandAddress::Knight1,
-                },
-                // PromotedLance1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: PromotedLance,
-                    promoted: PromotedLance1,
-                    demoted: Lance1,
-                    captured: Lance2,
-                    hand_address: HandAddress::Lance1,
-                },
-                // PromotedPawn1
-                PieceMeaningChart {
-                    phase: First,
-                    piece_type: PromotedPawn,
-                    promoted: PromotedPawn1,
-                    demoted: Pawn1,
-                    captured: Pawn2,
-                    hand_address: HandAddress::Pawn1,
-                },
-                // King2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: King,
-                    promoted: King2,
-                    demoted: King2,
-                    captured: King1,
-                    hand_address: HandAddress::King2,
-                },
-                // Rook2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Rook,
-                    promoted: Dragon2,
-                    demoted: Rook2,
-                    captured: Rook1,
-                    hand_address: HandAddress::Rook2,
-                },
-                // Bishop2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Bishop,
-                    promoted: Horse2,
-                    demoted: Bishop2,
-                    captured: Bishop1,
-                    hand_address: HandAddress::Bishop2,
-                },
-                // Gold2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Gold,
-                    promoted: Gold2,
-                    demoted: Gold2,
-                    captured: Gold1,
-                    hand_address: HandAddress::Gold2,
-                },
-                // Silver2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Silver,
-                    promoted: PromotedSilver2,
-                    demoted: Silver2,
-                    captured: Silver1,
-                    hand_address: HandAddress::Silver2,
-                },
-                // Knight2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Knight,
-                    promoted: PromotedKnight2,
-                    demoted: Knight2,
-                    captured: Knight1,
-                    hand_address: HandAddress::Knight2,
-                },
-                // Lance2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Lance,
-                    promoted: PromotedLance2,
-                    demoted: Lance2,
-                    captured: Lance1,
-                    hand_address: HandAddress::Lance2,
-                },
-                // Pawn2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Pawn,
-                    promoted: PromotedPawn2,
-                    demoted: Pawn2,
-                    captured: Pawn1,
-                    hand_address: HandAddress::Pawn2,
-                },
-                // Dragon2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Dragon,
-                    promoted: Dragon2,
-                    demoted: Rook2,
-                    captured: Rook1,
-                    hand_address: HandAddress::Rook2,
-                },
-                // Horse2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: Horse,
-                    promoted: Horse2,
-                    demoted: Bishop2,
-                    captured: Bishop1,
-                    hand_address: HandAddress::Bishop2,
-                },
-                // PromotedSilver2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: PromotedSilver,
-                    promoted: PromotedSilver2,
-                    demoted: Silver2,
-                    captured: Silver1,
-                    hand_address: HandAddress::Silver2,
-                },
-                // PromotedKnight2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: PromotedKnight,
-                    promoted: PromotedKnight2,
-                    demoted: Knight2,
-                    captured: Knight1,
-                    hand_address: HandAddress::Knight2,
-                },
-                // PromotedLance2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: PromotedLance,
-                    promoted: PromotedLance2,
-                    demoted: Lance2,
-                    captured: Lance1,
-                    hand_address: HandAddress::Lance2,
-                },
-                // PromotedPawn2
-                PieceMeaningChart {
-                    phase: Second,
-                    piece_type: PromotedPawn,
-                    promoted: PromotedPawn2,
-                    demoted: Pawn2,
-                    captured: Pawn1,
-                    hand_address: HandAddress::Pawn2,
-                },
+            piece_meaning_phase_table: [
+                First,  // King1
+                First,  // Rook1
+                First,  // Bishop1
+                First,  // Gold1
+                First,  // Silver1
+                First,  // Knight1
+                First,  // Lance1
+                First,  // Pawn1
+                First,  // Dragon1
+                First,  // Horse1
+                First,  // PromotedSilver1
+                First,  // PromotedKnight1
+                First,  // PromotedLance1
+                First,  // PromotedPawn1
+                Second, // King2
+                Second, // Rook2
+                Second, // Bishop2
+                Second, // Gold2
+                Second, // Silver2
+                Second, // Knight2
+                Second, // Lance2
+                Second, // Pawn2
+                Second, // Dragon2
+                Second, // Horse2
+                Second, // PromotedSilver2
+                Second, // PromotedKnight2
+                Second, // PromotedLance2
+                Second, // PromotedPawn2
+            ],
+            piece_meaning_type_table: [
+                King,           // King1
+                Rook,           // Rook1
+                Bishop,         // Bishop1
+                Gold,           // Gold1
+                Silver,         // Silver1
+                Knight,         // Knight1
+                Lance,          // Lance1
+                Pawn,           // Pawn1
+                Dragon,         // Dragon1
+                Horse,          // Horse1
+                PromotedSilver, // PromotedSilver1
+                PromotedKnight, // PromotedKnight1
+                PromotedLance,  // PromotedLance1
+                PromotedPawn,   // PromotedPawn1
+                King,           // King2
+                Rook,           // Rook2
+                Bishop,         // Bishop2
+                Gold,           // Gold2
+                Silver,         // Silver2
+                Knight,         // Knight2
+                Lance,          // Lance2
+                Pawn,           // Pawn2
+                Dragon,         // Dragon2
+                Horse,          // Horse2
+                PromotedSilver, // PromotedSilver2
+                PromotedKnight, // PromotedKnight2
+                PromotedLance,  // PromotedLance2
+                PromotedPawn,   // PromotedPawn2
+            ],
+            piece_meaning_promoted_table: [
+                King1,           // King1
+                Dragon1,         // Rook1
+                Horse1,          // Bishop1
+                Gold1,           // Gold1
+                PromotedSilver1, // Silver1
+                PromotedKnight1, // Knight1
+                PromotedLance1,  // Lance1
+                PromotedPawn1,   // Pawn1
+                Dragon1,         // Dragon1
+                Horse1,          // Horse1
+                PromotedSilver1, // PromotedSilver1
+                PromotedKnight1, // PromotedKnight1
+                PromotedLance1,  // PromotedLance1
+                PromotedPawn1,   // PromotedPawn1
+                King2,           // King2
+                Dragon2,         // Rook2
+                Horse2,          // Bishop2
+                Gold2,           // Gold2
+                PromotedSilver2, // Silver2
+                PromotedKnight2, // Knight2
+                PromotedLance2,  // Lance2
+                PromotedPawn2,   // Pawn2
+                Dragon2,         // Dragon2
+                Horse2,          // Horse2
+                PromotedSilver2, // PromotedSilver2
+                PromotedKnight2, // PromotedKnight2
+                PromotedLance2,  // PromotedLance2
+                PromotedPawn2,   // PromotedPawn2
+            ],
+            piece_meaning_demoted_table: [
+                King1,   // King1
+                Rook1,   // Rook1
+                Bishop1, // Bishop1
+                Gold1,   // Gold1
+                Silver1, // Silver1
+                Knight1, // Knight1
+                Lance1,  // Lance1
+                Pawn1,   // Pawn1
+                Rook1,   // Dragon1
+                Bishop1, // Horse1
+                Silver1, // PromotedSilver1
+                Knight1, // PromotedKnight1
+                Lance1,  // PromotedLance1
+                Pawn1,   // PromotedPawn1
+                King2,   // King2
+                Rook2,   // Rook2
+                Bishop2, // Bishop2
+                Gold2,   // Gold2
+                Silver2, // Silver2
+                Knight2, // Knight2
+                Lance2,  // Lance2
+                Pawn2,   // Pawn2
+                Rook2,   // Dragon2
+                Bishop2, // Horse2
+                Silver2, // PromotedSilver2
+                Knight2, // PromotedKnight2
+                Lance2,  // PromotedLance2
+                Pawn2,   // PromotedPawn2
+            ],
+            piece_meaning_captured_table: [
+                King2,   // King1
+                Rook2,   // Rook1
+                Bishop2, // Bishop1
+                Gold2,   // Gold1
+                Silver2, // Silver1
+                Knight2, // Knight1
+                Lance2,  // Lance1
+                Pawn2,   // Pawn1
+                Rook2,   // Dragon1
+                Bishop2, // Horse1
+                Silver2, // PromotedSilver1
+                Knight2, // PromotedKnight1
+                Lance2,  // PromotedLance1
+                Pawn2,   // PromotedPawn1
+                King1,   // King2
+                Rook1,   // Rook2
+                Bishop1, // Bishop2
+                Gold1,   // Gold2
+                Silver1, // Silver2
+                Knight1, // Knight2
+                Lance1,  // Lance2
+                Pawn1,   // Pawn2
+                Rook1,   // Dragon2
+                Bishop1, // Horse2
+                Silver1, // PromotedSilver2
+                Knight1, // PromotedKnight2
+                Lance1,  // PromotedLance2
+                Pawn1,   // PromotedPawn2
+            ],
+            piece_meaning_hand_address_table: [
+                HandAddress::King1,   // King1
+                HandAddress::Rook1,   // Rook1
+                HandAddress::Bishop1, // Bishop1
+                HandAddress::Gold1,   // Gold1
+                HandAddress::Silver1, // Silver1
+                HandAddress::Knight1, // Knight1
+                HandAddress::Lance1,  // Lance1
+                HandAddress::Pawn1,   // Pawn1
+                HandAddress::Rook1,   // Dragon1
+                HandAddress::Bishop1, // Horse1
+                HandAddress::Silver1, // PromotedSilver1
+                HandAddress::Knight1, // PromotedKnight1
+                HandAddress::Lance1,  // PromotedLance1
+                HandAddress::Pawn1,   // PromotedPawn1
+                HandAddress::King2,   // King2
+                HandAddress::Rook2,   // Rook2
+                HandAddress::Bishop2, // Bishop2
+                HandAddress::Gold2,   // Gold2
+                HandAddress::Silver2, // Silver2
+                HandAddress::Knight2, // Knight2
+                HandAddress::Lance2,  // Lance2
+                HandAddress::Pawn2,   // Pawn2
+                HandAddress::Rook2,   // Dragon2
+                HandAddress::Bishop2, // Horse2
+                HandAddress::Silver2, // PromotedSilver2
+                HandAddress::Knight2, // PromotedKnight2
+                HandAddress::Lance2,  // PromotedLance2
+                HandAddress::Pawn2,   // PromotedPawn2
             ],
 
             // 駒種類☆（＾～＾）
@@ -527,52 +457,30 @@ impl Default for SpeedOfLight {
     }
 }
 
-/// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
-#[derive(Clone)]
-pub struct PieceMeaningChart {
-    /// 先後
-    phase: Phase,
-
-    /// 駒種類
-    piece_type: PieceType,
-
-    /// 駒→成駒　（成れない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    promoted: PieceMeaning,
-
-    /// 成駒→駒　（成っていない駒は、そのまま）Noneは空升に使っている☆（＾～＾）
-    demoted: PieceMeaning,
-
-    /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
-    /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
-    captured: PieceMeaning,
-
-    /// 配列のインデックス用☆（＾～＾）
-    hand_address: HandAddress,
-}
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceMeaning {
     pub fn phase(self) -> Phase {
-        NINE_299792458.piece_meaning_table[self as usize].phase
+        NINE_299792458.piece_meaning_phase_table[self as usize]
     }
 
     pub fn r#type(self) -> PieceType {
-        NINE_299792458.piece_meaning_table[self as usize].piece_type
+        NINE_299792458.piece_meaning_type_table[self as usize]
     }
 
     pub fn promoted(self) -> PieceMeaning {
-        NINE_299792458.piece_meaning_table[self as usize].promoted
+        NINE_299792458.piece_meaning_promoted_table[self as usize]
     }
 
     pub fn demoted(self) -> PieceMeaning {
-        NINE_299792458.piece_meaning_table[self as usize].demoted
+        NINE_299792458.piece_meaning_demoted_table[self as usize]
     }
 
     pub fn captured(self) -> PieceMeaning {
-        NINE_299792458.piece_meaning_table[self as usize].captured
+        NINE_299792458.piece_meaning_captured_table[self as usize]
     }
 
     pub fn hand_address(self) -> HandAddress {
-        NINE_299792458.piece_meaning_table[self as usize].hand_address
+        NINE_299792458.piece_meaning_hand_address_table[self as usize]
     }
 }
 
