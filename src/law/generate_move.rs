@@ -209,24 +209,13 @@ impl PseudoLegalMoves {
                             if !forbidden {
                                 callback(Way::new(
                                     // TODO これ、ハッシュにせずオブジェクトのまま持ってたらどうだぜ☆（＾～＾）？
-                                    Movement {
-                                        source: Some(*source),
-                                        destination: destination,
-                                        promote: false,
-                                        drop: None,
-                                    }
-                                    .to_hash(),
+                                    Movement::new(Some(*source), destination, false, None)
+                                        .to_hash(),
                                     pseudo_captured,
                                 ));
                             }
                             callback(Way::new(
-                                Movement {
-                                    source: Some(*source),
-                                    destination: destination,
-                                    promote: true,
-                                    drop: None,
-                                }
-                                .to_hash(),
+                                Movement::new(Some(*source), destination, true, None).to_hash(),
                                 pseudo_captured,
                             ));
                         }
@@ -234,13 +223,8 @@ impl PseudoLegalMoves {
                             // 成れるか、成れないかのどちらかのとき。
                             if promotion || !forbidden {
                                 callback(Way::new(
-                                    Movement {
-                                        source: Some(*source),
-                                        destination: destination,
-                                        promote: promotion,
-                                        drop: None,
-                                    }
-                                    .to_hash(),
+                                    Movement::new(Some(*source), destination, promotion, None)
+                                        .to_hash(),
                                     pseudo_captured,
                                 ));
                             }
@@ -282,12 +266,12 @@ impl PseudoLegalMoves {
                         _ => {}
                     }
                     callback(Way::new(
-                        Movement {
-                            source: None,                                      // 駒台
-                            destination: destination,                          // どの升へ行きたいか
-                            promote: false,                                    // 打に成りは無し
-                            drop: Some(piece.meaning.hand_address().r#type()), // 打った駒種類
-                        }
+                        Movement::new(
+                            None,                                        // 駒台
+                            destination,                                 // どの升へ行きたいか
+                            false,                                       // 打に成りは無し
+                            Some(piece.meaning.hand_address().r#type()), // 打った駒種類
+                        )
                         .to_hash(),
                         None,
                     ));

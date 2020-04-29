@@ -185,26 +185,16 @@ impl Lioncatch {
                             } else {
                                 // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                 self.checks.push(&Way::new(
-                                    Movement {
-                                        source: Some(cur),
-                                        destination: self.opponent_king_adr,
-                                        promote: false,
-                                        drop: None,
-                                    }
-                                    .to_hash(),
+                                    Movement::new(Some(cur), self.opponent_king_adr, false, None)
+                                        .to_hash(),
                                     Some(any_piece_val),
                                 ));
                             }
                         } else {
                             // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                             self.checks.push(&Way::new(
-                                Movement {
-                                    source: Some(cur),
-                                    destination: self.opponent_king_adr,
-                                    promote: false,
-                                    drop: None,
-                                }
-                                .to_hash(),
+                                Movement::new(Some(cur), self.opponent_king_adr, false, None)
+                                    .to_hash(),
                                 Some(any_piece_val),
                             ));
                         }
@@ -250,12 +240,12 @@ impl Lioncatch {
                                     } else {
                                         // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                         self.checks.push(&Way::new(
-                                            Movement {
-                                                source: Some(cur),
-                                                destination: self.opponent_king_adr,
-                                                promote: false,
-                                                drop: None,
-                                            }
+                                            Movement::new(
+                                                Some(cur),
+                                                self.opponent_king_adr,
+                                                false,
+                                                None,
+                                            )
                                             .to_hash(),
                                             Some(any_piece_val),
                                         ));
@@ -263,12 +253,12 @@ impl Lioncatch {
                                 } else {
                                     // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                     self.checks.push(&Way::new(
-                                        Movement {
-                                            source: Some(cur),
-                                            destination: self.opponent_king_adr,
-                                            promote: false,
-                                            drop: None,
-                                        }
+                                        Movement::new(
+                                            Some(cur),
+                                            self.opponent_king_adr,
+                                            false,
+                                            None,
+                                        )
                                         .to_hash(),
                                         Some(any_piece_val),
                                     ));
