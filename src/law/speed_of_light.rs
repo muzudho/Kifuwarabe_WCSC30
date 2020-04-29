@@ -32,6 +32,17 @@ pub struct SpeedOfLight {
     pub west_ccw: [RelAdr; ANGLE_LEN],
     pub west_ccw_double_rank: [RelAdr; ANGLE_LEN],
 
+    /// 時計回り(Clockwise)☆（＾～＾）
+    pub rotate90cw: [Angle; ANGLE_LEN],
+    /// 時計回り(Clockwise)☆（＾～＾）
+    pub rotate45cw: [Angle; ANGLE_LEN],
+    /// 反時計回り(Counterclockwise)☆（＾～＾）
+    pub rotate45ccw: [Angle; ANGLE_LEN],
+    /// 反時計回り(Counterclockwise)☆（＾～＾）
+    pub rotate90ccw: [Angle; ANGLE_LEN],
+    /// 点対称☆（＾～＾）
+    pub rotate180: [Angle; ANGLE_LEN],
+
     /// 評価値☆（＾～＾）
     /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
     /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
@@ -376,6 +387,61 @@ impl Default for SpeedOfLight {
                     .clone(),
             ],
 
+            /// 時計回り(Clockwise)☆（＾～＾）
+            rotate90cw: [
+                Angle::Ccw270,
+                Angle::Ccw315,
+                Angle::Ccw0,
+                Angle::Ccw45,
+                Angle::Ccw90,
+                Angle::Ccw135,
+                Angle::Ccw180,
+                Angle::Ccw225,
+            ],
+            /// 時計回り(Clockwise)☆（＾～＾）
+            rotate45cw: [
+                Angle::Ccw315,
+                Angle::Ccw0,
+                Angle::Ccw45,
+                Angle::Ccw90,
+                Angle::Ccw135,
+                Angle::Ccw180,
+                Angle::Ccw225,
+                Angle::Ccw270,
+            ],
+            /// 反時計回り(Counterclockwise)☆（＾～＾）
+            rotate45ccw: [
+                Angle::Ccw45,
+                Angle::Ccw90,
+                Angle::Ccw135,
+                Angle::Ccw180,
+                Angle::Ccw225,
+                Angle::Ccw270,
+                Angle::Ccw315,
+                Angle::Ccw0,
+            ],
+            /// 反時計回り(Counterclockwise)☆（＾～＾）
+            rotate90ccw: [
+                Angle::Ccw90,
+                Angle::Ccw135,
+                Angle::Ccw180,
+                Angle::Ccw225,
+                Angle::Ccw270,
+                Angle::Ccw315,
+                Angle::Ccw0,
+                Angle::Ccw45,
+            ],
+            rotate180: [
+                Angle::Ccw180,
+                Angle::Ccw225,
+                Angle::Ccw270,
+                Angle::Ccw315,
+                Angle::Ccw0,
+                Angle::Ccw45,
+                Angle::Ccw90,
+                Angle::Ccw135,
+            ],
+
             // 評価値☆（＾～＾）
             promotion_value: [0, 1, 1, 0, 0, 1, 1, 1],
             caputured_piece_value: [
@@ -537,4 +603,27 @@ pub fn push_drop_to_hash(hash: u64, piece_type_o: Option<HandAddressType>) -> u6
 pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
     // 使ってるのは8種類なんで、8(=2^3) で OK
     (hash >> 3, HandAddressType::from_u64(hash & 0b111))
+}
+
+impl Angle {
+    /// 時計回り(Clockwise)☆（＾～＾）
+    pub fn rotate90cw(self, speed_of_light: &SpeedOfLight) -> Angle {
+        speed_of_light.rotate90cw[self as usize]
+    }
+    /// 時計回り(Clockwise)☆（＾～＾）
+    pub fn rotate45cw(self, speed_of_light: &SpeedOfLight) -> Angle {
+        speed_of_light.rotate45cw[self as usize]
+    }
+    /// 反時計回り(Counterclockwise)☆（＾～＾）
+    pub fn rotate45ccw(self, speed_of_light: &SpeedOfLight) -> Angle {
+        speed_of_light.rotate45ccw[self as usize]
+    }
+    /// 反時計回り(Counterclockwise)☆（＾～＾）
+    pub fn rotate90ccw(self, speed_of_light: &SpeedOfLight) -> Angle {
+        speed_of_light.rotate90ccw[self as usize]
+    }
+    /// 点対称☆（＾～＾）
+    pub fn rotate180(self, speed_of_light: &SpeedOfLight) -> Angle {
+        speed_of_light.rotate180[self as usize]
+    }
 }

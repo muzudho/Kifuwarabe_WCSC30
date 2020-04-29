@@ -409,7 +409,7 @@ impl Area {
 
         Area::r#move(source, angle, Agility::Knight, speed_of_light, promoting);
 
-        let angle = angle.rotate90ccw();
+        let angle = angle.rotate90ccw(speed_of_light);
         Area::r#move(source, angle, Agility::Knight, speed_of_light, promoting);
     }
 
@@ -440,28 +440,30 @@ impl Area {
         Area::r#move(source, angle, Agility::Hopping, speed_of_light, promoting);
         Area::r#move(
             source,
-            angle.rotate45ccw(),
+            angle.rotate45ccw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             promoting,
         );
         Area::r#move(
             source,
-            angle.rotate90ccw().rotate45ccw(),
+            angle
+                .rotate90ccw(speed_of_light)
+                .rotate45ccw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             promoting,
         );
         Area::r#move(
             source,
-            angle.rotate90cw().rotate45cw(),
+            angle.rotate90cw(speed_of_light).rotate45cw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             promoting,
         );
         Area::r#move(
             source,
-            angle.rotate45cw(),
+            angle.rotate45cw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             promoting,
@@ -494,35 +496,35 @@ impl Area {
         Area::r#move(source, angle, Agility::Hopping, speed_of_light, hopping);
         Area::r#move(
             source,
-            angle.rotate45ccw(),
+            angle.rotate45ccw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             hopping,
         );
         Area::r#move(
             source,
-            angle.rotate90ccw(),
+            angle.rotate90ccw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             hopping,
         );
         Area::r#move(
             source,
-            angle.rotate180(),
+            angle.rotate180(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             hopping,
         );
         Area::r#move(
             source,
-            angle.rotate90cw(),
+            angle.rotate90cw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             hopping,
         );
         Area::r#move(
             source,
-            angle.rotate45cw(),
+            angle.rotate45cw(speed_of_light),
             Agility::Hopping,
             speed_of_light,
             hopping,
