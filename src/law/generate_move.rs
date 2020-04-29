@@ -6,14 +6,12 @@ use crate::cosmic::recording::{Movement, Phase};
 use crate::cosmic::smart::features::HandAddress;
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::features::PieceType;
-use crate::cosmic::smart::mate1::Mate1;
 use crate::cosmic::smart::square::{
     AbsoluteAddress, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
-use crate::law::speed_of_light::Nine299792458;
 use crate::spaceship::equipment::Beam;
 use std::fmt;
 
@@ -130,32 +128,20 @@ impl PseudoLegalMoves {
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    pub fn make_move<F1>(friend: Phase, board: &Board, mate1: Option<&Mate1>, callback: &mut F1)
+    pub fn make_move<F1>(friend: Phase, board: &Board, callback: &mut F1)
     where
         F1: FnMut(Way),
     {
-        let piece_numbers = if let Some(mate1_val) = mate1 {
-            if let Some(checkers_val) = &mate1_val.checkers {
-                checkers_val
-            } else {
-                Nine299792458::piece_numbers()
+        board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
+            Location::Board(source) => {
+                PseudoLegalMoves::start_on_board(friend, &source, &piece, board, callback)
             }
-        } else {
-            Nine299792458::piece_numbers()
-        };
-
-        board.for_some_pieces_on_list40(friend, &piece_numbers, &mut |location, piece| {
-            match location {
-                Location::Board(source) => {
-                    PseudoLegalMoves::start_on_board(friend, &source, &piece, board, callback)
-                }
-                Location::Hand(adr) => {
-                    PseudoLegalMoves::make_drop(friend, adr, board, callback);
-                }
-                Location::Busy => panic!(Beam::trouble(
-                    "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
-                )),
+            Location::Hand(adr) => {
+                PseudoLegalMoves::make_drop(friend, adr, board, callback);
             }
+            Location::Busy => panic!(Beam::trouble(
+                "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
+            )),
         });
     }
 
@@ -222,6 +208,7 @@ impl PseudoLegalMoves {
                             // 成ったり、成れなかったりできるとき。
                             if !forbidden {
                                 callback(Way::new(
+                                    // TODO これ、ハッシュにせずオブジェクトのまま持ってたらどうだぜ☆（＾～＾）？
                                     Movement {
                                         source: Some(*source),
                                         destination: destination,

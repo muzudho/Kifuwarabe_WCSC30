@@ -6,7 +6,7 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceType;
-use crate::cosmic::smart::mate1::Mate1;
+use crate::cosmic::smart::mate1::Lioncatch;
 use crate::cosmic::smart::see::SEE;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::{Piece, PseudoLegalMoves, Ways};
@@ -137,23 +137,26 @@ impl Tree {
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
-        //*
-        // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
-        let mut mate1 = Mate1::new(game);
-        mate1.init(game).pinned_pieces(game).checkers(game);
-        // */
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let mut ways = Ways::new();
+        let mut ways = {
+            /*
+            // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
+            let mut lioncatch = Lioncatch::new(game);
+            lioncatch.init(game).pinned_pieces(game).checkers(game);
+            if !lioncatch.checks.is_empty() {
+                lioncatch.checks
+            } else {
+                */
+            let mut ways = Ways::new();
 
-        // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-        PseudoLegalMoves::make_move(
-            game.history.get_friend(),
-            &game.board,
-            Some(&mate1),
-            &mut |way| {
+            // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
+            PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
                 ways.push(&way);
-            },
-        );
+            });
+
+            ways
+            // }
+        };
 
         // 指せる手が無ければ投了☆（＾～＾）
         if ways.is_empty() {

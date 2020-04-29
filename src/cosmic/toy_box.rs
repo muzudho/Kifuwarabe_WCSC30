@@ -11,7 +11,7 @@ use crate::cosmic::smart::square::{
     AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
 use crate::law::generate_move::Piece;
-use crate::law::speed_of_light::HandAddresses;
+use crate::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -400,15 +400,11 @@ impl Board {
     }
 
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
-    pub fn for_some_pieces_on_list40<F>(
-        &self,
-        friend: Phase,
-        piece_numbers: &Vec<PieceNum>,
-        piece_get: &mut F,
-    ) where
+    pub fn for_some_pieces_on_list40<F>(&self, friend: Phase, piece_get: &mut F)
+    where
         F: FnMut(Location, Piece),
     {
-        for piece_num in piece_numbers {
+        for piece_num in Nine299792458::piece_numbers().iter() {
             let location = self.location[*piece_num as usize];
             match location {
                 Location::Board(adr) => {

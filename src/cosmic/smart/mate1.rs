@@ -2,14 +2,17 @@
 //! これが無いと、探索しなくていい枝を末端まで伸ばしてしまうぜ☆（＾～＾）
 
 use crate::cosmic::playing::Game;
+use crate::cosmic::recording::Movement;
 use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::square::AbsoluteAddress;
 use crate::cosmic::smart::square::RelAdr;
 use crate::cosmic::toy_box::{Location, PieceNum};
+use crate::law::generate_move::{Way, Ways};
 use crate::law::speed_of_light::Movility;
 use crate::spaceship::equipment::Beam;
 
-pub struct Mate1 {
+/// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？
+pub struct Lioncatch {
     /// 自分の手番☆（＾～＾）
     friend: Phase,
     /// 相手の手番☆（＾～＾）
@@ -18,22 +21,25 @@ pub struct Mate1 {
     friend_king_adr: AbsoluteAddress,
     /// 敵玉の場所☆（＾～＾）
     opponent_king_adr: AbsoluteAddress,
+    /// 王手の指し手一覧だぜ☆（＾～＾）
+    pub checks: Ways,
     /// 王手を掛けている駒の背番号だぜ☆（＾～＾）
-    pub checkers: Option<Vec<PieceNum>>,
+    // pub checkers: Option<Vec<PieceNum>>,
     /// 動かしてはいけない駒の背番号の一覧を作るぜ☆（＾～＾）
     pub pinned_pieces: Option<Vec<PieceNum>>,
     /// 上下反転させるのに使うぜ☆（＾～＾）
     pub sign: isize,
 }
-impl Mate1 {
+impl Lioncatch {
     pub fn new(game: &Game) -> Self {
         let friend = game.history.get_friend();
-        Mate1 {
+        Lioncatch {
             friend: friend,
             opponent: friend.turn(),
             friend_king_adr: AbsoluteAddress::default(),
             opponent_king_adr: AbsoluteAddress::default(),
-            checkers: None,
+            checks: Ways::new(),
+            // checkers: None,
             pinned_pieces: None,
             sign: 1,
         }
@@ -159,7 +165,6 @@ impl Mate1 {
             (RelAdr::new(1, self.sign * -1), Movility::BackDiagonally), // 北西
         ];
 
-        let mut checkers = Vec::<PieceNum>::new();
         // 王手を掛けている駒を全部挙げろだぜ☆（＾～＾）
         for recipe in &recipes {
             // 相手玉をスタート地点にするぜ☆（＾～＾）
@@ -179,11 +184,29 @@ impl Mate1 {
                                 // ピンされてる駒だった☆（＾～＾）動かせないぜ☆（＾～＾）！
                             } else {
                                 // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                                checkers.push(any_piece_val.num);
+                                self.checks.push(&Way::new(
+                                    Movement {
+                                        source: Some(cur),
+                                        destination: self.opponent_king_adr,
+                                        promote: false,
+                                        drop: None,
+                                    }
+                                    .to_hash(),
+                                    Some(any_piece_val),
+                                ));
                             }
                         } else {
                             // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                            checkers.push(any_piece_val.num);
+                            self.checks.push(&Way::new(
+                                Movement {
+                                    source: Some(cur),
+                                    destination: self.opponent_king_adr,
+                                    promote: false,
+                                    drop: None,
+                                }
+                                .to_hash(),
+                                Some(any_piece_val),
+                            ));
                         }
                     }
                 }
@@ -221,8 +244,35 @@ impl Mate1 {
                         {
                             // 隣接している駒は、さっき入れたはずだぜ☆（＾～＾）
                             if i != 0 {
-                                // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                                checkers.push(any_piece_val.num);
+                                if let Some(pinned_pieces_val) = &mut self.pinned_pieces {
+                                    if pinned_pieces_val.contains(&any_piece_val.num) {
+                                        // ピンされてる駒だった☆（＾～＾）動かせないぜ☆（＾～＾）！
+                                    } else {
+                                        // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
+                                        self.checks.push(&Way::new(
+                                            Movement {
+                                                source: Some(cur),
+                                                destination: self.opponent_king_adr,
+                                                promote: false,
+                                                drop: None,
+                                            }
+                                            .to_hash(),
+                                            Some(any_piece_val),
+                                        ));
+                                    }
+                                } else {
+                                    // 敵玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
+                                    self.checks.push(&Way::new(
+                                        Movement {
+                                            source: Some(cur),
+                                            destination: self.opponent_king_adr,
+                                            promote: false,
+                                            drop: None,
+                                        }
+                                        .to_hash(),
+                                        Some(any_piece_val),
+                                    ));
+                                }
                             }
                         }
                         // なんか駒に当たったよな☆（＾～＾） スライダー終わり☆（＾～＾）
@@ -230,10 +280,6 @@ impl Mate1 {
                     }
                 }
             }
-        }
-
-        if !checkers.is_empty() {
-            self.checkers = Some(checkers);
         }
 
         self
