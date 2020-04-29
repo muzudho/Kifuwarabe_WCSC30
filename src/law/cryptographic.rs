@@ -3,6 +3,7 @@
 //!
 use crate::cosmic::smart::square::{AbsoluteAddress, Address};
 
+/*
 /// 0 なら偽、それ以外は真☆（＾～＾）
 pub fn num_to_bool(n: usize) -> bool {
     match n {
@@ -20,6 +21,7 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
     let b_num = num_to_bool((hash & 0b1) as usize);
     (hash >> 7, b_num)
 }
+*/
 
 /// ハッシュ値を作る
 pub fn push_sq_to_hash(hash: u64, square: Option<&AbsoluteAddress>) -> u64 {

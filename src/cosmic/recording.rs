@@ -6,11 +6,8 @@
 //!
 use crate::cosmic::smart::features::HandAddressType;
 use crate::cosmic::smart::square::AbsoluteAddress;
-use crate::law::cryptographic::{
-    num_to_lower_case, pop_bool_from_hash, pop_sq_from_hash, push_bool_to_hash, push_sq_to_hash,
-};
+use crate::law::cryptographic::num_to_lower_case;
 use crate::law::generate_move::Piece;
-use crate::law::speed_of_light::{pop_drop_from_hash, push_drop_to_hash};
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。
@@ -96,6 +93,7 @@ impl Movement {
         }
     }
 
+    /*
     pub fn from_hash(hash: u64) -> Option<Movement> {
         if hash == 0 {
             None
@@ -117,6 +115,7 @@ impl Movement {
         hash = push_sq_to_hash(hash, Some(&self.destination));
         push_sq_to_hash(hash, self.source.as_ref())
     }
+    */
 
     pub fn set(&mut self, b: &Movement) {
         self.source = b.source;
