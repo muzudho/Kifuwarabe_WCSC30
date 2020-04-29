@@ -1,12 +1,11 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::playing::{Game, PosNums};
-use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::square::{AbsoluteAddress, FILE_1};
-use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
 use crate::law::generate_move::PseudoLegalMoves;
+use crate::law::generate_move::Way;
 use crate::law::usi::*;
 use crate::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen};
@@ -175,14 +174,10 @@ impl Chiyuri {
     pub fn genmove(game: &Game) {
         // Generation move.
         // FIXME 合法手とは限らない
-        let mut ways = Vec::<(u64, Option<(PieceMeaning, PieceNum)>)>::new();
-        PseudoLegalMoves::make_move(
-            game.history.get_friend(),
-            &game.board,
-            &mut |movement_hash, pseudo_captured| {
-                ways.push((movement_hash, pseudo_captured));
-            },
-        );
+        let mut ways = Vec::<Way>::new();
+        PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
+            ways.push(way);
+        });
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
         Kitchen::print_ways(&ways);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");

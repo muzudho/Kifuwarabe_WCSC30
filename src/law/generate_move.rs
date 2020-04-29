@@ -15,6 +15,23 @@ use crate::cosmic::toy_box::{Board, Location};
 use crate::spaceship::equipment::Beam;
 use std::fmt;
 
+/// 局面の差分だぜ☆（＾～＾）
+#[derive(Clone)]
+pub struct Way {
+    /// 指し手☆（＾～＾）
+    pub move_hash: u64,
+    /// 取った駒☆（＾～＾）
+    pub captured: Option<(PieceMeaning, PieceNum)>,
+}
+impl Way {
+    pub fn new(mov: u64, cap: Option<(PieceMeaning, PieceNum)>) -> Self {
+        Way {
+            move_hash: mov,
+            captured: cap,
+        }
+    }
+}
+
 /// Pseudo legal move(疑似合法手)☆（＾～＾）
 ///
 /// 先手の連続王手の千日手とか、空き王手とか、駒を見ただけでは調べられないだろ☆（＾～＾）
@@ -47,7 +64,7 @@ impl PseudoLegalMoves {
     /// * 移動先にあった駒
     pub fn make_move<F1>(friend: Phase, board: &Board, callback: &mut F1)
     where
-        F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
+        F1: FnMut(Way),
     {
         board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
             Location::Board(source) => {
@@ -84,7 +101,7 @@ impl PseudoLegalMoves {
         board: &Board,
         callback: &mut F1,
     ) where
-        F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
+        F1: FnMut(Way),
     {
         let callback_next =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
@@ -92,7 +109,7 @@ impl PseudoLegalMoves {
 
                 let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
                     if pseudo_captured_val.0.phase() == friend {
-                        // 味方の駒を取った☆（＾～＾）
+                        // 味方の駒を取った☆（＾～＾）なしだぜ☆（＾～＾）！
                         (false, false)
                     } else {
                         (true, false)
@@ -124,7 +141,7 @@ impl PseudoLegalMoves {
                         Any => {
                             // 成ったり、成れなかったりできるとき。
                             if !forbidden {
-                                callback(
+                                callback(Way::new(
                                     Movement {
                                         source: Some(*source),
                                         destination: destination,
@@ -133,9 +150,9 @@ impl PseudoLegalMoves {
                                     }
                                     .to_hash(),
                                     pseudo_captured,
-                                );
+                                ));
                             }
-                            callback(
+                            callback(Way::new(
                                 Movement {
                                     source: Some(*source),
                                     destination: destination,
@@ -144,12 +161,12 @@ impl PseudoLegalMoves {
                                 }
                                 .to_hash(),
                                 pseudo_captured,
-                            );
+                            ));
                         }
                         _ => {
                             // 成れるか、成れないかのどちらかのとき。
                             if promotion || !forbidden {
-                                callback(
+                                callback(Way::new(
                                     Movement {
                                         source: Some(*source),
                                         destination: destination,
@@ -158,7 +175,7 @@ impl PseudoLegalMoves {
                                     }
                                     .to_hash(),
                                     pseudo_captured,
-                                );
+                                ));
                             }
                         }
                     };
@@ -180,7 +197,7 @@ impl PseudoLegalMoves {
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
     fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, callback: &mut F1)
     where
-        F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
+        F1: FnMut(Way),
     {
         if let Some(piece) = board.last_hand(adr) {
             // 打つぜ☆（＾～＾）
@@ -197,7 +214,7 @@ impl PseudoLegalMoves {
                         }
                         _ => {}
                     }
-                    callback(
+                    callback(Way::new(
                         Movement {
                             source: None,                                // 駒台
                             destination: destination,                    // どの升へ行きたいか
@@ -206,7 +223,7 @@ impl PseudoLegalMoves {
                         }
                         .to_hash(),
                         None,
-                    );
+                    ));
                 }
             };
 

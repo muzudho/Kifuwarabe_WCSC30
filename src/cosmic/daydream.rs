@@ -10,6 +10,7 @@ use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
+use crate::law::generate_move::Way;
 use crate::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
@@ -137,16 +138,12 @@ impl Tree {
         let mut exists_lose = false;
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let mut ways = Vec::<(u64, Option<(PieceMeaning, PieceNum)>)>::new();
+        let mut ways = Vec::<Way>::new();
 
         // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-        PseudoLegalMoves::make_move(
-            game.history.get_friend(),
-            &game.board,
-            &mut |movement, pseudo_captured| {
-                &ways.push((movement, pseudo_captured));
-            },
-        );
+        PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
+            &ways.push(way);
+        });
 
         // 指せる手が無ければ投了☆（＾～＾）
         if ways.is_empty() {
@@ -157,10 +154,11 @@ impl Tree {
         let mut cap = 0;
         if 1 < ways.len() {
             for i in 0..ways.len() {
-                if let Some(_captured) = ways[i].1 {
+                if let Some(_captured) = ways[i].captured {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
-                    let temp = ways[cap];
-                    ways[cap] = ways[i];
+                    // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
+                    let temp = ways[cap].clone();
+                    ways[cap] = ways[i].clone();
                     ways[i] = temp;
                     cap += 1;
                 }
@@ -168,11 +166,12 @@ impl Tree {
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                match ways[i].1.unwrap().0.r#type() {
+                match ways[i].captured.unwrap().0.r#type() {
                     PieceType::King => {
                         // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
-                        let temp = ways[king];
-                        ways[king] = ways[i];
+                        // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
+                        let temp = ways[king].clone();
+                        ways[king] = ways[i].clone();
                         ways[i] = temp;
                         king += 1;
                     }
@@ -202,7 +201,7 @@ impl Tree {
 
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
-            let movement = Movement::from_hash(way.0).unwrap();
+            let movement = Movement::from_hash(way.move_hash).unwrap();
             let source_piece = if let Some(source_val) = &movement.source {
                 game.board.piece_at(source_val)
             } else {
@@ -218,7 +217,7 @@ impl Tree {
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.0.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(way.0);
+                    ts.bestmove.catch_king(way.move_hash);
 
                     self.evaluation
                         .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
@@ -231,7 +230,7 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_movement_hash = way.0;
+                ts.repetition_movement_hash = way.move_hash;
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
@@ -258,7 +257,7 @@ impl Tree {
                 let board_coverage_value = coverage_sign * game.board.coverage_value();
                 ts.choice_friend(
                     &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
-                    way.0,
+                    way.move_hash,
                 );
 
                 if game.info.is_printable() {
@@ -302,8 +301,11 @@ impl Tree {
                 self.evaluation.after_search();
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
-                exists_lose =
-                    ts.turn_over_and_choice(&opponent_ts, way.0, self.evaluation.centi_pawn(0));
+                exists_lose = ts.turn_over_and_choice(
+                    &opponent_ts,
+                    way.move_hash,
+                    self.evaluation.centi_pawn(0),
+                );
             }
 
             self.evaluation
@@ -356,16 +358,13 @@ impl Tree {
         ts
     }
 
-    pub fn add_control(
-        &mut self,
-        sign: isize,
-        game: &mut Game,
-        ways: &Vec<(u64, Option<(PieceMeaning, PieceNum)>)>,
-    ) {
+    pub fn add_control(&mut self, sign: isize, game: &mut Game, ways: &Vec<Way>) {
         for way in ways.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.control
-                [Movement::from_hash(way.0).unwrap().destination.address() as usize] += sign;
+            game.board.control[Movement::from_hash(way.move_hash)
+                .unwrap()
+                .destination
+                .address() as usize] += sign;
         }
     }
 
