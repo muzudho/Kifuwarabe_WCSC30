@@ -92,8 +92,8 @@ impl Default for SpeedOfLight {
             /// ピースの早見表の生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
             /// 先後付きの駒☆（＾～＾）
             piece_meaning_table: [
+                // King1
                 PieceMeaningChart {
-                    piece: King1,
                     phase: First,
                     piece_type: King,
                     promoted: King1,
@@ -101,8 +101,8 @@ impl Default for SpeedOfLight {
                     captured: King2,
                     hand_address: HandAddress::King1,
                 },
+                // Rook1
                 PieceMeaningChart {
-                    piece: Rook1,
                     phase: First,
                     piece_type: Rook,
                     promoted: Dragon1,
@@ -110,8 +110,8 @@ impl Default for SpeedOfLight {
                     captured: Rook2,
                     hand_address: HandAddress::Rook1,
                 },
+                // Bishop1
                 PieceMeaningChart {
-                    piece: Bishop1,
                     phase: First,
                     piece_type: Bishop,
                     promoted: Horse1,
@@ -119,8 +119,8 @@ impl Default for SpeedOfLight {
                     captured: Bishop2,
                     hand_address: HandAddress::Bishop1,
                 },
+                // Gold1
                 PieceMeaningChart {
-                    piece: Gold1,
                     phase: First,
                     piece_type: Gold,
                     promoted: Gold1,
@@ -128,8 +128,8 @@ impl Default for SpeedOfLight {
                     captured: Gold2,
                     hand_address: HandAddress::Gold1,
                 },
+                // Silver1
                 PieceMeaningChart {
-                    piece: Silver1,
                     phase: First,
                     piece_type: Silver,
                     promoted: PromotedSilver1,
@@ -137,8 +137,8 @@ impl Default for SpeedOfLight {
                     captured: Silver2,
                     hand_address: HandAddress::Silver1,
                 },
+                // Knight1
                 PieceMeaningChart {
-                    piece: Knight1,
                     phase: First,
                     piece_type: Knight,
                     promoted: PromotedKnight1,
@@ -146,8 +146,8 @@ impl Default for SpeedOfLight {
                     captured: Knight2,
                     hand_address: HandAddress::Knight1,
                 },
+                // Lance1
                 PieceMeaningChart {
-                    piece: Lance1,
                     phase: First,
                     piece_type: Lance,
                     promoted: PromotedLance1,
@@ -155,8 +155,8 @@ impl Default for SpeedOfLight {
                     captured: Lance2,
                     hand_address: HandAddress::Lance1,
                 },
+                // Pawn1
                 PieceMeaningChart {
-                    piece: Pawn1,
                     phase: First,
                     piece_type: Pawn,
                     promoted: PromotedPawn1,
@@ -164,8 +164,8 @@ impl Default for SpeedOfLight {
                     captured: Pawn2,
                     hand_address: HandAddress::Pawn1,
                 },
+                // Dragon1
                 PieceMeaningChart {
-                    piece: Dragon1,
                     phase: First,
                     piece_type: Dragon,
                     promoted: Dragon1,
@@ -173,8 +173,8 @@ impl Default for SpeedOfLight {
                     captured: Rook2,
                     hand_address: HandAddress::Rook1,
                 },
+                // Horse1
                 PieceMeaningChart {
-                    piece: Horse1,
                     phase: First,
                     piece_type: Horse,
                     promoted: Horse1,
@@ -182,8 +182,8 @@ impl Default for SpeedOfLight {
                     captured: Bishop2,
                     hand_address: HandAddress::Bishop1,
                 },
+                // PromotedSilver1
                 PieceMeaningChart {
-                    piece: PromotedSilver1,
                     phase: First,
                     piece_type: PromotedSilver,
                     promoted: PromotedSilver1,
@@ -191,8 +191,8 @@ impl Default for SpeedOfLight {
                     captured: Silver2,
                     hand_address: HandAddress::Silver1,
                 },
+                // PromotedKnight1
                 PieceMeaningChart {
-                    piece: PromotedKnight1,
                     phase: First,
                     piece_type: PromotedKnight,
                     promoted: PromotedKnight1,
@@ -200,8 +200,8 @@ impl Default for SpeedOfLight {
                     captured: Knight2,
                     hand_address: HandAddress::Knight1,
                 },
+                // PromotedLance1
                 PieceMeaningChart {
-                    piece: PromotedLance1,
                     phase: First,
                     piece_type: PromotedLance,
                     promoted: PromotedLance1,
@@ -209,8 +209,8 @@ impl Default for SpeedOfLight {
                     captured: Lance2,
                     hand_address: HandAddress::Lance1,
                 },
+                // PromotedPawn1
                 PieceMeaningChart {
-                    piece: PromotedPawn1,
                     phase: First,
                     piece_type: PromotedPawn,
                     promoted: PromotedPawn1,
@@ -218,8 +218,8 @@ impl Default for SpeedOfLight {
                     captured: Pawn2,
                     hand_address: HandAddress::Pawn1,
                 },
+                // King2
                 PieceMeaningChart {
-                    piece: King2,
                     phase: Second,
                     piece_type: King,
                     promoted: King2,
@@ -227,8 +227,8 @@ impl Default for SpeedOfLight {
                     captured: King1,
                     hand_address: HandAddress::King2,
                 },
+                // Rook2
                 PieceMeaningChart {
-                    piece: Rook2,
                     phase: Second,
                     piece_type: Rook,
                     promoted: Dragon2,
@@ -236,8 +236,8 @@ impl Default for SpeedOfLight {
                     captured: Rook1,
                     hand_address: HandAddress::Rook2,
                 },
+                // Bishop2
                 PieceMeaningChart {
-                    piece: Bishop2,
                     phase: Second,
                     piece_type: Bishop,
                     promoted: Horse2,
@@ -245,8 +245,8 @@ impl Default for SpeedOfLight {
                     captured: Bishop1,
                     hand_address: HandAddress::Bishop2,
                 },
+                // Gold2
                 PieceMeaningChart {
-                    piece: Gold2,
                     phase: Second,
                     piece_type: Gold,
                     promoted: Gold2,
@@ -254,8 +254,8 @@ impl Default for SpeedOfLight {
                     captured: Gold1,
                     hand_address: HandAddress::Gold2,
                 },
+                // Silver2
                 PieceMeaningChart {
-                    piece: Silver2,
                     phase: Second,
                     piece_type: Silver,
                     promoted: PromotedSilver2,
@@ -263,8 +263,8 @@ impl Default for SpeedOfLight {
                     captured: Silver1,
                     hand_address: HandAddress::Silver2,
                 },
+                // Knight2
                 PieceMeaningChart {
-                    piece: Knight2,
                     phase: Second,
                     piece_type: Knight,
                     promoted: PromotedKnight2,
@@ -272,8 +272,8 @@ impl Default for SpeedOfLight {
                     captured: Knight1,
                     hand_address: HandAddress::Knight2,
                 },
+                // Lance2
                 PieceMeaningChart {
-                    piece: Lance2,
                     phase: Second,
                     piece_type: Lance,
                     promoted: PromotedLance2,
@@ -281,8 +281,8 @@ impl Default for SpeedOfLight {
                     captured: Lance1,
                     hand_address: HandAddress::Lance2,
                 },
+                // Pawn2
                 PieceMeaningChart {
-                    piece: Pawn2,
                     phase: Second,
                     piece_type: Pawn,
                     promoted: PromotedPawn2,
@@ -290,8 +290,8 @@ impl Default for SpeedOfLight {
                     captured: Pawn1,
                     hand_address: HandAddress::Pawn2,
                 },
+                // Dragon2
                 PieceMeaningChart {
-                    piece: Dragon2,
                     phase: Second,
                     piece_type: Dragon,
                     promoted: Dragon2,
@@ -299,8 +299,8 @@ impl Default for SpeedOfLight {
                     captured: Rook1,
                     hand_address: HandAddress::Rook2,
                 },
+                // Horse2
                 PieceMeaningChart {
-                    piece: Horse2,
                     phase: Second,
                     piece_type: Horse,
                     promoted: Horse2,
@@ -308,8 +308,8 @@ impl Default for SpeedOfLight {
                     captured: Bishop1,
                     hand_address: HandAddress::Bishop2,
                 },
+                // PromotedSilver2
                 PieceMeaningChart {
-                    piece: PromotedSilver2,
                     phase: Second,
                     piece_type: PromotedSilver,
                     promoted: PromotedSilver2,
@@ -317,8 +317,8 @@ impl Default for SpeedOfLight {
                     captured: Silver1,
                     hand_address: HandAddress::Silver2,
                 },
+                // PromotedKnight2
                 PieceMeaningChart {
-                    piece: PromotedKnight2,
                     phase: Second,
                     piece_type: PromotedKnight,
                     promoted: PromotedKnight2,
@@ -326,8 +326,8 @@ impl Default for SpeedOfLight {
                     captured: Knight1,
                     hand_address: HandAddress::Knight2,
                 },
+                // PromotedLance2
                 PieceMeaningChart {
-                    piece: PromotedLance2,
                     phase: Second,
                     piece_type: PromotedLance,
                     promoted: PromotedLance2,
@@ -335,8 +335,8 @@ impl Default for SpeedOfLight {
                     captured: Lance1,
                     hand_address: HandAddress::Lance2,
                 },
+                // PromotedPawn2
                 PieceMeaningChart {
-                    piece: PromotedPawn2,
                     phase: Second,
                     piece_type: PromotedPawn,
                     promoted: PromotedPawn2,
@@ -530,8 +530,6 @@ impl Default for SpeedOfLight {
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 #[derive(Clone)]
 pub struct PieceMeaningChart {
-    pub piece: PieceMeaning,
-
     /// 先後
     phase: Phase,
 
@@ -705,4 +703,87 @@ impl Angle {
     pub fn west_ccw(self) -> RelAdr {
         NINE_299792458.west_ccw[self as usize]
     }
+}
+
+/// 駒の利き☆（＾～＾）
+pub enum RelativePieceControl66 {
+    West0,
+    West1,
+    West2,
+    West3,
+    West4,
+    West5,
+    West6,
+    West7,
+    West8,
+    SouthWest0,
+    SouthWest1,
+    SouthWest2,
+    SouthWest3,
+    SouthWest4,
+    SouthWest5,
+    SouthWest6,
+    SouthWest7,
+    South0,
+    South1,
+    South2,
+    South3,
+    South4,
+    South5,
+    South6,
+    South7,
+    SouthEast0,
+    SouthEast1,
+    SouthEast2,
+    SouthEast3,
+    SouthEast4,
+    SouthEast5,
+    SouthEast6,
+    SouthEast7,
+    East0,
+    East1,
+    East2,
+    East3,
+    East4,
+    East5,
+    East6,
+    East7,
+    NorthEast0,
+    NorthEast1,
+    NorthEast2,
+    NorthEast3,
+    NorthEast4,
+    NorthEast5,
+    NorthEast6,
+    NorthEast7,
+    North0,
+    North1,
+    North2,
+    North3,
+    North4,
+    North5,
+    North6,
+    North7,
+    NorthWest0,
+    NorthWest1,
+    NorthWest2,
+    NorthWest3,
+    NorthWest4,
+    NorthWest5,
+    NorthWest6,
+    NorthWest7,
+    Knight0,
+    Knight1,
+}
+
+/// ミーシーな駒の機動性☆（＾～＾）
+pub enum Movility7 {
+    Knight,
+    SlideDiagonally,
+    SideBackSlider,
+    FrontSlider,
+    BackDiagonally,
+    FrontDiagonally,
+    SideBack,
+    Front,
 }
