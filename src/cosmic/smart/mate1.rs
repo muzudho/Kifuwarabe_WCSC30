@@ -42,61 +42,6 @@ impl Mate1 {
         }
     }
 
-    /*
-    /// まず、王手してるか判定して、王手していたらこれを呼べだぜ☆（＾～＾）
-    pub fn can_evasion(&mut self, game: &Game) -> bool {
-        // 敵玉の８方向☆（＾～＾）
-        let sign = if self.friend == Phase::Second { -1 } else { 1 };
-        // Beam::shoot(&format!("Mate1 | sign={}", sign));
-
-        // TODO speed of light に入れたいぜ☆（＾～＾）
-        let recipes = [
-            RelAdr::new(1, sign * 0),   // 西
-            RelAdr::new(1, sign * 1),   // 南西
-            RelAdr::new(0, sign * 1),   // 南
-            RelAdr::new(-1, sign * 1),  // 南東
-            RelAdr::new(-1, sign * 0),  // 東
-            RelAdr::new(-1, sign * -1), // 北東
-            RelAdr::new(0, sign * -1),  // 北
-            RelAdr::new(1, sign * -1),  // 北西
-                                        // TODO 飛び利きにも対応したいぜ☆（＾～＾）
-        ];
-
-        let mut can_evasion = false;
-        for recipe in &recipes {
-            let mut cur = self.opponent_king_adr.clone();
-            // Beam::shoot(&format!("Mate1 | cur={:?}", cur));
-
-            if cur.offset(&recipe).legal_cur() {
-                // Beam::shoot(&format!("Mate1 | legal cur={:?}", cur));
-                let any_piece = game.board.piece_at(&cur);
-                if let Some(any_piece_val) = any_piece {
-                    // Beam::shoot(&format!("Mate1 | piece={:?}", piece_val));
-                    // Beam::shoot(&format!(
-                    //     "Mate1 | piece.phase={}",
-                    //     piece_val.meaning.phase()
-                    // ));
-                    // Beam::shoot(&format!(
-                    //     "Mate1 | contains recipe={}",
-                    //     piece_val.meaning.r#type().movility().contains(&recipe.1)
-                    // ));
-                    if any_piece_val.meaning.phase() == self.opponent {
-                        // こっちには避けれないぜ☆（＾～＾）
-                    } else if 0 < game.board.controls[self.friend as usize][cur.address()] {
-                        // こっち側の利きが利いているから、避けれないぜ☆（＾～＾）
-                    } else {
-                        // 避けれるだろ☆（＾～＾）
-                        can_evasion = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        can_evasion
-    }
-    */
-
     pub fn end(&mut self) {
         if let Some(pinned_pieces_val) = &mut self.pinned_pieces {
             if let Some(checkers_val) = &mut self.checkers {
@@ -182,7 +127,12 @@ impl Mate1 {
                         } else {
                             // 相手の香飛角か☆（＾～＾）？
                             if any_piece_val.meaning.phase() == self.opponent {
-                                if any_piece_val.meaning.r#type().sliding() {
+                                if any_piece_val
+                                    .meaning
+                                    .r#type()
+                                    .movility()
+                                    .contains(&recipe.1)
+                                {
                                     // そうだぜ☆（＾～＾）ピンされている方確定だな☆（＾～＾）
                                     pinned_pieces.push(any_piece_val.num);
                                 } else {
@@ -209,50 +159,6 @@ impl Mate1 {
     /// 相手玉を取れる駒（checkers）たちを調べるぜ☆
     /// ただし、自玉に空き王手がかかる形では この手は使えないぜ☆（＾～＾）
     pub fn checkers(&mut self, game: &Game) -> &mut Self {
-        // Beam::shoot(&format!("Mate1 | opponent={}", opponent));
-        /*
-        // 自玉の場所☆（＾～＾）
-        let friend_king_adr = match game.board.location_at(match friend {
-            Phase::First => PieceNum::King1,
-            Phase::Second => PieceNum::King2,
-        }) {
-            Location::Board(adr) => adr,
-            Location::Hand(adr) => panic!(Beam::trouble(
-                "(Err.21) なんで自玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
-            )),
-            Location::Busy => panic!(Beam::trouble(
-                "(Err.25) なんで自玉が作業中なんだぜ☆（＾～＾）！"
-            )),
-        };
-        */
-        // Beam::shoot(&format!("Mate1 | friend={}", friend));
-        // 敵玉の場所☆（＾～＾）
-        self.opponent_king_adr = match game.board.location_at(match self.opponent {
-            Phase::First => PieceNum::King1,
-            Phase::Second => PieceNum::King2,
-        }) {
-            Location::Board(adr) => adr,
-            Location::Hand(_adr) => {
-                // TODO らいおんキャッチするのはおかしいぜ☆（＾～＾）！
-                self.lioncatch = true;
-                return self;
-                // panic!(Beam::trouble(
-                //     "(Err.48) なんで敵玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
-                // ))
-            }
-            Location::Busy => panic!(Beam::trouble(
-                "(Err.51) なんで敵玉が作業中なんだぜ☆（＾～＾）！"
-            )),
-        };
-        // Beam::shoot(&format!(
-        //     "Mate1 | opponent_king_adr={:?}",
-        //     opponent_king_adr
-        // ));
-        // TODO ピンされている駒が動いたことで、空き王手になる可能性があるぜ☆（＾～＾）
-
-        // 自駒が敵玉に当たってるなら、取れるな☆（＾～＾）
-        // Beam::shoot(&format!("Mate1 | sign={}", sign));
-
         // TODO speed of light に入れたいぜ☆（＾～＾）
         let sign = if self.friend == Phase::Second { -1 } else { 1 };
         let recipes = [
