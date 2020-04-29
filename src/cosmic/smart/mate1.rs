@@ -23,8 +23,7 @@ pub enum Mate1Result {
 pub struct Mate1 {}
 impl Mate1 {
     /// まず、王手してるか判定して、王手していたらこれを呼べだぜ☆（＾～＾）
-    pub fn can_evasion(_game: &Game) -> bool {
-        /*
+    pub fn can_evasion(game: &Game) -> bool {
         // 相手の手番☆（＾～＾）
         let opponent = game.history.get_friend();
         // 敵玉の場所☆（＾～＾）
@@ -80,26 +79,18 @@ impl Mate1 {
                     // ));
                     if piece_val.meaning.phase() == opponent {
                         // こっちには避けれないぜ☆（＾～＾）
+                    } else if 0 < game.board.controls[friend as usize][cur.address()] {
+                        // こっち側の利きが利いているから、避けれないぜ☆（＾～＾）
+                    } else {
+                        // 避けれるだろ☆（＾～＾）
+                        can_evasion = true;
                         break;
                     }
-
-                    // if game.board.control
-                    // match piece_val.meaning.phase() {
-                    //     Phase::First
-                    // }
-                    // if piece_val.meaning.r#type().movility().contains(&recipe.1)
-                    // {
-                    //     // Beam::shoot("Mate1 | mate!");
-                    //     // 敵玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                    //     return Mate1Result::Checked;
-                    // }
                 }
             }
         }
 
         can_evasion
-        */
-        true
     }
 
     /// このメソッドが呼び出されるのは、１手指した直後だから、局面は相手視点になっているぜ☆（＾～＾）
