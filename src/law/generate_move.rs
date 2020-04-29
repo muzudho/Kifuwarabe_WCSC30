@@ -76,7 +76,7 @@ impl Ways {
 #[derive(Clone, Copy)]
 pub struct Way {
     /// 指し手☆（＾～＾）
-    pub move_hash: u64,
+    pub movement: Movement,
     /// 取った駒☆（＾～＾）
     pub captured: Option<Piece>,
 }
@@ -84,15 +84,15 @@ impl Default for Way {
     /// ゴミ値☆（＾～＾）
     fn default() -> Self {
         Way {
-            move_hash: 0,
+            movement: Movement::default(),
             captured: None,
         }
     }
 }
 impl Way {
-    pub fn new(mov: u64, cap: Option<Piece>) -> Self {
+    pub fn new(mov: Movement, cap: Option<Piece>) -> Self {
         Way {
-            move_hash: mov,
+            movement: mov,
             captured: cap,
         }
     }
@@ -208,14 +208,12 @@ impl PseudoLegalMoves {
                             // 成ったり、成れなかったりできるとき。
                             if !forbidden {
                                 callback(Way::new(
-                                    // TODO これ、ハッシュにせずオブジェクトのまま持ってたらどうだぜ☆（＾～＾）？
-                                    Movement::new(Some(*source), destination, false, None)
-                                        .to_hash(),
+                                    Movement::new(Some(*source), destination, false, None),
                                     pseudo_captured,
                                 ));
                             }
                             callback(Way::new(
-                                Movement::new(Some(*source), destination, true, None).to_hash(),
+                                Movement::new(Some(*source), destination, true, None),
                                 pseudo_captured,
                             ));
                         }
@@ -223,8 +221,7 @@ impl PseudoLegalMoves {
                             // 成れるか、成れないかのどちらかのとき。
                             if promotion || !forbidden {
                                 callback(Way::new(
-                                    Movement::new(Some(*source), destination, promotion, None)
-                                        .to_hash(),
+                                    Movement::new(Some(*source), destination, promotion, None),
                                     pseudo_captured,
                                 ));
                             }
@@ -271,8 +268,7 @@ impl PseudoLegalMoves {
                             destination,                                 // どの升へ行きたいか
                             false,                                       // 打に成りは無し
                             Some(piece.meaning.hand_address().r#type()), // 打った駒種類
-                        )
-                        .to_hash(),
+                        ),
                         None,
                     ));
                 }

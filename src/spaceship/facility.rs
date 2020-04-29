@@ -1,5 +1,4 @@
 use crate::cosmic::playing::{Game, PosNums};
-use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
 use crate::cosmic::smart::square::*;
 use crate::law::generate_move::Piece;
@@ -203,11 +202,7 @@ impl Kitchen {
         for way in ways {
             let ss_str = format!(
                 "{}{}",
-                if let Some(r#move) = Movement::from_hash(way.move_hash) {
-                    format!("{}", r#move)
-                } else {
-                    "resign".to_string()
-                },
+                format!("{}", way.movement),
                 if let Some(psuedo_captured) = way.captured {
                     format!(" ({})", psuedo_captured.meaning)
                 } else {

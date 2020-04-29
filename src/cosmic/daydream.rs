@@ -209,7 +209,7 @@ impl Tree {
 
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
-            let movement = Movement::from_hash(way.move_hash).unwrap();
+            let movement = way.movement;
             let source_piece = if let Some(source_val) = &movement.source {
                 game.board.piece_at(source_val)
             } else {
@@ -226,7 +226,7 @@ impl Tree {
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.meaning.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(way.move_hash);
+                    ts.bestmove.catch_king(way.movement.to_hash());
 
                     self.evaluation
                         .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
@@ -239,7 +239,7 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_movement_hash = way.move_hash;
+                ts.repetition_movement_hash = way.movement.to_hash();
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
@@ -252,7 +252,7 @@ impl Tree {
                 let board_coverage_value = coverage_sign * game.board.coverage_value();
                 ts.choice_friend(
                     &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
-                    way.move_hash,
+                    way.movement.to_hash(),
                 );
 
                 if game.info.is_printable() {
@@ -304,7 +304,7 @@ impl Tree {
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 exists_lose = ts.turn_over_and_choice(
                     &opponent_ts,
-                    way.move_hash,
+                    way.movement.to_hash(),
                     self.evaluation.centi_pawn(0),
                 );
             }
@@ -363,10 +363,8 @@ impl Tree {
         let friend_index = game.history.get_friend() as usize;
         for index in ways.indexes.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.controls[friend_index][Movement::from_hash(ways.get(*index).move_hash)
-                .unwrap()
-                .destination
-                .address() as usize] += sign;
+            game.board.controls[friend_index]
+                [ways.get(*index).movement.destination.address() as usize] += sign;
             game.board.control_sum += sign;
         }
     }
