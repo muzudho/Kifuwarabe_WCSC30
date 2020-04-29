@@ -24,12 +24,9 @@ mod law;
 mod spaceship;
 
 use crate::cosmic::universe::Universe;
-use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::crew::{Chiyuri, Kifuwarabe, Yumemi};
 
 fn main() {
-    // 光速は定義☆（＾～＾）変化しないぜ☆（＾～＾）
-    let speed_of_light: SpeedOfLight = SpeedOfLight::default();
     // 宇宙☆（＾～＾）変化するぜ☆（＾～＾）
     let mut universe: Universe = Universe::default();
 
@@ -39,11 +36,11 @@ fn main() {
     // 「何が見えんの？」
     Yumemi::look_into_the_telescope();
 
-    main_loop(&mut universe, &speed_of_light);
+    main_loop(&mut universe);
     // [Ctrl]+[C] で強制終了
 }
 
-fn main_loop(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
+fn main_loop(universe: &mut Universe) {
     loop {
         let (line, len, starts) = Kifuwarabe::catch_the_message();
 
@@ -54,7 +51,7 @@ fn main_loop(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
         } else if 9 < len && &line[starts..10] == "usinewgame" {
             Kifuwarabe::usinewgame(universe);
         } else if line.starts_with("position") {
-            Kifuwarabe::position(universe, &line, &speed_of_light);
+            Kifuwarabe::position(universe, &line);
         } else if 6 < len && &line[starts..7] == "isready" {
             Kifuwarabe::isready();
         } else if 3 < len && &line[starts..4] == "quit" {
@@ -65,27 +62,21 @@ fn main_loop(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
         } else if 2 < len && &line[starts..3] == "usi" {
             Kifuwarabe::usi();
         } else if 1 < len && &line[starts..2] == "go" {
-            Kifuwarabe::go(universe, speed_of_light);
+            Kifuwarabe::go(universe);
         } else {
-            help_chiyuri(&line, len, starts, universe, speed_of_light);
+            help_chiyuri(&line, len, starts, universe);
         }
     } //loop
 }
 
 /// 独自コマンド☆（＾～＾）
-fn help_chiyuri(
-    line: &str,
-    len: usize,
-    starts: usize,
-    universe: &mut Universe,
-    speed_of_light: &SpeedOfLight,
-) {
+fn help_chiyuri(line: &str, len: usize, starts: usize, universe: &mut Universe) {
     // D
     if 2 < len && &line[starts..3] == "do " {
-        Chiyuri::do_(universe, line, len, starts, speed_of_light);
+        Chiyuri::do_(universe, line, len, starts);
     // G
     } else if 6 < len && &line[starts..7] == "genmove" {
-        Chiyuri::genmove(&universe.game, speed_of_light);
+        Chiyuri::genmove(&universe.game);
     // H
     } else if 7 < len && &line[starts..8] == "how-much" {
         Chiyuri::how_much(line);
@@ -103,7 +94,7 @@ fn help_chiyuri(
         Chiyuri::pos(universe);
     // S
     } else if 7 < len && &line[starts..8] == "startpos" {
-        Chiyuri::startpos(universe, speed_of_light);
+        Chiyuri::startpos(universe);
     // R
     } else if 3 < len && &line[starts..4] == "rand" {
         Chiyuri::rand();
@@ -115,6 +106,6 @@ fn help_chiyuri(
         Chiyuri::teigi_conv();
     // U
     } else if 3 < len && &line[starts..4] == "undo" {
-        Chiyuri::undo(universe, speed_of_light);
+        Chiyuri::undo(universe);
     }
 }

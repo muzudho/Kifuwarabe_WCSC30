@@ -6,7 +6,6 @@ use crate::cosmic::recording::Movement;
 use crate::cosmic::smart::features::HandAddressType;
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
-use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use atoi::atoi;
 
@@ -165,13 +164,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
 
 /// position コマンド 盤上部分のみ 読取
 /// 初期化は既に終わらせてあります。
-pub fn read_board(
-    line: &str,
-    starts: &mut usize,
-    len: usize,
-    game: &mut Game,
-    speed_of_light: &SpeedOfLight,
-) {
+pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
     // 初期盤面
     let board = game.mut_starting();
     let mut file = FILE_9; //９筋から右方向へ読取
@@ -247,7 +240,7 @@ pub fn read_board(
         match board_part {
             BoardPart::Alphabet(piece) => {
                 *starts += 1;
-                board.push_piece_on_init(file, rank, Some(piece), speed_of_light);
+                board.push_piece_on_init(file, rank, Some(piece));
                 file -= 1;
             }
             BoardPart::Number(space_num) => {
@@ -269,7 +262,7 @@ pub fn read_board(
 }
 
 /// position コマンド読取
-pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) {
+pub fn set_position(line: &str, game: &mut Game) {
     let mut starts = 0;
 
     // 全体の長さ
@@ -283,13 +276,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
         starts += 17;
         // 別途用意した平手初期局面文字列を読取
         let mut local_starts = 0;
-        read_board(
-            &STARTPOS.to_string(),
-            &mut local_starts,
-            STARTPOS_LN,
-            game,
-            speed_of_light,
-        );
+        read_board(&STARTPOS.to_string(), &mut local_starts, STARTPOS_LN, game);
 
         if 0 < (len - starts) && &line[starts..=starts] == " " {
             // ' ' を読み飛ばした。
@@ -297,7 +284,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
         }
     } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
         starts += 14; // 'position sfen ' を読み飛ばし
-        read_board(line, &mut starts, len, game, speed_of_light);
+        read_board(line, &mut starts, len, game);
 
         if 0 < (len - starts) && &line[starts..=starts] == " " {
             starts += 1;
@@ -396,8 +383,7 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
                     };
                     starts += 1;
 
-                    game.mut_starting()
-                        .push_hand_on_init(hand, hand_num, speed_of_light);
+                    game.mut_starting().push_hand_on_init(hand, hand_num);
                 } //if
             } //loop
         } //else
@@ -427,9 +413,6 @@ pub fn set_position(line: &str, game: &mut Game, speed_of_light: &SpeedOfLight) 
         game.history.ply -= 1;
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let ply = game.history.ply;
-        game.do_move(
-            &game.history.movements[ply as usize].clone(),
-            speed_of_light,
-        );
+        game.do_move(&game.history.movements[ply as usize].clone());
     }
 }

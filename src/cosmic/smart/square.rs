@@ -460,7 +460,7 @@ impl Address {
 /// そこから、 file, rank で持ちます。
 ///
 /// メモリを使わないようにしようぜ☆（＾～＾）
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct RelAdr {
     file: isize,
     rank: isize,

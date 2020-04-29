@@ -3,7 +3,6 @@
 //!
 use crate::cosmic::smart::features::PieceMeaning;
 use crate::cosmic::toy_box::PieceNum;
-use crate::law::speed_of_light::SpeedOfLight;
 
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: isize = -300;
@@ -64,21 +63,19 @@ impl Evaluation {
         source_piece: &Option<(PieceMeaning, PieceNum)>,
         captured_piece: &Option<(PieceMeaning, PieceNum)>,
         promotion: bool,
-        speed_of_light: &SpeedOfLight,
     ) -> (isize, isize) {
         // 取った駒の価値を評価するぜ☆（＾～＾）
-        let delta_captured_piece =
-            Evaluation::caputured_piece_value(captured_piece, speed_of_light);
+        let delta_captured_piece = Evaluation::caputured_piece_value(captured_piece);
         self.piece_allocation_value += delta_captured_piece;
 
         // 成り駒を取って降格させたら、成り駒評価値追加だぜ☆（＾～＾）
         let delta_promotion = if let Some(captured_piece_val) = captured_piece {
             if captured_piece_val
                 .0
-                .r#type(speed_of_light)
-                .promoted(speed_of_light)
+                .r#type()
+                .promoted()
             {
-                speed_of_light.promotion_value[captured_piece_val.0.hand_address(&speed_of_light).r#type(&speed_of_light)as usize]
+                captured_piece_val.0.hand_address().r#type().promotion_value()
             } else {
                 0
             }
@@ -89,7 +86,7 @@ impl Evaluation {
         +
         if let Some(source_piece_val) = source_piece {
             if promotion {
-                speed_of_light.promotion_value[source_piece_val.0.hand_address(speed_of_light).r#type(&speed_of_light)as usize]
+                source_piece_val.0.hand_address().r#type().promotion_value()
             } else {
                 0
             }
@@ -114,15 +111,13 @@ impl Evaluation {
     /// Returns
     /// -------
     /// Centi pawn.
-    fn caputured_piece_value(
-        captured_piece: &Option<(PieceMeaning, PieceNum)>,
-        speed_of_light: &SpeedOfLight,
-    ) -> isize {
+    fn caputured_piece_value(captured_piece: &Option<(PieceMeaning, PieceNum)>) -> isize {
         if let Some(captured_piece_val) = captured_piece {
-            speed_of_light.caputured_piece_value[captured_piece_val
+            captured_piece_val
                 .0
-                .hand_address(speed_of_light)
-                .r#type(speed_of_light) as usize]
+                .hand_address()
+                .r#type()
+                .caputured_piece_value()
         } else {
             0
         }

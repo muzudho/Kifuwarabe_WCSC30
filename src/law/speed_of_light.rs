@@ -15,7 +15,32 @@ use crate::cosmic::smart::features::PIECE_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use num_traits::FromPrimitive;
+use std::sync::Mutex;
 
+// グローバル定数
+//
+// 使い方（lazy_static!マクロ）
+// ============================
+// 定数の値を実行時に決めることができる。
+//
+// Cargo.toml に１行追記
+// > [dependencies]
+// > lazy_static = "1.0.0"
+//
+// main.rs の冒頭あたりに次の２行を記述
+// > #[macro_use]
+// > extern crate lazy_static;
+//
+// 「How can I use mutable lazy_static?」
+// https://users.rust-lang.org/t/how-can-i-use-mutable-lazy-static/3751/3
+lazy_static! {
+    /// ９桁の有効数字☆（＾～＾）
+    static ref NINE_299792458: Mutex<SpeedOfLight> = {
+        Mutex::new(SpeedOfLight::default())
+    };
+}
+
+/// こいつが早引き表なわけだぜ☆（＾～＾）
 pub struct SpeedOfLight {
     /// 駒構造体・マスター☆（＾～＾）イミュータブルなんでアクセッサなんか要らないぜ☆（＾～＾）
 
@@ -454,35 +479,6 @@ impl Default for SpeedOfLight {
     }
 }
 
-/// こいつが早引き表なわけだぜ☆（＾～＾）
-impl SpeedOfLight {
-    /// 駒の属性を参照するぜ☆（＾～＾）
-    fn piece_meaning_chart(&self, piece: PieceMeaning) -> &PieceMeaningChart {
-        // 列挙型を配列のインデックスとして使用☆（＾～＾）
-        &self.piece_meaning_table[piece as usize]
-    }
-
-    /// 駒の属性を参照するぜ☆（＾～＾）
-    fn piece_type_chart(&self, piece_type: &PieceType) -> &PieceTypeChart {
-        // 列挙型を配列のインデックスとして使用☆（＾～＾）
-        &self.piece_type_table[*piece_type as usize]
-    }
-
-    /// 持ち駒の型☆（＾～＾）
-    fn hand_address_chart(&self, adr: HandAddress) -> &HandAddressChart {
-        // 列挙型を配列のインデックスとして使用☆（＾～＾）
-        &self.hand_address_table[adr as usize]
-    }
-
-    pub fn west_ccw(&self, angle: Angle) -> &RelAdr {
-        &self.west_ccw[angle as usize]
-    }
-
-    pub fn west_ccw_double_rank(&self, angle: Angle) -> &RelAdr {
-        &self.west_ccw_double_rank[angle as usize]
-    }
-}
-
 /// いろいろありそうに見えるが、結局のところ３０種類ぐらいしか存在しない☆（＾～＾）
 #[derive(Clone)]
 pub struct PieceMeaningChart {
@@ -509,28 +505,28 @@ pub struct PieceMeaningChart {
 }
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceMeaning {
-    pub fn phase(self, speed_of_light: &SpeedOfLight) -> Phase {
-        speed_of_light.piece_meaning_chart(self).phase
+    pub fn phase(self) -> Phase {
+        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].phase
     }
 
-    pub fn r#type(self, speed_of_light: &SpeedOfLight) -> PieceType {
-        speed_of_light.piece_meaning_chart(self).piece_type
+    pub fn r#type(self) -> PieceType {
+        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].piece_type
     }
 
-    pub fn promoted(self, speed_of_light: &SpeedOfLight) -> PieceMeaning {
-        speed_of_light.piece_meaning_chart(self).promoted
+    pub fn promoted(self) -> PieceMeaning {
+        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].promoted
     }
 
-    pub fn demoted(self, speed_of_light: &SpeedOfLight) -> PieceMeaning {
-        speed_of_light.piece_meaning_chart(self).demoted
+    pub fn demoted(self) -> PieceMeaning {
+        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].demoted
     }
 
-    pub fn captured(self, speed_of_light: &SpeedOfLight) -> PieceMeaning {
-        speed_of_light.piece_meaning_chart(self).captured
+    pub fn captured(self) -> PieceMeaning {
+        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].captured
     }
 
-    pub fn hand_address(self, speed_of_light: &SpeedOfLight) -> HandAddress {
-        speed_of_light.piece_meaning_chart(self).hand_address
+    pub fn hand_address(self) -> HandAddress {
+        NINE_299792458.lock().unwrap().piece_meaning_table[self as usize].hand_address
     }
 }
 
@@ -540,8 +536,8 @@ pub struct PieceTypeChart {
 }
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceType {
-    pub fn promoted(&self, speed_of_light: &SpeedOfLight) -> bool {
-        speed_of_light.piece_type_chart(self).promoted
+    pub fn promoted(self) -> bool {
+        NINE_299792458.lock().unwrap().piece_type_table[self as usize].promoted
     }
 }
 
@@ -582,8 +578,8 @@ impl HandAddressChart {
 }
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddress {
-    pub fn r#type(self, speed_of_light: &SpeedOfLight) -> HandAddressType {
-        speed_of_light.hand_address_chart(self).r#type
+    pub fn r#type(self) -> HandAddressType {
+        NINE_299792458.lock().unwrap().hand_address_table[self as usize].r#type
     }
 }
 
@@ -605,25 +601,41 @@ pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
     (hash >> 3, HandAddressType::from_u64(hash & 0b111))
 }
 
+/// コーディングを短くするためのものだぜ☆（＾～＾）
+impl HandAddressType {
+    pub fn promotion_value(self) -> isize {
+        NINE_299792458.lock().unwrap().promotion_value[self as usize]
+    }
+    pub fn caputured_piece_value(self) -> isize {
+        NINE_299792458.lock().unwrap().caputured_piece_value[self as usize]
+    }
+}
+
 impl Angle {
     /// 時計回り(Clockwise)☆（＾～＾）
-    pub fn rotate90cw(self, speed_of_light: &SpeedOfLight) -> Angle {
-        speed_of_light.rotate90cw[self as usize]
+    pub fn rotate90cw(self) -> Angle {
+        NINE_299792458.lock().unwrap().rotate90cw[self as usize]
     }
     /// 時計回り(Clockwise)☆（＾～＾）
-    pub fn rotate45cw(self, speed_of_light: &SpeedOfLight) -> Angle {
-        speed_of_light.rotate45cw[self as usize]
+    pub fn rotate45cw(self) -> Angle {
+        NINE_299792458.lock().unwrap().rotate45cw[self as usize]
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
-    pub fn rotate45ccw(self, speed_of_light: &SpeedOfLight) -> Angle {
-        speed_of_light.rotate45ccw[self as usize]
+    pub fn rotate45ccw(self) -> Angle {
+        NINE_299792458.lock().unwrap().rotate45ccw[self as usize]
     }
     /// 反時計回り(Counterclockwise)☆（＾～＾）
-    pub fn rotate90ccw(self, speed_of_light: &SpeedOfLight) -> Angle {
-        speed_of_light.rotate90ccw[self as usize]
+    pub fn rotate90ccw(self) -> Angle {
+        NINE_299792458.lock().unwrap().rotate90ccw[self as usize]
     }
     /// 点対称☆（＾～＾）
-    pub fn rotate180(self, speed_of_light: &SpeedOfLight) -> Angle {
-        speed_of_light.rotate180[self as usize]
+    pub fn rotate180(self) -> Angle {
+        NINE_299792458.lock().unwrap().rotate180[self as usize]
+    }
+    pub fn west_ccw_double_rank(self) -> RelAdr {
+        NINE_299792458.lock().unwrap().west_ccw_double_rank[self as usize]
+    }
+    pub fn west_ccw(self) -> RelAdr {
+        NINE_299792458.lock().unwrap().west_ccw[self as usize]
     }
 }

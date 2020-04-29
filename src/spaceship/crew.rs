@@ -7,7 +7,6 @@ use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
 use crate::law::generate_move::PseudoLegalMoves;
-use crate::law::speed_of_light::*;
 use crate::law::usi::*;
 use crate::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen};
@@ -48,7 +47,7 @@ impl Kifuwarabe {
         (line, len, starts)
     }
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
-    pub fn go(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
+    pub fn go(universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let mut tree = Tree::new(
             universe.option_board_coverage_weight,
@@ -56,7 +55,7 @@ impl Kifuwarabe {
             universe.option_promotion_weight,
             universe.option_depth_not_to_give_up,
         );
-        let ts = tree.iteration_deeping(universe, speed_of_light);
+        let ts = tree.iteration_deeping(universe);
         // その手を選んだ理由☆（＾～＾）
         universe.game.info.print(
             None,
@@ -80,9 +79,9 @@ impl Kifuwarabe {
     pub fn isready() {
         Beam::shoot("readyok");
     }
-    pub fn position(universe: &mut Universe, line: &String, speed_of_light: &SpeedOfLight) {
+    pub fn position(universe: &mut Universe, line: &String) {
         // positionコマンドの読取を丸投げ
-        set_position(&line, &mut universe.game, &speed_of_light);
+        set_position(&line, &mut universe.game);
     }
     pub fn setoption_name(universe: &mut Universe, line: &String) {
         // Example: setoption name USI_Ponder value true
@@ -161,13 +160,7 @@ impl Kifuwarabe {
 /// 対局でやっちゃいかん命令なら任せろだぜ☆（＾～＾）
 pub struct Chiyuri {}
 impl Chiyuri {
-    pub fn do_(
-        universe: &mut Universe,
-        line: &str,
-        len: usize,
-        mut starts: usize,
-        speed_of_light: &SpeedOfLight,
-    ) {
+    pub fn do_(universe: &mut Universe, line: &str, len: usize, mut starts: usize) {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える
         if read_sasite(&line, &mut starts, len, &mut universe.game) {
@@ -176,17 +169,16 @@ impl Chiyuri {
             // 入っている指し手の通り指すぜ☆（＾～＾）
             let ply = universe.game.history.ply;
             let ss = universe.game.history.movements[ply as usize].clone();
-            universe.game.do_move(&ss, speed_of_light);
+            universe.game.do_move(&ss);
         }
     }
-    pub fn genmove(game: &Game, speed_of_light: &SpeedOfLight) {
+    pub fn genmove(game: &Game) {
         // Generation move.
         // FIXME 合法手とは限らない
         let mut ways = Vec::<(u64, Option<(PieceMeaning, PieceNum)>)>::new();
         PseudoLegalMoves::make_move(
             game.history.get_friend(),
             &game.board,
-            &speed_of_light,
             &mut |movement_hash, pseudo_captured| {
                 ways.push((movement_hash, pseudo_captured));
             },
@@ -268,9 +260,9 @@ impl Chiyuri {
         let count = universe.game.count_same_position();
         Beam::shoot(&format!("同一局面調べ count={}", count));
     }
-    pub fn startpos(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
+    pub fn startpos(universe: &mut Universe) {
         // 平手初期局面
-        set_position(&POS_1.to_string(), &mut universe.game, &speed_of_light);
+        set_position(&POS_1.to_string(), &mut universe.game);
     }
     pub fn teigi_conv() {
         Beam::shoot("teigi::convのテスト");
@@ -290,8 +282,8 @@ impl Chiyuri {
             }
         }
     }
-    pub fn undo(universe: &mut Universe, speed_of_light: &SpeedOfLight) {
-        if !universe.game.undo_move(&speed_of_light) {
+    pub fn undo(universe: &mut Universe) {
+        if !universe.game.undo_move() {
             Beam::shoot(&format!(
                 "ply={} を、これより戻せません",
                 universe.game.history.ply

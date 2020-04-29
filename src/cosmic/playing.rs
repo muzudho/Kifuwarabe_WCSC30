@@ -4,7 +4,6 @@ use crate::cosmic::smart::features::{HandAddress, PieceMeaning, HAND_MAX, PIECE_
 use crate::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
 use crate::cosmic::toy_box::Board;
 use crate::cosmic::toy_box::PieceNum;
-use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::{Beam, DestinationDisplay};
 use rand::Rng;
 
@@ -199,11 +198,7 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(
-        &mut self,
-        movement: &Movement,
-        speed_of_light: &SpeedOfLight,
-    ) -> Option<(PieceMeaning, PieceNum)> {
+    pub fn do_move(&mut self, movement: &Movement) -> Option<(PieceMeaning, PieceNum)> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(movement);
         let friend = self.history.get_friend();
@@ -218,7 +213,7 @@ impl Game {
                     let piece152: Option<(PieceMeaning, PieceNum)> = if movement.promote {
                         if let Some(piece) = self.board.pop_from_board(&source_val) {
                             // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
-                            Some((piece.0.promoted(speed_of_light), piece.1))
+                            Some((piece.0.promoted(), piece.1))
                         } else {
                             panic!(Beam::trouble(
                                 "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）"
@@ -248,11 +243,8 @@ impl Game {
             // 移動先升に駒があるかどうか
             cap = if let Some(collision_piece) = self.board.pop_from_board(&movement.destination) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
-                let captured_piece = (
-                    collision_piece.0.captured(speed_of_light),
-                    collision_piece.1,
-                );
-                self.board.push_hand(&captured_piece, speed_of_light);
+                let captured_piece = (collision_piece.0.captured(), collision_piece.1);
+                self.board.push_hand(&captured_piece);
                 Some(collision_piece)
             } else {
                 None
@@ -272,7 +264,7 @@ impl Game {
         cap
     }
 
-    pub fn undo_move(&mut self, speed_of_light: &SpeedOfLight) -> bool {
+    pub fn undo_move(&mut self) -> bool {
         if 0 < self.history.ply {
             // 棋譜から読取、手目も減る
             self.history.ply -= 1;
@@ -290,7 +282,7 @@ impl Game {
                         // 成ったなら、成る前へ
                         if let Some(source_piece) = self.board.pop_from_board(&movement.destination)
                         {
-                            Some((source_piece.0.demoted(speed_of_light), source_piece.1))
+                            Some((source_piece.0.demoted(), source_piece.1))
                         } else {
                             panic!(Beam::trouble(
                                 "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
@@ -304,7 +296,7 @@ impl Game {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
                         let piece = self.board.pop_from_board(&movement.destination).unwrap();
                         // 自分の持ち駒を増やそうぜ☆（＾～＾）！
-                        self.board.push_hand(&piece, speed_of_light);
+                        self.board.push_hand(&piece);
                         Some(piece)
                     } else {
                         panic!(Beam::trouble(
@@ -315,12 +307,8 @@ impl Game {
 
                 if let Some(captured_piece_val) = captured {
                     // 自分の持ち駒を減らす
-                    self.board.pop_hand(
-                        captured_piece_val
-                            .0
-                            .captured(speed_of_light)
-                            .hand_address(speed_of_light),
-                    );
+                    self.board
+                        .pop_hand(captured_piece_val.0.captured().hand_address());
                     // 移動先の駒を、取った駒（あるいは空）に戻す
                     self.board.push_to_board(&movement.destination, captured);
                 }

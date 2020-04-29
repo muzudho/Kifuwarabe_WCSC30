@@ -12,7 +12,6 @@ use crate::cosmic::smart::square::{
 };
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::toy_box::{Board, Location};
-use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use std::fmt;
 
@@ -39,7 +38,6 @@ impl PseudoLegalMoves {
     /// ---------
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
     ///
     /// Returns
@@ -47,31 +45,20 @@ impl PseudoLegalMoves {
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    pub fn make_move<F1>(
-        friend: Phase,
-        board: &Board,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    pub fn make_move<F1>(friend: Phase, board: &Board, callback: &mut F1)
+    where
         F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
     {
-        board.for_some_pieces_on_list40(friend, speed_of_light, &mut |location, piece| {
-            match location {
-                Location::Board(source) => PseudoLegalMoves::start_on_board(
-                    friend,
-                    &source,
-                    &piece,
-                    board,
-                    speed_of_light,
-                    callback,
-                ),
-                Location::Hand(adr) => {
-                    PseudoLegalMoves::make_drop(friend, adr, board, speed_of_light, callback);
-                }
-                Location::Busy => panic!(Beam::trouble(
-                    "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
-                )),
+        board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
+            Location::Board(source) => {
+                PseudoLegalMoves::start_on_board(friend, &source, &piece, board, callback)
             }
+            Location::Hand(adr) => {
+                PseudoLegalMoves::make_drop(friend, adr, board, callback);
+            }
+            Location::Busy => panic!(Beam::trouble(
+                "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
+            )),
         });
     }
 
@@ -83,7 +70,6 @@ impl PseudoLegalMoves {
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `piece` - 駒だぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
     ///
     /// Returns
@@ -96,7 +82,6 @@ impl PseudoLegalMoves {
         source: &AbsoluteAddress,
         piece: &(PieceMeaning, PieceNum),
         board: &Board,
-        speed_of_light: &SpeedOfLight,
         callback: &mut F1,
     ) where
         F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
@@ -106,7 +91,7 @@ impl PseudoLegalMoves {
                 let pseudo_captured = board.piece_at(&destination);
 
                 let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
-                    if pseudo_captured_val.0.phase(speed_of_light) == friend {
+                    if pseudo_captured_val.0.phase() == friend {
                         // 味方の駒を取った☆（＾～＾）
                         (false, false)
                     } else {
@@ -182,13 +167,7 @@ impl PseudoLegalMoves {
                 !space
             };
 
-        Area::piece_of(
-            piece.0.r#type(speed_of_light),
-            friend,
-            &source,
-            speed_of_light,
-            callback_next,
-        );
+        Area::piece_of(piece.0.r#type(), friend, &source, callback_next);
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -198,15 +177,9 @@ impl PseudoLegalMoves {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `speed_of_light` - 光速だぜ☆（＾～＾）
     /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
-    fn make_drop<F1>(
-        friend: Phase,
-        adr: HandAddress,
-        board: &Board,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, callback: &mut F1)
+    where
         F1: FnMut(u64, Option<(PieceMeaning, PieceNum)>),
     {
         if let Some(piece) = board.last_hand(adr) {
@@ -218,8 +191,7 @@ impl PseudoLegalMoves {
                     match piece.0 {
                         Pawn1 | Pawn2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
-                            if board.exists_pawn_on_file(friend, destination.file(), speed_of_light)
-                            {
+                            if board.exists_pawn_on_file(friend, destination.file()) {
                                 return;
                             }
                         }
@@ -227,10 +199,10 @@ impl PseudoLegalMoves {
                     }
                     callback(
                         Movement {
-                            source: None,                                                            // 駒台
-                            destination: destination, // どの升へ行きたいか
-                            promote: false,           // 打に成りは無し
-                            drop: Some(piece.0.hand_address(speed_of_light).r#type(speed_of_light)), // 打った駒種類
+                            source: None,                                // 駒台
+                            destination: destination,                    // どの升へ行きたいか
+                            promote: false,                              // 打に成りは無し
+                            drop: Some(piece.0.hand_address().r#type()), // 打った駒種類
                         }
                         .to_hash(),
                         None,
@@ -239,7 +211,7 @@ impl PseudoLegalMoves {
             };
 
             // 駒を持っていれば
-            let ty = adr.r#type(speed_of_light);
+            let ty = adr.r#type();
             use crate::cosmic::smart::features::HandAddressType::*;
             match ty {
                 // 歩、香
@@ -285,26 +257,25 @@ impl Area {
         piece_type: PieceType,
         friend: Phase,
         source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
         callback: &mut F1,
     ) where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         match piece_type {
-            PieceType::Pawn => Area::pawn(friend, source, speed_of_light, callback),
-            PieceType::Lance => Area::lance(friend, source, speed_of_light, callback),
-            PieceType::Knight => Area::knight(friend, source, speed_of_light, callback),
-            PieceType::Silver => Area::silver(friend, source, speed_of_light, callback),
-            PieceType::Gold => Area::gold(friend, source, speed_of_light, callback),
-            PieceType::King => Area::king(source, speed_of_light, callback),
-            PieceType::Bishop => Area::bishop(friend, source, speed_of_light, callback),
-            PieceType::Rook => Area::rook(friend, source, speed_of_light, callback),
-            PieceType::PromotedPawn => Area::gold(friend, source, speed_of_light, callback),
-            PieceType::PromotedLance => Area::gold(friend, source, speed_of_light, callback),
-            PieceType::PromotedKnight => Area::gold(friend, source, speed_of_light, callback),
-            PieceType::PromotedSilver => Area::gold(friend, source, speed_of_light, callback),
-            PieceType::Horse => Area::horse(source, speed_of_light, callback),
-            PieceType::Dragon => Area::dragon(source, speed_of_light, callback),
+            PieceType::Pawn => Area::pawn(friend, source, callback),
+            PieceType::Lance => Area::lance(friend, source, callback),
+            PieceType::Knight => Area::knight(friend, source, callback),
+            PieceType::Silver => Area::silver(friend, source, callback),
+            PieceType::Gold => Area::gold(friend, source, callback),
+            PieceType::King => Area::king(source, callback),
+            PieceType::Bishop => Area::bishop(friend, source, callback),
+            PieceType::Rook => Area::rook(friend, source, callback),
+            PieceType::PromotedPawn => Area::gold(friend, source, callback),
+            PieceType::PromotedLance => Area::gold(friend, source, callback),
+            PieceType::PromotedKnight => Area::gold(friend, source, callback),
+            PieceType::PromotedSilver => Area::gold(friend, source, callback),
+            PieceType::Horse => Area::horse(source, callback),
+            PieceType::Dragon => Area::dragon(source, callback),
         }
     }
 
@@ -316,12 +287,8 @@ impl Area {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn pawn<F1>(
-        friend: Phase,
-        source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn pawn<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting = &mut |destination| {
@@ -339,7 +306,7 @@ impl Area {
             Angle::Ccw90
         };
 
-        Area::r#move(source, angle, Agility::Hopping, speed_of_light, promoting);
+        Area::r#move(source, angle, Agility::Hopping, promoting);
     }
 
     /// 先手から見た盤上の香の動けるマスだぜ☆（＾～＾）
@@ -350,12 +317,8 @@ impl Area {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn lance<F1>(
-        friend: Phase,
-        source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn lance<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting = &mut |destination| {
@@ -373,7 +336,7 @@ impl Area {
             Angle::Ccw90
         };
 
-        Area::r#move(source, angle, Agility::Sliding, speed_of_light, promoting);
+        Area::r#move(source, angle, Agility::Sliding, promoting);
     }
 
     /// 先手から見た盤上の桂の動けるマスだぜ☆（＾～＾）
@@ -384,12 +347,8 @@ impl Area {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn knight<F1>(
-        friend: Phase,
-        source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn knight<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting = &mut |destination| {
@@ -407,10 +366,10 @@ impl Area {
             Angle::Ccw45
         };
 
-        Area::r#move(source, angle, Agility::Knight, speed_of_light, promoting);
+        Area::r#move(source, angle, Agility::Knight, promoting);
 
-        let angle = angle.rotate90ccw(speed_of_light);
-        Area::r#move(source, angle, Agility::Knight, speed_of_light, promoting);
+        let angle = angle.rotate90ccw();
+        Area::r#move(source, angle, Agility::Knight, promoting);
     }
 
     /// 先手から見た盤上の銀の動けるマスだぜ☆（＾～＾）
@@ -421,12 +380,8 @@ impl Area {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn silver<F1>(
-        friend: Phase,
-        source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn silver<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting =
@@ -437,37 +392,21 @@ impl Area {
         } else {
             Angle::Ccw90
         };
-        Area::r#move(source, angle, Agility::Hopping, speed_of_light, promoting);
+        Area::r#move(source, angle, Agility::Hopping, promoting);
+        Area::r#move(source, angle.rotate45ccw(), Agility::Hopping, promoting);
         Area::r#move(
             source,
-            angle.rotate45ccw(speed_of_light),
+            angle.rotate90ccw().rotate45ccw(),
             Agility::Hopping,
-            speed_of_light,
             promoting,
         );
         Area::r#move(
             source,
-            angle
-                .rotate90ccw(speed_of_light)
-                .rotate45ccw(speed_of_light),
+            angle.rotate90cw().rotate45cw(),
             Agility::Hopping,
-            speed_of_light,
             promoting,
         );
-        Area::r#move(
-            source,
-            angle.rotate90cw(speed_of_light).rotate45cw(speed_of_light),
-            Agility::Hopping,
-            speed_of_light,
-            promoting,
-        );
-        Area::r#move(
-            source,
-            angle.rotate45cw(speed_of_light),
-            Agility::Hopping,
-            speed_of_light,
-            promoting,
-        );
+        Area::r#move(source, angle.rotate45cw(), Agility::Hopping, promoting);
     }
 
     /// 先手から見た盤上の金、と、杏、圭、全の動けるマスだぜ☆（＾～＾）
@@ -478,12 +417,8 @@ impl Area {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn gold<F1>(
-        friend: Phase,
-        source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn gold<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let hopping =
@@ -493,42 +428,12 @@ impl Area {
         } else {
             Angle::Ccw90
         };
-        Area::r#move(source, angle, Agility::Hopping, speed_of_light, hopping);
-        Area::r#move(
-            source,
-            angle.rotate45ccw(speed_of_light),
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            angle.rotate90ccw(speed_of_light),
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            angle.rotate180(speed_of_light),
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            angle.rotate90cw(speed_of_light),
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            angle.rotate45cw(speed_of_light),
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
+        Area::r#move(source, angle, Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate45ccw(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate90ccw(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate180(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate90cw(), Agility::Hopping, hopping);
+        Area::r#move(source, angle.rotate45cw(), Agility::Hopping, hopping);
     }
 
     /// 盤上の玉の動けるマスだぜ☆（＾～＾）
@@ -538,68 +443,20 @@ impl Area {
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn king<F1>(source: &AbsoluteAddress, speed_of_light: &SpeedOfLight, callback: &mut F1)
+    fn king<F1>(source: &AbsoluteAddress, callback: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let hopping =
             &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
-        Area::r#move(
-            source,
-            Angle::Ccw0,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw45,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw90,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw135,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw180,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw225,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw270,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw315,
-            Agility::Hopping,
-            speed_of_light,
-            hopping,
-        );
+        Area::r#move(source, Angle::Ccw0, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw45, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw90, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw135, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw180, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw225, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw270, Agility::Hopping, hopping);
+        Area::r#move(source, Angle::Ccw315, Agility::Hopping, hopping);
     }
 
     /// 盤上の角の動けるマスだぜ☆（＾～＾）
@@ -609,44 +466,16 @@ impl Area {
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn bishop<F1>(
-        friend: Phase,
-        source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn bishop<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting =
             &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
-        Area::r#move(
-            source,
-            Angle::Ccw45,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw135,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw225,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw315,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
+        Area::r#move(source, Angle::Ccw45, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw135, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw225, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw315, Agility::Sliding, promoting);
     }
 
     /// 盤上の飛の動けるマスだぜ☆（＾～＾）
@@ -656,44 +485,16 @@ impl Area {
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn rook<F1>(
-        friend: Phase,
-        source: &AbsoluteAddress,
-        speed_of_light: &SpeedOfLight,
-        callback: &mut F1,
-    ) where
+    fn rook<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let promoting =
             &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
-        Area::r#move(
-            source,
-            Angle::Ccw0,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw90,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw180,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
-        Area::r#move(
-            source,
-            Angle::Ccw270,
-            Agility::Sliding,
-            speed_of_light,
-            promoting,
-        );
+        Area::r#move(source, Angle::Ccw0, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw90, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw180, Agility::Sliding, promoting);
+        Area::r#move(source, Angle::Ccw270, Agility::Sliding, promoting);
     }
 
     /// 盤上の馬の動けるマスだぜ☆（＾～＾）
@@ -703,7 +504,7 @@ impl Area {
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn horse<F1>(source: &AbsoluteAddress, speed_of_light: &SpeedOfLight, callback: &mut F1)
+    fn horse<F1>(source: &AbsoluteAddress, callback: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
@@ -711,67 +512,19 @@ impl Area {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            Area::r#move(
-                source,
-                Angle::Ccw45,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw135,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw225,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw315,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
+            Area::r#move(source, Angle::Ccw45, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw135, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw225, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw315, Agility::Sliding, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            Area::r#move(
-                source,
-                Angle::Ccw0,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw90,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw180,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw270,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
+            Area::r#move(source, Angle::Ccw0, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw90, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw180, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw270, Agility::Hopping, hopping);
         }
     }
 
@@ -782,7 +535,7 @@ impl Area {
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn dragon<F1>(source: &AbsoluteAddress, speed_of_light: &SpeedOfLight, callback: &mut F1)
+    fn dragon<F1>(source: &AbsoluteAddress, callback: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
@@ -790,67 +543,19 @@ impl Area {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            Area::r#move(
-                source,
-                Angle::Ccw0,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw90,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw180,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw270,
-                Agility::Sliding,
-                speed_of_light,
-                sliding,
-            );
+            Area::r#move(source, Angle::Ccw0, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw90, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw180, Agility::Sliding, sliding);
+            Area::r#move(source, Angle::Ccw270, Agility::Sliding, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            Area::r#move(
-                source,
-                Angle::Ccw45,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw135,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw225,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
-            Area::r#move(
-                source,
-                Angle::Ccw315,
-                Agility::Hopping,
-                speed_of_light,
-                hopping,
-            );
+            Area::r#move(source, Angle::Ccw45, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw135, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw225, Agility::Hopping, hopping);
+            Area::r#move(source, Angle::Ccw315, Agility::Hopping, hopping);
         }
     }
 
@@ -911,13 +616,8 @@ impl Area {
     /// * `angle` - 角度☆（＾～＾）
     /// * `agility` - 動き方☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn r#move<F1>(
-        start: &AbsoluteAddress,
-        angle: Angle,
-        agility: Agility,
-        speed_of_light: &SpeedOfLight,
-        adr_get: &mut F1,
-    ) where
+    fn r#move<F1>(start: &AbsoluteAddress, angle: Angle, agility: Agility, adr_get: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress) -> bool,
     {
         match agility {
@@ -942,7 +642,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                cur.offset(speed_of_light.west_ccw_double_rank(angle));
+                cur.offset(&angle.west_ccw_double_rank());
 
                 if cur.legal_cur() {
                     adr_get(cur);
@@ -952,7 +652,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                cur.offset(speed_of_light.west_ccw(angle));
+                cur.offset(&angle.west_ccw());
 
                 if cur.legal_cur() {
                     adr_get(cur);

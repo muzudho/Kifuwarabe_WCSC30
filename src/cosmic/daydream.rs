@@ -10,7 +10,6 @@ use crate::cosmic::smart::features::{PieceMeaning, PieceType};
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::PseudoLegalMoves;
-use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
@@ -53,11 +52,7 @@ impl Tree {
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
-    pub fn iteration_deeping(
-        &mut self,
-        universe: &mut Universe,
-        speed_of_light: &SpeedOfLight,
-    ) -> TreeState {
+    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> TreeState {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng().gen_range(
             universe.option_min_think_sec as u64,
@@ -68,7 +63,7 @@ impl Tree {
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.evaluation.before_search();
         self.max_depth0 = 0;
-        let mut best_ts = self.node(&mut universe.game, Value::Win, speed_of_light);
+        let mut best_ts = self.node(&mut universe.game, Value::Win);
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -112,7 +107,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
-            let ts = self.node(&mut universe.game, Value::Win, speed_of_light);
+            let ts = self.node(&mut universe.game, Value::Win);
             self.evaluation.after_search();
             if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -132,17 +127,11 @@ impl Tree {
     ///
     /// * `game` - 対局。
     /// * `sibling_best` - アルファベータ探索のベータ値。兄弟で一番良い評価値。
-    /// * `speed_of_light` - (光速)
     ///
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn node(
-        &mut self,
-        game: &mut Game,
-        another_branch_best: Value,
-        speed_of_light: &SpeedOfLight,
-    ) -> TreeState {
+    fn node(&mut self, game: &mut Game, another_branch_best: Value) -> TreeState {
         let mut ts = TreeState::default();
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
@@ -154,7 +143,6 @@ impl Tree {
         PseudoLegalMoves::make_move(
             game.history.get_friend(),
             &game.board,
-            &speed_of_light,
             &mut |movement, pseudo_captured| {
                 &ways.push((movement, pseudo_captured));
             },
@@ -180,7 +168,7 @@ impl Tree {
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                match ways[i].1.unwrap().0.r#type(speed_of_light) {
+                match ways[i].1.unwrap().0.r#type() {
                     PieceType::King => {
                         // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                         let temp = ways[king];
@@ -221,25 +209,21 @@ impl Tree {
                 // 打
                 None
             };
-            let captured_piece: Option<(PieceMeaning, PieceNum)> =
-                game.do_move(&movement, speed_of_light);
+            let captured_piece: Option<(PieceMeaning, PieceNum)> = game.do_move(&movement);
             self.pv.push(&movement);
-            let (captured_piece_centi_pawn, delta_promotion_bonus) = self.evaluation.after_do_move(
-                &source_piece,
-                &captured_piece,
-                movement.promote,
-                speed_of_light,
-            );
+            let (captured_piece_centi_pawn, delta_promotion_bonus) =
+                self.evaluation
+                    .after_do_move(&source_piece, &captured_piece, movement.promote);
 
             if let Some(captured_piece_val) = captured_piece {
-                if captured_piece_val.0.r#type(speed_of_light) == PieceType::King {
+                if captured_piece_val.0.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     ts.bestmove.catch_king(way.0);
 
                     self.evaluation
                         .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
                     self.pv.pop();
-                    game.undo_move(speed_of_light);
+                    game.undo_move();
                     break;
                 }
             }
@@ -314,7 +298,6 @@ impl Tree {
                         Value::Win => Value::Lose,
                         Value::Lose => Value::Win,
                     },
-                    speed_of_light,
                 );
                 self.evaluation.after_search();
 
@@ -326,7 +309,7 @@ impl Tree {
             self.evaluation
                 .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
-            game.undo_move(speed_of_light);
+            game.undo_move();
 
             match ts.bestmove.value {
                 Value::Win => {

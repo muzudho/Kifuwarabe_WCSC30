@@ -11,7 +11,6 @@ use crate::cosmic::smart::features::{
 use crate::cosmic::smart::square::{
     AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
-use crate::law::speed_of_light::SpeedOfLight;
 use crate::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -229,18 +228,11 @@ impl Board {
     }
 
     /// 歩が置いてあるか確認
-    pub fn exists_pawn_on_file(
-        &self,
-        phase: Phase,
-        file: usize,
-        speed_of_light: &SpeedOfLight,
-    ) -> bool {
+    pub fn exists_pawn_on_file(&self, phase: Phase, file: usize) -> bool {
         for rank in RANK_1..RANK_10 {
             let adr = AbsoluteAddress::new(file, rank);
             if let Some(piece) = self.piece_at(&adr) {
-                if piece.0.phase(speed_of_light) == phase
-                    && piece.0.r#type(speed_of_light) == PieceType::Pawn
-                {
+                if piece.0.phase() == phase && piece.0.r#type() == PieceType::Pawn {
                     return true;
                 }
             }
@@ -276,13 +268,7 @@ impl Board {
         piece
     }
     /// 盤に駒か空升を置いていきます。
-    pub fn push_piece_on_init(
-        &mut self,
-        file: usize,
-        rank: usize,
-        piece: Option<PieceMeaning>,
-        speed_of_light: &SpeedOfLight,
-    ) {
+    pub fn push_piece_on_init(&mut self, file: usize, rank: usize, piece: Option<PieceMeaning>) {
         if !(FILE_0 < file && file < FILE_10 && RANK_0 < rank && rank < RANK_10) {
             panic!(Beam::trouble(&format!(
                 "(Err.323) 盤上の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
@@ -303,9 +289,7 @@ impl Board {
                     PieceNum::King2
                 }
                 _ => {
-                    let hand_type = piece_meaning
-                        .hand_address(speed_of_light)
-                        .r#type(speed_of_light);
+                    let hand_type = piece_meaning.hand_address().r#type();
                     self.location[self.hand_index[hand_type as usize]] = Location::Board(source);
                     let pn = PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap();
                     self.hand_index[hand_type as usize] += 1;
@@ -319,24 +303,19 @@ impl Board {
         }
     }
     /// 駒台に置く
-    pub fn push_hand_on_init(
-        &mut self,
-        piece_meaning: PieceMeaning,
-        number: isize,
-        speed_of_light: &SpeedOfLight,
-    ) {
+    pub fn push_hand_on_init(&mut self, piece_meaning: PieceMeaning, number: isize) {
         for _i in 0..number {
-            let adr = piece_meaning.hand_address(speed_of_light);
-            let hand = piece_meaning.hand_address(speed_of_light);
-            let hand_type = hand.r#type(speed_of_light);
+            let adr = piece_meaning.hand_address();
+            let hand = piece_meaning.hand_address();
+            let hand_type = hand.r#type();
             let cursor = self.hand_index[hand_type as usize];
             self.location[cursor] = Location::Hand(adr);
             self.hands[hand as usize].push(&(piece_meaning, PieceNum::from_usize(cursor).unwrap()));
             self.hand_index[hand_type as usize] += 1;
         }
     }
-    pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum), speed_of_light: &SpeedOfLight) {
-        let adr = hand.0.hand_address(speed_of_light);
+    pub fn push_hand(&mut self, hand: &(PieceMeaning, PieceNum)) {
+        let adr = hand.0.hand_address();
         self.hands[adr as usize].push(hand);
         self.location[hand.1 as usize] = Location::Hand(adr);
     }
@@ -414,12 +393,8 @@ impl Board {
     }
 
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
-    pub fn for_some_pieces_on_list40<F>(
-        &self,
-        friend: Phase,
-        speed_of_light: &SpeedOfLight,
-        piece_get: &mut F,
-    ) where
+    pub fn for_some_pieces_on_list40<F>(&self, friend: Phase, piece_get: &mut F)
+    where
         F: FnMut(Location, (PieceMeaning, PieceNum)),
     {
         for location in self.location.iter() {
@@ -427,7 +402,7 @@ impl Board {
                 Location::Board(adr) => {
                     // 盤上の駒☆（＾～＾）
                     let piece = self.piece_at(adr).unwrap();
-                    if piece.0.phase(speed_of_light) == friend {
+                    if piece.0.phase() == friend {
                         piece_get(*location, piece);
                     }
                 }
