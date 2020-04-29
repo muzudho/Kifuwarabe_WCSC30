@@ -137,10 +137,11 @@ impl Tree {
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
-        // 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
+        //*
+        // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
         let mut mate1 = Mate1::new(game);
-        mate1.init(game).pinned_pieces(game).checkers(game).end();
-
+        mate1.init(game).pinned_pieces(game).checkers(game);
+        // */
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
         let mut ways = Ways::new();
 
@@ -217,41 +218,6 @@ impl Tree {
             let (captured_piece_centi_pawn, delta_promotion_bonus) =
                 self.evaluation
                     .after_do_move(&source_piece, &captured_piece, movement.promote);
-
-            if mate1.lioncatch {
-                // TODO 廃止方針☆（＾～＾）
-                // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                ts.bestmove.catch_king(way.move_hash);
-
-                self.evaluation
-                    .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
-                self.pv.pop();
-                game.undo_move();
-                break;
-            } else if mate1.counter {
-                // こんなクソ手を指してはいけないぜ☆（＾～＾）！ 戻せ☆（＾～＾）！
-                self.evaluation
-                    .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
-                self.pv.pop();
-                game.undo_move();
-                break;
-            }
-            // else if 0 < mate1.checkers.len() {
-            // 相手玉に王手がかかってるぜ☆（＾～＾）！
-            /*
-            if !mate1.can_evasion(game) {
-                // 相手玉が詰んでたら、勝ちだぜ☆（＾～＾）！
-                ts.bestmove.mate(way.move_hash);
-
-                self.evaluation
-                    .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
-                self.pv.pop();
-                game.undo_move();
-                break;
-            }
-            */
-            // 相手玉は逃げれるぜ☆（＾～＾）
-            //}
 
             // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {

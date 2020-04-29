@@ -22,10 +22,6 @@ pub struct Mate1 {
     pub checkers: Option<Vec<PieceNum>>,
     /// 動かしてはいけない駒の背番号の一覧を作るぜ☆（＾～＾）
     pub pinned_pieces: Option<Vec<PieceNum>>,
-    /// TODO おかしいぜ☆（＾～＾）
-    pub lioncatch: bool,
-    /// TODO 空き王手になって、自玉が逆に王手回避放置になるぜ☆（＾～＾）！
-    pub counter: bool,
     /// 上下反転させるのに使うぜ☆（＾～＾）
     pub sign: isize,
 }
@@ -39,20 +35,10 @@ impl Mate1 {
             opponent_king_adr: AbsoluteAddress::default(),
             checkers: None,
             pinned_pieces: None,
-            lioncatch: false,
-            counter: false,
             sign: 1,
         }
     }
 
-    pub fn end(&mut self) -> &mut Self {
-        if let Some(pinned_pieces_val) = &mut self.pinned_pieces {
-            if let Some(checkers_val) = &mut self.checkers {
-                checkers_val.retain(|x| !(*pinned_pieces_val).contains(&x))
-            }
-        }
-        self
-    }
     pub fn init(&mut self, game: &Game) -> &mut Self {
         // 自玉の場所☆（＾～＾）
         self.friend_king_adr = match game.board.location_at(match self.friend {
@@ -74,14 +60,9 @@ impl Mate1 {
             Phase::Second => PieceNum::King2,
         }) {
             Location::Board(adr) => adr,
-            Location::Hand(_adr) => {
-                // TODO らいおんキャッチするのはおかしいぜ☆（＾～＾）！
-                self.lioncatch = true;
-                return self;
-                // panic!(Beam::trouble(
-                //     "(Err.48) なんで敵玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
-                // ))
-            }
+            Location::Hand(_adr) => panic!(Beam::trouble(
+                "(Err.48) なんで敵玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
+            )),
             Location::Busy => panic!(Beam::trouble(
                 "(Err.83) なんで敵玉が作業中なんだぜ☆（＾～＾）！"
             )),
@@ -160,6 +141,7 @@ impl Mate1 {
     }
 
     /// 相手玉を取れる駒（checkers）たちを調べるぜ☆
+    /// ピンされている駒を調べたあとで使えだぜ☆（＾～＾）
     /// ただし、自玉に空き王手がかかる形では この手は使えないぜ☆（＾～＾）
     pub fn checkers(&mut self, game: &Game) -> &mut Self {
         // TODO speed of light に入れたいぜ☆（＾～＾）
@@ -192,8 +174,17 @@ impl Mate1 {
                             .movility()
                             .contains(&recipe.1)
                     {
-                        // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                        checkers.push(any_piece_val.num);
+                        if let Some(pinned_pieces_val) = &mut self.pinned_pieces {
+                            if pinned_pieces_val.contains(&any_piece_val.num) {
+                                // ピンされてる駒だった☆（＾～＾）動かせないぜ☆（＾～＾）！
+                            } else {
+                                // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
+                                checkers.push(any_piece_val.num);
+                            }
+                        } else {
+                            // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
+                            checkers.push(any_piece_val.num);
+                        }
                     }
                 }
             }
