@@ -206,31 +206,3 @@ pub enum HandAddress {
     Lance2,
     Pawn2,
 }
-
-/// 持駒種類
-pub struct HandAddresses {}
-impl HandAddresses {
-    pub fn for_all<F1>(callback: &mut F1)
-    where
-        F1: FnMut(HandAddress),
-    {
-        for adr in &[
-            HandAddress::Rook1,
-            HandAddress::Bishop1,
-            HandAddress::Gold1,
-            HandAddress::Silver1,
-            HandAddress::Knight1,
-            HandAddress::Lance1,
-            HandAddress::Pawn1,
-            HandAddress::Rook2,
-            HandAddress::Bishop2,
-            HandAddress::Gold2,
-            HandAddress::Silver2,
-            HandAddress::Knight2,
-            HandAddress::Lance2,
-            HandAddress::Pawn2,
-        ] {
-            callback(*adr);
-        }
-    }
-}

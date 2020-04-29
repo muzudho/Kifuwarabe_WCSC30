@@ -57,6 +57,8 @@ pub struct SpeedOfLight {
     pub piece_type_table: [PieceTypeChart; PIECE_TYPE_LEN],
 
     /// 持ち駒☆（＾～＾）
+    /// 玉２枚引く☆（＾～＾）
+    pub hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
     pub hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
     pub hand_address_table: [HandAddressChart; HAND_ADDRESS_LEN],
 
@@ -363,6 +365,22 @@ impl Default for SpeedOfLight {
             ],
 
             // 持ち駒☆（＾～＾）
+            hand_addresses_legal_all: [
+                HandAddress::Rook1,
+                HandAddress::Bishop1,
+                HandAddress::Gold1,
+                HandAddress::Silver1,
+                HandAddress::Knight1,
+                HandAddress::Lance1,
+                HandAddress::Pawn1,
+                HandAddress::Rook2,
+                HandAddress::Bishop2,
+                HandAddress::Gold2,
+                HandAddress::Silver2,
+                HandAddress::Knight2,
+                HandAddress::Lance2,
+                HandAddress::Pawn2,
+            ],
             hand_addresses: [
                 [
                     HandAddress::King1,
@@ -568,6 +586,19 @@ pub struct PieceTypeChart {
 impl PieceType {
     pub fn promoted(self) -> bool {
         NINE_299792458.piece_type_table[self as usize].promoted
+    }
+}
+
+/// 持駒種類
+pub struct HandAddresses {}
+impl HandAddresses {
+    pub fn for_all<F1>(callback: &mut F1)
+    where
+        F1: FnMut(HandAddress),
+    {
+        for adr in &NINE_299792458.hand_addresses_legal_all {
+            callback(*adr);
+        }
     }
 }
 

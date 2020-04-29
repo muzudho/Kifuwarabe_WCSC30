@@ -5,12 +5,11 @@ use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
-use crate::cosmic::smart::features::{
-    HandAddress, HandAddresses, PieceMeaning, PieceType, HAND_MAX,
-};
+use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_MAX};
 use crate::cosmic::smart::square::{
     AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
+use crate::law::speed_of_light::HandAddresses;
 use crate::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;

@@ -88,4 +88,8 @@ position startpos moves 7g7f 3c3d 2h7h 8c8d 9i9h 6a6b 7h1h 4a3b 8g8f 8b8c 8h7g 8
 
 sfen ln7/1r4gk1/ppppsg1pn/9/9/1P+bl2P2/P2P+pP1P1/1RS1p1G2/LNG1K1SN1 b S4Pblp 1
 
+### 2020-04-29(thu) ５手を読み切って 3八銀 だったのに、6手目で適当に読んだ 7八玉 を指してしまって、王が利きに飛び込んだぜ☆（＾～＾）
+
+position startpos moves 7g7f 3c3d 8h2b+ 3a2b B*7e B*4d 9i9h 4d9i+ 7i7h 9i9h 7e5c+ 4a5b 5c2f L*8d 6i7i 8d8g+ 7h6i 9h9i 2f1f 8g9h 1f1e 5a6b 1e2f 6b7b 6i7h 9h8h 7i8h 9i8h L*9e 9c9d P*8d 9d9e 8d8c+ 8b8c 5i6h 8h8i 7h8i 8c8i+
+
 ```

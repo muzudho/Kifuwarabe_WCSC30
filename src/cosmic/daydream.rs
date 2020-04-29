@@ -7,6 +7,7 @@ use crate::cosmic::recording::PLY_LEN;
 use crate::cosmic::recording::{Movement, SENNTITE_NUM};
 use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::{PieceMeaning, PieceType};
+use crate::cosmic::smart::see::SEE;
 use crate::cosmic::toy_box::PieceNum;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::{PseudoLegalMoves, Ways};
@@ -186,13 +187,11 @@ impl Tree {
         for index in ways.indexes.iter() {
             let way = ways.get(*index);
             // 時間を見ようぜ☆（＾～＾）？
-            if ts.timeout {
-                // すでにタイムアウトしていたのなら、さっさと抜けるぜ☆（＾～＾）
-                break;
-            } else if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
+            if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
+                // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                 ts.timeout = true;
-                break;
+                return ts;
             }
 
             // 1手進めるぜ☆（＾～＾）
@@ -230,24 +229,10 @@ impl Tree {
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
-                /*
-                if let Some(_captured) = way.1 {
-                    // TODO SEE. Static exchange variation.
-                    // 葉で駒を取ったら、取り返されるのも考慮しないとな☆（＾～＾）
-
-                    // 移動先升に利きのある駒が無くなるまで繰り返すぜ☆（＾～＾）
-                    loop {
-                        let mut cur =
-                            Address::from_absolute_address(movement.destination.address()).unwrap();
-                        // 西
-                        cur.offset(&RelativeAddress::new(&RelAdr::new(1, 0)));
-                        if cur.legal_cur() {
-                            let piece = game.board.piece_at(&cur);
-                        }
-                        break;
-                    }
+                if let Some(_captured) = way.captured {
+                    // TODO SEEやろうぜ☆（＾～＾）
+                    SEE::go(game, &movement.destination);
                 }
-                */
 
                 // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
                 let board_coverage_value = coverage_sign * game.board.coverage_value();
@@ -294,6 +279,11 @@ impl Tree {
                         Value::Lose => Value::Win,
                     },
                 );
+
+                if ts.timeout {
+                    // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
+                    return ts;
+                }
                 self.evaluation.after_search();
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
