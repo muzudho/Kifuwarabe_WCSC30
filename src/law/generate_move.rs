@@ -364,13 +364,8 @@ impl Area {
             )
         };
 
-        let angle = if friend == Phase::First {
-            Angle::Ccw270
-        } else {
-            Angle::Ccw90
-        };
-
-        Area::r#move(source, angle, Agility::Hopping, promoting);
+        let angle = Angle::Ccw270;
+        Area::r#move(&Some(friend), source, angle, Agility::Hopping, promoting);
     }
 
     /// 先手から見た盤上の香の動けるマスだぜ☆（＾～＾）
@@ -394,13 +389,8 @@ impl Area {
             )
         };
 
-        let angle = if friend == Phase::First {
-            Angle::Ccw270
-        } else {
-            Angle::Ccw90
-        };
-
-        Area::r#move(source, angle, Agility::Sliding, promoting);
+        let angle = Angle::Ccw270;
+        Area::r#move(&Some(friend), source, angle, Agility::Sliding, promoting);
     }
 
     /// 先手から見た盤上の桂の動けるマスだぜ☆（＾～＾）
@@ -424,16 +414,15 @@ impl Area {
             )
         };
 
-        let angle = if friend == Phase::First {
-            Angle::Ccw225
-        } else {
-            Angle::Ccw45
-        };
-
-        Area::r#move(source, angle, Agility::Knight, promoting);
-
-        let angle = angle.rotate90ccw();
-        Area::r#move(source, angle, Agility::Knight, promoting);
+        let angle = Angle::Ccw225;
+        Area::r#move(&Some(friend), source, angle, Agility::Knight, promoting);
+        Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate90ccw(),
+            Agility::Knight,
+            promoting,
+        );
     }
 
     /// 先手から見た盤上の銀の動けるマスだぜ☆（＾～＾）
@@ -451,26 +440,36 @@ impl Area {
         let promoting =
             &mut |destination| Promoting::silver(friend, &source, &destination, callback);
 
-        let angle = if friend == Phase::First {
-            Angle::Ccw270
-        } else {
-            Angle::Ccw90
-        };
-        Area::r#move(source, angle, Agility::Hopping, promoting);
-        Area::r#move(source, angle.rotate45ccw(), Agility::Hopping, promoting);
+        let angle = Angle::Ccw270;
+        Area::r#move(&Some(friend), source, angle, Agility::Hopping, promoting);
         Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate45ccw(),
+            Agility::Hopping,
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
             source,
             angle.rotate90ccw().rotate45ccw(),
             Agility::Hopping,
             promoting,
         );
         Area::r#move(
+            &Some(friend),
             source,
             angle.rotate90cw().rotate45cw(),
             Agility::Hopping,
             promoting,
         );
-        Area::r#move(source, angle.rotate45cw(), Agility::Hopping, promoting);
+        Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate45cw(),
+            Agility::Hopping,
+            promoting,
+        );
     }
 
     /// 先手から見た盤上の金、と、杏、圭、全の動けるマスだぜ☆（＾～＾）
@@ -487,17 +486,43 @@ impl Area {
     {
         let hopping =
             &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
-        let angle = if friend == Phase::First {
-            Angle::Ccw270
-        } else {
-            Angle::Ccw90
-        };
-        Area::r#move(source, angle, Agility::Hopping, hopping);
-        Area::r#move(source, angle.rotate45ccw(), Agility::Hopping, hopping);
-        Area::r#move(source, angle.rotate90ccw(), Agility::Hopping, hopping);
-        Area::r#move(source, angle.rotate180(), Agility::Hopping, hopping);
-        Area::r#move(source, angle.rotate90cw(), Agility::Hopping, hopping);
-        Area::r#move(source, angle.rotate45cw(), Agility::Hopping, hopping);
+        let angle = Angle::Ccw270;
+        Area::r#move(&Some(friend), source, angle, Agility::Hopping, hopping);
+        Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate45ccw(),
+            Agility::Hopping,
+            hopping,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate90ccw(),
+            Agility::Hopping,
+            hopping,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate180(),
+            Agility::Hopping,
+            hopping,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate90cw(),
+            Agility::Hopping,
+            hopping,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            angle.rotate45cw(),
+            Agility::Hopping,
+            hopping,
+        );
     }
 
     /// 盤上の玉の動けるマスだぜ☆（＾～＾）
@@ -513,14 +538,14 @@ impl Area {
     {
         let hopping =
             &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
-        Area::r#move(source, Angle::Ccw0, Agility::Hopping, hopping);
-        Area::r#move(source, Angle::Ccw45, Agility::Hopping, hopping);
-        Area::r#move(source, Angle::Ccw90, Agility::Hopping, hopping);
-        Area::r#move(source, Angle::Ccw135, Agility::Hopping, hopping);
-        Area::r#move(source, Angle::Ccw180, Agility::Hopping, hopping);
-        Area::r#move(source, Angle::Ccw225, Agility::Hopping, hopping);
-        Area::r#move(source, Angle::Ccw270, Agility::Hopping, hopping);
-        Area::r#move(source, Angle::Ccw315, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw0, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw45, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw90, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw135, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw180, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw225, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw270, Agility::Hopping, hopping);
+        Area::r#move(&None, source, Angle::Ccw315, Agility::Hopping, hopping);
     }
 
     /// 盤上の角の動けるマスだぜ☆（＾～＾）
@@ -536,10 +561,34 @@ impl Area {
     {
         let promoting =
             &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
-        Area::r#move(source, Angle::Ccw45, Agility::Sliding, promoting);
-        Area::r#move(source, Angle::Ccw135, Agility::Sliding, promoting);
-        Area::r#move(source, Angle::Ccw225, Agility::Sliding, promoting);
-        Area::r#move(source, Angle::Ccw315, Agility::Sliding, promoting);
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw45,
+            Agility::Sliding,
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw135,
+            Agility::Sliding,
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw225,
+            Agility::Sliding,
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw315,
+            Agility::Sliding,
+            promoting,
+        );
     }
 
     /// 盤上の飛の動けるマスだぜ☆（＾～＾）
@@ -555,10 +604,34 @@ impl Area {
     {
         let promoting =
             &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
-        Area::r#move(source, Angle::Ccw0, Agility::Sliding, promoting);
-        Area::r#move(source, Angle::Ccw90, Agility::Sliding, promoting);
-        Area::r#move(source, Angle::Ccw180, Agility::Sliding, promoting);
-        Area::r#move(source, Angle::Ccw270, Agility::Sliding, promoting);
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw0,
+            Agility::Sliding,
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw90,
+            Agility::Sliding,
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw180,
+            Agility::Sliding,
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Angle::Ccw270,
+            Agility::Sliding,
+            promoting,
+        );
     }
 
     /// 盤上の馬の動けるマスだぜ☆（＾～＾）
@@ -576,19 +649,19 @@ impl Area {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            Area::r#move(source, Angle::Ccw45, Agility::Sliding, sliding);
-            Area::r#move(source, Angle::Ccw135, Agility::Sliding, sliding);
-            Area::r#move(source, Angle::Ccw225, Agility::Sliding, sliding);
-            Area::r#move(source, Angle::Ccw315, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw45, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw135, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw225, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw315, Agility::Sliding, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            Area::r#move(source, Angle::Ccw0, Agility::Hopping, hopping);
-            Area::r#move(source, Angle::Ccw90, Agility::Hopping, hopping);
-            Area::r#move(source, Angle::Ccw180, Agility::Hopping, hopping);
-            Area::r#move(source, Angle::Ccw270, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw0, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw90, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw180, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw270, Agility::Hopping, hopping);
         }
     }
 
@@ -607,19 +680,19 @@ impl Area {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            Area::r#move(source, Angle::Ccw0, Agility::Sliding, sliding);
-            Area::r#move(source, Angle::Ccw90, Agility::Sliding, sliding);
-            Area::r#move(source, Angle::Ccw180, Agility::Sliding, sliding);
-            Area::r#move(source, Angle::Ccw270, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw0, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw90, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw180, Agility::Sliding, sliding);
+            Area::r#move(&None, source, Angle::Ccw270, Agility::Sliding, sliding);
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            Area::r#move(source, Angle::Ccw45, Agility::Hopping, hopping);
-            Area::r#move(source, Angle::Ccw135, Agility::Hopping, hopping);
-            Area::r#move(source, Angle::Ccw225, Agility::Hopping, hopping);
-            Area::r#move(source, Angle::Ccw315, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw45, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw135, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw225, Agility::Hopping, hopping);
+            Area::r#move(&None, source, Angle::Ccw315, Agility::Hopping, hopping);
         }
     }
 
@@ -675,15 +748,32 @@ impl Area {
     ///
     /// Arguments
     /// ---------
-    ///
+    /// * `friend` - 先手か後手か、関係ないか☆（＾～＾）先後同型なら関係ないしな☆（＾～＾）
     /// * `start` - 移動元升☆（＾～＾）
     /// * `angle` - 角度☆（＾～＾）
     /// * `agility` - 動き方☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn r#move<F1>(start: &AbsoluteAddress, angle: Angle, agility: Agility, adr_get: &mut F1)
-    where
+    fn r#move<F1>(
+        friend: &Option<Phase>,
+        start: &AbsoluteAddress,
+        angle: Angle,
+        agility: Agility,
+        adr_get: &mut F1,
+    ) where
         F1: FnMut(AbsoluteAddress) -> bool,
     {
+        let angle = if let Some(friend_val) = friend {
+            // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
+            if *friend_val == Phase::Second {
+                angle.rotate180()
+            } else {
+                angle
+            }
+        } else {
+            // 先後同型だからそのままだぜ☆（＾～＾）
+            angle
+        };
+
         match agility {
             Agility::Sliding => {
                 let mut cur = start.clone();

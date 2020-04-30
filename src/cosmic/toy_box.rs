@@ -10,7 +10,7 @@ use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_
 use crate::cosmic::smart::square::{
     AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
-use crate::law::generate_move::Piece;
+use crate::law::generate_move::{Area, Piece};
 use crate::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
@@ -118,6 +118,7 @@ pub enum Location {
 /// 10の位を筋、1の位を段とする。
 /// 0筋、0段は未使用
 pub struct Board {
+    // いわゆる盤☆（＾～＾）
     pieces: [Option<Piece>; BOARD_MEMORY_AREA as usize],
     /// 駒の居場所☆（＾～＾）
     location: [Location; PIECE_NUM_LEN],
@@ -229,6 +230,14 @@ impl Board {
         self.hands = board.hands.clone();
         self.control_sum = board.control_sum;
         self.controls = board.controls.clone();
+    }
+
+    /// 初期局面の利きを数えようぜ☆（＾～＾）？
+    pub fn init_controls(&mut self) {
+        Area::for_all(&mut |adr| {
+            // そこに置いてある駒を調べようぜ☆（＾～＾）？
+            let piece = self.piece_at(&adr);
+        });
     }
 
     /// 歩が置いてあるか確認
