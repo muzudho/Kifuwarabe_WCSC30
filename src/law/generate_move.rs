@@ -104,7 +104,7 @@ pub struct Mobility {
     agility: Agility,
 }
 impl Mobility {
-    fn new(angle: Angle, agility: Agility) -> Self {
+    pub fn new(angle: Angle, agility: Agility) -> Self {
         Mobility {
             angle: angle,
             agility: agility,
@@ -330,30 +330,27 @@ impl Area {
     /// * `piece_type` - 駒の種類だぜ☆（＾～＾）
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn piece_of<F1>(
-        piece_type: PieceType,
-        friend: Phase,
-        source: &AbsoluteAddress,
-        callback: &mut F1,
-    ) where
+    /// * `hopping` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    /// * `sliding` -
+    fn piece_of<F1>(piece_type: PieceType, friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
+    where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         match piece_type {
-            PieceType::Pawn => Area::pawn(friend, source, callback),
-            PieceType::Lance => Area::lance(friend, source, callback),
-            PieceType::Knight => Area::knight(friend, source, callback),
-            PieceType::Silver => Area::silver(friend, source, callback),
-            PieceType::Gold => Area::gold(friend, source, callback),
-            PieceType::King => Area::king(source, callback),
-            PieceType::Bishop => Area::bishop(friend, source, callback),
-            PieceType::Rook => Area::rook(friend, source, callback),
-            PieceType::PromotedPawn => Area::gold(friend, source, callback),
-            PieceType::PromotedLance => Area::gold(friend, source, callback),
-            PieceType::PromotedKnight => Area::gold(friend, source, callback),
-            PieceType::PromotedSilver => Area::gold(friend, source, callback),
-            PieceType::Horse => Area::horse(source, callback),
-            PieceType::Dragon => Area::dragon(source, callback),
+            PieceType::Pawn => Area::pawn(friend, source, moving),
+            PieceType::Lance => Area::lance(friend, source, moving),
+            PieceType::Knight => Area::knight(friend, source, moving),
+            PieceType::Silver => Area::silver(friend, source, moving),
+            PieceType::Gold => Area::gold(friend, source, moving),
+            PieceType::King => Area::king(source, moving),
+            PieceType::Bishop => Area::bishop(friend, source, moving),
+            PieceType::Rook => Area::rook(friend, source, moving),
+            PieceType::PromotedPawn => Area::gold(friend, source, moving),
+            PieceType::PromotedLance => Area::gold(friend, source, moving),
+            PieceType::PromotedKnight => Area::gold(friend, source, moving),
+            PieceType::PromotedSilver => Area::gold(friend, source, moving),
+            PieceType::Horse => Area::horse(source, moving),
+            PieceType::Dragon => Area::dragon(source, moving),
         }
     }
 
@@ -364,23 +361,22 @@ impl Area {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn pawn<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn pawn<F1>(friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting = &mut |destination| {
+        let moving = &mut |destination, _agility| {
             Promoting::pawn_lance(
                 friend,
                 &destination,
-                callback,
+                moving,
                 Some(MovePermission::from_pawn_or_lance(friend)),
             )
         };
 
-        let mobilities = [Mobility::new(Angle::Ccw270, Agility::Hopping)];
-        for mobility in &mobilities {
-            Area::r#move(&Some(friend), source, *mobility, promoting);
+        for mobility in PieceType::Pawn.mobility().iter() {
+            Area::r#move(&Some(friend), source, *mobility, moving);
         }
     }
 
@@ -391,23 +387,22 @@ impl Area {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn lance<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn lance<F1>(friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting = &mut |destination| {
+        let moving = &mut |destination, _agility| {
             Promoting::pawn_lance(
                 friend,
                 &destination,
-                callback,
+                moving,
                 Some(MovePermission::from_pawn_or_lance(friend)),
             )
         };
 
-        let mobilities = [Mobility::new(Angle::Ccw270, Agility::Sliding)];
-        for mobility in &mobilities {
-            Area::r#move(&Some(friend), source, *mobility, promoting);
+        for mobility in PieceType::Lance.mobility().iter() {
+            Area::r#move(&Some(friend), source, *mobility, moving);
         }
     }
 
@@ -418,26 +413,22 @@ impl Area {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn knight<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn knight<F1>(friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting = &mut |destination| {
+        let moving = &mut |destination, _agility| {
             Promoting::knight(
                 friend,
                 &destination,
-                callback,
+                moving,
                 Some(MovePermission::from_knight(friend)),
             )
         };
 
-        let mobilities = [
-            Mobility::new(Angle::Ccw225, Agility::Knight),
-            Mobility::new(Angle::Ccw225.rotate90ccw(), Agility::Knight),
-        ];
-        for mobility in &mobilities {
-            Area::r#move(&Some(friend), source, *mobility, promoting);
+        for mobility in PieceType::Knight.mobility().iter() {
+            Area::r#move(&Some(friend), source, *mobility, moving);
         }
     }
 
@@ -448,23 +439,16 @@ impl Area {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn silver<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn silver<F1>(friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting =
-            &mut |destination| Promoting::silver(friend, &source, &destination, callback);
+        let moving =
+            &mut |destination, _agility| Promoting::silver(friend, &source, &destination, moving);
 
-        let mobilities = [
-            Mobility::new(Angle::Ccw270, Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate45ccw(), Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate90ccw().rotate45ccw(), Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate90cw().rotate45cw(), Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate45cw(), Agility::Hopping),
-        ];
-        for mobility in &mobilities {
-            Area::r#move(&Some(friend), source, *mobility, promoting);
+        for mobility in PieceType::Silver.mobility().iter() {
+            Area::r#move(&Some(friend), source, *mobility, moving);
         }
     }
 
@@ -475,24 +459,17 @@ impl Area {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn gold<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn gold<F1>(friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let hopping =
-            &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
+        let moving = &mut |destination, _agility| {
+            moving(destination, Promotability::Deny, Agility::Hopping, None)
+        };
 
-        let mobilities = [
-            Mobility::new(Angle::Ccw270, Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate45ccw(), Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate90ccw(), Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate180(), Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate90cw(), Agility::Hopping),
-            Mobility::new(Angle::Ccw270.rotate45cw(), Agility::Hopping),
-        ];
-        for mobility in &mobilities {
-            Area::r#move(&Some(friend), source, *mobility, hopping);
+        for mobility in PieceType::Gold.mobility().iter() {
+            Area::r#move(&Some(friend), source, *mobility, moving);
         }
     }
 
@@ -502,26 +479,17 @@ impl Area {
     /// ---------
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn king<F1>(source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn king<F1>(source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let hopping =
-            &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
+        let moving = &mut |destination, _agility| {
+            moving(destination, Promotability::Deny, Agility::Hopping, None)
+        };
 
-        let mobilities = [
-            Mobility::new(Angle::Ccw0, Agility::Hopping),
-            Mobility::new(Angle::Ccw45, Agility::Hopping),
-            Mobility::new(Angle::Ccw90, Agility::Hopping),
-            Mobility::new(Angle::Ccw135, Agility::Hopping),
-            Mobility::new(Angle::Ccw180, Agility::Hopping),
-            Mobility::new(Angle::Ccw225, Agility::Hopping),
-            Mobility::new(Angle::Ccw270, Agility::Hopping),
-            Mobility::new(Angle::Ccw315, Agility::Hopping),
-        ];
-        for mobility in &mobilities {
-            Area::r#move(&None, source, *mobility, hopping);
+        for mobility in PieceType::King.mobility().iter() {
+            Area::r#move(&None, source, *mobility, moving);
         }
     }
 
@@ -531,21 +499,16 @@ impl Area {
     /// ---------
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn bishop<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn bishop<F1>(friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting =
-            &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
-        let mobilities = [
-            Mobility::new(Angle::Ccw45, Agility::Sliding),
-            Mobility::new(Angle::Ccw135, Agility::Sliding),
-            Mobility::new(Angle::Ccw225, Agility::Sliding),
-            Mobility::new(Angle::Ccw315, Agility::Sliding),
-        ];
-        for mobility in &mobilities {
-            Area::r#move(&Some(friend), source, *mobility, promoting);
+        let moving = &mut |destination, _agility| {
+            Promoting::bishop_rook(friend, &source, &destination, moving)
+        };
+        for mobility in PieceType::Bishop.mobility().iter() {
+            Area::r#move(&Some(friend), source, *mobility, moving);
         }
     }
 
@@ -555,21 +518,16 @@ impl Area {
     /// ---------
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn rook<F1>(friend: Phase, source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn rook<F1>(friend: Phase, source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let promoting =
-            &mut |destination| Promoting::bishop_rook(friend, &source, &destination, callback);
-        let mobilities = [
-            Mobility::new(Angle::Ccw0, Agility::Sliding),
-            Mobility::new(Angle::Ccw90, Agility::Sliding),
-            Mobility::new(Angle::Ccw180, Agility::Sliding),
-            Mobility::new(Angle::Ccw270, Agility::Sliding),
-        ];
-        for mobility in &mobilities {
-            Area::r#move(&Some(friend), source, *mobility, promoting);
+        let moving = &mut |destination, _agility| {
+            Promoting::bishop_rook(friend, &source, &destination, moving)
+        };
+        for mobility in PieceType::Rook.mobility().iter() {
+            Area::r#move(&Some(friend), source, *mobility, moving);
         }
     }
 
@@ -579,40 +537,16 @@ impl Area {
     /// ---------
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn horse<F1>(source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn horse<F1>(source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        {
-            let sliding = &mut |destination| {
-                callback(destination, Promotability::Deny, Agility::Sliding, None)
-            };
+        let moving =
+            &mut |destination, agility| moving(destination, Promotability::Deny, agility, None);
 
-            let mobilities = [
-                Mobility::new(Angle::Ccw45, Agility::Sliding),
-                Mobility::new(Angle::Ccw135, Agility::Sliding),
-                Mobility::new(Angle::Ccw225, Agility::Sliding),
-                Mobility::new(Angle::Ccw315, Agility::Sliding),
-            ];
-            for mobility in &mobilities {
-                Area::r#move(&None, source, *mobility, sliding);
-            }
-        }
-        {
-            let hopping = &mut |destination| {
-                callback(destination, Promotability::Deny, Agility::Hopping, None)
-            };
-
-            let mobilities = [
-                Mobility::new(Angle::Ccw0, Agility::Hopping),
-                Mobility::new(Angle::Ccw90, Agility::Hopping),
-                Mobility::new(Angle::Ccw180, Agility::Hopping),
-                Mobility::new(Angle::Ccw270, Agility::Hopping),
-            ];
-            for mobility in &mobilities {
-                Area::r#move(&None, source, *mobility, hopping);
-            }
+        for mobility in PieceType::Horse.mobility().iter() {
+            Area::r#move(&None, source, *mobility, moving);
         }
     }
 
@@ -622,68 +556,18 @@ impl Area {
     /// ---------
     ///
     /// * `source` - 移動元升だぜ☆（＾～＾）
-    /// * `callback` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn dragon<F1>(source: &AbsoluteAddress, callback: &mut F1)
+    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+    fn dragon<F1>(source: &AbsoluteAddress, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         {
-            let sliding = &mut |destination| {
-                callback(destination, Promotability::Deny, Agility::Sliding, None)
-            };
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw0, Agility::Sliding),
-                sliding,
-            );
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw90, Agility::Sliding),
-                sliding,
-            );
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw180, Agility::Sliding),
-                sliding,
-            );
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw270, Agility::Sliding),
-                sliding,
-            );
-        }
-        {
-            let hopping = &mut |destination| {
-                callback(destination, Promotability::Deny, Agility::Hopping, None)
-            };
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw45, Agility::Hopping),
-                hopping,
-            );
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw135, Agility::Hopping),
-                hopping,
-            );
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw225, Agility::Hopping),
-                hopping,
-            );
-            Area::r#move(
-                &None,
-                source,
-                Mobility::new(Angle::Ccw315, Agility::Hopping),
-                hopping,
-            );
+            let moving =
+                &mut |destination, agility| moving(destination, Promotability::Deny, agility, None);
+
+            for mobility in PieceType::Dragon.mobility().iter() {
+                Area::r#move(&None, source, *mobility, moving);
+            }
         }
     }
 
@@ -748,9 +632,9 @@ impl Area {
         friend: &Option<Phase>,
         start: &AbsoluteAddress,
         mobility: Mobility,
-        adr_get: &mut F1,
+        moving: &mut F1,
     ) where
-        F1: FnMut(AbsoluteAddress) -> bool,
+        F1: FnMut(AbsoluteAddress, Agility) -> bool,
     {
         let angle = if let Some(friend_val) = friend {
             // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
@@ -775,7 +659,7 @@ impl Area {
                         break;
                     }
 
-                    if adr_get(cur) {
+                    if moving(cur, mobility.agility) {
                         break;
                     }
                 }
@@ -786,7 +670,7 @@ impl Area {
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 if cur.offset(&angle.west_ccw_double_rank()).legal_cur() {
-                    adr_get(cur);
+                    moving(cur, mobility.agility);
                 }
             }
             Agility::Hopping => {
@@ -794,7 +678,7 @@ impl Area {
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 if cur.offset(&angle.west_ccw()).legal_cur() {
-                    adr_get(cur);
+                    moving(cur, mobility.agility);
                 }
             }
         }
@@ -803,7 +687,7 @@ impl Area {
 
 /// 機敏性。
 #[derive(Clone, Copy, Debug)]
-enum Agility {
+pub enum Agility {
     /// 隣へ１つ進む駒。
     Hopping,
     /// 長い利き。

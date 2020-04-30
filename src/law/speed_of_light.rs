@@ -16,6 +16,7 @@ use crate::cosmic::smart::features::PIECE_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, HandAddressType, PieceMeaning, PieceType};
 use crate::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::cosmic::toy_box::PieceNum;
+use crate::law::generate_move::{Agility, Mobility};
 use num_traits::FromPrimitive;
 // use std::sync::Mutex;
 
@@ -59,6 +60,7 @@ struct SpeedOfLight {
 
     /// 駒種類☆（＾～＾）
     piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
+    piece_type_to_mobility_table: [Vec<Mobility>; PIECE_TYPE_LEN],
     piece_type_to_movility_table: [Vec<Movility>; PIECE_TYPE_LEN],
     piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
 
@@ -340,6 +342,103 @@ impl Default for SpeedOfLight {
                 true,  // PromotedKnight
                 true,  // PromotedLance
                 true,  // PromotedPawn
+            ],
+            piece_type_to_mobility_table: [
+                vec![
+                    Mobility::new(Angle::Ccw0, Agility::Hopping),
+                    Mobility::new(Angle::Ccw45, Agility::Hopping),
+                    Mobility::new(Angle::Ccw90, Agility::Hopping),
+                    Mobility::new(Angle::Ccw135, Agility::Hopping),
+                    Mobility::new(Angle::Ccw180, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                ], // King
+                vec![
+                    Mobility::new(Angle::Ccw0, Agility::Sliding),
+                    Mobility::new(Angle::Ccw90, Agility::Sliding),
+                    Mobility::new(Angle::Ccw180, Agility::Sliding),
+                    Mobility::new(Angle::Ccw270, Agility::Sliding),
+                ], // Rook
+                vec![
+                    Mobility::new(Angle::Ccw45, Agility::Sliding),
+                    Mobility::new(Angle::Ccw135, Agility::Sliding),
+                    Mobility::new(Angle::Ccw225, Agility::Sliding),
+                    Mobility::new(Angle::Ccw315, Agility::Sliding),
+                ], // Bishop
+                vec![
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                    Mobility::new(Angle::Ccw0, Agility::Hopping),
+                    Mobility::new(Angle::Ccw90, Agility::Hopping),
+                    Mobility::new(Angle::Ccw180, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                ], // Gold
+                vec![
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                    Mobility::new(Angle::Ccw45, Agility::Hopping),
+                    Mobility::new(Angle::Ccw135, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                ], // Silver
+                vec![
+                    Mobility::new(Angle::Ccw225, Agility::Knight),
+                    Mobility::new(Angle::Ccw315, Agility::Knight),
+                ], // Knight
+                vec![Mobility::new(Angle::Ccw270, Agility::Sliding)], // Lance
+                vec![Mobility::new(Angle::Ccw270, Agility::Hopping)], // Pawn
+                vec![
+                    Mobility::new(Angle::Ccw0, Agility::Sliding),
+                    Mobility::new(Angle::Ccw90, Agility::Sliding),
+                    Mobility::new(Angle::Ccw180, Agility::Sliding),
+                    Mobility::new(Angle::Ccw270, Agility::Sliding),
+                    Mobility::new(Angle::Ccw45, Agility::Hopping),
+                    Mobility::new(Angle::Ccw135, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                ], // Dragon
+                vec![
+                    Mobility::new(Angle::Ccw0, Agility::Hopping),
+                    Mobility::new(Angle::Ccw90, Agility::Hopping),
+                    Mobility::new(Angle::Ccw180, Agility::Hopping),
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw45, Agility::Sliding),
+                    Mobility::new(Angle::Ccw135, Agility::Sliding),
+                    Mobility::new(Angle::Ccw225, Agility::Sliding),
+                    Mobility::new(Angle::Ccw315, Agility::Sliding),
+                ], // Horse
+                vec![
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                    Mobility::new(Angle::Ccw0, Agility::Hopping),
+                    Mobility::new(Angle::Ccw90, Agility::Hopping),
+                    Mobility::new(Angle::Ccw180, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                ], // PromotedSilver (Same gold)
+                vec![
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                    Mobility::new(Angle::Ccw0, Agility::Hopping),
+                    Mobility::new(Angle::Ccw90, Agility::Hopping),
+                    Mobility::new(Angle::Ccw180, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                ], // PromotedKnight
+                vec![
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                    Mobility::new(Angle::Ccw0, Agility::Hopping),
+                    Mobility::new(Angle::Ccw90, Agility::Hopping),
+                    Mobility::new(Angle::Ccw180, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                ], // PromotedLance
+                vec![
+                    Mobility::new(Angle::Ccw270, Agility::Hopping),
+                    Mobility::new(Angle::Ccw315, Agility::Hopping),
+                    Mobility::new(Angle::Ccw0, Agility::Hopping),
+                    Mobility::new(Angle::Ccw90, Agility::Hopping),
+                    Mobility::new(Angle::Ccw180, Agility::Hopping),
+                    Mobility::new(Angle::Ccw225, Agility::Hopping),
+                ], // PromotedPawn
             ],
             piece_type_to_movility_table: [
                 vec![
@@ -632,6 +731,9 @@ impl PieceMeaning {
 impl PieceType {
     pub fn promoted(self) -> bool {
         NINE_299792458.piece_type_to_promoted_table[self as usize]
+    }
+    pub fn mobility(self) -> &'static Vec<Mobility> {
+        &NINE_299792458.piece_type_to_mobility_table[self as usize]
     }
     pub fn movility(self) -> &'static Vec<Movility> {
         &NINE_299792458.piece_type_to_movility_table[self as usize]
