@@ -100,8 +100,8 @@ impl Way {
 
 #[derive(Clone, Copy)]
 pub struct Mobility {
-    angle: Angle,
-    agility: Agility,
+    pub angle: Angle,
+    pub agility: Agility,
 }
 impl Mobility {
     pub fn new(angle: Angle, agility: Agility) -> Self {

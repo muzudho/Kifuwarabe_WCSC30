@@ -270,9 +270,9 @@ impl Tree {
                             self.evaluation.komawari(),
                             self.evaluation.promotion(),
                             // サンプルを見ているだけだぜ☆（＾～＾）
-                            game.board.controls[game.history.get_friend() as usize][68],
-                            game.board.controls[game.history.get_friend() as usize][58],
-                            game.board.controls[game.history.get_friend() as usize][48],
+                            game.board.controls[game.history.get_friend() as usize].get(68),
+                            game.board.controls[game.history.get_friend() as usize].get(58),
+                            game.board.controls[game.history.get_friend() as usize].get(48),
                         ))),
                     );
                     game.info.print(
@@ -368,7 +368,7 @@ impl Tree {
         for index in ways.indexes.iter() {
             // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
             game.board.controls[friend_index]
-                [ways.get(*index).movement.destination.address() as usize] += sign;
+                .add(ways.get(*index).movement.destination.address(), sign);
             game.board.control_sum += sign;
         }
     }

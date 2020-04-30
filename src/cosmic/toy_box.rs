@@ -8,9 +8,9 @@ use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_MAX};
 use crate::cosmic::smart::square::{
-    AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
+    AbsoluteAddress, RelAdr, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
-use crate::law::generate_move::{Area, Piece};
+use crate::law::generate_move::{Agility, Area, Piece};
 use crate::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
@@ -113,6 +113,27 @@ pub enum Location {
     Busy,
 }
 
+// 利きボード☆（＾～＾）
+#[derive(Clone, Copy)]
+pub struct ControlBoard {
+    board: [isize; BOARD_MEMORY_AREA as usize],
+}
+impl Default for ControlBoard {
+    fn default() -> Self {
+        ControlBoard {
+            board: [0; BOARD_MEMORY_AREA as usize],
+        }
+    }
+}
+impl ControlBoard {
+    pub fn get(&self, index: usize) -> isize {
+        self.board[index]
+    }
+    pub fn add(&mut self, index: usize, offset: isize) {
+        self.board[index] += offset
+    }
+}
+
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
 /// 10の位を筋、1の位を段とする。
@@ -127,7 +148,7 @@ pub struct Board {
     pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
     pub control_sum: isize,
-    pub controls: [[isize; BOARD_MEMORY_AREA as usize]; PHASE_LEN],
+    pub controls: [ControlBoard; PHASE_LEN],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -174,7 +195,7 @@ impl Default for Board {
                 HandAddressTypeStack::default(),
             ],
             control_sum: 0,
-            controls: [[0; BOARD_MEMORY_AREA as usize]; PHASE_LEN],
+            controls: [ControlBoard::default(); PHASE_LEN],
         }
     }
 }
@@ -232,11 +253,57 @@ impl Board {
         self.controls = board.controls.clone();
     }
 
-    /// 初期局面の利きを数えようぜ☆（＾～＾）？
+    /// TODO 初期局面の利きを数えようぜ☆（＾～＾）？
     pub fn init_controls(&mut self) {
-        Area::for_all(&mut |adr| {
+        Area::for_all(&mut |source| {
             // そこに置いてある駒を調べようぜ☆（＾～＾）？
-            let piece = self.piece_at(&adr);
+            if let Some(piece) = self.piece_at(&source) {
+                // 駒の利きを調べようぜ☆（＾～＾）？
+                for mobility in piece.meaning.r#type().mobility() {
+                    match mobility.agility {
+                        Agility::Hopping => {
+                            let mut cur = source.clone();
+                            let mut rel = RelAdr::new(1, 0);
+                            rel.rotate(mobility.angle);
+                            if cur.offset(&rel).legal_cur() {
+                                self.controls[piece.meaning.phase() as usize].add(cur.address(), 1);
+                            }
+                        }
+                        Agility::Sliding => {
+                            let mut cur = source.clone();
+                            let mut rel = RelAdr::new(1, 0);
+                            for _i in 0..8 {
+                                rel.rotate(mobility.angle);
+                                if cur.offset(&rel).legal_cur() {
+                                    if let Some(collision_piece) = self.piece_at(&cur) {
+                                        if collision_piece.meaning.phase() == piece.meaning.phase()
+                                        {
+                                            // 味方の駒にぶつかったのなら終わり☆（＾～＾）
+                                            break;
+                                        }
+
+                                        self.controls[piece.meaning.phase() as usize]
+                                            .add(cur.address(), 1);
+
+                                        // 敵の駒を取ったところで終わり☆（＾～＾）
+                                        break;
+                                    }
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                        Agility::Knight => {
+                            let mut cur = source.clone();
+                            let mut rel = RelAdr::new(1, 0);
+                            rel.double_rank().rotate(mobility.angle);
+                            if cur.offset(&rel).legal_cur() {
+                                self.controls[piece.meaning.phase() as usize].add(cur.address(), 1);
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 
