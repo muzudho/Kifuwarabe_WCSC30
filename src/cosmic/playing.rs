@@ -87,7 +87,7 @@ impl Game {
 
     /// 棋譜の作成
     pub fn set_move(&mut self, r#move: &Movement) {
-        self.history.movements[self.history.ply as usize] = *r#move;
+        self.history.movements[self.history.ply as usize] = r#move.clone()
     }
     pub fn get_move(&self) -> &Movement {
         &self.history.movements[self.history.ply as usize]

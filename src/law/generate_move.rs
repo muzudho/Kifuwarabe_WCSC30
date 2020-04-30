@@ -98,6 +98,19 @@ impl Way {
     }
 }
 
+pub struct Mobility {
+    angle: Angle,
+    agility: Agility,
+}
+impl Mobility {
+    fn new(angle: Angle, agility: Agility) -> Self {
+        Mobility {
+            angle: angle,
+            agility: agility,
+        }
+    }
+}
+
 /// Pseudo legal move(疑似合法手)☆（＾～＾）
 ///
 /// 先手の連続王手の千日手とか、空き王手とか、駒を見ただけでは調べられないだろ☆（＾～＾）
@@ -365,7 +378,12 @@ impl Area {
         };
 
         let angle = Angle::Ccw270;
-        Area::r#move(&Some(friend), source, angle, Agility::Hopping, promoting);
+        Area::r#move(
+            &Some(friend),
+            source,
+            Mobility::new(angle, Agility::Hopping),
+            promoting,
+        );
     }
 
     /// 先手から見た盤上の香の動けるマスだぜ☆（＾～＾）
@@ -390,7 +408,12 @@ impl Area {
         };
 
         let angle = Angle::Ccw270;
-        Area::r#move(&Some(friend), source, angle, Agility::Sliding, promoting);
+        Area::r#move(
+            &Some(friend),
+            source,
+            Mobility::new(angle, Agility::Sliding),
+            promoting,
+        );
     }
 
     /// 先手から見た盤上の桂の動けるマスだぜ☆（＾～＾）
@@ -415,12 +438,16 @@ impl Area {
         };
 
         let angle = Angle::Ccw225;
-        Area::r#move(&Some(friend), source, angle, Agility::Knight, promoting);
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate90ccw(),
-            Agility::Knight,
+            Mobility::new(angle, Agility::Knight),
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Mobility::new(angle.rotate90ccw(), Agility::Knight),
             promoting,
         );
     }
@@ -441,33 +468,34 @@ impl Area {
             &mut |destination| Promoting::silver(friend, &source, &destination, callback);
 
         let angle = Angle::Ccw270;
-        Area::r#move(&Some(friend), source, angle, Agility::Hopping, promoting);
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate45ccw(),
-            Agility::Hopping,
+            Mobility::new(angle, Agility::Hopping),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate90ccw().rotate45ccw(),
-            Agility::Hopping,
+            Mobility::new(angle.rotate45ccw(), Agility::Hopping),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate90cw().rotate45cw(),
-            Agility::Hopping,
+            Mobility::new(angle.rotate90ccw().rotate45ccw(), Agility::Hopping),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate45cw(),
-            Agility::Hopping,
+            Mobility::new(angle.rotate90cw().rotate45cw(), Agility::Hopping),
+            promoting,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Mobility::new(angle.rotate45cw(), Agility::Hopping),
             promoting,
         );
     }
@@ -487,40 +515,40 @@ impl Area {
         let hopping =
             &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
         let angle = Angle::Ccw270;
-        Area::r#move(&Some(friend), source, angle, Agility::Hopping, hopping);
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate45ccw(),
-            Agility::Hopping,
+            Mobility::new(angle, Agility::Hopping),
             hopping,
         );
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate90ccw(),
-            Agility::Hopping,
+            Mobility::new(angle.rotate45ccw(), Agility::Hopping),
             hopping,
         );
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate180(),
-            Agility::Hopping,
+            Mobility::new(angle.rotate90ccw(), Agility::Hopping),
             hopping,
         );
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate90cw(),
-            Agility::Hopping,
+            Mobility::new(angle.rotate180(), Agility::Hopping),
             hopping,
         );
         Area::r#move(
             &Some(friend),
             source,
-            angle.rotate45cw(),
-            Agility::Hopping,
+            Mobility::new(angle.rotate90cw(), Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &Some(friend),
+            source,
+            Mobility::new(angle.rotate45cw(), Agility::Hopping),
             hopping,
         );
     }
@@ -538,14 +566,54 @@ impl Area {
     {
         let hopping =
             &mut |destination| callback(destination, Promotability::Deny, Agility::Hopping, None);
-        Area::r#move(&None, source, Angle::Ccw0, Agility::Hopping, hopping);
-        Area::r#move(&None, source, Angle::Ccw45, Agility::Hopping, hopping);
-        Area::r#move(&None, source, Angle::Ccw90, Agility::Hopping, hopping);
-        Area::r#move(&None, source, Angle::Ccw135, Agility::Hopping, hopping);
-        Area::r#move(&None, source, Angle::Ccw180, Agility::Hopping, hopping);
-        Area::r#move(&None, source, Angle::Ccw225, Agility::Hopping, hopping);
-        Area::r#move(&None, source, Angle::Ccw270, Agility::Hopping, hopping);
-        Area::r#move(&None, source, Angle::Ccw315, Agility::Hopping, hopping);
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw0, Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw45, Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw90, Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw135, Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw180, Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw225, Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw270, Agility::Hopping),
+            hopping,
+        );
+        Area::r#move(
+            &None,
+            source,
+            Mobility::new(Angle::Ccw315, Agility::Hopping),
+            hopping,
+        );
     }
 
     /// 盤上の角の動けるマスだぜ☆（＾～＾）
@@ -564,29 +632,25 @@ impl Area {
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw45,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw45, Agility::Sliding),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw135,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw135, Agility::Sliding),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw225,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw225, Agility::Sliding),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw315,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw315, Agility::Sliding),
             promoting,
         );
     }
@@ -607,29 +671,25 @@ impl Area {
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw0,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw0, Agility::Sliding),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw90,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw90, Agility::Sliding),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw180,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw180, Agility::Sliding),
             promoting,
         );
         Area::r#move(
             &Some(friend),
             source,
-            Angle::Ccw270,
-            Agility::Sliding,
+            Mobility::new(Angle::Ccw270, Agility::Sliding),
             promoting,
         );
     }
@@ -649,19 +709,59 @@ impl Area {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            Area::r#move(&None, source, Angle::Ccw45, Agility::Sliding, sliding);
-            Area::r#move(&None, source, Angle::Ccw135, Agility::Sliding, sliding);
-            Area::r#move(&None, source, Angle::Ccw225, Agility::Sliding, sliding);
-            Area::r#move(&None, source, Angle::Ccw315, Agility::Sliding, sliding);
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw45, Agility::Sliding),
+                sliding,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw135, Agility::Sliding),
+                sliding,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw225, Agility::Sliding),
+                sliding,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw315, Agility::Sliding),
+                sliding,
+            );
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            Area::r#move(&None, source, Angle::Ccw0, Agility::Hopping, hopping);
-            Area::r#move(&None, source, Angle::Ccw90, Agility::Hopping, hopping);
-            Area::r#move(&None, source, Angle::Ccw180, Agility::Hopping, hopping);
-            Area::r#move(&None, source, Angle::Ccw270, Agility::Hopping, hopping);
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw0, Agility::Hopping),
+                hopping,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw90, Agility::Hopping),
+                hopping,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw180, Agility::Hopping),
+                hopping,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw270, Agility::Hopping),
+                hopping,
+            );
         }
     }
 
@@ -680,19 +780,59 @@ impl Area {
             let sliding = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Sliding, None)
             };
-            Area::r#move(&None, source, Angle::Ccw0, Agility::Sliding, sliding);
-            Area::r#move(&None, source, Angle::Ccw90, Agility::Sliding, sliding);
-            Area::r#move(&None, source, Angle::Ccw180, Agility::Sliding, sliding);
-            Area::r#move(&None, source, Angle::Ccw270, Agility::Sliding, sliding);
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw0, Agility::Sliding),
+                sliding,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw90, Agility::Sliding),
+                sliding,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw180, Agility::Sliding),
+                sliding,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw270, Agility::Sliding),
+                sliding,
+            );
         }
         {
             let hopping = &mut |destination| {
                 callback(destination, Promotability::Deny, Agility::Hopping, None)
             };
-            Area::r#move(&None, source, Angle::Ccw45, Agility::Hopping, hopping);
-            Area::r#move(&None, source, Angle::Ccw135, Agility::Hopping, hopping);
-            Area::r#move(&None, source, Angle::Ccw225, Agility::Hopping, hopping);
-            Area::r#move(&None, source, Angle::Ccw315, Agility::Hopping, hopping);
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw45, Agility::Hopping),
+                hopping,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw135, Agility::Hopping),
+                hopping,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw225, Agility::Hopping),
+                hopping,
+            );
+            Area::r#move(
+                &None,
+                source,
+                Mobility::new(Angle::Ccw315, Agility::Hopping),
+                hopping,
+            );
         }
     }
 
@@ -756,8 +896,7 @@ impl Area {
     fn r#move<F1>(
         friend: &Option<Phase>,
         start: &AbsoluteAddress,
-        angle: Angle,
-        agility: Agility,
+        mobility: Mobility,
         adr_get: &mut F1,
     ) where
         F1: FnMut(AbsoluteAddress) -> bool,
@@ -765,19 +904,19 @@ impl Area {
         let angle = if let Some(friend_val) = friend {
             // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
             if *friend_val == Phase::Second {
-                angle.rotate180()
+                mobility.angle.rotate180()
             } else {
-                angle
+                mobility.angle
             }
         } else {
             // 先後同型だからそのままだぜ☆（＾～＾）
-            angle
+            mobility.angle
         };
 
-        match agility {
+        match mobility.agility {
             Agility::Sliding => {
                 let mut cur = start.clone();
-                let r = RelAdr::new(1, 0).rotate(angle).clone();
+                let r = RelAdr::new(1, 0).rotate(mobility.angle).clone();
 
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
