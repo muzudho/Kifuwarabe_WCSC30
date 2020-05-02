@@ -136,31 +136,20 @@ impl PseudoLegalMoves {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
-    /// * `listen_previous_control` - 利きを受け取れだぜ☆（＾～＾）
     ///
     /// Returns
     /// -------
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    pub fn make_move<F1, F2>(
-        friend: Phase,
-        board: &Board,
-        listen_move: &mut F1,
-        listen_previous_control: &mut F2,
-    ) where
-        F1: FnMut(Way),
-        F2: FnMut(&AbsoluteAddress),
+    pub fn make_move<F1>(friend: Phase, board: &Board, listen_move: &mut F1)
+    where
+        F1: FnMut(Option<Way>, &AbsoluteAddress),
     {
         board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
-            Location::Board(source) => PseudoLegalMoves::start_on_board(
-                friend,
-                &source,
-                &piece,
-                board,
-                listen_move,
-                listen_previous_control,
-            ),
+            Location::Board(source) => {
+                PseudoLegalMoves::start_on_board(friend, &source, &piece, board, listen_move)
+            }
             Location::Hand(adr) => {
                 PseudoLegalMoves::make_drop(friend, adr, board, listen_move);
             }
@@ -179,28 +168,24 @@ impl PseudoLegalMoves {
     /// * `piece` - 駒だぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
-    /// * `listen_previous_control` - 利きを受け取れだぜ☆（＾～＾）
     ///
     /// Returns
     /// -------
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    fn start_on_board<F1, F2>(
+    fn start_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
         piece: &Piece,
         board: &Board,
         listen_move: &mut F1,
-        listen_previous_control: &mut F2,
     ) where
-        F1: FnMut(Way),
-        F2: FnMut(&AbsoluteAddress),
+        F1: FnMut(Option<Way>, &AbsoluteAddress),
     {
         let moving =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
                 let pseudo_captured = board.piece_at(&destination);
-                listen_previous_control(&destination);
 
                 let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
                     if pseudo_captured_val.meaning.phase() == friend {
@@ -236,26 +221,37 @@ impl PseudoLegalMoves {
                         Any => {
                             // 成ったり、成れなかったりできるとき。
                             if !forbidden {
-                                listen_move(Way::new(
-                                    Movement::new(Some(*source), destination, false, None),
-                                    pseudo_captured,
-                                ));
+                                listen_move(
+                                    Some(Way::new(
+                                        Movement::new(Some(*source), destination, false, None),
+                                        pseudo_captured,
+                                    )),
+                                    &destination,
+                                );
                             }
-                            listen_move(Way::new(
-                                Movement::new(Some(*source), destination, true, None),
-                                pseudo_captured,
-                            ));
+                            listen_move(
+                                Some(Way::new(
+                                    Movement::new(Some(*source), destination, true, None),
+                                    pseudo_captured,
+                                )),
+                                &destination,
+                            );
                         }
                         _ => {
                             // 成れるか、成れないかのどちらかのとき。
                             if promotion || !forbidden {
-                                listen_move(Way::new(
-                                    Movement::new(Some(*source), destination, promotion, None),
-                                    pseudo_captured,
-                                ));
+                                listen_move(
+                                    Some(Way::new(
+                                        Movement::new(Some(*source), destination, promotion, None),
+                                        pseudo_captured,
+                                    )),
+                                    &destination,
+                                );
                             }
                         }
                     };
+                } else {
+                    listen_move(None, &destination);
                 }
 
                 !space
@@ -275,7 +271,7 @@ impl PseudoLegalMoves {
     /// * `listen_control` - 利きを受け取れだぜ☆（＾～＾）
     fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, listen_move: &mut F1)
     where
-        F1: FnMut(Way),
+        F1: FnMut(Option<Way>, &AbsoluteAddress),
     {
         if let Some(piece) = board.last_hand(adr) {
             // 打つぜ☆（＾～＾）
@@ -292,15 +288,18 @@ impl PseudoLegalMoves {
                         }
                         _ => {}
                     }
-                    listen_move(Way::new(
-                        Movement::new(
-                            None,                                        // 駒台
-                            destination,                                 // どの升へ行きたいか
-                            false,                                       // 打に成りは無し
-                            Some(piece.meaning.hand_address().r#type()), // 打った駒種類
-                        ),
-                        None,
-                    ));
+                    listen_move(
+                        Some(Way::new(
+                            Movement::new(
+                                None,                                        // 駒台
+                                destination,                                 // どの升へ行きたいか
+                                false,                                       // 打に成りは無し
+                                Some(piece.meaning.hand_address().r#type()), // 打った駒種類
+                            ),
+                            None,
+                        )),
+                        &destination,
+                    );
                 }
             };
 

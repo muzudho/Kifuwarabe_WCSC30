@@ -156,10 +156,10 @@ impl Tree {
             PseudoLegalMoves::make_move(
                 game.history.get_friend(),
                 &game.board,
-                &mut |way| {
-                    ways.push(&way);
-                },
-                &mut |destination| {
+                &mut |way, destination| {
+                    if let Some(way_val) = way {
+                        ways.push(&way_val);
+                    }
                     // 利きを一旦覚えようぜ☆（＾～＾）？
                     controls.push(*destination);
                 },
