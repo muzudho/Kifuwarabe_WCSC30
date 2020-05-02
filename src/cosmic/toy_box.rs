@@ -276,7 +276,7 @@ impl Board {
                         Agility::Knight => {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
-                            rel.double_rank().rotate(mobility.angle);
+                            rel.rotate(mobility.angle).double_rank();
                             if !cur.offset(&rel).wall() {
                                 self.add_control(piece.meaning.phase(), &cur, 1);
                             }
