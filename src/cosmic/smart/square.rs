@@ -395,60 +395,6 @@ pub enum Angle {
     Ccw315,
 }
 
-/// 升の番地だぜ☆（＾～＾）
-/// きふわらべでは 辞書象限 を採用している☆（＾～＾）
-/// これは、file, rank は別々に持ち、しかも軸毎にプラス・マイナスを持つぜ☆（＾～＾）
-pub struct Address {
-    file: isize,
-    rank: isize,
-}
-impl Default for Address {
-    /// 駒台に番地は無いぜ☆（＾～＾） 仮に (0, 0) でも入れとくぜ☆（＾～＾）
-    fn default() -> Self {
-        Address { file: 0, rank: 0 }
-    }
-}
-impl Address {
-    pub fn new(file1: isize, rank1: isize) -> Self {
-        debug_assert!(
-            -(FILE_11 as isize) < file1 && file1 < (FILE_11 as isize),
-            format!("file={}", file1)
-        );
-        debug_assert!(
-            -(RANK_11 as isize) < rank1 && rank1 < (RANK_11 as isize),
-            format!("rank={}", rank1)
-        );
-        Address {
-            file: file1,
-            rank: rank1,
-        }
-    }
-
-    pub fn from_absolute_address(address: usize) -> Option<AbsoluteAddress> {
-        let file = (address / 10) % 10;
-        let rank = address % 10;
-        if address == 0 {
-            None
-        } else {
-            debug_assert!(FILE_0 < file && file < FILE_10, format!("file={}", file));
-            debug_assert!(RANK_0 < rank && rank < RANK_10, format!("rank={}", rank));
-            Some(AbsoluteAddress::new(file as usize, rank as usize))
-        }
-    }
-
-    pub fn abs(&self) -> AbsoluteAddress {
-        debug_assert!(
-            (FILE_0 as isize) < self.file && self.file < (FILE_10 as isize),
-            format!("file={}", self.file)
-        );
-        debug_assert!(
-            (RANK_0 as isize) < self.rank && self.rank < (RANK_10 as isize),
-            format!("rank={}", self.rank)
-        );
-        AbsoluteAddress::new(self.file as usize, self.rank as usize)
-    }
-}
-
 /// 相対番地。絶対番地と同じだが、回転の中心を原点に固定した操作が行われるぜ☆（＾～＾）
 ///
 /// 18  8  -2 -12 -22
@@ -618,6 +564,8 @@ impl fmt::Debug for RelAdr {
 }
 
 /// 絶対番地☆（＾～＾）相対番地と同じだが、回転の操作は座標 55 が中心になるぜ☆（＾～＾）
+/// きふわらべでは 辞書象限 を採用している☆（＾～＾）
+/// これは、file, rank は別々に持ち、しかも軸毎にプラス・マイナスを持つぜ☆（＾～＾）
 ///
 /// Copy: 配列の要素の初期化時に使う☆（＾～＾）
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -660,6 +608,18 @@ impl AbsoluteAddress {
         }
     }
 
+    pub fn from_absolute_address(address: usize) -> Option<AbsoluteAddress> {
+        let file = (address / 10) % 10;
+        let rank = address % 10;
+        if address == 0 {
+            None
+        } else {
+            debug_assert!(FILE_0 < file && file < FILE_10, format!("file={}", file));
+            debug_assert!(RANK_0 < rank && rank < RANK_10, format!("rank={}", rank));
+            Some(AbsoluteAddress::new(file as usize, rank as usize))
+        }
+    }
+
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...
     pub fn file(&self) -> usize {
         self.file
@@ -682,8 +642,9 @@ impl AbsoluteAddress {
         AbsoluteAddress::new(file, rank)
     }
 
-    pub fn legal_cur(&self) -> bool {
-        self.file % 10 != 0 && self.rank % 10 != 0
+    /// 壁の中にいる☆（＾～＾）
+    pub fn wall(&self) -> bool {
+        self.file % 10 == 0 || self.rank % 10 == 0
     }
 
     pub fn address(&self) -> usize {

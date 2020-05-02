@@ -1,7 +1,7 @@
 //!
 //! なんか難しいやつはここだぜ☆（＾～＾）
 //!
-use crate::cosmic::smart::square::{AbsoluteAddress, Address};
+use crate::cosmic::smart::square::AbsoluteAddress;
 
 /*
 /// 0 なら偽、それ以外は真☆（＾～＾）
@@ -38,7 +38,7 @@ pub fn push_sq_to_hash(hash: u64, square: Option<&AbsoluteAddress>) -> u64 {
 pub fn pop_sq_from_hash(hash: u64) -> (u64, Option<AbsoluteAddress>) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let adr = Address::from_absolute_address((hash & 0b111_1111) as usize);
+    let adr = AbsoluteAddress::from_absolute_address((hash & 0b111_1111) as usize);
     (hash >> 7, adr)
 }
 

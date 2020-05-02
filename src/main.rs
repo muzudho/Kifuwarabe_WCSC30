@@ -84,6 +84,8 @@ fn help_chiyuri(line: &str, len: usize, starts: usize, universe: &mut Universe) 
         Chiyuri::hash(universe);
     } else if 3 < len && &line[starts..4] == "kifu" {
         Chiyuri::kifu(universe);
+    } else if 3 < len && &line[starts..4] == "kiki" {
+        Chiyuri::kiki(universe);
     // L
     } else if 5 < len && &line[starts..6] == "list40" {
         Chiyuri::list40(universe);

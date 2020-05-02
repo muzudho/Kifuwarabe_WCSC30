@@ -176,7 +176,8 @@ impl Tree {
 
         // 利き追加☆（＾～＾）
         for destination in &controls {
-            game.board.controls[game.history.get_friend() as usize].add(destination.address(), 1);
+            game.board
+                .add_control(game.history.get_friend(), destination, 1);
         }
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
@@ -285,9 +286,18 @@ impl Tree {
                             self.evaluation.komawari(),
                             self.evaluation.promotion(),
                             // サンプルを見ているだけだぜ☆（＾～＾）
-                            game.board.controls[game.history.get_friend() as usize].get(68),
-                            game.board.controls[game.history.get_friend() as usize].get(58),
-                            game.board.controls[game.history.get_friend() as usize].get(48),
+                            game.board.get_control(
+                                game.history.get_friend(),
+                                &AbsoluteAddress::new(6, 8)
+                            ),
+                            game.board.get_control(
+                                game.history.get_friend(),
+                                &AbsoluteAddress::new(5, 8)
+                            ),
+                            game.board.get_control(
+                                game.history.get_friend(),
+                                &AbsoluteAddress::new(4, 8)
+                            ),
                         ))),
                     );
                     game.info.print(
@@ -364,7 +374,8 @@ impl Tree {
 
         // 利き削除☆（＾～＾）
         for destination in &controls {
-            game.board.controls[game.history.get_friend() as usize].add(destination.address(), -1);
+            game.board
+                .add_control(game.history.get_friend(), destination, -1);
         }
 
         if !exists_lose {

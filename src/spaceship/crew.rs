@@ -1,6 +1,7 @@
 use crate::config::*;
 use crate::cosmic::daydream::Tree;
 use crate::cosmic::playing::{Game, PosNums};
+use crate::cosmic::recording::Phase;
 use crate::cosmic::smart::square::{AbsoluteAddress, FILE_1};
 use crate::cosmic::universe::Universe;
 use crate::law::cryptographic::*;
@@ -8,7 +9,7 @@ use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::generate_move::Way;
 use crate::law::usi::*;
 use crate::spaceship::equipment::{Beam, PvString, Telescope};
-use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen};
+use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen, RestRoom};
 use rand::Rng;
 use std::io as std_io;
 
@@ -200,6 +201,13 @@ impl Chiyuri {
         let s = universe.game.get_moves_history_text();
         Beam::shoot(&s);
     }
+    pub fn kiki(universe: &Universe) {
+        // 利き数表示
+        let s = RestRoom::to_string(&universe.game, Phase::First);
+        Beam::shoot(&s);
+        let s = RestRoom::to_string(&universe.game, Phase::Second);
+        Beam::shoot(&s);
+    }
     pub fn list40(universe: &Universe) {
         Beam::shoot("----駒リスト40表示 ここから----");
         universe
@@ -234,18 +242,18 @@ impl Chiyuri {
             CommandRoom::print_title();
         } else {
             // 局面表示
-            let s = GameRoom::to_string(&universe.game, &PosNums::Current);
+            let s = GameRoom::to_string(&universe.game, PosNums::Current);
             Beam::shoot(&s);
         }
     }
     pub fn pos(universe: &Universe) {
         // 現局面表示
-        let s = GameRoom::to_string(&universe.game, &PosNums::Current);
+        let s = GameRoom::to_string(&universe.game, PosNums::Current);
         Beam::shoot(&s);
     }
     pub fn pos0(universe: &Universe) {
         // 初期局面表示
-        let s = GameRoom::to_string(&universe.game, &PosNums::Start);
+        let s = GameRoom::to_string(&universe.game, PosNums::Start);
         Beam::shoot(&s);
     }
     pub fn rand() {

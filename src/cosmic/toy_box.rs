@@ -126,7 +126,8 @@ pub struct Board {
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
     pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
-    pub controls: [ControlBoard; PHASE_LEN],
+    /// 利きの数☆（＾～＾）
+    controls: [ControlBoard; PHASE_LEN],
 }
 impl Default for Board {
     fn default() -> Self {
@@ -229,6 +230,14 @@ impl Board {
         self.controls = board.controls.clone();
     }
 
+    pub fn add_control(&mut self, phase: Phase, adr: &AbsoluteAddress, offset: isize) {
+        self.controls[phase as usize].add(adr.address(), offset);
+    }
+
+    pub fn get_control(&self, phase: Phase, adr: &AbsoluteAddress) -> isize {
+        self.controls[phase as usize].get(adr.address())
+    }
+
     /// TODO 初期局面の利きを数えようぜ☆（＾～＾）？
     pub fn init_controls(&mut self) {
         Area::for_all(&mut |source| {
@@ -241,30 +250,25 @@ impl Board {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle);
-                            if cur.offset(&rel).legal_cur() {
-                                self.controls[piece.meaning.phase() as usize].add(cur.address(), 1);
+                            if !cur.offset(&rel).wall() {
+                                self.add_control(piece.meaning.phase(), &cur, 1);
                             }
                         }
                         Agility::Sliding => {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
+                            rel.rotate(mobility.angle);
                             for _i in 0..8 {
-                                rel.rotate(mobility.angle);
-                                if cur.offset(&rel).legal_cur() {
-                                    if let Some(collision_piece) = self.piece_at(&cur) {
-                                        if collision_piece.meaning.phase() == piece.meaning.phase()
-                                        {
-                                            // 味方の駒にぶつかったのなら終わり☆（＾～＾）
-                                            break;
-                                        }
+                                if !cur.offset(&rel).wall() {
+                                    // とりあえず盤の上なら隣に利きは通るぜ☆（＾～＾）
+                                    self.add_control(piece.meaning.phase(), &cur, 1);
 
-                                        self.controls[piece.meaning.phase() as usize]
-                                            .add(cur.address(), 1);
-
-                                        // 敵の駒を取ったところで終わり☆（＾～＾）
+                                    // 利きを調べたいだけなんで、味方／敵問わず駒が有れば終了だぜ☆（＾～＾）
+                                    if let Some(_collision_piece) = self.piece_at(&cur) {
                                         break;
                                     }
                                 } else {
+                                    // 壁に利きは通らないぜ☆（＾～＾）
                                     break;
                                 }
                             }
@@ -273,8 +277,8 @@ impl Board {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.double_rank().rotate(mobility.angle);
-                            if cur.offset(&rel).legal_cur() {
-                                self.controls[piece.meaning.phase() as usize].add(cur.address(), 1);
+                            if !cur.offset(&rel).wall() {
+                                self.add_control(piece.meaning.phase(), &cur, 1);
                             }
                         }
                     }

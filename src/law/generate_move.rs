@@ -670,7 +670,7 @@ impl Area {
 
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    if !cur.offset(&r).legal_cur() {
+                    if cur.offset(&r).wall() {
                         break;
                     }
 
@@ -684,7 +684,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                if cur.offset(&angle.west_ccw_double_rank()).legal_cur() {
+                if !cur.offset(&angle.west_ccw_double_rank()).wall() {
                     moving(cur, mobility.agility);
                 }
             }
@@ -692,7 +692,7 @@ impl Area {
                 let mut cur = start.clone();
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                if cur.offset(&angle.west_ccw()).legal_cur() {
+                if !cur.offset(&angle.west_ccw()).wall() {
                     moving(cur, mobility.agility);
                 }
             }

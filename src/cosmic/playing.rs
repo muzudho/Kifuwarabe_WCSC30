@@ -109,8 +109,8 @@ impl Game {
         self.history.captured_pieces[ply1] = pc
     }
 
-    pub fn get_board(&self, num: &PosNums) -> &Board {
-        match *num {
+    pub fn get_board(&self, num: PosNums) -> &Board {
+        match num {
             PosNums::Current => &self.board,
             PosNums::Start => &self.starting_board,
         }

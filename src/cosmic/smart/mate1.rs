@@ -109,7 +109,7 @@ impl Lioncatch {
             let mut friend_piece = None;
 
             for _i in 0..8 {
-                if cur.offset(&recipe.0).legal_cur() {
+                if !cur.offset(&recipe.0).wall() {
                     let any_piece = game.board.piece_at(&cur);
                     if let Some(any_piece_val) = any_piece {
                         if let None = friend_piece {
@@ -183,7 +183,7 @@ impl Lioncatch {
             // 相手玉をスタート地点にするぜ☆（＾～＾）
             let mut cur = self.opponent_king_adr.clone();
             Log::write(&format!("cur1={:?}", cur));
-            if cur.offset(&recipe.0).legal_cur() {
+            if !cur.offset(&recipe.0).wall() {
                 Log::write(&format!("cur2={:?}", cur));
                 // 1つ隣に駒があるか確認だぜ☆（＾～＾）
                 if let Some(any_piece_val) = game.board.piece_at(&cur) {
@@ -242,7 +242,7 @@ impl Lioncatch {
             let mut cur = self.opponent_king_adr.clone();
 
             for i in 0..8 {
-                if cur.offset(&recipe.0).legal_cur() {
+                if !cur.offset(&recipe.0).wall() {
                     // 1つ隣になんか駒があるか確認だぜ☆（＾～＾）
                     if let Some(any_piece_val) = game.board.piece_at(&cur) {
                         // それがスライディング自駒か確認だぜ☆（＾～＾）
