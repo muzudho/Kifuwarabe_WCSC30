@@ -174,7 +174,8 @@ impl Tree {
             return ts;
         }
 
-        // 利き追加☆（＾～＾）
+        // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
+        // いわば、１光手 利きカウントボードだぜ☆（＾～＾）
         for destination in &controls {
             game.board
                 .add_control(game.history.get_friend(), destination, 1);
