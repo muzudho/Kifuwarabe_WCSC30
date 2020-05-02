@@ -4,6 +4,7 @@
 use crate::cosmic::playing::Game;
 use crate::cosmic::recording::Phase;
 use crate::cosmic::recording::PHASE_LEN;
+use crate::cosmic::smart::features::ControlBoard;
 use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_MAX};
@@ -113,27 +114,6 @@ pub enum Location {
     Busy,
 }
 
-// 利きボード☆（＾～＾）
-#[derive(Clone, Copy)]
-pub struct ControlBoard {
-    board: [isize; BOARD_MEMORY_AREA as usize],
-}
-impl Default for ControlBoard {
-    fn default() -> Self {
-        ControlBoard {
-            board: [0; BOARD_MEMORY_AREA as usize],
-        }
-    }
-}
-impl ControlBoard {
-    pub fn get(&self, index: usize) -> isize {
-        self.board[index]
-    }
-    pub fn add(&mut self, index: usize, offset: isize) {
-        self.board[index] += offset
-    }
-}
-
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
 /// 10の位を筋、1の位を段とする。
@@ -146,8 +126,6 @@ pub struct Board {
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
     pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
-    /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）葉で得点化するぜ☆（＾～＾）
-    pub control_sum: isize,
     pub controls: [ControlBoard; PHASE_LEN],
 }
 impl Default for Board {
@@ -194,7 +172,6 @@ impl Default for Board {
                 HandAddressTypeStack::default(),
                 HandAddressTypeStack::default(),
             ],
-            control_sum: 0,
             controls: [ControlBoard::default(); PHASE_LEN],
         }
     }
@@ -249,7 +226,6 @@ impl Board {
         self.location = board.location.clone();
         self.hand_index = board.hand_index.clone();
         self.hands = board.hands.clone();
-        self.control_sum = board.control_sum;
         self.controls = board.controls.clone();
     }
 
@@ -445,11 +421,6 @@ impl Board {
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）
 
         hash
-    }
-
-    /// 盤面の全升への利きだぜ☆（＾～＾） 良ければ総量はプラスだぜ☆（＾～＾）
-    pub fn coverage_value(&self) -> isize {
-        self.control_sum
     }
 
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）

@@ -36,7 +36,7 @@ pub struct Tree {
 }
 impl Tree {
     pub fn new(
-        board_coverage_weight: isize,
+        many_ways_weight: isize,
         komawari_weight: isize,
         promotion_weight: isize,
         depth_not_to_give_up: usize,
@@ -46,7 +46,7 @@ impl Tree {
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
-            evaluation: Evaluation::new(board_coverage_weight, komawari_weight, promotion_weight),
+            evaluation: Evaluation::new(many_ways_weight, komawari_weight, promotion_weight),
             depth_not_to_give_up: depth_not_to_give_up,
             max_depth0: 0,
         }
@@ -196,7 +196,7 @@ impl Tree {
             // 後手が指すところだぜ☆（＾～＾）
             -1
         };
-        self.add_control(coverage_sign, game, &ways);
+        self.evaluation.add_control(coverage_sign, game, &ways);
         for index in ways.indexes.iter() {
             let way = ways.get(*index);
             // 時間を見ようぜ☆（＾～＾）？
@@ -248,10 +248,9 @@ impl Tree {
                     SEE::go(game, &movement.destination);
                 }
 
-                // 利きを集計するぜ☆（＾～＾）自分が後手なら符号を逆さにして見ろだぜ☆（＾～＾）
-                let board_coverage_value = coverage_sign * game.board.coverage_value();
+                // 評価を集計するぜ☆（＾～＾）
                 ts.choice_friend(
-                    &Value::CentiPawn(self.evaluation.centi_pawn(board_coverage_value)),
+                    &Value::CentiPawn(self.evaluation.centi_pawn()),
                     way.movement,
                 );
 
@@ -265,8 +264,8 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "board coverage={} | komawari={} | promotion={} | {} {} {} |",
-                            self.evaluation.board_coverage(board_coverage_value),
+                            "ways={} | komawari={} | promotion={} | {} {} {} |",
+                            self.evaluation.ways(),
                             self.evaluation.komawari(),
                             self.evaluation.promotion(),
                             // サンプルを見ているだけだぜ☆（＾～＾）
@@ -305,7 +304,7 @@ impl Tree {
                 exists_lose = ts.turn_over_and_choice(
                     &opponent_ts,
                     way.movement,
-                    self.evaluation.centi_pawn(0),
+                    self.evaluation.centi_pawn(),
                 );
             }
 
@@ -345,7 +344,7 @@ impl Tree {
                 }
             }
         }
-        self.add_control(-1 * coverage_sign, game, &ways);
+        self.evaluation.add_control(-1 * coverage_sign, game, &ways);
 
         if !exists_lose {
             if let None = ts.bestmove.movement {
@@ -361,16 +360,6 @@ impl Tree {
         }
 
         ts
-    }
-
-    pub fn add_control(&mut self, sign: isize, game: &mut Game, ways: &Ways) {
-        let friend_index = game.history.get_friend() as usize;
-        for index in ways.indexes.iter() {
-            // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            game.board.controls[friend_index]
-                .add(ways.get(*index).movement.destination.address(), sign);
-            game.board.control_sum += sign;
-        }
     }
 
     pub fn sec(&self) -> u64 {

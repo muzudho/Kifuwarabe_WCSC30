@@ -4,6 +4,7 @@
 //! 先後なしの駒と空白
 //!
 
+use crate::cosmic::smart::square::BOARD_MEMORY_AREA;
 use num_derive::FromPrimitive;
 use std::fmt;
 
@@ -205,4 +206,25 @@ pub enum HandAddress {
     Knight2,
     Lance2,
     Pawn2,
+}
+
+// 利きボード☆（＾～＾）
+#[derive(Clone, Copy)]
+pub struct ControlBoard {
+    board: [isize; BOARD_MEMORY_AREA as usize],
+}
+impl Default for ControlBoard {
+    fn default() -> Self {
+        ControlBoard {
+            board: [0; BOARD_MEMORY_AREA as usize],
+        }
+    }
+}
+impl ControlBoard {
+    pub fn get(&self, index: usize) -> isize {
+        self.board[index]
+    }
+    pub fn add(&mut self, index: usize, offset: isize) {
+        self.board[index] += offset
+    }
 }

@@ -1,14 +1,16 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
+use crate::cosmic::playing::Game;
 use crate::law::generate_move::Piece;
+use crate::law::generate_move::Ways;
 
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: isize = -300;
 
 pub struct Evaluation {
-    // 盤面をカバーする利きの多さの重み☆（＾～＾）1000分率☆（＾～＾）
-    board_coverage_weight: isize,
+    // 指し手がいっぱいあることを評価する重み☆（＾～＾）1000分率☆（＾～＾）
+    many_ways_weight: isize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
     komawari_weight: isize,
     /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
@@ -17,26 +19,25 @@ pub struct Evaluation {
     piece_allocation_value: isize,
     /// 成り駒ボーナスだぜ☆（＾～＾）
     promotion_value: isize,
+    /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）
+    ways_value: isize,
 }
 impl Evaluation {
-    pub fn new(
-        board_coverage_weight: isize,
-        komawari_weight: isize,
-        promotion_weight: isize,
-    ) -> Self {
+    pub fn new(many_ways_weight: isize, komawari_weight: isize, promotion_weight: isize) -> Self {
         Evaluation {
-            board_coverage_weight: board_coverage_weight,
+            many_ways_weight: many_ways_weight,
             komawari_weight: komawari_weight,
             promotion_weight: promotion_weight,
             piece_allocation_value: 0,
             promotion_value: 0,
+            ways_value: 0,
         }
     }
-    pub fn centi_pawn(&self, board_coverage_value: isize) -> isize {
-        self.board_coverage(board_coverage_value) + self.komawari() + self.promotion()
+    pub fn centi_pawn(&self) -> isize {
+        self.ways() + self.komawari() + self.promotion()
     }
-    pub fn board_coverage(&self, board_coverage_value: isize) -> isize {
-        self.board_coverage_weight * board_coverage_value / 1000
+    pub fn ways(&self) -> isize {
+        self.many_ways_weight * self.ways_value / 1000
     }
     pub fn komawari(&self) -> isize {
         self.komawari_weight * self.piece_allocation_value / 1000
@@ -118,6 +119,16 @@ impl Evaluation {
                 .captured_value()
         } else {
             0
+        }
+    }
+
+    pub fn add_control(&mut self, sign: isize, game: &mut Game, ways: &Ways) {
+        let friend_index = game.history.get_friend() as usize;
+        for index in ways.indexes.iter() {
+            // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
+            // game.board.controls[friend_index]
+            //     .add(ways.get(*index).movement.destination.address(), sign);
+            self.ways_value += sign;
         }
     }
 }

@@ -49,7 +49,7 @@ impl Kifuwarabe {
     pub fn go(universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let mut tree = Tree::new(
-            universe.option_board_coverage_weight,
+            universe.option_many_ways_weight,
             universe.option_komawari_weight,
             universe.option_promotion_weight,
             universe.option_depth_not_to_give_up,
@@ -91,8 +91,8 @@ impl Kifuwarabe {
             let value = &line[(label1_width + name_width + label2_width)..];
             // IO::writeln(&format!("Debug value=|{}|", value));
             match name {
-                "BoardCoverageWeightPer1000" => {
-                    universe.option_board_coverage_weight = value.parse().unwrap();
+                "ManyWaysPer1000" => {
+                    universe.option_many_ways_weight = value.parse().unwrap();
                 }
                 "DepthNotToGiveUp" => {
                     universe.option_depth_not_to_give_up = value.parse().unwrap();
@@ -140,9 +140,7 @@ impl Kifuwarabe {
         Beam::shoot(
             "option name KomawariWeightPer1000 type spin default 1000 min -100000 max 100000",
         );
-        Beam::shoot(
-            "option name BoardCoverageWeightPer1000 type spin default 1000 min -100000 max 100000",
-        );
+        Beam::shoot("option name ManyWaysPer1000 type spin default 1000 min -100000 max 100000");
         Beam::shoot(
             "option name PromotionWeightPer1000 type spin default 1000 min -100000 max 100000",
         );
