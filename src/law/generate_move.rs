@@ -135,23 +135,34 @@ impl PseudoLegalMoves {
     /// ---------
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
+    /// * `listen_previous_control` - 利きを受け取れだぜ☆（＾～＾）
     ///
     /// Returns
     /// -------
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    pub fn make_move<F1>(friend: Phase, board: &Board, callback: &mut F1)
-    where
+    pub fn make_move<F1, F2>(
+        friend: Phase,
+        board: &Board,
+        listen_move: &mut F1,
+        listen_previous_control: &mut F2,
+    ) where
         F1: FnMut(Way),
+        F2: FnMut(&AbsoluteAddress),
     {
         board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
-            Location::Board(source) => {
-                PseudoLegalMoves::start_on_board(friend, &source, &piece, board, callback)
-            }
+            Location::Board(source) => PseudoLegalMoves::start_on_board(
+                friend,
+                &source,
+                &piece,
+                board,
+                listen_move,
+                listen_previous_control,
+            ),
             Location::Hand(adr) => {
-                PseudoLegalMoves::make_drop(friend, adr, board, callback);
+                PseudoLegalMoves::make_drop(friend, adr, board, listen_move);
             }
             Location::Busy => panic!(Beam::trouble(
                 "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
@@ -167,25 +178,29 @@ impl PseudoLegalMoves {
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `piece` - 駒だぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
+    /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
+    /// * `listen_previous_control` - 利きを受け取れだぜ☆（＾～＾）
     ///
     /// Returns
     /// -------
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    fn start_on_board<F1>(
+    fn start_on_board<F1, F2>(
         friend: Phase,
         source: &AbsoluteAddress,
         piece: &Piece,
         board: &Board,
-        callback: &mut F1,
+        listen_move: &mut F1,
+        listen_previous_control: &mut F2,
     ) where
         F1: FnMut(Way),
+        F2: FnMut(&AbsoluteAddress),
     {
-        let callback_next =
+        let moving =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
                 let pseudo_captured = board.piece_at(&destination);
+                listen_previous_control(&destination);
 
                 let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
                     if pseudo_captured_val.meaning.phase() == friend {
@@ -221,12 +236,12 @@ impl PseudoLegalMoves {
                         Any => {
                             // 成ったり、成れなかったりできるとき。
                             if !forbidden {
-                                callback(Way::new(
+                                listen_move(Way::new(
                                     Movement::new(Some(*source), destination, false, None),
                                     pseudo_captured,
                                 ));
                             }
-                            callback(Way::new(
+                            listen_move(Way::new(
                                 Movement::new(Some(*source), destination, true, None),
                                 pseudo_captured,
                             ));
@@ -234,7 +249,7 @@ impl PseudoLegalMoves {
                         _ => {
                             // 成れるか、成れないかのどちらかのとき。
                             if promotion || !forbidden {
-                                callback(Way::new(
+                                listen_move(Way::new(
                                     Movement::new(Some(*source), destination, promotion, None),
                                     pseudo_captured,
                                 ));
@@ -246,7 +261,7 @@ impl PseudoLegalMoves {
                 !space
             };
 
-        Area::piece_of(piece.meaning.r#type(), friend, &source, callback_next);
+        Area::piece_of(piece.meaning.r#type(), friend, &source, moving);
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -256,8 +271,9 @@ impl PseudoLegalMoves {
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `board` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `callback` - 指し手のハッシュを受け取れだぜ☆（＾～＾）
-    fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, callback: &mut F1)
+    /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
+    /// * `listen_control` - 利きを受け取れだぜ☆（＾～＾）
+    fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, listen_move: &mut F1)
     where
         F1: FnMut(Way),
     {
@@ -276,7 +292,7 @@ impl PseudoLegalMoves {
                         }
                         _ => {}
                     }
-                    callback(Way::new(
+                    listen_move(Way::new(
                         Movement::new(
                             None,                                        // 駒台
                             destination,                                 // どの升へ行きたいか

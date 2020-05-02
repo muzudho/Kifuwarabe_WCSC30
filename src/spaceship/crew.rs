@@ -172,9 +172,14 @@ impl Chiyuri {
         // Generation move.
         // FIXME 合法手とは限らない
         let mut ways = Vec::<Way>::new();
-        PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
-            ways.push(way);
-        });
+        PseudoLegalMoves::make_move(
+            game.history.get_friend(),
+            &game.board,
+            &mut |way| {
+                ways.push(way);
+            },
+            &mut |_destination| {},
+        );
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
         Kitchen::print_ways(&ways);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");

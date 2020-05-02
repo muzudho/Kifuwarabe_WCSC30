@@ -122,13 +122,8 @@ impl Evaluation {
         }
     }
 
-    pub fn add_control(&mut self, sign: isize, game: &mut Game, ways: &Ways) {
-        let friend_index = game.history.get_friend() as usize;
-        for index in ways.indexes.iter() {
-            // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-            // game.board.controls[friend_index]
-            //     .add(ways.get(*index).movement.destination.address(), sign);
-            self.ways_value += sign;
-        }
+    pub fn add_control(&mut self, sign: isize, ways: &Ways) {
+        // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
+        self.ways_value += sign * ways.len() as isize;
     }
 }

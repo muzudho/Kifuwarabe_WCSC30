@@ -8,6 +8,7 @@ use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::cosmic::smart::features::PieceType;
 use crate::cosmic::smart::mate1::Lioncatch;
 use crate::cosmic::smart::see::SEE;
+use crate::cosmic::smart::square::AbsoluteAddress;
 use crate::cosmic::universe::Universe;
 use crate::law::generate_move::{Piece, PseudoLegalMoves, Ways};
 use crate::spaceship::equipment::{Beam, PvString};
@@ -137,6 +138,8 @@ impl Tree {
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
+        let mut controls = Vec::<AbsoluteAddress>::new();
+
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
         let mut ways = {
             /*
@@ -150,9 +153,17 @@ impl Tree {
             let mut ways = Ways::new();
 
             // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-            PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
-                ways.push(&way);
-            });
+            PseudoLegalMoves::make_move(
+                game.history.get_friend(),
+                &game.board,
+                &mut |way| {
+                    ways.push(&way);
+                },
+                &mut |destination| {
+                    // 利きを一旦覚えようぜ☆（＾～＾）？
+                    controls.push(*destination);
+                },
+            );
 
             ways
             //}
@@ -161,6 +172,11 @@ impl Tree {
         // 指せる手が無ければ投了☆（＾～＾）
         if ways.is_empty() {
             return ts;
+        }
+
+        // 利き追加☆（＾～＾）
+        for destination in &controls {
+            game.board.controls[game.history.get_friend() as usize].add(destination.address(), 1);
         }
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
@@ -196,7 +212,7 @@ impl Tree {
             // 後手が指すところだぜ☆（＾～＾）
             -1
         };
-        self.evaluation.add_control(coverage_sign, game, &ways);
+        self.evaluation.add_control(coverage_sign, &ways);
         for index in ways.indexes.iter() {
             let way = ways.get(*index);
             // 時間を見ようぜ☆（＾～＾）？
@@ -344,7 +360,12 @@ impl Tree {
                 }
             }
         }
-        self.evaluation.add_control(-1 * coverage_sign, game, &ways);
+        self.evaluation.add_control(-1 * coverage_sign, &ways);
+
+        // 利き削除☆（＾～＾）
+        for destination in &controls {
+            game.board.controls[game.history.get_friend() as usize].add(destination.address(), -1);
+        }
 
         if !exists_lose {
             if let None = ts.bestmove.movement {
