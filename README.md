@@ -97,4 +97,5 @@ position startpos moves 7g7f 3c3d 8h2b+ 3a2b B*7e B*4d 9i9h 4d9i+ 7i7h 9i9h 7e5c
 position sfen 9/9/9/9/9/9/9/7R1/9 b - 1
 position sfen 9/9/9/9/9/9/9/1B5R1/9 b - 1
 position sfen 9/9/9/9/9/9/9/9/LNSGKGSNL b - 1
+position sfen 9/9/ppppppppp/9/9/9/9/9/9 b - 1
 ```

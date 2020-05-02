@@ -250,6 +250,9 @@ impl Board {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle);
+                            if piece.meaning.phase() == Phase::Second {
+                                rel.rotate_180();
+                            }
                             if !cur.offset(&rel).wall() {
                                 self.add_control(piece.meaning.phase(), &cur, 1);
                             }
@@ -258,6 +261,9 @@ impl Board {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle);
+                            if piece.meaning.phase() == Phase::Second {
+                                rel.rotate_180();
+                            }
                             for _i in 0..8 {
                                 if !cur.offset(&rel).wall() {
                                     // とりあえず盤の上なら隣に利きは通るぜ☆（＾～＾）
@@ -277,6 +283,9 @@ impl Board {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle).double_rank();
+                            if piece.meaning.phase() == Phase::Second {
+                                rel.rotate_180();
+                            }
                             if !cur.offset(&rel).wall() {
                                 self.add_control(piece.meaning.phase(), &cur, 1);
                             }
