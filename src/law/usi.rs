@@ -409,8 +409,10 @@ pub fn set_position(line: &str, game: &mut Game) {
 
     // 初期局面を、現局面にコピーします
     game.board.copy_from(&game.starting_board);
+    /* TODO
     // 初期局面の利きを算出しようぜ☆（＾～＾）？
     game.board.init_controls();
+    */
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
     while read_sasite(line, &mut starts, len, game) {

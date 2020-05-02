@@ -9,7 +9,7 @@ use crate::law::generate_move::PseudoLegalMoves;
 use crate::law::generate_move::Way;
 use crate::law::usi::*;
 use crate::spaceship::equipment::{Beam, PvString, Telescope};
-use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen, RestRoom};
+use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
 use rand::Rng;
 use std::io as std_io;
 
@@ -173,6 +173,7 @@ impl Chiyuri {
         // Generation move.
         // FIXME 合法手とは限らない
         let mut ways = Vec::<Way>::new();
+        /* TODO
         PseudoLegalMoves::make_move(
             game.history.get_friend(),
             &game.board,
@@ -182,6 +183,10 @@ impl Chiyuri {
                 }
             },
         );
+        */
+        PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
+            ways.push(way);
+        });
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
         Kitchen::print_ways(&ways);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
@@ -201,6 +206,7 @@ impl Chiyuri {
         let s = universe.game.get_moves_history_text();
         Beam::shoot(&s);
     }
+    /* TODO
     pub fn kiki(universe: &Universe) {
         // 利き数表示
         let s = RestRoom::to_string(&universe.game, Phase::First);
@@ -208,6 +214,7 @@ impl Chiyuri {
         let s = RestRoom::to_string(&universe.game, Phase::Second);
         Beam::shoot(&s);
     }
+    */
     pub fn list40(universe: &Universe) {
         Beam::shoot("----駒リスト40表示 ここから----");
         universe

@@ -144,7 +144,8 @@ impl PseudoLegalMoves {
     /// * 移動先にあった駒
     pub fn make_move<F1>(friend: Phase, board: &Board, listen_move: &mut F1)
     where
-        F1: FnMut(Option<Way>, &AbsoluteAddress),
+        // TODO F1: FnMut(Option<Way>, &AbsoluteAddress),
+        F1: FnMut(Way),
     {
         board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
             Location::Board(source) => {
@@ -181,7 +182,8 @@ impl PseudoLegalMoves {
         board: &Board,
         listen_move: &mut F1,
     ) where
-        F1: FnMut(Option<Way>, &AbsoluteAddress),
+        // TODO F1: FnMut(Option<Way>, &AbsoluteAddress),
+        F1: FnMut(Way),
     {
         let moving =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
@@ -221,6 +223,7 @@ impl PseudoLegalMoves {
                         Any => {
                             // 成ったり、成れなかったりできるとき。
                             if !forbidden {
+                                /* TODO
                                 listen_move(
                                     Some(Way::new(
                                         Movement::new(Some(*source), destination, false, None),
@@ -228,7 +231,13 @@ impl PseudoLegalMoves {
                                     )),
                                     &destination,
                                 );
+                                */
+                                listen_move(Way::new(
+                                    Movement::new(Some(*source), destination, false, None),
+                                    pseudo_captured,
+                                ));
                             }
+                            /* TODO
                             listen_move(
                                 Some(Way::new(
                                     Movement::new(Some(*source), destination, true, None),
@@ -236,10 +245,16 @@ impl PseudoLegalMoves {
                                 )),
                                 &destination,
                             );
+                            */
+                            listen_move(Way::new(
+                                Movement::new(Some(*source), destination, true, None),
+                                pseudo_captured,
+                            ));
                         }
                         _ => {
                             // 成れるか、成れないかのどちらかのとき。
                             if promotion || !forbidden {
+                                /* TODO
                                 listen_move(
                                     Some(Way::new(
                                         Movement::new(Some(*source), destination, promotion, None),
@@ -247,11 +262,16 @@ impl PseudoLegalMoves {
                                     )),
                                     &destination,
                                 );
+                                */
+                                listen_move(Way::new(
+                                    Movement::new(Some(*source), destination, promotion, None),
+                                    pseudo_captured,
+                                ));
                             }
                         }
                     };
-                } else {
-                    listen_move(None, &destination);
+                    // } else {
+                    // TODO listen_move(None, &destination);
                 }
 
                 !space
@@ -271,7 +291,8 @@ impl PseudoLegalMoves {
     /// * `listen_control` - 利きを受け取れだぜ☆（＾～＾）
     fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, listen_move: &mut F1)
     where
-        F1: FnMut(Option<Way>, &AbsoluteAddress),
+        // TODO F1: FnMut(Option<Way>, &AbsoluteAddress),
+        F1: FnMut(Way),
     {
         if let Some(piece) = board.last_hand(adr) {
             // 打つぜ☆（＾～＾）
@@ -288,6 +309,7 @@ impl PseudoLegalMoves {
                         }
                         _ => {}
                     }
+                    /* TOTO
                     listen_move(
                         Some(Way::new(
                             Movement::new(
@@ -300,6 +322,16 @@ impl PseudoLegalMoves {
                         )),
                         &destination,
                     );
+                    */
+                    listen_move(Way::new(
+                        Movement::new(
+                            None,                                        // 駒台
+                            destination,                                 // どの升へ行きたいか
+                            false,                                       // 打に成りは無し
+                            Some(piece.meaning.hand_address().r#type()), // 打った駒種類
+                        ),
+                        None,
+                    ));
                 }
             };
 

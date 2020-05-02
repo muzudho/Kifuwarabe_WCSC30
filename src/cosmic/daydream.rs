@@ -138,7 +138,7 @@ impl Tree {
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
-        let mut controls = Vec::<AbsoluteAddress>::new();
+        // TODO let mut controls = Vec::<AbsoluteAddress>::new();
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
         let mut ways = {
@@ -153,6 +153,7 @@ impl Tree {
             let mut ways = Ways::new();
 
             // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
+            /* TODO
             PseudoLegalMoves::make_move(
                 game.history.get_friend(),
                 &game.board,
@@ -160,10 +161,14 @@ impl Tree {
                     if let Some(way_val) = way {
                         ways.push(&way_val);
                     }
-                    // 利きを一旦覚えようぜ☆（＾～＾）？
-                    controls.push(*destination);
+                    // TODO 利きを一旦覚えようぜ☆（＾～＾）？
+                    // controls.push(*destination);
                 },
             );
+            */
+            PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
+                ways.push(&way);
+            });
 
             ways
             //}
@@ -176,10 +181,10 @@ impl Tree {
 
         // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
         // いわば、１光手 利きカウントボードだぜ☆（＾～＾）
-        for destination in &controls {
-            game.board
-                .add_control(game.history.get_friend(), destination, 1);
-        }
+        // for destination in &controls {
+        //     game.board
+        //         .add_control(game.history.get_friend(), destination, 1);
+        // }
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
         let mut cap = 0;
@@ -282,10 +287,11 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "ways={} | komawari={} | promotion={} | {} {} {} |",
+                            "ways={} | komawari={} | promotion={}", //  | {} {} {} |
                             self.evaluation.ways(),
                             self.evaluation.komawari(),
                             self.evaluation.promotion(),
+                            /* TODO
                             // サンプルを見ているだけだぜ☆（＾～＾）
                             game.board.get_control(
                                 game.history.get_friend(),
@@ -299,6 +305,7 @@ impl Tree {
                                 game.history.get_friend(),
                                 &AbsoluteAddress::new(4, 8)
                             ),
+                            */
                         ))),
                     );
                     game.info.print(
@@ -373,11 +380,11 @@ impl Tree {
         }
         self.evaluation.add_control(-1 * coverage_sign, &ways);
 
-        // 利き削除☆（＾～＾）
-        for destination in &controls {
-            game.board
-                .add_control(game.history.get_friend(), destination, -1);
-        }
+        // TODO 利き削除☆（＾～＾）
+        // for destination in &controls {
+        //     game.board
+        //         .add_control(game.history.get_friend(), destination, -1);
+        // }
 
         if !exists_lose {
             if let None = ts.bestmove.movement {

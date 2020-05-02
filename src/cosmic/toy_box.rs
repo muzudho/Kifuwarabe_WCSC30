@@ -126,8 +126,10 @@ pub struct Board {
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
     pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
+    /* TODO
     /// 利きの数☆（＾～＾）
     controls: [ControlBoard; PHASE_LEN],
+    */
 }
 impl Default for Board {
     fn default() -> Self {
@@ -173,7 +175,7 @@ impl Default for Board {
                 HandAddressTypeStack::default(),
                 HandAddressTypeStack::default(),
             ],
-            controls: [ControlBoard::default(); PHASE_LEN],
+            // TODO controls: [ControlBoard::default(); PHASE_LEN],
         }
     }
 }
@@ -227,9 +229,10 @@ impl Board {
         self.location = board.location.clone();
         self.hand_index = board.hand_index.clone();
         self.hands = board.hands.clone();
-        self.controls = board.controls.clone();
+        // TODO self.controls = board.controls.clone();
     }
 
+    /* TODO
     pub fn add_control(&mut self, phase: Phase, adr: &AbsoluteAddress, offset: isize) {
         self.controls[phase as usize].add(adr.address(), offset);
     }
@@ -237,7 +240,9 @@ impl Board {
     pub fn get_control(&self, phase: Phase, adr: &AbsoluteAddress) -> isize {
         self.controls[phase as usize].get(adr.address())
     }
+    */
 
+    /* TODO
     /// TODO 初期局面の利きを数えようぜ☆（＾～＾）？
     pub fn init_controls(&mut self) {
         Area::for_all(&mut |source| {
@@ -295,6 +300,7 @@ impl Board {
             }
         });
     }
+    */
 
     /// 歩が置いてあるか確認
     pub fn exists_pawn_on_file(&self, phase: Phase, file: usize) -> bool {
