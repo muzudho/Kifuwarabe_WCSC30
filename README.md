@@ -19,6 +19,19 @@ cargo build --release
 Shogidokoro `[対局(G)] - [エンジン管理...] - [追加...]`  
 `./target/release/rust-kifuwarabe-wcsc30.exe`
 
+## Engine option example
+
+```Plain
+大会設定例。
+DepthNotToGiveUp 5 - 最低でも5手は読む
+MaxDepth 6 - 6手読んだら打切り(優先度高)
+MinThinkSec 30 - 最低でも30秒は読む
+MaxThinkSec 35 - 35秒読んだら打切り(優先度高)
+KomawariWeightPer1000 1000 - 駒割評価値100.0%反映
+ManyWaysPer1000 10 - 選択肢の多い（非一直線な）局面好む。変な手になるばかり。001.0%反映
+PromotionWeightPer1000 1000 - 成りに加点100.0%反映
+```
+
 ## Debug on the terminal
 
 Visual Studio Code `[Terminal] - [New Terminal]`.  
