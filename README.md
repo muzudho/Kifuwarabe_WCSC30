@@ -2,6 +2,23 @@
 
 Rust言語だぜ☆（＾～＾）　今回は　他のコンピューター将棋ソフトの流行り合わせていくぜ☆（＾～＾）
 
+## Run
+
+```shell
+cargo run
+# cargo run --release
+# cargo build --release
+```
+
+## エンジン設定の例
+
+```plain
+DepthNotToGiveUp      [    7 ]    MaxDepth        [    5 ]
+MinThinkSec           [    5 ]    MaxThinkSec     [   17 ]
+KomawariWeightPer1000 [ 1000 ]    ManyWaysPer1000 [ 1000 ]
+PromotionWeightPer1000[ 1000 ]
+```
+
 ## 直近のTODO
 
 (^_^)
