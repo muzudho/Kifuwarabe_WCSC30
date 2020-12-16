@@ -1,12 +1,7 @@
 //! 宇宙船の備品だぜ☆（＾～＾）
-use crate::config::*;
-use crate::entities::cosmic::daydream::Value;
-use crate::entities::cosmic::recording::Movement;
-use crate::entities::cosmic::smart::square::test_rotation;
-use std::fs::File;
+use crate::entities::cosmic::{daydream::Value, recording::Movement, smart::square::test_rotation};
+use crate::entities::logging::{LOGFILE, LOG_ENABLED};
 use std::io::Write;
-use std::path::Path;
-use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
 /// ちゆり「望遠鏡だぜ☆」
@@ -121,37 +116,6 @@ impl DestinationDisplay {
         self.first = false;
         self.previous = self.stopwatch.elapsed();
     }
-}
-
-// グローバル定数
-//
-// 使い方（lazy_static!マクロ）
-// ============================
-// 定数の値を実行時に決めることができる。
-//
-// Cargo.toml に１行追記
-// > [dependencies]
-// > lazy_static = "1.0.0"
-//
-// main.rs の冒頭あたりに次の２行を記述
-// > #[macro_use]
-// > extern crate lazy_static;
-//
-// 「How can I use mutable lazy_static?」
-// https://users.rust-lang.org/t/how-can-i-use-mutable-lazy-static/3751/3
-lazy_static! {
-    /// ログ・ファイルのミューテックス（排他制御）
-    pub static ref LOGFILE: Mutex<File> = {
-        let engine_file = EngineFile::read();
-
-        // File::createの返り値は`io::Result<File>` なので .unwrap() で中身を取り出す
-        Mutex::new(File::create(Path::new(&engine_file.resources.log_file)).unwrap())
-    };
-
-    pub static ref LOG_ENABLED: Mutex<bool> = {
-        let engine_file = EngineFile::read();
-        Mutex::new(engine_file.resources.log_enabled)
-    };
 }
 
 pub struct Log {}

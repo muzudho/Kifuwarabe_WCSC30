@@ -1,4 +1,4 @@
-id name Kifuwaracheby 0.1.3
+id name Kifuwaracheby 0.1.4
 id author Satoshi TAKAHASHI
 option name DepthNotToGiveUp type spin default 4 min 1 max 8
 option name MaxDepth type spin default 7 min 1 max 15
