@@ -1,15 +1,15 @@
 use crate::config::*;
-use crate::cosmic::daydream::Tree;
-use crate::cosmic::playing::{Game, PosNums};
-use crate::cosmic::recording::Phase;
-use crate::cosmic::smart::square::{AbsoluteAddress, FILE_1};
-use crate::cosmic::universe::Universe;
-use crate::law::cryptographic::*;
-use crate::law::generate_move::PseudoLegalMoves;
-use crate::law::generate_move::Way;
-use crate::law::usi::*;
-use crate::spaceship::equipment::{Beam, PvString, Telescope};
-use crate::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
+use crate::entities::cosmic::daydream::Tree;
+use crate::entities::cosmic::playing::{Game, PosNums};
+use crate::entities::cosmic::recording::Phase;
+use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_1};
+use crate::entities::cosmic::universe::Universe;
+use crate::entities::law::cryptographic::*;
+use crate::entities::law::generate_move::PseudoLegalMoves;
+use crate::entities::law::generate_move::Way;
+use crate::entities::law::usi::*;
+use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
+use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
 use rand::Rng;
 use std::fs::{self};
 use std::io as std_io;

@@ -1,8 +1,8 @@
 //! 宇宙船の備品だぜ☆（＾～＾）
 use crate::config::*;
-use crate::cosmic::daydream::Value;
-use crate::cosmic::recording::Movement;
-use crate::cosmic::smart::square::test_rotation;
+use crate::entities::cosmic::daydream::Value;
+use crate::entities::cosmic::recording::Movement;
+use crate::entities::cosmic::smart::square::test_rotation;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;

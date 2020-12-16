@@ -27,7 +27,7 @@
 //!              Source
 //!
 //! None is 0.
-use crate::law::speed_of_light::Nine299792458;
+use crate::entities::law::speed_of_light::Nine299792458;
 use std::cmp::max;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
@@ -519,7 +519,7 @@ impl RelAdr {
     /// ---------
     /// * `r` - (Relative file, relative rank).
     pub fn rotate(&mut self, angle: Angle) -> &mut Self {
-        use crate::cosmic::smart::square::Angle::*;
+        use crate::entities::cosmic::smart::square::Angle::*;
         match angle {
             Ccw0 => self,
             Ccw45 => self.rotate_45_ccw(),

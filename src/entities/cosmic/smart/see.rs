@@ -1,8 +1,8 @@
 //! Static exchange evaluation
 
-use crate::cosmic::daydream::Value;
-use crate::cosmic::playing::Game;
-use crate::cosmic::smart::square::AbsoluteAddress;
+use crate::entities::cosmic::daydream::Value;
+use crate::entities::cosmic::playing::Game;
+use crate::entities::cosmic::smart::square::AbsoluteAddress;
 /*
 use crate::cosmic::smart::square::RelAdr;
 use crate::law::generate_move::Piece;

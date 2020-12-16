@@ -1,12 +1,12 @@
 //!
 //! USIプロトコル
 //!
-use crate::cosmic::playing::Game;
-use crate::cosmic::recording::Movement;
-use crate::cosmic::smart::features::HandAddressType;
-use crate::cosmic::smart::features::PieceMeaning;
-use crate::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
-use crate::spaceship::equipment::Beam;
+use crate::entities::cosmic::playing::Game;
+use crate::entities::cosmic::recording::Movement;
+use crate::entities::cosmic::smart::features::HandAddressType;
+use crate::entities::cosmic::smart::features::PieceMeaning;
+use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
+use crate::entities::spaceship::equipment::Beam;
 use atoi::atoi;
 
 // 局面の最多合法手５９３手
@@ -364,7 +364,7 @@ pub fn set_position(line: &str, game: &mut Game) {
                         }
                     };
 
-                    use crate::cosmic::smart::features::PieceMeaning::*;
+                    use crate::entities::cosmic::smart::features::PieceMeaning::*;
                     let hand = match &line[starts..=starts] {
                         "R" => Rook1,
                         "B" => Bishop1,

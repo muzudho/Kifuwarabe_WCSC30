@@ -1,10 +1,10 @@
-use crate::cosmic::playing::{Game, PosNums};
-use crate::cosmic::recording::Phase;
-use crate::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
-use crate::cosmic::smart::square::*;
-use crate::law::generate_move::Piece;
-use crate::law::generate_move::Way;
-use crate::spaceship::equipment::Beam;
+use crate::entities::cosmic::playing::{Game, PosNums};
+use crate::entities::cosmic::recording::Phase;
+use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
+use crate::entities::cosmic::smart::square::*;
+use crate::entities::law::generate_move::Piece;
+use crate::entities::law::generate_move::Way;
+use crate::entities::spaceship::equipment::Beam;
 
 /// 指令室はこちらだぜ☆（＾～＾）！
 pub struct CommandRoom {}

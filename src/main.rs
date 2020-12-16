@@ -21,12 +21,10 @@ extern crate toml;
 // 使いたい ディレクトリー名を pub mod しろだぜ☆（＾～＾）
 // 別のアプリにも見えるようにしたけりゃ pub mod にしろだぜ☆（＾～＾）
 mod config;
-mod cosmic;
-mod law;
-mod spaceship;
+mod entities;
 
-use crate::cosmic::universe::Universe;
-use crate::spaceship::crew::{Chiyuri, Kifuwarabe, Yumemi};
+use crate::entities::cosmic::universe::Universe;
+use crate::entities::spaceship::crew::{Chiyuri, Kifuwarabe, Yumemi};
 
 fn main() {
     // 宇宙☆（＾～＾）変化するぜ☆（＾～＾）

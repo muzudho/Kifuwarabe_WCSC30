@@ -1,9 +1,11 @@
-use crate::cosmic::recording::{History, Movement, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
-use crate::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX, PIECE_MEANING_LEN};
-use crate::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
-use crate::cosmic::toy_box::Board;
-use crate::law::generate_move::Piece;
-use crate::spaceship::equipment::{Beam, DestinationDisplay};
+use crate::entities::cosmic::recording::{History, Movement, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
+use crate::entities::cosmic::smart::features::{
+    HandAddress, HAND_ADDRESS_LEN, HAND_MAX, PIECE_MEANING_LEN,
+};
+use crate::entities::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
+use crate::entities::cosmic::toy_box::Board;
+use crate::entities::law::generate_move::Piece;
+use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use rand::Rng;
 
 /// 局面
@@ -155,7 +157,7 @@ impl Game {
         let mut hash = self.board.create_hash(&self);
 
         // 手番ハッシュ
-        use crate::cosmic::recording::Phase::*;
+        use crate::entities::cosmic::recording::Phase::*;
         match self.history.get_friend() {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],

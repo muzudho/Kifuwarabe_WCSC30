@@ -1,7 +1,7 @@
 //!
 //! なんか難しいやつはここだぜ☆（＾～＾）
 //!
-use crate::cosmic::smart::square::AbsoluteAddress;
+use crate::entities::cosmic::smart::square::AbsoluteAddress;
 
 /*
 /// 0 なら偽、それ以外は真☆（＾～＾）

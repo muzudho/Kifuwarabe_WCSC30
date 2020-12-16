@@ -4,7 +4,7 @@
 //! 先後なしの駒と空白
 //!
 
-use crate::cosmic::smart::square::BOARD_MEMORY_AREA;
+use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
 use num_derive::FromPrimitive;
 use std::fmt;
 
@@ -84,7 +84,7 @@ impl fmt::Display for PieceMeaning {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
         // ▲、▽ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
-        use crate::cosmic::smart::features::PieceMeaning::*;
+        use crate::entities::cosmic::smart::features::PieceMeaning::*;
         match *self {
             King1 => write!(f, " ▲K "),
             Rook1 => write!(f, " ▲R "),

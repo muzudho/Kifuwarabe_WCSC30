@@ -1,19 +1,19 @@
 //!
 //! 駒 と 盤
 //!
-use crate::cosmic::playing::Game;
-use crate::cosmic::recording::Phase;
-use crate::cosmic::recording::PHASE_LEN;
-use crate::cosmic::smart::features::ControlBoard;
-use crate::cosmic::smart::features::HAND_ADDRESS_LEN;
-use crate::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
-use crate::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_MAX};
-use crate::cosmic::smart::square::{
+use crate::entities::cosmic::playing::Game;
+use crate::entities::cosmic::recording::Phase;
+use crate::entities::cosmic::recording::PHASE_LEN;
+use crate::entities::cosmic::smart::features::ControlBoard;
+use crate::entities::cosmic::smart::features::HAND_ADDRESS_LEN;
+use crate::entities::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
+use crate::entities::cosmic::smart::features::{HandAddress, PieceMeaning, PieceType, HAND_MAX};
+use crate::entities::cosmic::smart::square::{
     AbsoluteAddress, RelAdr, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
-use crate::law::generate_move::{Agility, Area, Piece};
-use crate::law::speed_of_light::{HandAddresses, Nine299792458};
-use crate::spaceship::equipment::Beam;
+use crate::entities::law::generate_move::{Agility, Area, Piece};
+use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
+use crate::entities::spaceship::equipment::Beam;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use std::fmt;

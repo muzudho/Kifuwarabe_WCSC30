@@ -2,16 +2,16 @@
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
 
-use crate::cosmic::playing::Game;
-use crate::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
-use crate::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
-use crate::cosmic::smart::features::PieceType;
-use crate::cosmic::smart::mate1::Lioncatch;
-use crate::cosmic::smart::see::SEE;
-use crate::cosmic::smart::square::AbsoluteAddress;
-use crate::cosmic::universe::Universe;
-use crate::law::generate_move::{Piece, PseudoLegalMoves, Ways};
-use crate::spaceship::equipment::{Beam, PvString};
+use crate::entities::cosmic::playing::Game;
+use crate::entities::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
+use crate::entities::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
+use crate::entities::cosmic::smart::features::PieceType;
+use crate::entities::cosmic::smart::mate1::Lioncatch;
+use crate::entities::cosmic::smart::see::SEE;
+use crate::entities::cosmic::smart::square::AbsoluteAddress;
+use crate::entities::cosmic::universe::Universe;
+use crate::entities::law::generate_move::{Piece, PseudoLegalMoves, Ways};
+use crate::entities::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
 use std::time::Instant;

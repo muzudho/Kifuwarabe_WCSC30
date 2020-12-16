@@ -1,9 +1,9 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-use crate::cosmic::playing::Game;
-use crate::law::generate_move::Piece;
-use crate::law::generate_move::Ways;
+use crate::entities::cosmic::playing::Game;
+use crate::entities::law::generate_move::Piece;
+use crate::entities::law::generate_move::Ways;
 
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: isize = -300;

@@ -2,17 +2,17 @@
 //! 現局面を使った指し手生成☆（＾～＾）
 //!
 
-use crate::cosmic::recording::{Movement, Phase};
-use crate::cosmic::smart::features::HandAddress;
-use crate::cosmic::smart::features::PieceMeaning;
-use crate::cosmic::smart::features::PieceType;
-use crate::cosmic::smart::square::{
+use crate::entities::cosmic::recording::{Movement, Phase};
+use crate::entities::cosmic::smart::features::HandAddress;
+use crate::entities::cosmic::smart::features::PieceMeaning;
+use crate::entities::cosmic::smart::features::PieceType;
+use crate::entities::cosmic::smart::square::{
     AbsoluteAddress, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
-use crate::cosmic::toy_box::PieceNum;
-use crate::cosmic::toy_box::{Board, Location};
-use crate::spaceship::equipment::Beam;
+use crate::entities::cosmic::toy_box::PieceNum;
+use crate::entities::cosmic::toy_box::{Board, Location};
+use crate::entities::spaceship::equipment::Beam;
 use std::fmt;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -202,7 +202,7 @@ impl PseudoLegalMoves {
 
                 if ok {
                     // 成れるかどうかの判定☆（＾ｑ＾）
-                    use crate::law::generate_move::Promotability::*;
+                    use crate::entities::law::generate_move::Promotability::*;
                     let promotion = match &promotability {
                         Forced => true,
                         _ => false,
@@ -299,7 +299,7 @@ impl PseudoLegalMoves {
             let drop = &mut |destination| {
                 if let None = board.piece_at(&destination) {
                     // 駒が無いところに打つ
-                    use crate::cosmic::smart::features::PieceMeaning::*;
+                    use crate::entities::cosmic::smart::features::PieceMeaning::*;
                     match piece.meaning {
                         Pawn1 | Pawn2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
@@ -337,7 +337,7 @@ impl PseudoLegalMoves {
 
             // 駒を持っていれば
             let ty = adr.r#type();
-            use crate::cosmic::smart::features::HandAddressType::*;
+            use crate::entities::cosmic::smart::features::HandAddressType::*;
             match ty {
                 // 歩、香
                 Pawn | Lance => Area::drop_pawn_lance(friend, drop),
