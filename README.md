@@ -2,12 +2,14 @@
 
 Rust言語だぜ☆（＾～＾）　今回は　他のコンピューター将棋ソフトの流行り合わせていくぜ☆（＾～＾）
 
+(2020-12-16 wed) チェビシェフ距離にちなんで、 kifuwaracheby という名前を与えたぜ☆（＾～＾） ここから再開発な☆（＾～＾）
+
 ## Run
 
 ```shell
-cargo run
-# cargo run --release
 # cargo build --release
+cargo run --release
+# cargo run
 ```
 
 ## エンジン設定の例

@@ -1,5 +1,6 @@
 [package]
-name = "rust-kifuwarabe-wcsc30"
+# 大会出場時の名前は "rust-kifuwarabe-wcsc30"。
+name = "kifuwaracheby"
 version = "0.1.0"
 authors = ["muzudho <muzudho1@gmail.com>"]
 edition = "2018"
@@ -8,9 +9,9 @@ edition = "2018"
 
 [dependencies]
 
-rand="0.7.3"
+rand = "0.7.3"
 lazy_static = "1.4.0"
 clippy = { version = "*", optional = true }
-atoi = "0.3.2"
+atoi = "0.4.0"
 num-traits = "0.2"
 num-derive = "0.3"
