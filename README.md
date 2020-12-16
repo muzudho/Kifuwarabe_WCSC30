@@ -1,8 +1,20 @@
 # Rust Kifuwarabe WCSC30
 
-Rust言語だぜ☆（＾～＾）　今回は　他のコンピューター将棋ソフトの流行り合わせていくぜ☆（＾～＾）
-
 (2020-12-16 wed) チェビシェフ距離にちなんで、 kifuwaracheby という名前を与えたぜ☆（＾～＾） ここから再開発な☆（＾～＾）
+
+|                         | ファイル                                                              |
+| ----------------------- | --------------------------------------------------------------------- |
+| ソース                  | `Kifuwarabe_WCSC30/Cargo.toml`                                        |
+| 将棋エンジン ソース     | `Kifuwarabe_WCSC30/src/main.rs`                                       |
+| GUI                     | なし                                                                  |
+| 将棋エンジン ランタイム | `Kifuwarabe_WCSC30/target/release/grayscale_kifuwaracheby_engine.exe` |
+| 設定ファイル1           | `Kifuwarabe_WCSC30/grayscale_kifuwaracheby_engine.exe.config.toml`    |
+| 設定ファイル2           | `Kifuwarabe_WCSC30/profile/Engine.toml`                               |
+
+* `Kifuwarabe_WCSC30` のトップ・ディレクトリーに `Logs` ディレクトリーを作成してください。
+* `cargo build --release` コマンドを打鍵して `将棋エンジン ランタイム` を生成してください。
+* 設定ファイル1 を、 将棋エンジン ランタイムと同じディレクトリーに 置いてください。
+* 設定ファイル1 の `profile = "./profile"` ファイルパスを 設定ファイル2のディレクトリーに合わせてください。
 
 ## Run
 
@@ -11,6 +23,10 @@ Rust言語だぜ☆（＾～＾）　今回は　他のコンピューター将�
 cargo run --release
 # cargo run
 ```
+
+## Manual
+
+Rust言語だぜ☆（＾～＾）　今回は　他のコンピューター将棋ソフトの流行り合わせていくぜ☆（＾～＾）
 
 ## エンジン設定の例
 

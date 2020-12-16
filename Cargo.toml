@@ -1,11 +1,16 @@
 [package]
-# 大会出場時の名前は "rust-kifuwarabe-wcsc30"。
-name = "kifuwaracheby"
-version = "0.1.0"
+name = "rust-kifuwarabe-wcsc30"
+version = "0.1.1"
 authors = ["muzudho <muzudho1@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+# 不本意だが C#言語のファイル名の付け方に揃えてみる……☆（＾～＾）
+# Rust言語では 実行ファイル名は クレート名のルールに揃える必要があるらしい☆（＾～＾）？
+name = "grayscale_kifuwaracheby_engine"
+path = "src/main.rs"
 
 [dependencies]
 
@@ -15,3 +20,5 @@ clippy = { version = "*", optional = true }
 atoi = "0.4.0"
 num-traits = "0.2"
 num-derive = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.5.7"

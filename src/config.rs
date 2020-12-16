@@ -2,12 +2,29 @@
 //! 設定
 //!
 
-/// USI対応コンピューター将棋ソフトの名前☆（＾～＾）
-pub const ENGINE_NAME: &str = "KifuwarabeW30 bld441";
-
-/// 作者の名前。姓・名の順にしたいぜ☆（＾～＾）異文化に通じる表記方法はないものか☆（＾～＾）
-pub const ENGINE_AUTHOR: &str = "TAKAHASHI, Satoshi";
+use serde::{Deserialize, Serialize};
 
 /// ログ
 pub const LOG_FILE_PATH: &str = "log_kw-wcsc30.txt";
 pub const LOG_ENABLE: bool = true; //false;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ExeConfigFile {
+    pub app: App,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct App {
+    pub profile: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct EngineFile {
+    pub engine: Engine,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Engine {
+    pub name: String,
+    pub author: String,
+}

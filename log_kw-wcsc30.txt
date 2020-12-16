@@ -1,5 +1,5 @@
-id name KifuwarabeW30 bld441
-id author TAKAHASHI, Satoshi
+id name Kifuwaracheby 0.1.1
+id author Satoshi TAKAHASHI
 option name DepthNotToGiveUp type spin default 4 min 1 max 8
 option name MaxDepth type spin default 7 min 1 max 15
 option name MinThinkSec type spin default 5 min 0 max 599

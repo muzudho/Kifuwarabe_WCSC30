@@ -11,6 +11,8 @@ extern crate lazy_static;
 extern crate atoi;
 extern crate num_derive;
 extern crate num_traits;
+extern crate serde;
+extern crate toml;
 
 // Rust言語の mod や ソース置き場の説明
 //     「Rust のモジュールシステム」
