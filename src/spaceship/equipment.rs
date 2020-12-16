@@ -142,8 +142,15 @@ impl DestinationDisplay {
 lazy_static! {
     /// ログ・ファイルのミューテックス（排他制御）
     pub static ref LOGFILE: Mutex<File> = {
+        let engine_file = EngineFile::read();
+
         // File::createの返り値は`io::Result<File>` なので .unwrap() で中身を取り出す
-        Mutex::new(File::create(Path::new(LOG_FILE_PATH)).unwrap())
+        Mutex::new(File::create(Path::new(&engine_file.resources.log_file)).unwrap())
+    };
+
+    pub static ref LOG_ENABLED: Mutex<bool> = {
+        let engine_file = EngineFile::read();
+        Mutex::new(engine_file.resources.log_enabled)
     };
 }
 
@@ -151,7 +158,7 @@ pub struct Log {}
 impl Log {
     #[allow(dead_code)]
     pub fn write(s: &str) {
-        if LOG_ENABLE {
+        if *LOG_ENABLED.lock().unwrap() {
             // write_allメソッドを使うには use std::io::Write; が必要
             if let Err(_why) = LOGFILE.lock().unwrap().write_all(s.as_bytes()) {
                 // 大会向けに、ログ書き込み失敗は出力しないことにする
@@ -161,7 +168,7 @@ impl Log {
     }
     #[allow(dead_code)]
     pub fn writeln(s: &str) -> &str {
-        if LOG_ENABLE {
+        if *LOG_ENABLED.lock().unwrap() {
             if let Err(_why) = LOGFILE
                 .lock()
                 .unwrap()
