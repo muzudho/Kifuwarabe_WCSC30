@@ -190,7 +190,7 @@ impl Chiyuri {
             ways.push(way);
         });
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
-        Kitchen::print_ways(&ways);
+        Kitchen::print_ways(game.history.get_friend(), &ways);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
     }
     pub fn hash(universe: &Universe) {

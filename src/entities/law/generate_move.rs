@@ -11,8 +11,11 @@ use crate::entities::cosmic::smart::square::{
 };
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::cosmic::toy_box::{Board, Location};
+use crate::entities::move_::newMove2;
+use crate::entities::move_::ResignMove;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::Beam;
+use crate::take1base::Move;
 use crate::take1base::Piece;
 use std::fmt;
 
@@ -78,7 +81,7 @@ impl Ways {
 #[derive(Clone, Copy)]
 pub struct Way {
     /// 指し手☆（＾～＾）
-    pub movement: Movement,
+    pub move_: Move,
     /// 取った駒☆（＾～＾）
     pub captured: Option<PieceEx>,
 }
@@ -86,15 +89,15 @@ impl Default for Way {
     /// ゴミ値☆（＾～＾）
     fn default() -> Self {
         Way {
-            movement: Movement::default(),
+            move_: ResignMove,
             captured: None,
         }
     }
 }
 impl Way {
-    pub fn new(mov: Movement, cap: Option<PieceEx>) -> Self {
+    pub fn new(mov: Move, cap: Option<PieceEx>) -> Self {
         Way {
-            movement: mov,
+            move_: mov,
             captured: cap,
         }
     }
@@ -235,7 +238,13 @@ impl PseudoLegalMoves {
                                 );
                                 */
                                 listen_move(Way::new(
-                                    Movement::new(Some(*source), destination, false, None),
+                                    newMove2(
+                                        friend,
+                                        Some(source.address() as u16),
+                                        destination.address() as u16,
+                                        false,
+                                        None,
+                                    ), // Movement::new(Some(*source), destination, false, None),
                                     pseudo_captured,
                                 ));
                             }
@@ -249,7 +258,13 @@ impl PseudoLegalMoves {
                             );
                             */
                             listen_move(Way::new(
-                                Movement::new(Some(*source), destination, true, None),
+                                newMove2(
+                                    friend,
+                                    Some(source.address() as u16),
+                                    destination.address() as u16,
+                                    true,
+                                    None,
+                                ), // Movement::new(Some(*source), destination, true, None),
                                 pseudo_captured,
                             ));
                         }
@@ -266,7 +281,13 @@ impl PseudoLegalMoves {
                                 );
                                 */
                                 listen_move(Way::new(
-                                    Movement::new(Some(*source), destination, promotion, None),
+                                    newMove2(
+                                        friend,
+                                        Some(source.address() as u16),
+                                        destination.address() as u16,
+                                        promotion,
+                                        None,
+                                    ), // Movement::new(Some(*source), destination, promotion, None),
                                     pseudo_captured,
                                 ));
                             }
@@ -326,12 +347,20 @@ impl PseudoLegalMoves {
                     );
                     */
                     listen_move(Way::new(
+                        newMove2(
+                            friend,
+                            None,                                        // 駒台
+                            destination.address() as u16,                // どの升へ行きたいか
+                            false,                                       // 打に成りは無し
+                            Some(piece.meaning.hand_address().r#type()), // 打った駒種類
+                        ),
+                        /*
                         Movement::new(
                             None,                                        // 駒台
                             destination,                                 // どの升へ行きたいか
                             false,                                       // 打に成りは無し
                             Some(piece.meaning.hand_address().r#type()), // 打った駒種類
-                        ),
+                        ),                        */
                         None,
                     ));
                 }

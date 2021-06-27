@@ -5,7 +5,7 @@ use crate::entities::movement::Movement;
 use crate::take1base::Move;
 
 // 投了（＾～＾）
-const ResignMove: Move = 0;
+pub const ResignMove: Move = 0;
 
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
 pub fn newMove(phase: Phase, movement: &Movement) -> Move {
@@ -48,6 +48,61 @@ pub fn newMove(phase: Phase, movement: &Movement) -> Move {
     num += (movement.destination.address() as u16) << 7;
 
     if movement.promote {
+        // 成
+        // .p.. .... .... ....
+        num += 0x4000;
+    }
+
+    return num;
+}
+
+/// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
+pub fn newMove2(
+    phase: Phase,
+    source: Option<u16>,
+    destination: u16,
+    promote: bool,
+    drop: Option<HandAddressType>,
+) -> Move {
+    let mut num: u16 = 0;
+
+    if let Some(src) = source {
+        // 移動元マス
+        // .... .... .sss ssss
+        num = src;
+    } else if let Some(drp) = drop {
+        // 打
+        num = match phase {
+            Phase::First => match drp {
+                HandAddressType::King => 100,
+                HandAddressType::Rook => 101,
+                HandAddressType::Bishop => 102,
+                HandAddressType::Gold => 103,
+                HandAddressType::Silver => 104,
+                HandAddressType::Knight => 105,
+                HandAddressType::Lance => 106,
+                HandAddressType::Pawn => 107,
+            },
+            Phase::Second => match drp {
+                HandAddressType::King => 108,
+                HandAddressType::Rook => 109,
+                HandAddressType::Bishop => 110,
+                HandAddressType::Gold => 111,
+                HandAddressType::Silver => 112,
+                HandAddressType::Knight => 113,
+                HandAddressType::Lance => 114,
+                HandAddressType::Pawn => 115,
+            },
+        };
+    } else {
+        panic!("move_::newMove srouce error")
+    }
+
+    // 移動先マス
+    // ..dd dddd d... ....
+    num += destination << 7;
+
+    if promote {
         // 成
         // .p.. .... .... ....
         num += 0x4000;

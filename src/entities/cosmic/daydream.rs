@@ -9,7 +9,6 @@ use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::see::SEE;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::generate_move::{PieceEx, PseudoLegalMoves, Ways};
-use crate::entities::move_::newMove;
 use crate::entities::move_::toMovement;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
@@ -238,8 +237,10 @@ impl Tree {
             // TODO こっちが正しいコード（＾～＾）
             // let movement = way.movement;
             // TODO テストコード　削除すること（＾～＾）
-            let move_ = newMove(game.history.get_friend(), &way.movement);
-            let movement = toMovement(game.history.get_friend(), move_);
+            // let move_ = newMove(game.history.get_friend(), &way.movement);
+            // let movement = toMovement(game.history.get_friend(), move_);
+            // TODO 新しいコード（＾～＾）
+            let movement = toMovement(game.history.get_friend(), way.move_);
             // ここまで
 
             let source_piece = if let Some(source_val) = &movement.source {
@@ -258,7 +259,7 @@ impl Tree {
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.meaning.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(way.movement);
+                    ts.bestmove.catch_king(movement); // way.movement
 
                     self.evaluation
                         .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
@@ -271,7 +272,7 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_movement = Some(way.movement);
+                ts.repetition_movement = Some(movement); // way.movement
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
@@ -283,7 +284,7 @@ impl Tree {
                 // 評価を集計するぜ☆（＾～＾）
                 ts.choice_friend(
                     &Value::CentiPawn(self.evaluation.centi_pawn()),
-                    way.movement,
+                    movement, // way.movement
                 );
 
                 if game.info.is_printable() {
@@ -346,7 +347,7 @@ impl Tree {
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 exists_lose = ts.turn_over_and_choice(
                     &opponent_ts,
-                    way.movement,
+                    movement, // way.movement
                     self.evaluation.centi_pawn(),
                 );
             }

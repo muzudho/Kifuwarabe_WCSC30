@@ -8,8 +8,9 @@ use crate::entities::cosmic::smart::square::RelAdr;
 use crate::entities::cosmic::toy_box::{Location, PieceNum};
 use crate::entities::law::generate_move::{Way, Ways};
 use crate::entities::law::speed_of_light::Movility;
-use crate::entities::movement::Movement;
+use crate::entities::move_::newMove2;
 use crate::entities::spaceship::equipment::{Beam, Log};
+// use crate::entities::movement::Movement;
 
 /// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？
 pub struct Lioncatch {
@@ -200,14 +201,26 @@ impl Lioncatch {
                             } else {
                                 // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                 self.checks.push(&Way::new(
-                                    Movement::new(Some(cur), self.opponent_king_adr, false, None),
+                                    newMove2(
+                                        game.history.get_friend(),
+                                        Some(cur.address() as u16),
+                                        self.opponent_king_adr.address() as u16,
+                                        false,
+                                        None,
+                                    ), // Movement::new(Some(cur), self.opponent_king_adr, false, None)
                                     Some(any_piece_val),
                                 ));
                             }
                         } else {
                             // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                             self.checks.push(&Way::new(
-                                Movement::new(Some(cur), self.opponent_king_adr, false, None),
+                                newMove2(
+                                    game.history.get_friend(),
+                                    Some(cur.address() as u16),
+                                    self.opponent_king_adr.address() as u16,
+                                    false,
+                                    None,
+                                ), // Movement::new(Some(cur), self.opponent_king_adr, false, None)
                                 Some(any_piece_val),
                             ));
                         }
@@ -261,12 +274,20 @@ impl Lioncatch {
                                     if i != 0 {
                                         // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                         self.checks.push(&Way::new(
+                                            newMove2(
+                                                game.history.get_friend(),
+                                                Some(cur.address() as u16),
+                                                self.opponent_king_adr.address() as u16,
+                                                false,
+                                                None,
+                                            ),
+                                            /*
                                             Movement::new(
                                                 Some(cur),
                                                 self.opponent_king_adr,
                                                 false,
                                                 None,
-                                            ),
+                                            ),                                            */
                                             Some(any_piece_val),
                                         ));
                                     }
@@ -277,12 +298,21 @@ impl Lioncatch {
                                 if i != 0 {
                                     // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                     self.checks.push(&Way::new(
+                                        newMove2(
+                                            game.history.get_friend(),
+                                            Some(cur.address() as u16),
+                                            self.opponent_king_adr.address() as u16,
+                                            false,
+                                            None,
+                                        ),
+                                        /*
                                         Movement::new(
                                             Some(cur),
                                             self.opponent_king_adr,
                                             false,
                                             None,
                                         ),
+                                        */
                                         Some(any_piece_val),
                                     ));
                                 }
