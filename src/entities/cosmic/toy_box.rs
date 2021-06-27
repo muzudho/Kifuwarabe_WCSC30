@@ -360,7 +360,7 @@ impl Board {
                     self.location[PieceNum::King1 as usize] = Location::Board(source);
                     PieceNum::King1
                 }
-                Piece::King2 => {
+                Piece::K2 => {
                     self.location[PieceNum::King2 as usize] = Location::Board(source);
                     PieceNum::King2
                 }

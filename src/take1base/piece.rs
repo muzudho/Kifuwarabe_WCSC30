@@ -9,60 +9,60 @@ pub const PIECE_MEANING_LEN: usize = 28;
 // Copy: 配列の要素の初期化のために利用。
 #[derive(Copy, Clone, PartialEq, FromPrimitive)]
 pub enum Piece {
-    // ▲玉
+    // ▲玉 King
     K1,
-    // ▲飛
+    // ▲飛 Rook
     R1,
-    // ▲角
+    // ▲角 Bishop
     B1,
-    // ▲金
+    // ▲金 Gold
     G1,
-    // ▲銀
+    // ▲銀 Silver
     S1,
-    // ▲桂
+    // ▲桂 Knight
     N1,
-    // ▲香
+    // ▲香 Lance
     L1,
-    // ▲歩
+    // ▲歩 Pawn
     P1,
-    // ▲竜
+    // ▲竜 Promoted Rook
     PR1,
-    // ▲馬
+    // ▲馬 Promoted Bishop
     PB1,
-    // ▲全
+    // ▲全 Promoted Silver
     PS1,
-    // ▲圭
+    // ▲圭 Promoted Knight
     PN1,
-    // ▲杏
+    // ▲杏 Promoted Lance
     PL1,
-    // ▲と
+    // ▲と Promoted Pawn
     PP1,
-    // ▽ライオン
-    King2,
-    // ▽キリン
-    Rook2,
-    // ▽ゾウ
-    Bishop2,
-    // ▽イヌ
-    Gold2,
-    // ▽ネコ
-    Silver2,
-    // ▽ウサギ
-    Knight2,
-    // ▽イノシシ
-    Lance2,
-    // ▽ヒヨコ
-    Pawn2,
-    // ▽パワーアップキリン
-    Dragon2,
-    // ▽パワーアップゾウ
-    Horse2,
-    // ▽パワーアップネコ
-    PromotedSilver2,
-    // ▽パワーアップウサギ
-    PromotedKnight2,
-    // ▽パワーアップイノシシ
-    PromotedLance2,
-    // ▽パワーアップヒヨコ
-    PromotedPawn2,
+    // ▽玉
+    K2,
+    // ▽飛
+    R2,
+    // ▽角
+    B2,
+    // ▽金
+    G2,
+    // ▽銀
+    S2,
+    // ▽桂
+    N2,
+    // ▽香
+    L2,
+    // ▽歩
+    P2,
+    // ▽竜
+    PR2,
+    // ▽馬
+    PB2,
+    // ▽全
+    PS2,
+    // ▽圭
+    PN2,
+    // ▽杏
+    PL2,
+    // ▽と
+    PP2,
 }
