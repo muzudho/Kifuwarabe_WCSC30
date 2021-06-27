@@ -14,43 +14,6 @@ pub const HAND_MAX: usize = 18;
 // Note: 持ち駒には玉も含むぜ☆（＾～＾）
 pub const HAND_ADDRESS_LEN: usize = 16;
 pub static PIECE_WHITE_SPACE: &str = "    ";
-impl fmt::Display for Piece {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
-        // ▲、▽ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
-        use crate::entities::cosmic::smart::features::Piece::*;
-        match *self {
-            K1 => write!(f, " ▲K "),
-            Rook1 => write!(f, " ▲R "),
-            Bishop1 => write!(f, " ▲B "),
-            Gold1 => write!(f, " ▲G "),
-            Silver1 => write!(f, " ▲S "),
-            Knight1 => write!(f, " ▲N "),
-            Lance1 => write!(f, " ▲L "),
-            Pawn1 => write!(f, " ▲P "),
-            Dragon1 => write!(f, " ▲PR"),
-            Horse1 => write!(f, " ▲PB"),
-            PromotedSilver1 => write!(f, " ▲PS"),
-            PromotedKnight1 => write!(f, " ▲PN"),
-            PromotedLance1 => write!(f, " ▲PL"),
-            PromotedPawn1 => write!(f, " ▲PP"),
-            King2 => write!(f, " ▽k "),
-            Rook2 => write!(f, " ▽r "),
-            Bishop2 => write!(f, " ▽b "),
-            Gold2 => write!(f, " ▽g "),
-            Silver2 => write!(f, " ▽s "),
-            Knight2 => write!(f, " ▽n "),
-            Lance2 => write!(f, " ▽l "),
-            Pawn2 => write!(f, " ▽p "),
-            Dragon2 => write!(f, " ▽pr"),
-            Horse2 => write!(f, " ▽pb"),
-            PromotedSilver2 => write!(f, " ▽ps"),
-            PromotedKnight2 => write!(f, " ▽pn"),
-            PromotedLance2 => write!(f, " ▽pl"),
-            PromotedPawn2 => write!(f, " ▽pp"),
-        }
-    }
-}
 
 pub const PIECE_TYPE_LEN: usize = 14;
 

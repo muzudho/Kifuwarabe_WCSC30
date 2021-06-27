@@ -1,4 +1,5 @@
 use num_derive::FromPrimitive;
+use std::fmt;
 
 pub const PIECE_MEANING_LEN: usize = 28;
 
@@ -65,4 +66,41 @@ pub enum Piece {
     PL2,
     // ▽と
     PP2,
+}
+impl fmt::Display for Piece {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
+        // ▲、▽ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
+        use crate::take1base::piece::Piece::*;
+        match *self {
+            K1 => write!(f, " ▲K "),
+            R1 => write!(f, " ▲R "),
+            B1 => write!(f, " ▲B "),
+            G1 => write!(f, " ▲G "),
+            S1 => write!(f, " ▲S "),
+            N1 => write!(f, " ▲N "),
+            L1 => write!(f, " ▲L "),
+            P1 => write!(f, " ▲P "),
+            PR1 => write!(f, " ▲PR"),
+            PB1 => write!(f, " ▲PB"),
+            PS1 => write!(f, " ▲PS"),
+            PN1 => write!(f, " ▲PN"),
+            PL1 => write!(f, " ▲PL"),
+            PP1 => write!(f, " ▲PP"),
+            K2 => write!(f, " ▽k "),
+            R2 => write!(f, " ▽r "),
+            B2 => write!(f, " ▽b "),
+            G2 => write!(f, " ▽g "),
+            S2 => write!(f, " ▽s "),
+            N2 => write!(f, " ▽n "),
+            L2 => write!(f, " ▽l "),
+            P2 => write!(f, " ▽p "),
+            PR2 => write!(f, " ▽pr"),
+            PB2 => write!(f, " ▽pb"),
+            PS2 => write!(f, " ▽ps"),
+            PN2 => write!(f, " ▽pn"),
+            PL2 => write!(f, " ▽pl"),
+            PP2 => write!(f, " ▽pp"),
+        }
+    }
 }
