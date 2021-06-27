@@ -6,7 +6,7 @@ use crate::entities::cosmic::recording::Movement;
 use crate::entities::cosmic::smart::features::HandAddressType;
 use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
 use crate::entities::spaceship::equipment::Beam;
-use crate::take1base::piece::Piece;
+use crate::take1base::Piece;
 use atoi::atoi;
 
 // 局面の最多合法手５９３手
@@ -364,7 +364,7 @@ pub fn set_position(line: &str, game: &mut Game) {
                         }
                     };
 
-                    use crate::take1base::piece::Piece::*;
+                    use crate::take1base::Piece::*;
                     let hand = match &line[starts..=starts] {
                         "R" => R1,
                         "B" => B1,

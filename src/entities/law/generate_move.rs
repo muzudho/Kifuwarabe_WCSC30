@@ -12,7 +12,7 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::cosmic::toy_box::{Board, Location};
 use crate::entities::spaceship::equipment::Beam;
-use crate::take1base::piece::Piece;
+use crate::take1base::Piece;
 use std::fmt;
 
 ///
@@ -300,7 +300,7 @@ impl PseudoLegalMoves {
             let drop = &mut |destination| {
                 if let None = board.piece_at(&destination) {
                     // 駒が無いところに打つ
-                    use crate::take1base::piece::Piece::*;
+                    use crate::take1base::Piece::*;
                     match piece.meaning {
                         P1 | P2 => {
                             // ひよこ　は２歩できない☆（＾～＾）

@@ -16,7 +16,7 @@ use crate::entities::cosmic::smart::features::{HandAddress, HandAddressType, Pie
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::law::generate_move::{Agility, Mobility};
-use crate::take1base::piece::{Piece, PIECE_MEANING_LEN};
+use crate::take1base::{Piece, PIECE_MEANING_LEN};
 //use num_traits::FromPrimitive;
 // use std::sync::Mutex;
 
@@ -97,7 +97,7 @@ impl Default for SpeedOfLight {
     fn default() -> Self {
         use crate::entities::cosmic::recording::Phase::*;
         use crate::entities::cosmic::smart::features::PieceType::*;
-        use crate::take1base::piece::Piece::*;
+        use crate::take1base::Piece::*;
         SpeedOfLight {
             /// ピースの早見表の生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
             piece_numbers: [
