@@ -12,19 +12,18 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::cosmic::toy_box::{Board, Location};
 use crate::entities::spaceship::equipment::Beam;
-use crate::take1base::piece::PieceMeaning;
+use crate::take1base::piece::Piece;
 use std::fmt;
 
 ///
 #[derive(Clone, Copy, PartialEq)]
 pub struct PieceEx {
-    /// Stockfish系コンピューター将棋ソフトが言う PieceEx は、きふわらべでは PieceMeaning に名前を変えているぜ☆（＾～＾）
-    pub meaning: PieceMeaning,
+    pub meaning: Piece,
     /// 将棋の駒の背番号だぜ☆（＾～＾）
     pub num: PieceNum,
 }
 impl PieceEx {
-    pub fn new(meaning: PieceMeaning, num: PieceNum) -> Self {
+    pub fn new(meaning: Piece, num: PieceNum) -> Self {
         PieceEx {
             meaning: meaning,
             num: num,
@@ -300,7 +299,7 @@ impl PseudoLegalMoves {
             let drop = &mut |destination| {
                 if let None = board.piece_at(&destination) {
                     // 駒が無いところに打つ
-                    use crate::take1base::piece::PieceMeaning::*;
+                    use crate::take1base::piece::Piece::*;
                     match piece.meaning {
                         Pawn1 | Pawn2 => {
                             // ひよこ　は２歩できない☆（＾～＾）

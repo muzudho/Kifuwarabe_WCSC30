@@ -5,7 +5,7 @@
 //!
 
 use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
-use crate::take1base::piece::PieceMeaning;
+use crate::take1base::piece::Piece;
 use num_derive::FromPrimitive;
 use std::fmt;
 
@@ -14,11 +14,11 @@ pub const HAND_MAX: usize = 18;
 // Note: 持ち駒には玉も含むぜ☆（＾～＾）
 pub const HAND_ADDRESS_LEN: usize = 16;
 pub static PIECE_WHITE_SPACE: &str = "    ";
-impl fmt::Display for PieceMeaning {
+impl fmt::Display for Piece {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
         // ▲、▽ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
-        use crate::entities::cosmic::smart::features::PieceMeaning::*;
+        use crate::entities::cosmic::smart::features::Piece::*;
         match *self {
             King1 => write!(f, " ▲K "),
             Rook1 => write!(f, " ▲R "),

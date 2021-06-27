@@ -16,7 +16,7 @@ use crate::entities::cosmic::smart::features::{HandAddress, HandAddressType, Pie
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::law::generate_move::{Agility, Mobility};
-use crate::take1base::piece::{PieceMeaning, PIECE_MEANING_LEN};
+use crate::take1base::piece::{Piece, PIECE_MEANING_LEN};
 //use num_traits::FromPrimitive;
 // use std::sync::Mutex;
 
@@ -50,12 +50,12 @@ struct SpeedOfLight {
     piece_meaning_to_phase_table: [Phase; PIECE_MEANING_LEN],
     piece_meaning_type_table: [PieceType; PIECE_MEANING_LEN],
     /// 駒→成駒　（成れない駒は、そのまま）
-    piece_meaning_promoted_table: [PieceMeaning; PIECE_MEANING_LEN],
+    piece_meaning_promoted_table: [Piece; PIECE_MEANING_LEN],
     /// 成駒→駒　（成っていない駒は、そのまま）
-    piece_meaning_demoted_table: [PieceMeaning; PIECE_MEANING_LEN],
+    piece_meaning_demoted_table: [Piece; PIECE_MEANING_LEN],
     /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
-    piece_meaning_captured_table: [PieceMeaning; PIECE_MEANING_LEN],
+    piece_meaning_captured_table: [Piece; PIECE_MEANING_LEN],
     piece_meaning_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
 
     /// 駒種類☆（＾～＾）
@@ -97,7 +97,7 @@ impl Default for SpeedOfLight {
     fn default() -> Self {
         use crate::entities::cosmic::recording::Phase::*;
         use crate::entities::cosmic::smart::features::PieceType::*;
-        use crate::take1base::piece::PieceMeaning::*;
+        use crate::take1base::piece::Piece::*;
         SpeedOfLight {
             /// ピースの早見表の生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
             piece_numbers: [
@@ -718,7 +718,7 @@ impl Nine299792458 {
 }
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
-impl PieceMeaning {
+impl Piece {
     pub fn phase(self) -> Phase {
         NINE_299792458.piece_meaning_to_phase_table[self as usize]
     }
@@ -727,15 +727,15 @@ impl PieceMeaning {
         NINE_299792458.piece_meaning_type_table[self as usize]
     }
 
-    pub fn promoted(self) -> PieceMeaning {
+    pub fn promoted(self) -> Piece {
         NINE_299792458.piece_meaning_promoted_table[self as usize]
     }
 
-    pub fn demoted(self) -> PieceMeaning {
+    pub fn demoted(self) -> Piece {
         NINE_299792458.piece_meaning_demoted_table[self as usize]
     }
 
-    pub fn captured(self) -> PieceMeaning {
+    pub fn captured(self) -> Piece {
         NINE_299792458.piece_meaning_captured_table[self as usize]
     }
 

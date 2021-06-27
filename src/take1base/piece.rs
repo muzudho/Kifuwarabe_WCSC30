@@ -8,7 +8,7 @@ pub const PIECE_MEANING_LEN: usize = 28;
 ///
 // Copy: 配列の要素の初期化のために利用。
 #[derive(Copy, Clone, PartialEq, FromPrimitive)]
-pub enum PieceMeaning {
+pub enum Piece {
     // ▲玉
     King1,
     // ▲きりん

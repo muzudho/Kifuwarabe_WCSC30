@@ -14,7 +14,7 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::law::generate_move::{Agility, Area, PieceEx};
 use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
-use crate::take1base::piece::PieceMeaning;
+use crate::take1base::piece::Piece;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use std::fmt;
@@ -344,7 +344,7 @@ impl Board {
         piece
     }
     /// 盤に駒か空升を置いていきます。
-    pub fn push_piece_on_init(&mut self, file: usize, rank: usize, piece: Option<PieceMeaning>) {
+    pub fn push_piece_on_init(&mut self, file: usize, rank: usize, piece: Option<Piece>) {
         if !(FILE_0 < file && file < FILE_10 && RANK_0 < rank && rank < RANK_10) {
             std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.323) 盤上の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
@@ -356,11 +356,11 @@ impl Board {
             let source = AbsoluteAddress::new(file, rank);
             let piece_num = match piece_meaning {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
-                PieceMeaning::King1 => {
+                Piece::King1 => {
                     self.location[PieceNum::King1 as usize] = Location::Board(source);
                     PieceNum::King1
                 }
-                PieceMeaning::King2 => {
+                Piece::King2 => {
                     self.location[PieceNum::King2 as usize] = Location::Board(source);
                     PieceNum::King2
                 }
@@ -379,7 +379,7 @@ impl Board {
         }
     }
     /// 駒台に置く
-    pub fn push_hand_on_init(&mut self, piece_meaning: PieceMeaning, number: isize) {
+    pub fn push_hand_on_init(&mut self, piece_meaning: Piece, number: isize) {
         for _i in 0..number {
             let adr = piece_meaning.hand_address();
             let hand = piece_meaning.hand_address();
@@ -529,7 +529,7 @@ impl Default for HandAddressTypeStack {
     fn default() -> Self {
         HandAddressTypeStack {
             // ゴミ値で埋めるぜ☆（＾～＾）
-            items: [PieceEx::new(PieceMeaning::King1, PieceNum::King1); HAND_MAX],
+            items: [PieceEx::new(Piece::King1, PieceNum::King1); HAND_MAX],
             count: 0,
         }
     }
