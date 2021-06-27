@@ -41,6 +41,14 @@ impl Default for History {
     }
 }
 impl History {
+    pub fn clear(&mut self) {
+        self.ply = 0;
+        self.movements = [Movement::default(); PLY_LEN];
+        self.position_hashs = [0; PLY_LEN];
+        // 取った駒
+        self.captured_pieces = [None; PLY_LEN];
+    }
+
     /// 手番
     pub fn get_friend(&self) -> Phase {
         // 手番

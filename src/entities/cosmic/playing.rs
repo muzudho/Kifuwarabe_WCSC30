@@ -60,6 +60,14 @@ impl Default for Game {
     }
 }
 impl Game {
+    /// 初期局面、現局面ともにクリアーします。
+    /// 手目も 0 に戻します。
+    pub fn clear(&mut self) {
+        self.history.clear();
+        self.starting_position_hash = 0;
+        self.starting_board.clear();
+        self.board.clear();
+    }
     /// 宇宙誕生
     pub fn big_bang(&mut self) {
         // 局面ハッシュの種をリセット
@@ -118,14 +126,6 @@ impl Game {
     }
     pub fn mut_starting(&mut self) -> &mut Board {
         &mut self.starting_board
-    }
-
-    /// 初期局面、現局面ともにクリアーします。
-    /// 手目も 0 に戻します。
-    pub fn clear(&mut self) {
-        self.starting_board.clear();
-        self.board.clear();
-        self.history.ply = 0;
     }
 
     /// テスト用に局面ハッシュ☆（＾～＾）
