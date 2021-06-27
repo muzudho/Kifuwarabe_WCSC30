@@ -16,10 +16,15 @@
 * 設定ファイル1 を、 将棋エンジン ランタイムと同じディレクトリーに 置いてください。
 * 設定ファイル1 の `profile = "./profile"` ファイルパスを 設定ファイル2のディレクトリーに合わせてください。
 
-## Run
+## Build
 
 ```shell
 # cargo build --release
+```
+
+## Run
+
+```shell
 cargo run --release
 # cargo run
 ```
