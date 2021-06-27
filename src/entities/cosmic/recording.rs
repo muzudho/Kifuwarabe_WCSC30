@@ -5,7 +5,7 @@
 //! * Person (先手,後手)
 //!
 use crate::entities::law::generate_move::PieceEx;
-use crate::entities::move_::Movement;
+use crate::entities::movement::Movement;
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。

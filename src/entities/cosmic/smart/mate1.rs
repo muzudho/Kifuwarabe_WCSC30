@@ -8,7 +8,7 @@ use crate::entities::cosmic::smart::square::RelAdr;
 use crate::entities::cosmic::toy_box::{Location, PieceNum};
 use crate::entities::law::generate_move::{Way, Ways};
 use crate::entities::law::speed_of_light::Movility;
-use crate::entities::move_::Movement;
+use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, Log};
 
 /// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？

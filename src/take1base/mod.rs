@@ -105,6 +105,5 @@ impl fmt::Display for Piece {
     }
 }
 
-pub enum Move {
-    Resign = 0,
-}
+/// 指し手
+pub type Move = u16;

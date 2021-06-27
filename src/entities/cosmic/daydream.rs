@@ -9,7 +9,7 @@ use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::see::SEE;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::generate_move::{PieceEx, PseudoLegalMoves, Ways};
-use crate::entities::move_::Movement;
+use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
