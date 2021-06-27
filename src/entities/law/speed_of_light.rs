@@ -11,14 +11,12 @@ use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::recording::PHASE_LEN;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
-use crate::entities::cosmic::smart::features::PIECE_MEANING_LEN;
 use crate::entities::cosmic::smart::features::PIECE_TYPE_LEN;
-use crate::entities::cosmic::smart::features::{
-    HandAddress, HandAddressType, PieceMeaning, PieceType,
-};
+use crate::entities::cosmic::smart::features::{HandAddress, HandAddressType, PieceType};
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::law::generate_move::{Agility, Mobility};
+use crate::take1base::piece::{PieceMeaning, PIECE_MEANING_LEN};
 //use num_traits::FromPrimitive;
 // use std::sync::Mutex;
 
@@ -98,8 +96,8 @@ struct SpeedOfLight {
 impl Default for SpeedOfLight {
     fn default() -> Self {
         use crate::entities::cosmic::recording::Phase::*;
-        use crate::entities::cosmic::smart::features::PieceMeaning::*;
         use crate::entities::cosmic::smart::features::PieceType::*;
+        use crate::take1base::piece::PieceMeaning::*;
         SpeedOfLight {
             /// ピースの早見表の生成は、アプリケーション開始時に全部済ませておけだぜ☆（＾～＾）
             piece_numbers: [

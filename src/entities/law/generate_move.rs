@@ -4,7 +4,6 @@
 
 use crate::entities::cosmic::recording::{Movement, Phase};
 use crate::entities::cosmic::smart::features::HandAddress;
-use crate::entities::cosmic::smart::features::PieceMeaning;
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::square::{
     AbsoluteAddress, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
@@ -13,6 +12,7 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::cosmic::toy_box::{Board, Location};
 use crate::entities::spaceship::equipment::Beam;
+use crate::take1base::piece::PieceMeaning;
 use std::fmt;
 
 ///
@@ -300,7 +300,7 @@ impl PseudoLegalMoves {
             let drop = &mut |destination| {
                 if let None = board.piece_at(&destination) {
                     // 駒が無いところに打つ
-                    use crate::entities::cosmic::smart::features::PieceMeaning::*;
+                    use crate::take1base::piece::PieceMeaning::*;
                     match piece.meaning {
                         Pawn1 | Pawn2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
