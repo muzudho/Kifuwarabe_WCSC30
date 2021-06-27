@@ -18,6 +18,7 @@ use std::fmt;
 ///
 #[derive(Clone, Copy, PartialEq)]
 pub struct PieceEx {
+    /// 深い意味は無く Stockfish の Piece（＾～＾）
     pub meaning: Piece,
     /// 将棋の駒の背番号だぜ☆（＾～＾）
     pub num: PieceNum,

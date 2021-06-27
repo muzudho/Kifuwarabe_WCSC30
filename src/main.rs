@@ -45,6 +45,15 @@ fn main_loop(universe: &mut Universe) {
     loop {
         let (line, len, starts) = Kifuwarabe::catch_the_message();
 
+        if len == 26 && line == "position startpos moves *0" {
+            // 将棋所の連続対局中に
+            // 相手が 時間切れを知らずに bestmove を返すと、
+            // 将棋所は `isready` など次の対局が始まっている最中に
+            // `position startpos moves *0` を返してくる。
+            // この `*0` をパースできずに落ちることがあるので、無視するぜ（＾～＾）
+            continue;
+        }
+
         if len == 0 {
             // 任せろだぜ☆（＾～＾）
             Chiyuri::len0(universe);
@@ -64,6 +73,13 @@ fn main_loop(universe: &mut Universe) {
             Kifuwarabe::usi();
         } else if 1 < len && &line[starts..2] == "go" {
             Kifuwarabe::go(universe);
+        } else if 7 < len && &line[starts..8] == "gameover" {
+            // gameover win
+            // gameover lose
+            // gameover draw
+            // 時間切れのときなど、将棋所から このメッセージがくるぜ（＾～＾）
+            // TODO 時間切れと知らず指し手を返すと 将棋所の連続対局で不具合を起こすから、指し手は返すなだぜ（＾～＾）
+            // といっても、そんなことは難しい（＾～＾）
         } else {
             help_chiyuri(&line, len, starts, universe);
         }

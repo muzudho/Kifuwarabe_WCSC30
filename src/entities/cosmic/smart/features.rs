@@ -5,7 +5,6 @@
 //!
 
 use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
-use crate::take1base::piece::Piece;
 use num_derive::FromPrimitive;
 use std::fmt;
 
