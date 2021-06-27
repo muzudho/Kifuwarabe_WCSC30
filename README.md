@@ -95,6 +95,10 @@ cargo run
 
 * [x] 320手制限ルールに対応☆（＾～＾）
 
+## Documents
+
+[Design](./doc/design.md)  
+
 ## エラーが出た局面
 
 ```
