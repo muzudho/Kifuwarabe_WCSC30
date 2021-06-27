@@ -2,7 +2,7 @@ use crate::entities::cosmic::playing::{Game, PosNums};
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
 use crate::entities::cosmic::smart::square::*;
-use crate::entities::law::generate_move::Piece;
+use crate::entities::law::generate_move::PieceEx;
 use crate::entities::law::generate_move::Way;
 use crate::entities::spaceship::equipment::Beam;
 
@@ -48,7 +48,7 @@ impl CommandRoom {
 /// ゲームルームはこちらだぜ☆（＾～＾）！
 pub struct GameRoom {}
 impl GameRoom {
-    fn to_string2(piece: Option<Piece>) -> String {
+    fn to_string2(piece: Option<PieceEx>) -> String {
         if let Some(piece_val) = piece {
             format!("{}", piece_val.meaning)
         } else {

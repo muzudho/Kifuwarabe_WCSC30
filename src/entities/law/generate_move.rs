@@ -15,24 +15,25 @@ use crate::entities::cosmic::toy_box::{Board, Location};
 use crate::entities::spaceship::equipment::Beam;
 use std::fmt;
 
+///
 #[derive(Clone, Copy, PartialEq)]
-pub struct Piece {
-    /// Stockfish系コンピューター将棋ソフトが言う Piece は、きふわらべでは PieceMeaning に名前を変えているぜ☆（＾～＾）
+pub struct PieceEx {
+    /// Stockfish系コンピューター将棋ソフトが言う PieceEx は、きふわらべでは PieceMeaning に名前を変えているぜ☆（＾～＾）
     pub meaning: PieceMeaning,
     /// 将棋の駒の背番号だぜ☆（＾～＾）
     pub num: PieceNum,
 }
-impl Piece {
+impl PieceEx {
     pub fn new(meaning: PieceMeaning, num: PieceNum) -> Self {
-        Piece {
+        PieceEx {
             meaning: meaning,
             num: num,
         }
     }
 }
-impl fmt::Debug for Piece {
+impl fmt::Debug for PieceEx {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Piece({} {:?})", self.meaning, self.num)
+        write!(f, "PieceEx({} {:?})", self.meaning, self.num)
     }
 }
 
@@ -78,7 +79,7 @@ pub struct Way {
     /// 指し手☆（＾～＾）
     pub movement: Movement,
     /// 取った駒☆（＾～＾）
-    pub captured: Option<Piece>,
+    pub captured: Option<PieceEx>,
 }
 impl Default for Way {
     /// ゴミ値☆（＾～＾）
@@ -90,7 +91,7 @@ impl Default for Way {
     }
 }
 impl Way {
-    pub fn new(mov: Movement, cap: Option<Piece>) -> Self {
+    pub fn new(mov: Movement, cap: Option<PieceEx>) -> Self {
         Way {
             movement: mov,
             captured: cap,
@@ -178,7 +179,7 @@ impl PseudoLegalMoves {
     fn start_on_board<F1>(
         friend: Phase,
         source: &AbsoluteAddress,
-        piece: &Piece,
+        piece: &PieceEx,
         board: &Board,
         listen_move: &mut F1,
     ) where

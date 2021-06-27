@@ -8,7 +8,7 @@ use crate::entities::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::see::SEE;
 use crate::entities::cosmic::universe::Universe;
-use crate::entities::law::generate_move::{Piece, PseudoLegalMoves, Ways};
+use crate::entities::law::generate_move::{PieceEx, PseudoLegalMoves, Ways};
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
@@ -237,7 +237,7 @@ impl Tree {
                 // 打
                 None
             };
-            let captured_piece: Option<Piece> = game.do_move(&movement);
+            let captured_piece: Option<PieceEx> = game.do_move(&movement);
             self.pv.push(&movement);
             let (captured_piece_centi_pawn, delta_promotion_bonus) =
                 self.evaluation

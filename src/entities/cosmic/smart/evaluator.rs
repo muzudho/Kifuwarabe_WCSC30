@@ -2,7 +2,7 @@
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
 use crate::entities::cosmic::playing::Game;
-use crate::entities::law::generate_move::Piece;
+use crate::entities::law::generate_move::PieceEx;
 use crate::entities::law::generate_move::Ways;
 
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
@@ -60,8 +60,8 @@ impl Evaluation {
 
     pub fn after_do_move(
         &mut self,
-        source_piece: &Option<Piece>,
-        captured_piece: &Option<Piece>,
+        source_piece: &Option<PieceEx>,
+        captured_piece: &Option<PieceEx>,
         promotion: bool,
     ) -> (isize, isize) {
         // 取った駒の価値を評価するぜ☆（＾～＾）
@@ -110,7 +110,7 @@ impl Evaluation {
     /// Returns
     /// -------
     /// Centi pawn.
-    fn caputured_piece_value(captured_piece: &Option<Piece>) -> isize {
+    fn caputured_piece_value(captured_piece: &Option<PieceEx>) -> isize {
         if let Some(captured_piece_val) = captured_piece {
             captured_piece_val
                 .meaning

@@ -7,7 +7,7 @@
 use crate::entities::cosmic::smart::features::HandAddressType;
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
 use crate::entities::law::cryptographic::num_to_lower_case;
-use crate::entities::law::generate_move::Piece;
+use crate::entities::law::generate_move::PieceEx;
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。
@@ -27,7 +27,7 @@ pub struct History {
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hashs: [u64; PLY_LEN],
     /// 取った駒
-    pub captured_pieces: [Option<Piece>; PLY_LEN],
+    pub captured_pieces: [Option<PieceEx>; PLY_LEN],
 }
 impl Default for History {
     fn default() -> History {

@@ -5,7 +5,7 @@ use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
 /*
 use crate::cosmic::smart::square::RelAdr;
-use crate::law::generate_move::Piece;
+use crate::law::generate_move::PieceEx;
 use crate::law::speed_of_light::Movility;
 use crate::spaceship::equipment::Beam;
 // */
@@ -37,7 +37,7 @@ impl SEE {
         for i in 0..102 {
             let mut next_target_piece = None;
             // TODO 相手の駒が、自分の駒を取る全てのケースを一覧しろだぜ☆（＾～＾）
-            let attackers = Vec::<Piece>::new();
+            let attackers = Vec::<PieceEx>::new();
             for recipe in &recipes {
                 let mut cur = adr.clone();
                 if cur.offset(&recipe.0).legal_cur() {

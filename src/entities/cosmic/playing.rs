@@ -4,7 +4,7 @@ use crate::entities::cosmic::smart::features::{
 };
 use crate::entities::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
 use crate::entities::cosmic::toy_box::Board;
-use crate::entities::law::generate_move::Piece;
+use crate::entities::law::generate_move::PieceEx;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use rand::Rng;
 
@@ -107,7 +107,7 @@ impl Game {
     pub fn set_position_hash(&mut self, hash: u64) {
         self.history.position_hashs[self.history.ply as usize] = hash;
     }
-    pub fn set_captured(&mut self, ply1: usize, pc: Option<Piece>) {
+    pub fn set_captured(&mut self, ply1: usize, pc: Option<PieceEx>) {
         self.history.captured_pieces[ply1] = pc
     }
 
@@ -199,7 +199,7 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(&mut self, movement: &Movement) -> Option<Piece> {
+    pub fn do_move(&mut self, movement: &Movement) -> Option<PieceEx> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(movement);
         let friend = self.history.get_friend();
@@ -211,15 +211,15 @@ impl Game {
         }
 
         // 取った駒
-        let cap: Option<Piece>;
+        let cap: Option<PieceEx>;
         {
             // 動かす駒
-            let moveing_piece: Option<Piece> = if let Some(source_val) = movement.source {
+            let moveing_piece: Option<PieceEx> = if let Some(source_val) = movement.source {
                 // 打でなければ、元の升に駒はあるので、それを消す。
-                let piece152: Option<Piece> = if movement.promote {
+                let piece152: Option<PieceEx> = if movement.promote {
                     if let Some(piece) = self.board.pop_from_board(&source_val) {
                         // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
-                        Some(Piece::new(piece.meaning.promoted(), piece.num))
+                        Some(PieceEx::new(piece.meaning.promoted(), piece.num))
                     } else {
                         std::panic::panic_any(Beam::trouble(
                             "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）",
@@ -249,7 +249,7 @@ impl Game {
             cap = if let Some(collision_piece) = self.board.pop_from_board(&movement.destination) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let captured_piece =
-                    Piece::new(collision_piece.meaning.captured(), collision_piece.num);
+                    PieceEx::new(collision_piece.meaning.captured(), collision_piece.num);
                 self.board.push_hand(&captured_piece);
                 Some(collision_piece)
             } else {
@@ -277,16 +277,19 @@ impl Game {
             let movement = &self.get_move().clone();
             {
                 // 取った駒が有ったか。
-                let captured: Option<Piece> =
+                let captured: Option<PieceEx> =
                     self.history.captured_pieces[self.history.ply as usize];
                 // 動いた駒
-                let moveing_piece: Option<Piece> = if let Some(_source_val) = movement.source {
+                let moveing_piece: Option<PieceEx> = if let Some(_source_val) = movement.source {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
                         if let Some(source_piece) = self.board.pop_from_board(&movement.destination)
                         {
-                            Some(Piece::new(source_piece.meaning.demoted(), source_piece.num))
+                            Some(PieceEx::new(
+                                source_piece.meaning.demoted(),
+                                source_piece.num,
+                            ))
                         } else {
                             std::panic::panic_any(Beam::trouble(
                                 "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！",
