@@ -19,7 +19,8 @@
 ## Build
 
 ```shell
-# cargo build --release
+rustup update
+cargo build --release
 ```
 
 ## Run

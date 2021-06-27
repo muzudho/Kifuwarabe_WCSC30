@@ -70,7 +70,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
             let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
                 num
             } else {
-                panic!(Beam::trouble(&format!(
+                std::panic::panic_any(Beam::trouble(&format!(
                     "(Err.72)  '{}' だった。",
                     &line[*starts..=*starts]
                 )))
@@ -88,7 +88,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
                 "h" => Source::Move(file, 8),
                 "i" => Source::Move(file, 9),
                 _ => {
-                    panic!(Beam::trouble(&format!(
+                    std::panic::panic_any(Beam::trouble(&format!(
                         "(Err.90)  '{}' だった。",
                         &line[*starts..=*starts]
                     )));
@@ -116,7 +116,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
         num
     } else {
-        panic!(Beam::trouble(&format!(
+        std::panic::panic_any(Beam::trouble(&format!(
             "(Err.118)  '{}' だった。",
             &line[*starts..=*starts]
         )));
@@ -134,7 +134,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         "h" => 8,
         "i" => 9,
         _ => {
-            panic!(Beam::trouble(&format!(
+            std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.136)  '{}' だった。",
                 &line[*starts..=*starts]
             )));
@@ -228,7 +228,7 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
                     "l" => BoardPart::Alphabet(PieceMeaning::PromotedLance2),
                     "p" => BoardPart::Alphabet(PieceMeaning::PromotedPawn2),
                     _ => {
-                        panic!(Beam::trouble(&format!(
+                        std::panic::panic_any(Beam::trouble(&format!(
                             "(Err.235)  盤部(0) '{}' だった。",
                             &line[*starts..=*starts]
                         )));
@@ -331,7 +331,7 @@ pub fn set_position(line: &str, game: &mut Game) {
                                 "7" => HandCount::N2Digit(17),
                                 "8" => HandCount::N2Digit(18),
                                 _ => {
-                                    panic!(Beam::trouble(&format!(
+                                    std::panic::panic_any(Beam::trouble(&format!(
                                         "(Err.346)  持駒部(0) '{}' だった。",
                                         &line[starts..(starts + 2)]
                                     )));

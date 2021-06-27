@@ -1,7 +1,6 @@
 use crate::config::*;
 use crate::entities::cosmic::daydream::Tree;
 use crate::entities::cosmic::playing::{Game, PosNums};
-use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_1};
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::cryptographic::*;
@@ -11,9 +10,7 @@ use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
 use rand::Rng;
-use std::fs::{self};
 use std::io as std_io;
-use std::path::Path;
 
 /// 船長：きふわらべ
 ///
@@ -26,7 +23,7 @@ impl Kifuwarabe {
         // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
         match std_io::stdin().read_line(&mut line) {
             Ok(_n) => {}
-            Err(e) => panic!(Beam::trouble(&format!(
+            Err(e) => std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.28)  Failed to read line. / {}",
                 e
             ))),
@@ -36,7 +33,7 @@ impl Kifuwarabe {
         // trim すると空白も消えるぜ☆（＾～＾）
         let line: String = match line.trim().parse() {
             Ok(n) => n,
-            Err(e) => panic!(Beam::trouble(&format!(
+            Err(e) => std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.38)  Failed to parse. / {}",
                 e
             ))),

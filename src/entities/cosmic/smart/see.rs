@@ -83,7 +83,7 @@ impl SEE {
             }
 
             if 100 < i {
-                panic!(Beam::trouble(
+                std::panic::panic_any(Beam::trouble(
                     "(Err.61) SEEが終わらんぜ☆（＾～＾）バグってんじゃねーの☆（＾～＾）？"
                 ))
             }

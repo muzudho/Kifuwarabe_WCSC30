@@ -6,9 +6,7 @@ use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::entities::cosmic::smart::features::PieceType;
-use crate::entities::cosmic::smart::mate1::Lioncatch;
 use crate::entities::cosmic::smart::see::SEE;
-use crate::entities::cosmic::smart::square::AbsoluteAddress;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::generate_move::{Piece, PseudoLegalMoves, Ways};
 use crate::entities::spaceship::equipment::{Beam, PvString};
@@ -502,20 +500,26 @@ impl TreeState {
                 } else {
                     match self.bestmove.value {
                         Value::Win => {
-                            panic!(Beam::trouble(
+                            std::panic::panic_any(Beam::trouble(
                                 "(Err.405) 自分が勝つ手を既に読んでるのに、ここに来るのはおかしいぜ☆（＾～＾）"
                             ))
                         }
                         Value::Lose => {
                             // 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
-                            self.bestmove
-                            .update(friend_movement, &Value::CentiPawn(friend_centi_pawn2), Reason::AnyMoveMoreThanLose);
+                            self.bestmove.update(
+                                friend_movement,
+                                &Value::CentiPawn(friend_centi_pawn2),
+                                Reason::AnyMoveMoreThanLose,
+                            );
                         }
                         Value::CentiPawn(best_centi_pawn) => {
                             if best_centi_pawn < friend_centi_pawn2 {
                                 // 上方修正
-                                self.bestmove
-                                .update(friend_movement, &Value::CentiPawn(friend_centi_pawn2), Reason::ValueUp);
+                                self.bestmove.update(
+                                    friend_movement,
+                                    &Value::CentiPawn(friend_centi_pawn2),
+                                    Reason::ValueUp,
+                                );
                             }
                         }
                     }
@@ -535,8 +539,8 @@ impl TreeState {
             return;
         } else {
             match self.bestmove.value {
-                Value::Win => panic!(Beam::trouble(
-                    "(Err.397) 自分が勝つ手を読んでるなら、ここに来るのはおかしいぜ☆（＾～＾）"
+                Value::Win => std::panic::panic_any(Beam::trouble(
+                    "(Err.397) 自分が勝つ手を読んでるなら、ここに来るのはおかしいぜ☆（＾～＾）",
                 )),
                 Value::Lose => {
                     // どんな評価値でも、負けるよりマシだろ☆（＾～＾）

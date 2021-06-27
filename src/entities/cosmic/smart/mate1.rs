@@ -52,11 +52,11 @@ impl Lioncatch {
             Phase::Second => PieceNum::King2,
         }) {
             Location::Board(adr) => adr,
-            Location::Hand(_adr) => panic!(Beam::trouble(
-                "(Err.62) なんで自玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
+            Location::Hand(_adr) => std::panic::panic_any(Beam::trouble(
+                "(Err.62) なんで自玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！",
             )),
-            Location::Busy => panic!(Beam::trouble(
-                "(Err.66) なんで自玉が作業中なんだぜ☆（＾～＾）！"
+            Location::Busy => std::panic::panic_any(Beam::trouble(
+                "(Err.66) なんで自玉が作業中なんだぜ☆（＾～＾）！",
             )),
         };
 
@@ -66,11 +66,11 @@ impl Lioncatch {
             Phase::Second => PieceNum::King2,
         }) {
             Location::Board(adr) => adr,
-            Location::Hand(_adr) => panic!(Beam::trouble(
-                "(Err.48) なんで敵玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！"
+            Location::Hand(_adr) => std::panic::panic_any(Beam::trouble(
+                "(Err.48) なんで敵玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！",
             )),
-            Location::Busy => panic!(Beam::trouble(
-                "(Err.83) なんで敵玉が作業中なんだぜ☆（＾～＾）！"
+            Location::Busy => std::panic::panic_any(Beam::trouble(
+                "(Err.83) なんで敵玉が作業中なんだぜ☆（＾～＾）！",
             )),
         };
 

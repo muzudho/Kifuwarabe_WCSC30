@@ -345,7 +345,7 @@ impl Board {
     /// 盤に駒か空升を置いていきます。
     pub fn push_piece_on_init(&mut self, file: usize, rank: usize, piece: Option<PieceMeaning>) {
         if !(FILE_0 < file && file < FILE_10 && RANK_0 < rank && rank < RANK_10) {
-            panic!(Beam::trouble(&format!(
+            std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.323) 盤上の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
                 file, rank
             )))
@@ -458,8 +458,8 @@ impl Board {
                     // TODO 持ち駒☆（＾～＾）
                     piece_get(i, None, None);
                 }
-                Location::Busy => panic!(Beam::trouble(
-                    "(Err.624) なんで駒が作業中なんだぜ☆（＾～＾）！"
+                Location::Busy => std::panic::panic_any(Beam::trouble(
+                    "(Err.624) なんで駒が作業中なんだぜ☆（＾～＾）！",
                 )),
             }
         }
@@ -483,8 +483,8 @@ impl Board {
                 Location::Hand(_adr) => {
                     // 持ち駒はここで調べるのは無駄な気がするよな☆（＾～＾）持ち駒に歩が１８個とか☆（＾～＾）
                 }
-                Location::Busy => panic!(Beam::trouble(
-                    "(Err.650) なんで駒が作業中なんだぜ☆（＾～＾）！"
+                Location::Busy => std::panic::panic_any(Beam::trouble(
+                    "(Err.650) なんで駒が作業中なんだぜ☆（＾～＾）！",
                 )),
             }
         }

@@ -19,7 +19,7 @@ use crate::entities::cosmic::smart::features::{
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::law::generate_move::{Agility, Mobility};
-use num_traits::FromPrimitive;
+//use num_traits::FromPrimitive;
 // use std::sync::Mutex;
 
 // グローバル定数
@@ -757,9 +757,11 @@ impl PieceType {
     pub fn movility(self) -> &'static Vec<Movility> {
         &NINE_299792458.piece_type_to_movility_table[self as usize]
     }
+    /*
     pub fn see_order(self) -> usize {
         NINE_299792458.piece_type_to_see_order_table[self as usize]
     }
+    */
 }
 
 /// 持駒種類
@@ -785,6 +787,7 @@ impl HandAddress {
     }
 }
 
+/*
 /// ハッシュ値を作る
 pub fn push_drop_to_hash(hash: u64, piece_type_o: Option<HandAddressType>) -> u64 {
     let num = if let Some(piece_type) = piece_type_o {
@@ -796,12 +799,15 @@ pub fn push_drop_to_hash(hash: u64, piece_type_o: Option<HandAddressType>) -> u6
     };
     (hash << 3) + num
 }
+*/
 
+/*
 /// ハッシュ値から作る
 pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
     // 使ってるのは8種類なんで、8(=2^3) で OK
     (hash >> 3, HandAddressType::from_u64(hash & 0b111))
 }
+*/
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddressType {
@@ -815,6 +821,7 @@ impl HandAddressType {
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl Angle {
+    /*
     /// 時計回り(Clockwise)☆（＾～＾）
     pub fn rotate90cw(self) -> Angle {
         NINE_299792458.rotate90cw[self as usize]
@@ -831,6 +838,7 @@ impl Angle {
     pub fn rotate90ccw(self) -> Angle {
         NINE_299792458.rotate90ccw[self as usize]
     }
+    */
     /// 点対称☆（＾～＾）
     pub fn rotate180(self) -> Angle {
         NINE_299792458.rotate180[self as usize]

@@ -221,8 +221,8 @@ impl Game {
                         // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
                         Some(Piece::new(piece.meaning.promoted(), piece.num))
                     } else {
-                        panic!(Beam::trouble(
-                            "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）"
+                        std::panic::panic_any(Beam::trouble(
+                            "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）",
                         ));
                     }
                 } else {
@@ -240,8 +240,8 @@ impl Game {
                             .pop_hand(HandAddress::from_phase_and_type(friend, drp)),
                     )
                 } else {
-                    panic!(Beam::trouble(
-                        "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）"
+                    std::panic::panic_any(Beam::trouble(
+                        "(Err.236) 打なのに駒を指定してないぜ☆（＾～＾）",
                     ));
                 }
             };
@@ -288,8 +288,8 @@ impl Game {
                         {
                             Some(Piece::new(source_piece.meaning.demoted(), source_piece.num))
                         } else {
-                            panic!(Beam::trouble(
-                                "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！"
+                            std::panic::panic_any(Beam::trouble(
+                                "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！",
                             ))
                         }
                     } else {
@@ -303,8 +303,8 @@ impl Game {
                         self.board.push_hand(&piece);
                         Some(piece)
                     } else {
-                        panic!(Beam::trouble(
-                            "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！"
+                        std::panic::panic_any(Beam::trouble(
+                            "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！",
                         ))
                     }
                 };

@@ -154,8 +154,8 @@ impl PseudoLegalMoves {
             Location::Hand(adr) => {
                 PseudoLegalMoves::make_drop(friend, adr, board, listen_move);
             }
-            Location::Busy => panic!(Beam::trouble(
-                "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！"
+            Location::Busy => std::panic::panic_any(Beam::trouble(
+                "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
             )),
         });
     }

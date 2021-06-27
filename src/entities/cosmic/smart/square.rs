@@ -58,19 +58,28 @@ pub fn _assert_in_board_as_absolute(ab_adr: &AbsoluteAddress, hint: &str) {
 fn test_dort(test_name: &str, expected: &str, actual: &DictOrthant) {
     debug_assert!(
         format!("{:?}", actual) == expected,
-        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
+        "{}: expected={} | actual={:?}",
+        test_name,
+        expected,
+        actual
     );
 }
 fn test_d45ort(test_name: &str, expected: &str, actual: &Degree45Orthant) {
     debug_assert!(
         format!("{:?}", actual) == expected,
-        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
+        "{}: expected={} | actual={:?}",
+        test_name,
+        expected,
+        actual
     );
 }
 fn test_rsq(test_name: &str, expected: &str, actual: &RelAdr) {
     debug_assert!(
         format!("{:?}", actual) == expected,
-        format!("{}: expected={} | actual={:?}", test_name, expected, actual)
+        "{}: expected={} | actual={:?}",
+        test_name,
+        expected,
+        actual
     );
 }
 
@@ -596,11 +605,13 @@ impl AbsoluteAddress {
     pub fn new(file: usize, rank: usize) -> Self {
         debug_assert!(
             FILE_0 as usize <= file && file < FILE_11 as usize,
-            format!("file={}", file)
+            "file={}",
+            file
         );
         debug_assert!(
             RANK_0 as usize <= rank && rank < RANK_11 as usize,
-            format!("rank={}", rank)
+            "rank={}",
+            rank
         );
         AbsoluteAddress {
             file: file,
@@ -614,8 +625,8 @@ impl AbsoluteAddress {
         if address == 0 {
             None
         } else {
-            debug_assert!(FILE_0 < file && file < FILE_10, format!("file={}", file));
-            debug_assert!(RANK_0 < rank && rank < RANK_10, format!("rank={}", rank));
+            debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
+            debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
             Some(AbsoluteAddress::new(file as usize, rank as usize))
         }
     }
@@ -637,8 +648,8 @@ impl AbsoluteAddress {
     pub fn rotate_180(&self) -> Self {
         let file = FILE_10 - self.file;
         let rank = RANK_10 - self.rank;
-        debug_assert!(FILE_0 < file && file < FILE_10, format!("file={}", file));
-        debug_assert!(RANK_0 < rank && rank < RANK_10, format!("rank={}", rank));
+        debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
+        debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
         AbsoluteAddress::new(file, rank)
     }
 
