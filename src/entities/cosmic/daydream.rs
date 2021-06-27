@@ -9,7 +9,7 @@ use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::see::SEE;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::generate_move::{PieceEx, PseudoLegalMoves, Ways};
-use crate::entities::move_::toMovement;
+use crate::entities::move_::to_movement;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
@@ -237,10 +237,10 @@ impl Tree {
             // TODO こっちが正しいコード（＾～＾）
             // let movement = way.movement;
             // TODO テストコード　削除すること（＾～＾）
-            // let move_ = newMove(game.history.get_friend(), &way.movement);
-            // let movement = toMovement(game.history.get_friend(), move_);
+            // let move_ = new_move(game.history.get_friend(), &way.movement);
+            // let movement = to_movement(game.history.get_friend(), move_);
             // TODO 新しいコード（＾～＾）
-            let movement = toMovement(game.history.get_friend(), way.move_);
+            let movement = to_movement(game.history.get_friend(), way.move_);
             // ここまで
 
             let source_piece = if let Some(source_val) = &movement.source {

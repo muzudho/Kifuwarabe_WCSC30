@@ -11,8 +11,8 @@ use crate::entities::cosmic::smart::square::{
 };
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::cosmic::toy_box::{Board, Location};
-use crate::entities::move_::newMove2;
-use crate::entities::move_::ResignMove;
+use crate::entities::move_::new_move2;
+use crate::entities::move_::RESIGN_MOVE;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::Beam;
 use crate::take1base::Move;
@@ -89,7 +89,7 @@ impl Default for Way {
     /// ゴミ値☆（＾～＾）
     fn default() -> Self {
         Way {
-            move_: ResignMove,
+            move_: RESIGN_MOVE,
             captured: None,
         }
     }
@@ -238,7 +238,7 @@ impl PseudoLegalMoves {
                                 );
                                 */
                                 listen_move(Way::new(
-                                    newMove2(
+                                    new_move2(
                                         friend,
                                         Some(source.address() as u16),
                                         destination.address() as u16,
@@ -258,7 +258,7 @@ impl PseudoLegalMoves {
                             );
                             */
                             listen_move(Way::new(
-                                newMove2(
+                                new_move2(
                                     friend,
                                     Some(source.address() as u16),
                                     destination.address() as u16,
@@ -281,7 +281,7 @@ impl PseudoLegalMoves {
                                 );
                                 */
                                 listen_move(Way::new(
-                                    newMove2(
+                                    new_move2(
                                         friend,
                                         Some(source.address() as u16),
                                         destination.address() as u16,
@@ -347,7 +347,7 @@ impl PseudoLegalMoves {
                     );
                     */
                     listen_move(Way::new(
-                        newMove2(
+                        new_move2(
                             friend,
                             None,                                        // 駒台
                             destination.address() as u16,                // どの升へ行きたいか

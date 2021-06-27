@@ -4,8 +4,8 @@ use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
 use crate::entities::cosmic::smart::square::*;
 use crate::entities::law::generate_move::PieceEx;
 use crate::entities::law::generate_move::Way;
-use crate::entities::move_::newMove;
-use crate::entities::move_::toMovement;
+use crate::entities::move_::new_move;
+use crate::entities::move_::to_movement;
 use crate::entities::spaceship::equipment::Beam;
 
 /// 指令室はこちらだぜ☆（＾～＾）！
@@ -347,7 +347,7 @@ impl Kitchen {
         for way in ways {
             let ss_str = format!(
                 "{}{}",
-                format!("{}", toMovement(phase, way.move_)),
+                format!("{}", to_movement(phase, way.move_)),
                 if let Some(psuedo_captured) = way.captured {
                     format!(" ({})", psuedo_captured.meaning)
                 } else {

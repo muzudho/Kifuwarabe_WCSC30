@@ -5,10 +5,10 @@ use crate::entities::movement::Movement;
 use crate::take1base::Move;
 
 // 投了（＾～＾）
-pub const ResignMove: Move = 0;
+pub const RESIGN_MOVE: Move = 0;
 
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
-pub fn newMove(phase: Phase, movement: &Movement) -> Move {
+pub fn new_move(phase: Phase, movement: &Movement) -> Move {
     let mut num: u16 = 0;
 
     if let Some(src) = movement.source {
@@ -40,7 +40,7 @@ pub fn newMove(phase: Phase, movement: &Movement) -> Move {
             },
         };
     } else {
-        panic!("move_::newMove srouce error")
+        panic!("move_::new_move srouce error")
     }
 
     // 移動先マス
@@ -57,7 +57,7 @@ pub fn newMove(phase: Phase, movement: &Movement) -> Move {
 }
 
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
-pub fn newMove2(
+pub fn new_move2(
     phase: Phase,
     source: Option<u16>,
     destination: u16,
@@ -95,7 +95,7 @@ pub fn newMove2(
             },
         };
     } else {
-        panic!("move_::newMove srouce error")
+        panic!("move_::new_move srouce error")
     }
 
     // 移動先マス
@@ -111,8 +111,8 @@ pub fn newMove2(
     return num;
 }
 
-/// toMovement - 移動元マス、移動先マス、成りの有無
-pub fn toMovement(phase: Phase, num: Move) -> Movement {
+/// to_movement - 移動元マス、移動先マス、成りの有無
+pub fn to_movement(phase: Phase, num: Move) -> Movement {
     // 移動元マス
     // .pdd dddd dsss ssss - num
     // 0000 0000 0111 1111 - Mask 0x007f
@@ -148,7 +148,7 @@ pub fn toMovement(phase: Phase, num: Move) -> Movement {
                 105 => HandAddressType::Knight,
                 106 => HandAddressType::Lance,
                 107 => HandAddressType::Pawn,
-                _ => panic!("move_::toMovement num={}", num),
+                _ => panic!("move_::to_movement num={}", num),
             },
             Phase::Second => match num {
                 108 => HandAddressType::King,
@@ -159,7 +159,7 @@ pub fn toMovement(phase: Phase, num: Move) -> Movement {
                 113 => HandAddressType::Knight,
                 114 => HandAddressType::Lance,
                 115 => HandAddressType::Pawn,
-                _ => panic!("move_::toMovement num={}", num),
+                _ => panic!("move_::to_movement num={}", num),
             },
         };
 
