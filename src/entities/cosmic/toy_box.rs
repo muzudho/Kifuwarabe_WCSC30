@@ -356,7 +356,7 @@ impl Board {
             let source = AbsoluteAddress::new(file, rank);
             let piece_num = match piece_meaning {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
-                Piece::King1 => {
+                Piece::K1 => {
                     self.location[PieceNum::King1 as usize] = Location::Board(source);
                     PieceNum::King1
                 }
@@ -529,7 +529,7 @@ impl Default for HandAddressTypeStack {
     fn default() -> Self {
         HandAddressTypeStack {
             // ゴミ値で埋めるぜ☆（＾～＾）
-            items: [PieceEx::new(Piece::King1, PieceNum::King1); HAND_MAX],
+            items: [PieceEx::new(Piece::K1, PieceNum::King1); HAND_MAX],
             count: 0,
         }
     }

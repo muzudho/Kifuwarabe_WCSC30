@@ -301,7 +301,7 @@ impl PseudoLegalMoves {
                     // 駒が無いところに打つ
                     use crate::take1base::piece::Piece::*;
                     match piece.meaning {
-                        Pawn1 | Pawn2 => {
+                        P1 | Pawn2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
                             if board.exists_pawn_on_file(friend, destination.file()) {
                                 return;

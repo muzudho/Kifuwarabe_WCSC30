@@ -206,20 +206,20 @@ impl Default for SpeedOfLight {
                 PromotedPawn,   // PromotedPawn2
             ],
             piece_meaning_promoted_table: [
-                King1,           // King1
-                Dragon1,         // Rook1
-                Horse1,          // Bishop1
-                Gold1,           // Gold1
-                PromotedSilver1, // Silver1
-                PromotedKnight1, // Knight1
-                PromotedLance1,  // Lance1
-                PromotedPawn1,   // Pawn1
-                Dragon1,         // Dragon1
-                Horse1,          // Horse1
-                PromotedSilver1, // PromotedSilver1
-                PromotedKnight1, // PromotedKnight1
-                PromotedLance1,  // PromotedLance1
-                PromotedPawn1,   // PromotedPawn1
+                K1,              // King1
+                PR1,             // Rook1
+                PB1,             // Bishop1
+                G1,              // Gold1
+                PS1,             // Silver1
+                PN1,             // Knight1
+                PL1,             // Lance1
+                PP1,             // Pawn1
+                PR1,             // Dragon1
+                PB1,             // Horse1
+                PS1,             // PromotedSilver1
+                PN1,             // PromotedKnight1
+                PL1,             // PromotedLance1
+                PP1,             // PromotedPawn1
                 King2,           // King2
                 Dragon2,         // Rook2
                 Horse2,          // Bishop2
@@ -236,20 +236,20 @@ impl Default for SpeedOfLight {
                 PromotedPawn2,   // PromotedPawn2
             ],
             piece_meaning_demoted_table: [
-                King1,   // King1
-                Rook1,   // Rook1
-                Bishop1, // Bishop1
-                Gold1,   // Gold1
-                Silver1, // Silver1
-                Knight1, // Knight1
-                Lance1,  // Lance1
-                Pawn1,   // Pawn1
-                Rook1,   // Dragon1
-                Bishop1, // Horse1
-                Silver1, // PromotedSilver1
-                Knight1, // PromotedKnight1
-                Lance1,  // PromotedLance1
-                Pawn1,   // PromotedPawn1
+                K1,      // King1
+                R1,      // Rook1
+                B1,      // Bishop1
+                G1,      // Gold1
+                S1,      // Silver1
+                N1,      // Knight1
+                L1,      // Lance1
+                P1,      // Pawn1
+                R1,      // Dragon1
+                B1,      // Horse1
+                S1,      // PromotedSilver1
+                N1,      // PromotedKnight1
+                L1,      // PromotedLance1
+                P1,      // PromotedPawn1
                 King2,   // King2
                 Rook2,   // Rook2
                 Bishop2, // Bishop2
@@ -280,20 +280,20 @@ impl Default for SpeedOfLight {
                 Knight2, // PromotedKnight1
                 Lance2,  // PromotedLance1
                 Pawn2,   // PromotedPawn1
-                King1,   // King2
-                Rook1,   // Rook2
-                Bishop1, // Bishop2
-                Gold1,   // Gold2
-                Silver1, // Silver2
-                Knight1, // Knight2
-                Lance1,  // Lance2
-                Pawn1,   // Pawn2
-                Rook1,   // Dragon2
-                Bishop1, // Horse2
-                Silver1, // PromotedSilver2
-                Knight1, // PromotedKnight2
-                Lance1,  // PromotedLance2
-                Pawn1,   // PromotedPawn2
+                K1,      // King2
+                R1,      // Rook2
+                B1,      // Bishop2
+                G1,      // Gold2
+                S1,      // Silver2
+                N1,      // Knight2
+                L1,      // Lance2
+                P1,      // Pawn2
+                R1,      // Dragon2
+                B1,      // Horse2
+                S1,      // PromotedSilver2
+                N1,      // PromotedKnight2
+                L1,      // PromotedLance2
+                P1,      // PromotedPawn2
             ],
             piece_meaning_hand_address_table: [
                 HandAddress::King1,   // King1

@@ -4,39 +4,39 @@ pub const PIECE_MEANING_LEN: usize = 28;
 
 ///
 /// 先後付きの駒と空白。
-/// 接尾辞の 1 は先手、 2 は後手。
+/// 接尾辞の 1 は▲先手、 2 は▽後手。
 ///
 // Copy: 配列の要素の初期化のために利用。
 #[derive(Copy, Clone, PartialEq, FromPrimitive)]
 pub enum Piece {
     // ▲玉
-    King1,
-    // ▲きりん
-    Rook1,
-    // ▲ぞう
-    Bishop1,
-    // ▲いぬ
-    Gold1,
-    // ▲ねこ
-    Silver1,
-    // ▲うさぎ
-    Knight1,
-    // ▲いのしし
-    Lance1,
-    // ▲ひよこ
-    Pawn1,
-    // ▲ぱわーあっぷきりん
-    Dragon1,
-    // ▲ぱわーあっぷぞう
-    Horse1,
-    // ▲ぱわーあっぷねこ
-    PromotedSilver1,
-    // ▲ぱわーあっぷうさぎ
-    PromotedKnight1,
-    // ▲ぱわーあっぷいのしし
-    PromotedLance1,
-    // ▲ぱわーあっぷひよこ
-    PromotedPawn1,
+    K1,
+    // ▲飛
+    R1,
+    // ▲角
+    B1,
+    // ▲金
+    G1,
+    // ▲銀
+    S1,
+    // ▲桂
+    N1,
+    // ▲香
+    L1,
+    // ▲歩
+    P1,
+    // ▲竜
+    PR1,
+    // ▲馬
+    PB1,
+    // ▲全
+    PS1,
+    // ▲圭
+    PN1,
+    // ▲杏
+    PL1,
+    // ▲と
+    PP1,
     // ▽ライオン
     King2,
     // ▽キリン

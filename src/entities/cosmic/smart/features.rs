@@ -20,7 +20,7 @@ impl fmt::Display for Piece {
         // ▲、▽ が半角サイズなのは、Windows Terminal の担当者 いい加減だぜ☆（＾～＾）
         use crate::entities::cosmic::smart::features::Piece::*;
         match *self {
-            King1 => write!(f, " ▲K "),
+            K1 => write!(f, " ▲K "),
             Rook1 => write!(f, " ▲R "),
             Bishop1 => write!(f, " ▲B "),
             Gold1 => write!(f, " ▲G "),
