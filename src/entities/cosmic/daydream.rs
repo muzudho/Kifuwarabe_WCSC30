@@ -3,12 +3,13 @@
 //!
 
 use crate::entities::cosmic::playing::Game;
-use crate::entities::cosmic::recording::{Movement, PLY_LEN, SENNTITE_NUM};
+use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::see::SEE;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::generate_move::{PieceEx, PseudoLegalMoves, Ways};
+use crate::entities::move_::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;

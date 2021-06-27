@@ -2,13 +2,13 @@
 //! これが無いと、探索しなくていい枝を末端まで伸ばしてしまうぜ☆（＾～＾）
 
 use crate::entities::cosmic::playing::Game;
-use crate::entities::cosmic::recording::Movement;
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
 use crate::entities::cosmic::smart::square::RelAdr;
 use crate::entities::cosmic::toy_box::{Location, PieceNum};
 use crate::entities::law::generate_move::{Way, Ways};
 use crate::entities::law::speed_of_light::Movility;
+use crate::entities::move_::Movement;
 use crate::entities::spaceship::equipment::{Beam, Log};
 
 /// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？

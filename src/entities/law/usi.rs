@@ -2,9 +2,9 @@
 //! USIプロトコル
 //!
 use crate::entities::cosmic::playing::Game;
-use crate::entities::cosmic::recording::Movement;
 use crate::entities::cosmic::smart::features::HandAddressType;
 use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
+use crate::entities::move_::Movement;
 use crate::entities::spaceship::equipment::Beam;
 use crate::take1base::Piece;
 use atoi::atoi;

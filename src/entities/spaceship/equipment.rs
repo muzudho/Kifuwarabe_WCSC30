@@ -1,6 +1,7 @@
 //! 宇宙船の備品だぜ☆（＾～＾）
-use crate::entities::cosmic::{daydream::Value, recording::Movement, smart::square::test_rotation};
+use crate::entities::cosmic::{daydream::Value, smart::square::test_rotation};
 use crate::entities::logging::{LOGFILE, LOG_ENABLED};
+use crate::entities::move_::Movement;
 use std::io::Write;
 use std::time::{Duration, Instant};
 

@@ -2,7 +2,7 @@
 //! 現局面を使った指し手生成☆（＾～＾）
 //!
 
-use crate::entities::cosmic::recording::{Movement, Phase};
+use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddress;
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::square::{
@@ -11,6 +11,7 @@ use crate::entities::cosmic::smart::square::{
 };
 use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::cosmic::toy_box::{Board, Location};
+use crate::entities::move_::Movement;
 use crate::entities::spaceship::equipment::Beam;
 use crate::take1base::Piece;
 use std::fmt;
