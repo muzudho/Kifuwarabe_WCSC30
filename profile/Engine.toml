@@ -2,8 +2,8 @@
 
 # 将棋ソフトの表示名です。 後ろにバージョン番号が付くなどの加工があることがあります。
 # 大会出場時の名前は "rust-kifuwarabe-wcsc30"。
-# Kifuwaracheby は WCSOC版と、第１回電竜戦版の２つが居る（＾～＾）
-name = "KifuwarachebyWCSOC"
+# Kifuwaracheby は WCSOC版(W)と、第１回電竜戦版(D)の２つが居る（＾～＾）
+name = "KifuwarachebyW"
 
 # 将棋ソフトの制作者名です。
 # 大会出場時 "TAKAHASHI, Satoshi" 作者の名前。姓・名の順にしたいぜ☆（＾～＾）異文化に通じる表記方法はないものか☆（＾～＾）
