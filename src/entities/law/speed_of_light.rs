@@ -74,14 +74,14 @@ struct SpeedOfLight {
     west_ccw: [RelAdr; ANGLE_LEN],
     west_ccw_double_rank: [RelAdr; ANGLE_LEN],
 
-    /// 時計回り(Clockwise)☆（＾～＾）
-    rotate90cw: [Angle; ANGLE_LEN],
-    /// 時計回り(Clockwise)☆（＾～＾）
-    rotate45cw: [Angle; ANGLE_LEN],
-    /// 反時計回り(Counterclockwise)☆（＾～＾）
-    rotate45ccw: [Angle; ANGLE_LEN],
-    /// 反時計回り(Counterclockwise)☆（＾～＾）
-    rotate90ccw: [Angle; ANGLE_LEN],
+    // 時計回り(Clockwise)☆（＾～＾）
+    //rotate90cw: [Angle; ANGLE_LEN],
+    // 時計回り(Clockwise)☆（＾～＾）
+    //rotate45cw: [Angle; ANGLE_LEN],
+    // 反時計回り(Counterclockwise)☆（＾～＾）
+    //rotate45ccw: [Angle; ANGLE_LEN],
+    // 反時計回り(Counterclockwise)☆（＾～＾）
+    //rotate90ccw: [Angle; ANGLE_LEN],
     /// 点対称☆（＾～＾）
     rotate180: [Angle; ANGLE_LEN],
 
@@ -620,50 +620,50 @@ impl Default for SpeedOfLight {
                     .clone(),
             ],
 
-            /// 時計回り(Clockwise)☆（＾～＾）
-            rotate90cw: [
-                Angle::Ccw270,
-                Angle::Ccw315,
-                Angle::Ccw0,
-                Angle::Ccw45,
-                Angle::Ccw90,
-                Angle::Ccw135,
-                Angle::Ccw180,
-                Angle::Ccw225,
-            ],
-            /// 時計回り(Clockwise)☆（＾～＾）
-            rotate45cw: [
-                Angle::Ccw315,
-                Angle::Ccw0,
-                Angle::Ccw45,
-                Angle::Ccw90,
-                Angle::Ccw135,
-                Angle::Ccw180,
-                Angle::Ccw225,
-                Angle::Ccw270,
-            ],
-            /// 反時計回り(Counterclockwise)☆（＾～＾）
-            rotate45ccw: [
-                Angle::Ccw45,
-                Angle::Ccw90,
-                Angle::Ccw135,
-                Angle::Ccw180,
-                Angle::Ccw225,
-                Angle::Ccw270,
-                Angle::Ccw315,
-                Angle::Ccw0,
-            ],
-            /// 反時計回り(Counterclockwise)☆（＾～＾）
-            rotate90ccw: [
-                Angle::Ccw90,
-                Angle::Ccw135,
-                Angle::Ccw180,
-                Angle::Ccw225,
-                Angle::Ccw270,
-                Angle::Ccw315,
-                Angle::Ccw0,
-                Angle::Ccw45,
-            ],
+            // 時計回り(Clockwise)☆（＾～＾）
+            // rotate90cw: [
+            //     Angle::Ccw270,
+            //     Angle::Ccw315,
+            //     Angle::Ccw0,
+            //     Angle::Ccw45,
+            //     Angle::Ccw90,
+            //     Angle::Ccw135,
+            //     Angle::Ccw180,
+            //     Angle::Ccw225,
+            // ],
+            // 時計回り(Clockwise)☆（＾～＾）
+            // rotate45cw: [
+            //     Angle::Ccw315,
+            //     Angle::Ccw0,
+            //     Angle::Ccw45,
+            //     Angle::Ccw90,
+            //     Angle::Ccw135,
+            //     Angle::Ccw180,
+            //     Angle::Ccw225,
+            //     Angle::Ccw270,
+            // ],
+            // 反時計回り(Counterclockwise)☆（＾～＾）
+            // rotate45ccw: [
+            //     Angle::Ccw45,
+            //     Angle::Ccw90,
+            //     Angle::Ccw135,
+            //     Angle::Ccw180,
+            //     Angle::Ccw225,
+            //     Angle::Ccw270,
+            //     Angle::Ccw315,
+            //     Angle::Ccw0,
+            // ],
+            // 反時計回り(Counterclockwise)☆（＾～＾）
+            // rotate90ccw: [
+            //     Angle::Ccw90,
+            //     Angle::Ccw135,
+            //     Angle::Ccw180,
+            //     Angle::Ccw225,
+            //     Angle::Ccw270,
+            //     Angle::Ccw315,
+            //     Angle::Ccw0,
+            //     Angle::Ccw45,
+            // ],
             rotate180: [
                 Angle::Ccw180,
                 Angle::Ccw225,
@@ -921,15 +921,15 @@ pub enum RelativePieceControl66 {
 }
 */
 
-/// ミーシーな駒の機動性☆（＾～＾）
-#[derive(PartialEq)]
-pub enum Movility {
-    Knight,
-    SlideDiagonally,
-    SideBackSlider,
-    FrontSlider,
-    BackDiagonally,
-    FrontDiagonally,
-    SideBack,
-    Front,
-}
+// ミーシーな駒の機動性☆（＾～＾）
+// #[derive(PartialEq)]
+// pub enum Movility {
+//     Knight,
+//     SlideDiagonally,
+//     SideBackSlider,
+//     FrontSlider,
+//     BackDiagonally,
+//     FrontDiagonally,
+//     SideBack,
+//     Front,
+// }
