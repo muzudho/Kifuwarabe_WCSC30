@@ -5,7 +5,6 @@
 use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::features::PieceType;
-use crate::entities::cosmic::smart::see::SEE;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::generate_move::{PieceEx, PseudoLegalMoves, Ways};
 use crate::entities::move_::to_movement;
@@ -14,6 +13,7 @@ use crate::entities::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
 use std::time::Instant;
+//use crate::entities::cosmic::smart::see::SEE;
 //use crate::entities::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 
 pub struct Tree {

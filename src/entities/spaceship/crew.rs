@@ -119,7 +119,7 @@ impl Kifuwarabe {
     pub fn usi() {
         let engine_file = EngineFile::read();
         // const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-        const VERSION: &'static str = "B1";
+        const VERSION: &'static str = "B2";
         Beam::shoot(&format!("id name {} {}", engine_file.engine.name, VERSION));
         Beam::shoot(&format!("id author {}", engine_file.engine.author));
 
