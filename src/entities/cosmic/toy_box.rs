@@ -3,15 +3,22 @@
 //!
 use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::Phase;
-use crate::entities::cosmic::recording::PHASE_LEN;
-use crate::entities::cosmic::smart::features::ControlBoard;
+// use crate::entities::cosmic::recording::PHASE_LEN;
+// use crate::entities::cosmic::smart::features::ControlBoard;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::entities::cosmic::smart::features::{HandAddress, PieceType, HAND_MAX};
 use crate::entities::cosmic::smart::square::{
-    AbsoluteAddress, RelAdr, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
+    AbsoluteAddress,
+    BOARD_MEMORY_AREA,
+    FILE_0,
+    FILE_1,
+    FILE_10,
+    RANK_0,
+    RANK_1,
+    RANK_10, // , RelAdr
 };
-use crate::entities::law::generate_move::{Agility, Area, PieceEx};
+use crate::entities::law::generate_move::PieceEx; //Agility, Area,
 use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
 use crate::take1base::Piece;
@@ -319,10 +326,12 @@ impl Board {
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<PieceEx> {
         self.pieces[adr.address() as usize]
     }
+    /*
     /// 駒の背番号で指定して場所を取得
     pub fn location_at(&self, adr: PieceNum) -> Location {
         self.location[adr as usize]
     }
+    */
 
     /// 升で指定して駒を置く
     pub fn push_to_board(&mut self, adr: &AbsoluteAddress, piece: Option<PieceEx>) {

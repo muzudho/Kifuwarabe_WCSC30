@@ -1,17 +1,18 @@
 //! 一手詰め判定だぜ☆（＾～＾）
 //! これが無いと、探索しなくていい枝を末端まで伸ばしてしまうぜ☆（＾～＾）
 
-use crate::entities::cosmic::playing::Game;
-use crate::entities::cosmic::recording::Phase;
-use crate::entities::cosmic::smart::square::AbsoluteAddress;
-use crate::entities::cosmic::smart::square::RelAdr;
-use crate::entities::cosmic::toy_box::{Location, PieceNum};
-use crate::entities::law::generate_move::{Way, Ways};
-use crate::entities::law::speed_of_light::Movility;
-use crate::entities::move_::new_move2;
-use crate::entities::spaceship::equipment::{Beam, Log};
+// use crate::entities::cosmic::playing::Game;
+// use crate::entities::cosmic::recording::Phase;
+// use crate::entities::cosmic::smart::square::AbsoluteAddress;
+// use crate::entities::cosmic::smart::square::RelAdr;
+// use crate::entities::cosmic::toy_box::{Location, PieceNum};
+// use crate::entities::law::generate_move::{Way, Ways};
+// use crate::entities::law::speed_of_light::Movility;
+// use crate::entities::move_::new_move2;
+// use crate::entities::spaceship::equipment::{Beam, Log};
 // use crate::entities::movement::Movement;
 
+/*
 /// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？
 pub struct Lioncatch {
     /// 自分の手番☆（＾～＾）
@@ -285,13 +286,12 @@ impl Lioncatch {
                                                 false,
                                                 None,
                                             ),
-                                            /*
-                                            Movement::new(
-                                                Some(cur),
-                                                self.opponent_king_adr,
-                                                false,
-                                                None,
-                                            ),                                            */
+                                            // Movement::new(
+                                            //     Some(cur),
+                                            //     self.opponent_king_adr,
+                                            //     false,
+                                            //     None,
+                                            // ),
                                             Some(any_piece_val),
                                         ));
                                     }
@@ -309,14 +309,12 @@ impl Lioncatch {
                                             false,
                                             None,
                                         ),
-                                        /*
-                                        Movement::new(
-                                            Some(cur),
-                                            self.opponent_king_adr,
-                                            false,
-                                            None,
-                                        ),
-                                        */
+                                        // Movement::new(
+                                        //     Some(cur),
+                                        //     self.opponent_king_adr,
+                                        //     false,
+                                        //     None,
+                                        // ),
                                         Some(any_piece_val),
                                     ));
                                 }
@@ -332,3 +330,4 @@ impl Lioncatch {
         self
     }
 }
+*/
