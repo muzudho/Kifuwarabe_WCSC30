@@ -4,7 +4,6 @@
 
 use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
-use crate::entities::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::see::SEE;
 use crate::entities::cosmic::universe::Universe;
@@ -15,6 +14,7 @@ use crate::entities::spaceship::equipment::{Beam, PvString};
 use rand::Rng;
 use std::fmt;
 use std::time::Instant;
+//use crate::entities::cosmic::smart::evaluator::{Evaluation, REPITITION_VALUE};
 
 pub struct Tree {
     // この木を生成したと同時にストップ・ウォッチを開始するぜ☆（＾～＾）
@@ -28,7 +28,7 @@ pub struct Tree {
     // 思考時間（秒）をランダムにすることで、指し手を変えるぜ☆（＾～＾）
     think_sec: u64,
 
-    pub evaluation: Evaluation,
+    //pub evaluation: Evaluation,
 
     // 反復深化探索の１回目だけ真☆（＾～＾）
     pub depth_not_to_give_up: usize,
@@ -37,9 +37,9 @@ pub struct Tree {
 }
 impl Tree {
     pub fn new(
-        many_ways_weight: isize,
-        komawari_weight: isize,
-        promotion_weight: isize,
+        // many_ways_weight: isize,
+        // komawari_weight: isize,
+        // promotion_weight: isize,
         depth_not_to_give_up: usize,
     ) -> Self {
         Tree {
@@ -47,7 +47,7 @@ impl Tree {
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
-            evaluation: Evaluation::new(many_ways_weight, komawari_weight, promotion_weight),
+            //evaluation: Evaluation::new(many_ways_weight, komawari_weight, promotion_weight),
             depth_not_to_give_up: depth_not_to_give_up,
             max_depth0: 0,
         }
@@ -62,10 +62,10 @@ impl Tree {
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
-        self.evaluation.before_search();
+        //self.evaluation.before_search();
         self.max_depth0 = 0;
         let mut best_ts = self.node(&mut universe.game, Value::Win);
-        self.evaluation.after_search();
+        //self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
         for id in 1..universe.option_max_depth {
@@ -107,9 +107,9 @@ impl Tree {
             );
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
-            self.evaluation.before_search();
+            //self.evaluation.before_search();
             let ts = self.node(&mut universe.game, Value::Win);
-            self.evaluation.after_search();
+            //self.evaluation.after_search();
             if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
@@ -216,14 +216,14 @@ impl Tree {
             }
         }
 
-        let coverage_sign = if self.pv.len() % 2 == 0 {
-            // 先手が指すところだぜ☆（＾～＾）
-            1
-        } else {
-            // 後手が指すところだぜ☆（＾～＾）
-            -1
-        };
-        self.evaluation.add_control(coverage_sign, &ways);
+        // let coverage_sign = if self.pv.len() % 2 == 0 {
+        //     // 先手が指すところだぜ☆（＾～＾）
+        //     1
+        // } else {
+        //     // 後手が指すところだぜ☆（＾～＾）
+        //     -1
+        // };
+        //self.evaluation.add_control(coverage_sign, &ways);
         for index in ways.indexes.iter() {
             let way = ways.get(*index);
             // 時間を見ようぜ☆（＾～＾）？
@@ -247,17 +247,17 @@ impl Tree {
             let movement = to_movement(game.history.get_friend(), way.move_);
             // ここまで
 
-            let source_piece = if let Some(source_val) = &movement.source {
-                game.board.piece_at(source_val)
-            } else {
-                // 打
-                None
-            };
+            // let source_piece = if let Some(source_val) = &movement.source {
+            //     game.board.piece_at(source_val)
+            // } else {
+            //     // 打
+            //     None
+            // };
             let captured_piece: Option<PieceEx> = game.do_move(&movement);
             self.pv.push(&movement);
-            let (captured_piece_centi_pawn, delta_promotion_bonus) =
-                self.evaluation
-                    .after_do_move(&source_piece, &captured_piece, movement.promote);
+            // let (captured_piece_centi_pawn, delta_promotion_bonus) =
+            //     self.evaluation
+            //         .after_do_move(&source_piece, &captured_piece, movement.promote);
 
             // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {
@@ -265,8 +265,8 @@ impl Tree {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     ts.bestmove.catch_king(movement); // way.movement
 
-                    self.evaluation
-                        .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                    // self.evaluation
+                    //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
                     self.pv.pop();
                     game.undo_move();
                     break;
@@ -287,7 +287,8 @@ impl Tree {
 
                 // 評価を集計するぜ☆（＾～＾）
                 ts.choice_friend(
-                    &Value::CentiPawn(self.evaluation.centi_pawn()),
+                    // &Value::CentiPawn(self.evaluation.centi_pawn()),
+                    &Value::CentiPawn(0),
                     movement, // way.movement
                 );
 
@@ -302,24 +303,24 @@ impl Tree {
                         None,
                         &Some(PvString::String(format!(
                             "ways={} | komawari={} | promotion={}", //  | {} {} {} |
-                            self.evaluation.ways(),
-                            self.evaluation.komawari(),
-                            self.evaluation.promotion(),
-                            /* TODO
-                            // サンプルを見ているだけだぜ☆（＾～＾）
-                            game.board.get_control(
-                                game.history.get_friend(),
-                                &AbsoluteAddress::new(6, 8)
-                            ),
-                            game.board.get_control(
-                                game.history.get_friend(),
-                                &AbsoluteAddress::new(5, 8)
-                            ),
-                            game.board.get_control(
-                                game.history.get_friend(),
-                                &AbsoluteAddress::new(4, 8)
-                            ),
-                            */
+                            0,                                      //self.evaluation.ways(),
+                            0,                                      //self.evaluation.komawari(),
+                            0,                                      //self.evaluation.promotion(),
+                                                                    /* TODO
+                                                                    // サンプルを見ているだけだぜ☆（＾～＾）
+                                                                    game.board.get_control(
+                                                                        game.history.get_friend(),
+                                                                        &AbsoluteAddress::new(6, 8)
+                                                                    ),
+                                                                    game.board.get_control(
+                                                                        game.history.get_friend(),
+                                                                        &AbsoluteAddress::new(5, 8)
+                                                                    ),
+                                                                    game.board.get_control(
+                                                                        game.history.get_friend(),
+                                                                        &AbsoluteAddress::new(4, 8)
+                                                                    ),
+                                                                    */
                         ))),
                     );
                     game.info.print(
@@ -332,7 +333,7 @@ impl Tree {
                 }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                self.evaluation.before_search();
+                //self.evaluation.before_search();
                 let opponent_ts = self.node(
                     game,
                     match ts.bestmove.value {
@@ -346,18 +347,18 @@ impl Tree {
                     // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                     return ts;
                 }
-                self.evaluation.after_search();
+                //self.evaluation.after_search();
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 exists_lose = ts.turn_over_and_choice(
                     &opponent_ts,
                     movement, // way.movement
-                    self.evaluation.centi_pawn(),
+                    0,        //self.evaluation.centi_pawn(),
                 );
             }
 
-            self.evaluation
-                .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+            // self.evaluation
+            //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
             game.undo_move();
 
@@ -392,7 +393,7 @@ impl Tree {
                 }
             }
         }
-        self.evaluation.add_control(-1 * coverage_sign, &ways);
+        //self.evaluation.add_control(-1 * coverage_sign, &ways);
 
         // TODO 利き削除☆（＾～＾）
         // for destination in &controls {
@@ -406,7 +407,8 @@ impl Tree {
                     // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
                     ts.bestmove.update(
                         repetition_movement_val,
-                        &Value::CentiPawn(REPITITION_VALUE),
+                        //&Value::CentiPawn(REPITITION_VALUE),
+                        &Value::CentiPawn(0),
                         Reason::RepetitionBetterThanResign,
                     );
                 }

@@ -59,7 +59,7 @@ struct SpeedOfLight {
     piece_meaning_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
 
     /// 駒種類☆（＾～＾）
-    piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
+    //piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
     piece_type_to_mobility_table: [Vec<Mobility>; PIECE_TYPE_LEN],
     //piece_type_to_movility_table: [Vec<Movility>; PIECE_TYPE_LEN],
     //piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
@@ -68,7 +68,7 @@ struct SpeedOfLight {
     hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
     hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
     hand_address_to_type_table: [HandAddressType; HAND_ADDRESS_LEN],
-    hand_address_to_captured_value: [isize; HAND_ADDRESS_TYPE_LEN],
+    //hand_address_to_captured_value: [isize; HAND_ADDRESS_TYPE_LEN],
 
     // 相対番地と角度☆（＾～＾）
     west_ccw: [RelAdr; ANGLE_LEN],
@@ -85,11 +85,10 @@ struct SpeedOfLight {
     /// 点対称☆（＾～＾）
     rotate180: [Angle; ANGLE_LEN],
 
-    /// 評価値☆（＾～＾）
-    /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
-    /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
-    promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
-
+    // 評価値☆（＾～＾）
+    // 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
+    // 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
+    //promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
     west: RelAdr,
 }
 impl Default for SpeedOfLight {
@@ -326,22 +325,22 @@ impl Default for SpeedOfLight {
             ],
 
             // 成り駒か☆（＾～＾）？
-            piece_type_to_promoted_table: [
-                false, // King
-                false, // Rook
-                false, // Bishop
-                false, // Gold
-                false, // Silver
-                false, // Knight
-                false, // Lance
-                false, // Pawn
-                true,  // Dragon
-                true,  // Horse
-                true,  // PromotedSilver
-                true,  // PromotedKnight
-                true,  // PromotedLance
-                true,  // PromotedPawn
-            ],
+            // piece_type_to_promoted_table: [
+            //     false, // King
+            //     false, // Rook
+            //     false, // Bishop
+            //     false, // Gold
+            //     false, // Silver
+            //     false, // Knight
+            //     false, // Lance
+            //     false, // Pawn
+            //     true,  // Dragon
+            //     true,  // Horse
+            //     true,  // PromotedSilver
+            //     true,  // PromotedKnight
+            //     true,  // PromotedLance
+            //     true,  // PromotedPawn
+            // ],
             piece_type_to_mobility_table: [
                 vec![
                     Mobility::new(Angle::Ccw0, Agility::Hopping),
@@ -676,13 +675,13 @@ impl Default for SpeedOfLight {
             ],
 
             // 評価値☆（＾～＾）
-            promotion_value: [0, 1, 1, 0, 0, 1, 1, 1],
-            hand_address_to_captured_value: [
-                // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
-                15000, // TODO 玉は 0 にしたい,
-                // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
-                1000, 900, 600, 500, 300, 200, 100,
-            ],
+            //promotion_value: [0, 1, 1, 0, 0, 1, 1, 1],
+            // hand_address_to_captured_value: [
+            //     // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
+            //     15000, // TODO 玉は 0 にしたい,
+            //     // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
+            //     1000, 900, 600, 500, 300, 200, 100,
+            // ],
             /*
             hand_address_to_captured_value: [
                 // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
@@ -745,9 +744,9 @@ impl Piece {
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl PieceType {
-    pub fn promoted(self) -> bool {
-        NINE_299792458.piece_type_to_promoted_table[self as usize]
-    }
+    // pub fn promoted(self) -> bool {
+    //     NINE_299792458.piece_type_to_promoted_table[self as usize]
+    // }
     pub fn mobility(self) -> &'static Vec<Mobility> {
         &NINE_299792458.piece_type_to_mobility_table[self as usize]
     }
@@ -808,12 +807,12 @@ pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddressType {
-    pub fn promotion_value(self) -> isize {
-        NINE_299792458.promotion_value[self as usize]
-    }
-    pub fn captured_value(self) -> isize {
-        NINE_299792458.hand_address_to_captured_value[self as usize]
-    }
+    // pub fn promotion_value(self) -> isize {
+    //     NINE_299792458.promotion_value[self as usize]
+    // }
+    // pub fn captured_value(self) -> isize {
+    //     NINE_299792458.hand_address_to_captured_value[self as usize]
+    // }
 }
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
