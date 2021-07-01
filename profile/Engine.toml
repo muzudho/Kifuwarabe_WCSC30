@@ -11,5 +11,5 @@ author = "Satoshi TAKAHASHI"
 
 [resources]
 
-log_file = "log_kw-wcsc30.txt"
+log_file = "kw-wcsc30.log"
 log_enabled = true
