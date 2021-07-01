@@ -4,7 +4,6 @@ use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
 use crate::entities::cosmic::smart::square::*;
 use crate::entities::law::generate_move::PieceEx;
 use crate::entities::law::generate_move::Way;
-use crate::entities::move_::new_move;
 use crate::entities::move_::to_movement;
 use crate::entities::spaceship::equipment::Beam;
 

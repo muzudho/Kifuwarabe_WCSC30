@@ -7,6 +7,7 @@ use crate::take1base::Move;
 // 投了（＾～＾）
 pub const RESIGN_MOVE: Move = 0;
 
+/*
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
 pub fn new_move(phase: Phase, movement: &Movement) -> Move {
     let mut num: u16 = 0;
@@ -55,6 +56,7 @@ pub fn new_move(phase: Phase, movement: &Movement) -> Move {
 
     return num;
 }
+*/
 
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
 pub fn new_move2(
@@ -64,7 +66,7 @@ pub fn new_move2(
     promote: bool,
     drop: Option<HandAddressType>,
 ) -> Move {
-    let mut num: u16 = 0;
+    let mut num: u16;
 
     if let Some(src) = source {
         // 移動元マス
@@ -121,12 +123,13 @@ pub fn to_movement(phase: Phase, num: Move) -> Movement {
     // 移動先マス
     // .pdd dddd dsss ssss - num
     // 0011 1111 1000 0000 - Mask 0x3f80
-    let to = num & 0x3f80 >> 7;
+    // 演算子の優先順位は `&` より `>>` の方が高いことに注意（＾～＾）
+    let to = (num & 0x3f80) >> 7;
 
     // 成
     // .pdd dddd dsss ssss - num
     // 0100 0000 0000 0000 - Mask 0x4000
-    let promote = num & 0x4000 >> 14;
+    let promote = (num & 0x4000) >> 14;
 
     if from < 100 {
         // 盤上
