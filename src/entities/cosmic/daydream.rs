@@ -280,10 +280,10 @@ impl Tree {
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
-                if let Some(_captured) = way.captured {
-                    // TODO SEEやろうぜ☆（＾～＾）
-                    SEE::go(game, &movement.destination);
-                }
+                // if let Some(_captured) = way.captured {
+                //     // TODO SEEやろうぜ☆（＾～＾）
+                //     SEE::go(game, &movement.destination);
+                // }
 
                 // 評価を集計するぜ☆（＾～＾）
                 ts.choice_friend(
