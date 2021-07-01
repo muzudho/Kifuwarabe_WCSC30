@@ -133,12 +133,16 @@ pub fn to_movement(phase: Phase, num: Move) -> Movement {
 
     if from < 100 {
         // 盤上
-        return Movement::new(
-            AbsoluteAddress::from_absolute_address(from as usize),
-            AbsoluteAddress::from_absolute_address(to as usize).unwrap(),
-            promote == 1,
-            None,
-        );
+        if let Some(dst) = AbsoluteAddress::from_absolute_address(to as usize) {
+            return Movement::new(
+                AbsoluteAddress::from_absolute_address(from as usize),
+                dst,
+                promote == 1,
+                None,
+            );
+        } else {
+            panic!("dst {}", to)
+        }
     } else {
         // 打
         let hand = match phase {
@@ -166,11 +170,10 @@ pub fn to_movement(phase: Phase, num: Move) -> Movement {
             },
         };
 
-        return Movement::new(
-            None,
-            AbsoluteAddress::from_absolute_address(to as usize).unwrap(),
-            promote == 1,
-            Some(hand),
-        );
+        if let Some(dst) = AbsoluteAddress::from_absolute_address(to as usize) {
+            return Movement::new(None, dst, promote == 1, Some(hand));
+        } else {
+            panic!("to={}", to)
+        }
     }
 }

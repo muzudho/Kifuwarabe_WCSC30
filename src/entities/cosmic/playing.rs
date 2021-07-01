@@ -301,10 +301,13 @@ impl Game {
                 } else {
                     if let Some(_drp) = movement.drop {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        let piece = self.board.pop_from_board(&movement.destination).unwrap();
-                        // 自分の持ち駒を増やそうぜ☆（＾～＾）！
-                        self.board.push_hand(&piece);
-                        Some(piece)
+                        if let Some(piece) = self.board.pop_from_board(&movement.destination) {
+                            // 自分の持ち駒を増やそうぜ☆（＾～＾）！
+                            self.board.push_hand(&piece);
+                            Some(piece)
+                        } else {
+                            panic!("dst={:?}", movement.destination)
+                        }
                     } else {
                         std::panic::panic_any(Beam::trouble(
                             "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！",

@@ -367,9 +367,12 @@ impl Board {
                 _ => {
                     let hand_type = piece_meaning.hand_address().r#type();
                     self.location[self.hand_index[hand_type as usize]] = Location::Board(source);
-                    let pn = PieceNum::from_usize(self.hand_index[hand_type as usize]).unwrap();
-                    self.hand_index[hand_type as usize] += 1;
-                    pn
+                    if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
+                        self.hand_index[hand_type as usize] += 1;
+                        pn
+                    } else {
+                        panic!("hand_index={}", self.hand_index[hand_type as usize])
+                    }
                 }
             };
             self.push_to_board(
@@ -386,10 +389,11 @@ impl Board {
             let hand_type = hand.r#type();
             let cursor = self.hand_index[hand_type as usize];
             self.location[cursor] = Location::Hand(adr);
-            self.hands[hand as usize].push(&PieceEx::new(
-                piece_meaning,
-                PieceNum::from_usize(cursor).unwrap(),
-            ));
+            if let Some(pn) = PieceNum::from_usize(cursor) {
+                self.hands[hand as usize].push(&PieceEx::new(piece_meaning, pn));
+            } else {
+                panic!("cursor={}", cursor)
+            }
             self.hand_index[hand_type as usize] += 1;
         }
     }
@@ -452,8 +456,11 @@ impl Board {
             match location {
                 Location::Board(adr) => {
                     // 盤上の駒☆（＾～＾）
-                    let piece = self.piece_at(adr).unwrap();
-                    piece_get(i, Some(adr), Some(piece));
+                    if let Some(piece) = self.piece_at(adr) {
+                        piece_get(i, Some(adr), Some(piece));
+                    } else {
+                        panic!("adr={:?}", adr)
+                    }
                 }
                 Location::Hand(_adr) => {
                     // TODO 持ち駒☆（＾～＾）
@@ -476,9 +483,12 @@ impl Board {
             match location {
                 Location::Board(adr) => {
                     // 盤上の駒☆（＾～＾）
-                    let piece = self.piece_at(&adr).unwrap();
-                    if piece.meaning.phase() == friend {
-                        piece_get(location, piece);
+                    if let Some(piece) = self.piece_at(&adr) {
+                        if piece.meaning.phase() == friend {
+                            piece_get(location, piece);
+                        }
+                    } else {
+                        panic!("adr={:?}", adr)
                     }
                 }
                 Location::Hand(_adr) => {

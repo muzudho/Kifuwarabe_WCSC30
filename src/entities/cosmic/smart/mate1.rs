@@ -132,7 +132,11 @@ impl Lioncatch {
                                     .contains(&recipe.1)
                                 {
                                     // そうだぜ☆（＾～＾）ピンされている方確定だな☆（＾～＾）
-                                    pinned_pieces.push(friend_piece.unwrap().num);
+                                    if let Some(friend_piece) = friend_piece {
+                                        pinned_pieces.push(friend_piece.num);
+                                    } else {
+                                        panic!("friend_piece={:?}", friend_piece)
+                                    }
                                 } else {
                                     // おわり☆（＾～＾）
                                     break;

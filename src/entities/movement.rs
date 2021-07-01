@@ -54,7 +54,11 @@ impl Movement {
             let (hash, dst53) = pop_sq_from_hash(hash);
             let (hash, pro54) = pop_bool_from_hash(hash);
             let (_hash, drop55) = pop_drop_from_hash(hash);
-            Some(Movement::new(src52, dst53.unwrap(), pro54, drop55))
+            if let Some(dst) = dst53 {
+                Some(Movement::new(src52, dst, pro54, drop55))
+            } else {
+                panic!("dst53={:?}",dst53)
+            }
         }
     }
 
