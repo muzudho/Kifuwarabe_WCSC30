@@ -4,7 +4,8 @@
 //! 先後なしの駒と空白
 //!
 
-use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
+//use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
+
 use num_derive::FromPrimitive;
 use std::fmt;
 
@@ -104,6 +105,7 @@ pub enum HandAddress {
     Pawn2,
 }
 
+/*
 // 利きボード☆（＾～＾）
 #[derive(Clone, Copy)]
 pub struct ControlBoard {
@@ -124,3 +126,4 @@ impl ControlBoard {
         self.board[index] += offset
     }
 }
+*/

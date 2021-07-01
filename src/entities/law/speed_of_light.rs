@@ -61,9 +61,8 @@ struct SpeedOfLight {
     /// 駒種類☆（＾～＾）
     piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
     piece_type_to_mobility_table: [Vec<Mobility>; PIECE_TYPE_LEN],
-    piece_type_to_movility_table: [Vec<Movility>; PIECE_TYPE_LEN],
-    piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
-
+    //piece_type_to_movility_table: [Vec<Movility>; PIECE_TYPE_LEN],
+    //piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
     /// 持ち駒☆（＾～＾）
     /// 玉２枚引く☆（＾～＾）
     hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
@@ -440,90 +439,90 @@ impl Default for SpeedOfLight {
                     Mobility::new(Angle::Ccw225, Agility::Hopping),
                 ], // PromotedPawn
             ],
-            piece_type_to_movility_table: [
-                vec![
-                    Movility::BackDiagonally,
-                    Movility::FrontDiagonally,
-                    Movility::SideBackSlider,
-                    Movility::FrontDiagonally,
-                ], // King
-                vec![
-                    Movility::SideBackSlider,
-                    Movility::FrontSlider,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // Rook
-                vec![
-                    Movility::SlideDiagonally,
-                    Movility::BackDiagonally,
-                    Movility::FrontDiagonally,
-                ], // Bishop
-                vec![
-                    Movility::FrontDiagonally,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // Gold
-                vec![
-                    Movility::BackDiagonally,
-                    Movility::FrontDiagonally,
-                    Movility::Front,
-                ], // Silver
-                vec![Movility::Knight],                       // Knight
-                vec![Movility::FrontSlider, Movility::Front], // Lance
-                vec![Movility::Front],                        // Pawn
-                vec![
-                    Movility::SideBackSlider,
-                    Movility::FrontSlider,
-                    Movility::BackDiagonally,
-                    Movility::FrontDiagonally,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // Dragon
-                vec![
-                    Movility::SlideDiagonally,
-                    Movility::BackDiagonally,
-                    Movility::FrontDiagonally,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // Horse
-                vec![
-                    Movility::FrontDiagonally,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // PromotedSilver
-                vec![
-                    Movility::FrontDiagonally,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // PromotedKnight
-                vec![
-                    Movility::FrontDiagonally,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // PromotedLance
-                vec![
-                    Movility::FrontDiagonally,
-                    Movility::SideBack,
-                    Movility::Front,
-                ], // PromotedPawn
-            ],
+            // piece_type_to_movility_table: [
+            //     vec![
+            //         Movility::BackDiagonally,
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBackSlider,
+            //         Movility::FrontDiagonally,
+            //     ], // King
+            //     vec![
+            //         Movility::SideBackSlider,
+            //         Movility::FrontSlider,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // Rook
+            //     vec![
+            //         Movility::SlideDiagonally,
+            //         Movility::BackDiagonally,
+            //         Movility::FrontDiagonally,
+            //     ], // Bishop
+            //     vec![
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // Gold
+            //     vec![
+            //         Movility::BackDiagonally,
+            //         Movility::FrontDiagonally,
+            //         Movility::Front,
+            //     ], // Silver
+            //     vec![Movility::Knight],                       // Knight
+            //     vec![Movility::FrontSlider, Movility::Front], // Lance
+            //     vec![Movility::Front],                        // Pawn
+            //     vec![
+            //         Movility::SideBackSlider,
+            //         Movility::FrontSlider,
+            //         Movility::BackDiagonally,
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // Dragon
+            //     vec![
+            //         Movility::SlideDiagonally,
+            //         Movility::BackDiagonally,
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // Horse
+            //     vec![
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // PromotedSilver
+            //     vec![
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // PromotedKnight
+            //     vec![
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // PromotedLance
+            //     vec![
+            //         Movility::FrontDiagonally,
+            //         Movility::SideBack,
+            //         Movility::Front,
+            //     ], // PromotedPawn
+            // ],
             // 駒の取り合いになったときに、先に捨てていく順だぜ☆（＾～＾）
-            piece_type_to_see_order_table: [
-                8, // King
-                5, // Rook
-                4, // Bishop
-                3, // Gold
-                3, // Silver
-                2, // Knight
-                2, // Lance
-                0, // Pawn
-                7, // Dragon
-                6, // Horse
-                3, // PromotedSilver
-                2, // PromotedKnight
-                2, // PromotedLance
-                1, // PromotedPawn
-            ],
+            // piece_type_to_see_order_table: [
+            //     8, // King
+            //     5, // Rook
+            //     4, // Bishop
+            //     3, // Gold
+            //     3, // Silver
+            //     2, // Knight
+            //     2, // Lance
+            //     0, // Pawn
+            //     7, // Dragon
+            //     6, // Horse
+            //     3, // PromotedSilver
+            //     2, // PromotedKnight
+            //     2, // PromotedLance
+            //     1, // PromotedPawn
+            // ],
             // 持ち駒☆（＾～＾）
             hand_addresses_legal_all: [
                 HandAddress::Rook1,
@@ -752,9 +751,9 @@ impl PieceType {
     pub fn mobility(self) -> &'static Vec<Mobility> {
         &NINE_299792458.piece_type_to_mobility_table[self as usize]
     }
-    pub fn movility(self) -> &'static Vec<Movility> {
-        &NINE_299792458.piece_type_to_movility_table[self as usize]
-    }
+    // pub fn movility(self) -> &'static Vec<Movility> {
+    //     &NINE_299792458.piece_type_to_movility_table[self as usize]
+    // }
     /*
     pub fn see_order(self) -> usize {
         NINE_299792458.piece_type_to_see_order_table[self as usize]

@@ -13,11 +13,11 @@ use crate::entities::cosmic::toy_box::PieceNum;
 use crate::entities::cosmic::toy_box::{Board, Location};
 use crate::entities::move_::new_move2;
 use crate::entities::move_::RESIGN_MOVE;
-use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::Beam;
 use crate::take1base::Move;
 use crate::take1base::Piece;
 use std::fmt;
+// use crate::entities::movement::Movement;
 
 ///
 #[derive(Clone, Copy, PartialEq)]
