@@ -244,7 +244,7 @@ impl PseudoLegalMoves {
             !space
         };
 
-        Area::piece_of(piece.meaning.r#type(), us, &from, moving);
+        Area::piece_of(piece.meaning.r#type(), us, from.square_number(), moving);
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -330,7 +330,7 @@ impl Area {
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `hopping` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     /// * `sliding` -
-    fn piece_of<F1>(piece_type: PieceType, us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn piece_of<F1>(piece_type: PieceType, us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
@@ -360,7 +360,7 @@ impl Area {
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn pawn<F1>(us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn pawn<F1>(us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
@@ -374,7 +374,7 @@ impl Area {
         };
 
         for mobility in PieceType::Pawn.mobility().iter() {
-            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
+            Area::move_(&Some(us), from, *mobility, moving);
         }
     }
 
@@ -386,7 +386,7 @@ impl Area {
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn lance<F1>(us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn lance<F1>(us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
@@ -400,7 +400,7 @@ impl Area {
         };
 
         for mobility in PieceType::Lance.mobility().iter() {
-            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
+            Area::move_(&Some(us), from, *mobility, moving);
         }
     }
 
@@ -412,7 +412,7 @@ impl Area {
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn knight<F1>(us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn knight<F1>(us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
@@ -426,7 +426,7 @@ impl Area {
         };
 
         for mobility in PieceType::Knight.mobility().iter() {
-            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
+            Area::move_(&Some(us), from, *mobility, moving);
         }
     }
 
@@ -438,16 +438,16 @@ impl Area {
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn silver<F1>(us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn silver<F1>(us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to: AbsoluteAddress, _agility| {
-            Promoting::silver(us, from.square_number(), to.square_number(), moving)
+            Promoting::silver(us, from, to.square_number(), moving)
         };
 
         for mobility in PieceType::Silver.mobility().iter() {
-            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
+            Area::move_(&Some(us), from, *mobility, moving);
         }
     }
 
@@ -459,14 +459,14 @@ impl Area {
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn gold<F1>(us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn gold<F1>(us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
 
         for mobility in PieceType::Gold.mobility().iter() {
-            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
+            Area::move_(&Some(us), from, *mobility, moving);
         }
     }
 
@@ -477,14 +477,14 @@ impl Area {
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn king<F1>(from: &AbsoluteAddress, moving: &mut F1)
+    fn king<F1>(from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
 
         for mobility in PieceType::King.mobility().iter() {
-            Area::r#move(&None, from.square_number(), *mobility, moving);
+            Area::move_(&None, from, *mobility, moving);
         }
     }
 
@@ -495,15 +495,15 @@ impl Area {
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn bishop<F1>(us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn bishop<F1>(us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to: AbsoluteAddress, _agility| {
-            Promoting::bishop_rook(us, from.square_number(), to.square_number(), moving)
+            Promoting::bishop_rook(us, from, to.square_number(), moving)
         };
         for mobility in PieceType::Bishop.mobility().iter() {
-            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
+            Area::move_(&Some(us), from, *mobility, moving);
         }
     }
 
@@ -514,15 +514,15 @@ impl Area {
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn rook<F1>(us: Phase, from: &AbsoluteAddress, moving: &mut F1)
+    fn rook<F1>(us: Phase, from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to: AbsoluteAddress, _agility| {
-            Promoting::bishop_rook(us, from.square_number(), to.square_number(), moving)
+            Promoting::bishop_rook(us, from, to.square_number(), moving)
         };
         for mobility in PieceType::Rook.mobility().iter() {
-            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
+            Area::move_(&Some(us), from, *mobility, moving);
         }
     }
 
@@ -533,14 +533,14 @@ impl Area {
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn horse<F1>(from: &AbsoluteAddress, moving: &mut F1)
+    fn horse<F1>(from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
 
         for mobility in PieceType::Horse.mobility().iter() {
-            Area::r#move(&None, from.square_number(), *mobility, moving);
+            Area::move_(&None, from, *mobility, moving);
         }
     }
 
@@ -551,7 +551,7 @@ impl Area {
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn dragon<F1>(from: &AbsoluteAddress, moving: &mut F1)
+    fn dragon<F1>(from: Square, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
@@ -559,7 +559,7 @@ impl Area {
             let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
 
             for mobility in PieceType::Dragon.mobility().iter() {
-                Area::r#move(&None, from.square_number(), *mobility, moving);
+                Area::move_(&None, from, *mobility, moving);
             }
         }
     }
@@ -621,7 +621,7 @@ impl Area {
     /// * `angle` - 角度☆（＾～＾）
     /// * `agility` - 動き方☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn r#move<F1>(us: &Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
+    fn move_<F1>(us: &Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Agility) -> bool,
     {
