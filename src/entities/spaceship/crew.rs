@@ -1,12 +1,13 @@
 use crate::config::*;
 use crate::entities::cosmic::playing::{Game, PosNums};
-use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_1};
+use crate::entities::cosmic::smart::square::FILE_1;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::cryptographic::*;
 use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
 use crate::movegen::PseudoLegalMoves;
+use crate::position::square_from;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::search::search::Tree;
@@ -271,8 +272,8 @@ impl Chiyuri {
 
         for ms in 1..9 {
             for hash in 0..10 {
-                let sq = AbsoluteAddress::new(FILE_1, ms);
-                let next = push_sq_to_hash(hash, Some(&sq));
+                let sq = square_from(FILE_1, ms);
+                let next = push_sq_to_hash(hash, sq);
                 let (hash_orig, sq_orig) = pop_sq_from_hash(next);
                 Beam::shoot( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
                     ,hash

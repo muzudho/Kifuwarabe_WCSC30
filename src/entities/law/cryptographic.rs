@@ -26,15 +26,14 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
 */
 
 /// ハッシュ値を作る
-pub fn push_sq_to_hash(hash: u64, square: Option<&AbsoluteAddress>) -> u64 {
+pub fn push_sq_to_hash(hash: u64, sq: Square) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    (hash << 7)
-        + if let Some(square_val) = square {
-            square_val.square_number()
-        } else {
-            0
-        } as u64
+    if is_square(sq) {
+        (hash << 7) + sq as u64
+    } else {
+        panic!("push_sq_to_hash fail")
+    }
 }
 /// ハッシュ値から作る
 pub fn pop_sq_from_hash(hash: u64) -> (u64, AbsoluteAddress) {

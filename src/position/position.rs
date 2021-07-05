@@ -7,7 +7,7 @@ use crate::entities::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::entities::cosmic::smart::features::{HandAddress, PieceType, HAND_MAX};
 use crate::entities::cosmic::smart::square::{
-    AbsoluteAddress, BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
+    BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
 use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
@@ -230,11 +230,11 @@ impl Position {
     }
 
     /* TODO
-    pub fn add_control(&mut self, phase: Phase, adr: &AbsoluteAddress, offset: isize) {
+    pub fn add_control(&mut self, phase: Phase, adr: Square, offset: isize) {
         self.controls[phase as usize].add(adr.address(), offset);
     }
 
-    pub fn get_control(&self, phase: Phase, adr: &AbsoluteAddress) -> isize {
+    pub fn get_control(&self, phase: Phase, adr: Square) -> isize {
         self.controls[phase as usize].get(adr.address())
     }
     */
@@ -302,8 +302,8 @@ impl Position {
     /// 歩が置いてあるか確認
     pub fn exists_pawn_on_file(&self, phase: Phase, file: u8) -> bool {
         for rank in RANK_1..RANK_10 {
-            let adr = AbsoluteAddress::new(file, rank);
-            if let Some(piece) = self.piece_at(adr.square_number()) {
+            let sq = square_from(file, rank);
+            if let Some(piece) = self.piece_at(sq) {
                 if piece.meaning.phase() == phase && piece.meaning.r#type() == PieceType::Pawn {
                     return true;
                 }
