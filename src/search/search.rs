@@ -243,9 +243,7 @@ impl Tree {
             // let movement = move_.movement;
             // TODO テストコード　削除すること（＾～＾）
             // let move_ = new_move(game.history.get_friend(), &move_.movement);
-            // let movement = to_movement(game.history.get_friend(), move_);
             // TODO 新しいコード（＾～＾）
-            // let movement = to_movement(game.history.get_friend(), *move_);
             // ここまで
 
             // let source_piece = if let Some(source_val) = &movement.source {

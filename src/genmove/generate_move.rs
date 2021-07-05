@@ -15,9 +15,7 @@ use crate::position::position::{Location, PieceNum, Position};
 use crate::take1base::Move;
 use crate::take1base::Piece;
 use std::fmt;
-// use crate::entities::movement::Movement;
 
-///
 #[derive(Clone, Copy, PartialEq)]
 pub struct PieceEx {
     /// 深い意味は無く Stockfish の Piece（＾～＾）
@@ -166,65 +164,32 @@ impl PseudoLegalMoves {
                     Any => {
                         // 成ったり、成れなかったりできるとき。
                         if !forbidden {
-                            /* TODO
-                            listen_move(
-                                Some(MoveCap::new(
-                                    Movement::new(Some(*source), destination, false, None),
-                                    pseudo_captured,
-                                )),
-                                &destination,
-                            );
-                            */
-                            listen_move(
-                                new_move2(
-                                    friend,
-                                    Some(source.square_number() as u16),
-                                    destination.square_number() as u16,
-                                    false,
-                                    None,
-                                ), // Movement::new(Some(*source), destination, false, None),
-                            );
-                        }
-                        /* TODO
-                        listen_move(
-                            Some(MoveCap::new(
-                                Movement::new(Some(*source), destination, true, None),
-                                pseudo_captured,
-                            )),
-                            &destination,
-                        );
-                        */
-                        listen_move(
-                            new_move2(
+                            listen_move(new_move2(
                                 friend,
                                 Some(source.square_number() as u16),
                                 destination.square_number() as u16,
-                                true,
+                                false,
                                 None,
-                            ), // Movement::new(Some(*source), destination, true, None),
-                        );
+                            ));
+                        }
+                        listen_move(new_move2(
+                            friend,
+                            Some(source.square_number() as u16),
+                            destination.square_number() as u16,
+                            true,
+                            None,
+                        ));
                     }
                     _ => {
                         // 成れるか、成れないかのどちらかのとき。
                         if promotion || !forbidden {
-                            /* TODO
-                            listen_move(
-                                Some(MoveCap::new(
-                                    Movement::new(Some(*source), destination, promotion, None),
-                                    pseudo_captured,
-                                )),
-                                &destination,
-                            );
-                            */
-                            listen_move(
-                                new_move2(
-                                    friend,
-                                    Some(source.square_number() as u16),
-                                    destination.square_number() as u16,
-                                    promotion,
-                                    None,
-                                ), // Movement::new(Some(*source), destination, promotion, None),
-                            );
+                            listen_move(new_move2(
+                                friend,
+                                Some(source.square_number() as u16),
+                                destination.square_number() as u16,
+                                promotion,
+                                None,
+                            ));
                         }
                     }
                 };
@@ -267,36 +232,13 @@ impl PseudoLegalMoves {
                         }
                         _ => {}
                     }
-                    /* TOTO
-                    listen_move(
-                        Some(MoveCap::new(
-                            Movement::new(
-                                None,                                        // 駒台
-                                destination,                                 // どの升へ行きたいか
-                                false,                                       // 打に成りは無し
-                                Some(piece.meaning.hand_address().r#type()), // 打った駒種類
-                            ),
-                            None,
-                        )),
-                        &destination,
-                    );
-                    */
-                    listen_move(
-                        new_move2(
-                            friend,
-                            None,                                        // 駒台
-                            destination.square_number() as u16,          // どの升へ行きたいか
-                            false,                                       // 打に成りは無し
-                            Some(piece.meaning.hand_address().r#type()), // 打った駒種類
-                        ),
-                        /*
-                        Movement::new(
-                            None,                                        // 駒台
-                            destination,                                 // どの升へ行きたいか
-                            false,                                       // 打に成りは無し
-                            Some(piece.meaning.hand_address().r#type()), // 打った駒種類
-                        ),                        */
-                    );
+                    listen_move(new_move2(
+                        friend,
+                        None,                                        // 駒台
+                        destination.square_number() as u16,          // どの升へ行きたいか
+                        false,                                       // 打に成りは無し
+                        Some(piece.meaning.hand_address().r#type()), // 打った駒種類
+                    ));
                 }
             };
 

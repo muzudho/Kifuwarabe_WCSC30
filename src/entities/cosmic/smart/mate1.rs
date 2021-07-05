@@ -9,7 +9,6 @@
 // use crate::entities::law::speed_of_light::Movility;
 // use crate::entities::move_::new_move2;
 // use crate::entities::spaceship::equipment::{Beam, Log};
-// use crate::entities::movement::Movement;
 
 /*
 /// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？
@@ -211,7 +210,7 @@ impl Lioncatch {
                                         self.opponent_king_adr.address() as u16,
                                         false,
                                         None,
-                                    ), // Movement::new(Some(cur), self.opponent_king_adr, false, None)
+                                    ),
                                     Some(any_piece_val),
                                 ));
                             }
@@ -224,7 +223,7 @@ impl Lioncatch {
                                     self.opponent_king_adr.address() as u16,
                                     false,
                                     None,
-                                ), // Movement::new(Some(cur), self.opponent_king_adr, false, None)
+                                ),
                                 Some(any_piece_val),
                             ));
                         }
@@ -285,12 +284,6 @@ impl Lioncatch {
                                                 false,
                                                 None,
                                             ),
-                                            // Movement::new(
-                                            //     Some(cur),
-                                            //     self.opponent_king_adr,
-                                            //     false,
-                                            //     None,
-                                            // ),
                                             Some(any_piece_val),
                                         ));
                                     }
@@ -308,12 +301,6 @@ impl Lioncatch {
                                             false,
                                             None,
                                         ),
-                                        // Movement::new(
-                                        //     Some(cur),
-                                        //     self.opponent_king_adr,
-                                        //     false,
-                                        //     None,
-                                        // ),
                                         Some(any_piece_val),
                                     ));
                                 }
