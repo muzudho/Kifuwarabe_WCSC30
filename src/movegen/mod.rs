@@ -5,13 +5,13 @@
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddress;
 use crate::entities::cosmic::smart::features::PieceType;
-use crate::entities::cosmic::smart::square::FILE_0;
 use crate::entities::cosmic::smart::square::{
     Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4, RANK_6, RANK_7,
     RANK_8, RANK_9,
 };
 use crate::entities::move_::new_move;
 use crate::entities::spaceship::equipment::Beam;
+use crate::position::destructure_move;
 use crate::position::file;
 use crate::position::is_board_square;
 use crate::position::is_hand_square;
@@ -62,6 +62,75 @@ impl Mobility {
     }
 }
 
+/// # Returns
+///
+/// 合い駒のマス, チェッカーのマス
+fn check_checker_pin(
+    us: Phase,
+    position: &Position,
+    ksq: Square,
+    d_file: i8,
+    d_rank: i8,
+) -> (Option<Square>, Option<Square>) {
+    let mut file = file(ksq) as i8 + d_file;
+    let mut rank = rank(ksq) as i8 + d_rank;
+    let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
+    let mut checker: Option<Square> = None; // チェック駒
+    let mut interval = 0;
+    while (FILE_1 as i8) <= file
+        && file < (FILE_10 as i8)
+        && (RANK_1 as i8) <= rank
+        && rank < (RANK_10 as i8)
+    {
+        let sq = square_from(file as u8, rank as u8);
+        if let Some(pc_ex) = position.piece_at(sq) {
+            if us == pc_ex.piece.phase() {
+                // 合い駒か、ただの自駒か
+                if let None = pinned {
+                    pinned = Some(sq);
+                } else {
+                    // 味方の駒が２枚あれば長い利きは当たっていません
+                    // ループ終了
+                    break;
+                }
+            } else {
+                // 敵駒
+                checker = if interval == 0 {
+                    match pc_ex.piece.type_() {
+                        PieceType::K
+                        | PieceType::R
+                        | PieceType::G
+                        | PieceType::PR
+                        | PieceType::PB
+                        | PieceType::PS
+                        | PieceType::PN
+                        | PieceType::PL
+                        | PieceType::PP => Some(sq),
+                        _ => None,
+                    }
+                } else {
+                    match pc_ex.piece.type_() {
+                        PieceType::R | PieceType::PR => Some(sq),
+                        _ => None,
+                    }
+                };
+                // ループ終了
+                break;
+            }
+        } else {
+        }
+
+        file += d_file;
+        rank += d_rank;
+        interval += 1;
+    }
+
+    if let None = checker {
+        pinned = None;
+    }
+
+    (pinned, checker)
+}
 /// Pseudo legal move(疑似合法手)☆（＾～＾）
 ///
 /// 先手の連続王手の千日手とか、空き王手とか、駒を見ただけでは調べられないだろ☆（＾～＾）
@@ -96,48 +165,51 @@ impl PseudoLegalMoves {
             Phase::First => position.location_at(PieceNum::King1),
             Phase::Second => position.location_at(PieceNum::King2),
         };
-        if is_board_square(ksq) {
-            // TODO 合い駒(Pinned)検索
 
-            // TODO 右方向
-            {
-                let mut pinned: Option<Piece> = None; // 合い駒か、ただの自駒
-                let mut checker: Option<Piece> = None; // チェック駒
-                let rank = rank(ksq);
-                for file in file(ksq) + 1..FILE_0 {
-                    let sq = square_from(file, rank);
-                    if let Some(pc_ex) = position.piece_at(sq) {
-                        if us == pc_ex.piece.phase() {
-                            // 合い駒か、ただの自駒か
-                            pinned = Some(pc_ex.piece);
-                        } else {
-                            // 敵駒
-                            // match pc_ex.piece.type_ {
-                            //     PieceType::Rook =>,
-                            // }
-                        }
-                    } else {
-                    }
-                }
-            }
-
-            // TODO 右上方向
-            // TODO 上方向
-            // TODO 左上方向
-            // TODO 左方向
-            // TODO 左下方向
-            // TODO 下方向
-            // TODO 右下方向
-
-            // TODO スライディング・チェッカー(Sliding Checker)検索
-        } else {
+        if !is_board_square(ksq) {
             panic!("(Err.93) ksq fail")
         }
+
+        // 合い駒(Pinned)検索
+        let mut pinned_list = Vec::<Square>::new();
+
+        // とりあえず 合い駒(Pinned) は今のところ 動かさないことにするぜ（＾～＾）
+        // 方向
+        let directions = [
+            (1, 0),   // 右方向
+            (1, -1),  // 右上方向
+            (0, -1),  // 上方向
+            (-1, -1), // 左上方向
+            (-1, 0),  // 左方向
+            (-1, 1),  // 左下方向
+            (0, 1),   // 下方向
+            (1, 1),   // 右下方向
+        ];
+        // TODO 合い駒でも、動かしていい方向はあるはず
+        for dir in directions {
+            let (pinned, _checker) = check_checker_pin(us, position, ksq, dir.0, dir.1);
+            if let Some(pinned) = pinned {
+                pinned_list.push(pinned);
+            }
+        }
+
+        // TODO スライディング・チェッカー(Sliding Checker)検索
 
         // TODO チェッカーがいたら、王手回避(Evasions)モードへ
 
         // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
-        PseudoLegalMoves::generate_non_evasion(us, position)
+        let mut move_list = PseudoLegalMoves::generate_non_evasion(us, position);
+
+        // とりあえず、合い駒を動かす手を除外します
+        move_list.retain(|particle| {
+            let delete = {
+                let (from, _, _) = destructure_move(*particle);
+                pinned_list.contains(&from)
+            };
+            !delete
+        });
+
+        move_list
     }
 
     fn generate_non_evasion(us: Phase, position: &Position) -> Vec<Move> {
