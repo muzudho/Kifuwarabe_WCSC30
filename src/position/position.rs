@@ -299,7 +299,7 @@ impl Position {
     */
 
     /// 歩が置いてあるか確認
-    pub fn exists_pawn_on_file(&self, phase: Phase, file: usize) -> bool {
+    pub fn exists_pawn_on_file(&self, phase: Phase, file: u8) -> bool {
         for rank in RANK_1..RANK_10 {
             let adr = AbsoluteAddress::new(file, rank);
             if let Some(piece) = self.piece_at(adr.square_number()) {
@@ -339,7 +339,7 @@ impl Position {
         piece
     }
     /// 盤に駒か空升を置いていきます。
-    pub fn push_piece_on_init(&mut self, file: usize, rank: usize, piece: Option<Piece>) {
+    pub fn push_piece_on_init(&mut self, file: u8, rank: u8, piece: Option<Piece>) {
         if !(FILE_0 < file && file < FILE_10 && RANK_0 < rank && rank < RANK_10) {
             std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.323) 盤上の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",

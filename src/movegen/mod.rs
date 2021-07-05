@@ -684,8 +684,8 @@ enum Promotability {
 /// 行き先があるかないかのチェックに使うぜ☆（＾～＾）
 /// 成れるときは使わないぜ☆（＾～＾）
 struct MovePermission {
-    min_rank: usize,
-    max_rank: usize,
+    min_rank: u8,
+    max_rank: u8,
 }
 impl MovePermission {
     fn from_pawn_or_lance(us: Phase) -> Self {
@@ -794,7 +794,7 @@ impl Promoting {
     {
         if Promoting::is_first_second_farthest_rank_from_friend(us, &to) {
             callback(*to, Promotability::Forced, Agility::Knight, move_permission)
-        } else if Promoting::is_third_farthest_rank_from_friend(us, &to) {
+        } else if Promoting::is_third_farthest_rank_from_friend(us, to.square_number()) {
             callback(*to, Promotability::Any, Agility::Knight, move_permission)
         } else {
             callback(*to, Promotability::Deny, Agility::Knight, move_permission)
@@ -820,7 +820,7 @@ impl Promoting {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_third_farthest_rank_from_friend(us, &from) {
+        if Promoting::is_third_farthest_rank_from_friend(us, from.square_number()) {
             callback(*to, Promotability::Any, Agility::Hopping, None)
         } else if Promoting::is_opponent_region(us, to.square_number()) {
             callback(*to, Promotability::Any, Agility::Hopping, None)
@@ -895,8 +895,8 @@ impl Promoting {
     ///
     /// * `us` -
     /// * `to` -
-    fn is_third_farthest_rank_from_friend(us: Phase, to: &AbsoluteAddress) -> bool {
-        (us == Phase::First && to.rank() == RANK_3) || (us == Phase::Second && RANK_7 == to.rank())
+    fn is_third_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
+        (us == Phase::First && rank(to) == RANK_3) || (us == Phase::Second && RANK_7 == rank(to))
     }
     /// 敵陣
     ///
@@ -906,7 +906,6 @@ impl Promoting {
     /// * `us` -
     /// * `to` -
     fn is_opponent_region(us: Phase, to: Square) -> bool {
-        (us == Phase::First && (rank(to) as usize) < RANK_4)
-            || (us == Phase::Second && RANK_6 < rank(to) as usize)
+        (us == Phase::First && rank(to) < RANK_4) || (us == Phase::Second && RANK_6 < rank(to))
     }
 }

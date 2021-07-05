@@ -206,7 +206,7 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
         /// 改行のようなものだぜ☆（＾～＾）
         NewLine,
         /// スペース数☆（＾～＾）
-        Number(usize),
+        Number(u8),
         /// 駒☆（＾～＾）+で始まるものもこっちだぜ☆（＾～＾）
         Alphabet(Piece),
     }

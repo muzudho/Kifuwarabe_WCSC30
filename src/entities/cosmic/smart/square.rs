@@ -308,27 +308,27 @@ pub fn test_rotation() {
 // pub type isquare = isize;
 
 // 配列サイズなので 1 大きめだぜ☆（＾～＾）
-pub const BOARD_MEMORY_AREA: usize = 100;
+pub const BOARD_MEMORY_AREA: u8 = 100;
 
 /// 筋、段は 1 から始まる、という明示。
 /// usize が速い☆（＾～＾）
-pub const FILE_0: usize = 0;
-pub const FILE_1: usize = 1;
-pub const FILE_9: usize = 9;
-pub const FILE_10: usize = 10;
-pub const FILE_11: usize = 11;
-pub const RANK_0: usize = 0;
-pub const RANK_1: usize = 1;
-pub const RANK_2: usize = 2;
-pub const RANK_3: usize = 3;
-pub const RANK_4: usize = 4;
-// pub const RANK_5: usize = 5;
-pub const RANK_6: usize = 6;
-pub const RANK_7: usize = 7;
-pub const RANK_8: usize = 8; //うさぎの打てる段の上限
-pub const RANK_9: usize = 9;
-pub const RANK_10: usize = 10;
-pub const RANK_11: usize = 11;
+pub const FILE_0: u8 = 0;
+pub const FILE_1: u8 = 1;
+pub const FILE_9: u8 = 9;
+pub const FILE_10: u8 = 10;
+pub const FILE_11: u8 = 11;
+pub const RANK_0: u8 = 0;
+pub const RANK_1: u8 = 1;
+pub const RANK_2: u8 = 2;
+pub const RANK_3: u8 = 3;
+pub const RANK_4: u8 = 4;
+// pub const RANK_5: u8 = 5;
+pub const RANK_6: u8 = 6;
+pub const RANK_7: u8 = 7;
+pub const RANK_8: u8 = 8; //うさぎの打てる段の上限
+pub const RANK_9: u8 = 9;
+pub const RANK_10: u8 = 10;
+pub const RANK_11: u8 = 11;
 
 #[derive(Debug)]
 pub enum DictOrthant {
@@ -590,8 +590,8 @@ pub struct AbsoluteAddress {
     ///   98 88 78 68 58 48 38 28 18
     ///   99 89 79 69 59 49 39 29 19
     ///           Source
-    file: usize,
-    rank: usize,
+    file: u8,
+    rank: u8,
 }
 impl Default for AbsoluteAddress {
     /// ゴミの値を作るぜ☆（＾～＾）
@@ -600,17 +600,9 @@ impl Default for AbsoluteAddress {
     }
 }
 impl AbsoluteAddress {
-    pub fn new(file: usize, rank: usize) -> Self {
-        debug_assert!(
-            FILE_0 as usize <= file && file < FILE_11 as usize,
-            "file={}",
-            file
-        );
-        debug_assert!(
-            RANK_0 as usize <= rank && rank < RANK_11 as usize,
-            "rank={}",
-            rank
-        );
+    pub fn new(file: u8, rank: u8) -> Self {
+        debug_assert!(FILE_0 <= file && file < FILE_11, "file={}", file);
+        debug_assert!(RANK_0 <= rank && rank < RANK_11, "rank={}", rank);
         AbsoluteAddress {
             file: file,
             rank: rank,
@@ -618,24 +610,24 @@ impl AbsoluteAddress {
     }
 
     pub fn from_square(sq: Square) -> AbsoluteAddress {
-        let file = ((sq / 10) % 10) as usize;
-        let rank = (sq % 10) as usize;
+        let file = (sq / 10) as u8; // ((sq / 10) % 10) as u8;
+        let rank = (sq % 10) as u8;
         if sq == 0 {
             panic!("from_absolute_address fail")
         } else {
             debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
             debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
-            AbsoluteAddress::new(file as usize, rank as usize)
+            AbsoluteAddress::new(file, rank)
         }
     }
 
     /// 列番号。いわゆる筋。右から 1, 2, 3 ...
-    pub fn file(&self) -> usize {
+    pub fn file(&self) -> u8 {
         self.file
     }
 
     /// 行番号。いわゆる段。上から 1, 2, 3 ...
-    pub fn rank(&self) -> usize {
+    pub fn rank(&self) -> u8 {
         self.rank
     }
 
@@ -663,7 +655,7 @@ impl AbsoluteAddress {
     pub fn offset(&mut self, r: &RelAdr) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
-        let sum = (self.square_number() as isize + r.get_address()) as usize;
+        let sum = (self.square_number() as isize + r.get_address()) as u8;
 
         // Initialize.
         self.rank = sum % 10;
