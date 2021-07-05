@@ -262,10 +262,10 @@ impl PseudoLegalMoves {
         }
 
         // 合い駒(Pinned)検索
+        // スライディング・チェッカー(Sliding Checker)検索
         let mut pinned_list = Vec::<Square>::new();
 
         // とりあえず 合い駒(Pinned) は今のところ 動かさないことにするぜ（＾～＾）
-        // 方向
         let directions = [
             Direction::Right,
             Direction::TopRight,
@@ -276,7 +276,6 @@ impl PseudoLegalMoves {
             Direction::Bottom,
             Direction::BottomRight,
         ];
-        // TODO 合い駒でも、動かしていい方向はあるはず
         for direction in directions {
             let (pinned, _checker) = check_checker_pin(us, position, ksq, direction);
             if let Some(pinned) = pinned {
@@ -284,14 +283,13 @@ impl PseudoLegalMoves {
             }
         }
 
-        // TODO スライディング・チェッカー(Sliding Checker)検索
-
         // TODO チェッカーがいたら、王手回避(Evasions)モードへ
 
         // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
         let mut move_list = PseudoLegalMoves::generate_non_evasion(us, position);
 
         // とりあえず、合い駒を動かす手を除外します
+        // TODO 合い駒でも、動かしていい方向はあるはず
         move_list.retain(|particle| {
             let delete = {
                 let (from, _, _) = destructure_move(*particle);
