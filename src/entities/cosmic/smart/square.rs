@@ -643,47 +643,8 @@ impl AbsoluteAddress {
         AbsoluteAddress::new(file, rank)
     }
 
-    /// 壁の中にいる☆（＾～＾）
-    pub fn wall(&self) -> bool {
-        self.file % 10 == 0 || self.rank % 10 == 0
-    }
-
     pub fn square_number(&self) -> Square {
         (self.file * 10 + self.rank) as Square
-    }
-
-    pub fn offset(&mut self, r: &RelAdr) -> &mut Self {
-        // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
-        // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
-        let sum = (self.square_number() as isize + r.get_address()) as u8;
-
-        // Initialize.
-        self.rank = sum % 10;
-        self.file = 0;
-        // Carry.
-        if 9 < self.rank {
-            self.rank = self.rank % 10;
-            self.file += 1;
-        }
-        self.file += sum / 10 % 10;
-        // Carry over flow.
-        if 9 < self.file {
-            self.file = self.file % 10;
-        }
-
-        // 番兵込みの絶対番地に収めろだぜ☆（＾～＾）
-        /*
-        debug_assert!(0 <= sum, format!("negative address={}", sum));
-        debug_assert!(
-            FILE_0 <= self.file && self.file < FILE_11,
-            format!("file={}", self.file)
-        );
-        debug_assert!(
-            RANK_0 <= self.rank && self.rank < RANK_11,
-            format!("rank={}", self.rank)
-        );
-        */
-        self
     }
 }
 impl fmt::Debug for AbsoluteAddress {

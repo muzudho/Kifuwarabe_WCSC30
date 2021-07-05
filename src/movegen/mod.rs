@@ -124,13 +124,7 @@ impl PseudoLegalMoves {
         // 座標ではなく、駒の背番号で検索
         position.for_some_pieces_on_list40(us, &mut |sq, piece| {
             if is_board_square(sq) {
-                PseudoLegalMoves::start_on_board(
-                    us,
-                    &AbsoluteAddress::from_square(sq),
-                    &piece,
-                    position,
-                    listen_move,
-                )
+                PseudoLegalMoves::start_on_board(us, sq, &piece, position, listen_move)
             } else if is_hand_square(sq) {
                 PseudoLegalMoves::make_drop(us, square_to_hand_address(sq), position, listen_move);
             } else {
@@ -160,7 +154,7 @@ impl PseudoLegalMoves {
     /// * 移動先にあった駒
     fn start_on_board<F1>(
         us: Phase,
-        from: &AbsoluteAddress,
+        from: Square,
         piece: &PieceEx,
         position: &Position,
         listen_move: &mut F1,
@@ -208,29 +202,17 @@ impl PseudoLegalMoves {
                     Any => {
                         // 成ったり、成れなかったりできるとき。
                         if !forbidden {
-                            listen_move(new_move(
-                                us,
-                                Some(from.square_number() as u16),
-                                to.square_number() as u16,
-                                false,
-                                None,
-                            ));
+                            listen_move(new_move(us, Some(from), to.square_number(), false, None));
                         }
-                        listen_move(new_move(
-                            us,
-                            Some(from.square_number() as u16),
-                            to.square_number() as u16,
-                            true,
-                            None,
-                        ));
+                        listen_move(new_move(us, Some(from), to.square_number(), true, None));
                     }
                     _ => {
                         // 成れるか、成れないかのどちらかのとき。
                         if promotion || !forbidden {
                             listen_move(new_move(
                                 us,
-                                Some(from.square_number() as u16),
-                                to.square_number() as u16,
+                                Some(from),
+                                to.square_number(),
                                 promotion,
                                 None,
                             ));
@@ -244,7 +226,7 @@ impl PseudoLegalMoves {
             !space
         };
 
-        Area::piece_of(piece.meaning.r#type(), us, from.square_number(), moving);
+        Area::piece_of(piece.meaning.r#type(), us, from, moving);
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -279,7 +261,7 @@ impl PseudoLegalMoves {
                     listen_move(new_move(
                         us,
                         None,                                        // 駒台
-                        to.square_number() as u16,                   // どの升へ行きたいか
+                        to.square_number(),                          // どの升へ行きたいか
                         false,                                       // 打に成りは無し
                         Some(piece.meaning.hand_address().r#type()), // 打った駒種類
                     ));

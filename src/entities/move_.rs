@@ -3,22 +3,23 @@ use crate::entities::cosmic::smart::features::HandAddressType;
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
 use crate::position::destructure_move;
 use crate::position::is_board_square;
+use crate::position::Square;
 use crate::take1base::Move;
 
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
 pub fn new_move(
     phase: Phase,
-    source: Option<u16>,
-    destination: u16,
+    from: Option<Square>,
+    to: Square,
     promote: bool,
     drop: Option<HandAddressType>,
 ) -> Move {
     let mut num: u16;
 
-    if let Some(src) = source {
+    if let Some(src) = from {
         // 移動元マス
         // .... .... .sss ssss
-        num = src;
+        num = src as u16;
     } else if let Some(drp) = drop {
         // 打
         num = match phase {
@@ -49,7 +50,7 @@ pub fn new_move(
 
     // 移動先マス
     // ..dd dddd d... ....
-    num += destination << 7;
+    num += (to as u16) << 7;
 
     if promote {
         // 成
