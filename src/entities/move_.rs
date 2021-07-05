@@ -1,7 +1,6 @@
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddressType;
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
-use crate::entities::movement::Movement;
 use crate::position::destructure_move;
 use crate::take1base::Move;
 
@@ -112,13 +111,28 @@ pub fn new_move2(
 }
 
 /// to_movement - 移動元マス、移動先マス、成りの有無
-pub fn to_movement(phase: Phase, num: Move) -> Movement {
+///
+/// # Returns
+///
+/// `Option<AbsoluteAddress>` - from. 移動元升。Dropのときは None だぜ☆（＾～＾）
+/// `AbsoluteAddress` - to. 移動先升
+/// `bool` - promote. 移動後に成るなら真
+/// `Option<HandAddressType>` - drop. 打の場合、打った駒種類
+pub fn to_movement(
+    phase: Phase,
+    num: Move,
+) -> (
+    Option<AbsoluteAddress>,
+    AbsoluteAddress,
+    bool,
+    Option<HandAddressType>,
+) {
     let (from, to, promote) = destructure_move(num);
 
     if from < 100 {
         // 盤上
         if let Some(dst) = AbsoluteAddress::from_absolute_address(to as usize) {
-            return Movement::new(
+            return (
                 AbsoluteAddress::from_absolute_address(from as usize),
                 dst,
                 promote,
@@ -155,7 +169,7 @@ pub fn to_movement(phase: Phase, num: Move) -> Movement {
         };
 
         if let Some(dst) = AbsoluteAddress::from_absolute_address(to as usize) {
-            return Movement::new(None, dst, promote, Some(hand));
+            return (None, dst, promote, Some(hand));
         } else {
             panic!("to={}", to)
         }

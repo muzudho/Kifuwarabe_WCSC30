@@ -30,19 +30,19 @@ impl Default for Movement {
     }
 }
 impl Movement {
-    pub fn new(
-        source: Option<AbsoluteAddress>,
-        destination: AbsoluteAddress,
-        promote: bool,
-        drop: Option<HandAddressType>,
-    ) -> Self {
-        Movement {
-            source: source,
-            destination: destination,
-            promote: promote,
-            drop: drop,
-        }
-    }
+    // pub fn new(
+    //     source: Option<AbsoluteAddress>,
+    //     destination: AbsoluteAddress,
+    //     promote: bool,
+    //     drop: Option<HandAddressType>,
+    // ) -> Self {
+    //     Movement {
+    //         source: source,
+    //         destination: destination,
+    //         promote: promote,
+    //         drop: drop,
+    //     }
+    // }
 
     // pub fn from_hash(hash: u64) -> Option<Movement> {
     //     if hash == 0 {
