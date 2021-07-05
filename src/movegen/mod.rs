@@ -14,7 +14,9 @@ use crate::entities::spaceship::equipment::Beam;
 use crate::position::is_board_square;
 use crate::position::is_hand_square;
 use crate::position::position::{PieceNum, Position};
+use crate::position::rank;
 use crate::position::square_to_hand_address;
+use crate::position::Square;
 use crate::take1base::Move;
 use crate::take1base::Piece;
 use std::fmt;
@@ -820,7 +822,7 @@ impl Promoting {
     {
         if Promoting::is_third_farthest_rank_from_friend(us, &from) {
             callback(*to, Promotability::Any, Agility::Hopping, None)
-        } else if Promoting::is_opponent_region(us, &to) {
+        } else if Promoting::is_opponent_region(us, to.square_number()) {
             callback(*to, Promotability::Any, Agility::Hopping, None)
         } else {
             callback(*to, Promotability::Deny, Agility::Hopping, None)
@@ -846,7 +848,9 @@ impl Promoting {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_opponent_region(us, &from) || Promoting::is_opponent_region(us, &to) {
+        if Promoting::is_opponent_region(us, from.square_number())
+            || Promoting::is_opponent_region(us, to.square_number())
+        {
             callback(*to, Promotability::Any, Agility::Sliding, None)
         } else {
             callback(*to, Promotability::Deny, Agility::Sliding, None)
@@ -901,7 +905,8 @@ impl Promoting {
     ///
     /// * `us` -
     /// * `to` -
-    fn is_opponent_region(us: Phase, to: &AbsoluteAddress) -> bool {
-        (us == Phase::First && to.rank() < RANK_4) || (us == Phase::Second && RANK_6 < to.rank())
+    fn is_opponent_region(us: Phase, to: Square) -> bool {
+        (us == Phase::First && (rank(to) as usize) < RANK_4)
+            || (us == Phase::Second && RANK_6 < rank(to) as usize)
     }
 }

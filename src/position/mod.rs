@@ -80,6 +80,13 @@ pub fn hand_address_to_square(ha: HandAddress) -> Square {
     }
 }
 
+pub fn rank(sq: Square) -> u8 {
+    sq % 10
+}
+pub fn file(sq: Square) -> u8 {
+    sq / 10
+}
+
 pub fn destructure_move(num: Move) -> (Square, Square, bool) {
     // 移動元マス
     // .pdd dddd dsss ssss - num
