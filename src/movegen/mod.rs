@@ -62,6 +62,19 @@ impl Mobility {
     }
 }
 
+/// 向き
+#[derive(Clone, Copy)]
+pub enum Direction {
+    Right,
+    TopRight,
+    Top,
+    TopLeft,
+    Left,
+    BottomLeft,
+    Bottom,
+    BottomRight,
+}
+
 /// # Returns
 ///
 /// 合い駒のマス, チェッカーのマス
@@ -69,9 +82,21 @@ fn check_checker_pin(
     us: Phase,
     position: &Position,
     ksq: Square,
-    d_file: i8,
-    d_rank: i8,
+    direction: Direction,
 ) -> (Option<Square>, Option<Square>) {
+    let directions = [
+        (1, 0),   // 右方向
+        (1, -1),  // 右上方向
+        (0, -1),  // 上方向
+        (-1, -1), // 左上方向
+        (-1, 0),  // 左方向
+        (-1, 1),  // 左下方向
+        (0, 1),   // 下方向
+        (1, 1),   // 右下方向
+    ];
+    let d_file = directions[direction as usize].0;
+    let d_rank = directions[direction as usize].1;
+
     let mut file = file(ksq) as i8 + d_file;
     let mut rank = rank(ksq) as i8 + d_rank;
     let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
@@ -96,22 +121,88 @@ fn check_checker_pin(
             } else {
                 // 敵駒
                 checker = if interval == 0 {
-                    match pc_ex.piece.type_() {
-                        PieceType::K
-                        | PieceType::R
-                        | PieceType::G
-                        | PieceType::PR
-                        | PieceType::PB
-                        | PieceType::PS
-                        | PieceType::PN
-                        | PieceType::PL
-                        | PieceType::PP => Some(sq),
-                        _ => None,
+                    match direction {
+                        Direction::Right | Direction::Left => match pc_ex.piece.type_() {
+                            PieceType::K
+                            | PieceType::R
+                            | PieceType::G
+                            | PieceType::PR
+                            | PieceType::PB
+                            | PieceType::PS
+                            | PieceType::PN
+                            | PieceType::PL
+                            | PieceType::PP => Some(sq),
+                            _ => None,
+                        },
+                        Direction::TopRight | Direction::TopLeft => match pc_ex.piece.type_() {
+                            PieceType::K
+                            | PieceType::B
+                            | PieceType::G
+                            | PieceType::S
+                            | PieceType::PR
+                            | PieceType::PB
+                            | PieceType::PS
+                            | PieceType::PN
+                            | PieceType::PL
+                            | PieceType::PP => Some(sq),
+                            _ => None,
+                        },
+                        Direction::Top => match pc_ex.piece.type_() {
+                            PieceType::K
+                            | PieceType::R
+                            | PieceType::G
+                            | PieceType::S
+                            | PieceType::L
+                            | PieceType::P
+                            | PieceType::PR
+                            | PieceType::PB
+                            | PieceType::PS
+                            | PieceType::PN
+                            | PieceType::PL
+                            | PieceType::PP => Some(sq),
+                            _ => None,
+                        },
+                        Direction::BottomLeft | Direction::BottomRight => match pc_ex.piece.type_()
+                        {
+                            PieceType::K
+                            | PieceType::B
+                            | PieceType::S
+                            | PieceType::PR
+                            | PieceType::PB => Some(sq),
+                            _ => None,
+                        },
+                        Direction::Bottom => match pc_ex.piece.type_() {
+                            PieceType::K
+                            | PieceType::R
+                            | PieceType::G
+                            | PieceType::PR
+                            | PieceType::PB
+                            | PieceType::PS
+                            | PieceType::PN
+                            | PieceType::PL
+                            | PieceType::PP => Some(sq),
+                            _ => None,
+                        },
                     }
                 } else {
-                    match pc_ex.piece.type_() {
-                        PieceType::R | PieceType::PR => Some(sq),
-                        _ => None,
+                    match direction {
+                        Direction::Right | Direction::Left | Direction::Bottom => {
+                            match pc_ex.piece.type_() {
+                                PieceType::R | PieceType::PR => Some(sq),
+                                _ => None,
+                            }
+                        }
+                        Direction::TopRight
+                        | Direction::TopLeft
+                        | Direction::BottomLeft
+                        | Direction::BottomRight => match pc_ex.piece.type_() {
+                            PieceType::B | PieceType::PB => Some(sq),
+                            _ => None,
+                        },
+                        Direction::Top => match pc_ex.piece.type_() {
+                            PieceType::R | PieceType::L | PieceType::PR => Some(sq),
+                            _ => None,
+                        },
                     }
                 };
                 // ループ終了
@@ -176,18 +267,18 @@ impl PseudoLegalMoves {
         // とりあえず 合い駒(Pinned) は今のところ 動かさないことにするぜ（＾～＾）
         // 方向
         let directions = [
-            (1, 0),   // 右方向
-            (1, -1),  // 右上方向
-            (0, -1),  // 上方向
-            (-1, -1), // 左上方向
-            (-1, 0),  // 左方向
-            (-1, 1),  // 左下方向
-            (0, 1),   // 下方向
-            (1, 1),   // 右下方向
+            Direction::Right,
+            Direction::TopRight,
+            Direction::Top,
+            Direction::TopLeft,
+            Direction::Left,
+            Direction::BottomLeft,
+            Direction::Bottom,
+            Direction::BottomRight,
         ];
         // TODO 合い駒でも、動かしていい方向はあるはず
-        for dir in directions {
-            let (pinned, _checker) = check_checker_pin(us, position, ksq, dir.0, dir.1);
+        for direction in directions {
+            let (pinned, _checker) = check_checker_pin(us, position, ksq, direction);
             if let Some(pinned) = pinned {
                 pinned_list.push(pinned);
             }
