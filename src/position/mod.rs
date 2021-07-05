@@ -92,6 +92,11 @@ pub fn square_from(file: u8, rank: u8) -> Square {
     file * 10 + rank
 }
 
+/// 壁の中にいる☆（＾～＾）
+pub fn square_wall(sq: Square) -> bool {
+    file(sq) % 10 == 0 || rank(sq) % 10 == 0
+}
+
 pub fn square_offset(sq: Square, r: &RelAdr) -> Square {
     // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
     // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）

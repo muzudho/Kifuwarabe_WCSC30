@@ -15,7 +15,9 @@ use crate::position::is_board_square;
 use crate::position::is_hand_square;
 use crate::position::position::{PieceNum, Position};
 use crate::position::rank;
+use crate::position::square_offset;
 use crate::position::square_to_hand_address;
+use crate::position::square_wall;
 use crate::position::Square;
 use crate::take1base::Move;
 use crate::take1base::Piece;
@@ -372,7 +374,7 @@ impl Area {
         };
 
         for mobility in PieceType::Pawn.mobility().iter() {
-            Area::r#move(&Some(us), from, *mobility, moving);
+            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
         }
     }
 
@@ -398,7 +400,7 @@ impl Area {
         };
 
         for mobility in PieceType::Lance.mobility().iter() {
-            Area::r#move(&Some(us), from, *mobility, moving);
+            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
         }
     }
 
@@ -424,7 +426,7 @@ impl Area {
         };
 
         for mobility in PieceType::Knight.mobility().iter() {
-            Area::r#move(&Some(us), from, *mobility, moving);
+            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
         }
     }
 
@@ -445,7 +447,7 @@ impl Area {
         };
 
         for mobility in PieceType::Silver.mobility().iter() {
-            Area::r#move(&Some(us), from, *mobility, moving);
+            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
         }
     }
 
@@ -464,7 +466,7 @@ impl Area {
         let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
 
         for mobility in PieceType::Gold.mobility().iter() {
-            Area::r#move(&Some(us), from, *mobility, moving);
+            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
         }
     }
 
@@ -482,7 +484,7 @@ impl Area {
         let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
 
         for mobility in PieceType::King.mobility().iter() {
-            Area::r#move(&None, from, *mobility, moving);
+            Area::r#move(&None, from.square_number(), *mobility, moving);
         }
     }
 
@@ -501,7 +503,7 @@ impl Area {
             Promoting::bishop_rook(us, from.square_number(), to.square_number(), moving)
         };
         for mobility in PieceType::Bishop.mobility().iter() {
-            Area::r#move(&Some(us), from, *mobility, moving);
+            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
         }
     }
 
@@ -520,7 +522,7 @@ impl Area {
             Promoting::bishop_rook(us, from.square_number(), to.square_number(), moving)
         };
         for mobility in PieceType::Rook.mobility().iter() {
-            Area::r#move(&Some(us), from, *mobility, moving);
+            Area::r#move(&Some(us), from.square_number(), *mobility, moving);
         }
     }
 
@@ -538,7 +540,7 @@ impl Area {
         let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
 
         for mobility in PieceType::Horse.mobility().iter() {
-            Area::r#move(&None, from, *mobility, moving);
+            Area::r#move(&None, from.square_number(), *mobility, moving);
         }
     }
 
@@ -557,7 +559,7 @@ impl Area {
             let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
 
             for mobility in PieceType::Dragon.mobility().iter() {
-                Area::r#move(&None, from, *mobility, moving);
+                Area::r#move(&None, from.square_number(), *mobility, moving);
             }
         }
     }
@@ -619,7 +621,7 @@ impl Area {
     /// * `angle` - 角度☆（＾～＾）
     /// * `agility` - 動き方☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn r#move<F1>(us: &Option<Phase>, start: &AbsoluteAddress, mobility: Mobility, moving: &mut F1)
+    fn r#move<F1>(us: &Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
     where
         F1: FnMut(AbsoluteAddress, Agility) -> bool,
     {
@@ -637,35 +639,38 @@ impl Area {
 
         match mobility.agility {
             Agility::Sliding => {
-                let mut cur = start.clone();
+                let mut cur = start;
                 let r = RelAdr::new(1, 0).rotate(mobility.angle).clone();
 
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    if cur.offset(&r).wall() {
+                    cur = square_offset(cur, &r);
+                    if square_wall(cur) {
                         break;
                     }
 
-                    if moving(cur, mobility.agility) {
+                    if moving(AbsoluteAddress::from_square(cur), mobility.agility) {
                         break;
                     }
                 }
             }
             // 桂馬専用☆（＾～＾）行き先の無いところに置いてないはずだぜ☆（＾～＾）
             Agility::Knight => {
-                let mut cur = start.clone();
+                let mut cur = start;
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                if !cur.offset(&angle.west_ccw_double_rank()).wall() {
-                    moving(cur, mobility.agility);
+                cur = square_offset(cur, &angle.west_ccw_double_rank());
+                if !square_wall(cur) {
+                    moving(AbsoluteAddress::from_square(cur), mobility.agility);
                 }
             }
             Agility::Hopping => {
-                let mut cur = start.clone();
+                let mut cur = start;
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                if !cur.offset(&angle.west_ccw()).wall() {
-                    moving(cur, mobility.agility);
+                cur = square_offset(cur, &angle.west_ccw());
+                if !square_wall(cur) {
+                    moving(AbsoluteAddress::from_square(cur), mobility.agility);
                 }
             }
         }
