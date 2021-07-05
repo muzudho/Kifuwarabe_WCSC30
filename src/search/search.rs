@@ -195,7 +195,9 @@ impl Tree {
         let mut cap = 0;
         if 1 < move_caps.len() {
             for i in 0..move_caps.len() {
-                if let Some(_captured) = move_caps.get(i).captured1 {
+                let move_cap = move_caps.get(i);
+                // game.position.piece_at(move_cap.move_.)
+                if let Some(_captured) = move_cap.captured1 {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
                     move_caps.swap(cap, i);

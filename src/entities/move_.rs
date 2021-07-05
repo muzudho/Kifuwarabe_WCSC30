@@ -2,6 +2,7 @@ use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddressType;
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
 use crate::entities::movement::Movement;
+use crate::position::Square;
 use crate::take1base::Move;
 
 /*
@@ -110,23 +111,29 @@ pub fn new_move2(
     return num;
 }
 
-/// to_movement - 移動元マス、移動先マス、成りの有無
-pub fn to_movement(phase: Phase, num: Move) -> Movement {
+pub fn destructure_move(num: Move) -> (Square, Square, bool) {
     // 移動元マス
     // .pdd dddd dsss ssss - num
     // 0000 0000 0111 1111 - Mask 0x007f
-    let from = num & 0x007f;
+    let from = (num & 0x007f) as Square;
 
     // 移動先マス
     // .pdd dddd dsss ssss - num
     // 0011 1111 1000 0000 - Mask 0x3f80
     // 演算子の優先順位は `&` より `>>` の方が高いことに注意（＾～＾）
-    let to = (num & 0x3f80) >> 7;
+    let to = ((num & 0x3f80) >> 7) as Square;
 
     // 成
     // .pdd dddd dsss ssss - num
     // 0100 0000 0000 0000 - Mask 0x4000
-    let promote = (num & 0x4000) >> 14;
+    let promote = ((num & 0x4000) >> 14) == 1;
+
+    return (from, to, promote);
+}
+
+/// to_movement - 移動元マス、移動先マス、成りの有無
+pub fn to_movement(phase: Phase, num: Move) -> Movement {
+    let (from, to, promote) = destructure_move(num);
 
     if from < 100 {
         // 盤上
@@ -134,7 +141,7 @@ pub fn to_movement(phase: Phase, num: Move) -> Movement {
             return Movement::new(
                 AbsoluteAddress::from_absolute_address(from as usize),
                 dst,
-                promote == 1,
+                promote,
                 None,
             );
         } else {
@@ -168,7 +175,7 @@ pub fn to_movement(phase: Phase, num: Move) -> Movement {
         };
 
         if let Some(dst) = AbsoluteAddress::from_absolute_address(to as usize) {
-            return Movement::new(None, dst, promote == 1, Some(hand));
+            return Movement::new(None, dst, promote, Some(hand));
         } else {
             panic!("to={}", to)
         }
