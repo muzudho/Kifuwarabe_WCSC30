@@ -640,7 +640,7 @@ impl AbsoluteAddress {
     //     let rank = RANK_10 - self.rank;
     //     debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
     //     debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
-    //     AbsoluteAddress::new(file, rank)
+    //     Square::new(file, rank)
     // }
 
     pub fn square_number(&self) -> Square {

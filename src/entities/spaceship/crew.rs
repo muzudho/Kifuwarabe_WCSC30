@@ -280,7 +280,7 @@ impl Chiyuri {
                     ,ms
                     ,next
                     ,hash_orig
-                    ,sq_orig.square_number()
+                    ,sq_orig
                 ));
             }
         }

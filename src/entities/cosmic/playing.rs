@@ -217,10 +217,10 @@ impl Game {
         let cap: Option<PieceEx>;
         {
             // 動かす駒
-            let moveing_piece: Option<PieceEx> = if let Some(source_val) = from2 {
+            let moveing_piece: Option<PieceEx> = if let Some(from) = from2 {
                 // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152: Option<PieceEx> = if promote2 {
-                    if let Some(piece) = self.position.pop_from_board(source_val.square_number()) {
+                    if let Some(piece) = self.position.pop_from_board(from) {
                         // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
                         Some(PieceEx::new(piece.meaning.promoted(), piece.num))
                     } else {
@@ -230,7 +230,7 @@ impl Game {
                     }
                 } else {
                     // 移動元の駒。
-                    self.position.pop_from_board(source_val.square_number())
+                    self.position.pop_from_board(from)
                 };
 
                 piece152
@@ -249,7 +249,7 @@ impl Game {
                 }
             };
             // 移動先升に駒があるかどうか
-            cap = if let Some(collision_piece) = self.position.pop_from_board(to2.square_number()) {
+            cap = if let Some(collision_piece) = self.position.pop_from_board(to2) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let captured_piece =
                     PieceEx::new(collision_piece.meaning.captured(), collision_piece.num);
@@ -260,8 +260,7 @@ impl Game {
             };
 
             // 移動先升に駒を置く
-            self.position
-                .push_to_board(to2.square_number(), moveing_piece);
+            self.position.push_to_board(to2, moveing_piece);
         }
         self.set_captured(self.history.ply as usize, cap);
 
@@ -289,9 +288,7 @@ impl Game {
                     // 打でなければ
                     if promote2 {
                         // 成ったなら、成る前へ
-                        if let Some(source_piece) =
-                            self.position.pop_from_board(to2.square_number())
-                        {
+                        if let Some(source_piece) = self.position.pop_from_board(to2) {
                             Some(PieceEx::new(
                                 source_piece.meaning.demoted(),
                                 source_piece.num,
@@ -302,12 +299,12 @@ impl Game {
                             ))
                         }
                     } else {
-                        self.position.pop_from_board(to2.square_number())
+                        self.position.pop_from_board(to2)
                     }
                 } else {
                     if let Some(_drp) = drop2 {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        if let Some(piece) = self.position.pop_from_board(to2.square_number()) {
+                        if let Some(piece) = self.position.pop_from_board(to2) {
                             // 自分の持ち駒を増やそうぜ☆（＾～＾）！
                             self.position.push_hand(&piece);
                             Some(piece)
@@ -326,13 +323,12 @@ impl Game {
                     self.position
                         .pop_hand(captured_piece_val.meaning.captured().hand_address());
                     // 移動先の駒を、取った駒（あるいは空）に戻す
-                    self.position.push_to_board(to2.square_number(), captured);
+                    self.position.push_to_board(to2, captured);
                 }
 
-                if let Some(source_val) = from2 {
+                if let Some(from2) = from2 {
                     // 打でなければ、移動元升に、動かした駒を置く☆（＾～＾）打なら何もしないぜ☆（＾～＾）
-                    self.position
-                        .push_to_board(source_val.square_number(), moveing_piece);
+                    self.position.push_to_board(from2, moveing_piece);
                 }
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく

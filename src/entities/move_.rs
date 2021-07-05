@@ -65,25 +65,19 @@ pub fn new_move(
 ///
 /// # Returns
 ///
-/// `Option<AbsoluteAddress>` - from. 移動元升。Dropのときは None だぜ☆（＾～＾）
-/// `AbsoluteAddress` - to. 移動先升
+/// `Option<Square>` - from. 移動元升。Dropのときは None だぜ☆（＾～＾）
+/// `Square` - to. 移動先升
 /// `bool` - promote. 移動後に成るなら真
 /// `Option<HandAddressType>` - drop. 打の場合、打った駒種類
 pub fn to_move_object(
     phase: Phase,
     num: Move,
-) -> (
-    Option<AbsoluteAddress>,
-    AbsoluteAddress,
-    bool,
-    Option<HandAddressType>,
-) {
+) -> (Option<Square>, Square, bool, Option<HandAddressType>) {
     let (from, to, promote) = destructure_move(num);
 
     if is_board_square(from) {
         // 盤上
-        let dst = AbsoluteAddress::from_square(to);
-        return (Some(AbsoluteAddress::from_square(from)), dst, promote, None);
+        return (Some(from), to, promote, None);
     } else {
         // 打
         let hand = match phase {
@@ -111,7 +105,6 @@ pub fn to_move_object(
             },
         };
 
-        let dst = AbsoluteAddress::from_square(to);
-        return (None, dst, promote, Some(hand));
+        return (None, to, promote, Some(hand));
     }
 }

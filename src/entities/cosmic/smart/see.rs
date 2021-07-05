@@ -2,7 +2,6 @@
 
 // use crate::entities::cosmic::daydream::Value;
 // use crate::entities::cosmic::playing::Game;
-// use crate::entities::cosmic::smart::square::AbsoluteAddress;
 // use crate::cosmic::smart::square::RelAdr;
 // use crate::law::generate_move::PieceEx;
 // use crate::law::speed_of_light::Movility;
@@ -13,7 +12,7 @@
 //     /// 葉で駒を取ったら、取り返されるのも考慮しないとな☆（＾～＾）
 //     ///
 //     /// 価値の低い駒から順に使って、取りに行けだぜ☆（＾～＾）
-//     pub fn go(_game: &Game, _adr: &AbsoluteAddress) -> Value {
+//     pub fn go(_game: &Game, _adr: &Square) -> Value {
 //         // // この駒☆（＾～＾）
 //         // let mut current_target_piece = game.position.piece_at(adr).unwrap();
 //         // let mut centi_pawn = 0;

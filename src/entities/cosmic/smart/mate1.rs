@@ -3,7 +3,6 @@
 
 // use crate::entities::cosmic::playing::Game;
 // use crate::entities::cosmic::recording::Phase;
-// use crate::entities::cosmic::smart::square::AbsoluteAddress;
 // use crate::entities::cosmic::smart::square::RelAdr;
 // use crate::entities::cosmic::toy_box::{PieceNum};
 // use crate::entities::law::speed_of_light::Movility;
@@ -18,9 +17,9 @@ pub struct Lioncatch {
     /// 相手の手番☆（＾～＾）
     opponent: Phase,
     /// 自玉の場所☆（＾～＾）
-    friend_king_adr: AbsoluteAddress,
+    friend_king_adr: Square,
     /// 敵玉の場所☆（＾～＾）
-    opponent_king_adr: AbsoluteAddress,
+    opponent_king_adr: Square,
     /// 王手の指し手一覧だぜ☆（＾～＾）
     pub checks: Vec<Move>,
     /// 王手を掛けている駒の背番号だぜ☆（＾～＾）
@@ -36,8 +35,8 @@ impl Lioncatch {
         Lioncatch {
             phase: us,
             opponent: us.turn(),
-            friend_king_adr: AbsoluteAddress::default(),
-            opponent_king_adr: AbsoluteAddress::default(),
+            friend_king_adr: Square::default(),
+            opponent_king_adr: Square::default(),
             checks: Vec<Move>::new(),
             // checkers: None,
             pinned_pieces: None,
