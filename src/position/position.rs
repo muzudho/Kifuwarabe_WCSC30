@@ -128,7 +128,7 @@ pub enum Location {
 /// 0筋、0段は未使用
 pub struct Position {
     // いわゆる盤☆（＾～＾）
-    pieces: [Option<PieceEx>; BOARD_MEMORY_AREA as usize],
+    board: [Option<PieceEx>; BOARD_MEMORY_AREA as usize],
     /// 駒の居場所☆（＾～＾）
     location: [Location; PIECE_NUM_LEN],
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
@@ -143,7 +143,7 @@ impl Default for Position {
     fn default() -> Self {
         Position {
             // 盤上
-            pieces: [
+            board: [
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -189,7 +189,7 @@ impl Default for Position {
 }
 impl Position {
     pub fn clear(&mut self) {
-        self.pieces = [
+        self.board = [
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -233,7 +233,7 @@ impl Position {
 
     /// 開始盤面を、現盤面にコピーしたいときに使うぜ☆（＾～＾）
     pub fn copy_from(&mut self, position: &Position) {
-        self.pieces = position.pieces.clone();
+        self.board = position.board.clone();
         self.location = position.location.clone();
         self.hand_index = position.hand_index.clone();
         self.hands = position.hands.clone();
@@ -324,7 +324,7 @@ impl Position {
     }
     /// 升で指定して駒を取得
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<PieceEx> {
-        self.pieces[adr.address() as usize]
+        self.board[adr.address() as usize]
     }
     /*
     /// 駒の背番号で指定して場所を取得
@@ -336,18 +336,18 @@ impl Position {
     /// 升で指定して駒を置く
     pub fn push_to_board(&mut self, adr: &AbsoluteAddress, piece: Option<PieceEx>) {
         if let Some(piece_val) = piece {
-            self.pieces[adr.address() as usize] = piece;
+            self.board[adr.address() as usize] = piece;
             self.location[piece_val.num as usize] = Location::Position(*adr);
         } else {
-            self.pieces[adr.address() as usize] = None;
+            self.board[adr.address() as usize] = None;
         }
     }
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
     pub fn pop_from_board(&mut self, adr: &AbsoluteAddress) -> Option<PieceEx> {
         // 取り出すピースは複製するぜ☆（＾～＾）
-        let piece = self.pieces[adr.address() as usize].clone();
+        let piece = self.board[adr.address() as usize].clone();
         if let Some(piece_val) = piece {
-            self.pieces[adr.address() as usize] = None;
+            self.board[adr.address() as usize] = None;
             self.location[piece_val.num as usize] = Location::Busy;
         }
         piece
