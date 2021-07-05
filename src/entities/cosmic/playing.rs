@@ -200,12 +200,12 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(&mut self, phase: Phase, move_: Move) -> Option<PieceEx> {
+    pub fn do_move(&mut self, move_: Move) -> Option<PieceEx> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(move_);
+        let us = self.history.get_friend();
         // let (from, to, pro) = destructure_move(move_);
-        let (from2, to2, promote2, drop2) = to_move_object(phase, move_);
-        let friend = self.history.get_friend();
+        let (from2, to2, promote2, drop2) = to_move_object(us, move_);
 
         // TODO 利き
         {
@@ -240,7 +240,7 @@ impl Game {
                 if let Some(drp) = drop2 {
                     Some(
                         self.position
-                            .pop_hand(HandAddress::from_phase_and_type(friend, drp)),
+                            .pop_hand(HandAddress::from_phase_and_type(us, drp)),
                     )
                 } else {
                     std::panic::panic_any(Beam::trouble(
@@ -272,13 +272,13 @@ impl Game {
         cap
     }
 
-    pub fn undo_move(&mut self, phase: Phase) -> bool {
+    pub fn undo_move(&mut self, us: Phase) -> bool {
         if 0 < self.history.ply {
             // 棋譜から読取、手目も減る
             self.history.ply -= 1;
             let move_ = self.get_move();
             // let (from, to, pro) = destructure_move(move_);
-            let (from2, to2, promote2, drop2) = to_move_object(phase, move_);
+            let (from2, to2, promote2, drop2) = to_move_object(us, move_);
             {
                 // 取った駒が有ったか。
                 let captured: Option<PieceEx> =

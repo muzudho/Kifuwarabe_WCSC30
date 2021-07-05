@@ -448,6 +448,6 @@ pub fn set_position(line: &str, game: &mut Game) {
         game.history.ply -= 1;
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let ply = game.history.ply;
-        game.do_move(game.history.get_friend(), game.history.moves[ply as usize]);
+        game.do_move(game.history.moves[ply as usize]);
     }
 }

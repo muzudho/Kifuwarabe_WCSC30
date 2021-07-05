@@ -485,7 +485,7 @@ impl Position {
     }
 
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
-    pub fn for_some_pieces_on_list40<F>(&self, friend: Phase, piece_get: &mut F)
+    pub fn for_some_pieces_on_list40<F>(&self, us: Phase, piece_get: &mut F)
     where
         F: FnMut(Location, PieceEx),
     {
@@ -495,7 +495,7 @@ impl Position {
                 Location::Position(adr) => {
                     // 盤上の駒☆（＾～＾）
                     if let Some(piece) = self.piece_at(adr.square_number()) {
-                        if piece.meaning.phase() == friend {
+                        if piece.meaning.phase() == us {
                             piece_get(location, piece);
                         }
                     } else {
@@ -533,7 +533,7 @@ impl Position {
                 HandAddress::Pawn2,
             ],
         ];
-        for adr in &FIRST_SECOND[friend as usize] {
+        for adr in &FIRST_SECOND[us as usize] {
             if let Some(piece) = self.last_hand(*adr) {
                 piece_get(Location::Hand(*adr), *piece);
             }

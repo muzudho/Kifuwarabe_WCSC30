@@ -150,7 +150,7 @@ impl Tree {
                 lioncatch.checks
             } else {
                 //   */
-            let move_list = PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position);
+            let move_list = PseudoLegalMoves::generate(game.history.get_friend(), &game.position);
 
             move_list
             //}
@@ -226,7 +226,7 @@ impl Tree {
             //     // 打
             //     None
             // };
-            let captured_piece: Option<PieceEx> = game.do_move(game.history.get_friend(), *move_);
+            let captured_piece: Option<PieceEx> = game.do_move(*move_);
             self.pv.push(*move_);
             // let (captured_piece_centi_pawn, delta_promotion_bonus) =
             //     self.evaluation

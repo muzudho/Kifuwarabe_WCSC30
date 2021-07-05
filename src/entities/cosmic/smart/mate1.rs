@@ -14,7 +14,7 @@
 /// これは一手詰め判定ではなく、ライオンキャッチ判定なのでは☆（＾～＾）？
 pub struct Lioncatch {
     /// 自分の手番☆（＾～＾）
-    friend: Phase,
+    phase: Phase,
     /// 相手の手番☆（＾～＾）
     opponent: Phase,
     /// 自玉の場所☆（＾～＾）
@@ -32,10 +32,10 @@ pub struct Lioncatch {
 }
 impl Lioncatch {
     pub fn new(game: &Game) -> Self {
-        let friend = game.history.get_friend();
+        let us = game.history.get_phase();
         Lioncatch {
-            friend: friend,
-            opponent: friend.turn(),
+            phase: us,
+            opponent: us.turn(),
             friend_king_adr: AbsoluteAddress::default(),
             opponent_king_adr: AbsoluteAddress::default(),
             checks: Vec<Move>::new(),
@@ -47,7 +47,7 @@ impl Lioncatch {
 
     pub fn init(&mut self, game: &Game) -> &mut Self {
         // 自玉の場所☆（＾～＾）
-        self.friend_king_adr = match game.position.location_at(match self.friend {
+        self.friend_king_adr = match game.position.location_at(match self.phase {
             Phase::First => PieceNum::King1,
             Phase::Second => PieceNum::King2,
         }) {
@@ -74,7 +74,7 @@ impl Lioncatch {
             )),
         };
 
-        self.sign = if self.friend == Phase::Second { -1 } else { 1 };
+        self.sign = if self.phase == Phase::Second { -1 } else { 1 };
 
         self
     }
@@ -114,7 +114,7 @@ impl Lioncatch {
                     if let Some(any_piece_val) = any_piece {
                         if let None = friend_piece {
                             // 味方の駒か☆（＾～＾）？
-                            if any_piece_val.meaning.phase() == self.friend {
+                            if any_piece_val.meaning.phase() == self.phase {
                                 // そうだぜ☆（＾～＾）
                                 friend_piece = Some(any_piece_val);
                             } else {
@@ -191,7 +191,7 @@ impl Lioncatch {
                 Log::write(&format!("cur2={:?}", cur));
                 // 1つ隣に駒があるか確認だぜ☆（＾～＾）
                 if let Some(any_piece_val) = game.position.piece_at(&cur) {
-                    if any_piece_val.meaning.phase() == self.friend
+                    if any_piece_val.meaning.phase() == self.phase
                         && any_piece_val
                             .meaning
                             .r#type()
@@ -262,7 +262,7 @@ impl Lioncatch {
                     // 1つ隣になんか駒があるか確認だぜ☆（＾～＾）
                     if let Some(any_piece_val) = game.position.piece_at(&cur) {
                         // それがスライディング自駒か確認だぜ☆（＾～＾）
-                        if any_piece_val.meaning.phase() == self.friend
+                        if any_piece_val.meaning.phase() == self.phase
                             && any_piece_val
                                 .meaning
                                 .r#type()

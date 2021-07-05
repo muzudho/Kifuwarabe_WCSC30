@@ -170,14 +170,12 @@ impl Chiyuri {
             // 入っている指し手の通り指すぜ☆（＾～＾）
             let ply = universe.game.history.ply;
             let move_ = universe.game.history.moves[ply as usize];
-            universe
-                .game
-                .do_move(universe.game.history.get_friend(), move_);
+            universe.game.do_move(move_);
         }
     }
     pub fn genmove(game: &Game) {
         // Generation move.
-        let move_list = PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position);
+        let move_list = PseudoLegalMoves::generate(game.history.get_friend(), &game.position);
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
         Kitchen::print_ways(&game.position, &move_list);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
