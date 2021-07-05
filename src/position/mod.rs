@@ -2,6 +2,10 @@ pub mod position;
 
 use crate::entities::cosmic::smart::features::HandAddress;
 use crate::entities::cosmic::smart::square::RelAdr;
+use crate::entities::cosmic::smart::square::FILE_0;
+use crate::entities::cosmic::smart::square::FILE_10;
+use crate::entities::cosmic::smart::square::RANK_0;
+use crate::entities::cosmic::smart::square::RANK_10;
 use crate::entities::law::cryptographic::num_to_lower_case;
 use crate::take1base::Move;
 
@@ -116,6 +120,14 @@ pub fn square_offset(sq: Square, r: &RelAdr) -> Square {
         file = file % 10;
     }
 
+    square_from(file, rank)
+}
+
+pub fn square_rotate_180(sq: Square) -> Square {
+    let file = FILE_10 - file(sq);
+    let rank = RANK_10 - rank(sq);
+    debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
+    debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
     square_from(file, rank)
 }
 
