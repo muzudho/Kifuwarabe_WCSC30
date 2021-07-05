@@ -12,6 +12,7 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::move_::new_move2;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::position::{Location, PieceNum, Position};
+use crate::position::Square;
 use crate::record::MoveCap;
 use crate::take1base::Piece;
 use std::fmt;
@@ -162,68 +163,50 @@ impl PseudoLegalMoves {
         // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
         F1: FnMut(MoveCap),
     {
-        let moving =
-            &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
-                let pseudo_captured = position.piece_at(&destination);
+        let moving = &mut |destination: AbsoluteAddress,
+                           promotability,
+                           _agility,
+                           move_permission: Option<MovePermission>| {
+            let pseudo_captured = position.piece_at(destination.square_number() as Square);
 
-                let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
-                    if pseudo_captured_val.meaning.phase() == friend {
-                        // 味方の駒を取った☆（＾～＾）なしだぜ☆（＾～＾）！
-                        (false, false)
-                    } else {
-                        (true, false)
-                    }
+            let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
+                if pseudo_captured_val.meaning.phase() == friend {
+                    // 味方の駒を取った☆（＾～＾）なしだぜ☆（＾～＾）！
+                    (false, false)
                 } else {
-                    (true, true)
+                    (true, false)
+                }
+            } else {
+                (true, true)
+            };
+
+            if ok {
+                // 成れるかどうかの判定☆（＾ｑ＾）
+                use crate::genmove::generate_move::Promotability::*;
+                let promotion = match &promotability {
+                    Forced => true,
+                    _ => false,
                 };
 
-                if ok {
-                    // 成れるかどうかの判定☆（＾ｑ＾）
-                    use crate::genmove::generate_move::Promotability::*;
-                    let promotion = match &promotability {
-                        Forced => true,
-                        _ => false,
-                    };
-
-                    // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
-                    let forbidden = if let Some(move_permission_val) = move_permission {
-                        if move_permission_val.check(&destination) {
-                            false
-                        } else {
-                            true
-                        }
-                    } else {
+                // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
+                let forbidden = if let Some(move_permission_val) = move_permission {
+                    if move_permission_val.check(&destination) {
                         false
-                    };
+                    } else {
+                        true
+                    }
+                } else {
+                    false
+                };
 
-                    match &promotability {
-                        Any => {
-                            // 成ったり、成れなかったりできるとき。
-                            if !forbidden {
-                                /* TODO
-                                listen_move(
-                                    Some(MoveCap::new(
-                                        Movement::new(Some(*source), destination, false, None),
-                                        pseudo_captured,
-                                    )),
-                                    &destination,
-                                );
-                                */
-                                listen_move(MoveCap::new(
-                                    new_move2(
-                                        friend,
-                                        Some(source.square_number() as u16),
-                                        destination.square_number() as u16,
-                                        false,
-                                        None,
-                                    ), // Movement::new(Some(*source), destination, false, None),
-                                    pseudo_captured,
-                                ));
-                            }
+                match &promotability {
+                    Any => {
+                        // 成ったり、成れなかったりできるとき。
+                        if !forbidden {
                             /* TODO
                             listen_move(
                                 Some(MoveCap::new(
-                                    Movement::new(Some(*source), destination, true, None),
+                                    Movement::new(Some(*source), destination, false, None),
                                     pseudo_captured,
                                 )),
                                 &destination,
@@ -234,43 +217,63 @@ impl PseudoLegalMoves {
                                     friend,
                                     Some(source.square_number() as u16),
                                     destination.square_number() as u16,
-                                    true,
+                                    false,
                                     None,
-                                ), // Movement::new(Some(*source), destination, true, None),
+                                ), // Movement::new(Some(*source), destination, false, None),
                                 pseudo_captured,
                             ));
                         }
-                        _ => {
-                            // 成れるか、成れないかのどちらかのとき。
-                            if promotion || !forbidden {
-                                /* TODO
-                                listen_move(
-                                    Some(MoveCap::new(
-                                        Movement::new(Some(*source), destination, promotion, None),
-                                        pseudo_captured,
-                                    )),
-                                    &destination,
-                                );
-                                */
-                                listen_move(MoveCap::new(
-                                    new_move2(
-                                        friend,
-                                        Some(source.square_number() as u16),
-                                        destination.square_number() as u16,
-                                        promotion,
-                                        None,
-                                    ), // Movement::new(Some(*source), destination, promotion, None),
+                        /* TODO
+                        listen_move(
+                            Some(MoveCap::new(
+                                Movement::new(Some(*source), destination, true, None),
+                                pseudo_captured,
+                            )),
+                            &destination,
+                        );
+                        */
+                        listen_move(MoveCap::new(
+                            new_move2(
+                                friend,
+                                Some(source.square_number() as u16),
+                                destination.square_number() as u16,
+                                true,
+                                None,
+                            ), // Movement::new(Some(*source), destination, true, None),
+                            pseudo_captured,
+                        ));
+                    }
+                    _ => {
+                        // 成れるか、成れないかのどちらかのとき。
+                        if promotion || !forbidden {
+                            /* TODO
+                            listen_move(
+                                Some(MoveCap::new(
+                                    Movement::new(Some(*source), destination, promotion, None),
                                     pseudo_captured,
-                                ));
-                            }
+                                )),
+                                &destination,
+                            );
+                            */
+                            listen_move(MoveCap::new(
+                                new_move2(
+                                    friend,
+                                    Some(source.square_number() as u16),
+                                    destination.square_number() as u16,
+                                    promotion,
+                                    None,
+                                ), // Movement::new(Some(*source), destination, promotion, None),
+                                pseudo_captured,
+                            ));
                         }
-                    };
-                    // } else {
-                    // TODO listen_move(None, &destination);
-                }
+                    }
+                };
+                // } else {
+                // TODO listen_move(None, &destination);
+            }
 
-                !space
-            };
+            !space
+        };
 
         Area::piece_of(piece.meaning.r#type(), friend, &source, moving);
     }
@@ -291,8 +294,8 @@ impl PseudoLegalMoves {
     {
         if let Some(piece) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
-            let drop = &mut |destination| {
-                if let None = position.piece_at(&destination) {
+            let drop = &mut |destination: AbsoluteAddress| {
+                if let None = position.piece_at(destination.square_number() as Square) {
                     // 駒が無いところに打つ
                     use crate::take1base::Piece::*;
                     match piece.meaning {

@@ -3,6 +3,7 @@
 //!
 use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::Phase;
+use crate::position::Square;
 // use crate::entities::cosmic::recording::PHASE_LEN;
 // use crate::entities::cosmic::smart::features::ControlBoard;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_LEN;
@@ -314,7 +315,7 @@ impl Position {
     pub fn exists_pawn_on_file(&self, phase: Phase, file: usize) -> bool {
         for rank in RANK_1..RANK_10 {
             let adr = AbsoluteAddress::new(file, rank);
-            if let Some(piece) = self.piece_at(&adr) {
+            if let Some(piece) = self.piece_at(adr.square_number() as Square) {
                 if piece.meaning.phase() == phase && piece.meaning.r#type() == PieceType::Pawn {
                     return true;
                 }
@@ -323,8 +324,8 @@ impl Position {
         false
     }
     /// 升で指定して駒を取得
-    pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<PieceEx> {
-        self.board[adr.square_number() as usize]
+    pub fn piece_at(&self, sq: Square) -> Option<PieceEx> {
+        self.board[sq as usize]
     }
     /*
     /// 駒の背番号で指定して場所を取得
@@ -432,7 +433,7 @@ impl Position {
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
                 let ab_adr = &AbsoluteAddress::new(file, rank);
-                if let Some(piece) = self.piece_at(ab_adr) {
+                if let Some(piece) = self.piece_at(ab_adr.square_number() as Square) {
                     hash ^= game.hash_seed.piece[ab_adr.square_number() as usize]
                         [piece.meaning as usize];
                 }
@@ -466,7 +467,7 @@ impl Position {
             match location {
                 Location::Position(adr) => {
                     // 盤上の駒☆（＾～＾）
-                    if let Some(piece) = self.piece_at(adr) {
+                    if let Some(piece) = self.piece_at(adr.square_number() as Square) {
                         piece_get(i, Some(adr), Some(piece));
                     } else {
                         panic!("adr={:?}", adr)
@@ -493,7 +494,7 @@ impl Position {
             match location {
                 Location::Position(adr) => {
                     // 盤上の駒☆（＾～＾）
-                    if let Some(piece) = self.piece_at(&adr) {
+                    if let Some(piece) = self.piece_at(adr.square_number() as Square) {
                         if piece.meaning.phase() == friend {
                             piece_get(location, piece);
                         }
