@@ -168,8 +168,10 @@ impl Chiyuri {
             universe.game.history.ply -= 1;
             // 入っている指し手の通り指すぜ☆（＾～＾）
             let ply = universe.game.history.ply;
-            let ss = universe.game.history.movements[ply as usize].clone();
-            universe.game.do_move(&ss);
+            let move_ = universe.game.history.moves[ply as usize];
+            universe
+                .game
+                .do_move(universe.game.history.get_friend(), move_);
         }
     }
     pub fn genmove(game: &Game) {
@@ -299,7 +301,7 @@ impl Chiyuri {
         }
     }
     pub fn undo(universe: &mut Universe) {
-        if !universe.game.undo_move() {
+        if !universe.game.undo_move(universe.game.history.get_friend()) {
             Beam::shoot(&format!(
                 "ply={} を、これより戻せません",
                 universe.game.history.ply

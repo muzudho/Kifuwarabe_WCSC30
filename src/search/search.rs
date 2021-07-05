@@ -257,7 +257,7 @@ impl Tree {
             //     // 打
             //     None
             // };
-            let captured_piece: Option<PieceEx> = game.do_move(&movement);
+            let captured_piece: Option<PieceEx> = game.do_move(game.history.get_friend(), *move_);
             self.pv.push(*move_);
             // let (captured_piece_centi_pawn, delta_promotion_bonus) =
             //     self.evaluation
@@ -272,7 +272,7 @@ impl Tree {
                     // self.evaluation
                     //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
                     self.pv.pop();
-                    game.undo_move();
+                    game.undo_move(game.history.get_friend());
                     break;
                 }
             }
@@ -364,7 +364,7 @@ impl Tree {
             // self.evaluation
             //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
-            game.undo_move();
+            game.undo_move(game.history.get_friend());
 
             match ts.bestmove.value {
                 Value::Win => {

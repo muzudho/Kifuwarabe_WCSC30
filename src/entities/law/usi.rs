@@ -2,10 +2,10 @@
 //! USIプロトコル
 //!
 use crate::entities::cosmic::playing::Game;
-use crate::entities::cosmic::smart::features::HandAddressType;
-use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_9, RANK_1};
-use crate::entities::movement::Movement;
+use crate::entities::cosmic::recording::Phase;
+use crate::entities::cosmic::smart::square::{FILE_9, RANK_1};
 use crate::entities::spaceship::equipment::Beam;
+use crate::take1base::Move;
 use crate::take1base::Piece;
 use atoi::atoi;
 
@@ -46,24 +46,57 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         return false;
     }
 
-    let mut buffer = Movement::default();
-
-    // 1文字目と2文字目
-    // 移動元とドロップ。
-    enum Source {
-        Move(usize, usize),
-        Drop(HandAddressType),
-    }
-
-    let source = match &line[*starts..=*starts] {
+    let from = match &line[*starts..=*starts] {
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
-        "R" => Source::Drop(HandAddressType::Rook),
-        "B" => Source::Drop(HandAddressType::Bishop),
-        "G" => Source::Drop(HandAddressType::Gold),
-        "S" => Source::Drop(HandAddressType::Silver),
-        "N" => Source::Drop(HandAddressType::Knight),
-        "L" => Source::Drop(HandAddressType::Lance),
-        "P" => Source::Drop(HandAddressType::Pawn),
+        "R" => {
+            *starts += 2;
+            match game.history.get_friend() {
+                Phase::First => 101,
+                Phase::Second => 109,
+            }
+        }
+        "B" => {
+            *starts += 2;
+            match game.history.get_friend() {
+                Phase::First => 102,
+                Phase::Second => 110,
+            }
+        }
+        "G" => {
+            *starts += 2;
+            match game.history.get_friend() {
+                Phase::First => 103,
+                Phase::Second => 111,
+            }
+        }
+        "S" => {
+            *starts += 2;
+            match game.history.get_friend() {
+                Phase::First => 104,
+                Phase::Second => 112,
+            }
+        }
+        "N" => {
+            *starts += 2;
+            match game.history.get_friend() {
+                Phase::First => 105,
+                Phase::Second => 113,
+            }
+        }
+        "L" => {
+            *starts += 2;
+            match game.history.get_friend() {
+                Phase::First => 106,
+                Phase::Second => 114,
+            }
+        }
+        "P" => {
+            *starts += 2;
+            match game.history.get_friend() {
+                Phase::First => 107,
+                Phase::Second => 115,
+            }
+        }
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
             // 数字じゃないものが入ったら強制終了するんじゃないか☆（＾～＾）
@@ -77,80 +110,73 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
             };
             *starts += 1;
 
-            match &line[*starts..=*starts] {
-                "a" => Source::Move(file, 1),
-                "b" => Source::Move(file, 2),
-                "c" => Source::Move(file, 3),
-                "d" => Source::Move(file, 4),
-                "e" => Source::Move(file, 5),
-                "f" => Source::Move(file, 6),
-                "g" => Source::Move(file, 7),
-                "h" => Source::Move(file, 8),
-                "i" => Source::Move(file, 9),
+            let rank = match &line[*starts..=*starts] {
+                "a" => 1,
+                "b" => 2,
+                "c" => 3,
+                "d" => 4,
+                "e" => 5,
+                "f" => 6,
+                "g" => 7,
+                "h" => 8,
+                "i" => 9,
                 _ => {
                     std::panic::panic_any(Beam::trouble(&format!(
                         "(Err.90)  '{}' だった。",
                         &line[*starts..=*starts]
                     )));
                 }
-            }
+            };
+            *starts += 1;
+
+            file * 10 + rank
         }
     };
-
-    match source {
-        Source::Move(file, rank) => {
-            *starts += 1;
-            buffer.source = Some(AbsoluteAddress::new(file, rank));
-            buffer.drop = None;
-        }
-        Source::Drop(hand) => {
-            *starts += 2;
-            buffer.source = None;
-            buffer.drop = Some(hand);
-        }
-    }
 
     // 残りは「筋の数字」、「段のアルファベット」のはず。
-
-    // 3文字目
-    let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
-        num
-    } else {
-        std::panic::panic_any(Beam::trouble(&format!(
-            "(Err.118)  '{}' だった。",
-            &line[*starts..=*starts]
-        )));
-    };
-    *starts += 1;
-    // 4文字目
-    let rank = match &line[*starts..=*starts] {
-        "a" => 1,
-        "b" => 2,
-        "c" => 3,
-        "d" => 4,
-        "e" => 5,
-        "f" => 6,
-        "g" => 7,
-        "h" => 8,
-        "i" => 9,
-        _ => {
+    let to = {
+        // 3文字目
+        let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
+            num
+        } else {
             std::panic::panic_any(Beam::trouble(&format!(
-                "(Err.136)  '{}' だった。",
-                &line[*starts..=*starts]
+                "(Err.118)  '{}' だった。 line='{}'",
+                &line[*starts..=*starts],
+                &line
             )));
-        }
-    };
-    *starts += 1;
+        };
+        *starts += 1;
 
-    // 行き先。
-    buffer.destination = AbsoluteAddress::new(file, rank);
+        // 4文字目
+        let rank = match &line[*starts..=*starts] {
+            "a" => 1,
+            "b" => 2,
+            "c" => 3,
+            "d" => 4,
+            "e" => 5,
+            "f" => 6,
+            "g" => 7,
+            "h" => 8,
+            "i" => 9,
+            _ => {
+                std::panic::panic_any(Beam::trouble(&format!(
+                    "(Err.136)  '{}' だった。",
+                    &line[*starts..=*starts]
+                )));
+            }
+        };
+        *starts += 1;
+
+        // 行き先。
+        file * 10 + rank
+    };
 
     // 5文字に「+」があれば成り。
-    buffer.promote = if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
+    let promote = if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
         *starts += 1;
-        true
+        1
     } else {
-        false
+        0
     };
 
     // 続きにスペース「 」が１つあれば読み飛ばす
@@ -158,8 +184,10 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         *starts += 1;
     }
 
+    let move_ = ((promote << 14) + (to << 7) + from) as Move;
+
     // 確定。
-    game.set_move(&buffer);
+    game.set_move(move_);
 
     game.history.ply += 1;
     true
@@ -420,6 +448,6 @@ pub fn set_position(line: &str, game: &mut Game) {
         game.history.ply -= 1;
         // 入っている指し手の通り指すぜ☆（＾～＾）
         let ply = game.history.ply;
-        game.do_move(&game.history.movements[ply as usize].clone());
+        game.do_move(game.history.get_friend(), game.history.moves[ply as usize]);
     }
 }

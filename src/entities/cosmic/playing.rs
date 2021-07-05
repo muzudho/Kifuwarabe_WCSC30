@@ -1,10 +1,12 @@
+use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::recording::{History, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
 use crate::entities::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX};
 use crate::entities::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
-use crate::entities::movement::Movement;
+use crate::entities::move_::to_movement;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use crate::genmove::generate_move::PieceEx;
 use crate::position::position::Position;
+use crate::take1base::Move;
 use crate::take1base::PIECE_MEANING_LEN;
 use rand::Rng;
 
@@ -96,18 +98,17 @@ impl Game {
     }
 
     /// 棋譜の作成
-    pub fn set_move(&mut self, r#move: &Movement) {
-        self.history.movements[self.history.ply as usize] = r#move.clone()
+    pub fn set_move(&mut self, move_: Move) {
+        self.history.moves[self.history.ply as usize] = move_
     }
-    pub fn get_move(&self) -> &Movement {
-        &self.history.movements[self.history.ply as usize]
+    pub fn get_move(&self) -> Move {
+        self.history.moves[self.history.ply as usize]
     }
     /// テスト用に棋譜表示☆（＾～＾）
     pub fn get_moves_history_text(&self) -> String {
         let mut s = String::new();
         for ply in 0..self.history.ply {
-            let movement = &self.history.movements[ply as usize];
-            s.push_str(&format!("[{}] {}", ply, movement));
+            s.push_str(&format!("[{}] {}", ply, self.history.moves[ply as usize]));
         }
         s
     }
@@ -199,9 +200,11 @@ impl Game {
     /// # Returns
     ///
     /// Captured piece.
-    pub fn do_move(&mut self, movement: &Movement) -> Option<PieceEx> {
+    pub fn do_move(&mut self, phase: Phase, move_: Move) -> Option<PieceEx> {
         // もう入っているかも知れないが、棋譜に入れる☆
-        self.set_move(movement);
+        self.set_move(move_);
+        // let (from, to, pro) = destructure_move(move_);
+        let movement = to_movement(phase, move_);
         let friend = self.history.get_friend();
 
         // TODO 利き
@@ -271,11 +274,13 @@ impl Game {
         cap
     }
 
-    pub fn undo_move(&mut self) -> bool {
+    pub fn undo_move(&mut self, phase: Phase) -> bool {
         if 0 < self.history.ply {
             // 棋譜から読取、手目も減る
             self.history.ply -= 1;
-            let movement = &self.get_move().clone();
+            let move_ = self.get_move();
+            // let (from, to, pro) = destructure_move(move_);
+            let movement = to_movement(phase, move_);
             {
                 // 取った駒が有ったか。
                 let captured: Option<PieceEx> =

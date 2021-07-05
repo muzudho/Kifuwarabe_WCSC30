@@ -4,8 +4,9 @@
 //! * Phase (先後。手番,相手番)
 //! * Person (先手,後手)
 //!
-use crate::entities::movement::Movement;
 use crate::genmove::generate_move::PieceEx;
+use crate::record::RESIGN_MOVE;
+use crate::take1base::Move;
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。
@@ -21,7 +22,7 @@ pub struct History {
     pub ply: isize,
     /// 棋譜
     /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
-    pub movements: [Movement; PLY_LEN],
+    pub moves: [Move; PLY_LEN],
     /// 棋譜に対応した各局面の局面ハッシュ
     pub position_hashs: [u64; PLY_LEN],
     /// 取った駒
@@ -31,7 +32,7 @@ impl Default for History {
     fn default() -> History {
         History {
             ply: 0,
-            movements: [Movement::default(); PLY_LEN],
+            moves: [RESIGN_MOVE; PLY_LEN],
             position_hashs: [0; PLY_LEN],
             /// 取った駒
             captured_pieces: [None; PLY_LEN],
@@ -41,7 +42,7 @@ impl Default for History {
 impl History {
     pub fn clear(&mut self) {
         self.ply = 0;
-        self.movements = [Movement::default(); PLY_LEN];
+        self.moves = [RESIGN_MOVE; PLY_LEN];
         self.position_hashs = [0; PLY_LEN];
         // 取った駒
         self.captured_pieces = [None; PLY_LEN];
