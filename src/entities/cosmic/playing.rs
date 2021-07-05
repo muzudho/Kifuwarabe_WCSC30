@@ -260,7 +260,8 @@ impl Game {
             };
 
             // 移動先升に駒を置く
-            self.position.push_to_board(&to2, moveing_piece);
+            self.position
+                .push_to_board(to2.square_number(), moveing_piece);
         }
         self.set_captured(self.history.ply as usize, cap);
 
@@ -323,12 +324,13 @@ impl Game {
                     self.position
                         .pop_hand(captured_piece_val.meaning.captured().hand_address());
                     // 移動先の駒を、取った駒（あるいは空）に戻す
-                    self.position.push_to_board(&to2, captured);
+                    self.position.push_to_board(to2.square_number(), captured);
                 }
 
                 if let Some(source_val) = from2 {
                     // 打でなければ、移動元升に、動かした駒を置く☆（＾～＾）打なら何もしないぜ☆（＾～＾）
-                    self.position.push_to_board(&source_val, moveing_piece);
+                    self.position
+                        .push_to_board(source_val.square_number(), moveing_piece);
                 }
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく

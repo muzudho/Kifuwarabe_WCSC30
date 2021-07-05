@@ -15,6 +15,7 @@ use crate::movegen::PieceEx;
 use crate::position::hand_address_to_square;
 use crate::position::is_board_square;
 use crate::position::is_hand_square;
+use crate::position::square_from;
 use crate::position::Square;
 use crate::position::SQUARE_NONE;
 use crate::take1base::Piece;
@@ -320,12 +321,12 @@ impl Position {
     }
 
     /// 升で指定して駒を置く
-    pub fn push_to_board(&mut self, adr: &AbsoluteAddress, piece: Option<PieceEx>) {
+    pub fn push_to_board(&mut self, sq: Square, piece: Option<PieceEx>) {
         if let Some(piece_val) = piece {
-            self.board[adr.square_number() as usize] = piece;
-            self.pc_num_to_location[piece_val.num as usize] = adr.square_number();
+            self.board[sq as usize] = piece;
+            self.pc_num_to_location[piece_val.num as usize] = sq;
         } else {
-            self.board[adr.square_number() as usize] = None;
+            self.board[sq as usize] = None;
         }
     }
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
@@ -372,7 +373,7 @@ impl Position {
                 }
             };
             self.push_to_board(
-                &AbsoluteAddress::new(file, rank),
+                square_from(file, rank),
                 Some(PieceEx::new(piece_meaning, piece_num)),
             );
         }
@@ -418,10 +419,9 @@ impl Position {
         // 盤上の駒
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                let ab_adr = &AbsoluteAddress::new(file, rank);
-                if let Some(piece) = self.piece_at(ab_adr.square_number()) {
-                    hash ^= game.hash_seed.piece[ab_adr.square_number() as usize]
-                        [piece.meaning as usize];
+                let sq = square_from(file, rank);
+                if let Some(piece) = self.piece_at(sq) {
+                    hash ^= game.hash_seed.piece[sq as usize][piece.meaning as usize];
                 }
             }
         }
@@ -447,13 +447,13 @@ impl Position {
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
     pub fn for_all_pieces_on_board<F>(&self, piece_get: &mut F)
     where
-        F: FnMut(usize, Option<&AbsoluteAddress>, Option<PieceEx>),
+        F: FnMut(usize, Option<Square>, Option<PieceEx>),
     {
         for (i, sq) in self.pc_num_to_location.iter().enumerate() {
             if is_board_square(*sq) {
                 // 盤上の駒☆（＾～＾）
                 if let Some(piece) = self.piece_at(*sq) {
-                    piece_get(i, Some(&AbsoluteAddress::from_square(*sq)), Some(piece));
+                    piece_get(i, Some(*sq), Some(piece));
                 } else {
                     panic!("sq={:?}", sq)
                 }

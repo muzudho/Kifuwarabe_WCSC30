@@ -138,7 +138,7 @@ impl Tree {
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
 
-        // TODO let mut controls = Vec::<AbsoluteAddress>::new();
+        // TODO let mut controls = Vec::<Square>::new();
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
         let mut move_list = {
@@ -282,15 +282,15 @@ impl Tree {
                                // サンプルを見ているだけだぜ☆（＾～＾）
                                game.position.get_control(
                                    game.history.get_phase(),
-                                   &AbsoluteAddress::new(6, 8)
+                                   (6, 8)
                                ),
                                game.position.get_control(
                                    game.history.get_phase(),
-                                   &AbsoluteAddress::new(5, 8)
+                                   (5, 8)
                                ),
                                game.position.get_control(
                                    game.history.get_phase(),
-                                   &AbsoluteAddress::new(4, 8)
+                                   (4, 8)
                                ),
                                */
                         ))),
