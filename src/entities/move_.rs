@@ -2,6 +2,7 @@ use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddressType;
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
 use crate::position::destructure_move;
+use crate::position::is_board_square;
 use crate::take1base::Move;
 
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
@@ -78,18 +79,10 @@ pub fn to_move_object(
 ) {
     let (from, to, promote) = destructure_move(num);
 
-    if from < 100 {
+    if is_board_square(from) {
         // 盤上
-        if let Some(dst) = AbsoluteAddress::from_absolute_address(to as usize) {
-            return (
-                AbsoluteAddress::from_absolute_address(from as usize),
-                dst,
-                promote,
-                None,
-            );
-        } else {
-            panic!("dst {}", to)
-        }
+        let dst = AbsoluteAddress::from_square(to);
+        return (Some(AbsoluteAddress::from_square(from)), dst, promote, None);
     } else {
         // 打
         let hand = match phase {
@@ -117,10 +110,7 @@ pub fn to_move_object(
             },
         };
 
-        if let Some(dst) = AbsoluteAddress::from_absolute_address(to as usize) {
-            return (None, dst, promote, Some(hand));
-        } else {
-            panic!("to={}", to)
-        }
+        let dst = AbsoluteAddress::from_square(to);
+        return (None, dst, promote, Some(hand));
     }
 }

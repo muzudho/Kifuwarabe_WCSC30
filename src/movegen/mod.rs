@@ -12,8 +12,8 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::move_::new_move;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::is_board_square;
-use crate::position::position::{PieceNum, Position};
 use crate::position::is_hand_square;
+use crate::position::position::{PieceNum, Position};
 use crate::position::square_to_hand_address;
 use crate::take1base::Move;
 use crate::take1base::Piece;
@@ -122,7 +122,7 @@ impl PseudoLegalMoves {
             if is_board_square(sq) {
                 PseudoLegalMoves::start_on_board(
                     us,
-                    &AbsoluteAddress::from_absolute_address(sq as usize).unwrap(),
+                    &AbsoluteAddress::from_square(sq),
                     &piece,
                     position,
                     listen_move,

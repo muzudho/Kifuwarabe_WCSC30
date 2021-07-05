@@ -23,6 +23,19 @@ pub fn is_hand_square(sq: Square) -> bool {
 // pub fn is_none_square(sq: Square) -> bool {
 //     sq == SQUARE_NONE
 // }
+/// マス、または持駒なら真
+pub fn is_square(sq: Square) -> bool {
+    (11 <= sq && sq < 20)
+        || (21 <= sq && sq < 30)
+        || (31 <= sq && sq < 40)
+        || (41 <= sq && sq < 50)
+        || (51 <= sq && sq < 60)
+        || (61 <= sq && sq < 70)
+        || (71 <= sq && sq < 80)
+        || (81 <= sq && sq < 90)
+        || (91 <= sq && sq < 100)
+        || (100 <= sq && sq < 116)
+}
 
 pub fn square_to_hand_address(sq: Square) -> HandAddress {
     match sq {

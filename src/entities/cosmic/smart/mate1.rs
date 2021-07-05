@@ -5,7 +5,7 @@
 // use crate::entities::cosmic::recording::Phase;
 // use crate::entities::cosmic::smart::square::AbsoluteAddress;
 // use crate::entities::cosmic::smart::square::RelAdr;
-// use crate::entities::cosmic::toy_box::{Location, PieceNum};
+// use crate::entities::cosmic::toy_box::{PieceNum};
 // use crate::entities::law::speed_of_light::Movility;
 // use crate::entities::move_::new_move;
 // use crate::entities::spaceship::equipment::{Beam, Log};

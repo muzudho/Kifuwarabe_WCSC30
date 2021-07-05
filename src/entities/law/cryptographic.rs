@@ -2,6 +2,8 @@
 //! なんか難しいやつはここだぜ☆（＾～＾）
 //!
 use crate::entities::cosmic::smart::square::AbsoluteAddress;
+use crate::position::is_square;
+use crate::position::Square;
 
 /*
 /// 0 なら偽、それ以外は真☆（＾～＾）
@@ -35,11 +37,16 @@ pub fn push_sq_to_hash(hash: u64, square: Option<&AbsoluteAddress>) -> u64 {
         } as u64
 }
 /// ハッシュ値から作る
-pub fn pop_sq_from_hash(hash: u64) -> (u64, Option<AbsoluteAddress>) {
+pub fn pop_sq_from_hash(hash: u64) -> (u64, AbsoluteAddress) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let adr = AbsoluteAddress::from_absolute_address((hash & 0b111_1111) as usize);
-    (hash >> 7, adr)
+    let sq = (hash & 0b111_1111) as Square;
+    if is_square(sq) {
+        let adr = AbsoluteAddress::from_square(sq);
+        (hash >> 7, adr)
+    } else {
+        panic!("pop_sq_from_hash fail")
+    }
 }
 
 /// 指し手のために、段をアルファベットにすることを想定

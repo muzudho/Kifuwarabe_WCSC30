@@ -110,16 +110,6 @@ pub enum PieceNum {
     Pawn40,
 }
 
-// #[derive(Clone, Copy)]
-// pub enum Location {
-//     // 盤上
-//     OnBoard(AbsoluteAddress),
-//     // 持駒
-//     Hand(HandAddress),
-//     // 作業中のときは、これだぜ☆（＾～＾）
-//     Busy,
-// }
-
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
 /// 10の位を筋、1の位を段とする。
@@ -463,11 +453,7 @@ impl Position {
             if is_board_square(*sq) {
                 // 盤上の駒☆（＾～＾）
                 if let Some(piece) = self.piece_at(*sq) {
-                    piece_get(
-                        i,
-                        Some(&AbsoluteAddress::from_absolute_address(*sq as usize).unwrap()),
-                        Some(piece),
-                    );
+                    piece_get(i, Some(&AbsoluteAddress::from_square(*sq)), Some(piece));
                 } else {
                     panic!("sq={:?}", sq)
                 }

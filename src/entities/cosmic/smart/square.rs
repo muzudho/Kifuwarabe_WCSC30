@@ -617,15 +617,15 @@ impl AbsoluteAddress {
         }
     }
 
-    pub fn from_absolute_address(address: usize) -> Option<AbsoluteAddress> {
-        let file = (address / 10) % 10;
-        let rank = address % 10;
-        if address == 0 {
-            None
+    pub fn from_square(sq: Square) -> AbsoluteAddress {
+        let file = ((sq / 10) % 10) as usize;
+        let rank = (sq % 10) as usize;
+        if sq == 0 {
+            panic!("from_absolute_address fail")
         } else {
             debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
             debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
-            Some(AbsoluteAddress::new(file as usize, rank as usize))
+            AbsoluteAddress::new(file as usize, rank as usize)
         }
     }
 

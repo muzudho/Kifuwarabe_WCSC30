@@ -273,13 +273,13 @@ impl Chiyuri {
             for hash in 0..10 {
                 let sq = AbsoluteAddress::new(FILE_1, ms);
                 let next = push_sq_to_hash(hash, Some(&sq));
-                let (hash_orig, square_orig) = pop_sq_from_hash(next);
+                let (hash_orig, sq_orig) = pop_sq_from_hash(next);
                 Beam::shoot( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
                     ,hash
                     ,ms
                     ,next
                     ,hash_orig
-                    ,if let Some(square_orig_val) = square_orig{ square_orig_val.square_number()}else{0}
+                    ,sq_orig.square_number()
                 ));
             }
         }
