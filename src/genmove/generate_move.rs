@@ -12,7 +12,6 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::move_::new_move2;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::position::{Location, PieceNum, Position};
-use crate::position::Square;
 use crate::record::MoveCap;
 use crate::take1base::Piece;
 use std::fmt;
@@ -167,7 +166,7 @@ impl PseudoLegalMoves {
                            promotability,
                            _agility,
                            move_permission: Option<MovePermission>| {
-            let pseudo_captured = position.piece_at(destination.square_number() as Square);
+            let pseudo_captured = position.piece_at(destination.square_number());
 
             let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
                 if pseudo_captured_val.meaning.phase() == friend {
@@ -295,7 +294,7 @@ impl PseudoLegalMoves {
         if let Some(piece) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
             let drop = &mut |destination: AbsoluteAddress| {
-                if let None = position.piece_at(destination.square_number() as Square) {
+                if let None = position.piece_at(destination.square_number()) {
                     // 駒が無いところに打つ
                     use crate::take1base::Piece::*;
                     match piece.meaning {

@@ -315,7 +315,7 @@ impl Position {
     pub fn exists_pawn_on_file(&self, phase: Phase, file: usize) -> bool {
         for rank in RANK_1..RANK_10 {
             let adr = AbsoluteAddress::new(file, rank);
-            if let Some(piece) = self.piece_at(adr.square_number() as Square) {
+            if let Some(piece) = self.piece_at(adr.square_number()) {
                 if piece.meaning.phase() == phase && piece.meaning.r#type() == PieceType::Pawn {
                     return true;
                 }
@@ -433,7 +433,7 @@ impl Position {
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
                 let ab_adr = &AbsoluteAddress::new(file, rank);
-                if let Some(piece) = self.piece_at(ab_adr.square_number() as Square) {
+                if let Some(piece) = self.piece_at(ab_adr.square_number()) {
                     hash ^= game.hash_seed.piece[ab_adr.square_number() as usize]
                         [piece.meaning as usize];
                 }
@@ -467,7 +467,7 @@ impl Position {
             match location {
                 Location::Position(adr) => {
                     // 盤上の駒☆（＾～＾）
-                    if let Some(piece) = self.piece_at(adr.square_number() as Square) {
+                    if let Some(piece) = self.piece_at(adr.square_number()) {
                         piece_get(i, Some(adr), Some(piece));
                     } else {
                         panic!("adr={:?}", adr)
@@ -494,7 +494,7 @@ impl Position {
             match location {
                 Location::Position(adr) => {
                     // 盤上の駒☆（＾～＾）
-                    if let Some(piece) = self.piece_at(adr.square_number() as Square) {
+                    if let Some(piece) = self.piece_at(adr.square_number()) {
                         if piece.meaning.phase() == friend {
                             piece_get(location, piece);
                         }

@@ -28,6 +28,7 @@
 //!
 //! None is 0.
 use crate::entities::law::speed_of_light::Nine299792458;
+use crate::position::Square;
 use std::cmp::max;
 use std::cmp::Eq;
 use std::cmp::PartialEq;
@@ -658,8 +659,8 @@ impl AbsoluteAddress {
         self.file % 10 == 0 || self.rank % 10 == 0
     }
 
-    pub fn square_number(&self) -> usize {
-        self.file * 10 + self.rank
+    pub fn square_number(&self) -> Square {
+        (self.file * 10 + self.rank) as Square
     }
 
     pub fn offset(&mut self, r: &RelAdr) -> &mut Self {
