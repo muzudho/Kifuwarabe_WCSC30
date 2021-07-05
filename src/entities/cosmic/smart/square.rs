@@ -642,9 +642,9 @@ impl AbsoluteAddress {
         self.rank
     }
 
-    pub fn to_file_rank(&self) -> (usize, usize) {
-        (self.file(), self.rank())
-    }
+    // pub fn to_file_rank(&self) -> (usize, usize) {
+    //     (self.file(), self.rank())
+    // }
 
     pub fn rotate_180(&self) -> Self {
         let file = FILE_10 - self.file;

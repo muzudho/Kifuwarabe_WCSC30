@@ -9,7 +9,7 @@ use crate::entities::cosmic::smart::square::{
     AbsoluteAddress, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
-use crate::entities::move_::new_move2;
+use crate::entities::move_::new_move;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::position::{Location, PieceNum, Position};
 use crate::take1base::Move;
@@ -164,7 +164,7 @@ impl PseudoLegalMoves {
                     Any => {
                         // 成ったり、成れなかったりできるとき。
                         if !forbidden {
-                            listen_move(new_move2(
+                            listen_move(new_move(
                                 friend,
                                 Some(source.square_number() as u16),
                                 destination.square_number() as u16,
@@ -172,7 +172,7 @@ impl PseudoLegalMoves {
                                 None,
                             ));
                         }
-                        listen_move(new_move2(
+                        listen_move(new_move(
                             friend,
                             Some(source.square_number() as u16),
                             destination.square_number() as u16,
@@ -183,7 +183,7 @@ impl PseudoLegalMoves {
                     _ => {
                         // 成れるか、成れないかのどちらかのとき。
                         if promotion || !forbidden {
-                            listen_move(new_move2(
+                            listen_move(new_move(
                                 friend,
                                 Some(source.square_number() as u16),
                                 destination.square_number() as u16,
@@ -232,7 +232,7 @@ impl PseudoLegalMoves {
                         }
                         _ => {}
                     }
-                    listen_move(new_move2(
+                    listen_move(new_move(
                         friend,
                         None,                                        // 駒台
                         destination.square_number() as u16,          // どの升へ行きたいか

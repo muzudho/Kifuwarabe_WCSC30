@@ -2,7 +2,7 @@ use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::recording::{History, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
 use crate::entities::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX};
 use crate::entities::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
-use crate::entities::move_::to_movement;
+use crate::entities::move_::to_move_object;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use crate::genmove::generate_move::PieceEx;
 use crate::position::position::Position;
@@ -204,7 +204,7 @@ impl Game {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(move_);
         // let (from, to, pro) = destructure_move(move_);
-        let (from2, to2, promote2, drop2) = to_movement(phase, move_);
+        let (from2, to2, promote2, drop2) = to_move_object(phase, move_);
         let friend = self.history.get_friend();
 
         // TODO 利き
@@ -278,8 +278,7 @@ impl Game {
             self.history.ply -= 1;
             let move_ = self.get_move();
             // let (from, to, pro) = destructure_move(move_);
-            let (from2, to2, promote2, drop2) = to_movement(phase, move_);
-            // let movement = to_movement(phase, move_);
+            let (from2, to2, promote2, drop2) = to_move_object(phase, move_);
             {
                 // 取った駒が有ったか。
                 let captured: Option<PieceEx> =

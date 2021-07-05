@@ -7,7 +7,7 @@
 // use crate::entities::cosmic::smart::square::RelAdr;
 // use crate::entities::cosmic::toy_box::{Location, PieceNum};
 // use crate::entities::law::speed_of_light::Movility;
-// use crate::entities::move_::new_move2;
+// use crate::entities::move_::new_move;
 // use crate::entities::spaceship::equipment::{Beam, Log};
 
 /*
@@ -204,7 +204,7 @@ impl Lioncatch {
                             } else {
                                 // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                 self.checks.push(&MoveCap::new(
-                                    new_move2(
+                                    new_move(
                                         game.history.get_friend(),
                                         Some(cur.address() as u16),
                                         self.opponent_king_adr.address() as u16,
@@ -217,7 +217,7 @@ impl Lioncatch {
                         } else {
                             // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                             self.checks.push(&MoveCap::new(
-                                new_move2(
+                                new_move(
                                     game.history.get_friend(),
                                     Some(cur.address() as u16),
                                     self.opponent_king_adr.address() as u16,
@@ -277,7 +277,7 @@ impl Lioncatch {
                                     if i != 0 {
                                         // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                         self.checks.push(&MoveCap::new(
-                                            new_move2(
+                                            new_move(
                                                 game.history.get_friend(),
                                                 Some(cur.address() as u16),
                                                 self.opponent_king_adr.address() as u16,
@@ -294,7 +294,7 @@ impl Lioncatch {
                                 if i != 0 {
                                     // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                     self.checks.push(&MoveCap::new(
-                                        new_move2(
+                                        new_move(
                                             game.history.get_friend(),
                                             Some(cur.address() as u16),
                                             self.opponent_king_adr.address() as u16,

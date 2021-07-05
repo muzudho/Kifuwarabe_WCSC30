@@ -238,14 +238,6 @@ impl Tree {
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
 
-            // ここから
-            // TODO こっちが正しいコード（＾～＾）
-            // let movement = move_.movement;
-            // TODO テストコード　削除すること（＾～＾）
-            // let move_ = new_move(game.history.get_friend(), &move_.movement);
-            // TODO 新しいコード（＾～＾）
-            // ここまで
-
             // let source_piece = if let Some(source_val) = &movement.source {
             //     game.position.piece_at(source_val)
             // } else {
