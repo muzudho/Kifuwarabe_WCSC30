@@ -414,8 +414,13 @@ impl Area {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| {
-            Promoting::knight(us, &to, moving, Some(MovePermission::from_knight(us)))
+        let moving = &mut |to: AbsoluteAddress, _agility| {
+            Promoting::knight(
+                us,
+                to.square_number(),
+                moving,
+                Some(MovePermission::from_knight(us)),
+            )
         };
 
         for mobility in PieceType::Knight.mobility().iter() {
@@ -435,7 +440,9 @@ impl Area {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| Promoting::silver(us, &from, &to, moving);
+        let moving = &mut |to: AbsoluteAddress, _agility| {
+            Promoting::silver(us, from.square_number(), to.square_number(), moving)
+        };
 
         for mobility in PieceType::Silver.mobility().iter() {
             Area::r#move(&Some(us), from, *mobility, moving);
@@ -490,7 +497,9 @@ impl Area {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| Promoting::bishop_rook(us, &from, &to, moving);
+        let moving = &mut |to: AbsoluteAddress, _agility| {
+            Promoting::bishop_rook(us, from.square_number(), to.square_number(), moving)
+        };
         for mobility in PieceType::Bishop.mobility().iter() {
             Area::r#move(&Some(us), from, *mobility, moving);
         }
@@ -507,7 +516,9 @@ impl Area {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| Promoting::bishop_rook(us, &from, &to, moving);
+        let moving = &mut |to: AbsoluteAddress, _agility| {
+            Promoting::bishop_rook(us, from.square_number(), to.square_number(), moving)
+        };
         for mobility in PieceType::Rook.mobility().iter() {
             Area::r#move(&Some(us), from, *mobility, moving);
         }
@@ -736,44 +747,31 @@ impl Promoting {
     /// ---------
     ///
     /// * `us` -
-    /// * `destinaion` -
+    /// * `to` -
     /// * `callback` -
     /// * `move_permission` - 成らずに一番奥の段に移動することはできません。
     fn pawn_lance<F1>(
         us: Phase,
-        destinaion: &AbsoluteAddress,
+        to: &AbsoluteAddress,
         callback: &mut F1,
         move_permission: Option<MovePermission>,
     ) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_farthest_rank_from_friend(us, destinaion.square_number()) {
+        if Promoting::is_farthest_rank_from_friend(us, to.square_number()) {
             // 自陣から見て一番奥の段
             callback(
-                *destinaion,
+                *to,
                 Promotability::Forced,
                 Agility::Hopping,
                 move_permission,
             )
-        } else if Promoting::is_second_third_farthest_rank_from_friend(
-            us,
-            destinaion.square_number(),
-        ) {
+        } else if Promoting::is_second_third_farthest_rank_from_friend(us, to.square_number()) {
             // 自陣から見て二番、三番目の奥の段
-            callback(
-                *destinaion,
-                Promotability::Any,
-                Agility::Hopping,
-                move_permission,
-            )
+            callback(*to, Promotability::Any, Agility::Hopping, move_permission)
         } else {
-            callback(
-                *destinaion,
-                Promotability::Deny,
-                Agility::Hopping,
-                move_permission,
-            )
+            callback(*to, Promotability::Deny, Agility::Hopping, move_permission)
         }
     }
 
@@ -783,24 +781,39 @@ impl Promoting {
     /// ---------
     ///
     /// * `us` -
-    /// * `destinaion` -
+    /// * `to` -
     /// * `callback` -
     /// * `move_permission` - 成らずに奥から２番目の段に移動することはできません。
     fn knight<F1>(
         us: Phase,
-        to: &AbsoluteAddress,
+        to: Square,
         callback: &mut F1,
         move_permission: Option<MovePermission>,
     ) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_first_second_farthest_rank_from_friend(us, to.square_number()) {
-            callback(*to, Promotability::Forced, Agility::Knight, move_permission)
-        } else if Promoting::is_third_farthest_rank_from_friend(us, to.square_number()) {
-            callback(*to, Promotability::Any, Agility::Knight, move_permission)
+        if Promoting::is_first_second_farthest_rank_from_friend(us, to) {
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Forced,
+                Agility::Knight,
+                move_permission,
+            )
+        } else if Promoting::is_third_farthest_rank_from_friend(us, to) {
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Any,
+                Agility::Knight,
+                move_permission,
+            )
         } else {
-            callback(*to, Promotability::Deny, Agility::Knight, move_permission)
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Deny,
+                Agility::Knight,
+                move_permission,
+            )
         }
     }
 
@@ -814,21 +827,31 @@ impl Promoting {
     /// * `from` -
     /// * `to` -
     /// * `callback` -
-    fn silver<F1>(
-        us: Phase,
-        from: &AbsoluteAddress,
-        to: &AbsoluteAddress,
-        callback: &mut F1,
-    ) -> bool
+    fn silver<F1>(us: Phase, from: Square, to: Square, callback: &mut F1) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_third_farthest_rank_from_friend(us, from.square_number()) {
-            callback(*to, Promotability::Any, Agility::Hopping, None)
-        } else if Promoting::is_opponent_region(us, to.square_number()) {
-            callback(*to, Promotability::Any, Agility::Hopping, None)
+        if Promoting::is_third_farthest_rank_from_friend(us, from) {
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Any,
+                Agility::Hopping,
+                None,
+            )
+        } else if Promoting::is_opponent_region(us, to) {
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Any,
+                Agility::Hopping,
+                None,
+            )
         } else {
-            callback(*to, Promotability::Deny, Agility::Hopping, None)
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Deny,
+                Agility::Hopping,
+                None,
+            )
         }
     }
 
@@ -842,21 +865,24 @@ impl Promoting {
     /// * `from` -
     /// * `to` -
     /// * `callback` -
-    fn bishop_rook<F1>(
-        us: Phase,
-        from: &AbsoluteAddress,
-        to: &AbsoluteAddress,
-        callback: &mut F1,
-    ) -> bool
+    fn bishop_rook<F1>(us: Phase, from: Square, to: Square, callback: &mut F1) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_opponent_region(us, from.square_number())
-            || Promoting::is_opponent_region(us, to.square_number())
-        {
-            callback(*to, Promotability::Any, Agility::Sliding, None)
+        if Promoting::is_opponent_region(us, from) || Promoting::is_opponent_region(us, to) {
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Any,
+                Agility::Sliding,
+                None,
+            )
         } else {
-            callback(*to, Promotability::Deny, Agility::Sliding, None)
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Deny,
+                Agility::Sliding,
+                None,
+            )
         }
     }
 
