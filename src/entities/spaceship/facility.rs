@@ -1,10 +1,10 @@
 use crate::entities::cosmic::playing::{Game, PosNums};
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
-use crate::entities::move_::destructure_move;
 use crate::entities::move_::to_movement;
 use crate::entities::spaceship::equipment::Beam;
 use crate::genmove::generate_move::PieceEx;
+use crate::position::destructure_move;
 use crate::position::position::Position;
 use crate::take1base::Move;
 

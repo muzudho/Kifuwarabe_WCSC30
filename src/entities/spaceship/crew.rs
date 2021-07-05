@@ -7,6 +7,8 @@ use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
 use crate::genmove::generate_move::PseudoLegalMoves;
+use crate::position::to_move_code;
+use crate::record::RESIGN_MOVE;
 use crate::search::search::Tree;
 use crate::take1base::Move;
 use rand::Rng;
@@ -60,15 +62,15 @@ impl Kifuwarabe {
             None,
             Some((tree.state_nodes, tree.nps())),
             Some(ts.bestmove.value),
-            ts.bestmove.movement,
+            Some(ts.bestmove.move_),
             &Some(PvString::String(ts.bestmove.reason.to_string())),
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
         Beam::shoot(&format!(
             "bestmove {}",
-            if let Some(bestmove) = ts.bestmove.movement {
-                format!("{}", bestmove)
+            if ts.bestmove.move_ != RESIGN_MOVE {
+                to_move_code(ts.bestmove.move_)
             } else {
                 "resign".to_string()
             }

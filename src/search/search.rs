@@ -6,11 +6,9 @@ use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::universe::Universe;
-use crate::entities::move_::destructure_move;
-use crate::entities::move_::to_movement;
-use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use crate::genmove::generate_move::{PieceEx, PseudoLegalMoves};
+use crate::position::destructure_move;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 use rand::Rng;
@@ -74,26 +72,25 @@ impl Tree {
         for id in 1..universe.option_max_depth {
             self.max_depth0 = id;
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
-            let movement = best_ts.bestmove.movement;
             universe.game.info.print(
                 Some(self.max_depth0),
                 Some((self.state_nodes, self.nps())),
                 Some(best_ts.bestmove.value),
-                movement,
+                Some(best_ts.bestmove.move_),
                 &Some(PvString::PV(
                     self.msec(),
                     format!(
                         "{}",
-                        if let Some(movement_val) = movement {
-                            format!("{}", movement_val)
-                        } else {
+                        if best_ts.bestmove.move_ == RESIGN_MOVE {
                             "resign".to_string()
+                        } else {
+                            format!("{}", best_ts.bestmove.move_)
                         },
                     ),
                 )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
             );
 
-            if let None = movement {
+            if best_ts.bestmove.move_ == RESIGN_MOVE {
                 // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
                 break;
             }
@@ -248,7 +245,7 @@ impl Tree {
             // let move_ = new_move(game.history.get_friend(), &move_.movement);
             // let movement = to_movement(game.history.get_friend(), move_);
             // TODO 新しいコード（＾～＾）
-            let movement = to_movement(game.history.get_friend(), *move_);
+            // let movement = to_movement(game.history.get_friend(), *move_);
             // ここまで
 
             // let source_piece = if let Some(source_val) = &movement.source {
@@ -267,7 +264,7 @@ impl Tree {
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.meaning.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(movement); // move_.movement
+                    ts.bestmove.catch_king(*move_); // move_.movement
 
                     // self.evaluation
                     //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
@@ -280,7 +277,7 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_movement = Some(movement); // move_.movement
+                ts.repetition_move = *move_; // move_.movement
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
@@ -293,13 +290,12 @@ impl Tree {
                 ts.choice_friend(
                     // &Value::CentiPawn(self.evaluation.centi_pawn()),
                     &Value::CentiPawn(0),
-                    movement, // move_.movement
+                    *move_, // move_.movement
                 );
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
                     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
-                    let movement = ts.bestmove.movement;
                     game.info.print(
                         None,
                         None,
@@ -331,7 +327,7 @@ impl Tree {
                         Some(self.pv.len()),
                         Some((self.state_nodes, self.nps())),
                         Some(ts.bestmove.value),
-                        movement,
+                        Some(ts.bestmove.move_),
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
@@ -356,8 +352,8 @@ impl Tree {
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 exists_lose = ts.turn_over_and_choice(
                     &opponent_ts,
-                    movement, // move_.movement
-                    0,        //self.evaluation.centi_pawn(),
+                    *move_, // move_.movement
+                    0,      //self.evaluation.centi_pawn(),
                 );
             }
 
@@ -406,16 +402,14 @@ impl Tree {
         // }
 
         if !exists_lose {
-            if let None = ts.bestmove.movement {
-                if let Some(repetition_movement_val) = ts.repetition_movement {
-                    // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-                    ts.bestmove.update(
-                        repetition_movement_val,
-                        //&Value::CentiPawn(REPITITION_VALUE),
-                        &Value::CentiPawn(0),
-                        Reason::RepetitionBetterThanResign,
-                    );
-                }
+            if ts.bestmove.move_ == RESIGN_MOVE {
+                // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
+                ts.bestmove.update(
+                    ts.repetition_move,
+                    //&Value::CentiPawn(REPITITION_VALUE),
+                    &Value::CentiPawn(0),
+                    Reason::RepetitionBetterThanResign,
+                );
             }
         }
 
@@ -443,7 +437,7 @@ impl Tree {
 #[derive(Clone)]
 pub struct Bestmove {
     pub value: Value,
-    pub movement: Option<Movement>,
+    pub move_: Move,
     /// この指し手を選んだ理由☆（＾～＾）
     pub reason: Reason,
 }
@@ -451,7 +445,7 @@ impl Default for Bestmove {
     fn default() -> Self {
         Bestmove {
             value: Value::Lose,
-            movement: None,
+            move_: RESIGN_MOVE,
             // なんの手も無かったぜ☆（＾～＾）
             reason: Reason::NoUpdate,
         }
@@ -459,14 +453,14 @@ impl Default for Bestmove {
 }
 impl Bestmove {
     /// TODO 廃止予定☆（＾～＾）
-    pub fn catch_king(&mut self, movement: Movement) {
+    pub fn catch_king(&mut self, move_: Move) {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
-        self.movement = Some(movement);
+        self.move_ = move_;
         self.value = Value::Win;
         self.reason = Reason::KingCatchIsStrongest;
     }
-    pub fn update(&mut self, movement: Movement, value: &Value, reason: Reason) {
-        self.movement = Some(movement);
+    pub fn update(&mut self, move_: Move, value: &Value, reason: Reason) {
+        self.move_ = move_;
         self.value = *value;
         self.reason = reason;
     }
@@ -475,14 +469,14 @@ impl Bestmove {
 pub struct TreeState {
     pub bestmove: Bestmove,
     // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
-    pub repetition_movement: Option<Movement>,
+    pub repetition_move: Move,
     pub timeout: bool,
 }
 impl Default for TreeState {
     fn default() -> Self {
         TreeState {
             bestmove: Bestmove::default(),
-            repetition_movement: None,
+            repetition_move: RESIGN_MOVE,
             timeout: false,
         }
     }
@@ -491,7 +485,7 @@ impl TreeState {
     pub fn turn_over_and_choice(
         &mut self,
         opponent_ts: &TreeState,
-        friend_movement: Movement,
+        friend_move: Move,
         friend_centi_pawn1: isize,
     ) -> bool {
         // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
@@ -506,16 +500,16 @@ impl TreeState {
             Value::Lose => {
                 // 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
                 self.bestmove
-                    .update(friend_movement, &Value::Win, Reason::FriendWin);
+                    .update(friend_move, &Value::Win, Reason::FriendWin);
                 false
             }
             Value::CentiPawn(num) => {
                 // 評価値は ひっくり返します。この指し手の駒の交換値も足します。
                 let friend_centi_pawn2 = -num + friend_centi_pawn1;
-                if let None = self.bestmove.movement {
+                if self.bestmove.move_ != RESIGN_MOVE {
                     // どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
                     self.bestmove.update(
-                        friend_movement,
+                        friend_move,
                         &Value::CentiPawn(friend_centi_pawn2),
                         Reason::ThisBetterThanResign,
                     );
@@ -529,7 +523,7 @@ impl TreeState {
                         Value::Lose => {
                             // 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
                             self.bestmove.update(
-                                friend_movement,
+                                friend_move,
                                 &Value::CentiPawn(friend_centi_pawn2),
                                 Reason::AnyMoveMoreThanLose,
                             );
@@ -538,7 +532,7 @@ impl TreeState {
                             if best_centi_pawn < friend_centi_pawn2 {
                                 // 上方修正
                                 self.bestmove.update(
-                                    friend_movement,
+                                    friend_move,
                                     &Value::CentiPawn(friend_centi_pawn2),
                                     Reason::ValueUp,
                                 );
@@ -552,12 +546,12 @@ impl TreeState {
     }
 
     /// 指し手のベストを選ぶぜ☆（＾～＾）
-    pub fn choice_friend(&mut self, value: &Value, movement: Movement) {
-        if let None = self.bestmove.movement {
+    pub fn choice_friend(&mut self, value: &Value, move_: Move) {
+        if self.bestmove.move_ == RESIGN_MOVE {
             // どんな葉も 投了より良いだろ☆（＾～＾）
             // TODO でも、王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
             self.bestmove
-                .update(movement, value, Reason::AnyLeafBetterThanResign);
+                .update(move_, value, Reason::AnyLeafBetterThanResign);
             return;
         } else {
             match self.bestmove.value {
@@ -567,14 +561,14 @@ impl TreeState {
                 Value::Lose => {
                     // どんな評価値でも、負けるよりマシだろ☆（＾～＾）
                     self.bestmove
-                        .update(movement, value, Reason::AnyLeafMoreThanLose);
+                        .update(move_, value, Reason::AnyLeafMoreThanLose);
                     return;
                 }
                 Value::CentiPawn(best_centi_pawn) => {
                     match value {
                         Value::Win => {
                             // 勝つんだから更新するぜ☆（＾～＾）
-                            self.bestmove.update(movement, value, Reason::Win);
+                            self.bestmove.update(move_, value, Reason::Win);
                             return;
                         }
                         Value::Lose => {
@@ -583,7 +577,7 @@ impl TreeState {
                         Value::CentiPawn(leaf_centi_pawn) => {
                             if best_centi_pawn < *leaf_centi_pawn {
                                 // 評価値が良かったから更新☆（＾～＾）
-                                self.bestmove.update(movement, value, Reason::GoodPosition);
+                                self.bestmove.update(move_, value, Reason::GoodPosition);
                                 return;
                             }
                         }

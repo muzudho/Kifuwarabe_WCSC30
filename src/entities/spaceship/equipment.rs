@@ -1,8 +1,8 @@
 //! 宇宙船の備品だぜ☆（＾～＾）
 use crate::entities::cosmic::smart::square::test_rotation;
 use crate::entities::logging::{LOGFILE, LOG_ENABLED};
-use crate::entities::movement::Movement;
 use crate::search::search::Value;
+use crate::take1base::Move;
 use std::io::Write;
 use std::time::{Duration, Instant};
 
@@ -59,7 +59,7 @@ impl DestinationDisplay {
         cur_depth: Option<usize>,
         state_nodes_nps: Option<(u64, u64)>,
         value: Option<Value>,
-        movement: Option<Movement>,
+        move_: Option<Move>,
         pv_string: &Option<PvString>,
     ) {
         // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
@@ -101,8 +101,8 @@ impl DestinationDisplay {
             } else {
                 "".to_string()
             },
-            if let Some(movement_val) = movement {
-                format!("{}", movement_val)
+            if let Some(move_) = move_ {
+                format!("{}", move_)
             } else {
                 "".to_string()
             },
