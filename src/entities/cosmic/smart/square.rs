@@ -38,7 +38,7 @@ use std::hash::Hash;
 /// 打はテストできない
 ///
 pub fn _assert_in_board_as_absolute(ab_adr: &AbsoluteAddress, hint: &str) {
-    let adr = ab_adr.address();
+    let adr = ab_adr.square_number();
     debug_assert!(
         (10 < adr && adr < 20)
             || (20 < adr && adr < 30)
@@ -658,14 +658,14 @@ impl AbsoluteAddress {
         self.file % 10 == 0 || self.rank % 10 == 0
     }
 
-    pub fn address(&self) -> usize {
+    pub fn square_number(&self) -> usize {
         self.file * 10 + self.rank
     }
 
     pub fn offset(&mut self, r: &RelAdr) -> &mut Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
-        let sum = (self.address() as isize + r.get_address()) as usize;
+        let sum = (self.square_number() as isize + r.get_address()) as usize;
 
         // Initialize.
         self.rank = sum % 10;
@@ -703,7 +703,7 @@ impl fmt::Debug for AbsoluteAddress {
             "({}x {}y {}adr)",
             self.file(),
             self.rank(),
-            self.address()
+            self.square_number()
         )
     }
 }

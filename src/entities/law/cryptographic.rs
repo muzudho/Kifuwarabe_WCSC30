@@ -29,7 +29,7 @@ pub fn push_sq_to_hash(hash: u64, square: Option<&AbsoluteAddress>) -> u64 {
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
     (hash << 7)
         + if let Some(square_val) = square {
-            square_val.address()
+            square_val.square_number()
         } else {
             0
         } as u64

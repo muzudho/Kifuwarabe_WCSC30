@@ -212,8 +212,8 @@ impl PseudoLegalMoves {
                                 listen_move(MoveCap::new(
                                     new_move2(
                                         friend,
-                                        Some(source.address() as u16),
-                                        destination.address() as u16,
+                                        Some(source.square_number() as u16),
+                                        destination.square_number() as u16,
                                         false,
                                         None,
                                     ), // Movement::new(Some(*source), destination, false, None),
@@ -232,8 +232,8 @@ impl PseudoLegalMoves {
                             listen_move(MoveCap::new(
                                 new_move2(
                                     friend,
-                                    Some(source.address() as u16),
-                                    destination.address() as u16,
+                                    Some(source.square_number() as u16),
+                                    destination.square_number() as u16,
                                     true,
                                     None,
                                 ), // Movement::new(Some(*source), destination, true, None),
@@ -255,8 +255,8 @@ impl PseudoLegalMoves {
                                 listen_move(MoveCap::new(
                                     new_move2(
                                         friend,
-                                        Some(source.address() as u16),
-                                        destination.address() as u16,
+                                        Some(source.square_number() as u16),
+                                        destination.square_number() as u16,
                                         promotion,
                                         None,
                                     ), // Movement::new(Some(*source), destination, promotion, None),
@@ -322,7 +322,7 @@ impl PseudoLegalMoves {
                         new_move2(
                             friend,
                             None,                                        // 駒台
-                            destination.address() as u16,                // どの升へ行きたいか
+                            destination.square_number() as u16,          // どの升へ行きたいか
                             false,                                       // 打に成りは無し
                             Some(piece.meaning.hand_address().r#type()), // 打った駒種類
                         ),

@@ -293,7 +293,7 @@ impl Chiyuri {
                     ,ms
                     ,next
                     ,hash_orig
-                    ,if let Some(square_orig_val) = square_orig{ square_orig_val.address()}else{0}
+                    ,if let Some(square_orig_val) = square_orig{ square_orig_val.square_number()}else{0}
                 ));
             }
         }

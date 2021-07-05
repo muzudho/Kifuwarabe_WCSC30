@@ -117,11 +117,11 @@ impl fmt::Debug for Movement {
             f,
             "Movement({}{}{}{})",
             if let Some(source_val) = self.source {
-                source_val.address()
+                source_val.square_number()
             } else {
                 0
             },
-            self.destination.address(),
+            self.destination.square_number(),
             self.promote,
             if let Some(drp) = self.drop {
                 format!("{:?}", drp)

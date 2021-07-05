@@ -324,7 +324,7 @@ impl Position {
     }
     /// 升で指定して駒を取得
     pub fn piece_at(&self, adr: &AbsoluteAddress) -> Option<PieceEx> {
-        self.board[adr.address() as usize]
+        self.board[adr.square_number() as usize]
     }
     /*
     /// 駒の背番号で指定して場所を取得
@@ -336,18 +336,18 @@ impl Position {
     /// 升で指定して駒を置く
     pub fn push_to_board(&mut self, adr: &AbsoluteAddress, piece: Option<PieceEx>) {
         if let Some(piece_val) = piece {
-            self.board[adr.address() as usize] = piece;
+            self.board[adr.square_number() as usize] = piece;
             self.location[piece_val.num as usize] = Location::Position(*adr);
         } else {
-            self.board[adr.address() as usize] = None;
+            self.board[adr.square_number() as usize] = None;
         }
     }
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
     pub fn pop_from_board(&mut self, adr: &AbsoluteAddress) -> Option<PieceEx> {
         // 取り出すピースは複製するぜ☆（＾～＾）
-        let piece = self.board[adr.address() as usize].clone();
+        let piece = self.board[adr.square_number() as usize].clone();
         if let Some(piece_val) = piece {
-            self.board[adr.address() as usize] = None;
+            self.board[adr.square_number() as usize] = None;
             self.location[piece_val.num as usize] = Location::Busy;
         }
         piece
@@ -433,7 +433,8 @@ impl Position {
             for file in (FILE_1..FILE_10).rev() {
                 let ab_adr = &AbsoluteAddress::new(file, rank);
                 if let Some(piece) = self.piece_at(ab_adr) {
-                    hash ^= game.hash_seed.piece[ab_adr.address() as usize][piece.meaning as usize];
+                    hash ^= game.hash_seed.piece[ab_adr.square_number() as usize]
+                        [piece.meaning as usize];
                 }
             }
         }
