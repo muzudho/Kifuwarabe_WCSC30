@@ -30,28 +30,24 @@
 use crate::entities::law::speed_of_light::Nine299792458;
 use crate::position::Square;
 use std::cmp::max;
-use std::cmp::Eq;
-use std::cmp::PartialEq;
 use std::fmt;
-use std::hash::Hash;
 
 ///
 /// 打はテストできない
 ///
-pub fn _assert_in_board_as_absolute(ab_adr: &AbsoluteAddress, hint: &str) {
-    let adr = ab_adr.square_number();
+pub fn _assert_in_board_as_absolute(sq: Square, hint: &str) {
     debug_assert!(
-        (10 < adr && adr < 20)
-            || (20 < adr && adr < 30)
-            || (30 < adr && adr < 40)
-            || (40 < adr && adr < 50)
-            || (50 < adr && adr < 60)
-            || (60 < adr && adr < 70)
-            || (70 < adr && adr < 80)
-            || (80 < adr && adr < 90)
-            || (90 < adr && adr < 100),
-        "abs-adr=|{}| hint={}",
-        adr,
+        (10 < sq && sq < 20)
+            || (20 < sq && sq < 30)
+            || (30 < sq && sq < 40)
+            || (40 < sq && sq < 50)
+            || (50 < sq && sq < 60)
+            || (60 < sq && sq < 70)
+            || (70 < sq && sq < 80)
+            || (80 < sq && sq < 90)
+            || (90 < sq && sq < 100),
+        "abs-sq=|{}| hint={}",
+        sq,
         hint
     );
 }
@@ -316,7 +312,7 @@ pub const FILE_0: u8 = 0;
 pub const FILE_1: u8 = 1;
 pub const FILE_9: u8 = 9;
 pub const FILE_10: u8 = 10;
-pub const FILE_11: u8 = 11;
+// pub const FILE_11: u8 = 11;
 pub const RANK_0: u8 = 0;
 pub const RANK_1: u8 = 1;
 pub const RANK_2: u8 = 2;
@@ -328,7 +324,7 @@ pub const RANK_7: u8 = 7;
 pub const RANK_8: u8 = 8; //うさぎの打てる段の上限
 pub const RANK_9: u8 = 9;
 pub const RANK_10: u8 = 10;
-pub const RANK_11: u8 = 11;
+// pub const RANK_11: u8 = 11;
 
 #[derive(Debug)]
 pub enum DictOrthant {
@@ -566,95 +562,6 @@ impl fmt::Debug for RelAdr {
             self.file,
             self.rank,
             self.get_address()
-        )
-    }
-}
-
-/// 絶対番地☆（＾～＾）相対番地と同じだが、回転の操作は座標 55 が中心になるぜ☆（＾～＾）
-/// きふわらべでは 辞書象限 を採用している☆（＾～＾）
-/// これは、file, rank は別々に持ち、しかも軸毎にプラス・マイナスを持つぜ☆（＾～＾）
-///
-/// Copy: 配列の要素の初期化時に使う☆（＾～＾）
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
-pub struct AbsoluteAddress {
-    /// Square is shogi coordinate. file*10+rank.
-    ///
-    ///           North
-    ///   91 81 71 61 51 41 31 21 11
-    ///   92 82 72 62 52 42 32 22 12
-    /// W 93 83 73 63 53 43 33 23 13 E
-    /// E 94 84 74 64 54 44 34 24 14 A
-    /// S 95 85 75 65 55 45 35 25 15 S
-    /// T 96 86 76 66 56 46 36 26 16 T
-    ///   97 87 77 67 57 47 37 27 17
-    ///   98 88 78 68 58 48 38 28 18
-    ///   99 89 79 69 59 49 39 29 19
-    ///           Source
-    file: u8,
-    rank: u8,
-}
-impl Default for AbsoluteAddress {
-    /// ゴミの値を作るぜ☆（＾～＾）
-    fn default() -> Self {
-        AbsoluteAddress { file: 1, rank: 1 }
-    }
-}
-impl AbsoluteAddress {
-    pub fn new(file: u8, rank: u8) -> Self {
-        debug_assert!(FILE_0 <= file && file < FILE_11, "file={}", file);
-        debug_assert!(RANK_0 <= rank && rank < RANK_11, "rank={}", rank);
-        AbsoluteAddress {
-            file: file,
-            rank: rank,
-        }
-    }
-
-    pub fn from_square(sq: Square) -> AbsoluteAddress {
-        let file = (sq / 10) as u8; // ((sq / 10) % 10) as u8;
-        let rank = (sq % 10) as u8;
-        if sq == 0 {
-            panic!("from_absolute_address fail")
-        } else {
-            debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
-            debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
-            AbsoluteAddress::new(file, rank)
-        }
-    }
-
-    /// 列番号。いわゆる筋。右から 1, 2, 3 ...
-    pub fn file(&self) -> u8 {
-        self.file
-    }
-
-    /// 行番号。いわゆる段。上から 1, 2, 3 ...
-    pub fn rank(&self) -> u8 {
-        self.rank
-    }
-
-    // pub fn to_file_rank(&self) -> (usize, usize) {
-    //     (self.file(), self.rank())
-    // }
-
-    // pub fn rotate_180(&self) -> Self {
-    //     let file = FILE_10 - self.file;
-    //     let rank = RANK_10 - self.rank;
-    //     debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
-    //     debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
-    //     Square::new(file, rank)
-    // }
-
-    pub fn square_number(&self) -> Square {
-        (self.file * 10 + self.rank) as Square
-    }
-}
-impl fmt::Debug for AbsoluteAddress {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "({}x {}y {}adr)",
-            self.file(),
-            self.rank(),
-            self.square_number()
         )
     }
 }
