@@ -11,6 +11,7 @@ use crate::entities::move_::to_movement;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use crate::genmove::generate_move::{PieceEx, PseudoLegalMoves};
+use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 use rand::Rng;
 use std::fmt;
@@ -257,7 +258,7 @@ impl Tree {
             //     None
             // };
             let captured_piece: Option<PieceEx> = game.do_move(&movement);
-            self.pv.push(&movement);
+            self.pv.push(*move_);
             // let (captured_piece_centi_pawn, delta_promotion_bonus) =
             //     self.evaluation
             //         .after_do_move(&source_piece, &captured_piece, movement.promote);
@@ -610,21 +611,21 @@ pub enum Value {
 
 #[derive(Clone)]
 pub struct PrincipalVariation {
-    moves: [Movement; PLY_LEN],
+    moves: [Move; PLY_LEN],
     ply: usize,
 }
 impl Default for PrincipalVariation {
     fn default() -> Self {
         PrincipalVariation {
             // ゴミの値で埋めるぜ☆（＾～＾）
-            moves: [Movement::default(); PLY_LEN],
+            moves: [RESIGN_MOVE; PLY_LEN],
             ply: 0,
         }
     }
 }
 impl PrincipalVariation {
-    fn push(&mut self, movement: &Movement) {
-        self.moves[self.ply].set(movement);
+    fn push(&mut self, move_: Move) {
+        self.moves[self.ply] = move_;
         self.ply += 1;
     }
 

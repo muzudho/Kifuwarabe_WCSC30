@@ -44,40 +44,38 @@ impl Movement {
         }
     }
 
-    /*
-    pub fn from_hash(hash: u64) -> Option<Movement> {
-        if hash == 0 {
-            None
-        } else {
-            // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
-            let (hash, src52) = pop_sq_from_hash(hash);
-            let (hash, dst53) = pop_sq_from_hash(hash);
-            let (hash, pro54) = pop_bool_from_hash(hash);
-            let (_hash, drop55) = pop_drop_from_hash(hash);
-            if let Some(dst) = dst53 {
-                Some(Movement::new(src52, dst, pro54, drop55))
-            } else {
-                panic!("dst53={:?}",dst53)
-            }
-        }
-    }
+    // pub fn from_hash(hash: u64) -> Option<Movement> {
+    //     if hash == 0 {
+    //         None
+    //     } else {
+    //         // 逆順で押し込んであるんで、正順に引き出す☆（＾～＾）
+    //         let (hash, src52) = pop_sq_from_hash(hash);
+    //         let (hash, dst53) = pop_sq_from_hash(hash);
+    //         let (hash, pro54) = pop_bool_from_hash(hash);
+    //         let (_hash, drop55) = pop_drop_from_hash(hash);
+    //         if let Some(dst) = dst53 {
+    //             Some(Movement::new(src52, dst, pro54, drop55))
+    //         } else {
+    //             panic!("dst53={:?}",dst53)
+    //         }
+    //     }
+    // }
 
-    pub fn to_hash(&self) -> u64 {
-        let mut hash = 0;
-        // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
-        hash = push_drop_to_hash(hash, self.drop);
-        hash = push_bool_to_hash(hash, self.promote);
-        hash = push_sq_to_hash(hash, Some(&self.destination));
-        push_sq_to_hash(hash, self.source.as_ref())
-    }
-    */
+    // pub fn to_hash(&self) -> u64 {
+    //     let mut hash = 0;
+    //     // 正順で取り出すことを考えて、逆順で押し込む☆（＾～＾）
+    //     hash = push_drop_to_hash(hash, self.drop);
+    //     hash = push_bool_to_hash(hash, self.promote);
+    //     hash = push_sq_to_hash(hash, Some(&self.destination));
+    //     push_sq_to_hash(hash, self.source.as_ref())
+    // }
 
-    pub fn set(&mut self, b: &Movement) {
-        self.source = b.source;
-        self.destination = b.destination;
-        self.promote = b.promote;
-        self.drop = b.drop;
-    }
+    // pub fn set(&mut self, b: &Movement) {
+    //     self.source = b.source;
+    //     self.destination = b.destination;
+    //     self.promote = b.promote;
+    //     self.drop = b.drop;
+    // }
 }
 impl fmt::Display for Movement {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
