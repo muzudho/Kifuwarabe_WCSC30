@@ -95,16 +95,22 @@ const DIRECTIONS_FILE_RANK: [(i8, i8); 8] = [
 fn is_adjacent_opponent_control(
     us: Phase,
     position: &Position,
-    to: Square,
+    ksq: Square,
     direction: Direction,
 ) -> bool {
     let d_file = DIRECTIONS_FILE_RANK[direction as usize].0;
     let d_rank = DIRECTIONS_FILE_RANK[direction as usize].1;
+
     // TODO 隣のマス
     let adjacent_sq = square_from(
-        (file(to) as i8 + d_file) as u8,
-        (rank(to) as i8 + d_rank) as u8,
+        (file(ksq) as i8 + d_file) as u8,
+        (rank(ksq) as i8 + d_rank) as u8,
     );
+    // Beam::shoot(&format!(
+    //     "is_adjacent_opponent_control d_file={} d_rank={} adjacent_sq={}",
+    //     d_file, d_rank, adjacent_sq
+    // ));
+
     if let Some(pc_ex) = position.piece_at(adjacent_sq) {
         if us != pc_ex.piece.phase() {
             // 敵の駒なら
@@ -396,40 +402,52 @@ impl PseudoLegalMoves {
                     let file = file(to) as i8 - file(from) as i8;
                     let rank = rank(to) as i8 - rank(from) as i8;
 
-                    let direction = if file == -1 {
-                        if rank == -1 {
-                            Direction::TopRight
-                        } else if rank == 0 {
-                            Direction::Right
-                        } else if rank == 1 {
-                            Direction::BottomRight
-                        } else {
-                            panic!("(Err.405)")
-                        }
-                    } else if file == 0 {
-                        if rank == -1 {
-                            Direction::Top
-                        } else if rank == 0 {
-                            panic!("(Err.410)")
-                        } else if rank == 1 {
-                            Direction::Bottom
-                        } else {
-                            panic!("(Err.413)")
-                        }
-                    } else if file == 1 {
-                        if rank == -1 {
-                            Direction::TopLeft
-                        } else if rank == 0 {
-                            Direction::Left
-                        } else if rank == 1 {
-                            Direction::BottomLeft
-                        } else {
-                            panic!("(Err.420)")
-                        }
-                    } else {
-                        panic!("(Err.423)")
-                    };
-                    is_adjacent_opponent_control(us, position, to, direction)
+                    // let direction = if file == -1 {
+                    //     if rank == -1 {
+                    //         Direction::TopRight
+                    //     } else if rank == 0 {
+                    //         Direction::Right
+                    //     } else if rank == 1 {
+                    //         Direction::BottomRight
+                    //     } else {
+                    //         panic!("(Err.405)")
+                    //     }
+                    // } else if file == 0 {
+                    //     if rank == -1 {
+                    //         Direction::Top
+                    //     } else if rank == 0 {
+                    //         panic!("(Err.410)")
+                    //     } else if rank == 1 {
+                    //         Direction::Bottom
+                    //     } else {
+                    //         panic!("(Err.413)")
+                    //     }
+                    // } else if file == 1 {
+                    //     if rank == -1 {
+                    //         Direction::TopLeft
+                    //     } else if rank == 0 {
+                    //         Direction::Left
+                    //     } else if rank == 1 {
+                    //         Direction::BottomLeft
+                    //     } else {
+                    //         panic!("(Err.420)")
+                    //     }
+                    // } else {
+                    //     panic!("(Err.423)")
+                    // };
+                    // Beam::shoot(&format!(
+                    //     "Suicide ksq={} to={} file={} rank={}",
+                    //     ksq, to, file, rank
+                    // ));
+
+                    is_adjacent_opponent_control(us, position, to, Direction::Right)
+                        || is_adjacent_opponent_control(us, position, to, Direction::TopRight)
+                        || is_adjacent_opponent_control(us, position, to, Direction::Top)
+                        || is_adjacent_opponent_control(us, position, to, Direction::TopLeft)
+                        || is_adjacent_opponent_control(us, position, to, Direction::Left)
+                        || is_adjacent_opponent_control(us, position, to, Direction::BottomLeft)
+                        || is_adjacent_opponent_control(us, position, to, Direction::Bottom)
+                        || is_adjacent_opponent_control(us, position, to, Direction::BottomRight)
                 } else {
                     false
                 }

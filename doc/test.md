@@ -17,6 +17,7 @@ setoption name PromotionWeightPer1000 value 1000
 usinewgame
 position startpos moves 5i4h 4a3b 4h5h 6a5b 5h6h 5a4b 6h7h 4c4d 7h6h 5b4c 6h7h 4d4e 7h6h 5c5d 6h7h 5d5e 7h6h 9c9d 6h7h 9d9e 7h6h 6c6d 6h7h 6d6e 7h6h 7c7d 6h7h 7d7e 7h6h 1c1d 6h7h 2b1c 7h6h 5e5f 6h7h 5f5g+
 pos
+genmove
 go btime 102000 wtime 102000 byoyomi 0
 ```
 
