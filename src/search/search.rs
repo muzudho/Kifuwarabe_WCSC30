@@ -157,7 +157,7 @@ impl Tree {
             /* TODO
             PseudoLegalMoves::gen_move(
                 game.history.get_friend(),
-                &game.board,
+                &game.position,
                 &mut |move_cap, destination| {
                     if let Some(way_val) = move_cap {
                         move_caps.push(&way_val);
@@ -167,9 +167,13 @@ impl Tree {
                 },
             );
             */
-            PseudoLegalMoves::gen_move(game.history.get_friend(), &game.board, &mut |move_cap| {
-                move_caps.push(&move_cap);
-            });
+            PseudoLegalMoves::gen_move(
+                game.history.get_friend(),
+                &game.position,
+                &mut |move_cap| {
+                    move_caps.push(&move_cap);
+                },
+            );
 
             move_caps
             //}
@@ -183,7 +187,7 @@ impl Tree {
         // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
         // いわば、１光手 利きカウントボードだぜ☆（＾～＾）
         // for destination in &controls {
-        //     game.board
+        //     game.position
         //         .add_control(game.history.get_friend(), destination, 1);
         // }
 
@@ -191,7 +195,7 @@ impl Tree {
         let mut cap = 0;
         if 1 < move_caps.len() {
             for i in 0..move_caps.len() {
-                if let Some(_captured) = move_caps.get(i).captured {
+                if let Some(_captured) = move_caps.get(i).captured1 {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
                     move_caps.swap(cap, i);
@@ -201,7 +205,7 @@ impl Tree {
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                if let Some(captured) = move_caps.get(i).captured {
+                if let Some(captured) = move_caps.get(i).captured1 {
                     match captured.meaning.r#type() {
                         PieceType::King => {
                             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
@@ -212,7 +216,7 @@ impl Tree {
                         _ => {}
                     }
                 } else {
-                    panic!("captured={:?}", move_caps.get(i).captured)
+                    panic!("captured={:?}", move_caps.get(i).captured1)
                 }
             }
         }
@@ -249,7 +253,7 @@ impl Tree {
             // ここまで
 
             // let source_piece = if let Some(source_val) = &movement.source {
-            //     game.board.piece_at(source_val)
+            //     game.position.piece_at(source_val)
             // } else {
             //     // 打
             //     None
@@ -309,15 +313,15 @@ impl Tree {
                             0, //self.evaluation.promotion(),
                                /* TODO
                                // サンプルを見ているだけだぜ☆（＾～＾）
-                               game.board.get_control(
+                               game.position.get_control(
                                    game.history.get_friend(),
                                    &AbsoluteAddress::new(6, 8)
                                ),
-                               game.board.get_control(
+                               game.position.get_control(
                                    game.history.get_friend(),
                                    &AbsoluteAddress::new(5, 8)
                                ),
-                               game.board.get_control(
+                               game.position.get_control(
                                    game.history.get_friend(),
                                    &AbsoluteAddress::new(4, 8)
                                ),
@@ -398,7 +402,7 @@ impl Tree {
 
         // TODO 利き削除☆（＾～＾）
         // for destination in &controls {
-        //     game.board
+        //     game.position
         //         .add_control(game.history.get_friend(), destination, -1);
         // }
 

@@ -15,7 +15,7 @@
 //     /// 価値の低い駒から順に使って、取りに行けだぜ☆（＾～＾）
 //     pub fn go(_game: &Game, _adr: &AbsoluteAddress) -> Value {
 //         // // この駒☆（＾～＾）
-//         // let mut current_target_piece = game.board.piece_at(adr).unwrap();
+//         // let mut current_target_piece = game.position.piece_at(adr).unwrap();
 //         // let mut centi_pawn = 0;
 
 //         // // この駒の西に相手の駒があって、それが この駒に利いているなら、取りにくると思おうぜ☆（＾～＾）
@@ -38,7 +38,7 @@
 //         //     for recipe in &recipes {
 //         //         let mut cur = adr.clone();
 //         //         if cur.offset(&recipe.0).legal_cur() {
-//         //             let piece = game.board.piece_at(&cur);
+//         //             let piece = game.position.piece_at(&cur);
 //         //             if let Some(piece_val) = piece {
 //         //                 if piece_val.meaning.phase() != current_target_piece.meaning.phase()
 //         //                     || piece_val.meaning.r#type().movility().contains(&recipe.1)
@@ -54,7 +54,7 @@
 //         //     for recipe in &recipes {
 //         //         let mut cur = adr.clone();
 //         //         if cur.offset(&recipe.0).legal_cur() {
-//         //             let piece = game.board.piece_at(&cur);
+//         //             let piece = game.position.piece_at(&cur);
 //         //             if let Some(piece_val) = piece {
 //         //                 if piece_val.meaning.phase() != current_target_piece.meaning.phase()
 //         //                     || piece_val.meaning.r#type().movility().contains(&recipe.1)

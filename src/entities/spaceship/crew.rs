@@ -179,7 +179,7 @@ impl Chiyuri {
         /* TODO
         PseudoLegalMoves::gen_move(
             game.history.get_friend(),
-            &game.board,
+            &game.position,
             &mut |move_cap, _destination| {
                 if let Some(way_val) = move_cap {
                     move_caps.push(way_val);
@@ -187,7 +187,7 @@ impl Chiyuri {
             },
         );
         */
-        PseudoLegalMoves::gen_move(game.history.get_friend(), &game.board, &mut |move_cap| {
+        PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position, &mut |move_cap| {
             move_caps.push(move_cap);
         });
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
@@ -222,7 +222,7 @@ impl Chiyuri {
         Beam::shoot("----駒リスト40表示 ここから----");
         universe
             .game
-            .board
+            .position
             .for_all_pieces_on_board(&mut |i, adr, piece| {
                 Beam::shoot(&format!(
                     "[{}]{}{}",

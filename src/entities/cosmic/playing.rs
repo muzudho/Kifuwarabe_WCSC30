@@ -1,7 +1,7 @@
 use crate::entities::cosmic::recording::{History, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
 use crate::entities::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX};
 use crate::entities::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
-use crate::entities::cosmic::toy_box::Board;
+use crate::entities::cosmic::toy_box::Position;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use crate::genmove::generate_move::PieceEx;
@@ -33,11 +33,11 @@ pub struct Game {
     /// 初期局面ハッシュ
     pub starting_position_hash: u64,
     /// 初期盤面
-    pub starting_board: Board,
+    pub starting_board: Position,
     /// 現対局ハッシュ種☆（＾～＾）
     pub hash_seed: GameHashSeed,
     /// 現盤面
-    pub board: Board,
+    pub position: Position,
     /// 情報表示担当
     pub info: DestinationDisplay,
 }
@@ -46,7 +46,7 @@ impl Default for Game {
         Game {
             history: History::default(),
             starting_position_hash: 0,
-            starting_board: Board::default(),
+            starting_board: Position::default(),
             hash_seed: GameHashSeed {
                 // 盤上の駒
                 piece: [[0; PIECE_MEANING_LEN]; BOARD_MEMORY_AREA as usize],
@@ -55,7 +55,7 @@ impl Default for Game {
                 // 先後
                 phase: [0; PHASE_LEN],
             },
-            board: Board::default(),
+            position: Position::default(),
             info: DestinationDisplay::default(),
         }
     }
@@ -67,7 +67,7 @@ impl Game {
         self.history.clear();
         self.starting_position_hash = 0;
         self.starting_board.clear();
-        self.board.clear();
+        self.position.clear();
     }
     /// 宇宙誕生
     pub fn big_bang(&mut self) {
@@ -119,13 +119,13 @@ impl Game {
         self.history.captured_pieces[ply1] = pc
     }
 
-    pub fn get_board(&self, num: PosNums) -> &Board {
+    pub fn get_board(&self, num: PosNums) -> &Position {
         match num {
-            PosNums::Current => &self.board,
+            PosNums::Current => &self.position,
             PosNums::Start => &self.starting_board,
         }
     }
-    pub fn mut_starting(&mut self) -> &mut Board {
+    pub fn mut_starting(&mut self) -> &mut Position {
         &mut self.starting_board
     }
 
@@ -154,7 +154,7 @@ impl Game {
 
     /// 局面ハッシュを作り直す
     pub fn create_current_position_hash(&self) -> u64 {
-        let mut hash = self.board.create_hash(&self);
+        let mut hash = self.position.create_hash(&self);
 
         // 手番ハッシュ
         use crate::entities::cosmic::recording::Phase::*;
@@ -206,7 +206,7 @@ impl Game {
 
         // TODO 利き
         {
-            // game.board.controls[friend_index]
+            // game.position.controls[friend_index]
             //     .add(move_caps.get(*index).movement.destination.address(), sign);
         }
 
@@ -217,7 +217,7 @@ impl Game {
             let moveing_piece: Option<PieceEx> = if let Some(source_val) = movement.source {
                 // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152: Option<PieceEx> = if movement.promote {
-                    if let Some(piece) = self.board.pop_from_board(&source_val) {
+                    if let Some(piece) = self.position.pop_from_board(&source_val) {
                         // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
                         Some(PieceEx::new(piece.meaning.promoted(), piece.num))
                     } else {
@@ -227,7 +227,7 @@ impl Game {
                     }
                 } else {
                     // 移動元の駒。
-                    self.board.pop_from_board(&source_val)
+                    self.position.pop_from_board(&source_val)
                 };
 
                 piece152
@@ -236,7 +236,7 @@ impl Game {
                 // 自分の持ち駒を減らす
                 if let Some(drp) = movement.drop {
                     Some(
-                        self.board
+                        self.position
                             .pop_hand(HandAddress::from_phase_and_type(friend, drp)),
                     )
                 } else {
@@ -246,18 +246,19 @@ impl Game {
                 }
             };
             // 移動先升に駒があるかどうか
-            cap = if let Some(collision_piece) = self.board.pop_from_board(&movement.destination) {
+            cap = if let Some(collision_piece) = self.position.pop_from_board(&movement.destination)
+            {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let captured_piece =
                     PieceEx::new(collision_piece.meaning.captured(), collision_piece.num);
-                self.board.push_hand(&captured_piece);
+                self.position.push_hand(&captured_piece);
                 Some(collision_piece)
             } else {
                 None
             };
 
             // 移動先升に駒を置く
-            self.board
+            self.position
                 .push_to_board(&movement.destination, moveing_piece);
         }
         self.set_captured(self.history.ply as usize, cap);
@@ -284,7 +285,8 @@ impl Game {
                     // 打でなければ
                     if movement.promote {
                         // 成ったなら、成る前へ
-                        if let Some(source_piece) = self.board.pop_from_board(&movement.destination)
+                        if let Some(source_piece) =
+                            self.position.pop_from_board(&movement.destination)
                         {
                             Some(PieceEx::new(
                                 source_piece.meaning.demoted(),
@@ -296,14 +298,14 @@ impl Game {
                             ))
                         }
                     } else {
-                        self.board.pop_from_board(&movement.destination)
+                        self.position.pop_from_board(&movement.destination)
                     }
                 } else {
                     if let Some(_drp) = movement.drop {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        if let Some(piece) = self.board.pop_from_board(&movement.destination) {
+                        if let Some(piece) = self.position.pop_from_board(&movement.destination) {
                             // 自分の持ち駒を増やそうぜ☆（＾～＾）！
-                            self.board.push_hand(&piece);
+                            self.position.push_hand(&piece);
                             Some(piece)
                         } else {
                             panic!("dst={:?}", movement.destination)
@@ -317,15 +319,15 @@ impl Game {
 
                 if let Some(captured_piece_val) = captured {
                     // 自分の持ち駒を減らす
-                    self.board
+                    self.position
                         .pop_hand(captured_piece_val.meaning.captured().hand_address());
                     // 移動先の駒を、取った駒（あるいは空）に戻す
-                    self.board.push_to_board(&movement.destination, captured);
+                    self.position.push_to_board(&movement.destination, captured);
                 }
 
                 if let Some(source_val) = movement.source {
                     // 打でなければ、移動元升に、動かした駒を置く☆（＾～＾）打なら何もしないぜ☆（＾～＾）
-                    self.board.push_to_board(&source_val, moveing_piece);
+                    self.position.push_to_board(&source_val, moveing_piece);
                 }
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく

@@ -49,11 +49,11 @@ impl Lioncatch {
 
     pub fn init(&mut self, game: &Game) -> &mut Self {
         // 自玉の場所☆（＾～＾）
-        self.friend_king_adr = match game.board.location_at(match self.friend {
+        self.friend_king_adr = match game.position.location_at(match self.friend {
             Phase::First => PieceNum::King1,
             Phase::Second => PieceNum::King2,
         }) {
-            Location::Board(adr) => adr,
+            Location::Position(adr) => adr,
             Location::Hand(_adr) => std::panic::panic_any(Beam::trouble(
                 "(Err.62) なんで自玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！",
             )),
@@ -63,11 +63,11 @@ impl Lioncatch {
         };
 
         // 敵玉の場所☆（＾～＾）
-        self.opponent_king_adr = match game.board.location_at(match self.opponent {
+        self.opponent_king_adr = match game.position.location_at(match self.opponent {
             Phase::First => PieceNum::King1,
             Phase::Second => PieceNum::King2,
         }) {
-            Location::Board(adr) => adr,
+            Location::Position(adr) => adr,
             Location::Hand(_adr) => std::panic::panic_any(Beam::trouble(
                 "(Err.48) なんで敵玉が持ち駒になってて、１手詰め判定してんだぜ☆（＾～＾）！",
             )),
@@ -112,7 +112,7 @@ impl Lioncatch {
 
             for _i in 0..8 {
                 if !cur.offset(&recipe.0).wall() {
-                    let any_piece = game.board.piece_at(&cur);
+                    let any_piece = game.position.piece_at(&cur);
                     if let Some(any_piece_val) = any_piece {
                         if let None = friend_piece {
                             // 味方の駒か☆（＾～＾）？
@@ -192,7 +192,7 @@ impl Lioncatch {
             if !cur.offset(&recipe.0).wall() {
                 Log::write(&format!("cur2={:?}", cur));
                 // 1つ隣に駒があるか確認だぜ☆（＾～＾）
-                if let Some(any_piece_val) = game.board.piece_at(&cur) {
+                if let Some(any_piece_val) = game.position.piece_at(&cur) {
                     if any_piece_val.meaning.phase() == self.friend
                         && any_piece_val
                             .meaning
@@ -262,7 +262,7 @@ impl Lioncatch {
             for i in 0..8 {
                 if !cur.offset(&recipe.0).wall() {
                     // 1つ隣になんか駒があるか確認だぜ☆（＾～＾）
-                    if let Some(any_piece_val) = game.board.piece_at(&cur) {
+                    if let Some(any_piece_val) = game.position.piece_at(&cur) {
                         // それがスライディング自駒か確認だぜ☆（＾～＾）
                         if any_piece_val.meaning.phase() == self.friend
                             && any_piece_val

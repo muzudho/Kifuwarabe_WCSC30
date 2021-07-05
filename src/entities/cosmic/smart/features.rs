@@ -109,21 +109,21 @@ pub enum HandAddress {
 // 利きボード☆（＾～＾）
 #[derive(Clone, Copy)]
 pub struct ControlBoard {
-    board: [isize; BOARD_MEMORY_AREA as usize],
+    position: [isize; BOARD_MEMORY_AREA as usize],
 }
 impl Default for ControlBoard {
     fn default() -> Self {
         ControlBoard {
-            board: [0; BOARD_MEMORY_AREA as usize],
+            position: [0; BOARD_MEMORY_AREA as usize],
         }
     }
 }
 impl ControlBoard {
     pub fn get(&self, index: usize) -> isize {
-        self.board[index]
+        self.position[index]
     }
     pub fn add(&mut self, index: usize, offset: isize) {
-        self.board[index] += offset
+        self.position[index] += offset
     }
 }
 */

@@ -10,7 +10,7 @@ use crate::entities::cosmic::smart::square::{
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::entities::cosmic::toy_box::PieceNum;
-use crate::entities::cosmic::toy_box::{Board, Location};
+use crate::entities::cosmic::toy_box::{Location, Position};
 use crate::entities::move_::new_move2;
 use crate::entities::spaceship::equipment::Beam;
 use crate::record::MoveCap;
@@ -112,7 +112,7 @@ impl PseudoLegalMoves {
     /// Arguments
     /// ---------
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
-    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     ///
     /// Returns
@@ -120,17 +120,17 @@ impl PseudoLegalMoves {
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    pub fn gen_move<F1>(friend: Phase, board: &Board, listen_move: &mut F1)
+    pub fn gen_move<F1>(friend: Phase, position: &Position, listen_move: &mut F1)
     where
         // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
         F1: FnMut(MoveCap),
     {
-        board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
-            Location::Board(source) => {
-                PseudoLegalMoves::start_on_board(friend, &source, &piece, board, listen_move)
+        position.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
+            Location::Position(source) => {
+                PseudoLegalMoves::start_on_board(friend, &source, &piece, position, listen_move)
             }
             Location::Hand(adr) => {
-                PseudoLegalMoves::make_drop(friend, adr, board, listen_move);
+                PseudoLegalMoves::make_drop(friend, adr, position, listen_move);
             }
             Location::Busy => std::panic::panic_any(Beam::trouble(
                 "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
@@ -145,7 +145,7 @@ impl PseudoLegalMoves {
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
     /// * `source` - 移動元升だぜ☆（＾～＾）
     /// * `piece` - 駒だぜ☆（＾～＾）
-    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     ///
     /// Returns
@@ -157,7 +157,7 @@ impl PseudoLegalMoves {
         friend: Phase,
         source: &AbsoluteAddress,
         piece: &PieceEx,
-        board: &Board,
+        position: &Position,
         listen_move: &mut F1,
     ) where
         // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
@@ -165,7 +165,7 @@ impl PseudoLegalMoves {
     {
         let moving =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
-                let pseudo_captured = board.piece_at(&destination);
+                let pseudo_captured = position.piece_at(&destination);
 
                 let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
                     if pseudo_captured_val.meaning.phase() == friend {
@@ -282,24 +282,24 @@ impl PseudoLegalMoves {
     /// ---------
     ///
     /// * `friend` - 後手視点にしたけりゃ friend.turn() しろだぜ☆（＾～＾）
-    /// * `board` - 現局面の盤上だぜ☆（＾～＾）
+    /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     /// * `listen_control` - 利きを受け取れだぜ☆（＾～＾）
-    fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, listen_move: &mut F1)
+    fn make_drop<F1>(friend: Phase, adr: HandAddress, position: &Position, listen_move: &mut F1)
     where
         // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
         F1: FnMut(MoveCap),
     {
-        if let Some(piece) = board.last_hand(adr) {
+        if let Some(piece) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
             let drop = &mut |destination| {
-                if let None = board.piece_at(&destination) {
+                if let None = position.piece_at(&destination) {
                     // 駒が無いところに打つ
                     use crate::take1base::Piece::*;
                     match piece.meaning {
                         P1 | P2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
-                            if board.exists_pawn_on_file(friend, destination.file()) {
+                            if position.exists_pawn_on_file(friend, destination.file()) {
                                 return;
                             }
                         }

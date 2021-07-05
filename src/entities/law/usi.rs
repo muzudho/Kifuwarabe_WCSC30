@@ -169,7 +169,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
 /// 初期化は既に終わらせてあります。
 pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
     // 初期盤面
-    let board = game.mut_starting();
+    let position = game.mut_starting();
     let mut file = FILE_9; //９筋から右方向へ読取
     let mut rank = RANK_1;
 
@@ -243,7 +243,7 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
         match board_part {
             BoardPart::Alphabet(piece) => {
                 *starts += 1;
-                board.push_piece_on_init(file, rank, Some(piece));
+                position.push_piece_on_init(file, rank, Some(piece));
                 file -= 1;
             }
             BoardPart::Number(space_num) => {
@@ -408,10 +408,10 @@ pub fn set_position(line: &str, game: &mut Game) {
     }
 
     // 初期局面を、現局面にコピーします
-    game.board.copy_from(&game.starting_board);
+    game.position.copy_from(&game.starting_board);
     /* TODO
     // 初期局面の利きを算出しようぜ☆（＾～＾）？
-    game.board.init_controls();
+    game.position.init_controls();
     */
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）

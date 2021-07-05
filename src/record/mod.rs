@@ -9,15 +9,15 @@ pub const RESIGN_MOVE: Move = 0;
 pub struct MoveCap {
     /// 指し手☆（＾～＾）
     pub move_: Move,
-    /// 取った駒☆（＾～＾）
-    pub captured: Option<PieceEx>,
+    /// 取った駒☆（＾～＾）使ってる（＾～＾）？
+    pub captured1: Option<PieceEx>,
 }
 impl Default for MoveCap {
     /// ゴミ値☆（＾～＾）
     fn default() -> Self {
         MoveCap {
             move_: RESIGN_MOVE,
-            captured: None,
+            captured1: None,
         }
     }
 }
@@ -25,7 +25,7 @@ impl MoveCap {
     pub fn new(mov: Move, cap: Option<PieceEx>) -> Self {
         MoveCap {
             move_: mov,
-            captured: cap,
+            captured1: cap,
         }
     }
 }

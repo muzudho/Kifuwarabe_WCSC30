@@ -116,7 +116,7 @@ pub enum PieceNum {
 
 #[derive(Clone, Copy)]
 pub enum Location {
-    Board(AbsoluteAddress),
+    Position(AbsoluteAddress),
     Hand(HandAddress),
     // 作業中のときは、これだぜ☆（＾～＾）
     Busy,
@@ -126,7 +126,7 @@ pub enum Location {
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
 /// 10の位を筋、1の位を段とする。
 /// 0筋、0段は未使用
-pub struct Board {
+pub struct Position {
     // いわゆる盤☆（＾～＾）
     pieces: [Option<PieceEx>; BOARD_MEMORY_AREA as usize],
     /// 駒の居場所☆（＾～＾）
@@ -139,9 +139,9 @@ pub struct Board {
     controls: [ControlBoard; PHASE_LEN],
     */
 }
-impl Default for Board {
+impl Default for Position {
     fn default() -> Self {
-        Board {
+        Position {
             // 盤上
             pieces: [
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -187,7 +187,7 @@ impl Default for Board {
         }
     }
 }
-impl Board {
+impl Position {
     pub fn clear(&mut self) {
         self.pieces = [
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -232,12 +232,12 @@ impl Board {
     }
 
     /// 開始盤面を、現盤面にコピーしたいときに使うぜ☆（＾～＾）
-    pub fn copy_from(&mut self, board: &Board) {
-        self.pieces = board.pieces.clone();
-        self.location = board.location.clone();
-        self.hand_index = board.hand_index.clone();
-        self.hands = board.hands.clone();
-        // TODO self.controls = board.controls.clone();
+    pub fn copy_from(&mut self, position: &Position) {
+        self.pieces = position.pieces.clone();
+        self.location = position.location.clone();
+        self.hand_index = position.hand_index.clone();
+        self.hands = position.hands.clone();
+        // TODO self.controls = position.controls.clone();
     }
 
     /* TODO
@@ -337,7 +337,7 @@ impl Board {
     pub fn push_to_board(&mut self, adr: &AbsoluteAddress, piece: Option<PieceEx>) {
         if let Some(piece_val) = piece {
             self.pieces[adr.address() as usize] = piece;
-            self.location[piece_val.num as usize] = Location::Board(*adr);
+            self.location[piece_val.num as usize] = Location::Position(*adr);
         } else {
             self.pieces[adr.address() as usize] = None;
         }
@@ -366,16 +366,16 @@ impl Board {
             let piece_num = match piece_meaning {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 Piece::K1 => {
-                    self.location[PieceNum::King1 as usize] = Location::Board(source);
+                    self.location[PieceNum::King1 as usize] = Location::Position(source);
                     PieceNum::King1
                 }
                 Piece::K2 => {
-                    self.location[PieceNum::King2 as usize] = Location::Board(source);
+                    self.location[PieceNum::King2 as usize] = Location::Position(source);
                     PieceNum::King2
                 }
                 _ => {
                     let hand_type = piece_meaning.hand_address().r#type();
-                    self.location[self.hand_index[hand_type as usize]] = Location::Board(source);
+                    self.location[self.hand_index[hand_type as usize]] = Location::Position(source);
                     if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
                         self.hand_index[hand_type as usize] += 1;
                         pn
@@ -463,7 +463,7 @@ impl Board {
     {
         for (i, location) in self.location.iter().enumerate() {
             match location {
-                Location::Board(adr) => {
+                Location::Position(adr) => {
                     // 盤上の駒☆（＾～＾）
                     if let Some(piece) = self.piece_at(adr) {
                         piece_get(i, Some(adr), Some(piece));
@@ -490,7 +490,7 @@ impl Board {
         for piece_num in Nine299792458::piece_numbers().iter() {
             let location = self.location[*piece_num as usize];
             match location {
-                Location::Board(adr) => {
+                Location::Position(adr) => {
                     // 盤上の駒☆（＾～＾）
                     if let Some(piece) = self.piece_at(&adr) {
                         if piece.meaning.phase() == friend {
