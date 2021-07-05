@@ -23,6 +23,7 @@ extern crate toml;
 mod config;
 mod entities;
 mod genmove;
+mod position;
 mod record;
 mod search;
 mod take1base;

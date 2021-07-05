@@ -9,10 +9,9 @@ use crate::entities::cosmic::smart::square::{
     AbsoluteAddress, Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4,
     RANK_6, RANK_7, RANK_8, RANK_9,
 };
-use crate::entities::cosmic::toy_box::PieceNum;
-use crate::entities::cosmic::toy_box::{Location, Position};
 use crate::entities::move_::new_move2;
 use crate::entities::spaceship::equipment::Beam;
+use crate::position::position::{Location, PieceNum, Position};
 use crate::record::MoveCap;
 use crate::take1base::Piece;
 use std::fmt;
