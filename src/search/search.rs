@@ -7,7 +7,7 @@ use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::spaceship::equipment::{Beam, PvString};
-use crate::genmove::generate_move::{PieceEx, PseudoLegalMoves};
+use crate::movegen::generate_move::{PieceEx, PseudoLegalMoves};
 use crate::position::destructure_move;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;

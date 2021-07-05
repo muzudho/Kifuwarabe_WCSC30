@@ -97,6 +97,10 @@ impl PseudoLegalMoves {
             )),
         });
 
+        // TODO 被王手判定
+
+        // TODO アタッカー検索
+
         move_list
     }
 
@@ -144,7 +148,7 @@ impl PseudoLegalMoves {
 
             if ok {
                 // 成れるかどうかの判定☆（＾ｑ＾）
-                use crate::genmove::generate_move::Promotability::*;
+                use crate::movegen::generate_move::Promotability::*;
                 let promotion = match &promotability {
                     Forced => true,
                     _ => false,

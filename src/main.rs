@@ -22,7 +22,7 @@ extern crate toml;
 // 別のアプリにも見えるようにしたけりゃ pub mod にしろだぜ☆（＾～＾）
 mod config;
 mod entities;
-mod genmove;
+mod movegen;
 mod position;
 mod record;
 mod search;
