@@ -748,7 +748,7 @@ impl Promoting {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_farthest_rank_from_friend(us, &destinaion) {
+        if Promoting::is_farthest_rank_from_friend(us, destinaion.square_number()) {
             // 自陣から見て一番奥の段
             callback(
                 *destinaion,
@@ -756,7 +756,10 @@ impl Promoting {
                 Agility::Hopping,
                 move_permission,
             )
-        } else if Promoting::is_second_third_farthest_rank_from_friend(us, &destinaion) {
+        } else if Promoting::is_second_third_farthest_rank_from_friend(
+            us,
+            destinaion.square_number(),
+        ) {
             // 自陣から見て二番、三番目の奥の段
             callback(
                 *destinaion,
@@ -792,7 +795,7 @@ impl Promoting {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_first_second_farthest_rank_from_friend(us, &to) {
+        if Promoting::is_first_second_farthest_rank_from_friend(us, to.square_number()) {
             callback(*to, Promotability::Forced, Agility::Knight, move_permission)
         } else if Promoting::is_third_farthest_rank_from_friend(us, to.square_number()) {
             callback(*to, Promotability::Any, Agility::Knight, move_permission)
@@ -864,8 +867,8 @@ impl Promoting {
     ///
     /// * `us` -
     /// * `to` -
-    fn is_farthest_rank_from_friend(us: Phase, to: &AbsoluteAddress) -> bool {
-        (us == Phase::First && to.rank() < RANK_2) || (us == Phase::Second && RANK_8 < to.rank())
+    fn is_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
+        (us == Phase::First && rank(to) < RANK_2) || (us == Phase::Second && RANK_8 < rank(to))
     }
     /// 自陣から見て、一番目、２番目に遠いの段
     ///
@@ -874,8 +877,8 @@ impl Promoting {
     ///
     /// * `us` -
     /// * `to` -
-    fn is_first_second_farthest_rank_from_friend(us: Phase, to: &AbsoluteAddress) -> bool {
-        (us == Phase::First && to.rank() < RANK_3) || (us == Phase::Second && RANK_7 < to.rank())
+    fn is_first_second_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
+        (us == Phase::First && rank(to) < RANK_3) || (us == Phase::Second && RANK_7 < rank(to))
     }
     /// 自陣から見て、二番目、三番目に遠いの段
     ///
@@ -884,9 +887,9 @@ impl Promoting {
     ///
     /// * `us` -
     /// * `to` -
-    fn is_second_third_farthest_rank_from_friend(us: Phase, to: &AbsoluteAddress) -> bool {
-        (us == Phase::First && RANK_1 < to.rank() && to.rank() < RANK_4)
-            || (us == Phase::Second && RANK_6 < to.rank() && to.rank() < RANK_9)
+    fn is_second_third_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
+        (us == Phase::First && RANK_1 < rank(to) && rank(to) < RANK_4)
+            || (us == Phase::Second && RANK_6 < rank(to) && rank(to) < RANK_9)
     }
     /// 自陣から見て、三番目に遠いの段
     ///
