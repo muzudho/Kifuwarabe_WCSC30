@@ -307,8 +307,8 @@ pub fn test_rotation() {
 // #[allow(non_camel_case_types)]
 // pub type isquare = isize;
 
-// 枠も使う☆（＾～＾）配列サイズなので 1 大きめだぜ☆（＾～＾）
-pub const BOARD_MEMORY_AREA: usize = 111;
+// 配列サイズなので 1 大きめだぜ☆（＾～＾）
+pub const BOARD_MEMORY_AREA: usize = 100;
 
 /// 筋、段は 1 から始まる、という明示。
 /// usize が速い☆（＾～＾）
@@ -329,9 +329,6 @@ pub const RANK_8: usize = 8; //うさぎの打てる段の上限
 pub const RANK_9: usize = 9;
 pub const RANK_10: usize = 10;
 pub const RANK_11: usize = 11;
-
-/// 升の検索等で、該当なしの場合
-pub const SQUARE_NONE: usize = 0;
 
 #[derive(Debug)]
 pub enum DictOrthant {

@@ -1,7 +1,7 @@
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::recording::{History, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
 use crate::entities::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX};
-use crate::entities::cosmic::smart::square::{BOARD_MEMORY_AREA, SQUARE_NONE};
+use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
 use crate::entities::move_::to_move_object;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use crate::movegen::PieceEx;
@@ -76,7 +76,7 @@ impl Game {
         // 局面ハッシュの種をリセット
 
         // 盤上の駒
-        for i_square in SQUARE_NONE..BOARD_MEMORY_AREA {
+        for i_square in 11..BOARD_MEMORY_AREA {
             for i_piece in 0..PIECE_MEANING_LEN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
                 self.hash_seed.piece[i_square as usize][i_piece] =

@@ -11,7 +11,10 @@ use crate::entities::cosmic::smart::square::{
 };
 use crate::entities::move_::new_move;
 use crate::entities::spaceship::equipment::Beam;
-use crate::position::position::{Location, PieceNum, Position};
+use crate::position::is_board_square;
+use crate::position::position::{PieceNum, Position};
+use crate::position::is_hand_square;
+use crate::position::square_to_hand_address;
 use crate::take1base::Move;
 use crate::take1base::Piece;
 use std::fmt;
@@ -81,28 +84,25 @@ impl PseudoLegalMoves {
     /// 指し手の一覧
     pub fn generate(us: Phase, position: &Position) -> Vec<Move> {
         // TODO 自玉の位置検索
-        let king_location = match us {
+        let ksq = match us {
             Phase::First => position.location_at(PieceNum::King1),
             Phase::Second => position.location_at(PieceNum::King2),
         };
-        match king_location {
-            Location::OnBoard(addr) => {
-                // TODO 合い駒(Pinned)検索
+        if is_board_square(ksq) {
+            // TODO 合い駒(Pinned)検索
 
-                // TODO 右方向
-                // TODO 右上方向
-                // TODO 上方向
-                // TODO 左上方向
-                // TODO 左方向
-                // TODO 左下方向
-                // TODO 下方向
-                // TODO 右下方向
+            // TODO 右方向
+            // TODO 右上方向
+            // TODO 上方向
+            // TODO 左上方向
+            // TODO 左方向
+            // TODO 左下方向
+            // TODO 下方向
+            // TODO 右下方向
 
-                // TODO チェッカー(Checker)検索
-            }
-            _ => {
-                panic!("(Err.93) ksq fail")
-            }
+            // TODO チェッカー(Checker)検索
+        } else {
+            panic!("(Err.93) ksq fail")
         }
 
         // TODO チェッカーがいたら、王手回避(Evasions)モードへ
@@ -118,16 +118,22 @@ impl PseudoLegalMoves {
         };
 
         // 座標ではなく、駒の背番号で検索
-        position.for_some_pieces_on_list40(us, &mut |location, piece| match location {
-            Location::OnBoard(source) => {
-                PseudoLegalMoves::start_on_board(us, &source, &piece, position, listen_move)
+        position.for_some_pieces_on_list40(us, &mut |sq, piece| {
+            if is_board_square(sq) {
+                PseudoLegalMoves::start_on_board(
+                    us,
+                    &AbsoluteAddress::from_absolute_address(sq as usize).unwrap(),
+                    &piece,
+                    position,
+                    listen_move,
+                )
+            } else if is_hand_square(sq) {
+                PseudoLegalMoves::make_drop(us, square_to_hand_address(sq), position, listen_move);
+            } else {
+                std::panic::panic_any(Beam::trouble(
+                    "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
+                ))
             }
-            Location::Hand(adr) => {
-                PseudoLegalMoves::make_drop(us, adr, position, listen_move);
-            }
-            Location::Busy => std::panic::panic_any(Beam::trouble(
-                "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
-            )),
         });
 
         move_list

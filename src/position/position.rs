@@ -12,7 +12,11 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
 use crate::movegen::PieceEx;
+use crate::position::hand_address_to_square;
+use crate::position::is_board_square;
+use crate::position::is_hand_square;
 use crate::position::Square;
+use crate::position::SQUARE_NONE;
 use crate::take1base::Piece;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -106,15 +110,15 @@ pub enum PieceNum {
     Pawn40,
 }
 
-#[derive(Clone, Copy)]
-pub enum Location {
-    // 盤上
-    OnBoard(AbsoluteAddress),
-    // 持駒
-    Hand(HandAddress),
-    // 作業中のときは、これだぜ☆（＾～＾）
-    Busy,
-}
+// #[derive(Clone, Copy)]
+// pub enum Location {
+//     // 盤上
+//     OnBoard(AbsoluteAddress),
+//     // 持駒
+//     Hand(HandAddress),
+//     // 作業中のときは、これだぜ☆（＾～＾）
+//     Busy,
+// }
 
 /// 現局面、または初期局面☆（＾～＾）
 /// でかいのでコピーもクローンも不可☆（＾～＾）！
@@ -124,7 +128,7 @@ pub struct Position {
     // いわゆる盤☆（＾～＾）
     board: [Option<PieceEx>; BOARD_MEMORY_AREA as usize],
     /// 背番号 to 駒の居場所☆（＾～＾）
-    pc_num_to_location: [Location; PIECE_NUM_LEN],
+    pc_num_to_location: [Square; PIECE_NUM_LEN],
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
     pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
@@ -145,9 +149,9 @@ impl Default for Position {
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
                 None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-                None, None, None, None, None, None, None, None, None, None, None, None, None,
+                None, None,
             ],
-            pc_num_to_location: [Location::Busy; PIECE_NUM_LEN],
+            pc_num_to_location: [SQUARE_NONE; PIECE_NUM_LEN],
             hand_index: [
                 PieceNum::King1 as usize,
                 PieceNum::Rook21 as usize,
@@ -191,9 +195,9 @@ impl Position {
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None,
+            None, None,
         ];
-        self.pc_num_to_location = [Location::Busy; PIECE_NUM_LEN];
+        self.pc_num_to_location = [SQUARE_NONE; PIECE_NUM_LEN];
         self.hand_index = [
             PieceNum::King1 as usize,
             PieceNum::Rook21 as usize,
@@ -321,7 +325,7 @@ impl Position {
         self.board[sq as usize]
     }
     /// 駒の背番号で指定して場所を取得
-    pub fn location_at(&self, adr: PieceNum) -> Location {
+    pub fn location_at(&self, adr: PieceNum) -> Square {
         self.pc_num_to_location[adr as usize]
     }
 
@@ -329,7 +333,7 @@ impl Position {
     pub fn push_to_board(&mut self, adr: &AbsoluteAddress, piece: Option<PieceEx>) {
         if let Some(piece_val) = piece {
             self.board[adr.square_number() as usize] = piece;
-            self.pc_num_to_location[piece_val.num as usize] = Location::OnBoard(*adr);
+            self.pc_num_to_location[piece_val.num as usize] = adr.square_number();
         } else {
             self.board[adr.square_number() as usize] = None;
         }
@@ -340,7 +344,7 @@ impl Position {
         let piece = self.board[adr.square_number() as usize].clone();
         if let Some(piece_val) = piece {
             self.board[adr.square_number() as usize] = None;
-            self.pc_num_to_location[piece_val.num as usize] = Location::Busy;
+            self.pc_num_to_location[piece_val.num as usize] = SQUARE_NONE;
         }
         piece
     }
@@ -358,17 +362,17 @@ impl Position {
             let piece_num = match piece_meaning {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 Piece::K1 => {
-                    self.pc_num_to_location[PieceNum::King1 as usize] = Location::OnBoard(source);
+                    self.pc_num_to_location[PieceNum::King1 as usize] = source.square_number();
                     PieceNum::King1
                 }
                 Piece::K2 => {
-                    self.pc_num_to_location[PieceNum::King2 as usize] = Location::OnBoard(source);
+                    self.pc_num_to_location[PieceNum::King2 as usize] = source.square_number();
                     PieceNum::King2
                 }
                 _ => {
                     let hand_type = piece_meaning.hand_address().r#type();
                     self.pc_num_to_location[self.hand_index[hand_type as usize]] =
-                        Location::OnBoard(source);
+                        source.square_number();
                     if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
                         self.hand_index[hand_type as usize] += 1;
                         pn
@@ -386,11 +390,11 @@ impl Position {
     /// 駒台に置く
     pub fn push_hand_on_init(&mut self, piece_meaning: Piece, number: isize) {
         for _i in 0..number {
-            let adr = piece_meaning.hand_address();
+            let ha = piece_meaning.hand_address();
             let hand = piece_meaning.hand_address();
             let hand_type = hand.r#type();
             let cursor = self.hand_index[hand_type as usize];
-            self.pc_num_to_location[cursor] = Location::Hand(adr);
+            self.pc_num_to_location[cursor] = hand_address_to_square(ha);
             if let Some(pn) = PieceNum::from_usize(cursor) {
                 self.hands[hand as usize].push(&PieceEx::new(piece_meaning, pn));
             } else {
@@ -402,11 +406,11 @@ impl Position {
     pub fn push_hand(&mut self, hand: &PieceEx) {
         let adr = hand.meaning.hand_address();
         self.hands[adr as usize].push(hand);
-        self.pc_num_to_location[hand.num as usize] = Location::Hand(adr);
+        self.pc_num_to_location[hand.num as usize] = hand_address_to_square(adr);
     }
-    pub fn pop_hand(&mut self, adr: HandAddress) -> PieceEx {
-        let piece = self.hands[adr as usize].pop();
-        self.pc_num_to_location[piece.num as usize] = Location::Busy;
+    pub fn pop_hand(&mut self, ha: HandAddress) -> PieceEx {
+        let piece = self.hands[ha as usize].pop();
+        self.pc_num_to_location[piece.num as usize] = SQUARE_NONE;
         piece
     }
     /// 指し手生成で使うぜ☆（＾～＾）
@@ -455,23 +459,25 @@ impl Position {
     where
         F: FnMut(usize, Option<&AbsoluteAddress>, Option<PieceEx>),
     {
-        for (i, location) in self.pc_num_to_location.iter().enumerate() {
-            match location {
-                Location::OnBoard(adr) => {
-                    // 盤上の駒☆（＾～＾）
-                    if let Some(piece) = self.piece_at(adr.square_number()) {
-                        piece_get(i, Some(adr), Some(piece));
-                    } else {
-                        panic!("adr={:?}", adr)
-                    }
+        for (i, sq) in self.pc_num_to_location.iter().enumerate() {
+            if is_board_square(*sq) {
+                // 盤上の駒☆（＾～＾）
+                if let Some(piece) = self.piece_at(*sq) {
+                    piece_get(
+                        i,
+                        Some(&AbsoluteAddress::from_absolute_address(*sq as usize).unwrap()),
+                        Some(piece),
+                    );
+                } else {
+                    panic!("sq={:?}", sq)
                 }
-                Location::Hand(_adr) => {
-                    // TODO 持ち駒☆（＾～＾）
-                    piece_get(i, None, None);
-                }
-                Location::Busy => std::panic::panic_any(Beam::trouble(
+            } else if is_hand_square(*sq) {
+                // TODO 持ち駒☆（＾～＾）
+                piece_get(i, None, None);
+            } else {
+                std::panic::panic_any(Beam::trouble(
                     "(Err.624) なんで駒が作業中なんだぜ☆（＾～＾）！",
-                )),
+                ))
             }
         }
     }
@@ -479,27 +485,25 @@ impl Position {
     /// 盤上を検索するのではなく、４０個の駒を検索するぜ☆（＾～＾）
     pub fn for_some_pieces_on_list40<F>(&self, us: Phase, piece_get: &mut F)
     where
-        F: FnMut(Location, PieceEx),
+        F: FnMut(Square, PieceEx),
     {
         for piece_num in Nine299792458::piece_numbers().iter() {
-            let location = self.pc_num_to_location[*piece_num as usize];
-            match location {
-                Location::OnBoard(adr) => {
-                    // 盤上の駒☆（＾～＾）
-                    if let Some(piece) = self.piece_at(adr.square_number()) {
-                        if piece.meaning.phase() == us {
-                            piece_get(location, piece);
-                        }
-                    } else {
-                        panic!("adr={:?}", adr)
+            let sq = self.pc_num_to_location[*piece_num as usize];
+            if is_board_square(sq) {
+                // 盤上の駒☆（＾～＾）
+                if let Some(piece) = self.piece_at(sq) {
+                    if piece.meaning.phase() == us {
+                        piece_get(sq, piece);
                     }
+                } else {
+                    panic!("sq={:?}", sq)
                 }
-                Location::Hand(_adr) => {
-                    // 持ち駒はここで調べるのは無駄な気がするよな☆（＾～＾）持ち駒に歩が１８個とか☆（＾～＾）
-                }
-                Location::Busy => std::panic::panic_any(Beam::trouble(
+            } else if is_hand_square(sq) {
+                // 持ち駒はここで調べるのは無駄な気がするよな☆（＾～＾）持ち駒に歩が１８個とか☆（＾～＾）
+            } else {
+                std::panic::panic_any(Beam::trouble(
                     "(Err.650) なんで駒が作業中なんだぜ☆（＾～＾）！",
-                )),
+                ))
             }
         }
 
@@ -525,9 +529,9 @@ impl Position {
                 HandAddress::Pawn2,
             ],
         ];
-        for adr in &FIRST_SECOND[us as usize] {
-            if let Some(piece) = self.last_hand(*adr) {
-                piece_get(Location::Hand(*adr), *piece);
+        for ha in &FIRST_SECOND[us as usize] {
+            if let Some(piece) = self.last_hand(*ha) {
+                piece_get(hand_address_to_square(*ha), *piece);
             }
         }
     }
