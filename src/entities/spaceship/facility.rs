@@ -339,11 +339,11 @@ P x{87:2}   |{63:>4}|{64:>4}|{65:>4}|{66:>4}|{67:>4}|{68:>4}|{69:>4}|{70:>4}|{71
 pub struct Kitchen {}
 impl Kitchen {
     /// 現在の局面での、指し手の一覧を表示するぜ☆（＾～＾）
-    pub fn print_ways(position: &Position, some_moves: &Vec<Move>) {
-        Beam::shoot(&format!("Moves count={}", some_moves.len()));
+    pub fn print_ways(position: &Position, move_list: &Vec<Move>) {
+        Beam::shoot(&format!("Moves count={}", move_list.len()));
         // 辞書順ソート
         let mut move_names = Vec::new();
-        for move_ in some_moves {
+        for move_ in move_list {
             let (_, to, _) = destructure_move(*move_);
             let ss_str = format!(
                 "{}{}",

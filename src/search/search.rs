@@ -141,7 +141,7 @@ impl Tree {
         // TODO let mut controls = Vec::<AbsoluteAddress>::new();
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let mut some_moves = {
+        let mut move_list = {
             /*
             // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
             let mut lioncatch = Lioncatch::new(game);
@@ -150,32 +150,14 @@ impl Tree {
                 lioncatch.checks
             } else {
                 //   */
-            let mut some_moves = Vec::<Move>::new();
+            let move_list = PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position);
 
-            // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
-            /* TODO
-            PseudoLegalMoves::gen_move(
-                game.history.get_friend(),
-                &game.position,
-                &mut |move_, destination| {
-                    if let Some(way_val) = move_ {
-                        some_moves.push(&way_val);
-                    }
-                    // TODO 利きを一旦覚えようぜ☆（＾～＾）？
-                    // controls.push(*destination);
-                },
-            );
-            */
-            PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position, &mut |move_| {
-                some_moves.push(move_);
-            });
-
-            some_moves
+            move_list
             //}
         };
 
         // 指せる手が無ければ投了☆（＾～＾）
-        if some_moves.is_empty() {
+        if move_list.is_empty() {
             return ts;
         }
 
@@ -188,26 +170,26 @@ impl Tree {
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
         let mut cap = 0;
-        if 1 < some_moves.len() {
-            for i in 0..some_moves.len() {
-                let (_, to, _) = destructure_move(some_moves[i]);
+        if 1 < move_list.len() {
+            for i in 0..move_list.len() {
+                let (_, to, _) = destructure_move(move_list[i]);
                 if let Some(_captured) = game.position.piece_at(to) {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                    some_moves.swap(cap, i);
+                    move_list.swap(cap, i);
                     cap += 1;
                 }
             }
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                let (_, to, _) = destructure_move(some_moves[i]);
+                let (_, to, _) = destructure_move(move_list[i]);
                 if let Some(captured) = game.position.piece_at(to) {
                     match captured.meaning.r#type() {
                         PieceType::King => {
                             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                             // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                            some_moves.swap(king, i);
+                            move_list.swap(king, i);
                             king += 1;
                         }
                         _ => {}
@@ -225,8 +207,8 @@ impl Tree {
         //     // 後手が指すところだぜ☆（＾～＾）
         //     -1
         // };
-        //self.evaluation.add_control(coverage_sign, &some_moves);
-        for move_ in some_moves.iter() {
+        //self.evaluation.add_control(coverage_sign, &move_list);
+        for move_ in move_list.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
@@ -292,8 +274,8 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "some_moves={} | komawari={} | promotion={}", //  | {} {} {} |
-                            0, //self.evaluation.some_moves(),
+                            "move_list={} | komawari={} | promotion={}", //  | {} {} {} |
+                            0, //self.evaluation.move_list(),
                             0, //self.evaluation.komawari(),
                             0, //self.evaluation.promotion(),
                                /* TODO
@@ -383,7 +365,7 @@ impl Tree {
                 }
             }
         }
-        //self.evaluation.add_control(-1 * coverage_sign, &some_moves);
+        //self.evaluation.add_control(-1 * coverage_sign, &move_list);
 
         // TODO 利き削除☆（＾～＾）
         // for destination in &controls {

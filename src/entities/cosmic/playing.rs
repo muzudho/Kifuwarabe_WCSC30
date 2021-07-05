@@ -210,7 +210,7 @@ impl Game {
         // TODO 利き
         {
             // game.position.controls[friend_index]
-            //     .add(some_moves.get(*index).movement.destination.address(), sign);
+            //     .add(move_list.get(*index).movement.destination.address(), sign);
         }
 
         // 取った駒

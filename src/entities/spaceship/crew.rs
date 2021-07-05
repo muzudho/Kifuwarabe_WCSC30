@@ -10,7 +10,6 @@ use crate::genmove::generate_move::PseudoLegalMoves;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::search::search::Tree;
-use crate::take1base::Move;
 use rand::Rng;
 use std::io as std_io;
 
@@ -178,24 +177,9 @@ impl Chiyuri {
     }
     pub fn genmove(game: &Game) {
         // Generation move.
-        // FIXME 合法手とは限らない
-        let mut some_moves = Vec::<Move>::new();
-        /* TODO
-        PseudoLegalMoves::gen_move(
-            game.history.get_friend(),
-            &game.position,
-            &mut |move_, _destination| {
-                if let Some(way_val) = move_ {
-                    some_moves.push(way_val);
-                }
-            },
-        );
-        */
-        PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position, &mut |move_| {
-            some_moves.push(move_);
-        });
+        let move_list = PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position);
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
-        Kitchen::print_ways(&game.position, &some_moves);
+        Kitchen::print_ways(&game.position, &move_list);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
     }
     pub fn hash(universe: &Universe) {

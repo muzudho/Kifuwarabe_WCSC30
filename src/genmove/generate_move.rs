@@ -76,16 +76,15 @@ impl PseudoLegalMoves {
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     ///
-    /// Returns
-    /// -------
-    /// F1:
-    /// * 指し手ハッシュ
-    /// * 移動先にあった駒
-    pub fn gen_move<F1>(friend: Phase, position: &Position, listen_move: &mut F1)
-    where
-        // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
-        F1: FnMut(Move),
-    {
+    /// # Returns
+    ///
+    /// 指し手の一覧
+    pub fn gen_move(friend: Phase, position: &Position) -> Vec<Move> {
+        let mut move_list = Vec::<Move>::new();
+        let listen_move = &mut |move_| {
+            move_list.push(move_);
+        };
+
         position.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
             Location::Position(source) => {
                 PseudoLegalMoves::start_on_board(friend, &source, &piece, position, listen_move)
@@ -97,6 +96,8 @@ impl PseudoLegalMoves {
                 "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
             )),
         });
+
+        move_list
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）

@@ -33,9 +33,9 @@
 //         }
 //     }
 //     pub fn centi_pawn(&self) -> isize {
-//         self.some_moves() + self.komawari() + self.promotion()
+//         self.move_list() + self.komawari() + self.promotion()
 //     }
-//     pub fn some_moves(&self) -> isize {
+//     pub fn move_list(&self) -> isize {
 //         self.many_ways_weight * self.ways_value / 1000
 //     }
 //     pub fn komawari(&self) -> isize {
@@ -121,8 +121,8 @@
 //         }
 //     }
 
-//     pub fn add_control(&mut self, sign: isize, some_moves: &Vec<Move>) {
+//     pub fn add_control(&mut self, sign: isize, move_list: &Vec<Move>) {
 //         // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-//         self.ways_value += sign * some_moves.len() as isize;
+//         self.ways_value += sign * move_list.len() as isize;
 //     }
 // }
