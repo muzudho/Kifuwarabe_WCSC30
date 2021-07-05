@@ -6,6 +6,7 @@ use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::universe::Universe;
+use crate::entities::move_::destructure_move;
 use crate::entities::move_::to_movement;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
@@ -195,19 +196,25 @@ impl Tree {
         let mut cap = 0;
         if 1 < move_caps.len() {
             for i in 0..move_caps.len() {
-                let move_cap = move_caps.get(i);
-                // game.position.piece_at(move_cap.move_.)
-                if let Some(_captured) = move_cap.captured1 {
+                let (_, to, _) = destructure_move(move_caps.get(i).move_);
+                if let Some(_captured) = game.position.piece_at(to) {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
                     move_caps.swap(cap, i);
                     cap += 1;
                 }
+                // if let Some(_captured) = move_cap.captured1 {
+                //     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
+                //     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
+                //     move_caps.swap(cap, i);
+                //     cap += 1;
+                // }
             }
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                if let Some(captured) = move_caps.get(i).captured1 {
+                let (_, to, _) = destructure_move(move_caps.get(i).move_);
+                if let Some(captured) = game.position.piece_at(to) {
                     match captured.meaning.r#type() {
                         PieceType::King => {
                             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
@@ -218,8 +225,21 @@ impl Tree {
                         _ => {}
                     }
                 } else {
-                    panic!("captured={:?}", move_caps.get(i).captured1)
+                    panic!("captured fail")
                 }
+                // if let Some(captured) = move_caps.get(i).captured1 {
+                //     match captured.meaning.r#type() {
+                //         PieceType::King => {
+                //             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
+                //             // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
+                //             move_caps.swap(king, i);
+                //             king += 1;
+                //         }
+                //         _ => {}
+                //     }
+                // } else {
+                //     panic!("captured={:?}", move_caps.get(i).captured1)
+                // }
             }
         }
 
