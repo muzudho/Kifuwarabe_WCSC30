@@ -77,15 +77,17 @@ pub enum Direction {
     BottomRight,
 }
 
-const directions_file_rank: [(i8, i8); 8] = [
-    (1, 0),   // 右方向
-    (1, -1),  // 右上方向
+// 筋は -1 すると右（＾～＾）
+// 段は -1 すると上（＾～＾）
+const DIRECTIONS_FILE_RANK: [(i8, i8); 8] = [
+    (-1, 0),  // 右方向
+    (-1, -1), // 右上方向
     (0, -1),  // 上方向
-    (-1, -1), // 左上方向
-    (-1, 0),  // 左方向
-    (-1, 1),  // 左下方向
+    (1, -1),  // 左上方向
+    (1, 0),   // 左方向
+    (1, 1),   // 左下方向
     (0, 1),   // 下方向
-    (1, 1),   // 右下方向
+    (-1, 1),  // 右下方向
 ];
 
 // TODO 隣の敵の利きが利いているかどうか
@@ -93,15 +95,15 @@ const directions_file_rank: [(i8, i8); 8] = [
 fn is_adjacent_opponent_control(
     us: Phase,
     position: &Position,
-    sq: Square,
+    to: Square,
     direction: Direction,
 ) -> bool {
-    let d_file = directions_file_rank[direction as usize].0;
-    let d_rank = directions_file_rank[direction as usize].1;
+    let d_file = DIRECTIONS_FILE_RANK[direction as usize].0;
+    let d_rank = DIRECTIONS_FILE_RANK[direction as usize].1;
     // TODO 隣のマス
     let adjacent_sq = square_from(
-        (file(sq) as i8 + d_file) as u8,
-        (rank(sq) as i8 + d_rank) as u8,
+        (file(to) as i8 + d_file) as u8,
+        (rank(to) as i8 + d_rank) as u8,
     );
     if let Some(pc_ex) = position.piece_at(adjacent_sq) {
         if us != pc_ex.piece.phase() {
@@ -181,8 +183,8 @@ fn check_checker_pin(
     ksq: Square,
     direction: Direction,
 ) -> (Option<Square>, Option<Square>) {
-    let d_file = directions_file_rank[direction as usize].0;
-    let d_rank = directions_file_rank[direction as usize].1;
+    let d_file = DIRECTIONS_FILE_RANK[direction as usize].0;
+    let d_rank = DIRECTIONS_FILE_RANK[direction as usize].1;
 
     let mut file = file(ksq) as i8 + d_file;
     let mut rank = rank(ksq) as i8 + d_rank;
@@ -396,11 +398,11 @@ impl PseudoLegalMoves {
 
                     let direction = if file == -1 {
                         if rank == -1 {
-                            Direction::TopLeft
+                            Direction::TopRight
                         } else if rank == 0 {
-                            Direction::Left
+                            Direction::Right
                         } else if rank == 1 {
-                            Direction::BottomLeft
+                            Direction::BottomRight
                         } else {
                             panic!("(Err.405)")
                         }
@@ -416,11 +418,11 @@ impl PseudoLegalMoves {
                         }
                     } else if file == 1 {
                         if rank == -1 {
-                            Direction::TopRight
+                            Direction::TopLeft
                         } else if rank == 0 {
-                            Direction::Right
+                            Direction::Left
                         } else if rank == 1 {
-                            Direction::BottomRight
+                            Direction::BottomLeft
                         } else {
                             panic!("(Err.420)")
                         }
