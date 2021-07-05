@@ -219,7 +219,6 @@ impl PseudoLegalMoves {
                                     false,
                                     None,
                                 ), // Movement::new(Some(*source), destination, false, None),
-                                pseudo_captured,
                             ));
                         }
                         /* TODO
@@ -239,7 +238,6 @@ impl PseudoLegalMoves {
                                 true,
                                 None,
                             ), // Movement::new(Some(*source), destination, true, None),
-                            pseudo_captured,
                         ));
                     }
                     _ => {
@@ -262,7 +260,6 @@ impl PseudoLegalMoves {
                                     promotion,
                                     None,
                                 ), // Movement::new(Some(*source), destination, promotion, None),
-                                pseudo_captured,
                             ));
                         }
                     }
@@ -335,7 +332,6 @@ impl PseudoLegalMoves {
                             false,                                       // 打に成りは無し
                             Some(piece.meaning.hand_address().r#type()), // 打った駒種類
                         ),                        */
-                        None,
                     ));
                 }
             };
