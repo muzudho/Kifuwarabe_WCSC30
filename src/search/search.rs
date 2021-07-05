@@ -9,6 +9,7 @@ use crate::entities::cosmic::universe::Universe;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use crate::movegen::{PieceEx, PseudoLegalMoves};
 use crate::position::destructure_move;
+use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 use rand::Rng;
@@ -608,7 +609,7 @@ impl fmt::Display for PrincipalVariation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
         for i in 0..self.ply {
-            buffer.push_str(&format!("{} ", self.moves[i]));
+            buffer.push_str(&format!("{} ", to_move_code(self.moves[i])));
         }
         write!(f, "{}", buffer.trim_end())
     }
