@@ -2,7 +2,7 @@
 // //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 // //!
 // use crate::entities::law::generate_move::PieceEx;
-// use crate::entities::law::generate_move::Ways;
+// use crate::entities::law::generate_move::MoveCaps;
 // //use crate::entities::cosmic::playing::Game;
 
 // /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
@@ -34,9 +34,9 @@
 //         }
 //     }
 //     pub fn centi_pawn(&self) -> isize {
-//         self.ways() + self.komawari() + self.promotion()
+//         self.move_caps() + self.komawari() + self.promotion()
 //     }
-//     pub fn ways(&self) -> isize {
+//     pub fn move_caps(&self) -> isize {
 //         self.many_ways_weight * self.ways_value / 1000
 //     }
 //     pub fn komawari(&self) -> isize {
@@ -122,8 +122,8 @@
 //         }
 //     }
 
-//     pub fn add_control(&mut self, sign: isize, ways: &Ways) {
+//     pub fn add_control(&mut self, sign: isize, move_caps: &MoveCaps) {
 //         // 駒を動かせたんなら、利きが広いと考えるぜ☆（＾～＾）
-//         self.ways_value += sign * ways.len() as isize;
+//         self.ways_value += sign * move_caps.len() as isize;
 //     }
 // }

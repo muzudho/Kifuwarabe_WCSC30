@@ -207,7 +207,7 @@ impl Game {
         // TODO 利き
         {
             // game.board.controls[friend_index]
-            //     .add(ways.get(*index).movement.destination.address(), sign);
+            //     .add(move_caps.get(*index).movement.destination.address(), sign);
         }
 
         // 取った駒

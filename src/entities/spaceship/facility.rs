@@ -2,8 +2,8 @@ use crate::entities::cosmic::playing::{Game, PosNums};
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
 use crate::entities::cosmic::smart::square::*;
+use crate::entities::law::generate_move::MoveCap;
 use crate::entities::law::generate_move::PieceEx;
-use crate::entities::law::generate_move::Way;
 use crate::entities::move_::to_movement;
 use crate::entities::spaceship::equipment::Beam;
 
@@ -339,15 +339,15 @@ P x{87:2}   |{63:>4}|{64:>4}|{65:>4}|{66:>4}|{67:>4}|{68:>4}|{69:>4}|{70:>4}|{71
 pub struct Kitchen {}
 impl Kitchen {
     /// 現在の局面での、指し手の一覧を表示するぜ☆（＾～＾）
-    pub fn print_ways(phase: Phase, ways: &Vec<Way>) {
-        Beam::shoot(&format!("Moves count={}", ways.len()));
+    pub fn print_ways(phase: Phase, move_caps: &Vec<MoveCap>) {
+        Beam::shoot(&format!("Moves count={}", move_caps.len()));
         // 辞書順ソート
         let mut move_names = Vec::new();
-        for way in ways {
+        for move_cap in move_caps {
             let ss_str = format!(
                 "{}{}",
-                format!("{}", to_movement(phase, way.move_)),
-                if let Some(psuedo_captured) = way.captured {
+                format!("{}", to_movement(phase, move_cap.move_)),
+                if let Some(psuedo_captured) = move_cap.captured {
                     format!(" ({})", psuedo_captured.meaning)
                 } else {
                     "".to_string()

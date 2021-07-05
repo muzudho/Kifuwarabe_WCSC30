@@ -6,7 +6,7 @@
 // use crate::entities::cosmic::smart::square::AbsoluteAddress;
 // use crate::entities::cosmic::smart::square::RelAdr;
 // use crate::entities::cosmic::toy_box::{Location, PieceNum};
-// use crate::entities::law::generate_move::{Way, Ways};
+// use crate::entities::law::generate_move::{MoveCap, MoveCaps};
 // use crate::entities::law::speed_of_light::Movility;
 // use crate::entities::move_::new_move2;
 // use crate::entities::spaceship::equipment::{Beam, Log};
@@ -24,7 +24,7 @@ pub struct Lioncatch {
     /// 敵玉の場所☆（＾～＾）
     opponent_king_adr: AbsoluteAddress,
     /// 王手の指し手一覧だぜ☆（＾～＾）
-    pub checks: Ways,
+    pub checks: MoveCaps,
     /// 王手を掛けている駒の背番号だぜ☆（＾～＾）
     // pub checkers: Option<Vec<PieceNum>>,
     /// 動かしてはいけない駒の背番号の一覧を作るぜ☆（＾～＾）
@@ -40,7 +40,7 @@ impl Lioncatch {
             opponent: friend.turn(),
             friend_king_adr: AbsoluteAddress::default(),
             opponent_king_adr: AbsoluteAddress::default(),
-            checks: Ways::new(),
+            checks: MoveCaps::new(),
             // checkers: None,
             pinned_pieces: None,
             sign: 1,
@@ -205,7 +205,7 @@ impl Lioncatch {
                                 // ピンされてる駒だった☆（＾～＾）動かせないぜ☆（＾～＾）！
                             } else {
                                 // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                                self.checks.push(&Way::new(
+                                self.checks.push(&MoveCap::new(
                                     new_move2(
                                         game.history.get_friend(),
                                         Some(cur.address() as u16),
@@ -218,7 +218,7 @@ impl Lioncatch {
                             }
                         } else {
                             // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                            self.checks.push(&Way::new(
+                            self.checks.push(&MoveCap::new(
                                 new_move2(
                                     game.history.get_friend(),
                                     Some(cur.address() as u16),
@@ -278,7 +278,7 @@ impl Lioncatch {
                                     // 隣接している駒は、さっき入れたはずだぜ☆（＾～＾）
                                     if i != 0 {
                                         // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                                        self.checks.push(&Way::new(
+                                        self.checks.push(&MoveCap::new(
                                             new_move2(
                                                 game.history.get_friend(),
                                                 Some(cur.address() as u16),
@@ -301,7 +301,7 @@ impl Lioncatch {
                                 // 隣接している駒は、さっき入れたはずだぜ☆（＾～＾）
                                 if i != 0 {
                                     // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
-                                    self.checks.push(&Way::new(
+                                    self.checks.push(&MoveCap::new(
                                         new_move2(
                                             game.history.get_friend(),
                                             Some(cur.address() as u16),

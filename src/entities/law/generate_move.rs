@@ -42,23 +42,23 @@ impl fmt::Debug for PieceEx {
 }
 
 /// ソートを高速にするためのものだぜ☆（＾～＾）
-pub struct Ways {
+pub struct MoveCaps {
     /// スワップしても割と速いだろ☆（＾～＾）
     pub indexes: Vec<usize>,
     /// こいつをスワップすると遅くなるぜ☆（＾～＾）
-    body: Vec<Way>,
+    body: Vec<MoveCap>,
 }
-impl Ways {
+impl MoveCaps {
     /// この初期化が遅いかどうかだな☆（＾～＾）
     pub fn new() -> Self {
-        Ways {
+        MoveCaps {
             indexes: Vec::<usize>::new(),
-            body: Vec::<Way>::new(),
+            body: Vec::<MoveCap>::new(),
         }
     }
-    pub fn push(&mut self, way: &Way) {
+    pub fn push(&mut self, move_cap: &MoveCap) {
         self.indexes.push(self.indexes.len());
-        self.body.push(*way);
+        self.body.push(*move_cap);
     }
     /// usize型のコピーなら、オブジェクトのコピーより少しは速いだろ☆（＾～＾）
     pub fn swap(&mut self, a: usize, b: usize) {
@@ -66,7 +66,7 @@ impl Ways {
         self.indexes[a] = self.indexes[b];
         self.indexes[b] = temp;
     }
-    pub fn get(&self, index: usize) -> Way {
+    pub fn get(&self, index: usize) -> MoveCap {
         self.body[self.indexes[index]]
     }
     pub fn len(&self) -> usize {
@@ -79,24 +79,24 @@ impl Ways {
 
 /// 局面の差分だぜ☆（＾～＾）
 #[derive(Clone, Copy)]
-pub struct Way {
+pub struct MoveCap {
     /// 指し手☆（＾～＾）
     pub move_: Move,
     /// 取った駒☆（＾～＾）
     pub captured: Option<PieceEx>,
 }
-impl Default for Way {
+impl Default for MoveCap {
     /// ゴミ値☆（＾～＾）
     fn default() -> Self {
-        Way {
+        MoveCap {
             move_: RESIGN_MOVE,
             captured: None,
         }
     }
 }
-impl Way {
+impl MoveCap {
     pub fn new(mov: Move, cap: Option<PieceEx>) -> Self {
-        Way {
+        MoveCap {
             move_: mov,
             captured: cap,
         }
@@ -149,8 +149,8 @@ impl PseudoLegalMoves {
     /// * 移動先にあった駒
     pub fn gen_move<F1>(friend: Phase, board: &Board, listen_move: &mut F1)
     where
-        // TODO F1: FnMut(Option<Way>, &AbsoluteAddress),
-        F1: FnMut(Way),
+        // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
+        F1: FnMut(MoveCap),
     {
         board.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
             Location::Board(source) => {
@@ -187,8 +187,8 @@ impl PseudoLegalMoves {
         board: &Board,
         listen_move: &mut F1,
     ) where
-        // TODO F1: FnMut(Option<Way>, &AbsoluteAddress),
-        F1: FnMut(Way),
+        // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
+        F1: FnMut(MoveCap),
     {
         let moving =
             &mut |destination, promotability, _agility, move_permission: Option<MovePermission>| {
@@ -230,14 +230,14 @@ impl PseudoLegalMoves {
                             if !forbidden {
                                 /* TODO
                                 listen_move(
-                                    Some(Way::new(
+                                    Some(MoveCap::new(
                                         Movement::new(Some(*source), destination, false, None),
                                         pseudo_captured,
                                     )),
                                     &destination,
                                 );
                                 */
-                                listen_move(Way::new(
+                                listen_move(MoveCap::new(
                                     new_move2(
                                         friend,
                                         Some(source.address() as u16),
@@ -250,14 +250,14 @@ impl PseudoLegalMoves {
                             }
                             /* TODO
                             listen_move(
-                                Some(Way::new(
+                                Some(MoveCap::new(
                                     Movement::new(Some(*source), destination, true, None),
                                     pseudo_captured,
                                 )),
                                 &destination,
                             );
                             */
-                            listen_move(Way::new(
+                            listen_move(MoveCap::new(
                                 new_move2(
                                     friend,
                                     Some(source.address() as u16),
@@ -273,14 +273,14 @@ impl PseudoLegalMoves {
                             if promotion || !forbidden {
                                 /* TODO
                                 listen_move(
-                                    Some(Way::new(
+                                    Some(MoveCap::new(
                                         Movement::new(Some(*source), destination, promotion, None),
                                         pseudo_captured,
                                     )),
                                     &destination,
                                 );
                                 */
-                                listen_move(Way::new(
+                                listen_move(MoveCap::new(
                                     new_move2(
                                         friend,
                                         Some(source.address() as u16),
@@ -314,8 +314,8 @@ impl PseudoLegalMoves {
     /// * `listen_control` - 利きを受け取れだぜ☆（＾～＾）
     fn make_drop<F1>(friend: Phase, adr: HandAddress, board: &Board, listen_move: &mut F1)
     where
-        // TODO F1: FnMut(Option<Way>, &AbsoluteAddress),
-        F1: FnMut(Way),
+        // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
+        F1: FnMut(MoveCap),
     {
         if let Some(piece) = board.last_hand(adr) {
             // 打つぜ☆（＾～＾）
@@ -334,7 +334,7 @@ impl PseudoLegalMoves {
                     }
                     /* TOTO
                     listen_move(
-                        Some(Way::new(
+                        Some(MoveCap::new(
                             Movement::new(
                                 None,                                        // 駒台
                                 destination,                                 // どの升へ行きたいか
@@ -346,7 +346,7 @@ impl PseudoLegalMoves {
                         &destination,
                     );
                     */
-                    listen_move(Way::new(
+                    listen_move(MoveCap::new(
                         new_move2(
                             friend,
                             None,                                        // 駒台
