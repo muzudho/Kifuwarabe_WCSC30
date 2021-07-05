@@ -22,6 +22,7 @@ extern crate toml;
 // 別のアプリにも見えるようにしたけりゃ pub mod にしろだぜ☆（＾～＾）
 mod config;
 mod entities;
+mod record;
 mod search;
 mod take1base;
 
