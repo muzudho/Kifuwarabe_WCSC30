@@ -10,8 +10,8 @@ use crate::entities::move_::destructure_move;
 use crate::entities::move_::to_movement;
 use crate::entities::movement::Movement;
 use crate::entities::spaceship::equipment::{Beam, PvString};
-use crate::genmove::generate_move::MoveCaps;
 use crate::genmove::generate_move::{PieceEx, PseudoLegalMoves};
+use crate::take1base::Move;
 use rand::Rng;
 use std::fmt;
 use std::time::Instant;
@@ -143,7 +143,7 @@ impl Tree {
         // TODO let mut controls = Vec::<AbsoluteAddress>::new();
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let mut move_caps = {
+        let mut some_moves = {
             /*
             // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
             let mut lioncatch = Lioncatch::new(game);
@@ -152,36 +152,32 @@ impl Tree {
                 lioncatch.checks
             } else {
                 //   */
-            let mut move_caps = MoveCaps::new();
+            let mut some_moves = Vec::<Move>::new();
 
             // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
             /* TODO
             PseudoLegalMoves::gen_move(
                 game.history.get_friend(),
                 &game.position,
-                &mut |move_cap, destination| {
-                    if let Some(way_val) = move_cap {
-                        move_caps.push(&way_val);
+                &mut |move_, destination| {
+                    if let Some(way_val) = move_ {
+                        some_moves.push(&way_val);
                     }
                     // TODO 利きを一旦覚えようぜ☆（＾～＾）？
                     // controls.push(*destination);
                 },
             );
             */
-            PseudoLegalMoves::gen_move(
-                game.history.get_friend(),
-                &game.position,
-                &mut |move_cap| {
-                    move_caps.push(&move_cap);
-                },
-            );
+            PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position, &mut |move_| {
+                some_moves.push(move_);
+            });
 
-            move_caps
+            some_moves
             //}
         };
 
         // 指せる手が無ければ投了☆（＾～＾）
-        if move_caps.is_empty() {
+        if some_moves.is_empty() {
             return ts;
         }
 
@@ -194,26 +190,26 @@ impl Tree {
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
         let mut cap = 0;
-        if 1 < move_caps.len() {
-            for i in 0..move_caps.len() {
-                let (_, to, _) = destructure_move(move_caps.get(i).move_);
+        if 1 < some_moves.len() {
+            for i in 0..some_moves.len() {
+                let (_, to, _) = destructure_move(some_moves[i]);
                 if let Some(_captured) = game.position.piece_at(to) {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                    move_caps.swap(cap, i);
+                    some_moves.swap(cap, i);
                     cap += 1;
                 }
             }
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
             for i in 0..cap {
-                let (_, to, _) = destructure_move(move_caps.get(i).move_);
+                let (_, to, _) = destructure_move(some_moves[i]);
                 if let Some(captured) = game.position.piece_at(to) {
                     match captured.meaning.r#type() {
                         PieceType::King => {
                             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                             // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                            move_caps.swap(king, i);
+                            some_moves.swap(king, i);
                             king += 1;
                         }
                         _ => {}
@@ -231,9 +227,8 @@ impl Tree {
         //     // 後手が指すところだぜ☆（＾～＾）
         //     -1
         // };
-        //self.evaluation.add_control(coverage_sign, &move_caps);
-        for index in move_caps.indexes.iter() {
-            let move_cap = move_caps.get(*index);
+        //self.evaluation.add_control(coverage_sign, &some_moves);
+        for move_ in some_moves.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
@@ -247,12 +242,12 @@ impl Tree {
 
             // ここから
             // TODO こっちが正しいコード（＾～＾）
-            // let movement = move_cap.movement;
+            // let movement = move_.movement;
             // TODO テストコード　削除すること（＾～＾）
-            // let move_ = new_move(game.history.get_friend(), &move_cap.movement);
+            // let move_ = new_move(game.history.get_friend(), &move_.movement);
             // let movement = to_movement(game.history.get_friend(), move_);
             // TODO 新しいコード（＾～＾）
-            let movement = to_movement(game.history.get_friend(), move_cap.move_);
+            let movement = to_movement(game.history.get_friend(), *move_);
             // ここまで
 
             // let source_piece = if let Some(source_val) = &movement.source {
@@ -271,7 +266,7 @@ impl Tree {
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.meaning.r#type() == PieceType::King {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(movement); // move_cap.movement
+                    ts.bestmove.catch_king(movement); // move_.movement
 
                     // self.evaluation
                     //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
@@ -284,11 +279,11 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_movement = Some(movement); // move_cap.movement
+                ts.repetition_movement = Some(movement); // move_.movement
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
-                // if let Some(_captured) = move_cap.captured {
+                // if let Some(_captured) = move_.captured {
                 //     // TODO SEEやろうぜ☆（＾～＾）
                 //     SEE::go(game, &movement.destination);
                 // }
@@ -297,7 +292,7 @@ impl Tree {
                 ts.choice_friend(
                     // &Value::CentiPawn(self.evaluation.centi_pawn()),
                     &Value::CentiPawn(0),
-                    movement, // move_cap.movement
+                    movement, // move_.movement
                 );
 
                 if game.info.is_printable() {
@@ -310,8 +305,8 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "move_caps={} | komawari={} | promotion={}", //  | {} {} {} |
-                            0, //self.evaluation.move_caps(),
+                            "some_moves={} | komawari={} | promotion={}", //  | {} {} {} |
+                            0, //self.evaluation.some_moves(),
                             0, //self.evaluation.komawari(),
                             0, //self.evaluation.promotion(),
                                /* TODO
@@ -360,7 +355,7 @@ impl Tree {
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
                 exists_lose = ts.turn_over_and_choice(
                     &opponent_ts,
-                    movement, // move_cap.movement
+                    movement, // move_.movement
                     0,        //self.evaluation.centi_pawn(),
                 );
             }
@@ -401,7 +396,7 @@ impl Tree {
                 }
             }
         }
-        //self.evaluation.add_control(-1 * coverage_sign, &move_caps);
+        //self.evaluation.add_control(-1 * coverage_sign, &some_moves);
 
         // TODO 利き削除☆（＾～＾）
         // for destination in &controls {

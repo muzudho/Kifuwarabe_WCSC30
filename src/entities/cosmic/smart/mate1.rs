@@ -6,7 +6,6 @@
 // use crate::entities::cosmic::smart::square::AbsoluteAddress;
 // use crate::entities::cosmic::smart::square::RelAdr;
 // use crate::entities::cosmic::toy_box::{Location, PieceNum};
-// use crate::entities::law::generate_move::{MoveCap, MoveCaps};
 // use crate::entities::law::speed_of_light::Movility;
 // use crate::entities::move_::new_move2;
 // use crate::entities::spaceship::equipment::{Beam, Log};
@@ -24,7 +23,7 @@ pub struct Lioncatch {
     /// 敵玉の場所☆（＾～＾）
     opponent_king_adr: AbsoluteAddress,
     /// 王手の指し手一覧だぜ☆（＾～＾）
-    pub checks: MoveCaps,
+    pub checks: Vec<Move>,
     /// 王手を掛けている駒の背番号だぜ☆（＾～＾）
     // pub checkers: Option<Vec<PieceNum>>,
     /// 動かしてはいけない駒の背番号の一覧を作るぜ☆（＾～＾）
@@ -40,7 +39,7 @@ impl Lioncatch {
             opponent: friend.turn(),
             friend_king_adr: AbsoluteAddress::default(),
             opponent_king_adr: AbsoluteAddress::default(),
-            checks: MoveCaps::new(),
+            checks: Vec<Move>::new(),
             // checkers: None,
             pinned_pieces: None,
             sign: 1,

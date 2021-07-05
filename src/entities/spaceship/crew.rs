@@ -7,8 +7,8 @@ use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
 use crate::genmove::generate_move::PseudoLegalMoves;
-use crate::record::MoveCap;
 use crate::search::search::Tree;
+use crate::take1base::Move;
 use rand::Rng;
 use std::io as std_io;
 
@@ -175,23 +175,23 @@ impl Chiyuri {
     pub fn genmove(game: &Game) {
         // Generation move.
         // FIXME 合法手とは限らない
-        let mut move_caps = Vec::<MoveCap>::new();
+        let mut some_moves = Vec::<Move>::new();
         /* TODO
         PseudoLegalMoves::gen_move(
             game.history.get_friend(),
             &game.position,
-            &mut |move_cap, _destination| {
-                if let Some(way_val) = move_cap {
-                    move_caps.push(way_val);
+            &mut |move_, _destination| {
+                if let Some(way_val) = move_ {
+                    some_moves.push(way_val);
                 }
             },
         );
         */
-        PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position, &mut |move_cap| {
-            move_caps.push(move_cap);
+        PseudoLegalMoves::gen_move(game.history.get_friend(), &game.position, &mut |move_| {
+            some_moves.push(move_);
         });
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
-        Kitchen::print_ways(game.history.get_friend(), &game.position, &move_caps);
+        Kitchen::print_ways(game.history.get_friend(), &game.position, &some_moves);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
     }
     pub fn hash(universe: &Universe) {

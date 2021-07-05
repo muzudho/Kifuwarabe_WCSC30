@@ -12,7 +12,7 @@ use crate::entities::cosmic::smart::square::{
 use crate::entities::move_::new_move2;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::position::{Location, PieceNum, Position};
-use crate::record::MoveCap;
+use crate::take1base::Move;
 use crate::take1base::Piece;
 use std::fmt;
 // use crate::entities::movement::Movement;
@@ -36,42 +36,6 @@ impl PieceEx {
 impl fmt::Debug for PieceEx {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "PieceEx({} {:?})", self.meaning, self.num)
-    }
-}
-
-/// ソートを高速にするためのものだぜ☆（＾～＾）
-pub struct MoveCaps {
-    /// スワップしても割と速いだろ☆（＾～＾）
-    pub indexes: Vec<usize>,
-    /// こいつをスワップすると遅くなるぜ☆（＾～＾）
-    body: Vec<MoveCap>,
-}
-impl MoveCaps {
-    /// この初期化が遅いかどうかだな☆（＾～＾）
-    pub fn new() -> Self {
-        MoveCaps {
-            indexes: Vec::<usize>::new(),
-            body: Vec::<MoveCap>::new(),
-        }
-    }
-    pub fn push(&mut self, move_cap: &MoveCap) {
-        self.indexes.push(self.indexes.len());
-        self.body.push(*move_cap);
-    }
-    /// usize型のコピーなら、オブジェクトのコピーより少しは速いだろ☆（＾～＾）
-    pub fn swap(&mut self, a: usize, b: usize) {
-        let temp = self.indexes[a];
-        self.indexes[a] = self.indexes[b];
-        self.indexes[b] = temp;
-    }
-    pub fn get(&self, index: usize) -> MoveCap {
-        self.body[self.indexes[index]]
-    }
-    pub fn len(&self) -> usize {
-        self.body.len()
-    }
-    pub fn is_empty(&self) -> bool {
-        self.body.is_empty()
     }
 }
 
@@ -122,7 +86,7 @@ impl PseudoLegalMoves {
     pub fn gen_move<F1>(friend: Phase, position: &Position, listen_move: &mut F1)
     where
         // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
-        F1: FnMut(MoveCap),
+        F1: FnMut(Move),
     {
         position.for_some_pieces_on_list40(friend, &mut |location, piece| match location {
             Location::Position(source) => {
@@ -160,7 +124,7 @@ impl PseudoLegalMoves {
         listen_move: &mut F1,
     ) where
         // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
-        F1: FnMut(MoveCap),
+        F1: FnMut(Move),
     {
         let moving = &mut |destination: AbsoluteAddress,
                            promotability,
@@ -211,7 +175,7 @@ impl PseudoLegalMoves {
                                 &destination,
                             );
                             */
-                            listen_move(MoveCap::new(
+                            listen_move(
                                 new_move2(
                                     friend,
                                     Some(source.square_number() as u16),
@@ -219,7 +183,7 @@ impl PseudoLegalMoves {
                                     false,
                                     None,
                                 ), // Movement::new(Some(*source), destination, false, None),
-                            ));
+                            );
                         }
                         /* TODO
                         listen_move(
@@ -230,7 +194,7 @@ impl PseudoLegalMoves {
                             &destination,
                         );
                         */
-                        listen_move(MoveCap::new(
+                        listen_move(
                             new_move2(
                                 friend,
                                 Some(source.square_number() as u16),
@@ -238,7 +202,7 @@ impl PseudoLegalMoves {
                                 true,
                                 None,
                             ), // Movement::new(Some(*source), destination, true, None),
-                        ));
+                        );
                     }
                     _ => {
                         // 成れるか、成れないかのどちらかのとき。
@@ -252,7 +216,7 @@ impl PseudoLegalMoves {
                                 &destination,
                             );
                             */
-                            listen_move(MoveCap::new(
+                            listen_move(
                                 new_move2(
                                     friend,
                                     Some(source.square_number() as u16),
@@ -260,7 +224,7 @@ impl PseudoLegalMoves {
                                     promotion,
                                     None,
                                 ), // Movement::new(Some(*source), destination, promotion, None),
-                            ));
+                            );
                         }
                     }
                 };
@@ -286,7 +250,7 @@ impl PseudoLegalMoves {
     fn make_drop<F1>(friend: Phase, adr: HandAddress, position: &Position, listen_move: &mut F1)
     where
         // TODO F1: FnMut(Option<MoveCap>, &AbsoluteAddress),
-        F1: FnMut(MoveCap),
+        F1: FnMut(Move),
     {
         if let Some(piece) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
@@ -317,7 +281,7 @@ impl PseudoLegalMoves {
                         &destination,
                     );
                     */
-                    listen_move(MoveCap::new(
+                    listen_move(
                         new_move2(
                             friend,
                             None,                                        // 駒台
@@ -332,7 +296,7 @@ impl PseudoLegalMoves {
                             false,                                       // 打に成りは無し
                             Some(piece.meaning.hand_address().r#type()), // 打った駒種類
                         ),                        */
-                    ));
+                    );
                 }
             };
 
