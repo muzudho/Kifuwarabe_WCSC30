@@ -3,7 +3,25 @@ pub mod position;
 use crate::entities::law::cryptographic::num_to_lower_case;
 use crate::take1base::Move;
 
+/// マス番号。
+/// 100以上は持駒。 K1=100, R1=101 .. P2=115
 pub type Square = u8;
+
+/// 盤上にも、駒台にも無いとき
+const SQUARE_NONE: Square = 0;
+
+/// 盤上のマスなら真
+fn IsBoardSquare(sq: Square) -> bool {
+    sq < 100
+}
+/// 持駒なら真
+fn IsHandSquare(sq: Square) -> bool {
+    100 <= sq
+}
+/// マスでないなら真
+fn IsNoneSquare(sq: Square) -> bool {
+    sq == SQUARE_NONE
+}
 
 pub fn destructure_move(num: Move) -> (Square, Square, bool) {
     // 移動元マス

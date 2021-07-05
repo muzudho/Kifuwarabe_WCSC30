@@ -72,7 +72,7 @@ impl PseudoLegalMoves {
     ///
     /// Arguments
     /// ---------
-    /// * `us` - 手番☆（＾～＾）
+    /// * `us` - どちらの手番か☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     ///
@@ -80,21 +80,46 @@ impl PseudoLegalMoves {
     ///
     /// 指し手の一覧
     pub fn generate(us: Phase, position: &Position) -> Vec<Move> {
+        // TODO 自玉の位置検索
+        let king_location = match us {
+            Phase::First => position.location_at(PieceNum::King1),
+            Phase::Second => position.location_at(PieceNum::King2),
+        };
+        match king_location {
+            Location::OnBoard(addr) => {
+                // TODO 合い駒(Pinned)検索
+
+                // TODO 右方向
+                // TODO 右上方向
+                // TODO 上方向
+                // TODO 左上方向
+                // TODO 左方向
+                // TODO 左下方向
+                // TODO 下方向
+                // TODO 右下方向
+
+                // TODO チェッカー(Checker)検索
+            }
+            _ => {
+                panic!("(Err.93) ksq fail")
+            }
+        }
+
+        // TODO チェッカーがいたら、王手回避(Evasions)モードへ
+
+        // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
+        PseudoLegalMoves::generate_non_evasion(us, position)
+    }
+
+    fn generate_non_evasion(us: Phase, position: &Position) -> Vec<Move> {
         let mut move_list = Vec::<Move>::new();
         let listen_move = &mut |move_| {
             move_list.push(move_);
         };
 
-        // TODO 自玉の位置検索
-        // TODO 合い駒(Pinned)検索
-        // TODO チェッカー(Checker)検索
-
-        // TODO チェッカーがいたら、王手回避(Evasions)モードへ
-        // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
-
         // 座標ではなく、駒の背番号で検索
         position.for_some_pieces_on_list40(us, &mut |location, piece| match location {
-            Location::Position(source) => {
+            Location::OnBoard(source) => {
                 PseudoLegalMoves::start_on_board(us, &source, &piece, position, listen_move)
             }
             Location::Hand(adr) => {
