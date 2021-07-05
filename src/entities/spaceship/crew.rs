@@ -191,7 +191,7 @@ impl Chiyuri {
             move_caps.push(move_cap);
         });
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
-        Kitchen::print_ways(game.history.get_friend(), &move_caps);
+        Kitchen::print_ways(game.history.get_friend(), &game.position, &move_caps);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
     }
     pub fn hash(universe: &Universe) {

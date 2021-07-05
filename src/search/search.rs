@@ -203,12 +203,6 @@ impl Tree {
                     move_caps.swap(cap, i);
                     cap += 1;
                 }
-                // if let Some(_captured) = move_cap.captured1 {
-                //     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
-                //     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                //     move_caps.swap(cap, i);
-                //     cap += 1;
-                // }
             }
             // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
             let mut king = 0;
@@ -227,19 +221,6 @@ impl Tree {
                 } else {
                     panic!("captured fail")
                 }
-                // if let Some(captured) = move_caps.get(i).captured1 {
-                //     match captured.meaning.r#type() {
-                //         PieceType::King => {
-                //             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
-                //             // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                //             move_caps.swap(king, i);
-                //             king += 1;
-                //         }
-                //         _ => {}
-                //     }
-                // } else {
-                //     panic!("captured={:?}", move_caps.get(i).captured1)
-                // }
             }
         }
 
