@@ -4,8 +4,8 @@
 //! * Phase (先後。手番,相手番)
 //! * Person (先手,後手)
 //!
-use crate::entities::law::generate_move::PieceEx;
 use crate::entities::movement::Movement;
+use crate::genmove::generate_move::PieceEx;
 use std::fmt;
 
 /// 手目数。何手目まで指せるか。

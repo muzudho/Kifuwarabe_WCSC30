@@ -18,9 +18,9 @@ use crate::entities::cosmic::smart::square::{
     RANK_1,
     RANK_10, // , RelAdr
 };
-use crate::entities::law::generate_move::PieceEx; //Agility, Area,
 use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
+use crate::genmove::generate_move::PieceEx; //Agility, Area,
 use crate::take1base::Piece;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;

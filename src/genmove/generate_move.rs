@@ -180,7 +180,7 @@ impl PseudoLegalMoves {
 
                 if ok {
                     // 成れるかどうかの判定☆（＾ｑ＾）
-                    use crate::entities::law::generate_move::Promotability::*;
+                    use crate::genmove::generate_move::Promotability::*;
                     let promotion = match &promotability {
                         Forced => true,
                         _ => false,

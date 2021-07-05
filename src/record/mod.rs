@@ -1,6 +1,8 @@
-use crate::entities::law::generate_move::PieceEx;
-use crate::entities::move_::RESIGN_MOVE;
+use crate::genmove::generate_move::PieceEx;
 use crate::take1base::Move;
+
+// 投了（＾～＾）
+pub const RESIGN_MOVE: Move = 0;
 
 /// 局面の差分だぜ☆（＾～＾）
 #[derive(Clone, Copy)]

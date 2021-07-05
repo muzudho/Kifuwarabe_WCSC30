@@ -4,9 +4,6 @@ use crate::entities::cosmic::smart::square::AbsoluteAddress;
 use crate::entities::movement::Movement;
 use crate::take1base::Move;
 
-// 投了（＾～＾）
-pub const RESIGN_MOVE: Move = 0;
-
 /*
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
 pub fn new_move(phase: Phase, movement: &Movement) -> Move {
