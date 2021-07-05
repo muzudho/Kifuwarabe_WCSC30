@@ -205,7 +205,7 @@ impl Lioncatch {
                                 // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                 self.checks.push(&MoveCap::new(
                                     new_move(
-                                        game.history.get_friend(),
+                                        game.history.get_phase(),
                                         Some(cur.address() as u16),
                                         self.opponent_king_adr.address() as u16,
                                         false,
@@ -218,7 +218,7 @@ impl Lioncatch {
                             // 相手玉に自駒が当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                             self.checks.push(&MoveCap::new(
                                 new_move(
-                                    game.history.get_friend(),
+                                    game.history.get_phase(),
                                     Some(cur.address() as u16),
                                     self.opponent_king_adr.address() as u16,
                                     false,
@@ -278,7 +278,7 @@ impl Lioncatch {
                                         // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                         self.checks.push(&MoveCap::new(
                                             new_move(
-                                                game.history.get_friend(),
+                                                game.history.get_phase(),
                                                 Some(cur.address() as u16),
                                                 self.opponent_king_adr.address() as u16,
                                                 false,
@@ -295,7 +295,7 @@ impl Lioncatch {
                                     // 相手玉に自駒スライダーが当たってるぜ☆（＾～＾）！ まず王手は確定だぜ☆（＾～＾）
                                     self.checks.push(&MoveCap::new(
                                         new_move(
-                                            game.history.get_friend(),
+                                            game.history.get_phase(),
                                             Some(cur.address() as u16),
                                             self.opponent_king_adr.address() as u16,
                                             false,

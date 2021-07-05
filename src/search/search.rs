@@ -150,7 +150,7 @@ impl Tree {
                 lioncatch.checks
             } else {
                 //   */
-            let move_list = PseudoLegalMoves::generate(game.history.get_friend(), &game.position);
+            let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position);
 
             move_list
             //}
@@ -165,7 +165,7 @@ impl Tree {
         // いわば、１光手 利きカウントボードだぜ☆（＾～＾）
         // for destination in &controls {
         //     game.position
-        //         .add_control(game.history.get_friend(), destination, 1);
+        //         .add_control(game.history.get_phase(), destination, 1);
         // }
 
         // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
@@ -241,7 +241,7 @@ impl Tree {
                     // self.evaluation
                     //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
                     self.pv.pop();
-                    game.undo_move(game.history.get_friend());
+                    game.undo_move(game.history.get_phase());
                     break;
                 }
             }
@@ -281,15 +281,15 @@ impl Tree {
                                /* TODO
                                // サンプルを見ているだけだぜ☆（＾～＾）
                                game.position.get_control(
-                                   game.history.get_friend(),
+                                   game.history.get_phase(),
                                    &AbsoluteAddress::new(6, 8)
                                ),
                                game.position.get_control(
-                                   game.history.get_friend(),
+                                   game.history.get_phase(),
                                    &AbsoluteAddress::new(5, 8)
                                ),
                                game.position.get_control(
-                                   game.history.get_friend(),
+                                   game.history.get_phase(),
                                    &AbsoluteAddress::new(4, 8)
                                ),
                                */
@@ -332,7 +332,7 @@ impl Tree {
             // self.evaluation
             //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
-            game.undo_move(game.history.get_friend());
+            game.undo_move(game.history.get_phase());
 
             match ts.bestmove.value {
                 Value::Win => {
@@ -370,7 +370,7 @@ impl Tree {
         // TODO 利き削除☆（＾～＾）
         // for destination in &controls {
         //     game.position
-        //         .add_control(game.history.get_friend(), destination, -1);
+        //         .add_control(game.history.get_phase(), destination, -1);
         // }
 
         if !exists_lose {

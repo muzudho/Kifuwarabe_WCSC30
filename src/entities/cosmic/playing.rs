@@ -159,7 +159,7 @@ impl Game {
 
         // 手番ハッシュ
         use crate::entities::cosmic::recording::Phase::*;
-        match self.history.get_friend() {
+        match self.history.get_phase() {
             First => hash ^= self.hash_seed.phase[PHASE_FIRST],
             Second => hash ^= self.hash_seed.phase[PHASE_SECOND],
         }
@@ -203,7 +203,7 @@ impl Game {
     pub fn do_move(&mut self, move_: Move) -> Option<PieceEx> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(move_);
-        let us = self.history.get_friend();
+        let us = self.history.get_phase();
         // let (from, to, pro) = destructure_move(move_);
         let (from2, to2, promote2, drop2) = to_move_object(us, move_);
 

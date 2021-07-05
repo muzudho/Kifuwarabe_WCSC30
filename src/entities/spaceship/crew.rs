@@ -175,7 +175,7 @@ impl Chiyuri {
     }
     pub fn genmove(game: &Game) {
         // Generation move.
-        let move_list = PseudoLegalMoves::generate(game.history.get_friend(), &game.position);
+        let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position);
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
         Kitchen::print_ways(&game.position, &move_list);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
@@ -285,7 +285,7 @@ impl Chiyuri {
         }
     }
     pub fn undo(universe: &mut Universe) {
-        if !universe.game.undo_move(universe.game.history.get_friend()) {
+        if !universe.game.undo_move(universe.game.history.get_phase()) {
             Beam::shoot(&format!(
                 "ply={} を、これより戻せません",
                 universe.game.history.ply

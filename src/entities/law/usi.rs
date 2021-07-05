@@ -50,49 +50,49 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
             *starts += 2;
-            match game.history.get_friend() {
+            match game.history.get_phase() {
                 Phase::First => 101,
                 Phase::Second => 109,
             }
         }
         "B" => {
             *starts += 2;
-            match game.history.get_friend() {
+            match game.history.get_phase() {
                 Phase::First => 102,
                 Phase::Second => 110,
             }
         }
         "G" => {
             *starts += 2;
-            match game.history.get_friend() {
+            match game.history.get_phase() {
                 Phase::First => 103,
                 Phase::Second => 111,
             }
         }
         "S" => {
             *starts += 2;
-            match game.history.get_friend() {
+            match game.history.get_phase() {
                 Phase::First => 104,
                 Phase::Second => 112,
             }
         }
         "N" => {
             *starts += 2;
-            match game.history.get_friend() {
+            match game.history.get_phase() {
                 Phase::First => 105,
                 Phase::Second => 113,
             }
         }
         "L" => {
             *starts += 2;
-            match game.history.get_friend() {
+            match game.history.get_phase() {
                 Phase::First => 106,
                 Phase::Second => 114,
             }
         }
         "P" => {
             *starts += 2;
-            match game.history.get_friend() {
+            match game.history.get_phase() {
                 Phase::First => 107,
                 Phase::Second => 115,
             }

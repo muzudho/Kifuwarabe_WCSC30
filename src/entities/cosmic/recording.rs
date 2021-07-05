@@ -48,7 +48,7 @@ impl History {
     }
 
     /// 手番
-    pub fn get_friend(&self) -> Phase {
+    pub fn get_phase(&self) -> Phase {
         // 手番
         if self.ply % 2 == 0 {
             Phase::First
