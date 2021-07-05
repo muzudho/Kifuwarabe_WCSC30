@@ -64,7 +64,7 @@ impl Tree {
         // 初手の３０手が葉になるぜ☆（＾～＾）
         //self.evaluation.before_search();
         self.max_depth0 = 0;
-        let mut best_ts = self.node(&mut universe.game, Value::Win);
+        let mut best_ts = self.search(&mut universe.game, Value::Win);
         //self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -108,7 +108,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             //self.evaluation.before_search();
-            let ts = self.node(&mut universe.game, Value::Win);
+            let ts = self.search(&mut universe.game, Value::Win);
             //self.evaluation.after_search();
             if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -132,7 +132,7 @@ impl Tree {
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn node(&mut self, game: &mut Game, another_branch_best: Value) -> TreeState {
+    fn search(&mut self, game: &mut Game, another_branch_best: Value) -> TreeState {
         let mut ts = TreeState::default();
 
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
@@ -334,7 +334,7 @@ impl Tree {
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 //self.evaluation.before_search();
-                let opponent_ts = self.node(
+                let opponent_ts = self.search(
                     game,
                     match ts.bestmove.value {
                         Value::CentiPawn(centi_pawn) => Value::CentiPawn(-centi_pawn),

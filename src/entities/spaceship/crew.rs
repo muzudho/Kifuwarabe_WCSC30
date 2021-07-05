@@ -1,5 +1,4 @@
 use crate::config::*;
-use crate::entities::cosmic::daydream::Tree;
 use crate::entities::cosmic::playing::{Game, PosNums};
 use crate::entities::cosmic::smart::square::{AbsoluteAddress, FILE_1};
 use crate::entities::cosmic::universe::Universe;
@@ -9,6 +8,7 @@ use crate::entities::law::generate_move::Way;
 use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
+use crate::search::search::Tree;
 use rand::Rng;
 use std::io as std_io;
 
