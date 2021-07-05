@@ -1,6 +1,7 @@
 pub mod position;
 
 use crate::entities::cosmic::smart::features::HandAddress;
+use crate::entities::cosmic::smart::square::RelAdr;
 use crate::entities::law::cryptographic::num_to_lower_case;
 use crate::take1base::Move;
 
@@ -85,6 +86,32 @@ pub fn rank(sq: Square) -> u8 {
 }
 pub fn file(sq: Square) -> u8 {
     sq / 10
+}
+
+pub fn square_from(file: u8, rank: u8) -> Square {
+    file * 10 + rank
+}
+
+pub fn square_offset(sq: Square, r: &RelAdr) -> Square {
+    // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
+    // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
+    let sum = (sq as isize + r.get_address()) as u8;
+
+    // Initialize.
+    let mut rank = sum % 10;
+    let mut file = 0;
+    // Carry.
+    if 9 < rank {
+        rank = rank % 10;
+        file += 1;
+    }
+    file += sum / 10 % 10;
+    // Carry over flow.
+    if 9 < file {
+        file = file % 10;
+    }
+
+    square_from(file, rank)
 }
 
 pub fn destructure_move(num: Move) -> (Square, Square, bool) {

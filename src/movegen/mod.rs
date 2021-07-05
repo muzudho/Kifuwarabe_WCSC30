@@ -193,7 +193,7 @@ impl PseudoLegalMoves {
 
                 // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
                 let forbidden = if let Some(move_permission_val) = move_permission {
-                    if move_permission_val.check(&to) {
+                    if move_permission_val.check(to.square_number()) {
                         false
                     } else {
                         true
@@ -362,10 +362,10 @@ impl Area {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| {
+        let moving = &mut |to: AbsoluteAddress, _agility| {
             Promoting::pawn_lance(
                 us,
-                &to,
+                to.square_number(),
                 moving,
                 Some(MovePermission::from_pawn_or_lance(us)),
             )
@@ -388,10 +388,10 @@ impl Area {
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| {
+        let moving = &mut |to: AbsoluteAddress, _agility| {
             Promoting::pawn_lance(
                 us,
-                &to,
+                to.square_number(),
                 moving,
                 Some(MovePermission::from_pawn_or_lance(us)),
             )
@@ -725,8 +725,8 @@ impl MovePermission {
             },
         }
     }
-    fn check(&self, to: &AbsoluteAddress) -> bool {
-        if to.rank() < self.min_rank || self.max_rank < to.rank() {
+    fn check(&self, to: Square) -> bool {
+        if rank(to) < self.min_rank || self.max_rank < rank(to) {
             return false;
         }
         true
@@ -752,26 +752,36 @@ impl Promoting {
     /// * `move_permission` - 成らずに一番奥の段に移動することはできません。
     fn pawn_lance<F1>(
         us: Phase,
-        to: &AbsoluteAddress,
+        to: Square,
         callback: &mut F1,
         move_permission: Option<MovePermission>,
     ) -> bool
     where
         F1: FnMut(AbsoluteAddress, Promotability, Agility, Option<MovePermission>) -> bool,
     {
-        if Promoting::is_farthest_rank_from_friend(us, to.square_number()) {
+        if Promoting::is_farthest_rank_from_friend(us, to) {
             // 自陣から見て一番奥の段
             callback(
-                *to,
+                AbsoluteAddress::from_square(to),
                 Promotability::Forced,
                 Agility::Hopping,
                 move_permission,
             )
-        } else if Promoting::is_second_third_farthest_rank_from_friend(us, to.square_number()) {
+        } else if Promoting::is_second_third_farthest_rank_from_friend(us, to) {
             // 自陣から見て二番、三番目の奥の段
-            callback(*to, Promotability::Any, Agility::Hopping, move_permission)
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Any,
+                Agility::Hopping,
+                move_permission,
+            )
         } else {
-            callback(*to, Promotability::Deny, Agility::Hopping, move_permission)
+            callback(
+                AbsoluteAddress::from_square(to),
+                Promotability::Deny,
+                Agility::Hopping,
+                move_permission,
+            )
         }
     }
 
