@@ -14,7 +14,7 @@ use crate::entities::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::entities::cosmic::smart::features::PIECE_TYPE_LEN;
 use crate::entities::cosmic::smart::features::{HandAddress, HandAddressType, PieceType};
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
-use crate::movegen::generate_move::{Agility, Mobility};
+use crate::movegen::{Agility, Mobility};
 use crate::position::position::PieceNum;
 use crate::take1base::{Piece, PIECE_MEANING_LEN};
 //use num_traits::FromPrimitive;

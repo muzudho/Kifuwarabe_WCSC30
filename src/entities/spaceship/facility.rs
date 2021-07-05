@@ -1,7 +1,7 @@
 use crate::entities::cosmic::playing::{Game, PosNums};
 use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
 use crate::entities::spaceship::equipment::Beam;
-use crate::movegen::generate_move::PieceEx;
+use crate::movegen::PieceEx;
 use crate::position::destructure_move;
 use crate::position::position::Position;
 use crate::position::to_move_code;

@@ -3,7 +3,7 @@
 //! * Phase (先後。手番,相手番)
 //! * Person (先手,後手)
 //!
-use crate::movegen::generate_move::PieceEx;
+use crate::movegen::PieceEx;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 use std::fmt;

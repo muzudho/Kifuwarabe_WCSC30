@@ -6,7 +6,7 @@ use crate::entities::law::cryptographic::*;
 use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
-use crate::movegen::generate_move::PseudoLegalMoves;
+use crate::movegen::PseudoLegalMoves;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::search::search::Tree;

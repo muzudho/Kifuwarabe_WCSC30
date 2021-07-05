@@ -21,7 +21,7 @@ use crate::entities::cosmic::smart::square::{
 };
 use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
-use crate::movegen::generate_move::PieceEx; //Agility, Area,
+use crate::movegen::PieceEx; //Agility, Area,
 use crate::take1base::Piece;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
