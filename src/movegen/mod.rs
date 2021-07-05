@@ -63,6 +63,8 @@ impl Mobility {
 }
 
 /// 向き
+/// TODO 桂馬
+/// TODO 先後
 #[derive(Clone, Copy)]
 pub enum Direction {
     Right,
@@ -75,6 +77,101 @@ pub enum Direction {
     BottomRight,
 }
 
+const directions_file_rank: [(i8, i8); 8] = [
+    (1, 0),   // 右方向
+    (1, -1),  // 右上方向
+    (0, -1),  // 上方向
+    (-1, -1), // 左上方向
+    (-1, 0),  // 左方向
+    (-1, 1),  // 左下方向
+    (0, 1),   // 下方向
+    (1, 1),   // 右下方向
+];
+
+// TODO 隣の敵の利きが利いているかどうか
+// TODO 長い利き
+fn is_adjacent_opponent_control(
+    us: Phase,
+    position: &Position,
+    sq: Square,
+    direction: Direction,
+) -> bool {
+    let d_file = directions_file_rank[direction as usize].0;
+    let d_rank = directions_file_rank[direction as usize].1;
+    // TODO 隣のマス
+    let adjacent_sq = square_from(
+        (file(sq) as i8 + d_file) as u8,
+        (rank(sq) as i8 + d_rank) as u8,
+    );
+    if let Some(pc_ex) = position.piece_at(adjacent_sq) {
+        if us != pc_ex.piece.phase() {
+            // 敵の駒なら
+            // TODO 桂馬
+            match direction {
+                Direction::Right | Direction::Left => match pc_ex.piece.type_() {
+                    PieceType::K
+                    | PieceType::R
+                    | PieceType::G
+                    | PieceType::PR
+                    | PieceType::PB
+                    | PieceType::PS
+                    | PieceType::PN
+                    | PieceType::PL
+                    | PieceType::PP => return true,
+                    _ => {}
+                },
+                Direction::TopRight | Direction::TopLeft => match pc_ex.piece.type_() {
+                    PieceType::K
+                    | PieceType::B
+                    | PieceType::G
+                    | PieceType::S
+                    | PieceType::PR
+                    | PieceType::PB
+                    | PieceType::PS
+                    | PieceType::PN
+                    | PieceType::PL
+                    | PieceType::PP => return true,
+                    _ => {}
+                },
+                Direction::Top => match pc_ex.piece.type_() {
+                    PieceType::K
+                    | PieceType::R
+                    | PieceType::G
+                    | PieceType::S
+                    | PieceType::L
+                    | PieceType::P
+                    | PieceType::PR
+                    | PieceType::PB
+                    | PieceType::PS
+                    | PieceType::PN
+                    | PieceType::PL
+                    | PieceType::PP => return true,
+                    _ => {}
+                },
+                Direction::BottomLeft | Direction::BottomRight => match pc_ex.piece.type_() {
+                    PieceType::K | PieceType::B | PieceType::S | PieceType::PR | PieceType::PB => {
+                        return true
+                    }
+                    _ => {}
+                },
+                Direction::Bottom => match pc_ex.piece.type_() {
+                    PieceType::K
+                    | PieceType::R
+                    | PieceType::G
+                    | PieceType::PR
+                    | PieceType::PB
+                    | PieceType::PS
+                    | PieceType::PN
+                    | PieceType::PL
+                    | PieceType::PP => return true,
+                    _ => {}
+                },
+            };
+        }
+    }
+    false
+}
+
 /// # Returns
 ///
 /// 合い駒のマス, チェッカーのマス
@@ -84,18 +181,8 @@ fn check_checker_pin(
     ksq: Square,
     direction: Direction,
 ) -> (Option<Square>, Option<Square>) {
-    let directions = [
-        (1, 0),   // 右方向
-        (1, -1),  // 右上方向
-        (0, -1),  // 上方向
-        (-1, -1), // 左上方向
-        (-1, 0),  // 左方向
-        (-1, 1),  // 左下方向
-        (0, 1),   // 下方向
-        (1, 1),   // 右下方向
-    ];
-    let d_file = directions[direction as usize].0;
-    let d_rank = directions[direction as usize].1;
+    let d_file = directions_file_rank[direction as usize].0;
+    let d_rank = directions_file_rank[direction as usize].1;
 
     let mut file = file(ksq) as i8 + d_file;
     let mut rank = rank(ksq) as i8 + d_rank;
@@ -294,6 +381,56 @@ impl PseudoLegalMoves {
             let delete = {
                 let (from, _, _) = destructure_move(*particle);
                 pinned_list.contains(&from)
+            };
+            !delete
+        });
+
+        // TODO 玉の自殺手を除外したい（＾～＾）
+        move_list.retain(|particle| {
+            let delete = {
+                let (from, to, _) = destructure_move(*particle);
+                if from == ksq {
+                    // 玉が移動する指し手は要注意（＾～＾）
+                    let file = file(to) as i8 - file(from) as i8;
+                    let rank = rank(to) as i8 - rank(from) as i8;
+
+                    let direction = if file == -1 {
+                        if rank == -1 {
+                            Direction::TopLeft
+                        } else if rank == 0 {
+                            Direction::Left
+                        } else if rank == 1 {
+                            Direction::BottomLeft
+                        } else {
+                            panic!("(Err.405)")
+                        }
+                    } else if file == 0 {
+                        if rank == -1 {
+                            Direction::Top
+                        } else if rank == 0 {
+                            panic!("(Err.410)")
+                        } else if rank == 1 {
+                            Direction::Bottom
+                        } else {
+                            panic!("(Err.413)")
+                        }
+                    } else if file == 1 {
+                        if rank == -1 {
+                            Direction::TopRight
+                        } else if rank == 0 {
+                            Direction::Right
+                        } else if rank == 1 {
+                            Direction::BottomRight
+                        } else {
+                            panic!("(Err.420)")
+                        }
+                    } else {
+                        panic!("(Err.423)")
+                    };
+                    is_adjacent_opponent_control(us, position, to, direction)
+                } else {
+                    false
+                }
             };
             !delete
         });
