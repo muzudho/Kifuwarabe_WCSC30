@@ -22,7 +22,7 @@ pub enum PosNums {
 /// ゾブリストハッシュを使って、局面の一致判定をするのに使う☆（＾～＾）
 pub struct GameHashSeed {
     // 盤上の駒
-    pub piece: [[u64; PIECE_MEANING_LEN]; BOARD_MEMORY_AREA as usize],
+    pub piece_hash: [[u64; PIECE_MEANING_LEN]; BOARD_MEMORY_AREA as usize],
     // 持ち駒
     pub hands: [[u64; HAND_MAX]; HAND_ADDRESS_LEN],
     // 先後
@@ -51,7 +51,7 @@ impl Default for Game {
             starting_board: Position::default(),
             hash_seed: GameHashSeed {
                 // 盤上の駒
-                piece: [[0; PIECE_MEANING_LEN]; BOARD_MEMORY_AREA as usize],
+                piece_hash: [[0; PIECE_MEANING_LEN]; BOARD_MEMORY_AREA as usize],
                 // 持ち駒
                 hands: [[0; HAND_MAX]; HAND_ADDRESS_LEN],
                 // 先後
@@ -79,7 +79,7 @@ impl Game {
         for i_square in 11..BOARD_MEMORY_AREA {
             for i_piece in 0..PIECE_MEANING_LEN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
-                self.hash_seed.piece[i_square as usize][i_piece] =
+                self.hash_seed.piece_hash[i_square as usize][i_piece] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }
@@ -199,7 +199,7 @@ impl Game {
     ///
     /// # Returns
     ///
-    /// Captured piece.
+    /// 取った駒
     pub fn do_move(&mut self, move_: Move) -> Option<PieceEx> {
         // もう入っているかも知れないが、棋譜に入れる☆
         self.set_move(move_);
@@ -220,9 +220,9 @@ impl Game {
             let moveing_piece: Option<PieceEx> = if let Some(from) = from2 {
                 // 打でなければ、元の升に駒はあるので、それを消す。
                 let piece152: Option<PieceEx> = if promote2 {
-                    if let Some(piece) = self.position.pop_from_board(from) {
+                    if let Some(pc_ex) = self.position.pop_from_board(from) {
                         // 成ったのなら、元のマスの駒を成らすぜ☆（＾～＾）
-                        Some(PieceEx::new(piece.meaning.promoted(), piece.num))
+                        Some(PieceEx::new(pc_ex.piece.promoted(), pc_ex.num))
                     } else {
                         std::panic::panic_any(Beam::trouble(
                             "(Err.248) 成ったのに、元の升に駒がなかった☆（＾～＾）",
@@ -252,7 +252,7 @@ impl Game {
             cap = if let Some(collision_piece) = self.position.pop_from_board(to2) {
                 // 移動先升の駒を盤上から消し、自分の持ち駒に増やす
                 let captured_piece =
-                    PieceEx::new(collision_piece.meaning.captured(), collision_piece.num);
+                    PieceEx::new(collision_piece.piece.captured(), collision_piece.num);
                 self.position.push_hand(&captured_piece);
                 Some(collision_piece)
             } else {
@@ -289,10 +289,7 @@ impl Game {
                     if promote2 {
                         // 成ったなら、成る前へ
                         if let Some(source_piece) = self.position.pop_from_board(to2) {
-                            Some(PieceEx::new(
-                                source_piece.meaning.demoted(),
-                                source_piece.num,
-                            ))
+                            Some(PieceEx::new(source_piece.piece.demoted(), source_piece.num))
                         } else {
                             std::panic::panic_any(Beam::trouble(
                                 "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！",
@@ -304,10 +301,10 @@ impl Game {
                 } else {
                     if let Some(_drp) = drop2 {
                         // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        if let Some(piece) = self.position.pop_from_board(to2) {
+                        if let Some(pc_ex) = self.position.pop_from_board(to2) {
                             // 自分の持ち駒を増やそうぜ☆（＾～＾）！
-                            self.position.push_hand(&piece);
-                            Some(piece)
+                            self.position.push_hand(&pc_ex);
+                            Some(pc_ex)
                         } else {
                             panic!("dst={:?}", to2)
                         }
@@ -321,7 +318,7 @@ impl Game {
                 if let Some(captured_piece_val) = captured {
                     // 自分の持ち駒を減らす
                     self.position
-                        .pop_hand(captured_piece_val.meaning.captured().hand_address());
+                        .pop_hand(captured_piece_val.piece.captured().hand_address());
                     // 移動先の駒を、取った駒（あるいは空）に戻す
                     self.position.push_to_board(to2, captured);
                 }

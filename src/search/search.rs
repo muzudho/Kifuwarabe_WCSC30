@@ -185,8 +185,8 @@ impl Tree {
             for i in 0..cap {
                 let (_, to, _) = destructure_move(move_list[i]);
                 if let Some(captured) = game.position.piece_at(to) {
-                    match captured.meaning.r#type() {
-                        PieceType::King => {
+                    match captured.piece.type_() {
+                        PieceType::K => {
                             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                             // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
                             move_list.swap(king, i);
@@ -234,7 +234,7 @@ impl Tree {
 
             // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {
-                if captured_piece_val.meaning.r#type() == PieceType::King {
+                if captured_piece_val.piece.type_() == PieceType::K {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     ts.bestmove.catch_king(*move_); // move_.movement
 

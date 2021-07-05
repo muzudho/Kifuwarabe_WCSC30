@@ -37,10 +37,10 @@
 //         //     for recipe in &recipes {
 //         //         let mut cur = adr.clone();
 //         //         if cur.offset(&recipe.0).legal_cur() {
-//         //             let piece = game.position.piece_at(&cur);
-//         //             if let Some(piece_val) = piece {
-//         //                 if piece_val.meaning.phase() != current_target_piece.meaning.phase()
-//         //                     || piece_val.meaning.r#type().movility().contains(&recipe.1)
+//         //             let pc_ex = game.position.piece_at(&cur);
+//         //             if let Some(piece_val) = pc_ex {
+//         //                 if piece_val.piece.phase() != current_target_piece.piece.phase()
+//         //                     || piece_val.piece.type_().movility().contains(&recipe.1)
 //         //                 {
 //         //                     // 敵の駒も西に動けるんだったら、利かされているぜ☆（＾～＾）
 //         //                     // 自分の駒が取られるということだぜ☆（＾～＾）
@@ -53,27 +53,27 @@
 //         //     for recipe in &recipes {
 //         //         let mut cur = adr.clone();
 //         //         if cur.offset(&recipe.0).legal_cur() {
-//         //             let piece = game.position.piece_at(&cur);
-//         //             if let Some(piece_val) = piece {
-//         //                 if piece_val.meaning.phase() != current_target_piece.meaning.phase()
-//         //                     || piece_val.meaning.r#type().movility().contains(&recipe.1)
+//         //             let pc_ex = game.position.piece_at(&cur);
+//         //             if let Some(piece_val) = pc_ex {
+//         //                 if piece_val.piece.phase() != current_target_piece.piece.phase()
+//         //                     || piece_val.piece.type_().movility().contains(&recipe.1)
 //         //                 {
 //         //                     // 敵の駒も西に動けるんだったら、利かされているぜ☆（＾～＾）
 //         //                     // 自分の駒が取られるということだぜ☆（＾～＾）
 //         //                     centi_pawn -= current_target_piece
-//         //                         .meaning
+//         //                         .piece
 //         //                         .hand_address()
-//         //                         .r#type()
+//         //                         .type_()
 //         //                         .captured_value();
-//         //                     next_target_piece = piece;
+//         //                     next_target_piece = pc_ex;
 //         //                     game.do_move();
 //         //                     break;
 //         //                 }
 //         //             }
 //         //         }
 //         //     }
-//         //     if let Some(piece) = next_target_piece {
-//         //         current_target_piece = piece;
+//         //     if let Some(pc_ex) = next_target_piece {
+//         //         current_target_piece = pc_ex;
 //         //     } else {
 //         //         break;
 //         //     }

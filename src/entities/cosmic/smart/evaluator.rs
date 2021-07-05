@@ -69,11 +69,11 @@
 
 //         // 成り駒を取って降格させたら、成り駒評価値追加だぜ☆（＾～＾）
 //         let delta_promotion = if let Some(captured_piece_val) = captured_piece {
-//             if captured_piece_val.meaning
-//                 .r#type()
+//             if captured_piece_val.piece
+//                 .type_()
 //                 .promoted()
 //             {
-//                 captured_piece_val.meaning.hand_address().r#type().promotion_value()
+//                 captured_piece_val.piece.hand_address().type_().promotion_value()
 //             } else {
 //                 0
 //             }
@@ -84,7 +84,7 @@
 //         +
 //         if let Some(source_piece_val) = source_piece {
 //             if promotion {
-//                 source_piece_val.meaning.hand_address().r#type().promotion_value()
+//                 source_piece_val.piece.hand_address().type_().promotion_value()
 //             } else {
 //                 0
 //             }
@@ -112,9 +112,9 @@
 //     fn caputured_piece_value(captured_piece: &Option<PieceEx>) -> isize {
 //         if let Some(captured_piece_val) = captured_piece {
 //             captured_piece_val
-//                 .meaning
+//                 .piece
 //                 .hand_address()
-//                 .r#type()
+//                 .type_()
 //                 .captured_value()
 //         } else {
 //             0

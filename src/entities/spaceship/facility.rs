@@ -49,9 +49,9 @@ impl CommandRoom {
 /// ゲームルームはこちらだぜ☆（＾～＾）！
 pub struct GameRoom {}
 impl GameRoom {
-    fn to_string2(piece: Option<PieceEx>) -> String {
-        if let Some(piece_val) = piece {
-            format!("{}", piece_val.meaning)
+    fn to_string2(pc_ex: Option<PieceEx>) -> String {
+        if let Some(pc_ex) = pc_ex {
+            format!("{}", pc_ex.piece)
         } else {
             PIECE_WHITE_SPACE.to_string()
         }
@@ -349,7 +349,7 @@ impl Kitchen {
                 "{}{}",
                 format!("{}", to_move_code(*move_)),
                 if let Some(captured) = position.piece_at(to) {
-                    format!(" ({})", captured.meaning)
+                    format!(" ({})", captured.piece)
                 } else {
                     "".to_string()
                 }

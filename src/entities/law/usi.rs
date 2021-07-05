@@ -269,9 +269,9 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
         };
 
         match board_part {
-            BoardPart::Alphabet(piece) => {
+            BoardPart::Alphabet(pc) => {
                 *starts += 1;
-                position.push_piece_on_init(file, rank, Some(piece));
+                position.push_piece_on_init(file, rank, Some(pc));
                 file -= 1;
             }
             BoardPart::Number(space_num) => {

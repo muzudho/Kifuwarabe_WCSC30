@@ -174,34 +174,34 @@ impl Default for SpeedOfLight {
                 Second, // PromotedPawn2
             ],
             piece_meaning_type_table: [
-                King,           // King1
-                Rook,           // Rook1
-                Bishop,         // Bishop1
-                Gold,           // Gold1
-                Silver,         // Silver1
-                Knight,         // Knight1
-                Lance,          // Lance1
-                Pawn,           // Pawn1
-                Dragon,         // Dragon1
-                Horse,          // Horse1
-                PromotedSilver, // PromotedSilver1
-                PromotedKnight, // PromotedKnight1
-                PromotedLance,  // PromotedLance1
-                PromotedPawn,   // PromotedPawn1
-                King,           // King2
-                Rook,           // Rook2
-                Bishop,         // Bishop2
-                Gold,           // Gold2
-                Silver,         // Silver2
-                Knight,         // Knight2
-                Lance,          // Lance2
-                Pawn,           // Pawn2
-                Dragon,         // Dragon2
-                Horse,          // Horse2
-                PromotedSilver, // PromotedSilver2
-                PromotedKnight, // PromotedKnight2
-                PromotedLance,  // PromotedLance2
-                PromotedPawn,   // PromotedPawn2
+                K,  // King1
+                R,  // Rook1
+                B,  // Bishop1
+                G,  // Gold1
+                S,  // Silver1
+                N,  // Knight1
+                L,  // Lance1
+                P,  // Pawn1
+                PR, // Dragon1
+                PB, // Horse1
+                PS, // PromotedSilver1
+                PN, // PromotedKnight1
+                PL, // PromotedLance1
+                PP, // PromotedPawn1
+                K,  // King2
+                R,  // Rook2
+                B,  // Bishop2
+                G,  // Gold2
+                S,  // Silver2
+                N,  // Knight2
+                L,  // Lance2
+                P,  // Pawn2
+                PR, // Dragon2
+                PB, // Horse2
+                PS, // PromotedSilver2
+                PN, // PromotedKnight2
+                PL, // PromotedLance2
+                PP, // PromotedPawn2
             ],
             piece_meaning_promoted_table: [
                 K1,  // King1
@@ -721,7 +721,7 @@ impl Piece {
         NINE_299792458.piece_meaning_to_phase_table[self as usize]
     }
 
-    pub fn r#type(self) -> PieceType {
+    pub fn type_(self) -> PieceType {
         NINE_299792458.piece_meaning_type_table[self as usize]
     }
 
@@ -778,7 +778,7 @@ impl HandAddress {
     pub fn from_phase_and_type(phase: Phase, adr: HandAddressType) -> Self {
         NINE_299792458.hand_addresses[phase as usize][adr as usize]
     }
-    pub fn r#type(self) -> HandAddressType {
+    pub fn type_(self) -> HandAddressType {
         NINE_299792458.hand_address_to_type_table[self as usize]
     }
 }

@@ -244,32 +244,32 @@ impl Position {
     pub fn init_controls(&mut self) {
         Area::for_all(&mut |source| {
             // そこに置いてある駒を調べようぜ☆（＾～＾）？
-            if let Some(piece) = self.piece_at(&source) {
+            if let Some(pc_ex) = self.piece_at(&source) {
                 // 駒の利きを調べようぜ☆（＾～＾）？
-                for mobility in piece.meaning.r#type().mobility() {
+                for mobility in pc_ex.piece.type_().mobility() {
                     match mobility.agility {
                         Agility::Hopping => {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle);
-                            if piece.meaning.phase() == Phase::Second {
+                            if pc_ex.piece.phase() == Phase::Second {
                                 rel.rotate_180();
                             }
                             if !cur.offset(&rel).wall() {
-                                self.add_control(piece.meaning.phase(), &cur, 1);
+                                self.add_control(pc_ex.piece.phase(), &cur, 1);
                             }
                         }
                         Agility::Sliding => {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle);
-                            if piece.meaning.phase() == Phase::Second {
+                            if pc_ex.piece.phase() == Phase::Second {
                                 rel.rotate_180();
                             }
                             for _i in 0..8 {
                                 if !cur.offset(&rel).wall() {
                                     // とりあえず盤の上なら隣に利きは通るぜ☆（＾～＾）
-                                    self.add_control(piece.meaning.phase(), &cur, 1);
+                                    self.add_control(pc_ex.piece.phase(), &cur, 1);
 
                                     // 利きを調べたいだけなんで、味方／敵問わず駒が有れば終了だぜ☆（＾～＾）
                                     if let Some(_collision_piece) = self.piece_at(&cur) {
@@ -285,11 +285,11 @@ impl Position {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle).double_rank();
-                            if piece.meaning.phase() == Phase::Second {
+                            if pc_ex.piece.phase() == Phase::Second {
                                 rel.rotate_180();
                             }
                             if !cur.offset(&rel).wall() {
-                                self.add_control(piece.meaning.phase(), &cur, 1);
+                                self.add_control(pc_ex.piece.phase(), &cur, 1);
                             }
                         }
                     }
@@ -303,8 +303,8 @@ impl Position {
     pub fn exists_pawn_on_file(&self, phase: Phase, file: u8) -> bool {
         for rank in RANK_1..RANK_10 {
             let sq = square_from(file, rank);
-            if let Some(piece) = self.piece_at(sq) {
-                if piece.meaning.phase() == phase && piece.meaning.r#type() == PieceType::Pawn {
+            if let Some(pc_ex) = self.piece_at(sq) {
+                if pc_ex.piece.phase() == phase && pc_ex.piece.type_() == PieceType::P {
                     return true;
                 }
             }
@@ -321,9 +321,9 @@ impl Position {
     }
 
     /// 升で指定して駒を置く
-    pub fn push_to_board(&mut self, sq: Square, piece: Option<PieceEx>) {
-        if let Some(piece_val) = piece {
-            self.board[sq as usize] = piece;
+    pub fn push_to_board(&mut self, sq: Square, pc_ex: Option<PieceEx>) {
+        if let Some(piece_val) = pc_ex {
+            self.board[sq as usize] = pc_ex;
             self.pc_num_to_location[piece_val.num as usize] = sq;
         } else {
             self.board[sq as usize] = None;
@@ -332,15 +332,15 @@ impl Position {
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
     pub fn pop_from_board(&mut self, sq: Square) -> Option<PieceEx> {
         // 取り出すピースは複製するぜ☆（＾～＾）
-        let piece = self.board[sq as usize].clone();
-        if let Some(piece_val) = piece {
+        let pc_ex = self.board[sq as usize].clone();
+        if let Some(piece_val) = pc_ex {
             self.board[sq as usize] = None;
             self.pc_num_to_location[piece_val.num as usize] = SQUARE_NONE;
         }
-        piece
+        pc_ex
     }
     /// 盤に駒か空升を置いていきます。
-    pub fn push_piece_on_init(&mut self, file: u8, rank: u8, piece: Option<Piece>) {
+    pub fn push_piece_on_init(&mut self, file: u8, rank: u8, pc_ex: Option<Piece>) {
         if !(FILE_0 < file && file < FILE_10 && RANK_0 < rank && rank < RANK_10) {
             std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.323) 盤上の初期化で盤の外を指定するのは止めろだぜ☆（＾～＾）！ ({}, {})",
@@ -348,7 +348,7 @@ impl Position {
             )))
         }
 
-        if let Some(piece_meaning) = piece {
+        if let Some(piece_meaning) = pc_ex {
             let from = square_from(file, rank);
             let piece_num = match piece_meaning {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
@@ -361,7 +361,7 @@ impl Position {
                     PieceNum::King2
                 }
                 _ => {
-                    let hand_type = piece_meaning.hand_address().r#type();
+                    let hand_type = piece_meaning.hand_address().type_();
                     self.pc_num_to_location[self.hand_index[hand_type as usize]] = from;
                     if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
                         self.hand_index[hand_type as usize] += 1;
@@ -382,7 +382,7 @@ impl Position {
         for _i in 0..number {
             let ha = piece_meaning.hand_address();
             let hand = piece_meaning.hand_address();
-            let hand_type = hand.r#type();
+            let hand_type = hand.type_();
             let cursor = self.hand_index[hand_type as usize];
             self.pc_num_to_location[cursor] = hand_address_to_square(ha);
             if let Some(pn) = PieceNum::from_usize(cursor) {
@@ -394,14 +394,14 @@ impl Position {
         }
     }
     pub fn push_hand(&mut self, hand: &PieceEx) {
-        let adr = hand.meaning.hand_address();
+        let adr = hand.piece.hand_address();
         self.hands[adr as usize].push(hand);
         self.pc_num_to_location[hand.num as usize] = hand_address_to_square(adr);
     }
     pub fn pop_hand(&mut self, ha: HandAddress) -> PieceEx {
-        let piece = self.hands[ha as usize].pop();
-        self.pc_num_to_location[piece.num as usize] = SQUARE_NONE;
-        piece
+        let pc_ex = self.hands[ha as usize].pop();
+        self.pc_num_to_location[pc_ex.num as usize] = SQUARE_NONE;
+        pc_ex
     }
     /// 指し手生成で使うぜ☆（＾～＾）
     pub fn last_hand(&self, adr: HandAddress) -> Option<&PieceEx> {
@@ -419,8 +419,8 @@ impl Position {
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
                 let sq = square_from(file, rank);
-                if let Some(piece) = self.piece_at(sq) {
-                    hash ^= game.hash_seed.piece[sq as usize][piece.meaning as usize];
+                if let Some(pc_ex) = self.piece_at(sq) {
+                    hash ^= game.hash_seed.piece_hash[sq as usize][pc_ex.piece as usize];
                 }
             }
         }
@@ -451,8 +451,8 @@ impl Position {
         for (i, sq) in self.pc_num_to_location.iter().enumerate() {
             if is_board_square(*sq) {
                 // 盤上の駒☆（＾～＾）
-                if let Some(piece) = self.piece_at(*sq) {
-                    piece_get(i, Some(*sq), Some(piece));
+                if let Some(pc_ex) = self.piece_at(*sq) {
+                    piece_get(i, Some(*sq), Some(pc_ex));
                 } else {
                     panic!("sq={:?}", sq)
                 }
@@ -476,9 +476,9 @@ impl Position {
             let sq = self.pc_num_to_location[*piece_num as usize];
             if is_board_square(sq) {
                 // 盤上の駒☆（＾～＾）
-                if let Some(piece) = self.piece_at(sq) {
-                    if piece.meaning.phase() == us {
-                        piece_get(sq, piece);
+                if let Some(pc_ex) = self.piece_at(sq) {
+                    if pc_ex.piece.phase() == us {
+                        piece_get(sq, pc_ex);
                     }
                 } else {
                     panic!("sq={:?}", sq)
@@ -515,8 +515,8 @@ impl Position {
             ],
         ];
         for ha in &FIRST_SECOND[us as usize] {
-            if let Some(piece) = self.last_hand(*ha) {
-                piece_get(hand_address_to_square(*ha), *piece);
+            if let Some(pc_ex) = self.last_hand(*ha) {
+                piece_get(hand_address_to_square(*ha), *pc_ex);
             }
         }
     }
@@ -537,16 +537,16 @@ impl Default for HandAddressTypeStack {
     }
 }
 impl HandAddressTypeStack {
-    fn push(&mut self, piece: &PieceEx) {
-        self.items[self.count] = *piece;
+    fn push(&mut self, pc_ex: &PieceEx) {
+        self.items[self.count] = *pc_ex;
         self.count += 1;
     }
 
     fn pop(&mut self) -> PieceEx {
         self.count -= 1;
-        let piece = self.items[self.count];
+        let pc_ex = self.items[self.count];
         // ゴミ値は消さないぜ☆（＾～＾）
-        piece
+        pc_ex
     }
 
     fn last(&self) -> Option<&PieceEx> {
@@ -567,7 +567,7 @@ impl fmt::Display for HandAddressTypeStack {
         for i in 0..=self.count {
             buffer.push_str(&format!(
                 "({}, {:?}) ",
-                self.items[i].meaning, self.items[i].num
+                self.items[i].piece, self.items[i].num
             ));
         }
         write!(f, "{}", buffer.trim_end())

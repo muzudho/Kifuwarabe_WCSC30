@@ -113,7 +113,7 @@ impl Lioncatch {
                     if let Some(any_piece_val) = any_piece {
                         if let None = friend_piece {
                             // 味方の駒か☆（＾～＾）？
-                            if any_piece_val.meaning.phase() == self.phase {
+                            if any_piece_val.piece.phase() == self.phase {
                                 // そうだぜ☆（＾～＾）
                                 friend_piece = Some(any_piece_val);
                             } else {
@@ -122,10 +122,10 @@ impl Lioncatch {
                             }
                         } else {
                             // 相手の香飛角か☆（＾～＾）？
-                            if any_piece_val.meaning.phase() == self.opponent {
+                            if any_piece_val.piece.phase() == self.opponent {
                                 if any_piece_val
-                                    .meaning
-                                    .r#type()
+                                    .piece
+                                    .type_()
                                     .movility()
                                     .contains(&recipe.1)
                                 {
@@ -190,10 +190,10 @@ impl Lioncatch {
                 Log::write(&format!("cur2={:?}", cur));
                 // 1つ隣に駒があるか確認だぜ☆（＾～＾）
                 if let Some(any_piece_val) = game.position.piece_at(&cur) {
-                    if any_piece_val.meaning.phase() == self.phase
+                    if any_piece_val.piece.phase() == self.phase
                         && any_piece_val
-                            .meaning
-                            .r#type()
+                            .piece
+                            .type_()
                             .movility()
                             .contains(&recipe.1)
                     {
@@ -261,10 +261,10 @@ impl Lioncatch {
                     // 1つ隣になんか駒があるか確認だぜ☆（＾～＾）
                     if let Some(any_piece_val) = game.position.piece_at(&cur) {
                         // それがスライディング自駒か確認だぜ☆（＾～＾）
-                        if any_piece_val.meaning.phase() == self.phase
+                        if any_piece_val.piece.phase() == self.phase
                             && any_piece_val
-                                .meaning
-                                .r#type()
+                                .piece
+                                .type_()
                                 .movility()
                                 .contains(&recipe.1)
                         {

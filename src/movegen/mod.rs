@@ -5,6 +5,7 @@
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddress;
 use crate::entities::cosmic::smart::features::PieceType;
+use crate::entities::cosmic::smart::square::FILE_0;
 use crate::entities::cosmic::smart::square::{
     Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4, RANK_6, RANK_7,
     RANK_8, RANK_9,
@@ -29,21 +30,21 @@ use std::fmt;
 #[derive(Clone, Copy, PartialEq)]
 pub struct PieceEx {
     /// 深い意味は無く Stockfish の Piece（＾～＾）
-    pub meaning: Piece,
+    pub piece: Piece,
     /// 将棋の駒の背番号だぜ☆（＾～＾）
     pub num: PieceNum,
 }
 impl PieceEx {
-    pub fn new(meaning: Piece, num: PieceNum) -> Self {
+    pub fn new(piece: Piece, num: PieceNum) -> Self {
         PieceEx {
-            meaning: meaning,
+            piece: piece,
             num: num,
         }
     }
 }
 impl fmt::Debug for PieceEx {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "PieceEx({} {:?})", self.meaning, self.num)
+        write!(f, "PieceEx({} {:?})", self.piece, self.num)
     }
 }
 
@@ -99,6 +100,27 @@ impl PseudoLegalMoves {
             // TODO 合い駒(Pinned)検索
 
             // TODO 右方向
+            {
+                let mut pinned: Option<Piece> = None; // 合い駒か、ただの自駒
+                let mut checker: Option<Piece> = None; // チェック駒
+                let rank = rank(ksq);
+                for file in file(ksq) + 1..FILE_0 {
+                    let sq = square_from(file, rank);
+                    if let Some(pc_ex) = position.piece_at(sq) {
+                        if us == pc_ex.piece.phase() {
+                            // 合い駒か、ただの自駒か
+                            pinned = Some(pc_ex.piece);
+                        } else {
+                            // 敵駒
+                            // match pc_ex.piece.type_ {
+                            //     PieceType::Rook =>,
+                            // }
+                        }
+                    } else {
+                    }
+                }
+            }
+
             // TODO 右上方向
             // TODO 上方向
             // TODO 左上方向
@@ -107,7 +129,7 @@ impl PseudoLegalMoves {
             // TODO 下方向
             // TODO 右下方向
 
-            // TODO チェッカー(Checker)検索
+            // TODO スライディング・チェッカー(Sliding Checker)検索
         } else {
             panic!("(Err.93) ksq fail")
         }
@@ -125,9 +147,9 @@ impl PseudoLegalMoves {
         };
 
         // 座標ではなく、駒の背番号で検索
-        position.for_some_pieces_on_list40(us, &mut |sq, piece| {
+        position.for_some_pieces_on_list40(us, &mut |sq, pc_ex| {
             if is_board_square(sq) {
-                PseudoLegalMoves::start_on_board(us, sq, &piece, position, listen_move)
+                PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, listen_move)
             } else if is_hand_square(sq) {
                 PseudoLegalMoves::make_drop(us, square_to_hand_address(sq), position, listen_move);
             } else {
@@ -146,7 +168,7 @@ impl PseudoLegalMoves {
     /// ---------
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `piece` - 駒だぜ☆（＾～＾）
+    /// * `pc_ex` - 駒だぜ☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     ///
@@ -158,7 +180,7 @@ impl PseudoLegalMoves {
     fn start_on_board<F1>(
         us: Phase,
         from: Square,
-        piece: &PieceEx,
+        pc_ex: &PieceEx,
         position: &Position,
         listen_move: &mut F1,
     ) where
@@ -168,7 +190,7 @@ impl PseudoLegalMoves {
             let pseudo_captured = position.piece_at(to);
 
             let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
-                if pseudo_captured_val.meaning.phase() == us {
+                if pseudo_captured_val.piece.phase() == us {
                     // 味方の駒を取った☆（＾～＾）なしだぜ☆（＾～＾）！
                     (false, false)
                 } else {
@@ -219,7 +241,7 @@ impl PseudoLegalMoves {
             !space
         };
 
-        Area::piece_of(piece.meaning.r#type(), us, from, moving);
+        Area::piece_of(pc_ex.piece.type_(), us, from, moving);
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -235,13 +257,13 @@ impl PseudoLegalMoves {
     where
         F1: FnMut(Move),
     {
-        if let Some(piece) = position.last_hand(adr) {
+        if let Some(pc_ex) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
             let drop = &mut |to| {
                 if let None = position.piece_at(to) {
                     // 駒が無いところに打つ
                     use crate::take1base::Piece::*;
-                    match piece.meaning {
+                    match pc_ex.piece {
                         P1 | P2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
                             if position.exists_pawn_on_file(us, file(to)) {
@@ -252,16 +274,16 @@ impl PseudoLegalMoves {
                     }
                     listen_move(new_move(
                         us,
-                        None,                                        // 駒台
-                        to,                                          // どの升へ行きたいか
-                        false,                                       // 打に成りは無し
-                        Some(piece.meaning.hand_address().r#type()), // 打った駒種類
+                        None,                                     // 駒台
+                        to,                                       // どの升へ行きたいか
+                        false,                                    // 打に成りは無し
+                        Some(pc_ex.piece.hand_address().type_()), // 打った駒種類
                     ));
                 }
             };
 
             // 駒を持っていれば
-            let ty = adr.r#type();
+            let ty = adr.type_();
             use crate::entities::cosmic::smart::features::HandAddressType::*;
             match ty {
                 // 歩、香
@@ -309,20 +331,20 @@ impl Area {
         F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         match piece_type {
-            PieceType::Pawn => Area::pawn(us, from, moving),
-            PieceType::Lance => Area::lance(us, from, moving),
-            PieceType::Knight => Area::knight(us, from, moving),
-            PieceType::Silver => Area::silver(us, from, moving),
-            PieceType::Gold => Area::gold(us, from, moving),
-            PieceType::King => Area::king(from, moving),
-            PieceType::Bishop => Area::bishop(us, from, moving),
-            PieceType::Rook => Area::rook(us, from, moving),
-            PieceType::PromotedPawn => Area::gold(us, from, moving),
-            PieceType::PromotedLance => Area::gold(us, from, moving),
-            PieceType::PromotedKnight => Area::gold(us, from, moving),
-            PieceType::PromotedSilver => Area::gold(us, from, moving),
-            PieceType::Horse => Area::horse(from, moving),
-            PieceType::Dragon => Area::dragon(from, moving),
+            PieceType::P => Area::pawn(us, from, moving),
+            PieceType::L => Area::lance(us, from, moving),
+            PieceType::N => Area::knight(us, from, moving),
+            PieceType::S => Area::silver(us, from, moving),
+            PieceType::G => Area::gold(us, from, moving),
+            PieceType::K => Area::king(from, moving),
+            PieceType::B => Area::bishop(us, from, moving),
+            PieceType::R => Area::rook(us, from, moving),
+            PieceType::PP => Area::gold(us, from, moving),
+            PieceType::PL => Area::gold(us, from, moving),
+            PieceType::PN => Area::gold(us, from, moving),
+            PieceType::PS => Area::gold(us, from, moving),
+            PieceType::PB => Area::horse(from, moving),
+            PieceType::PR => Area::dragon(from, moving),
         }
     }
 
@@ -342,7 +364,7 @@ impl Area {
             Promoting::pawn_lance(us, to, moving, Some(MovePermission::from_pawn_or_lance(us)))
         };
 
-        for mobility in PieceType::Pawn.mobility().iter() {
+        for mobility in PieceType::P.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
     }
@@ -363,7 +385,7 @@ impl Area {
             Promoting::pawn_lance(us, to, moving, Some(MovePermission::from_pawn_or_lance(us)))
         };
 
-        for mobility in PieceType::Lance.mobility().iter() {
+        for mobility in PieceType::L.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
     }
@@ -384,7 +406,7 @@ impl Area {
             Promoting::knight(us, to, moving, Some(MovePermission::from_knight(us)))
         };
 
-        for mobility in PieceType::Knight.mobility().iter() {
+        for mobility in PieceType::N.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
     }
@@ -403,7 +425,7 @@ impl Area {
     {
         let moving = &mut |to, _agility| Promoting::silver(us, from, to, moving);
 
-        for mobility in PieceType::Silver.mobility().iter() {
+        for mobility in PieceType::S.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
     }
@@ -422,7 +444,7 @@ impl Area {
     {
         let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
 
-        for mobility in PieceType::Gold.mobility().iter() {
+        for mobility in PieceType::G.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
     }
@@ -440,7 +462,7 @@ impl Area {
     {
         let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
 
-        for mobility in PieceType::King.mobility().iter() {
+        for mobility in PieceType::K.mobility().iter() {
             Area::move_(&None, from, *mobility, moving);
         }
     }
@@ -457,7 +479,7 @@ impl Area {
         F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to, _agility| Promoting::bishop_rook(us, from, to, moving);
-        for mobility in PieceType::Bishop.mobility().iter() {
+        for mobility in PieceType::B.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
     }
@@ -474,7 +496,7 @@ impl Area {
         F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
     {
         let moving = &mut |to, _agility| Promoting::bishop_rook(us, from, to, moving);
-        for mobility in PieceType::Rook.mobility().iter() {
+        for mobility in PieceType::R.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
     }
@@ -492,7 +514,7 @@ impl Area {
     {
         let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
 
-        for mobility in PieceType::Horse.mobility().iter() {
+        for mobility in PieceType::PB.mobility().iter() {
             Area::move_(&None, from, *mobility, moving);
         }
     }
@@ -511,7 +533,7 @@ impl Area {
         {
             let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
 
-            for mobility in PieceType::Dragon.mobility().iter() {
+            for mobility in PieceType::PR.mobility().iter() {
                 Area::move_(&None, from, *mobility, moving);
             }
         }

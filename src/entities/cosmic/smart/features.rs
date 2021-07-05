@@ -20,54 +20,54 @@ pub const PIECE_TYPE_LEN: usize = 14;
 /// USIでCopyするので、Copyが要る。
 #[derive(Copy, Clone, PartialEq)]
 pub enum PieceType {
-    // 玉
-    King,
-    // 飛
-    Rook,
-    // 角
-    Bishop,
-    // 金
-    Gold,
-    // 銀
-    Silver,
-    // 桂
-    Knight,
-    // 香
-    Lance,
-    // 歩
-    Pawn,
-    // 竜
-    Dragon,
-    // 馬
-    Horse,
-    // 全
-    PromotedSilver,
-    // 圭
-    PromotedKnight,
-    // 杏
-    PromotedLance,
-    // ぱわーあっぷひよこ
-    PromotedPawn,
+    // 玉 King
+    K,
+    // 飛 Rook
+    R,
+    // 角 Bishop
+    B,
+    // 金 Gold
+    G,
+    // 銀 Silver
+    S,
+    // 桂 Knight
+    N,
+    // 香 Lance
+    L,
+    // 歩 Pawn
+    P,
+    // 竜 Promoted Rook (Dragon)
+    PR,
+    // 馬 Promoted Bishop (Horse)
+    PB,
+    // 全 Promoted Silver
+    PS,
+    // 圭 Promoted Knight
+    PN,
+    // 杏 Promoted Lance
+    PL,
+    // と Promoted Pawn
+    PP,
 }
 impl fmt::Display for PieceType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
         use self::PieceType::*;
         match *self {
-            King => write!(f, "ら"),
-            Rook => write!(f, "き"),
-            Bishop => write!(f, "ぞ"),
-            Gold => write!(f, "い"),
-            Silver => write!(f, "ね"),
-            Knight => write!(f, "う"),
-            Lance => write!(f, "い"),
-            Pawn => write!(f, "ひ"),
-            Dragon => write!(f, "PK"),
-            Horse => write!(f, "PZ"),
-            PromotedSilver => write!(f, "PN"),
-            PromotedKnight => write!(f, "PU"),
-            PromotedLance => write!(f, "PS"),
-            PromotedPawn => write!(f, "PH"),
+            K => write!(f, "ら"),
+            R => write!(f, "き"),
+            B => write!(f, "ぞ"),
+            G => write!(f, "い"),
+            S => write!(f, "ね"),
+            N => write!(f, "う"),
+            L => write!(f, "い"),
+            P => write!(f, "ひ"),
+            PR => write!(f, "PK"),
+            PB => write!(f, "PZ"),
+            PS => write!(f, "PN"),
+            PN => write!(f, "PU"),
+            PL => write!(f, "PS"),
+            PP => write!(f, "PH"),
         }
     }
 }

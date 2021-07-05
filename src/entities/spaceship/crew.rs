@@ -210,7 +210,7 @@ impl Chiyuri {
         universe
             .game
             .position
-            .for_all_pieces_on_board(&mut |i, adr, piece| {
+            .for_all_pieces_on_board(&mut |i, adr, pc_ex| {
                 Beam::shoot(&format!(
                     "[{}]{}{}",
                     i,
@@ -219,8 +219,8 @@ impl Chiyuri {
                     } else {
                         " --".to_string()
                     },
-                    if let Some(piece_val) = piece {
-                        format!(" {} {:?}", piece_val.meaning, piece_val.num)
+                    if let Some(piece_val) = pc_ex {
+                        format!(" {} {:?}", piece_val.piece, piece_val.num)
                     } else {
                         " --".to_string()
                     }
