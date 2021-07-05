@@ -330,11 +330,11 @@ impl Position {
         }
     }
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
-    pub fn pop_from_board(&mut self, adr: &AbsoluteAddress) -> Option<PieceEx> {
+    pub fn pop_from_board(&mut self, sq: Square) -> Option<PieceEx> {
         // 取り出すピースは複製するぜ☆（＾～＾）
-        let piece = self.board[adr.square_number() as usize].clone();
+        let piece = self.board[sq as usize].clone();
         if let Some(piece_val) = piece {
-            self.board[adr.square_number() as usize] = None;
+            self.board[sq as usize] = None;
             self.pc_num_to_location[piece_val.num as usize] = SQUARE_NONE;
         }
         piece
@@ -349,21 +349,20 @@ impl Position {
         }
 
         if let Some(piece_meaning) = piece {
-            let source = AbsoluteAddress::new(file, rank);
+            let from = square_from(file, rank);
             let piece_num = match piece_meaning {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 Piece::K1 => {
-                    self.pc_num_to_location[PieceNum::King1 as usize] = source.square_number();
+                    self.pc_num_to_location[PieceNum::King1 as usize] = from;
                     PieceNum::King1
                 }
                 Piece::K2 => {
-                    self.pc_num_to_location[PieceNum::King2 as usize] = source.square_number();
+                    self.pc_num_to_location[PieceNum::King2 as usize] = from;
                     PieceNum::King2
                 }
                 _ => {
                     let hand_type = piece_meaning.hand_address().r#type();
-                    self.pc_num_to_location[self.hand_index[hand_type as usize]] =
-                        source.square_number();
+                    self.pc_num_to_location[self.hand_index[hand_type as usize]] = from;
                     if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
                         self.hand_index[hand_type as usize] += 1;
                         pn
