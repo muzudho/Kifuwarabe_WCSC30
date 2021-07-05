@@ -147,7 +147,7 @@ impl PseudoLegalMoves {
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    pub fn make_move<F1>(friend: Phase, board: &Board, listen_move: &mut F1)
+    pub fn gen_move<F1>(friend: Phase, board: &Board, listen_move: &mut F1)
     where
         // TODO F1: FnMut(Option<Way>, &AbsoluteAddress),
         F1: FnMut(Way),

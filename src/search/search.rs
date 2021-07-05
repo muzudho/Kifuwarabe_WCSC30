@@ -154,7 +154,7 @@ impl Tree {
 
             // 現局面で、各駒が、他に駒がないと考えた場合の最大数の指し手を生成しろだぜ☆（＾～＾）
             /* TODO
-            PseudoLegalMoves::make_move(
+            PseudoLegalMoves::gen_move(
                 game.history.get_friend(),
                 &game.board,
                 &mut |way, destination| {
@@ -166,7 +166,7 @@ impl Tree {
                 },
             );
             */
-            PseudoLegalMoves::make_move(game.history.get_friend(), &game.board, &mut |way| {
+            PseudoLegalMoves::gen_move(game.history.get_friend(), &game.board, &mut |way| {
                 ways.push(&way);
             });
 
