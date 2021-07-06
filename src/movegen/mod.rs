@@ -5,6 +5,10 @@
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddress;
 use crate::entities::cosmic::smart::features::PieceType;
+use crate::entities::cosmic::smart::square::I_FILE_1;
+use crate::entities::cosmic::smart::square::I_FILE_10;
+use crate::entities::cosmic::smart::square::I_RANK_1;
+use crate::entities::cosmic::smart::square::I_RANK_10;
 use crate::entities::cosmic::smart::square::{
     Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4, RANK_6, RANK_7,
     RANK_8, RANK_9,
@@ -90,7 +94,102 @@ const DIRECTIONS_FILE_RANK: [(i8, i8); 8] = [
     (-1, 1),  // 右下方向
 ];
 
-// TODO 隣の敵の利きが利いているかどうか
+// TODO 隣に敵の長い利きが利いているかどうか
+fn is_adjacent_opponent_long_control(
+    us: Phase,
+    position: &Position,
+    ksq: Square,
+    direction: Direction,
+) -> bool {
+    let d_file = DIRECTIONS_FILE_RANK[direction as usize].0;
+    let d_rank = DIRECTIONS_FILE_RANK[direction as usize].1;
+    let mut pinned = false;
+    let mut pinned_opponent = false;
+    let mut distance = 0;
+
+    // TODO 隣のマス
+    let mut adjacent_file = file(ksq) as i8;
+    let mut adjacent_rank = rank(ksq) as i8;
+    loop {
+        adjacent_file += d_file;
+        adjacent_rank += d_rank;
+
+        if !(I_FILE_1 <= adjacent_file
+            && adjacent_file < I_FILE_10
+            && I_RANK_1 <= adjacent_rank
+            && adjacent_rank <= I_RANK_10)
+        {
+            break;
+        }
+
+        let adjacent_sq = square_from(adjacent_file as u8, adjacent_rank as u8);
+
+        if let Some(pc_ex) = position.piece_at(adjacent_sq) {
+            if us == pc_ex.piece.phase() {
+                if pinned {
+                    // 味方の駒が２つ有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
+                    return false;
+                } else {
+                    // 味方の駒の１つ目は合い駒かも知れない（＾～＾）
+                    // 影に 相手の長い利きの駒があるかも知れないから見逃すぜ（＾～＾）
+                    pinned = true
+                }
+            } else {
+                // 敵の駒なら
+                if distance == 0 {
+                    // 隣接する相手の駒の影に、相手の長い利きの駒があるかも知れないから見逃すぜ（＾～＾）
+                    pinned_opponent = true;
+                    continue;
+                }
+
+                // TODO 桂馬
+                match direction {
+                    // 飛、香、竜
+                    Direction::Top => match pc_ex.piece.type_() {
+                        PieceType::R | PieceType::L | PieceType::PR => return true,
+                        _ => {
+                            // 相手の駒が２枚有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
+                            if pinned_opponent {
+                                return false;
+                            }
+                        }
+                    },
+                    // 飛、竜
+                    Direction::Right | Direction::Left | Direction::Bottom => {
+                        match pc_ex.piece.type_() {
+                            PieceType::R | PieceType::PR => return true,
+                            _ => {
+                                // 相手の駒が２枚有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
+                                if pinned_opponent {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    // 角、馬
+                    Direction::TopRight
+                    | Direction::TopLeft
+                    | Direction::BottomLeft
+                    | Direction::BottomRight => match pc_ex.piece.type_() {
+                        PieceType::B | PieceType::PB => return true,
+                        _ => {
+                            // 相手の駒が２枚有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
+                            if pinned_opponent {
+                                return false;
+                            }
+                        }
+                    },
+                };
+            }
+        }
+
+        distance += 1;
+    }
+
+    false
+}
+
+// 隣の敵の利きが利いているかどうか
 // TODO 長い利き
 fn is_adjacent_opponent_control(
     us: Phase,
@@ -448,6 +547,20 @@ impl PseudoLegalMoves {
                         || is_adjacent_opponent_control(us, position, to, Direction::BottomLeft)
                         || is_adjacent_opponent_control(us, position, to, Direction::Bottom)
                         || is_adjacent_opponent_control(us, position, to, Direction::BottomRight)
+                        || is_adjacent_opponent_long_control(us, position, to, Direction::TopRight)
+                        || is_adjacent_opponent_long_control(us, position, to, Direction::TopLeft)
+                        || is_adjacent_opponent_long_control(
+                            us,
+                            position,
+                            to,
+                            Direction::BottomLeft,
+                        )
+                        || is_adjacent_opponent_long_control(
+                            us,
+                            position,
+                            to,
+                            Direction::BottomRight,
+                        )
                 } else {
                     false
                 }
