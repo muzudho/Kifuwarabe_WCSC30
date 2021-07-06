@@ -82,14 +82,7 @@ impl Tree {
                 Some(best_ts.bestmove.move_),
                 &Some(PvString::PV(
                     self.msec(),
-                    format!(
-                        "{}",
-                        if best_ts.bestmove.move_ == RESIGN_MOVE {
-                            "resign".to_string()
-                        } else {
-                            format!("{}", to_move_code(best_ts.bestmove.move_))
-                        },
-                    ),
+                    format!("{}", format!("{}", to_move_code(best_ts.bestmove.move_))),
                 )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
             );
 

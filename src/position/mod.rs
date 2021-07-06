@@ -7,6 +7,7 @@ use crate::entities::cosmic::smart::square::FILE_10;
 use crate::entities::cosmic::smart::square::RANK_0;
 use crate::entities::cosmic::smart::square::RANK_10;
 use crate::entities::law::cryptographic::num_to_lower_case;
+use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 
 /// マス番号。
@@ -164,7 +165,11 @@ pub fn destructure_move(num: Move) -> (Square, Square, bool) {
     return (from, to, promote);
 }
 
+/// sfen
 pub fn to_move_code(move_: Move) -> String {
+    if move_ == RESIGN_MOVE {
+        return "resign".to_string();
+    }
     let (from, to, promote) = destructure_move(move_);
     let from_file = from / 10;
     let from_rank = from % 10;

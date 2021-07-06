@@ -9,7 +9,6 @@ use crate::entities::spaceship::facility::{CommandRoom, GameRoom};
 use crate::movegen::PseudoLegalMoves;
 use crate::position::square_from;
 use crate::position::to_move_code;
-use crate::record::RESIGN_MOVE;
 use crate::search::Tree;
 use crate::view::print_info;
 use crate::view::print_move_list;
@@ -70,14 +69,7 @@ impl Kifuwarabe {
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
-        Beam::shoot(&format!(
-            "bestmove {}",
-            if ts.bestmove.move_ != RESIGN_MOVE {
-                to_move_code(ts.bestmove.move_)
-            } else {
-                "resign".to_string()
-            }
-        ));
+        Beam::shoot(&format!("bestmove {}", to_move_code(ts.bestmove.move_)));
     }
     pub fn isready() {
         Beam::shoot("readyok");

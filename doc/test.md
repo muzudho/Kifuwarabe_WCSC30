@@ -37,6 +37,27 @@ pos
 genmove
 ```
 
+## 投了できるか？
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 2
+setoption name MaxDepth value 2
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
+position startpos moves 1g1f 4a3b 1f1e 6a5b 1e1d 1c1d 2g2f 1d1e 2f2e 1e1f 2e2d 2c2d 3g3f 1f1g+ 3f3e 1g2h 3e3d 2h3i 6i6h 3i4i 5i5h G*5i
+pos
+genmove
+go
+```
+
 ## 合い駒があるときの動きテスト
 
 ```plain
