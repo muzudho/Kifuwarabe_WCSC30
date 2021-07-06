@@ -328,11 +328,11 @@ pub const RANK_10: u8 = 10;
 
 /// 引き算もするところでは unsigned ではダメなところもある☆（＾～＾）
 // pub const I_FILE_0: i8 = 0;
-pub const I_FILE_1: i8 = 1;
+// pub const I_FILE_1: i8 = 1;
 // pub const I_FILE_9: i8 = 9;
-pub const I_FILE_10: i8 = 10;
+// pub const I_FILE_10: i8 = 10;
 // pub const I_RANK_0: i8 = 0;
-pub const I_RANK_1: i8 = 1;
+// pub const I_RANK_1: i8 = 1;
 // pub const I_RANK_2: i8 = 2;
 // pub const I_RANK_3: i8 = 3;
 // pub const I_RANK_4: i8 = 4;
@@ -340,7 +340,7 @@ pub const I_RANK_1: i8 = 1;
 // pub const I_RANK_7: i8 = 7;
 // pub const I_RANK_8: i8 = 8; //うさぎの打てる段の上限
 // pub const I_RANK_9: i8 = 9;
-pub const I_RANK_10: i8 = 10;
+// pub const I_RANK_10: i8 = 10;
 
 #[derive(Debug)]
 pub enum DictOrthant {

@@ -5,10 +5,6 @@
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandAddress;
 use crate::entities::cosmic::smart::features::PieceType;
-use crate::entities::cosmic::smart::square::I_FILE_1;
-use crate::entities::cosmic::smart::square::I_FILE_10;
-use crate::entities::cosmic::smart::square::I_RANK_1;
-use crate::entities::cosmic::smart::square::I_RANK_10;
 use crate::entities::cosmic::smart::square::{
     Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4, RANK_6, RANK_7,
     RANK_8, RANK_9,
@@ -83,15 +79,15 @@ pub enum Direction {
 
 // 筋は -1 すると右（＾～＾）
 // 段は -1 すると上（＾～＾）
-const DIRECTIONS_FILE_RANK: [(i8, i8); 8] = [
-    (-1, 0),  // 右方向
-    (-1, -1), // 右上方向
-    (0, -1),  // 上方向
-    (1, -1),  // 左上方向
-    (1, 0),   // 左方向
-    (1, 1),   // 左下方向
-    (0, 1),   // 下方向
-    (-1, 1),  // 右下方向
+const DIRECTIONS_SQ: [i8; 8] = [
+    -10, // 右方向
+    -11, // 右上方向
+    -1,  // 上方向
+    9,   // 左上方向
+    10,  // 左方向
+    11,  // 左下方向
+    1,   // 下方向
+    -9,  // 右下方向
 ];
 
 // TODO 隣に敵の長い利きが利いているかどうか
@@ -101,23 +97,22 @@ fn is_adjacent_opponent_long_control(
     ksq: Square,
     direction: Direction,
 ) -> bool {
-    let d_file = DIRECTIONS_FILE_RANK[direction as usize].0;
-    let d_rank = DIRECTIONS_FILE_RANK[direction as usize].1;
+    let d_sq = DIRECTIONS_SQ[direction as usize];
     let mut pinned = false;
     let mut pinned_opponent = false;
     let mut distance = 0;
 
     // TODO 隣のマス
-    let mut adjacent_file = file(ksq) as i8;
-    let mut adjacent_rank = rank(ksq) as i8;
+    let mut adjacent_sq = ksq as i8;
     loop {
-        adjacent_file += d_file;
-        adjacent_rank += d_rank;
+        adjacent_sq += d_sq;
 
-        if !(I_FILE_1 <= adjacent_file
-            && adjacent_file < I_FILE_10
-            && I_RANK_1 <= adjacent_rank
-            && adjacent_rank < I_RANK_10)
+        let adjacent_file = file(adjacent_sq as u8);
+        let adjacent_rank = rank(adjacent_sq as u8);
+        if !(FILE_1 <= adjacent_file
+            && adjacent_file < FILE_10
+            && RANK_1 <= adjacent_rank
+            && adjacent_rank < RANK_10)
         {
             break;
         }
@@ -197,14 +192,10 @@ fn is_adjacent_opponent_control(
     ksq: Square,
     direction: Direction,
 ) -> bool {
-    let d_file = DIRECTIONS_FILE_RANK[direction as usize].0;
-    let d_rank = DIRECTIONS_FILE_RANK[direction as usize].1;
+    let d_sq = DIRECTIONS_SQ[direction as usize];
 
     // TODO 隣のマス
-    let adjacent_sq = square_from(
-        (file(ksq) as i8 + d_file) as u8,
-        (rank(ksq) as i8 + d_rank) as u8,
-    );
+    let adjacent_sq = (ksq as i8 + d_sq) as u8;
     // Beam::shoot(&format!(
     //     "is_adjacent_opponent_control d_file={} d_rank={} adjacent_sq={}",
     //     d_file, d_rank, adjacent_sq
@@ -288,20 +279,13 @@ fn check_checker_pin(
     ksq: Square,
     direction: Direction,
 ) -> (Option<Square>, Option<Square>) {
-    let d_file = DIRECTIONS_FILE_RANK[direction as usize].0;
-    let d_rank = DIRECTIONS_FILE_RANK[direction as usize].1;
+    let d_sq = DIRECTIONS_SQ[direction as usize];
 
-    let mut file = file(ksq) as i8 + d_file;
-    let mut rank = rank(ksq) as i8 + d_rank;
+    let mut sq = (ksq as i8 + d_sq) as u8;
     let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
     let mut checker: Option<Square> = None; // チェック駒
     let mut interval = 0;
-    while (FILE_1 as i8) <= file
-        && file < (FILE_10 as i8)
-        && (RANK_1 as i8) <= rank
-        && rank < (RANK_10 as i8)
-    {
-        let sq = square_from(file as u8, rank as u8);
+    while FILE_1 <= file(sq) && file(sq) < FILE_10 && RANK_1 <= rank(sq) && rank(sq) < RANK_10 {
         if let Some(pc_ex) = position.piece_at(sq) {
             if us == pc_ex.piece.phase() {
                 // 合い駒か、ただの自駒か
@@ -405,8 +389,7 @@ fn check_checker_pin(
         } else {
         }
 
-        file += d_file;
-        rank += d_rank;
+        sq = (sq as i8 + d_sq) as u8;
         interval += 1;
     }
 
