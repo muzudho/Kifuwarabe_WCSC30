@@ -37,6 +37,8 @@ pos
 genmove
 ```
 
+## 自殺手のチェック
+
 ```plain
 usi
 isready

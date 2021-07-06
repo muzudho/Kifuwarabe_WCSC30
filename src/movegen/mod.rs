@@ -442,6 +442,8 @@ impl PseudoLegalMoves {
             Phase::Second => position.location_at(PieceNum::King2),
         };
 
+        Beam::shoot(&format!("# generate ksq={}", ksq));
+
         if !is_board_square(ksq) {
             panic!("(Err.93) ksq fail")
         }
@@ -540,7 +542,7 @@ impl PseudoLegalMoves {
                     //     ksq, to, file, rank
                     // ));
 
-                    is_adjacent_opponent_control(us, position, to, Direction::Right)
+                    let control = is_adjacent_opponent_control(us, position, to, Direction::Right)
                         || is_adjacent_opponent_control(us, position, to, Direction::TopRight)
                         || is_adjacent_opponent_control(us, position, to, Direction::Top)
                         || is_adjacent_opponent_control(us, position, to, Direction::TopLeft)
@@ -561,7 +563,13 @@ impl PseudoLegalMoves {
                             position,
                             to,
                             Direction::BottomRight,
-                        )
+                        );
+
+                    // Beam::shoot(&format!(
+                    //     "# suicide-check from={} to={} control={}",
+                    //     from, to, control
+                    // ));
+                    control
                 } else {
                     false
                 }
