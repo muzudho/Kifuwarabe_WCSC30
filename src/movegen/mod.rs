@@ -65,9 +65,7 @@ impl Mobility {
     }
 }
 
-/// 向き
-/// TODO 桂馬
-/// TODO 先後
+/// 手番から見た向き
 #[derive(Clone, Copy)]
 pub enum Direction {
     Right,
@@ -78,15 +76,14 @@ pub enum Direction {
     BottomLeft,
     Bottom,
     BottomRight,
-    TopRightKnight,    // 先手桂右
-    TopLeftKnight,     // 先手桂左
-    BottomRightKnight, // 後手桂右
-    BottomLeftKnight,  // 後手桂左
+    TopRightKnight, // 先手桂右
+    TopLeftKnight,  // 先手桂左
 }
 
-// 筋は -1 すると右（＾～＾）
-// 段は -1 すると上（＾～＾）
-const DIRECTIONS_SQ: [i8; 12] = [
+/// 先手から見た向き
+/// 筋は -1 すると右（＾～＾）
+/// 段は -1 すると上（＾～＾）
+const DIRECTIONS_SQ_FROM_FIRST: [i8; 10] = [
     -10, // 右方向
     -11, // 右上方向
     -1,  // 上方向
@@ -95,10 +92,24 @@ const DIRECTIONS_SQ: [i8; 12] = [
     11,  // 左下方向
     1,   // 下方向
     -9,  // 右下方向
-    -12, // 先手桂右
-    12,  // 先手桂左
-    -8,  // 後手桂右
-    12,  // 後手桂左
+    -12, // 桂右
+    12,  // 桂左
+];
+
+/// 後手から見た向き
+/// 筋は 1 すると右（＾～＾）
+/// 段は 1 すると上（＾～＾）
+const DIRECTIONS_SQ_FROM_SECOND: [i8; 10] = [
+    10,  // 右方向
+    11,  // 右上方向
+    1,   // 上方向
+    -9,  // 左上方向
+    -10, // 左方向
+    -11, // 左下方向
+    -1,  // 下方向
+    9,   // 右下方向
+    12,  // 桂右
+    -12, // 桂左
 ];
 
 // 玉が移動したとき、敵の長い利きが当たっているかどうか。
@@ -110,7 +121,10 @@ fn king_is_adjacent_opponent_long_control(
     ksq_to: Square,
     direction: Direction,
 ) -> bool {
-    let d_sq = DIRECTIONS_SQ[direction as usize];
+    let d_sq = match us {
+        Phase::First => DIRECTIONS_SQ_FROM_FIRST[direction as usize],
+        Phase::Second => DIRECTIONS_SQ_FROM_SECOND[direction as usize],
+    };
     let mut pinned = false;
     let mut pinned_opponent = false;
     let mut distance = 0;
@@ -150,7 +164,6 @@ fn king_is_adjacent_opponent_long_control(
                     continue;
                 }
 
-                // TODO 桂馬
                 match direction {
                     // 飛、香、竜
                     Direction::Top => match pc_ex.piece.type_() {
@@ -188,10 +201,7 @@ fn king_is_adjacent_opponent_long_control(
                         }
                     },
                     // ここ（桂馬の動き）を通るとは想定していないぜ（＾～＾）
-                    Direction::TopRightKnight
-                    | Direction::TopLeftKnight
-                    | Direction::BottomRightKnight
-                    | Direction::BottomLeftKnight => {}
+                    Direction::TopRightKnight | Direction::TopLeftKnight => {}
                 };
             }
         }
@@ -209,7 +219,10 @@ fn is_adjacent_opponent_control(
     ksq_to: Square,
     direction: Direction,
 ) -> bool {
-    let d_sq = DIRECTIONS_SQ[direction as usize];
+    let d_sq = match us {
+        Phase::First => DIRECTIONS_SQ_FROM_FIRST[direction as usize],
+        Phase::Second => DIRECTIONS_SQ_FROM_SECOND[direction as usize],
+    };
 
     // 隣のマス
     let adjacent_sq = (ksq_to as i8 + d_sq) as u8;
@@ -283,10 +296,7 @@ fn is_adjacent_opponent_control(
                 },
                 // 桂馬
                 // TODO 先後
-                Direction::TopRightKnight
-                | Direction::TopLeftKnight
-                | Direction::BottomRightKnight
-                | Direction::BottomLeftKnight => match pc_ex.piece.type_() {
+                Direction::TopRightKnight | Direction::TopLeftKnight => match pc_ex.piece.type_() {
                     PieceType::N => return true,
                     _ => {}
                 },
@@ -310,7 +320,10 @@ fn check_checker_pin(
     direction: Direction,
     sq_list: &mut Vec<Square>,
 ) -> (Option<Square>, Option<Square>, Option<Square>) {
-    let d_sq = DIRECTIONS_SQ[direction as usize];
+    let d_sq = match us {
+        Phase::First => DIRECTIONS_SQ_FROM_FIRST[direction as usize],
+        Phase::Second => DIRECTIONS_SQ_FROM_SECOND[direction as usize],
+    };
     Beam::shoot(&format!(
         "# check_checker_pin us={} ksq={} d_sq={}",
         us, ksq, d_sq
@@ -406,13 +419,12 @@ fn check_checker_pin(
                         },
                         // 桂馬
                         // TODO 先後
-                        Direction::TopRightKnight
-                        | Direction::TopLeftKnight
-                        | Direction::BottomRightKnight
-                        | Direction::BottomLeftKnight => match pc_ex.piece.type_() {
-                            PieceType::N => Some(sq),
-                            _ => None,
-                        },
+                        Direction::TopRightKnight | Direction::TopLeftKnight => {
+                            match pc_ex.piece.type_() {
+                                PieceType::N => Some(sq),
+                                _ => None,
+                            }
+                        }
                     };
 
                     if let None = checker {
@@ -444,10 +456,7 @@ fn check_checker_pin(
                             _ => None,
                         },
                         // 桂馬の動きは想定してないぜ（＾～＾）
-                        Direction::TopRightKnight
-                        | Direction::TopLeftKnight
-                        | Direction::BottomRightKnight
-                        | Direction::BottomLeftKnight => None,
+                        Direction::TopRightKnight | Direction::TopLeftKnight => None,
                     };
                     if let None = opponent {
                         Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
