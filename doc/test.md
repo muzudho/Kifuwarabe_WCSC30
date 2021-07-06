@@ -1,5 +1,9 @@
 # Test
 
+```plain
+position startpos moves 5i4h 4a3b 4h5h 6a5b 5h6h 5a4b 6h7h 4c4d 7h6h 5b4c 6h7h 4d4e 7h6h 5c5d 6h7h 5d5e 7h6h 9c9d 6h7h 9d9e 7h6h 6c6d 6h7h 6d6e 7h6h 7c7d 6h7h 7d7e 7h6h 1c1d 6h7h 2b1c 6i6h 3a2b 7h6i 3c3d 6i5i 2b3c 5i6i 4b3a 6i5i 3a2b 5i6i 1d1e 6i5i 8c8d 5i6i 8d8e 6i5i 8e8f 8g8f 8b8f
+```
+
 ## 自殺手
 
 ```plain

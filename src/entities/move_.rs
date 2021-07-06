@@ -80,7 +80,7 @@ pub fn to_move_object(
     } else {
         // 打
         let hand = match phase {
-            Phase::First => match num {
+            Phase::First => match from {
                 100 => HandAddressType::King,
                 101 => HandAddressType::Rook,
                 102 => HandAddressType::Bishop,
@@ -89,9 +89,9 @@ pub fn to_move_object(
                 105 => HandAddressType::Knight,
                 106 => HandAddressType::Lance,
                 107 => HandAddressType::Pawn,
-                _ => panic!("move_::to_move_object num={}", num),
+                _ => panic!("move_::to_move_object from={}", from),
             },
-            Phase::Second => match num {
+            Phase::Second => match from {
                 108 => HandAddressType::King,
                 109 => HandAddressType::Rook,
                 110 => HandAddressType::Bishop,
@@ -100,7 +100,7 @@ pub fn to_move_object(
                 113 => HandAddressType::Knight,
                 114 => HandAddressType::Lance,
                 115 => HandAddressType::Pawn,
-                _ => panic!("move_::to_move_object num={}", num),
+                _ => panic!("move_::to_move_object from={}", num),
             },
         };
 
