@@ -283,6 +283,7 @@ fn check_checker_pin(
     sq_list: &mut Vec<Square>,
 ) -> (Option<Square>, Option<Square>) {
     let d_sq = DIRECTIONS_SQ[direction as usize];
+    // Beam::shoot(&format!("# check_checker_pin ksq={} d_sq={}", ksq, d_sq));
 
     let mut sq = (ksq as i8 + d_sq) as u8;
     let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
@@ -290,7 +291,7 @@ fn check_checker_pin(
     let mut interval = 0;
     while FILE_1 <= file(sq) && file(sq) < FILE_10 && RANK_1 <= rank(sq) && rank(sq) < RANK_10 {
         sq_list.push(sq);
-        Beam::shoot(&format!("# check_checker_pin sq={}", sq));
+        // Beam::shoot(&format!("# check_checker_pin sq={}", sq));
 
         if let Some(pc_ex) = position.piece_at(sq) {
             if us == pc_ex.piece.phase() {
@@ -405,7 +406,7 @@ fn check_checker_pin(
         pinned = None;
         // チェッカーは無かったので、追加した分を減らします
         sq_list.truncate(sq_list.len() - interval);
-        Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
+        // Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
     }
 
     (pinned, checker)
@@ -462,7 +463,7 @@ impl PseudoLegalMoves {
             Phase::Second => position.location_at(PieceNum::King2),
         };
 
-        Beam::shoot(&format!("# generate ksq={}", ksq));
+        // Beam::shoot(&format!("# generate ksq={}", ksq));
 
         if !is_board_square(ksq) {
             panic!("(Err.93) ksq fail")
