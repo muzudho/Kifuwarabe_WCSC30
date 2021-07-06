@@ -29,9 +29,9 @@ pub type Square = u8;
 /// 升の検索等で、該当なしの場合
 pub const SQUARE_NONE: Square = 0;
 
-/// 盤上のマスなら真
+/// 盤上のマスなら真。（調べ方は、ざっくり）
 pub fn is_board_square(sq: Square) -> bool {
-    sq < 100
+    11 <= sq && sq < 100
 }
 /// 持駒なら真
 pub fn is_hand_square(sq: Square) -> bool {

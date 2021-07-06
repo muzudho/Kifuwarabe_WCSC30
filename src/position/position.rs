@@ -350,7 +350,7 @@ impl Position {
 
         if let Some(piece) = pc_ex {
             let from = square_from(file, rank);
-            let piece_num = match piece {
+            let pc_num = match piece {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 Piece::K1 => {
                     self.pc_num_to_location[PieceNum::King1 as usize] = from;
@@ -371,10 +371,7 @@ impl Position {
                     }
                 }
             };
-            self.push_to_board(
-                square_from(file, rank),
-                Some(PieceEx::new(piece, piece_num)),
-            );
+            self.push_to_board(square_from(file, rank), Some(PieceEx::new(piece, pc_num)));
         }
     }
     /// 駒台に置く
@@ -471,8 +468,9 @@ impl Position {
     where
         F: FnMut(Square, PieceEx),
     {
-        for piece_num in Nine299792458::piece_numbers().iter() {
-            let sq = self.pc_num_to_location[*piece_num as usize];
+        // 駒の背番号
+        for pc_num in Nine299792458::piece_numbers().iter() {
+            let sq = self.pc_num_to_location[*pc_num as usize];
             if is_board_square(sq) {
                 // 盤上の駒☆（＾～＾）
                 if let Some(pc_ex) = self.piece_at(sq) {
@@ -485,9 +483,10 @@ impl Position {
             } else if is_hand_square(sq) {
                 // 持ち駒はここで調べるのは無駄な気がするよな☆（＾～＾）持ち駒に歩が１８個とか☆（＾～＾）
             } else {
-                std::panic::panic_any(Beam::trouble(
-                    "(Err.650) なんで駒が作業中なんだぜ☆（＾～＾）！",
-                ))
+                std::panic::panic_any(Beam::trouble(&format!(
+                    "(Err.650) 駒{:?} が盤にも駒台にも無いぜ☆（＾～＾）！",
+                    pc_num
+                )))
             }
         }
 

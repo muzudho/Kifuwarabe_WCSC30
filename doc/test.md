@@ -13,6 +13,24 @@ setoption name KomawariWeightPer1000 value 1000
 setoption name ManyWaysPer1000 value 10
 setoption name PromotionWeightPer1000 value 1000
 usinewgame
+position sfen 4k4/9/9/2+p6/4K4/9/9/9/9 b 2r2b4g4s4n4l17p 1
+pos
+genmove
+```
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 1
+setoption name MaxDepth value 1
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
 # position sfen 4k4/9/2+p+p+p+p+p2/2+p3+p2/2+p1K1+p2/2+p3+p2/2+p+p+p+p+p2/9/P8 b 2r2b4g4s4n4lp 1
 position sfen 4k4/9/4+p4/9/4K4/9/4+p4/9/P8 b 2r2b4g4s4n4l15p 1
 # 持駒の歩の枚数のパースがおかしい？
