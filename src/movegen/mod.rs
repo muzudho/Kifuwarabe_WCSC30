@@ -430,7 +430,6 @@ impl PseudoLegalMoves {
     /// ---------
     /// * `us` - どちらの手番か☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     ///
     /// # Returns
     ///
@@ -585,7 +584,7 @@ impl PseudoLegalMoves {
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `pc_ex` - 駒だぜ☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
+    /// * `move_list` - 指し手一覧☆（＾～＾）
     ///
     /// Returns
     /// -------
@@ -599,10 +598,6 @@ impl PseudoLegalMoves {
         position: &Position,
         move_list: &mut Vec<Move>,
     ) {
-        let listen_move = &mut |move_| {
-            move_list.push(move_);
-        };
-
         let moving = &mut |to, promotability, _agility, move_permission: Option<MovePermission>| {
             let pseudo_captured = position.piece_at(to);
 
@@ -640,19 +635,20 @@ impl PseudoLegalMoves {
                     Any => {
                         // 成ったり、成れなかったりできるとき。
                         if !forbidden {
-                            listen_move(new_move(us, Some(from), to, false, None));
+                            let m = new_move(us, Some(from), to, false, None);
+                            move_list.push(m);
                         }
-                        listen_move(new_move(us, Some(from), to, true, None));
+                        let m = new_move(us, Some(from), to, true, None);
+                        move_list.push(m);
                     }
                     _ => {
                         // 成れるか、成れないかのどちらかのとき。
                         if promotion || !forbidden {
-                            listen_move(new_move(us, Some(from), to, promotion, None));
+                            let m = new_move(us, Some(from), to, promotion, None);
+                            move_list.push(m);
                         }
                     }
                 };
-                // } else {
-                // TODO listen_move(None, &to);
             }
 
             !space
@@ -668,13 +664,8 @@ impl PseudoLegalMoves {
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
-    /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
-    /// * `listen_control` - 利きを受け取れだぜ☆（＾～＾）
+    /// * `move_list` - 指し手一覧☆（＾～＾）
     fn make_drop(us: Phase, adr: HandAddress, position: &Position, move_list: &mut Vec<Move>) {
-        let listen_move = &mut |move_| {
-            move_list.push(move_);
-        };
-
         if let Some(pc_ex) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
             let drop = &mut |to| {
@@ -690,13 +681,14 @@ impl PseudoLegalMoves {
                         }
                         _ => {}
                     }
-                    listen_move(new_move(
+                    let m = new_move(
                         us,
                         None,                                     // 駒台
                         to,                                       // どの升へ行きたいか
                         false,                                    // 打に成りは無し
                         Some(pc_ex.piece.hand_address().type_()), // 打った駒種類
-                    ));
+                    );
+                    move_list.push(m);
                 }
             };
 
