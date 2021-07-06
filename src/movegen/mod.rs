@@ -599,22 +599,22 @@ impl PseudoLegalMoves {
             let (from, to, _) = destructure_move(*particle);
             if from == ksq {
                 // Control 1～12
-                let c1 = is_adjacent_opponent_control(us, position, to, Direction::Right);
-                let c2 = is_adjacent_opponent_control(us, position, to, Direction::TopRight);
-                let c3 = is_adjacent_opponent_control(us, position, to, Direction::Top);
-                let c4 = is_adjacent_opponent_control(us, position, to, Direction::TopLeft);
-                let c5 = is_adjacent_opponent_control(us, position, to, Direction::Left);
-                let c6 = is_adjacent_opponent_control(us, position, to, Direction::BottomLeft);
-                let c7 = is_adjacent_opponent_control(us, position, to, Direction::Bottom);
-                let c8 = is_adjacent_opponent_control(us, position, to, Direction::BottomRight);
-                let c9 = king_is_adjacent_opponent_long_control(us, position, from,to, Direction::TopRight);
-                let c10 = king_is_adjacent_opponent_long_control(us, position,from, to, Direction::TopLeft);
-                let c11 =
+                let r = is_adjacent_opponent_control(us, position, to, Direction::Right);
+                let tr = is_adjacent_opponent_control(us, position, to, Direction::TopRight);
+                let t = is_adjacent_opponent_control(us, position, to, Direction::Top);
+                let tl = is_adjacent_opponent_control(us, position, to, Direction::TopLeft);
+                let l = is_adjacent_opponent_control(us, position, to, Direction::Left);
+                let bl = is_adjacent_opponent_control(us, position, to, Direction::BottomLeft);
+                let b = is_adjacent_opponent_control(us, position, to, Direction::Bottom);
+                let br = is_adjacent_opponent_control(us, position, to, Direction::BottomRight);
+                let long_tr = king_is_adjacent_opponent_long_control(us, position, from,to, Direction::TopRight);
+                let long_tl = king_is_adjacent_opponent_long_control(us, position,from, to, Direction::TopLeft);
+                let long_bl =
                 king_is_adjacent_opponent_long_control(us, position, from,to, Direction::BottomLeft);
-                let c12 =
+                let long_br =
                 king_is_adjacent_opponent_long_control(us, position, from,to, Direction::BottomRight);
                 let control =
-                    c1 || c2 || c3 || c4 || c5 || c6 || c7 || c8 || c9 || c10 || c11 || c12;
+                    r || tr || t || tl || l || bl || b || br || long_tr || long_tl || long_bl || long_br;
 
                 // Beam::shoot(&format!(
                 //     "# suicide-check from={} to={} control={}",
@@ -622,9 +622,9 @@ impl PseudoLegalMoves {
                 // ));
                 if control {
                     Beam::shoot(&format!(
-                        "# remove suicide-move={} from={} to={} control={} c1={} c2={} c3={} c4={} c5={} c6={} c7={} c8={} c9={} c10={} c11={} c12={}",
+                        "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
                         to_move_code(*particle),
-                        from,to,control,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12
+                        from,to,control,r,tr,t,tl,l,bl,b,br,long_tr,long_tl,long_bl,long_br
                     ));
                 }
                 !control
