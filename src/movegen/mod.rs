@@ -117,7 +117,7 @@ fn is_adjacent_opponent_long_control(
         if !(I_FILE_1 <= adjacent_file
             && adjacent_file < I_FILE_10
             && I_RANK_1 <= adjacent_rank
-            && adjacent_rank <= I_RANK_10)
+            && adjacent_rank < I_RANK_10)
         {
             break;
         }
