@@ -57,19 +57,19 @@ impl Kifuwarabe {
             universe.option_promotion_weight,
             universe.option_depth_not_to_give_up,
         );
-        let ts = tree.iteration_deeping(universe);
+        let (bestmove, _) = tree.iteration_deeping(universe);
         // その手を選んだ理由☆（＾～＾）
         print_info(
             &mut universe.game.info,
             None,
             Some((tree.state_nodes, tree.nps())),
-            Some(ts.bestmove.value),
-            Some(ts.bestmove.move_),
-            &Some(PvString::String(ts.bestmove.reason.to_string())),
+            Some(bestmove.value),
+            Some(bestmove.move_),
+            &Some(PvString::String(bestmove.reason.to_string())),
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
-        Beam::shoot(&format!("bestmove {}", to_move_code(ts.bestmove.move_)));
+        Beam::shoot(&format!("bestmove {}", to_move_code(bestmove.move_)));
     }
     pub fn isready() {
         Beam::shoot("readyok");
