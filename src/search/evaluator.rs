@@ -1,8 +1,6 @@
 //!
 //! １手指して、何点動いたかを評価するぜ☆（＾～＾）
 //!
-//use crate::entities::cosmic::playing::Game;
-
 use crate::search::PieceEx;
 use crate::take1base::Move;
 
@@ -10,13 +8,13 @@ use crate::take1base::Move;
 pub const REPITITION_VALUE: isize = -300;
 
 pub struct Evaluation {
-    // 指し手がいっぱいあることを評価する重み☆（＾～＾）1000分率☆（＾～＾）
+    /// 指し手がいっぱいあることを評価する重み☆（＾～＾）1000分率☆（＾～＾）
     many_ways_weight: isize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
     material_advantage_weight: isize,
     /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
     promotion_weight: isize,
-    // 駒割だぜ☆（＾～＾）
+    /// 駒割だぜ☆（＾～＾）
     piece_allocation_value: isize,
     /// 成り駒ボーナスだぜ☆（＾～＾）
     promotion_value: isize,
