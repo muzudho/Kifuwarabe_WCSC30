@@ -93,11 +93,13 @@ const DIRECTIONS_SQ: [i8; 8] = [
     -9,  // 右下方向
 ];
 
-// TODO 隣に敵の長い利きが利いているかどうか
-fn is_adjacent_opponent_long_control(
+// 玉が移動したとき、敵の長い利きが当たっているかどうか。
+// ただし、駒が動く前の position であることに注意してください。
+fn king_is_adjacent_opponent_long_control(
     us: Phase,
-    position: &Position,
+    position_before_move: &Position,
     ksq_from: Square,
+    ksq_to: Square,
     direction: Direction,
 ) -> bool {
     let d_sq = DIRECTIONS_SQ[direction as usize];
@@ -106,7 +108,7 @@ fn is_adjacent_opponent_long_control(
     let mut distance = 0;
 
     // 隣のマス
-    let mut adjacent_sq = ksq_from as i8;
+    let mut adjacent_sq = ksq_to as i8;
     loop {
         adjacent_sq += d_sq;
 
@@ -120,7 +122,9 @@ fn is_adjacent_opponent_long_control(
             break;
         }
 
-        if let Some(pc_ex) = position.piece_at(adjacent_sq as u8) {
+        if adjacent_sq as u8 == ksq_from {
+            // 動かす前の自玉があるマスは、何もないマスとして無視します
+        } else if let Some(pc_ex) = position_before_move.piece_at(adjacent_sq as u8) {
             if us == pc_ex.piece.phase() {
                 if pinned {
                     // 味方の駒が２つ有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
@@ -603,12 +607,12 @@ impl PseudoLegalMoves {
                 let c6 = is_adjacent_opponent_control(us, position, to, Direction::BottomLeft);
                 let c7 = is_adjacent_opponent_control(us, position, to, Direction::Bottom);
                 let c8 = is_adjacent_opponent_control(us, position, to, Direction::BottomRight);
-                let c9 = is_adjacent_opponent_long_control(us, position, to, Direction::TopRight);
-                let c10 = is_adjacent_opponent_long_control(us, position, to, Direction::TopLeft);
+                let c9 = king_is_adjacent_opponent_long_control(us, position, from,to, Direction::TopRight);
+                let c10 = king_is_adjacent_opponent_long_control(us, position,from, to, Direction::TopLeft);
                 let c11 =
-                    is_adjacent_opponent_long_control(us, position, to, Direction::BottomLeft);
+                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::BottomLeft);
                 let c12 =
-                    is_adjacent_opponent_long_control(us, position, to, Direction::BottomRight);
+                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::BottomRight);
                 let control =
                     c1 || c2 || c3 || c4 || c5 || c6 || c7 || c8 || c9 || c10 || c11 || c12;
 
