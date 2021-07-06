@@ -189,7 +189,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     // 確定。
     game.set_move(move_);
 
-    game.history.ply += 1;
+    game.history.increase_moves_num();
     true
 }
 
@@ -444,10 +444,10 @@ pub fn set_position(line: &str, game: &mut Game) {
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
     while read_sasite(line, &mut starts, len, game) {
-        // 手目を戻す
-        game.history.ply -= 1;
+        // 次の do_move で増えるので、手目をいったん戻す
+        game.history.decrease_moves_num();
         // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = game.history.ply;
+        let ply = game.history.moves_num();
         game.do_move(game.history.moves[ply as usize]);
     }
 }

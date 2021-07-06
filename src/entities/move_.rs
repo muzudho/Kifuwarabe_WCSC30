@@ -89,7 +89,7 @@ pub fn to_move_object(
                 105 => HandAddressType::Knight,
                 106 => HandAddressType::Lance,
                 107 => HandAddressType::Pawn,
-                _ => panic!("move_::to_move_object from={}", from),
+                _ => panic!("move_::to_move_object phase={} from={}", phase, from),
             },
             Phase::Second => match from {
                 108 => HandAddressType::King,
@@ -100,7 +100,7 @@ pub fn to_move_object(
                 113 => HandAddressType::Knight,
                 114 => HandAddressType::Lance,
                 115 => HandAddressType::Pawn,
-                _ => panic!("move_::to_move_object from={}", from),
+                _ => panic!("move_::to_move_object phase={} from={}", phase, from),
             },
         };
 

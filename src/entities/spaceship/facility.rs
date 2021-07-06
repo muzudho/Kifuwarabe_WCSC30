@@ -59,7 +59,7 @@ impl GameRoom {
     /// 表示
     pub fn to_string(game: &Game, pos_nums: PosNums) -> String {
         let position = game.get_board(pos_nums);
-        let ply = game.history.ply;
+        let ply = game.history.moves_num();
         let phase = game.history.get_phase();
         let same_pos_count = game.count_same_position();
 

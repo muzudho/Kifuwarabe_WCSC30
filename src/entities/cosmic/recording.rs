@@ -17,8 +17,8 @@ pub const PLY_LEN: usize = 321;
 pub const SENNTITE_NUM: isize = 4;
 
 pub struct History {
-    /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）i8 は -128～127 なんで手数が収まらん☆（＾～＾）
-    pub ply: isize,
+    /// 手目。増減するので符号付きにしておくぜ☆（＾～＾）少なくとも 512手は含めたいぜ（＾～＾）スタートは 0（＾▽＾）
+    moves_num: isize,
     /// 棋譜
     /// TODO 0手目を初期局面にしたいので、最初にパスを入れてほしい☆（＾～＾）
     pub moves: [Move; PLY_LEN],
@@ -30,7 +30,7 @@ pub struct History {
 impl Default for History {
     fn default() -> History {
         History {
-            ply: 0,
+            moves_num: 0,
             moves: [RESIGN_MOVE; PLY_LEN],
             position_hashs: [0; PLY_LEN],
             /// 取った駒
@@ -40,17 +40,27 @@ impl Default for History {
 }
 impl History {
     pub fn clear(&mut self) {
-        self.ply = 0;
+        self.moves_num = 0;
         self.moves = [RESIGN_MOVE; PLY_LEN];
         self.position_hashs = [0; PLY_LEN];
         // 取った駒
         self.captured_pieces = [None; PLY_LEN];
     }
 
+    pub fn moves_num(&self) -> isize {
+        self.moves_num
+    }
+    pub fn increase_moves_num(&mut self) {
+        self.moves_num += 1
+    }
+    pub fn decrease_moves_num(&mut self) {
+        self.moves_num -= 1
+    }
+
     /// 手番
     pub fn get_phase(&self) -> Phase {
         // 手番
-        if self.ply % 2 == 0 {
+        if self.moves_num % 2 == 0 {
             Phase::First
         } else {
             Phase::Second

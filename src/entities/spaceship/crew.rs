@@ -166,10 +166,10 @@ impl Chiyuri {
         starts += 3;
         // コマンド読取。棋譜に追加され、手目も増える
         if read_sasite(&line, &mut starts, len, &mut universe.game) {
-            // 手目を戻す
-            universe.game.history.ply -= 1;
+            // 次の do_move で増えるので、手目をいったん戻す
+            universe.game.history.decrease_moves_num();
             // 入っている指し手の通り指すぜ☆（＾～＾）
-            let ply = universe.game.history.ply;
+            let ply = universe.game.history.moves_num();
             let move_ = universe.game.history.moves[ply as usize];
             universe.game.do_move(move_);
         }
@@ -191,7 +191,8 @@ impl Chiyuri {
         let bestmove = &line[9..];
         Beam::shoot(&format!("Debug   | bestmove=|{}|", bestmove));
     }
-    pub fn kifu(universe: &Universe) {
+    /// 棋譜（指し手の一覧）表示
+    pub fn record(universe: &Universe) {
         Beam::shoot("棋譜表示");
         let s = universe.game.get_moves_history_text();
         Beam::shoot(&s);
@@ -289,7 +290,7 @@ impl Chiyuri {
         if !universe.game.undo_move(universe.game.history.get_phase()) {
             Beam::shoot(&format!(
                 "ply={} を、これより戻せません",
-                universe.game.history.ply
+                universe.game.history.moves_num()
             ));
         }
     }

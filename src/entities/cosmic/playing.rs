@@ -6,6 +6,7 @@ use crate::entities::move_::to_move_object;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use crate::movegen::PieceEx;
 use crate::position::position::Position;
+use crate::position::to_move_code;
 use crate::take1base::Move;
 use crate::take1base::PIECE_MEANING_LEN;
 use rand::Rng;
@@ -99,22 +100,23 @@ impl Game {
 
     /// 棋譜の作成
     pub fn set_move(&mut self, move_: Move) {
-        self.history.moves[self.history.ply as usize] = move_
+        self.history.moves[self.history.moves_num() as usize] = move_
     }
     pub fn get_move(&self) -> Move {
-        self.history.moves[self.history.ply as usize]
+        self.history.moves[self.history.moves_num() as usize]
     }
     /// テスト用に棋譜表示☆（＾～＾）
     pub fn get_moves_history_text(&self) -> String {
         let mut s = String::new();
-        for ply in 0..self.history.ply {
-            s.push_str(&format!("[{}] {}", ply, self.history.moves[ply as usize]));
+        for ply in 0..self.history.moves_num() {
+            let m = self.history.moves[ply as usize];
+            s.push_str(&format!("[{}]{} ", ply, to_move_code(m)));
         }
         s
     }
 
     pub fn set_position_hash(&mut self, hash: u64) {
-        self.history.position_hashs[self.history.ply as usize] = hash;
+        self.history.position_hashs[self.history.moves_num() as usize] = hash;
     }
     pub fn set_captured(&mut self, ply1: usize, pc: Option<PieceEx>) {
         self.history.captured_pieces[ply1] = pc
@@ -135,7 +137,7 @@ impl Game {
         let mut s = String::new();
         s.push_str(&format!("[ini] {:20}\n", &self.starting_position_hash));
 
-        for ply in 0..self.history.ply {
+        for ply in 0..self.history.moves_num() {
             let hash = &self.history.position_hashs[ply as usize];
             // 64bitは10進数20桁。改行する
             s.push_str(&format!("[{:3}] {:20}\n", ply, hash));
@@ -171,13 +173,13 @@ impl Game {
     /// 現局面は、同一局面が何回目かを調べるぜ☆（＾～＾）
     /// TODO 初期局面を何に使ってるのか☆（＾～＾）？
     pub fn count_same_position(&self) -> isize {
-        if self.history.ply < 1 {
+        if self.history.moves_num() < 1 {
             return 0;
         }
 
         let mut count = 0;
-        let last_ply = self.history.ply - 1;
-        let new_ply = self.history.ply;
+        let last_ply = self.history.moves_num() - 1;
+        let new_ply = self.history.moves_num();
         for i_ply in 0..new_ply {
             let t = last_ply - i_ply;
             if self.history.position_hashs[t as usize]
@@ -262,71 +264,69 @@ impl Game {
             // 移動先升に駒を置く
             self.position.push_to_board(to2, moveing_piece);
         }
-        self.set_captured(self.history.ply as usize, cap);
+        self.set_captured(self.history.moves_num() as usize, cap);
 
         // 局面ハッシュを作り直す
         let ky_hash = self.create_current_position_hash();
         self.set_position_hash(ky_hash);
 
-        self.history.ply += 1;
+        self.history.increase_moves_num();
         cap
     }
 
     pub fn undo_move(&mut self, us: Phase) -> bool {
-        if 0 < self.history.ply {
-            // 棋譜から読取、手目も減る
-            self.history.ply -= 1;
+        if 0 < self.history.moves_num() {
+            // まず　手目を戻す
+            self.history.decrease_moves_num();
             let move_ = self.get_move();
             // let (from, to, pro) = destructure_move(move_);
             let (from2, to2, promote2, drop2) = to_move_object(us, move_);
-            {
-                // 取った駒が有ったか。
-                let captured: Option<PieceEx> =
-                    self.history.captured_pieces[self.history.ply as usize];
-                // 動いた駒
-                let moveing_piece: Option<PieceEx> = if let Some(_source_val) = from2 {
-                    // 打でなければ
-                    if promote2 {
-                        // 成ったなら、成る前へ
-                        if let Some(source_piece) = self.position.pop_from_board(to2) {
-                            Some(PieceEx::new(source_piece.piece.demoted(), source_piece.num))
-                        } else {
-                            std::panic::panic_any(Beam::trouble(
-                                "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！",
-                            ))
-                        }
-                    } else {
-                        self.position.pop_from_board(to2)
-                    }
-                } else {
-                    if let Some(_drp) = drop2 {
-                        // 打った場所に駒があるはずだぜ☆（＾～＾）
-                        if let Some(pc_ex) = self.position.pop_from_board(to2) {
-                            // 自分の持ち駒を増やそうぜ☆（＾～＾）！
-                            self.position.push_hand(&pc_ex);
-                            Some(pc_ex)
-                        } else {
-                            panic!("dst={:?}", to2)
-                        }
+            // 取った駒が有ったか。
+            let captured: Option<PieceEx> =
+                self.history.captured_pieces[self.history.moves_num() as usize];
+            // 動いた駒
+            let moveing_piece: Option<PieceEx> = if let Some(_source_val) = from2 {
+                // 打でなければ
+                if promote2 {
+                    // 成ったなら、成る前へ
+                    if let Some(source_piece) = self.position.pop_from_board(to2) {
+                        Some(PieceEx::new(source_piece.piece.demoted(), source_piece.num))
                     } else {
                         std::panic::panic_any(Beam::trouble(
-                            "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！",
+                            "(Err.305) 成ったのに移動先に駒が無いぜ☆（＾～＾）！",
                         ))
                     }
-                };
-
-                if let Some(captured_piece_val) = captured {
-                    // 自分の持ち駒を減らす
-                    self.position
-                        .pop_hand(captured_piece_val.piece.captured().hand_address());
-                    // 移動先の駒を、取った駒（あるいは空）に戻す
-                    self.position.push_to_board(to2, captured);
+                } else {
+                    self.position.pop_from_board(to2)
                 }
-
-                if let Some(from2) = from2 {
-                    // 打でなければ、移動元升に、動かした駒を置く☆（＾～＾）打なら何もしないぜ☆（＾～＾）
-                    self.position.push_to_board(from2, moveing_piece);
+            } else {
+                if let Some(_drp) = drop2 {
+                    // 打った場所に駒があるはずだぜ☆（＾～＾）
+                    if let Some(pc_ex) = self.position.pop_from_board(to2) {
+                        // 自分の持ち駒を増やそうぜ☆（＾～＾）！
+                        self.position.push_hand(&pc_ex);
+                        Some(pc_ex)
+                    } else {
+                        panic!("dst={:?}", to2)
+                    }
+                } else {
+                    std::panic::panic_any(Beam::trouble(
+                        "(Err.311) 打なのに駒を指定していないぜ☆（＾～＾）！",
+                    ))
                 }
+            };
+
+            if let Some(captured_piece_val) = captured {
+                // 自分の持ち駒を減らす
+                self.position
+                    .pop_hand(captured_piece_val.piece.captured().hand_address());
+                // 移動先の駒を、取った駒（あるいは空）に戻す
+                self.position.push_to_board(to2, captured);
+            }
+
+            if let Some(from2) = from2 {
+                // 打でなければ、移動元升に、動かした駒を置く☆（＾～＾）打なら何もしないぜ☆（＾～＾）
+                self.position.push_to_board(from2, moveing_piece);
             }
             // 棋譜にアンドゥした指し手がまだ残っているが、とりあえず残しとく
             true
