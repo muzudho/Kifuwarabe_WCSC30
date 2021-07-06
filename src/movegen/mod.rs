@@ -607,6 +607,14 @@ impl PseudoLegalMoves {
                 let bl = is_adjacent_opponent_control(us, position, to, Direction::BottomLeft);
                 let b = is_adjacent_opponent_control(us, position, to, Direction::Bottom);
                 let br = is_adjacent_opponent_control(us, position, to, Direction::BottomRight);
+                // 飛、香、竜の動き
+                let long_r = king_is_adjacent_opponent_long_control(us, position, from,to, Direction::Right);
+                let long_t = king_is_adjacent_opponent_long_control(us, position,from, to, Direction::Top);
+                let long_l =
+                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::Left);
+                let long_b =
+                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::Bottom);
+                // 角、馬の動き
                 let long_tr = king_is_adjacent_opponent_long_control(us, position, from,to, Direction::TopRight);
                 let long_tl = king_is_adjacent_opponent_long_control(us, position,from, to, Direction::TopLeft);
                 let long_bl =
@@ -614,7 +622,7 @@ impl PseudoLegalMoves {
                 let long_br =
                 king_is_adjacent_opponent_long_control(us, position, from,to, Direction::BottomRight);
                 let control =
-                    r || tr || t || tl || l || bl || b || br || long_tr || long_tl || long_bl || long_br;
+                    r || tr || t || tl || l || bl || b || br || long_r || long_t || long_l || long_b || long_tr || long_tl || long_bl || long_br;
 
                 // Beam::shoot(&format!(
                 //     "# suicide-check from={} to={} control={}",
@@ -622,9 +630,9 @@ impl PseudoLegalMoves {
                 // ));
                 if control {
                     Beam::shoot(&format!(
-                        "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
+                        "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
                         to_move_code(*particle),
-                        from,to,control,r,tr,t,tl,l,bl,b,br,long_tr,long_tl,long_bl,long_br
+                        from,to,control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
                     ));
                 }
                 !control
