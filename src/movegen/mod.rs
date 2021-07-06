@@ -184,8 +184,7 @@ fn is_adjacent_opponent_long_control(
     false
 }
 
-// 隣の敵の利きが利いているかどうか
-// TODO 長い利き
+// 隣接する敵の１マスの利きが利いているかどうか
 fn is_adjacent_opponent_control(
     us: Phase,
     position: &Position,
@@ -399,6 +398,15 @@ fn check_checker_pin(
 
     (pinned, checker)
 }
+
+/// 指し手生成区分（＾～＾）
+pub enum GenType {
+    // 王手されてるから回避しろよ（＾～＾）
+    Evasion,
+    // 王手されてないから普通にしろよ（＾～＾）
+    NonEvasion,
+}
+
 /// Pseudo legal move(疑似合法手)☆（＾～＾）
 ///
 /// 先手の連続王手の千日手とか、空き王手とか、駒を見ただけでは調べられないだろ☆（＾～＾）
@@ -461,19 +469,29 @@ impl PseudoLegalMoves {
         }
 
         // TODO チェッカーがいたら、王手回避(Evasions)モードへ
+        let gen_type = if pinned_list.is_empty() {
+            GenType::NonEvasion
+        } else {
+            GenType::Evasion
+        };
 
         // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
         let mut move_list = PseudoLegalMoves::generate_non_evasion(us, position);
 
-        // とりあえず、合い駒を動かす手を除外します
-        // TODO 合い駒でも、動かしていい方向はあるはず
-        move_list.retain(|particle| {
-            let delete = {
-                let (from, _, _) = destructure_move(*particle);
-                pinned_list.contains(&from)
-            };
-            !delete
-        });
+        match gen_type {
+            GenType::Evasion => {
+                // とりあえず、合い駒を動かす手を除外します
+                // TODO 合い駒でも、動かしていい方向はあるはず
+                move_list.retain(|particle| {
+                    let delete = {
+                        let (from, _, _) = destructure_move(*particle);
+                        pinned_list.contains(&from)
+                    };
+                    !delete
+                });
+            }
+            _ => {}
+        }
 
         // TODO 玉の自殺手を除外したい（＾～＾）
         move_list.retain(|particle| {

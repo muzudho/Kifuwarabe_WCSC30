@@ -348,9 +348,9 @@ impl Position {
             )))
         }
 
-        if let Some(piece_meaning) = pc_ex {
+        if let Some(piece) = pc_ex {
             let from = square_from(file, rank);
-            let piece_num = match piece_meaning {
+            let piece_num = match piece {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 Piece::K1 => {
                     self.pc_num_to_location[PieceNum::King1 as usize] = from;
@@ -361,7 +361,7 @@ impl Position {
                     PieceNum::King2
                 }
                 _ => {
-                    let hand_type = piece_meaning.hand_address().type_();
+                    let hand_type = piece.hand_address().type_();
                     self.pc_num_to_location[self.hand_index[hand_type as usize]] = from;
                     if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
                         self.hand_index[hand_type as usize] += 1;
@@ -373,22 +373,21 @@ impl Position {
             };
             self.push_to_board(
                 square_from(file, rank),
-                Some(PieceEx::new(piece_meaning, piece_num)),
+                Some(PieceEx::new(piece, piece_num)),
             );
         }
     }
     /// 駒台に置く
-    pub fn push_hand_on_init(&mut self, piece_meaning: Piece, number: isize) {
+    pub fn push_hand_on_init(&mut self, piece: Piece, number: isize) {
         for _i in 0..number {
-            let ha = piece_meaning.hand_address();
-            let hand = piece_meaning.hand_address();
-            let hand_type = hand.type_();
-            let cursor = self.hand_index[hand_type as usize];
-            self.pc_num_to_location[cursor] = hand_address_to_square(ha);
-            if let Some(pn) = PieceNum::from_usize(cursor) {
-                self.hands[hand as usize].push(&PieceEx::new(piece_meaning, pn));
+            let ha = piece.hand_address();
+            let hand_type = ha.type_();
+            let pc_num = self.hand_index[hand_type as usize];
+            self.pc_num_to_location[pc_num] = hand_address_to_square(ha);
+            if let Some(pc_num) = PieceNum::from_usize(pc_num) {
+                self.hands[ha as usize].push(&PieceEx::new(piece, pc_num));
             } else {
-                panic!("cursor={}", cursor)
+                panic!("pc_num={}", pc_num)
             }
             self.hand_index[hand_type as usize] += 1;
         }
