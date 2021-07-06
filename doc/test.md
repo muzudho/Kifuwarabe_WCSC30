@@ -33,11 +33,6 @@ setoption name PromotionWeightPer1000 value 1000
 usinewgame
 # position sfen 4k4/9/2+p+p+p+p+p2/2+p3+p2/2+p1K1+p2/2+p3+p2/2+p+p+p+p+p2/9/P8 b 2r2b4g4s4n4lp 1
 position sfen 4k4/9/4+p4/9/4K4/9/4+p4/9/P8 b 2r2b4g4s4n4l15p 1
-# 持駒の歩の枚数のパースがおかしい？
-# position sfen 4k4/9/4+p4/9/4K4/9/4+p4/9/P8 b 2r2b4g4s4n4l9p 1
-# 10～18 で 11 になる
-# position sfen 4k4/9/4+p4/9/4K4/9/4+p4/9/P8 b 2r2b4g4s4n4l10p 1
-# position sfen 4k4/9/9/9/4K4/9/9/9/9 b 2r2b4g4s4n4l18p 1
 pos
 genmove
 ```
@@ -56,6 +51,31 @@ setoption name ManyWaysPer1000 value 10
 setoption name PromotionWeightPer1000 value 1000
 usinewgame
 position startpos moves 5i4h 4a3b 4h5h 6a5b 5h6h 5a4b 6h7h 4c4d 7h6h 5b4c 6h7h 4d4e 7h6h 5c5d 6h7h 5d5e 7h6h 9c9d 6h7h 9d9e 7h6h 6c6d 6h7h 6d6e 7h6h 7c7d 6h7h 7d7e 7h6h 1c1d 6h7h 2b1c 6i6h 3a2b 7h6i 3c3d 6i5i 2b3c 5i6i 4b3a 6i5i 3a2b 5i6i 1d1e 6i5i 8c8d 5i6i 8d8e 6i5i 8e8f 8g8f 8b8f 5i6i P*8g 6i5i 8g8h+ 7i8h 8f8h+ 5i6i 8h9i 6i7i L*8f 7i6i 8f8i+ 6i5i S*7i 5i6i 5e5f 5g5f 7i6h+ 2h6h 8i8h
+pos
+genmove
+```
+
+## 持駒の歩の枚数がおかしい
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 1
+setoption name MaxDepth value 1
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
+position sfen 4k4/9/4+p4/9/4K4/9/4+p4/9/P8 b 2r2b4g4s4n4l15p 1
+# 持駒の歩の枚数のパースがおかしい？
+# position sfen 4k4/9/4+p4/9/4K4/9/4+p4/9/P8 b 2r2b4g4s4n4l9p 1
+# 10～18 で 11 になる
+# position sfen 4k4/9/4+p4/9/4K4/9/4+p4/9/P8 b 2r2b4g4s4n4l10p 1
+# position sfen 4k4/9/9/9/4K4/9/9/9/9 b 2r2b4g4s4n4l18p 1
 pos
 genmove
 ```

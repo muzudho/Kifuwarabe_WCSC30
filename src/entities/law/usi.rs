@@ -337,9 +337,9 @@ pub fn set_position(line: &str, game: &mut Game) {
                 // 数字なし
                 N0Digit,
                 // 1桁の数
-                N1Digit(isize),
+                N1Digit(u8),
                 // 2桁の数
-                N2Digit(isize),
+                N2Digit(u8),
             }
             'mg: loop {
                 if 0 < (len - starts) {
@@ -348,7 +348,7 @@ pub fn set_position(line: &str, game: &mut Game) {
                     let hand_count = match &line[starts..=starts] {
                         "1" => {
                             // 1枚のときは数字は付かないので、10～18 と確定☆
-                            match &line[starts..=starts] {
+                            match &line[starts + 1..=starts + 1] {
                                 "0" => HandCount::N2Digit(10),
                                 "1" => HandCount::N2Digit(11),
                                 "2" => HandCount::N2Digit(12),

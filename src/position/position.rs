@@ -375,7 +375,7 @@ impl Position {
         }
     }
     /// 駒台に置く
-    pub fn push_hand_on_init(&mut self, piece: Piece, number: isize) {
+    pub fn push_hand_on_init(&mut self, piece: Piece, number: u8) {
         for _i in 0..number {
             let ha = piece.hand_address();
             let hand_type = ha.type_();
@@ -387,6 +387,8 @@ impl Position {
                 panic!("pc_num={}", pc_num)
             }
             self.hand_index[hand_type as usize] += 1;
+
+            // Beam::shoot(&format!("# hand[{}]{} pc_num={}", i, piece, pc_num));
         }
     }
     pub fn push_hand(&mut self, hand: &PieceEx) {
