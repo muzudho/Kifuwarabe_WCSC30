@@ -27,6 +27,7 @@ mod position;
 mod record;
 mod search;
 mod take1base;
+mod view;
 
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::spaceship::crew::{Chiyuri, Kifuwarabe, Yumemi};

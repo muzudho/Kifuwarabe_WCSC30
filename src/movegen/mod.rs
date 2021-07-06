@@ -25,6 +25,7 @@ use crate::position::square_wall;
 use crate::position::Square;
 use crate::take1base::Move;
 use crate::take1base::Piece;
+use crate::view::print_sq_list;
 use std::fmt;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -94,7 +95,7 @@ const DIRECTIONS_SQ: [i8; 8] = [
 fn is_adjacent_opponent_long_control(
     us: Phase,
     position: &Position,
-    ksq: Square,
+    ksq_from: Square,
     direction: Direction,
 ) -> bool {
     let d_sq = DIRECTIONS_SQ[direction as usize];
@@ -102,8 +103,8 @@ fn is_adjacent_opponent_long_control(
     let mut pinned_opponent = false;
     let mut distance = 0;
 
-    // TODO 隣のマス
-    let mut adjacent_sq = ksq as i8;
+    // 隣のマス
+    let mut adjacent_sq = ksq_from as i8;
     loop {
         adjacent_sq += d_sq;
 
@@ -117,9 +118,7 @@ fn is_adjacent_opponent_long_control(
             break;
         }
 
-        let adjacent_sq = square_from(adjacent_file as u8, adjacent_rank as u8);
-
-        if let Some(pc_ex) = position.piece_at(adjacent_sq) {
+        if let Some(pc_ex) = position.piece_at(adjacent_sq as u8) {
             if us == pc_ex.piece.phase() {
                 if pinned {
                     // 味方の駒が２つ有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
@@ -188,13 +187,13 @@ fn is_adjacent_opponent_long_control(
 fn is_adjacent_opponent_control(
     us: Phase,
     position: &Position,
-    ksq: Square,
+    ksq_to: Square,
     direction: Direction,
 ) -> bool {
     let d_sq = DIRECTIONS_SQ[direction as usize];
 
-    // TODO 隣のマス
-    let adjacent_sq = (ksq as i8 + d_sq) as u8;
+    // 隣のマス
+    let adjacent_sq = (ksq_to as i8 + d_sq) as u8;
     // Beam::shoot(&format!(
     //     "is_adjacent_opponent_control d_file={} d_rank={} adjacent_sq={}",
     //     d_file, d_rank, adjacent_sq
@@ -269,14 +268,19 @@ fn is_adjacent_opponent_control(
     false
 }
 
+/// # Arguments
+///
+/// * `sq_list` - 玉を含まず、チェッカーを含む１列のマスのリストが追加されます
+///
 /// # Returns
 ///
-/// 合い駒のマス, チェッカーのマス
+/// 合い駒のマス, チェッカーのマス, この１列のマスのリスト
 fn check_checker_pin(
     us: Phase,
     position: &Position,
     ksq: Square,
     direction: Direction,
+    sq_list: &mut Vec<Square>,
 ) -> (Option<Square>, Option<Square>) {
     let d_sq = DIRECTIONS_SQ[direction as usize];
 
@@ -285,6 +289,9 @@ fn check_checker_pin(
     let mut checker: Option<Square> = None; // チェック駒
     let mut interval = 0;
     while FILE_1 <= file(sq) && file(sq) < FILE_10 && RANK_1 <= rank(sq) && rank(sq) < RANK_10 {
+        sq_list.push(sq);
+        Beam::shoot(&format!("# check_checker_pin sq={}", sq));
+
         if let Some(pc_ex) = position.piece_at(sq) {
             if us == pc_ex.piece.phase() {
                 // 合い駒か、ただの自駒か
@@ -293,6 +300,7 @@ fn check_checker_pin(
                 } else {
                     // 味方の駒が２枚あれば長い利きは当たっていません
                     // ループ終了
+                    interval += 1;
                     break;
                 }
             } else {
@@ -383,6 +391,7 @@ fn check_checker_pin(
                     }
                 };
                 // ループ終了
+                interval += 1;
                 break;
             }
         } else {
@@ -394,6 +403,9 @@ fn check_checker_pin(
 
     if let None = checker {
         pinned = None;
+        // チェッカーは無かったので、追加した分を減らします
+        sq_list.truncate(sq_list.len() - interval);
+        Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
     }
 
     (pinned, checker)
@@ -435,6 +447,15 @@ impl PseudoLegalMoves {
     ///
     /// 指し手の一覧
     pub fn generate(us: Phase, position: &Position) -> Vec<Move> {
+        // TODO その手を指して、王手が解消されない手は除外したい
+        // 本書では、「離れた王手」は玉とチェッカーの間に１マス以上の空きマスがあるものとします。また、桂を含みません。
+        //
+        // 離れた王手回避
+        // -------------
+        // 1. 離れた王手が２つなら、玉を動かすしかない
+        // 2. 離れた王手が１つなら、そのチェッカーのあるマスから玉の手前までのマスへ、玉以外の味方の駒を動かす（打含む）
+        // （離れた利きのチェックでは、玉でチェッカーを取り返すことはできない）
+
         // TODO 自玉の位置検索
         let ksq = match us {
             Phase::First => position.location_at(PieceNum::King1),
@@ -451,6 +472,7 @@ impl PseudoLegalMoves {
         // スライディング・チェッカー(Sliding Checker)検索
         let mut pinned_list = Vec::<Square>::new();
         let mut checker_list = Vec::<Square>::new();
+        let mut long_control_sq_list = Vec::<Square>::new();
 
         // とりあえず 合い駒(Pinned) は今のところ 動かさないことにするぜ（＾～＾）
         let directions = [
@@ -464,7 +486,8 @@ impl PseudoLegalMoves {
             Direction::BottomRight,
         ];
         for direction in directions {
-            let (pinned, checker) = check_checker_pin(us, position, ksq, direction);
+            let (pinned, checker) =
+                check_checker_pin(us, position, ksq, direction, &mut long_control_sq_list);
             if let Some(pinned) = pinned {
                 pinned_list.push(pinned);
             }
@@ -472,6 +495,7 @@ impl PseudoLegalMoves {
                 checker_list.push(checker);
             }
         }
+        print_sq_list(&long_control_sq_list);
 
         let gen_type = if checker_list.is_empty() {
             // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
@@ -487,6 +511,7 @@ impl PseudoLegalMoves {
             // チェッカーが２つあったら、玉が移動するしかない
             PseudoLegalMoves::generate_king(us, position, &mut move_list);
         } else {
+            // チェッカーが１つなら
             PseudoLegalMoves::generate_non_evasion(us, position, &mut move_list);
 
             match gen_type {
@@ -497,6 +522,20 @@ impl PseudoLegalMoves {
                         let delete = {
                             let (from, _, _) = destructure_move(*particle);
                             pinned_list.contains(&from)
+                        };
+                        !delete
+                    });
+
+                    // 合い駒になるような動き以外の、自玉以外の味方の動きを除外
+                    move_list.retain(|particle| {
+                        let delete = {
+                            let (from, to, _) = destructure_move(*particle);
+                            if from == ksq {
+                                return false;
+                            }
+
+                            // 利きを止めるような動きでなければ除外
+                            !long_control_sq_list.contains(&to)
                         };
                         !delete
                     });
@@ -518,18 +557,28 @@ impl PseudoLegalMoves {
                         || is_adjacent_opponent_control(us, position, to, Direction::BottomLeft)
                         || is_adjacent_opponent_control(us, position, to, Direction::Bottom)
                         || is_adjacent_opponent_control(us, position, to, Direction::BottomRight)
-                        || is_adjacent_opponent_long_control(us, position, to, Direction::TopRight)
-                        || is_adjacent_opponent_long_control(us, position, to, Direction::TopLeft)
                         || is_adjacent_opponent_long_control(
                             us,
                             position,
-                            to,
+                            from,
+                            Direction::TopRight,
+                        )
+                        || is_adjacent_opponent_long_control(
+                            us,
+                            position,
+                            from,
+                            Direction::TopLeft,
+                        )
+                        || is_adjacent_opponent_long_control(
+                            us,
+                            position,
+                            from,
                             Direction::BottomLeft,
                         )
                         || is_adjacent_opponent_long_control(
                             us,
                             position,
-                            to,
+                            from,
                             Direction::BottomRight,
                         );
 
@@ -544,21 +593,6 @@ impl PseudoLegalMoves {
             };
             !delete
         });
-
-        match gen_type {
-            GenType::Evasion => {
-                // TODO その手を指して、王手が解消されない手は除外したい
-
-                // 本書では、「離れた王手」は玉とチェッカーの間に１マス以上の空きマスがあるものとします。また、桂を含みません。
-                //
-                // 離れた王手回避
-                // -------------
-                // 1. 離れた王手が２つなら、玉を動かすしかない
-                // 2. 離れた王手が１つなら、そのチェッカーのあるマスから玉の手前までのマスへ、玉以外の味方の駒を動かす（打含む）
-                // （離れた利きのチェックでは、玉でチェッカーを取り返すことはできない）
-            }
-            _ => {}
-        }
 
         move_list
     }

@@ -5,12 +5,13 @@ use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::cryptographic::*;
 use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
-use crate::entities::spaceship::facility::{CommandRoom, GameRoom, Kitchen}; //, RestRoom
+use crate::entities::spaceship::facility::{CommandRoom, GameRoom};
 use crate::movegen::PseudoLegalMoves;
 use crate::position::square_from;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::search::search::Tree;
+use crate::view::print_move_list;
 use rand::Rng;
 use std::io as std_io;
 
@@ -178,7 +179,7 @@ impl Chiyuri {
         // Generation move.
         let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position);
         Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
-        Kitchen::print_ways(&game.position, &move_list);
+        print_move_list(&game.position, &move_list);
         Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
     }
     pub fn hash(universe: &Universe) {

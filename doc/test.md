@@ -37,6 +37,26 @@ pos
 genmove
 ```
 
+## 長い利きから逃げるかのテスト
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 1
+setoption name MaxDepth value 1
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
+position startpos moves 5i4h 4a3b 4h5h 6a5b 5h6h 5a4b 6h7h 4c4d 7h6h 5b4c 6h7h 4d4e 7h6h 5c5d 6h7h 5d5e 7h6h 9c9d 6h7h 9d9e 7h6h 6c6d 6h7h 6d6e 7h6h 7c7d 6h7h 7d7e 7h6h 1c1d 6h7h 2b1c 6i6h 3a2b 7h6i 3c3d 6i5i 2b3c 5i6i 4b3a 6i5i 3a2b 5i6i 1d1e 6i5i 8c8d 5i6i 8d8e 6i5i 8e8f 8g8f 8b8f 5i6i P*8g 6i5i 8g8h+ 7i8h 8f8h+ 5i6i 8h9i 6h7h 1c5g+ 7h8g 9i8i
+pos
+genmove
+```
+
 ## 自殺手のチェック
 
 ```plain
