@@ -16,7 +16,7 @@ use crate::entities::cosmic::smart::features::{HandAddress, HandAddressType, Pie
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::movegen::{Agility, Mobility};
 use crate::position::position::PieceNum;
-use crate::search::evaluator::CentiPawn;
+use crate::search::CentiPawn;
 use crate::take1base::{Piece, PIECE_MEANING_LEN};
 //use num_traits::FromPrimitive;
 // use std::sync::Mutex;
