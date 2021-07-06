@@ -116,7 +116,7 @@ pub fn print_info(
             "".to_string()
         },
         if let Some(move_) = move_ {
-            format!("{}", move_)
+            format!("{}", to_move_code(move_))
         } else {
             "".to_string()
         },
