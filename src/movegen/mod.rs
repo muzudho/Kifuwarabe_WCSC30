@@ -274,40 +274,47 @@ fn is_adjacent_opponent_control(
 ///
 /// # Returns
 ///
-/// 合い駒のマス, チェッカーのマス, この１列のマスのリスト
+/// 合い駒のマス, ピンしてる駒のマス、チェッカーのマス
 fn check_checker_pin(
     us: Phase,
     position: &Position,
     ksq: Square,
     direction: Direction,
     sq_list: &mut Vec<Square>,
-) -> (Option<Square>, Option<Square>) {
+) -> (Option<Square>, Option<Square>, Option<Square>) {
     let d_sq = DIRECTIONS_SQ[direction as usize];
-    // Beam::shoot(&format!("# check_checker_pin ksq={} d_sq={}", ksq, d_sq));
+    Beam::shoot(&format!(
+        "# check_checker_pin us={} ksq={} d_sq={}",
+        us, ksq, d_sq
+    ));
 
     let mut sq = (ksq as i8 + d_sq) as u8;
     let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
+    let mut pin_head: Option<Square> = None; // ピンしてる駒
     let mut checker: Option<Square> = None; // チェック駒
     let mut interval = 0;
     while FILE_1 <= file(sq) && file(sq) < FILE_10 && RANK_1 <= rank(sq) && rank(sq) < RANK_10 {
         sq_list.push(sq);
-        // Beam::shoot(&format!("# check_checker_pin sq={}", sq));
 
         if let Some(pc_ex) = position.piece_at(sq) {
             if us == pc_ex.piece.phase() {
                 // 合い駒か、ただの自駒か
                 if let None = pinned {
+                    // とりあえず 合い駒 候補
                     pinned = Some(sq);
+                    Beam::shoot(&format!("# check_checker_pin sq={} (Pinned?)", sq));
                 } else {
                     // 味方の駒が２枚あれば長い利きは当たっていません
                     // ループ終了
+                    Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
                     interval += 1;
                     break;
                 }
             } else {
                 // 敵駒
-                checker = if interval == 0 {
-                    match direction {
+                if interval == 0 {
+                    // 隣接する敵駒はチェッカー（＾～＾）
+                    checker = match direction {
                         Direction::Right | Direction::Left => match pc_ex.piece.type_() {
                             PieceType::K
                             | PieceType::R
@@ -369,9 +376,16 @@ fn check_checker_pin(
                             | PieceType::PP => Some(sq),
                             _ => None,
                         },
+                    };
+
+                    if let None = checker {
+                        Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
+                    } else {
+                        Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
                     }
                 } else {
-                    match direction {
+                    // 離れたところにある長い利きの駒は ピンの頭か、チェッカーのどちらか（＾～＾）
+                    let opponent = match direction {
                         Direction::Right | Direction::Left | Direction::Bottom => {
                             match pc_ex.piece.type_() {
                                 PieceType::R | PieceType::PR => Some(sq),
@@ -389,27 +403,41 @@ fn check_checker_pin(
                             PieceType::R | PieceType::L | PieceType::PR => Some(sq),
                             _ => None,
                         },
+                    };
+                    if let None = opponent {
+                        Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
+                    } else if let None = pinned {
+                        Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
+                        checker = opponent;
+                    } else {
+                        Beam::shoot(&format!("# check_checker_pin sq={} (PinHead)", sq));
+                        pin_head = opponent;
                     }
-                };
+                }
                 // ループ終了
                 interval += 1;
                 break;
             }
         } else {
+            Beam::shoot(&format!("# check_checker_pin sq={}", sq));
         }
 
         sq = (sq as i8 + d_sq) as u8;
         interval += 1;
     }
 
-    if let None = checker {
+    if let None = pin_head {
+        // ピン頭は無かったので、合い駒もありません
         pinned = None;
+        Beam::shoot("# check_checker_pin cancel pinned");
+    }
+    if let None = checker {
         // チェッカーは無かったので、追加した分を減らします
         sq_list.truncate(sq_list.len() - interval);
-        // Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
+        Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
     }
 
-    (pinned, checker)
+    (pinned, pin_head, checker)
 }
 
 /// 指し手生成区分（＾～＾）
@@ -470,8 +498,10 @@ impl PseudoLegalMoves {
         }
 
         // 合い駒(Pinned)検索
+        // ピンの頭検索。ただちに回避する必要はない
         // スライディング・チェッカー(Sliding Checker)検索
         let mut pinned_list = Vec::<Square>::new();
+        let mut pin_head_list = Vec::<Square>::new();
         let mut checker_list = Vec::<Square>::new();
         let mut long_control_sq_list = Vec::<Square>::new();
 
@@ -487,22 +517,32 @@ impl PseudoLegalMoves {
             Direction::BottomRight,
         ];
         for direction in directions {
-            let (pinned, checker) =
+            let (pinned, pin_head, checker) =
                 check_checker_pin(us, position, ksq, direction, &mut long_control_sq_list);
             if let Some(pinned) = pinned {
                 pinned_list.push(pinned);
+            }
+            if let Some(pin_head) = pin_head {
+                pin_head_list.push(pin_head);
             }
             if let Some(checker) = checker {
                 checker_list.push(checker);
             }
         }
+        Beam::shoot("# pinned_list");
+        print_sq_list(&pinned_list);
+        Beam::shoot("# pin_head_list");
+        print_sq_list(&pin_head_list);
+        Beam::shoot("# checker_list");
+        print_sq_list(&checker_list);
+        Beam::shoot("# long_control_sq_list");
         print_sq_list(&long_control_sq_list);
 
         let gen_type = if checker_list.is_empty() {
             // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
             GenType::NonEvasion
         } else {
-            // TODO チェッカーがいたら、王手回避(Evasions)モードへ
+            // TODO チェッカーがいたら、ただちに 王手回避(Evasions)モードへ
             GenType::Evasion
         };
 
@@ -512,21 +552,21 @@ impl PseudoLegalMoves {
             // チェッカーが２つあったら、玉が移動するしかない
             PseudoLegalMoves::generate_king(us, position, &mut move_list);
         } else {
-            // チェッカーが１つなら
+            // チェッカーが１つ以下なら
             PseudoLegalMoves::generate_non_evasion(us, position, &mut move_list);
+
+            // とりあえず、合い駒を動かす手を除外します
+            // TODO 合い駒でも、動かしていい方向はあるはず
+            move_list.retain(|particle| {
+                let delete = {
+                    let (from, _, _) = destructure_move(*particle);
+                    pinned_list.contains(&from)
+                };
+                !delete
+            });
 
             match gen_type {
                 GenType::Evasion => {
-                    // とりあえず、合い駒を動かす手を除外します
-                    // TODO 合い駒でも、動かしていい方向はあるはず
-                    move_list.retain(|particle| {
-                        let delete = {
-                            let (from, _, _) = destructure_move(*particle);
-                            pinned_list.contains(&from)
-                        };
-                        !delete
-                    });
-
                     // 合い駒になるような動き以外の、自玉以外の味方の動きを除外
                     move_list.retain(|particle| {
                         let delete = {
