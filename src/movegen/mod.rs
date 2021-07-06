@@ -498,8 +498,8 @@ impl PseudoLegalMoves {
                 let (from, to, _) = destructure_move(*particle);
                 if from == ksq {
                     // 玉が移動する指し手は要注意（＾～＾）
-                    let file = file(to) as i8 - file(from) as i8;
-                    let rank = rank(to) as i8 - rank(from) as i8;
+                    // let file = file(to) as i8 - file(from) as i8;
+                    // let rank = rank(to) as i8 - rank(from) as i8;
 
                     // let direction = if file == -1 {
                     //     if rank == -1 {

@@ -242,7 +242,7 @@ impl Tree {
                     // self.evaluation
                     //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
                     self.pv.pop();
-                    game.undo_move(game.history.get_phase());
+                    game.undo_move();
                     break;
                 }
             }
@@ -333,7 +333,7 @@ impl Tree {
             // self.evaluation
             //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
-            game.undo_move(game.history.get_phase());
+            game.undo_move();
 
             match ts.bestmove.value {
                 Value::Win => {

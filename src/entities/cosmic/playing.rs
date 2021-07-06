@@ -1,12 +1,11 @@
-use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::recording::{History, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
 use crate::entities::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX};
 use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
 use crate::entities::move_::to_move_object;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use crate::movegen::PieceEx;
+use crate::position::destructure_move;
 use crate::position::position::Position;
-use crate::position::to_move_code;
 use crate::take1base::Move;
 use crate::take1base::PIECE_MEANING_LEN;
 use rand::Rng;
@@ -105,12 +104,20 @@ impl Game {
     pub fn get_move(&self) -> Move {
         self.history.moves[self.history.moves_num() as usize]
     }
-    /// テスト用に棋譜表示☆（＾～＾）
-    pub fn get_moves_history_text(&self) -> String {
+    /// デバッグ用に棋譜表示☆（＾～＾） 普通に棋譜が欲しいときは sfen 見ろだぜ（＾～＾）
+    pub fn get_moves_history_debug_text(&self) -> String {
         let mut s = String::new();
-        for ply in 0..self.history.moves_num() {
-            let m = self.history.moves[ply as usize];
-            s.push_str(&format!("[{}]{} ", ply, to_move_code(m)));
+        for moves_num in 0..self.history.moves_num() {
+            let m = self.history.moves[moves_num as usize];
+            let (from, to, promote) = destructure_move(m);
+
+            s.push_str(&format!(
+                "[{}]{} {}{} ",
+                moves_num,
+                from,
+                to,
+                if promote { "+" } else { "" }
+            ));
         }
         s
     }
@@ -274,10 +281,11 @@ impl Game {
         cap
     }
 
-    pub fn undo_move(&mut self, us: Phase) -> bool {
+    pub fn undo_move(&mut self) -> bool {
         if 0 < self.history.moves_num() {
             // まず　手目を戻す
             self.history.decrease_moves_num();
+            let us = self.history.get_phase();
             let move_ = self.get_move();
             // let (from, to, pro) = destructure_move(move_);
             let (from2, to2, promote2, drop2) = to_move_object(us, move_);

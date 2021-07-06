@@ -191,10 +191,10 @@ impl Chiyuri {
         let bestmove = &line[9..];
         Beam::shoot(&format!("Debug   | bestmove=|{}|", bestmove));
     }
-    /// 棋譜（指し手の一覧）表示
+    /// デバッグ用に棋譜（指し手の一覧）表示
     pub fn record(universe: &Universe) {
         Beam::shoot("棋譜表示");
-        let s = universe.game.get_moves_history_text();
+        let s = universe.game.get_moves_history_debug_text();
         Beam::shoot(&s);
     }
     /* TODO
@@ -287,7 +287,7 @@ impl Chiyuri {
         }
     }
     pub fn undo(universe: &mut Universe) {
-        if !universe.game.undo_move(universe.game.history.get_phase()) {
+        if !universe.game.undo_move() {
             Beam::shoot(&format!(
                 "ply={} を、これより戻せません",
                 universe.game.history.moves_num()
