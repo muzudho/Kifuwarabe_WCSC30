@@ -594,23 +594,23 @@ impl PseudoLegalMoves {
         move_list.retain(|particle| {
             let (from, to, _) = destructure_move(*particle);
             if from == ksq {
-                let control = is_adjacent_opponent_control(us, position, to, Direction::Right)
-                    || is_adjacent_opponent_control(us, position, to, Direction::TopRight)
-                    || is_adjacent_opponent_control(us, position, to, Direction::Top)
-                    || is_adjacent_opponent_control(us, position, to, Direction::TopLeft)
-                    || is_adjacent_opponent_control(us, position, to, Direction::Left)
-                    || is_adjacent_opponent_control(us, position, to, Direction::BottomLeft)
-                    || is_adjacent_opponent_control(us, position, to, Direction::Bottom)
-                    || is_adjacent_opponent_control(us, position, to, Direction::BottomRight)
-                    || is_adjacent_opponent_long_control(us, position, from, Direction::TopRight)
-                    || is_adjacent_opponent_long_control(us, position, from, Direction::TopLeft)
-                    || is_adjacent_opponent_long_control(us, position, from, Direction::BottomLeft)
-                    || is_adjacent_opponent_long_control(
-                        us,
-                        position,
-                        from,
-                        Direction::BottomRight,
-                    );
+                // Control 1～12
+                let c1 = is_adjacent_opponent_control(us, position, to, Direction::Right);
+                let c2 = is_adjacent_opponent_control(us, position, to, Direction::TopRight);
+                let c3 = is_adjacent_opponent_control(us, position, to, Direction::Top);
+                let c4 = is_adjacent_opponent_control(us, position, to, Direction::TopLeft);
+                let c5 = is_adjacent_opponent_control(us, position, to, Direction::Left);
+                let c6 = is_adjacent_opponent_control(us, position, to, Direction::BottomLeft);
+                let c7 = is_adjacent_opponent_control(us, position, to, Direction::Bottom);
+                let c8 = is_adjacent_opponent_control(us, position, to, Direction::BottomRight);
+                let c9 = is_adjacent_opponent_long_control(us, position, to, Direction::TopRight);
+                let c10 = is_adjacent_opponent_long_control(us, position, to, Direction::TopLeft);
+                let c11 =
+                    is_adjacent_opponent_long_control(us, position, to, Direction::BottomLeft);
+                let c12 =
+                    is_adjacent_opponent_long_control(us, position, to, Direction::BottomRight);
+                let control =
+                    c1 || c2 || c3 || c4 || c5 || c6 || c7 || c8 || c9 || c10 || c11 || c12;
 
                 // Beam::shoot(&format!(
                 //     "# suicide-check from={} to={} control={}",
@@ -618,12 +618,14 @@ impl PseudoLegalMoves {
                 // ));
                 if control {
                     Beam::shoot(&format!(
-                        "# remove suicide-move={}",
-                        to_move_code(*particle)
+                        "# remove suicide-move={} from={} to={} control={} c1={} c2={} c3={} c4={} c5={} c6={} c7={} c8={} c9={} c10={} c11={} c12={}",
+                        to_move_code(*particle),
+                        from,to,control,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12
                     ));
                 }
                 !control
             } else {
+                // 玉以外の駒の動きは残す
                 true
             }
         });
