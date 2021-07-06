@@ -52,9 +52,9 @@ impl Kifuwarabe {
     pub fn go(universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let mut tree = Tree::new(
-            // universe.option_many_ways_weight,
-            // universe.option_komawari_weight,
-            // universe.option_promotion_weight,
+            universe.option_many_ways_weight,
+            universe.option_material_advantage_weight,
+            universe.option_promotion_weight,
             universe.option_depth_not_to_give_up,
         );
         let ts = tree.iteration_deeping(universe);
@@ -94,8 +94,8 @@ impl Kifuwarabe {
                 "DepthNotToGiveUp" => {
                     universe.option_depth_not_to_give_up = value.parse().unwrap();
                 }
-                "KomawariWeightPer1000" => {
-                    universe.option_komawari_weight = value.parse().unwrap();
+                "MaterialAdvantageWeightPer1000" => {
+                    universe.option_material_advantage_weight = value.parse().unwrap();
                 }
                 "PromotionWeightPer1000" => {
                     universe.option_promotion_weight = value.parse().unwrap();

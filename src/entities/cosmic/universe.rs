@@ -21,7 +21,7 @@ pub struct Universe {
     /// 諦めない深さ☆（＾～＾）読み終わるまで、思考時間を無視するぜ☆（＾～＾）max_depth - 1 より小さくしろだぜ☆（＾～＾）
     pub option_depth_not_to_give_up: usize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_komawari_weight: isize,
+    pub option_material_advantage_weight: isize,
     /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
     pub option_promotion_weight: isize,
 }
@@ -36,7 +36,7 @@ impl Default for Universe {
             option_min_think_sec: 7,
             option_max_think_sec: 17,
             option_many_ways_weight: 1000,
-            option_komawari_weight: 1000,
+            option_material_advantage_weight: 1000,
             option_promotion_weight: 1000,
         }
     }

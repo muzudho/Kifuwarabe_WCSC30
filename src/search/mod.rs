@@ -1,6 +1,7 @@
 //!
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
+pub mod evaluator;
 
 use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
@@ -9,8 +10,11 @@ use crate::entities::cosmic::universe::Universe;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use crate::movegen::{PieceEx, PseudoLegalMoves};
 use crate::position::destructure_move;
+use crate::position::is_board_square;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
+use crate::search::evaluator::Evaluation;
+use crate::search::evaluator::REPITITION_VALUE;
 use crate::take1base::Move;
 use crate::view::print_info;
 use rand::Rng;
@@ -31,7 +35,8 @@ pub struct Tree {
     // 思考時間（秒）をランダムにすることで、指し手を変えるぜ☆（＾～＾）
     think_sec: u64,
 
-    //pub evaluation: Evaluation,
+    /// 局面評価値の計算
+    pub evaluation: Evaluation,
 
     // 反復深化探索の１回目だけ真☆（＾～＾）
     pub depth_not_to_give_up: usize,
@@ -40,9 +45,9 @@ pub struct Tree {
 }
 impl Tree {
     pub fn new(
-        // many_ways_weight: isize,
-        // komawari_weight: isize,
-        // promotion_weight: isize,
+        many_ways_weight: isize,
+        material_advantage_weight: isize,
+        promotion_weight: isize,
         depth_not_to_give_up: usize,
     ) -> Self {
         Tree {
@@ -50,7 +55,11 @@ impl Tree {
             state_nodes: 0,
             pv: PrincipalVariation::default(),
             think_sec: 0,
-            //evaluation: Evaluation::new(many_ways_weight, komawari_weight, promotion_weight),
+            evaluation: Evaluation::new(
+                many_ways_weight,
+                material_advantage_weight,
+                promotion_weight,
+            ),
             depth_not_to_give_up: depth_not_to_give_up,
             max_depth0: 0,
         }
@@ -65,10 +74,10 @@ impl Tree {
 
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
-        //self.evaluation.before_search();
+        self.evaluation.before_search();
         self.max_depth0 = 0;
         let mut best_ts = self.search(&mut universe.game, Value::Win);
-        //self.evaluation.after_search();
+        self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
         for id in 1..universe.option_max_depth {
@@ -104,9 +113,9 @@ impl Tree {
             );
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
-            //self.evaluation.before_search();
+            self.evaluation.before_search();
             let ts = self.search(&mut universe.game, Value::Win);
-            //self.evaluation.after_search();
+            self.evaluation.after_search();
             if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
@@ -197,14 +206,14 @@ impl Tree {
             }
         }
 
-        // let coverage_sign = if self.pv.len() % 2 == 0 {
-        //     // 先手が指すところだぜ☆（＾～＾）
-        //     1
-        // } else {
-        //     // 後手が指すところだぜ☆（＾～＾）
-        //     -1
-        // };
-        //self.evaluation.add_control(coverage_sign, &move_list);
+        let coverage_sign = if self.pv.len() % 2 == 0 {
+            // 先手が指すところだぜ☆（＾～＾）
+            1
+        } else {
+            // 後手が指すところだぜ☆（＾～＾）
+            -1
+        };
+        self.evaluation.add_control(coverage_sign, &move_list);
         for move_ in move_list.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
@@ -217,26 +226,28 @@ impl Tree {
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
 
-            // let source_piece = if let Some(source_val) = &movement.source {
-            //     game.position.piece_at(source_val)
-            // } else {
-            //     // 打
-            //     None
-            // };
+            let (from, _, promote) = destructure_move(*move_);
+
+            let from_pc = if is_board_square(from) {
+                game.position.piece_at(from)
+            } else {
+                // 打
+                None
+            };
             let captured_piece: Option<PieceEx> = game.do_move(*move_);
             self.pv.push(*move_);
-            // let (captured_piece_centi_pawn, delta_promotion_bonus) =
-            //     self.evaluation
-            //         .after_do_move(&source_piece, &captured_piece, movement.promote);
+            let (captured_piece_centi_pawn, delta_promotion_bonus) =
+                self.evaluation
+                    .after_do_move(&from_pc, &captured_piece, promote);
 
             // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.piece.type_() == PieceType::K {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    ts.bestmove.catch_king(*move_); // move_.movement
+                    ts.bestmove.catch_king(*move_);
 
-                    // self.evaluation
-                    //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                    self.evaluation
+                        .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
                     self.pv.pop();
                     game.undo_move();
                     break;
@@ -246,7 +257,7 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_move = *move_; // move_.movement
+                ts.repetition_move = *move_;
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
@@ -256,11 +267,7 @@ impl Tree {
                 // }
 
                 // 評価を集計するぜ☆（＾～＾）
-                ts.choice_friend(
-                    // &Value::CentiPawn(self.evaluation.centi_pawn()),
-                    &Value::CentiPawn(0),
-                    *move_, // move_.movement
-                );
+                ts.choice_friend(&Value::CentiPawn(self.evaluation.centi_pawn()), *move_);
 
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
@@ -272,25 +279,25 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "move_list={} | komawari={} | promotion={}", //  | {} {} {} |
-                            0, //self.evaluation.move_list(),
-                            0, //self.evaluation.komawari(),
-                            0, //self.evaluation.promotion(),
-                               /* TODO
-                               // サンプルを見ているだけだぜ☆（＾～＾）
-                               game.position.get_control(
-                                   game.history.get_phase(),
-                                   (6, 8)
-                               ),
-                               game.position.get_control(
-                                   game.history.get_phase(),
-                                   (5, 8)
-                               ),
-                               game.position.get_control(
-                                   game.history.get_phase(),
-                                   (4, 8)
-                               ),
-                               */
+                            "move_list={} | material={} | promotion={}", //  | {} {} {} |
+                            self.evaluation.move_list(),
+                            self.evaluation.material_advantage(),
+                            self.evaluation.promotion(),
+                            /* TODO
+                            // サンプルを見ているだけだぜ☆（＾～＾）
+                            game.position.get_control(
+                                game.history.get_phase(),
+                                (6, 8)
+                            ),
+                            game.position.get_control(
+                                game.history.get_phase(),
+                                (5, 8)
+                            ),
+                            game.position.get_control(
+                                game.history.get_phase(),
+                                (4, 8)
+                            ),
+                            */
                         ))),
                     );
                     print_info(
@@ -304,7 +311,7 @@ impl Tree {
                 }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                //self.evaluation.before_search();
+                self.evaluation.before_search();
                 let opponent_ts = self.search(
                     game,
                     match ts.bestmove.value {
@@ -318,18 +325,15 @@ impl Tree {
                     // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                     return ts;
                 }
-                //self.evaluation.after_search();
+                self.evaluation.after_search();
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
-                exists_lose = ts.turn_over_and_choice(
-                    &opponent_ts,
-                    *move_, // move_.movement
-                    0,      //self.evaluation.centi_pawn(),
-                );
+                exists_lose =
+                    ts.turn_over_and_choice(&opponent_ts, *move_, self.evaluation.centi_pawn());
             }
 
-            // self.evaluation
-            //     .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+            self.evaluation
+                .before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
             self.pv.pop();
             game.undo_move();
 
@@ -364,7 +368,7 @@ impl Tree {
                 }
             }
         }
-        //self.evaluation.add_control(-1 * coverage_sign, &move_list);
+        self.evaluation.add_control(-1 * coverage_sign, &move_list);
 
         // TODO 利き削除☆（＾～＾）
         // for destination in &controls {
@@ -377,8 +381,7 @@ impl Tree {
                 // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
                 ts.bestmove.update(
                     ts.repetition_move,
-                    //&Value::CentiPawn(REPITITION_VALUE),
-                    &Value::CentiPawn(0),
+                    &Value::CentiPawn(REPITITION_VALUE),
                     Reason::RepetitionBetterThanResign,
                 );
             }
