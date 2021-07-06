@@ -555,16 +555,18 @@ impl PseudoLegalMoves {
 
     fn generate_non_evasion(us: Phase, position: &Position) -> Vec<Move> {
         let mut move_list = Vec::<Move>::new();
-        let listen_move = &mut |move_| {
-            move_list.push(move_);
-        };
 
         // 座標ではなく、駒の背番号で検索
         position.for_some_pieces_on_list40(us, &mut |sq, pc_ex| {
             if is_board_square(sq) {
-                PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, listen_move)
+                PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, &mut move_list)
             } else if is_hand_square(sq) {
-                PseudoLegalMoves::make_drop(us, square_to_hand_address(sq), position, listen_move);
+                PseudoLegalMoves::make_drop(
+                    us,
+                    square_to_hand_address(sq),
+                    position,
+                    &mut move_list,
+                );
             } else {
                 std::panic::panic_any(Beam::trouble(
                     "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
@@ -590,15 +592,17 @@ impl PseudoLegalMoves {
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
-    fn start_on_board<F1>(
+    fn start_on_board(
         us: Phase,
         from: Square,
         pc_ex: &PieceEx,
         position: &Position,
-        listen_move: &mut F1,
-    ) where
-        F1: FnMut(Move),
-    {
+        move_list: &mut Vec<Move>,
+    ) {
+        let listen_move = &mut |move_| {
+            move_list.push(move_);
+        };
+
         let moving = &mut |to, promotability, _agility, move_permission: Option<MovePermission>| {
             let pseudo_captured = position.piece_at(to);
 
@@ -666,10 +670,11 @@ impl PseudoLegalMoves {
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `listen_move` - 指し手を受け取れだぜ☆（＾～＾）
     /// * `listen_control` - 利きを受け取れだぜ☆（＾～＾）
-    fn make_drop<F1>(us: Phase, adr: HandAddress, position: &Position, listen_move: &mut F1)
-    where
-        F1: FnMut(Move),
-    {
+    fn make_drop(us: Phase, adr: HandAddress, position: &Position, move_list: &mut Vec<Move>) {
+        let listen_move = &mut |move_| {
+            move_list.push(move_);
+        };
+
         if let Some(pc_ex) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
             let drop = &mut |to| {
