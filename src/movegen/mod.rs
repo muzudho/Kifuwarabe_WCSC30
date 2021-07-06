@@ -500,48 +500,6 @@ impl PseudoLegalMoves {
             let delete = {
                 let (from, to, _) = destructure_move(*particle);
                 if from == ksq {
-                    // 玉が移動する指し手は要注意（＾～＾）
-                    // let file = file(to) as i8 - file(from) as i8;
-                    // let rank = rank(to) as i8 - rank(from) as i8;
-
-                    // let direction = if file == -1 {
-                    //     if rank == -1 {
-                    //         Direction::TopRight
-                    //     } else if rank == 0 {
-                    //         Direction::Right
-                    //     } else if rank == 1 {
-                    //         Direction::BottomRight
-                    //     } else {
-                    //         panic!("(Err.405)")
-                    //     }
-                    // } else if file == 0 {
-                    //     if rank == -1 {
-                    //         Direction::Top
-                    //     } else if rank == 0 {
-                    //         panic!("(Err.410)")
-                    //     } else if rank == 1 {
-                    //         Direction::Bottom
-                    //     } else {
-                    //         panic!("(Err.413)")
-                    //     }
-                    // } else if file == 1 {
-                    //     if rank == -1 {
-                    //         Direction::TopLeft
-                    //     } else if rank == 0 {
-                    //         Direction::Left
-                    //     } else if rank == 1 {
-                    //         Direction::BottomLeft
-                    //     } else {
-                    //         panic!("(Err.420)")
-                    //     }
-                    // } else {
-                    //     panic!("(Err.423)")
-                    // };
-                    // Beam::shoot(&format!(
-                    //     "Suicide ksq={} to={} file={} rank={}",
-                    //     ksq, to, file, rank
-                    // ));
-
                     let control = is_adjacent_opponent_control(us, position, to, Direction::Right)
                         || is_adjacent_opponent_control(us, position, to, Direction::TopRight)
                         || is_adjacent_opponent_control(us, position, to, Direction::Top)
@@ -576,6 +534,21 @@ impl PseudoLegalMoves {
             };
             !delete
         });
+
+        match gen_type {
+            GenType::Evasion => {
+                // TODO その手を指して、王手が解消されない手は除外したい
+
+                // 本書では、「離れた王手」は玉とチェッカーの間に１マス以上の空きマスがあるものとします。また、桂を含みません。
+                //
+                // 離れた王手回避
+                // -------------
+                // 1. 離れた王手が２つなら、玉を動かすしかない
+                // 2. 離れた王手が１つなら、そのチェッカーのあるマスから玉の手前までのマスへ、玉以外の味方の駒を動かす（打含む）
+                // （離れた利きのチェックでは、玉でチェッカーを取り返すことはできない）
+            }
+            _ => {}
+        }
 
         move_list
     }
