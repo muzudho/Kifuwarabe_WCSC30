@@ -1,8 +1,10 @@
 use crate::entities::spaceship::equipment::Beam;
+use crate::entities::spaceship::equipment::DestinationDisplay;
+use crate::entities::spaceship::equipment::PvString;
 use crate::position::destructure_move;
 use crate::position::position::Position;
 use crate::position::to_move_code;
-use crate::position::Square;
+use crate::search::Value;
 use crate::take1base::Move;
 
 /// 現在の局面での、指し手の一覧を表示するぜ☆（＾～＾）
@@ -51,16 +53,82 @@ pub fn print_move_list(title: &str, position: &Position, move_list: &Vec<Move>) 
     Beam::shoot("+");
 }
 
-/// マスの一覧を表示するぜ☆（＾～＾）
-pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
-    Beam::shoot(&format!("+\n| {}", title));
-    Beam::shoot(&format!("| Square count={}", sq_list.len()));
-    // ソート
-    let mut sq_list2 = sq_list.clone();
-    sq_list2.sort();
+// マスの一覧を表示するぜ☆（＾～＾）
+// pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
+//     Beam::shoot(&format!("+\n| {}", title));
+//     Beam::shoot(&format!("| Square count={}", sq_list.len()));
+//     // ソート
+//     let mut sq_list2 = sq_list.clone();
+//     sq_list2.sort();
 
-    for (i, sq) in sq_list2.into_iter().enumerate() {
-        Beam::shoot(&format!("| [{}] {}", i, sq));
-    }
-    Beam::shoot("+");
+//     for (i, sq) in sq_list2.into_iter().enumerate() {
+//         Beam::shoot(&format!("| [{}] {}", i, sq));
+//     }
+//     Beam::shoot("+");
+// }
+
+/// 情報表示
+pub fn print_info(
+    display: &mut DestinationDisplay,
+    cur_depth: Option<usize>,
+    state_nodes_nps: Option<(u64, u64)>,
+    value: Option<Value>,
+    move_: Option<Move>,
+    pv_string: &Option<PvString>,
+) {
+    // TODO 評価値が自分のか相手のか調べてないぜ☆（＾～＾）
+    Beam::shoot(&format!(
+        "info{}{}{}{} currmove {}{}",
+        // 思考を開始してからのミリ秒☆（＾～＾）
+        if let Some(pv_string_val) = pv_string {
+            match pv_string_val {
+                PvString::PV(msec, _pv) => format!(" time {}", msec),
+                PvString::String(_x) => "".to_string(),
+            }
+        } else {
+            "".to_string()
+        },
+        if let Some(num) = cur_depth {
+            // 単に読み筋の長さ☆（＾～＾）
+            format!(" depth {}", num)
+        } else {
+            "".to_string()
+        },
+        if let Some((state_node, nps)) = state_nodes_nps {
+            format!(" nodes {} nps {}", state_node, nps)
+        } else {
+            "".to_string()
+        },
+        //if let Some(centi_pawn) = value {
+        if let Some(value_val) = value {
+            match value_val {
+                Value::Win => {
+                    // 自分が勝つ
+                    " score mate +".to_string()
+                }
+                Value::Lose => {
+                    // 自分が負ける
+                    " score mate -".to_string()
+                }
+                Value::CentiPawn(num) => format!(" score cp {}", num),
+            }
+        } else {
+            "".to_string()
+        },
+        if let Some(move_) = move_ {
+            format!("{}", move_)
+        } else {
+            "".to_string()
+        },
+        if let Some(pv_string) = pv_string {
+            match pv_string {
+                PvString::PV(_sec, pv) => format!(" pv {}", pv),
+                PvString::String(x) => format!(" string {}", x),
+            }
+        } else {
+            "".to_string()
+        }
+    ));
+    display.first = false;
+    display.previous = display.stopwatch.elapsed();
 }

@@ -10,7 +10,8 @@ use crate::movegen::PseudoLegalMoves;
 use crate::position::square_from;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
-use crate::search::search::Tree;
+use crate::search::Tree;
+use crate::view::print_info;
 use crate::view::print_move_list;
 use rand::Rng;
 use std::io as std_io;
@@ -59,7 +60,8 @@ impl Kifuwarabe {
         );
         let ts = tree.iteration_deeping(universe);
         // その手を選んだ理由☆（＾～＾）
-        universe.game.info.print(
+        print_info(
+            &mut universe.game.info,
             None,
             Some((tree.state_nodes, tree.nps())),
             Some(ts.bestmove.value),

@@ -22,12 +22,9 @@ use crate::position::square_offset;
 use crate::position::square_rotate_180;
 use crate::position::square_to_hand_address;
 use crate::position::square_wall;
-use crate::position::to_move_code;
 use crate::position::Square;
 use crate::take1base::Move;
 use crate::take1base::Piece;
-use crate::view::print_move_list;
-use crate::view::print_sq_list;
 use std::fmt;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -324,10 +321,10 @@ fn check_checker_pin(
         Phase::First => DIRECTIONS_SQ_FROM_FIRST[direction as usize],
         Phase::Second => DIRECTIONS_SQ_FROM_SECOND[direction as usize],
     };
-    Beam::shoot(&format!(
-        "# check_checker_pin us={} ksq={} d_sq={}",
-        us, ksq, d_sq
-    ));
+    // Beam::shoot(&format!(
+    //     "# check_checker_pin us={} ksq={} d_sq={}",
+    //     us, ksq, d_sq
+    // ));
 
     let mut sq = (ksq as i8 + d_sq) as u8;
     let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
@@ -343,11 +340,11 @@ fn check_checker_pin(
                 if let None = pinned {
                     // とりあえず 合い駒 候補
                     pinned = Some(sq);
-                    Beam::shoot(&format!("# check_checker_pin sq={} (Pinned?)", sq));
+                    //Beam::shoot(&format!("# check_checker_pin sq={} (Pinned?)", sq));
                 } else {
                     // 味方の駒が２枚あれば長い利きは当たっていません
                     // ループ終了
-                    Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
+                    //Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
                     interval += 1;
                     break;
                 }
@@ -427,11 +424,11 @@ fn check_checker_pin(
                         }
                     };
 
-                    if let None = checker {
-                        Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
-                    } else {
-                        Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
-                    }
+                    // if let None = checker {
+                    //     Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
+                    // } else {
+                    //     Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
+                    // }
                 } else {
                     // 離れたところにある長い利きの駒は ピンの頭か、チェッカーのどちらか（＾～＾）
                     let opponent = match direction {
@@ -459,12 +456,12 @@ fn check_checker_pin(
                         Direction::TopRightKnight | Direction::TopLeftKnight => None,
                     };
                     if let None = opponent {
-                        Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
+                        //Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
                     } else if let None = pinned {
-                        Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
+                        //Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
                         checker = opponent;
                     } else {
-                        Beam::shoot(&format!("# check_checker_pin sq={} (PinHead)", sq));
+                        //Beam::shoot(&format!("# check_checker_pin sq={} (PinHead)", sq));
                         pin_head = opponent;
                     }
                 }
@@ -473,7 +470,7 @@ fn check_checker_pin(
                 break;
             }
         } else {
-            Beam::shoot(&format!("# check_checker_pin sq={}", sq));
+            //Beam::shoot(&format!("# check_checker_pin sq={}", sq));
         }
 
         sq = (sq as i8 + d_sq) as u8;
@@ -483,12 +480,12 @@ fn check_checker_pin(
     if let None = pin_head {
         // ピン頭は無かったので、合い駒もありません
         pinned = None;
-        Beam::shoot("# check_checker_pin cancel pinned");
+        //Beam::shoot("# check_checker_pin cancel pinned");
     }
     if let None = checker {
         // チェッカーは無かったので、追加した分を減らします
         sq_list.truncate(sq_list.len() - interval);
-        Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
+        //Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
     }
 
     (pinned, pin_head, checker)
@@ -583,10 +580,10 @@ impl PseudoLegalMoves {
                 checker_list.push(checker);
             }
         }
-        print_sq_list("pinned_list", &pinned_list);
-        print_sq_list("pin_head_list", &pin_head_list);
-        print_sq_list("checker_list", &checker_list);
-        print_sq_list("long_control_sq_list", &long_control_sq_list);
+        // print_sq_list("pinned_list", &pinned_list);
+        // print_sq_list("pin_head_list", &pin_head_list);
+        // print_sq_list("checker_list", &checker_list);
+        // print_sq_list("long_control_sq_list", &long_control_sq_list);
 
         let gen_type = if checker_list.is_empty() {
             // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
@@ -604,15 +601,15 @@ impl PseudoLegalMoves {
         } else {
             // チェッカーが１つ以下なら
             PseudoLegalMoves::generate_non_evasion(us, position, &mut move_list);
-            print_move_list("generate_non_evasion", position, &move_list);
+            //print_move_list("generate_non_evasion", position, &move_list);
             // とりあえず、合い駒を動かす手を除外します
             // TODO 合い駒でも、動かしていい方向はあるはず
             move_list.retain(|particle| {
                 let (from, _, _) = destructure_move(*particle);
                 let retain = !pinned_list.contains(&from);
-                if !retain {
-                    Beam::shoot(&format!("# remove pinned-move={}", to_move_code(*particle)));
-                }
+                // if !retain {
+                //     Beam::shoot(&format!("# remove pinned-move={}", to_move_code(*particle)));
+                // }
                 retain
             });
 
@@ -623,17 +620,17 @@ impl PseudoLegalMoves {
                     move_list.retain(|particle| {
                         let (from, to, _) = destructure_move(*particle);
                         if from == ksq {
-                            Beam::shoot(&format!("# retain king={}", to_move_code(*particle)));
+                            //Beam::shoot(&format!("# retain king={}", to_move_code(*particle)));
                             true
                         } else {
                             // 利きを止めるような動きでなければ除外
                             let retain = long_control_sq_list.contains(&to);
-                            if !retain {
-                                Beam::shoot(&format!(
-                                    "# remove not-pinned-move={}",
-                                    to_move_code(*particle)
-                                ));
-                            }
+                            // if !retain {
+                            //     Beam::shoot(&format!(
+                            //         "# remove not-pinned-move={}",
+                            //         to_move_code(*particle)
+                            //     ));
+                            // }
                             retain
                         }
                     });
@@ -656,33 +653,81 @@ impl PseudoLegalMoves {
                 let b = is_adjacent_opponent_control(us, position, to, Direction::Bottom);
                 let br = is_adjacent_opponent_control(us, position, to, Direction::BottomRight);
                 // 飛、香、竜の動き
-                let long_r = king_is_adjacent_opponent_long_control(us, position, from,to, Direction::Right);
-                let long_t = king_is_adjacent_opponent_long_control(us, position,from, to, Direction::Top);
+                let long_r = king_is_adjacent_opponent_long_control(
+                    us,
+                    position,
+                    from,
+                    to,
+                    Direction::Right,
+                );
+                let long_t =
+                    king_is_adjacent_opponent_long_control(us, position, from, to, Direction::Top);
                 let long_l =
-                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::Left);
-                let long_b =
-                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::Bottom);
+                    king_is_adjacent_opponent_long_control(us, position, from, to, Direction::Left);
+                let long_b = king_is_adjacent_opponent_long_control(
+                    us,
+                    position,
+                    from,
+                    to,
+                    Direction::Bottom,
+                );
                 // 角、馬の動き
-                let long_tr = king_is_adjacent_opponent_long_control(us, position, from,to, Direction::TopRight);
-                let long_tl = king_is_adjacent_opponent_long_control(us, position,from, to, Direction::TopLeft);
-                let long_bl =
-                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::BottomLeft);
-                let long_br =
-                king_is_adjacent_opponent_long_control(us, position, from,to, Direction::BottomRight);
-                let control =
-                    r || tr || t || tl || l || bl || b || br || long_r || long_t || long_l || long_b || long_tr || long_tl || long_bl || long_br;
+                let long_tr = king_is_adjacent_opponent_long_control(
+                    us,
+                    position,
+                    from,
+                    to,
+                    Direction::TopRight,
+                );
+                let long_tl = king_is_adjacent_opponent_long_control(
+                    us,
+                    position,
+                    from,
+                    to,
+                    Direction::TopLeft,
+                );
+                let long_bl = king_is_adjacent_opponent_long_control(
+                    us,
+                    position,
+                    from,
+                    to,
+                    Direction::BottomLeft,
+                );
+                let long_br = king_is_adjacent_opponent_long_control(
+                    us,
+                    position,
+                    from,
+                    to,
+                    Direction::BottomRight,
+                );
+                let control = r
+                    || tr
+                    || t
+                    || tl
+                    || l
+                    || bl
+                    || b
+                    || br
+                    || long_r
+                    || long_t
+                    || long_l
+                    || long_b
+                    || long_tr
+                    || long_tl
+                    || long_bl
+                    || long_br;
 
                 // Beam::shoot(&format!(
                 //     "# suicide-check from={} to={} control={}",
                 //     from, to, control
                 // ));
-                if control {
-                    Beam::shoot(&format!(
-                        "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
-                        to_move_code(*particle),
-                        from,to,control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
-                    ));
-                }
+                // if control {
+                //     Beam::shoot(&format!(
+                //         "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
+                //         to_move_code(*particle),
+                //         from,to,control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
+                //     ));
+                // }
                 !control
             } else {
                 // 玉以外の駒の動きは残す
