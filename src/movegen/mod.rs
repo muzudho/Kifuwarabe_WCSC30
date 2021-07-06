@@ -78,11 +78,15 @@ pub enum Direction {
     BottomLeft,
     Bottom,
     BottomRight,
+    TopRightKnight,    // 先手桂右
+    TopLeftKnight,     // 先手桂左
+    BottomRightKnight, // 後手桂右
+    BottomLeftKnight,  // 後手桂左
 }
 
 // 筋は -1 すると右（＾～＾）
 // 段は -1 すると上（＾～＾）
-const DIRECTIONS_SQ: [i8; 8] = [
+const DIRECTIONS_SQ: [i8; 12] = [
     -10, // 右方向
     -11, // 右上方向
     -1,  // 上方向
@@ -91,6 +95,10 @@ const DIRECTIONS_SQ: [i8; 8] = [
     11,  // 左下方向
     1,   // 下方向
     -9,  // 右下方向
+    -12, // 先手桂右
+    12,  // 先手桂左
+    -8,  // 後手桂右
+    12,  // 後手桂左
 ];
 
 // 玉が移動したとき、敵の長い利きが当たっているかどうか。
@@ -179,6 +187,11 @@ fn king_is_adjacent_opponent_long_control(
                             }
                         }
                     },
+                    // ここ（桂馬の動き）を通るとは想定していないぜ（＾～＾）
+                    Direction::TopRightKnight
+                    | Direction::TopLeftKnight
+                    | Direction::BottomRightKnight
+                    | Direction::BottomLeftKnight => {}
                 };
             }
         }
@@ -189,7 +202,7 @@ fn king_is_adjacent_opponent_long_control(
     false
 }
 
-// 隣接する敵の１マスの利きが利いているかどうか
+// 隣接する敵の１マスの利きが利いているかどうか（桂も含む）
 fn is_adjacent_opponent_control(
     us: Phase,
     position: &Position,
@@ -266,6 +279,15 @@ fn is_adjacent_opponent_control(
                     | PieceType::PN
                     | PieceType::PL
                     | PieceType::PP => return true,
+                    _ => {}
+                },
+                // 桂馬
+                // TODO 先後
+                Direction::TopRightKnight
+                | Direction::TopLeftKnight
+                | Direction::BottomRightKnight
+                | Direction::BottomLeftKnight => match pc_ex.piece.type_() {
+                    PieceType::N => return true,
                     _ => {}
                 },
             };
@@ -382,6 +404,15 @@ fn check_checker_pin(
                             | PieceType::PP => Some(sq),
                             _ => None,
                         },
+                        // 桂馬
+                        // TODO 先後
+                        Direction::TopRightKnight
+                        | Direction::TopLeftKnight
+                        | Direction::BottomRightKnight
+                        | Direction::BottomLeftKnight => match pc_ex.piece.type_() {
+                            PieceType::N => Some(sq),
+                            _ => None,
+                        },
                     };
 
                     if let None = checker {
@@ -392,12 +423,14 @@ fn check_checker_pin(
                 } else {
                     // 離れたところにある長い利きの駒は ピンの頭か、チェッカーのどちらか（＾～＾）
                     let opponent = match direction {
+                        // 飛、竜
                         Direction::Right | Direction::Left | Direction::Bottom => {
                             match pc_ex.piece.type_() {
                                 PieceType::R | PieceType::PR => Some(sq),
                                 _ => None,
                             }
                         }
+                        // 角、馬
                         Direction::TopRight
                         | Direction::TopLeft
                         | Direction::BottomLeft
@@ -405,10 +438,16 @@ fn check_checker_pin(
                             PieceType::B | PieceType::PB => Some(sq),
                             _ => None,
                         },
+                        // 飛、香、竜
                         Direction::Top => match pc_ex.piece.type_() {
                             PieceType::R | PieceType::L | PieceType::PR => Some(sq),
                             _ => None,
                         },
+                        // 桂馬の動きは想定してないぜ（＾～＾）
+                        Direction::TopRightKnight
+                        | Direction::TopLeftKnight
+                        | Direction::BottomRightKnight
+                        | Direction::BottomLeftKnight => None,
                     };
                     if let None = opponent {
                         Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
