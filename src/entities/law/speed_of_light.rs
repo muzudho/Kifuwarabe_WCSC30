@@ -16,6 +16,7 @@ use crate::entities::cosmic::smart::features::{HandAddress, HandAddressType, Pie
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::movegen::{Agility, Mobility};
 use crate::position::position::PieceNum;
+use crate::search::evaluator::CentiPawn;
 use crate::take1base::{Piece, PIECE_MEANING_LEN};
 //use num_traits::FromPrimitive;
 // use std::sync::Mutex;
@@ -68,7 +69,7 @@ struct SpeedOfLight {
     hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
     hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
     hand_address_to_type_table: [HandAddressType; HAND_ADDRESS_LEN],
-    hand_address_to_captured_value: [isize; HAND_ADDRESS_TYPE_LEN],
+    hand_address_to_captured_value: [CentiPawn; HAND_ADDRESS_TYPE_LEN],
 
     // 相対番地と角度☆（＾～＾）
     west_ccw: [RelAdr; ANGLE_LEN],
@@ -88,7 +89,7 @@ struct SpeedOfLight {
     /// 評価値☆（＾～＾）
     /// 成らないよりは、成った方がお得という、それだけの差を付けるだけの加点だぜ☆（＾～＾）
     /// 大きくすると、歩と交換に角が成り込むぜ☆（＾～＾）
-    promotion_value: [isize; HAND_ADDRESS_TYPE_LEN],
+    promotion_value: [CentiPawn; HAND_ADDRESS_TYPE_LEN],
     west: RelAdr,
 }
 impl Default for SpeedOfLight {
@@ -807,10 +808,10 @@ pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl HandAddressType {
-    pub fn promotion_value(self) -> isize {
+    pub fn promotion_value(self) -> CentiPawn {
         NINE_299792458.promotion_value[self as usize]
     }
-    pub fn captured_value(self) -> isize {
+    pub fn captured_value(self) -> CentiPawn {
         NINE_299792458.hand_address_to_captured_value[self as usize]
     }
 }

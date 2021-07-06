@@ -52,9 +52,9 @@ pub struct Tree {
 }
 impl Tree {
     pub fn new(
-        many_ways_weight: isize,
-        material_advantage_weight: isize,
-        promotion_weight: isize,
+        many_ways_weight: i16,
+        material_advantage_weight: i16,
+        promotion_weight: i16,
         depth_not_to_give_up: usize,
     ) -> Self {
         Tree {
@@ -79,11 +79,26 @@ impl Tree {
             universe.option_max_think_sec as u64,
         );
 
+        // alpha値を上げていきたいが、beta値を超えたくない（＾～＾）
+        let mut alpha = i16::MIN;
+        let beta = i16::MAX;
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.evaluation.before_search();
         self.max_depth0 = 0;
-        let (mut bestmove, mut best_ts) = self.search(&mut universe.game, Value::Win);
+        let (mut bestmove, mut best_ts) = self.search(&mut universe.game, Value::Win, alpha, beta);
+        match bestmove.value {
+            Value::CentiPawn(value) => {
+                if beta < value || value < alpha {
+                    // 無視
+                } else if alpha < value {
+                    alpha = value
+                }
+            }
+            Value::Win | Value::Lose => {
+                return (bestmove, best_ts);
+            }
+        }
         self.evaluation.after_search();
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -121,7 +136,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             self.evaluation.before_search();
-            let (bestmove_tmp, ts) = self.search(&mut universe.game, Value::Win);
+            let (bestmove_tmp, ts) = self.search(&mut universe.game, Value::Win, -beta, -alpha);
             bestmove = bestmove_tmp;
             self.evaluation.after_search();
             if ts.timeout {
@@ -146,7 +161,13 @@ impl Tree {
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn search(&mut self, game: &mut Game, another_branch_best: Value) -> (MoveEx, TreeState) {
+    fn search(
+        &mut self,
+        game: &mut Game,
+        another_branch_best: Value,
+        alpha: i16,
+        beta: i16,
+    ) -> (MoveEx, TreeState) {
         let mut ts = TreeState::default();
         let mut bestmove = MoveEx::default();
 
@@ -332,6 +353,8 @@ impl Tree {
                         Value::Win => Value::Lose,
                         Value::Lose => Value::Win,
                     },
+                    -beta,
+                    -alpha,
                 );
 
                 if ts.timeout {
@@ -539,7 +562,7 @@ pub enum Value {
     /// 歩１枚の交換値を 100 とするぜ☆（＾～＾）
     /// 将棋は、相手は駒を取られて損、自分は駒を取って得という風に痛手が２倍広がるので、
     /// 交換値が 100 ということは、200点差が開くということだぜ☆（＾～＾）
-    CentiPawn(isize),
+    CentiPawn(i16),
 
     /// 勝ち☆（＾～＾）
     Win,

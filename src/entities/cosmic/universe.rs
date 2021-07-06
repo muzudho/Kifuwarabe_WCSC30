@@ -17,13 +17,13 @@ pub struct Universe {
     /// 思考時間の最大秒☆（＾～＾）
     pub option_max_think_sec: usize,
     /// 指し手がいっぱいあることを評価する重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_many_ways_weight: isize,
+    pub option_many_ways_weight: i16,
     /// 諦めない深さ☆（＾～＾）読み終わるまで、思考時間を無視するぜ☆（＾～＾）max_depth - 1 より小さくしろだぜ☆（＾～＾）
     pub option_depth_not_to_give_up: usize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_material_advantage_weight: isize,
+    pub option_material_advantage_weight: i16,
     /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_promotion_weight: isize,
+    pub option_promotion_weight: i16,
 }
 impl Default for Universe {
     fn default() -> Self {
