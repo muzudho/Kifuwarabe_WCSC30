@@ -124,10 +124,13 @@ impl fmt::Display for Phase {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // 文字列リテラルでないとダメみたいなんで、他に似たようなコードがあるのに、また書くことに☆（＾～＾）
         // Windows Terminal では ▲、▽が半角サイズで表示されるので、それに合わせている☆（＾～＾） Microsoft 製品に最適化していいのか知らないが……☆（＾～＾）
+        // 将棋所が文字化けしてしまう（＾～＾）
         use self::Phase::*;
         match *self {
-            First => write!(f, " ▲"),
-            Second => write!(f, " ▽"),
+            // First => write!(f, " ▲"),
+            // Second => write!(f, " ▽"),
+            First => write!(f, " ^"),
+            Second => write!(f, " v"),
         }
     }
 }
