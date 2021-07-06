@@ -450,6 +450,7 @@ impl PseudoLegalMoves {
         // 合い駒(Pinned)検索
         // スライディング・チェッカー(Sliding Checker)検索
         let mut pinned_list = Vec::<Square>::new();
+        let mut checker_list = Vec::<Square>::new();
 
         // とりあえず 合い駒(Pinned) は今のところ 動かさないことにするぜ（＾～＾）
         let directions = [
@@ -463,35 +464,45 @@ impl PseudoLegalMoves {
             Direction::BottomRight,
         ];
         for direction in directions {
-            let (pinned, _checker) = check_checker_pin(us, position, ksq, direction);
+            let (pinned, checker) = check_checker_pin(us, position, ksq, direction);
             if let Some(pinned) = pinned {
                 pinned_list.push(pinned);
             }
+            if let Some(checker) = checker {
+                checker_list.push(checker);
+            }
         }
 
-        // TODO チェッカーがいたら、王手回避(Evasions)モードへ
-        let gen_type = if pinned_list.is_empty() {
+        let gen_type = if checker_list.is_empty() {
+            // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
             GenType::NonEvasion
         } else {
+            // TODO チェッカーがいたら、王手回避(Evasions)モードへ
             GenType::Evasion
         };
 
-        // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
-        let mut move_list = PseudoLegalMoves::generate_non_evasion(us, position);
+        let mut move_list = Vec::<Move>::new();
 
-        match gen_type {
-            GenType::Evasion => {
-                // とりあえず、合い駒を動かす手を除外します
-                // TODO 合い駒でも、動かしていい方向はあるはず
-                move_list.retain(|particle| {
-                    let delete = {
-                        let (from, _, _) = destructure_move(*particle);
-                        pinned_list.contains(&from)
-                    };
-                    !delete
-                });
+        if 2 <= checker_list.len() {
+            // チェッカーが２つあったら、玉が移動するしかない
+            PseudoLegalMoves::generate_king(us, position, &mut move_list);
+        } else {
+            PseudoLegalMoves::generate_non_evasion(us, position, &mut move_list);
+
+            match gen_type {
+                GenType::Evasion => {
+                    // とりあえず、合い駒を動かす手を除外します
+                    // TODO 合い駒でも、動かしていい方向はあるはず
+                    move_list.retain(|particle| {
+                        let delete = {
+                            let (from, _, _) = destructure_move(*particle);
+                            pinned_list.contains(&from)
+                        };
+                        !delete
+                    });
+                }
+                _ => {}
             }
-            _ => {}
         }
 
         // TODO 玉の自殺手を除外したい（＾～＾）
@@ -552,28 +563,35 @@ impl PseudoLegalMoves {
         move_list
     }
 
-    fn generate_non_evasion(us: Phase, position: &Position) -> Vec<Move> {
-        let mut move_list = Vec::<Move>::new();
+    /// 盤上の玉の指し手だけ生成（＾～＾）
+    fn generate_king(us: Phase, position: &Position, move_list: &mut Vec<Move>) {
+        let ksq = match us {
+            Phase::First => position.location_at(PieceNum::King1),
+            Phase::Second => position.location_at(PieceNum::King2),
+        };
+        // 盤上の駒☆（＾～＾）
+        let pc_ex = if let Some(pc_ex) = position.piece_at(ksq) {
+            pc_ex
+        } else {
+            panic!("ksq fail {:?}", ksq)
+        };
+        // 座標ではなく、駒の背番号で検索
+        PseudoLegalMoves::start_on_board(us, ksq, &pc_ex, position, move_list)
+    }
 
+    fn generate_non_evasion(us: Phase, position: &Position, move_list: &mut Vec<Move>) {
         // 座標ではなく、駒の背番号で検索
         position.for_some_pieces_on_list40(us, &mut |sq, pc_ex| {
             if is_board_square(sq) {
-                PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, &mut move_list)
+                PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, move_list)
             } else if is_hand_square(sq) {
-                PseudoLegalMoves::make_drop(
-                    us,
-                    square_to_hand_address(sq),
-                    position,
-                    &mut move_list,
-                );
+                PseudoLegalMoves::make_drop(us, square_to_hand_address(sq), position, move_list);
             } else {
                 std::panic::panic_any(Beam::trouble(
                     "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
                 ))
             }
         });
-
-        move_list
     }
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
