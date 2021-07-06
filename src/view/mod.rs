@@ -6,8 +6,9 @@ use crate::position::Square;
 use crate::take1base::Move;
 
 /// 現在の局面での、指し手の一覧を表示するぜ☆（＾～＾）
-pub fn print_move_list(position: &Position, move_list: &Vec<Move>) {
-    Beam::shoot(&format!("Moves count={}", move_list.len()));
+pub fn print_move_list(title: &str, position: &Position, move_list: &Vec<Move>) {
+    Beam::shoot(&format!("+\n| {}", title));
+    Beam::shoot(&format!("| Moves count={}", move_list.len()));
     // 辞書順ソート
     let mut move_names = Vec::new();
     for move_ in move_list {
@@ -45,13 +46,15 @@ pub fn print_move_list(position: &Position, move_list: &Vec<Move>) {
     move_names.reverse();
 
     for (i, move_name) in move_names.into_iter().enumerate() {
-        Beam::shoot(&format!("[{}] {}", i, move_name));
+        Beam::shoot(&format!("| [{}] {}", i, move_name));
     }
+    Beam::shoot("+");
 }
 
 /// マスの一覧を表示するぜ☆（＾～＾）
-pub fn print_sq_list(sq_list: &Vec<Square>) {
-    Beam::shoot(&format!("+\n| Square count={}", sq_list.len()));
+pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
+    Beam::shoot(&format!("+\n| {}", title));
+    Beam::shoot(&format!("| Square count={}", sq_list.len()));
     // ソート
     let mut sq_list2 = sq_list.clone();
     sq_list2.sort();

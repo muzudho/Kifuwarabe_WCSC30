@@ -22,9 +22,11 @@ use crate::position::square_offset;
 use crate::position::square_rotate_180;
 use crate::position::square_to_hand_address;
 use crate::position::square_wall;
+use crate::position::to_move_code;
 use crate::position::Square;
 use crate::take1base::Move;
 use crate::take1base::Piece;
+use crate::view::print_move_list;
 use crate::view::print_sq_list;
 use std::fmt;
 
@@ -529,14 +531,10 @@ impl PseudoLegalMoves {
                 checker_list.push(checker);
             }
         }
-        Beam::shoot("# pinned_list");
-        print_sq_list(&pinned_list);
-        Beam::shoot("# pin_head_list");
-        print_sq_list(&pin_head_list);
-        Beam::shoot("# checker_list");
-        print_sq_list(&checker_list);
-        Beam::shoot("# long_control_sq_list");
-        print_sq_list(&long_control_sq_list);
+        print_sq_list("pinned_list", &pinned_list);
+        print_sq_list("pin_head_list", &pin_head_list);
+        print_sq_list("checker_list", &checker_list);
+        print_sq_list("long_control_sq_list", &long_control_sq_list);
 
         let gen_type = if checker_list.is_empty() {
             // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
@@ -554,31 +552,38 @@ impl PseudoLegalMoves {
         } else {
             // チェッカーが１つ以下なら
             PseudoLegalMoves::generate_non_evasion(us, position, &mut move_list);
-
+            print_move_list("generate_non_evasion", position, &move_list);
             // とりあえず、合い駒を動かす手を除外します
             // TODO 合い駒でも、動かしていい方向はあるはず
             move_list.retain(|particle| {
-                let delete = {
-                    let (from, _, _) = destructure_move(*particle);
-                    pinned_list.contains(&from)
-                };
-                !delete
+                let (from, _, _) = destructure_move(*particle);
+                let retain = !pinned_list.contains(&from);
+                if !retain {
+                    Beam::shoot(&format!("# remove pinned-move={}", to_move_code(*particle)));
+                }
+                retain
             });
 
             match gen_type {
                 GenType::Evasion => {
                     // 合い駒になるような動き以外の、自玉以外の味方の動きを除外
+                    // 残す駒だけ 真を返してください
                     move_list.retain(|particle| {
-                        let delete = {
-                            let (from, to, _) = destructure_move(*particle);
-                            if from == ksq {
-                                return false;
-                            }
-
+                        let (from, to, _) = destructure_move(*particle);
+                        if from == ksq {
+                            Beam::shoot(&format!("# retain king={}", to_move_code(*particle)));
+                            true
+                        } else {
                             // 利きを止めるような動きでなければ除外
-                            !long_control_sq_list.contains(&to)
-                        };
-                        !delete
+                            let retain = long_control_sq_list.contains(&to);
+                            if !retain {
+                                Beam::shoot(&format!(
+                                    "# remove not-pinned-move={}",
+                                    to_move_code(*particle)
+                                ));
+                            }
+                            retain
+                        }
                     });
                 }
                 _ => {}
@@ -587,52 +592,40 @@ impl PseudoLegalMoves {
 
         // TODO 玉の自殺手を除外したい（＾～＾）
         move_list.retain(|particle| {
-            let delete = {
-                let (from, to, _) = destructure_move(*particle);
-                if from == ksq {
-                    let control = is_adjacent_opponent_control(us, position, to, Direction::Right)
-                        || is_adjacent_opponent_control(us, position, to, Direction::TopRight)
-                        || is_adjacent_opponent_control(us, position, to, Direction::Top)
-                        || is_adjacent_opponent_control(us, position, to, Direction::TopLeft)
-                        || is_adjacent_opponent_control(us, position, to, Direction::Left)
-                        || is_adjacent_opponent_control(us, position, to, Direction::BottomLeft)
-                        || is_adjacent_opponent_control(us, position, to, Direction::Bottom)
-                        || is_adjacent_opponent_control(us, position, to, Direction::BottomRight)
-                        || is_adjacent_opponent_long_control(
-                            us,
-                            position,
-                            from,
-                            Direction::TopRight,
-                        )
-                        || is_adjacent_opponent_long_control(
-                            us,
-                            position,
-                            from,
-                            Direction::TopLeft,
-                        )
-                        || is_adjacent_opponent_long_control(
-                            us,
-                            position,
-                            from,
-                            Direction::BottomLeft,
-                        )
-                        || is_adjacent_opponent_long_control(
-                            us,
-                            position,
-                            from,
-                            Direction::BottomRight,
-                        );
+            let (from, to, _) = destructure_move(*particle);
+            if from == ksq {
+                let control = is_adjacent_opponent_control(us, position, to, Direction::Right)
+                    || is_adjacent_opponent_control(us, position, to, Direction::TopRight)
+                    || is_adjacent_opponent_control(us, position, to, Direction::Top)
+                    || is_adjacent_opponent_control(us, position, to, Direction::TopLeft)
+                    || is_adjacent_opponent_control(us, position, to, Direction::Left)
+                    || is_adjacent_opponent_control(us, position, to, Direction::BottomLeft)
+                    || is_adjacent_opponent_control(us, position, to, Direction::Bottom)
+                    || is_adjacent_opponent_control(us, position, to, Direction::BottomRight)
+                    || is_adjacent_opponent_long_control(us, position, from, Direction::TopRight)
+                    || is_adjacent_opponent_long_control(us, position, from, Direction::TopLeft)
+                    || is_adjacent_opponent_long_control(us, position, from, Direction::BottomLeft)
+                    || is_adjacent_opponent_long_control(
+                        us,
+                        position,
+                        from,
+                        Direction::BottomRight,
+                    );
 
-                    // Beam::shoot(&format!(
-                    //     "# suicide-check from={} to={} control={}",
-                    //     from, to, control
-                    // ));
-                    control
-                } else {
-                    false
+                // Beam::shoot(&format!(
+                //     "# suicide-check from={} to={} control={}",
+                //     from, to, control
+                // ));
+                if control {
+                    Beam::shoot(&format!(
+                        "# remove suicide-move={}",
+                        to_move_code(*particle)
+                    ));
                 }
-            };
-            !delete
+                !control
+            } else {
+                true
+            }
         });
 
         move_list

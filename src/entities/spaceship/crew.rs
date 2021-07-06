@@ -178,9 +178,7 @@ impl Chiyuri {
     pub fn genmove(game: &Game) {
         // Generation move.
         let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position);
-        Beam::shoot("----指し手生成(合法手とは限らない) ここから----");
-        print_move_list(&game.position, &move_list);
-        Beam::shoot("----指し手生成(合法手とは限らない) ここまで----");
+        print_move_list("genmove", &game.position, &move_list);
     }
     pub fn hash(universe: &Universe) {
         Beam::shoot("局面ハッシュ表示");
