@@ -7,8 +7,8 @@ use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::{Beam, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom};
 use crate::movegen::PseudoLegalMoves;
-use crate::position::square_from;
 use crate::position::to_move_code;
+use crate::position::Square;
 use crate::search::Tree;
 use crate::view::print_info;
 use crate::view::print_move_list;
@@ -190,12 +190,12 @@ impl Chiyuri {
         universe
             .game
             .position
-            .for_all_pieces_on_board(&mut |i, adr, pc_ex| {
+            .for_all_pieces_on_board(&mut |i, sq, pc_ex| {
                 Beam::shoot(&format!(
                     "[{}]{}{}",
                     i,
-                    if let Some(adr_val) = adr {
-                        format!(" {:?}", adr_val)
+                    if let Some(sq) = sq {
+                        format!(" {:?}", sq.number())
                     } else {
                         " --".to_string()
                     },
@@ -252,7 +252,7 @@ impl Chiyuri {
 
         for ms in 1..9 {
             for hash in 0..10 {
-                let sq = square_from(FILE_1, ms);
+                let sq = Square::from(FILE_1, ms);
                 let next = push_sq_to_hash(hash, sq);
                 let (hash_orig, sq_orig) = pop_sq_from_hash(next);
                 Beam::shoot( &format!("push_ms_to_hash(0b{:4b},0b{:5b})=0b{:11b} pop_sq_from_hash(...)=(0b{:4b},0b{:5b})"
@@ -260,7 +260,7 @@ impl Chiyuri {
                     ,ms
                     ,next
                     ,hash_orig
-                    ,sq_orig
+                    ,sq_orig.number()
                 ));
             }
         }

@@ -7,10 +7,7 @@ use crate::movegen::FILE_1;
 use crate::movegen::FILE_10;
 use crate::movegen::RANK_1;
 use crate::movegen::RANK_10;
-use crate::position::file;
-use crate::position::is_board_square;
 use crate::position::position::Position;
-use crate::position::rank;
 use crate::position::Square;
 
 /// 先手から見た向き
@@ -61,12 +58,12 @@ pub fn king_is_adjacent_opponent_long_control(
     let mut distance = 0;
 
     // 隣のマス
-    let mut adjacent_sq = ksq_to as i8;
+    let mut adjacent_sq = ksq_to.number() as i8;
     loop {
         adjacent_sq += d_sq;
 
-        let adjacent_file = file(adjacent_sq as u8);
-        let adjacent_rank = rank(adjacent_sq as u8);
+        let adjacent_file = Square::new(adjacent_sq as u8).file();
+        let adjacent_rank = Square::new(adjacent_sq as u8).rank();
         if !(FILE_1 <= adjacent_file
             && adjacent_file < FILE_10
             && RANK_1 <= adjacent_rank
@@ -75,9 +72,11 @@ pub fn king_is_adjacent_opponent_long_control(
             break;
         }
 
-        if adjacent_sq as u8 == ksq_from {
+        if adjacent_sq as u8 == ksq_from.number() {
             // 動かす前の自玉があるマスは、何もないマスとして無視します
-        } else if let Some(pc_ex) = position_before_move.piece_at_board(adjacent_sq as u8) {
+        } else if let Some(pc_ex) =
+            position_before_move.piece_at_board(Square::new(adjacent_sq as u8))
+        {
             if us == pc_ex.piece.phase() {
                 if pinned {
                     // 味方の駒が２つ有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
@@ -156,14 +155,14 @@ pub fn is_adjacent_opponent_control(
     };
 
     // 隣のマス
-    let adjacent_sq = (ksq_to as i8 + d_sq) as u8;
+    let adjacent_sq = (ksq_to.number() as i8 + d_sq) as u8;
     // Beam::shoot(&format!(
     //     "is_adjacent_opponent_control d_file={} d_rank={} adjacent_sq={}",
     //     d_file, d_rank, adjacent_sq
     // ));
 
-    if is_board_square(adjacent_sq) {
-        if let Some(pc_ex) = position.piece_at_board(adjacent_sq) {
+    if Square::new(adjacent_sq).is_board() {
+        if let Some(pc_ex) = position.piece_at_board(Square::new(adjacent_sq)) {
             if us != pc_ex.piece.phase() {
                 // 敵の駒なら
                 // TODO 桂馬
@@ -266,12 +265,12 @@ pub fn check_checker_pin(
     //     us, ksq, d_sq
     // ));
 
-    let mut sq = (ksq as i8 + d_sq) as u8;
+    let mut sq = Square::new((ksq.number() as i8 + d_sq) as u8);
     let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
     let mut pin_head: Option<Square> = None; // ピンしてる駒
     let mut checker: Option<Square> = None; // チェック駒
     let mut interval = 0;
-    while FILE_1 <= file(sq) && file(sq) < FILE_10 && RANK_1 <= rank(sq) && rank(sq) < RANK_10 {
+    while FILE_1 <= sq.file() && sq.file() < FILE_10 && RANK_1 <= sq.rank() && sq.rank() < RANK_10 {
         sq_list.push(sq);
 
         if let Some(pc_ex) = position.piece_at_board(sq) {
@@ -413,7 +412,7 @@ pub fn check_checker_pin(
             //Beam::shoot(&format!("# check_checker_pin sq={}", sq));
         }
 
-        sq = (sq as i8 + d_sq) as u8;
+        sq = Square::new((sq.number() as i8 + d_sq) as u8);
         interval += 1;
     }
 

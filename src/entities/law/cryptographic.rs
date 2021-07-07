@@ -1,7 +1,6 @@
 //!
 //! なんか難しいやつはここだぜ☆（＾～＾）
 //!
-use crate::position::is_square;
 use crate::position::Square;
 
 /*
@@ -28,8 +27,8 @@ pub fn pop_bool_from_hash(hash: u64) -> (u64, bool) {
 pub fn push_sq_to_hash(hash: u64, sq: Square) -> u64 {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    if is_square(sq) {
-        (hash << 7) + sq as u64
+    if sq.is_square() {
+        (hash << 7) + (sq.number() as u64)
     } else {
         panic!("push_sq_to_hash fail")
     }
@@ -38,8 +37,8 @@ pub fn push_sq_to_hash(hash: u64, sq: Square) -> u64 {
 pub fn pop_sq_from_hash(hash: u64) -> (u64, Square) {
     // 0筋とか 0段とか 使ってないが、そのまま足す。
     // 0～100の101升と、ちょいなんで、128(=2^7) あれば十分
-    let sq = (hash & 0b111_1111) as Square;
-    if is_square(sq) {
+    let sq = Square::new((hash & 0b111_1111) as u8);
+    if sq.is_square() {
         (hash >> 7, sq)
     } else {
         panic!("pop_sq_from_hash fail")

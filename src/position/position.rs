@@ -13,9 +13,6 @@ use crate::entities::law::speed_of_light::{HandPieces, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
 use crate::movegen::PieceEx;
 use crate::position::hand_type_to_square;
-use crate::position::is_board_square;
-use crate::position::is_hand_square;
-use crate::position::square_from;
 use crate::position::square_to_hand_piece;
 use crate::position::Square;
 use crate::position::SQUARE_NONE;
@@ -225,7 +222,7 @@ impl Position {
     /// 開始盤面を、現盤面にコピーしたいときに使うぜ☆（＾～＾）
     pub fn copy_from(&mut self, position: &Position) {
         self.board = position.board.clone();
-        self.pc_num_to_location = position.pc_num_to_location.clone();
+        self.pc_num_to_location = position.pc_num_to_location;
         self.hand_index = position.hand_index.clone();
         self.hands = position.hands.clone();
         // TODO self.controls = position.controls.clone();
@@ -304,7 +301,7 @@ impl Position {
     /// 歩が置いてあるか確認
     pub fn exists_pawn_on_file(&self, phase: Phase, file: u8) -> bool {
         for rank in RANK_1..RANK_10 {
-            let sq = square_from(file, rank);
+            let sq = Square::from(file, rank);
             if let Some(pc_ex) = self.piece_at_board(sq) {
                 if pc_ex.piece.phase() == phase && pc_ex.piece.type_() == PieceType::P {
                     return true;
@@ -315,7 +312,7 @@ impl Position {
     }
     /// 升で指定して駒を取得
     pub fn piece_at_board(&self, sq: Square) -> Option<PieceEx> {
-        self.board[sq as usize]
+        self.board[sq.number() as usize]
     }
     /// 駒の背番号で指定して場所を取得
     pub fn location_at(&self, adr: PieceNum) -> Square {
@@ -325,18 +322,18 @@ impl Position {
     /// 升で指定して駒を置く
     pub fn push_to_board(&mut self, sq: Square, pc_ex: Option<PieceEx>) {
         if let Some(piece_val) = pc_ex {
-            self.board[sq as usize] = pc_ex;
+            self.board[sq.number() as usize] = pc_ex;
             self.pc_num_to_location[piece_val.num as usize] = sq;
         } else {
-            self.board[sq as usize] = None;
+            self.board[sq.number() as usize] = None;
         }
     }
     /// 盤上から駒を無くし、その駒を返り値で返すぜ☆（＾～＾）
     pub fn pop_from_board(&mut self, sq: Square) -> Option<PieceEx> {
         // 取り出すピースは複製するぜ☆（＾～＾）
-        let pc_ex = self.board[sq as usize].clone();
+        let pc_ex = self.board[sq.number() as usize].clone();
         if let Some(piece_val) = pc_ex {
-            self.board[sq as usize] = None;
+            self.board[sq.number() as usize] = None;
             self.pc_num_to_location[piece_val.num as usize] = SQUARE_NONE;
         }
         pc_ex
@@ -351,7 +348,7 @@ impl Position {
         }
 
         if let Some(piece) = pc_ex {
-            let from = square_from(file, rank);
+            let from = Square::from(file, rank);
             let pc_num = match piece {
                 // 玉だけ、先後を確定させようぜ☆（＾～＾）
                 Piece::K1 => {
@@ -373,7 +370,7 @@ impl Position {
                     }
                 }
             };
-            self.push_to_board(square_from(file, rank), Some(PieceEx::new(piece, pc_num)));
+            self.push_to_board(Square::from(file, rank), Some(PieceEx::new(piece, pc_num)));
         }
     }
     /// 駒台に置く
@@ -419,9 +416,9 @@ impl Position {
         // 盤上の駒
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                let sq = square_from(file, rank);
+                let sq = Square::from(file, rank);
                 if let Some(pc_ex) = self.piece_at_board(sq) {
-                    hash ^= game.hash_seed.piece_hash[sq as usize][pc_ex.piece as usize];
+                    hash ^= game.hash_seed.piece_hash[sq.number() as usize][pc_ex.piece as usize];
                 }
             }
         }
@@ -450,14 +447,14 @@ impl Position {
         F: FnMut(usize, Option<Square>, Option<PieceEx>),
     {
         for (i, sq) in self.pc_num_to_location.iter().enumerate() {
-            if is_board_square(*sq) {
+            if sq.is_board() {
                 // 盤上の駒☆（＾～＾）
                 if let Some(pc_ex) = self.piece_at_board(*sq) {
                     piece_get(i, Some(*sq), Some(pc_ex));
                 } else {
-                    panic!("sq={:?}", sq)
+                    panic!("sq={:?}", sq.number())
                 }
-            } else if is_hand_square(*sq) {
+            } else if sq.is_hand() {
                 // TODO 持ち駒☆（＾～＾）
                 piece_get(i, None, None);
             } else {
@@ -476,16 +473,16 @@ impl Position {
         // 駒の背番号
         for pc_num in Nine299792458::piece_numbers().iter() {
             let sq = self.pc_num_to_location[*pc_num as usize];
-            if is_board_square(sq) {
+            if sq.is_board() {
                 // 盤上の駒☆（＾～＾）
                 if let Some(pc_ex) = self.piece_at_board(sq) {
                     if pc_ex.piece.phase() == us {
                         piece_get(sq, pc_ex);
                     }
                 } else {
-                    panic!("sq={:?}", sq)
+                    panic!("sq={:?}", sq.number())
                 }
-            } else if is_hand_square(sq) {
+            } else if sq.is_hand() {
                 // 持ち駒はここで調べるのは無駄な気がするよな☆（＾～＾）持ち駒に歩が１８個とか☆（＾～＾）
             } else {
                 std::panic::panic_any(Beam::trouble(&format!(
@@ -529,7 +526,7 @@ impl Position {
         let mut value = 0;
         for pc_num in 0..PIECE_NUM_LEN {
             let sq = self.pc_num_to_location[pc_num];
-            if is_board_square(sq) {
+            if sq.is_board() {
                 if let Some(pc_ex) = self.piece_at_board(sq) {
                     if us == pc_ex.piece.phase() {
                         value += pc_ex.piece.hand_type().captured_value();
@@ -537,7 +534,7 @@ impl Position {
                         value -= pc_ex.piece.hand_type().captured_value();
                     }
                 }
-            } else if is_hand_square(sq) {
+            } else if sq.is_hand() {
                 let hand_piece = square_to_hand_piece(sq);
                 if us == hand_piece.phase() {
                     value += hand_piece.type_().captured_value();

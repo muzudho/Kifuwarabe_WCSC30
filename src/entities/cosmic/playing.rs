@@ -114,8 +114,8 @@ impl Game {
             s.push_str(&format!(
                 "[{}]{} {}{} ",
                 moves_num,
-                from,
-                to,
+                from.number(),
+                to.number(),
                 if promote { "+" } else { "" }
             ));
         }
@@ -315,7 +315,7 @@ impl Game {
                         self.position.push_hand(&pc_ex);
                         Some(pc_ex)
                     } else {
-                        panic!("dst={:?}", to2)
+                        panic!("dst={:?}", to2.number())
                     }
                 } else {
                     std::panic::panic_any(Beam::trouble(

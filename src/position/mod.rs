@@ -1,11 +1,8 @@
 pub mod position;
+pub mod square;
 
 use crate::entities::cosmic::smart::features::HandPiece;
-use crate::entities::cosmic::smart::square::RelAdr;
-use crate::entities::cosmic::smart::square::FILE_0;
-use crate::entities::cosmic::smart::square::FILE_10;
-use crate::entities::cosmic::smart::square::RANK_0;
-use crate::entities::cosmic::smart::square::RANK_10;
+use crate::entities::cosmic::smart::features::HandType;
 use crate::entities::law::cryptographic::num_to_lower_case;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
@@ -25,39 +22,49 @@ use crate::take1base::Move;
 ///   98 88 78 68 58 48 38 28 18
 ///   99 89 79 69 59 49 39 29 19
 ///           Source
-pub type Square = u8;
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Square(u8);
 
 /// 升の検索等で、該当なしの場合
-pub const SQUARE_NONE: Square = 0;
+pub const SQUARE_NONE: Square = Square(0);
 
-/// 盤上のマスなら真。（調べ方は、ざっくり）
-pub fn is_board_square(sq: Square) -> bool {
-    11 <= sq && sq < 100
+pub fn hand_type_to_square(ha: HandPiece) -> Square {
+    match ha {
+        HandPiece::King1 => Square(100),
+        HandPiece::Rook1 => Square(101),
+        HandPiece::Bishop1 => Square(102),
+        HandPiece::Gold1 => Square(103),
+        HandPiece::Silver1 => Square(104),
+        HandPiece::Knight1 => Square(105),
+        HandPiece::Lance1 => Square(106),
+        HandPiece::Pawn1 => Square(107),
+        HandPiece::King2 => Square(108),
+        HandPiece::Rook2 => Square(109),
+        HandPiece::Bishop2 => Square(110),
+        HandPiece::Gold2 => Square(111),
+        HandPiece::Silver2 => Square(112),
+        HandPiece::Knight2 => Square(113),
+        HandPiece::Lance2 => Square(114),
+        HandPiece::Pawn2 => Square(115),
+        // _ => panic!("(Err.44) Hand address fail"),
+    }
 }
-/// 持駒なら真
-pub fn is_hand_square(sq: Square) -> bool {
-    100 <= sq
-}
-//  /// マスでないなら真
-// pub fn is_none_square(sq: Square) -> bool {
-//     sq == SQUARE_NONE
-// }
-/// マス、または持駒なら真
-pub fn is_square(sq: Square) -> bool {
-    (11 <= sq && sq < 20)
-        || (21 <= sq && sq < 30)
-        || (31 <= sq && sq < 40)
-        || (41 <= sq && sq < 50)
-        || (51 <= sq && sq < 60)
-        || (61 <= sq && sq < 70)
-        || (71 <= sq && sq < 80)
-        || (81 <= sq && sq < 90)
-        || (91 <= sq && sq < 100)
-        || (100 <= sq && sq < 116)
+pub fn square_to_hand_type(sq: Square) -> HandType {
+    match sq.number() {
+        100 | 108 => HandType::King,
+        101 | 109 => HandType::Rook,
+        102 | 110 => HandType::Bishop,
+        103 | 111 => HandType::Gold,
+        104 | 112 => HandType::Silver,
+        105 | 113 => HandType::Knight,
+        106 | 114 => HandType::Lance,
+        107 | 115 => HandType::Pawn,
+        _ => panic!("square_to_hand_type sq={}", sq.number()),
+    }
 }
 
 pub fn square_to_hand_piece(sq: Square) -> HandPiece {
-    match sq {
+    match sq.number() {
         100 => HandPiece::King1,
         101 => HandPiece::Rook1,
         102 => HandPiece::Bishop1,
@@ -77,90 +84,23 @@ pub fn square_to_hand_piece(sq: Square) -> HandPiece {
         _ => panic!("(Err.44) Hand address fail"),
     }
 }
-pub fn hand_type_to_square(ha: HandPiece) -> Square {
-    match ha {
-        HandPiece::King1 => 100,
-        HandPiece::Rook1 => 101,
-        HandPiece::Bishop1 => 102,
-        HandPiece::Gold1 => 103,
-        HandPiece::Silver1 => 104,
-        HandPiece::Knight1 => 105,
-        HandPiece::Lance1 => 106,
-        HandPiece::Pawn1 => 107,
-        HandPiece::King2 => 108,
-        HandPiece::Rook2 => 109,
-        HandPiece::Bishop2 => 110,
-        HandPiece::Gold2 => 111,
-        HandPiece::Silver2 => 112,
-        HandPiece::Knight2 => 113,
-        HandPiece::Lance2 => 114,
-        HandPiece::Pawn2 => 115,
-        // _ => panic!("(Err.44) Hand address fail"),
-    }
-}
 
-pub fn rank(sq: Square) -> u8 {
-    sq % 10
-}
-pub fn file(sq: Square) -> u8 {
-    sq / 10
-}
-
-pub fn square_from(file: u8, rank: u8) -> Square {
-    file * 10 + rank
-}
-
-/// 壁の中にいる☆（＾～＾）
-pub fn square_wall(sq: Square) -> bool {
-    file(sq) % 10 == 0 || rank(sq) % 10 == 0
-}
-
-pub fn square_offset(sq: Square, r: &RelAdr) -> Square {
-    // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
-    // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
-    let sum = (sq as isize + r.get_address()) as u8;
-
-    // Initialize.
-    let mut rank = sum % 10;
-    let mut file = 0;
-    // Carry.
-    if 9 < rank {
-        rank = rank % 10;
-        file += 1;
-    }
-    file += sum / 10 % 10;
-    // Carry over flow.
-    if 9 < file {
-        file = file % 10;
-    }
-
-    square_from(file, rank)
-}
-
-pub fn square_rotate_180(sq: Square) -> Square {
-    let file = FILE_10 - file(sq);
-    let rank = RANK_10 - rank(sq);
-    debug_assert!(FILE_0 < file && file < FILE_10, "file={}", file);
-    debug_assert!(RANK_0 < rank && rank < RANK_10, "rank={}", rank);
-    square_from(file, rank)
-}
-
-pub fn destructure_move(num: Move) -> (Square, Square, bool) {
+pub fn destructure_move(m: Move) -> (Square, Square, bool) {
     // 移動元マス
-    // .pdd dddd dsss ssss - num
+    // .pdd dddd dsss ssss - m
     // 0000 0000 0111 1111 - Mask 0x007f
-    let from = (num & 0x007f) as Square;
+    let from = Square((m & 0x007f) as u8);
 
     // 移動先マス
-    // .pdd dddd dsss ssss - num
+    // .pdd dddd dsss ssss - m
     // 0011 1111 1000 0000 - Mask 0x3f80
     // 演算子の優先順位は `&` より `>>` の方が高いことに注意（＾～＾）
-    let to = ((num & 0x3f80) >> 7) as Square;
+    let to = Square(((m & 0x3f80) >> 7) as u8);
 
     // 成
-    // .pdd dddd dsss ssss - num
+    // .pdd dddd dsss ssss - m
     // 0100 0000 0000 0000 - Mask 0x4000
-    let promote = ((num & 0x4000) >> 14) == 1;
+    let promote = ((m & 0x4000) >> 14) == 1;
 
     return (from, to, promote);
 }
@@ -171,38 +111,25 @@ pub fn to_move_code(move_: Move) -> String {
         return "resign".to_string();
     }
     let (from, to, promote) = destructure_move(move_);
-    let from_file = from / 10;
-    let from_rank = from % 10;
-    let to_file = to / 10;
-    let to_rank = to % 10;
 
-    if 99 < from {
+    if from.is_hand() {
         // 打
-        let drop = match from {
-            101 | 109 => "R*",
-            102 | 110 => "B*",
-            103 | 111 => "G*",
-            104 | 112 => "S*",
-            105 | 113 => "N*",
-            106 | 114 => "L*",
-            107 | 115 => "P*",
-            _ => panic!("(Err.46) drop fail"),
-        };
+        let drop = from.to_drop_code();
         format!(
             "{}{}{}{}",
             drop,
-            to_file,
-            num_to_lower_case(to_rank.into()),
+            to.file(),
+            num_to_lower_case(to.rank().into()),
             if promote { "+" } else { "" }
         )
     } else {
         // 盤上
         format!(
             "{}{}{}{}{}",
-            from_file,
-            num_to_lower_case(from_rank.into()),
-            to_file,
-            num_to_lower_case(to_rank.into()),
+            from.file(),
+            num_to_lower_case(from.rank().into()),
+            to.file(),
+            num_to_lower_case(to.rank().into()),
             if promote { "+" } else { "" }
         )
     }

@@ -32,22 +32,20 @@ use crate::position::Square;
 use std::cmp::max;
 use std::fmt;
 
-///
 /// 打はテストできない
-///
 pub fn _assert_in_board_as_absolute(sq: Square, hint: &str) {
     debug_assert!(
-        (10 < sq && sq < 20)
-            || (20 < sq && sq < 30)
-            || (30 < sq && sq < 40)
-            || (40 < sq && sq < 50)
-            || (50 < sq && sq < 60)
-            || (60 < sq && sq < 70)
-            || (70 < sq && sq < 80)
-            || (80 < sq && sq < 90)
-            || (90 < sq && sq < 100),
+        (10 < sq.number() && sq.number() < 20)
+            || (20 < sq.number() && sq.number() < 30)
+            || (30 < sq.number() && sq.number() < 40)
+            || (40 < sq.number() && sq.number() < 50)
+            || (50 < sq.number() && sq.number() < 60)
+            || (60 < sq.number() && sq.number() < 70)
+            || (70 < sq.number() && sq.number() < 80)
+            || (80 < sq.number() && sq.number() < 90)
+            || (90 < sq.number() && sq.number() < 100),
         "abs-sq=|{}| hint={}",
-        sq,
+        sq.number(),
         hint
     );
 }

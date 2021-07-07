@@ -99,3 +99,7 @@ cargo run
 
 [Design](./doc/design.md)  
 [Test](./doc/test.md)  
+
+## References
+
+* [Is it possible to implement methods on type aliases?](https://stackoverflow.com/questions/35568871/is-it-possible-to-implement-methods-on-type-aliases)

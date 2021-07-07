@@ -53,6 +53,7 @@ setoption name ManyWaysPer1000 value 10
 setoption name PromotionWeightPer1000 value 1000
 usinewgame
 position sfen 4k4/2+P3+P2/3+P+P+P3/9/ll5ll/9/9/9/4K4 b 2R2B4G4S4N13P 1 moves 5i5h
+# position sfen 9/4k4/9/9/LL5LL/9/3+p+p+p3/2+p3+p2/4K4 b 2r2b4g4s4n13p 1
 pos
 genmove
 go

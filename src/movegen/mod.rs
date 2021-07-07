@@ -16,16 +16,8 @@ use crate::movegen::control::check_checker_pin;
 use crate::movegen::control::is_adjacent_opponent_control;
 use crate::movegen::control::king_is_adjacent_opponent_long_control;
 use crate::position::destructure_move;
-use crate::position::file;
-use crate::position::is_board_square;
-use crate::position::is_hand_square;
 use crate::position::position::{PieceNum, Position};
-use crate::position::rank;
-use crate::position::square_from;
-use crate::position::square_offset;
-use crate::position::square_rotate_180;
 use crate::position::square_to_hand_piece;
-use crate::position::square_wall;
 use crate::position::to_move_code;
 use crate::position::Square;
 use crate::take1base::Move;
@@ -136,10 +128,10 @@ impl PseudoLegalMoves {
         };
 
         if is_debug {
-            Beam::shoot(&format!("# generate ksq={}", ksq));
+            Beam::shoot(&format!("# generate ksq={}", ksq.number()));
         }
 
-        if !is_board_square(ksq) {
+        if !ksq.is_board() {
             panic!("(Err.93) ksq fail")
         }
 
@@ -323,7 +315,7 @@ impl PseudoLegalMoves {
                     Beam::shoot(&format!(
                         "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
                         to_move_code(*particle),
-                        from,to,control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
+                        from.number(),to.number(),control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
                     ));
                 }
                 !control
@@ -346,7 +338,7 @@ impl PseudoLegalMoves {
         let pc_ex = if let Some(pc_ex) = position.piece_at_board(ksq) {
             pc_ex
         } else {
-            panic!("ksq fail {:?}", ksq)
+            panic!("ksq fail {:?}", ksq.number())
         };
         // 座標ではなく、駒の背番号で検索
         PseudoLegalMoves::start_on_board(us, ksq, &pc_ex, position, move_list)
@@ -355,9 +347,9 @@ impl PseudoLegalMoves {
     fn generate_non_evasion(us: Phase, position: &Position, move_list: &mut Vec<Move>) {
         // 座標ではなく、駒の背番号で検索
         position.for_some_pieces_on_list40(us, &mut |sq, pc_ex| {
-            if is_board_square(sq) {
+            if sq.is_board() {
                 PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, move_list)
-            } else if is_hand_square(sq) {
+            } else if sq.is_hand() {
                 PseudoLegalMoves::make_drop(us, square_to_hand_piece(sq), position, move_list);
             } else {
                 std::panic::panic_any(Beam::trouble(
@@ -466,7 +458,7 @@ impl PseudoLegalMoves {
                     match pc_ex.piece {
                         P1 | P2 => {
                             // ひよこ　は２歩できない☆（＾～＾）
-                            if position.exists_pawn_on_file(us, file(to)) {
+                            if position.exists_pawn_on_file(us, to.file()) {
                                 return;
                             }
                         }
@@ -510,7 +502,7 @@ impl Area {
     {
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                callback(square_from(file, rank));
+                callback(Square::from(file, rank));
             }
         }
     }
@@ -562,7 +554,7 @@ impl Area {
         };
 
         for mobility in PieceType::P.mobility().iter() {
-            Area::move_(&Some(us), from, *mobility, moving);
+            Area::move_(Some(us), from, *mobility, moving);
         }
     }
 
@@ -582,7 +574,9 @@ impl Area {
         };
 
         for mobility in PieceType::L.mobility().iter() {
-            Area::move_(&Some(us), from, *mobility, moving);
+            // TODO なぜか後手が後ろに進んでしまう（＾～＾）理由不明（＾～＾）
+            Area::move_(Some(us), from, *mobility, moving);
+            // Area::move_(None, from, *mobility, moving);
         }
     }
 
@@ -602,7 +596,7 @@ impl Area {
         };
 
         for mobility in PieceType::N.mobility().iter() {
-            Area::move_(&Some(us), from, *mobility, moving);
+            Area::move_(Some(us), from, *mobility, moving);
         }
     }
 
@@ -620,7 +614,7 @@ impl Area {
         let moving = &mut |to, _move_range| Promoting::silver(us, from, to, moving);
 
         for mobility in PieceType::S.mobility().iter() {
-            Area::move_(&Some(us), from, *mobility, moving);
+            Area::move_(Some(us), from, *mobility, moving);
         }
     }
 
@@ -633,13 +627,13 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn gold<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool, // FnMut
     {
         let moving =
             &mut |to, _move_range| moving(to, Promotability::Deny, MoveRange::Adjacent, None);
 
         for mobility in PieceType::G.mobility().iter() {
-            Area::move_(&Some(us), from, *mobility, moving);
+            Area::move_(Some(us), from, *mobility, moving);
         }
     }
 
@@ -657,7 +651,8 @@ impl Area {
             &mut |to, _move_range| moving(to, Promotability::Deny, MoveRange::Adjacent, None);
 
         for mobility in PieceType::K.mobility().iter() {
-            Area::move_(&None, from, *mobility, moving);
+            // 先後同型
+            Area::move_(None, from, *mobility, moving);
         }
     }
 
@@ -673,7 +668,10 @@ impl Area {
     {
         let moving = &mut |to, _move_range| Promoting::bishop_rook(us, from, to, moving);
         for mobility in PieceType::B.mobility().iter() {
-            Area::move_(&Some(us), from, *mobility, moving);
+            Area::move_(
+                None, //&Some(us),// 先後同型なのでは（＾～＾）？
+                from, *mobility, moving,
+            );
         }
     }
 
@@ -689,7 +687,10 @@ impl Area {
     {
         let moving = &mut |to, _move_range| Promoting::bishop_rook(us, from, to, moving);
         for mobility in PieceType::R.mobility().iter() {
-            Area::move_(&Some(us), from, *mobility, moving);
+            Area::move_(
+                None, //&Some(us),// 先後同型なのでは（＾～＾）？
+                from, *mobility, moving,
+            );
         }
     }
 
@@ -706,7 +707,8 @@ impl Area {
         let moving = &mut |to, move_range| moving(to, Promotability::Deny, move_range, None);
 
         for mobility in PieceType::PB.mobility().iter() {
-            Area::move_(&None, from, *mobility, moving);
+            // 先後同型（＾～＾）
+            Area::move_(None, from, *mobility, moving);
         }
     }
 
@@ -724,7 +726,8 @@ impl Area {
             let moving = &mut |to, move_range| moving(to, Promotability::Deny, move_range, None);
 
             for mobility in PieceType::PR.mobility().iter() {
-                Area::move_(&None, from, *mobility, moving);
+                // 先後同型（＾～＾）
+                Area::move_(None, from, *mobility, moving);
             }
         }
     }
@@ -748,7 +751,7 @@ impl Area {
 
         for rank in min_rank..max_rank {
             for file in (FILE_1..FILE_10).rev() {
-                callback(square_from(file, rank));
+                callback(Square::from(file, rank));
             }
         }
     }
@@ -765,9 +768,9 @@ impl Area {
     {
         for rank in RANK_3..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
-                let mut sq = square_from(file, rank);
+                let mut sq = Square::from(file, rank);
                 if us == Phase::Second {
-                    sq = square_rotate_180(sq);
+                    sq = sq.rotate_180();
                 }
 
                 callback(sq);
@@ -779,17 +782,18 @@ impl Area {
     ///
     /// # Arguments
     ///
-    /// * `us` - 先手か後手か、関係ないか☆（＾～＾）先後同型なら関係ないしな☆（＾～＾）
+    /// * `us` - 先手か後手か、関係ないか☆（＾～＾）先後同型なら None ☆（＾～＾）
     /// * `start` - 移動元升☆（＾～＾）
     /// * `square` - 升☆（＾～＾）
     /// * `mobility` - 動き方☆（＾～＾）
     /// * `moving` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn move_<F1>(us: &Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
+    fn move_<F1>(us: Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
     where
         F1: FnMut(Square, MoveRange) -> bool,
     {
+        // 後手なら 180°ひっくり返す。 us が指定されていないとき、先後同型と見做して回転させません
         let angle = if let Some(us) = us {
-            if *us == Phase::First {
+            if us == Phase::First {
                 mobility.angle
             } else {
                 // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
@@ -809,8 +813,8 @@ impl Area {
 
                 loop {
                     // 西隣から反時計回りだぜ☆（＾～＾）
-                    cur = square_offset(cur, &r);
-                    if square_wall(cur) {
+                    cur = cur.offset(&r);
+                    if cur.wall() {
                         break;
                     }
 
@@ -824,8 +828,8 @@ impl Area {
                 let mut cur = start;
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                cur = square_offset(cur, &angle.west_ccw_double_rank());
-                if !square_wall(cur) {
+                cur = cur.offset(&angle.west_ccw_double_rank());
+                if !cur.wall() {
                     moving(cur, mobility.move_range);
                 }
             }
@@ -833,8 +837,8 @@ impl Area {
                 let mut cur = start;
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
-                cur = square_offset(cur, &angle.west_ccw());
-                if !square_wall(cur) {
+                cur = cur.offset(&angle.west_ccw());
+                if !cur.wall() {
                     moving(cur, mobility.move_range);
                 }
             }
@@ -896,7 +900,7 @@ impl MovePermission {
         }
     }
     fn check(&self, to: Square) -> bool {
-        if rank(to) < self.min_rank || self.max_rank < rank(to) {
+        if to.rank() < self.min_rank || self.max_rank < to.rank() {
             return false;
         }
         true
@@ -1029,7 +1033,7 @@ impl Promoting {
     /// * `us` -
     /// * `to` -
     fn is_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
-        (us == Phase::First && rank(to) < RANK_2) || (us == Phase::Second && RANK_8 < rank(to))
+        (us == Phase::First && to.rank() < RANK_2) || (us == Phase::Second && RANK_8 < to.rank())
     }
     /// 自陣から見て、一番目、２番目に遠いの段
     ///
@@ -1038,7 +1042,7 @@ impl Promoting {
     /// * `us` -
     /// * `to` -
     fn is_first_second_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
-        (us == Phase::First && rank(to) < RANK_3) || (us == Phase::Second && RANK_7 < rank(to))
+        (us == Phase::First && to.rank() < RANK_3) || (us == Phase::Second && RANK_7 < to.rank())
     }
     /// 自陣から見て、二番目、三番目に遠いの段
     ///
@@ -1047,8 +1051,8 @@ impl Promoting {
     /// * `us` -
     /// * `to` -
     fn is_second_third_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
-        (us == Phase::First && RANK_1 < rank(to) && rank(to) < RANK_4)
-            || (us == Phase::Second && RANK_6 < rank(to) && rank(to) < RANK_9)
+        (us == Phase::First && RANK_1 < to.rank() && to.rank() < RANK_4)
+            || (us == Phase::Second && RANK_6 < to.rank() && to.rank() < RANK_9)
     }
     /// 自陣から見て、三番目に遠いの段
     ///
@@ -1057,7 +1061,7 @@ impl Promoting {
     /// * `us` -
     /// * `to` -
     fn is_third_farthest_rank_from_friend(us: Phase, to: Square) -> bool {
-        (us == Phase::First && rank(to) == RANK_3) || (us == Phase::Second && RANK_7 == rank(to))
+        (us == Phase::First && to.rank() == RANK_3) || (us == Phase::Second && RANK_7 == to.rank())
     }
     /// 敵陣
     ///
@@ -1066,6 +1070,6 @@ impl Promoting {
     /// * `us` -
     /// * `to` -
     fn is_opponent_region(us: Phase, to: Square) -> bool {
-        (us == Phase::First && rank(to) < RANK_4) || (us == Phase::Second && RANK_6 < rank(to))
+        (us == Phase::First && to.rank() < RANK_4) || (us == Phase::Second && RANK_6 < to.rank())
     }
 }

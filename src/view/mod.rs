@@ -63,7 +63,7 @@ pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
     sq_list2.sort();
 
     for (i, sq) in sq_list2.into_iter().enumerate() {
-        Beam::shoot(&format!("| [{}] {}", i, sq));
+        Beam::shoot(&format!("| [{}] {}", i, sq.number()));
     }
     Beam::shoot("+");
 }

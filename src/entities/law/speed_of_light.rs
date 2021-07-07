@@ -598,22 +598,22 @@ impl Default for SpeedOfLight {
             ],
 
             hand_piece_to_square_table: [
-                100, // K1
-                101, // R1
-                102, // B1
-                103, // G1
-                104, // S1
-                105, // N1
-                106, // L1
-                107, // P1
-                108, // K2
-                109, // R2
-                110, // B2
-                111, // G2
-                112, // S2
-                113, // N2
-                114, // L2
-                115, // P2
+                Square::new(100), // K1
+                Square::new(101), // R1
+                Square::new(102), // B1
+                Square::new(103), // G1
+                Square::new(104), // S1
+                Square::new(105), // N1
+                Square::new(106), // L1
+                Square::new(107), // P1
+                Square::new(108), // K2
+                Square::new(109), // R2
+                Square::new(110), // B2
+                Square::new(111), // G2
+                Square::new(112), // S2
+                Square::new(113), // N2
+                Square::new(114), // L2
+                Square::new(115), // P2
             ],
             hand_piece_to_type_table: [
                 HandType::King,
