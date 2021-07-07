@@ -18,6 +18,7 @@ use crate::position::is_hand_square;
 use crate::position::square_from;
 use crate::position::Square;
 use crate::position::SQUARE_NONE;
+use crate::search::CentiPawn;
 use crate::take1base::Piece;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -519,6 +520,22 @@ impl Position {
                 piece_get(hand_address_to_square(*ha), *pc_ex);
             }
         }
+    }
+
+    /// 手番側の駒割評価値
+    pub fn material_advantage(&self, us: Phase) -> CentiPawn {
+        let mut value = 0;
+        for pc_num in 0..PIECE_NUM_LEN {
+            let sq = self.pc_num_to_location[pc_num];
+            if let Some(pc_ex) = self.piece_at(sq) {
+                if us == pc_ex.piece.phase() {
+                    //value += pc_ex.piece.type_().captured_value;
+                } else {
+                    //value -= pc_ex.piece.type_().captured_value;
+                }
+            }
+        }
+        value
     }
 }
 

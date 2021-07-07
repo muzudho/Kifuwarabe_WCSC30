@@ -48,16 +48,16 @@ struct SpeedOfLight {
     piece_numbers: Vec<PieceNum>,
 
     /// 先後付きの駒☆（＾～＾）
-    piece_meaning_to_phase_table: [Phase; PIECE_MEANING_LEN],
-    piece_meaning_type_table: [PieceType; PIECE_MEANING_LEN],
+    piece_to_phase_table: [Phase; PIECE_MEANING_LEN],
+    piece_type_table: [PieceType; PIECE_MEANING_LEN],
     /// 駒→成駒　（成れない駒は、そのまま）
-    piece_meaning_promoted_table: [Piece; PIECE_MEANING_LEN],
+    piece_promoted_table: [Piece; PIECE_MEANING_LEN],
     /// 成駒→駒　（成っていない駒は、そのまま）
-    piece_meaning_demoted_table: [Piece; PIECE_MEANING_LEN],
+    piece_demoted_table: [Piece; PIECE_MEANING_LEN],
     /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
-    piece_meaning_captured_table: [Piece; PIECE_MEANING_LEN],
-    piece_meaning_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
+    piece_captured_table: [Piece; PIECE_MEANING_LEN],
+    piece_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
 
     // 駒種類☆（＾～＾）
     //piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
@@ -144,7 +144,7 @@ impl Default for SpeedOfLight {
             .to_vec(),
 
             /// 先後付きの駒☆（＾～＾）
-            piece_meaning_to_phase_table: [
+            piece_to_phase_table: [
                 First,  // King1
                 First,  // Rook1
                 First,  // Bishop1
@@ -174,7 +174,7 @@ impl Default for SpeedOfLight {
                 Second, // PromotedLance2
                 Second, // PromotedPawn2
             ],
-            piece_meaning_type_table: [
+            piece_type_table: [
                 K,  // King1
                 R,  // Rook1
                 B,  // Bishop1
@@ -204,7 +204,7 @@ impl Default for SpeedOfLight {
                 PL, // PromotedLance2
                 PP, // PromotedPawn2
             ],
-            piece_meaning_promoted_table: [
+            piece_promoted_table: [
                 K1,  // King1
                 PR1, // Rook1
                 PB1, // Bishop1
@@ -234,7 +234,7 @@ impl Default for SpeedOfLight {
                 PL2, // PromotedLance2
                 PP2, // PromotedPawn2
             ],
-            piece_meaning_demoted_table: [
+            piece_demoted_table: [
                 K1, // King1
                 R1, // Rook1
                 B1, // Bishop1
@@ -264,7 +264,7 @@ impl Default for SpeedOfLight {
                 L2, // PromotedLance2
                 P2, // PromotedPawn2
             ],
-            piece_meaning_captured_table: [
+            piece_captured_table: [
                 K2, // King1
                 R2, // Rook1
                 B2, // Bishop1
@@ -294,7 +294,7 @@ impl Default for SpeedOfLight {
                 L1, // PromotedLance2
                 P1, // PromotedPawn2
             ],
-            piece_meaning_hand_address_table: [
+            piece_hand_address_table: [
                 HandAddress::King1,   // King1
                 HandAddress::Rook1,   // Rook1
                 HandAddress::Bishop1, // Bishop1
@@ -719,27 +719,27 @@ impl Nine299792458 {
 /// コーディングを短くするためのものだぜ☆（＾～＾）
 impl Piece {
     pub fn phase(self) -> Phase {
-        NINE_299792458.piece_meaning_to_phase_table[self as usize]
+        NINE_299792458.piece_to_phase_table[self as usize]
     }
 
     pub fn type_(self) -> PieceType {
-        NINE_299792458.piece_meaning_type_table[self as usize]
+        NINE_299792458.piece_type_table[self as usize]
     }
 
     pub fn promoted(self) -> Piece {
-        NINE_299792458.piece_meaning_promoted_table[self as usize]
+        NINE_299792458.piece_promoted_table[self as usize]
     }
 
     pub fn demoted(self) -> Piece {
-        NINE_299792458.piece_meaning_demoted_table[self as usize]
+        NINE_299792458.piece_demoted_table[self as usize]
     }
 
     pub fn captured(self) -> Piece {
-        NINE_299792458.piece_meaning_captured_table[self as usize]
+        NINE_299792458.piece_captured_table[self as usize]
     }
 
     pub fn hand_address(self) -> HandAddress {
-        NINE_299792458.piece_meaning_hand_address_table[self as usize]
+        NINE_299792458.piece_hand_address_table[self as usize]
     }
 }
 
