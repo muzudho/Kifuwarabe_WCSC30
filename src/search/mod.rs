@@ -36,8 +36,9 @@ pub struct Tree {
 
     // 反復深化探索の１回目だけ真☆（＾～＾）
     pub depth_not_to_give_up: usize,
-    // 読みの深さの上限☆（＾～＾）１手を読み切るなら 0 を指定しろだぜ☆（＾～＾）
-    max_depth0: usize,
+    // 反復深化探索（Iteration deeping）を使うときの、読みの深さの上限☆（＾～＾）
+    id_depth: usize,
+    id_max_depth: usize,
     // 時間切れ（＾～＾）
     pub timeout: bool,
     // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
@@ -51,7 +52,8 @@ impl Tree {
             pv: PrincipalVariation::default(),
             think_sec: 0,
             depth_not_to_give_up: depth_not_to_give_up,
-            max_depth0: 0,
+            id_depth: 0,
+            id_max_depth: 0,
             timeout: false,
             repetition_move: RESIGN_MOVE,
         }
@@ -70,8 +72,9 @@ impl Tree {
         let mut bestmove = RESIGN_MOVE;
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for depth in 0..universe.option_max_depth {
-            self.max_depth0 = depth;
+        for max_depth in 0..universe.option_max_depth {
+            self.id_max_depth = max_depth;
+            self.id_depth = max_depth;
             // 探索（＾～＾）
             let (value, move_) = self.search(&mut universe.game, -beta, -alpha);
             if self.timeout {
@@ -92,7 +95,7 @@ impl Tree {
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             print_info(
                 &mut universe.game.info,
-                Some(self.max_depth0),
+                Some(max_depth),
                 Some((self.state_nodes, self.nps())),
                 Some(alpha),
                 Some(bestmove),
@@ -118,9 +121,6 @@ impl Tree {
     /// Best movement, Value, Sum nodes
     fn search(&mut self, game: &mut Game, mut alpha: i16, beta: i16) -> (CentiPawn, Move) {
         let mut bestmove = RESIGN_MOVE;
-
-        // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
-        let mut exists_lose = false;
 
         // TODO let mut controls = Vec::<Square>::new();
 
@@ -186,17 +186,19 @@ impl Tree {
 
         for move_ in move_list.iter() {
             // 時間を見ようぜ☆（＾～＾）？
-            if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
+            if self.think_sec < self.sec()
+                && self.depth_not_to_give_up <= self.id_max_depth - self.id_depth
+            {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                 self.timeout = true;
                 return (-alpha, bestmove);
             }
 
+            let captured_piece: Option<PieceEx> = game.do_move(*move_);
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
 
-            let captured_piece: Option<PieceEx> = game.do_move(*move_);
             self.pv.push(*move_);
 
             // TODO 廃止方針☆（＾～＾）
@@ -216,7 +218,7 @@ impl Tree {
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
                 self.repetition_move = *move_;
-            } else if self.max_depth0 < self.pv.len() {
+            } else if self.id_depth < 1 {
                 // 葉だぜ☆（＾～＾）
 
                 // if let Some(_captured) = move_.captured {
@@ -254,43 +256,35 @@ impl Tree {
                 }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
+                self.id_depth -= 1;
                 let (node_value, _) = self.search(game, -beta, -alpha);
+                self.id_depth += 1;
 
-                if self.timeout {
-                    // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-                    return (-alpha, bestmove);
+                // if self.timeout {
+                //     // TODO すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
+                //     return (-alpha, bestmove);
+                // }
+
+                if bestmove == RESIGN_MOVE {
+                    // どんな悪手も、投了より良いだろ☆（＾～＾）
+                    alpha = node_value;
+                    bestmove = *move_;
+                } else if alpha < node_value {
+                    // 上方修正
+                    alpha = node_value;
+                    bestmove = *move_;
                 }
-
-                // 下の木の結果を、ひっくり返して、引き継ぎます。
-                exists_lose = {
-                    // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
-
-                    // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
-
-                    if bestmove != RESIGN_MOVE {
-                        // どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
-                        alpha = node_value;
-                        bestmove = *move_;
-                    } else {
-                        if alpha < node_value {
-                            // 上方修正
-                            alpha = node_value;
-                            bestmove = *move_;
-                        }
-                    }
-                    false
-                };
             }
 
             self.pv.pop();
             game.undo_move();
 
-            // ベータカット判定☆（＾～＾）
-            if beta < alpha {
-                // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
-                // これが　いわゆるベータカットだぜ☆（＾～＾）
-                break;
-            }
+            // // TODO ベータカット判定☆（＾～＾）
+            // if beta < alpha {
+            //     // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
+            //     // これが　いわゆるベータカットだぜ☆（＾～＾）
+            //     break;
+            // }
         }
 
         // TODO 利き削除☆（＾～＾）
@@ -299,12 +293,10 @@ impl Tree {
         //         .add_control(game.history.get_phase(), destination, -1);
         // }
 
-        if !exists_lose {
-            if bestmove == RESIGN_MOVE {
-                // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-                bestmove = self.repetition_move;
-                alpha = REPITITION_VALUE;
-            }
+        if bestmove == RESIGN_MOVE {
+            // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
+            bestmove = self.repetition_move;
+            alpha = REPITITION_VALUE;
         }
 
         (-alpha, bestmove)
