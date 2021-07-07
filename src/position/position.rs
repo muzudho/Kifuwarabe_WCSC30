@@ -450,7 +450,7 @@ impl Position {
                 if let Some(pc_ex) = self.piece_at_board(*sq) {
                     piece_get(i, Some(*sq), Some(pc_ex));
                 } else {
-                    panic!("sq={:?}", sq.number())
+                    panic!("sq={:?}", sq)
                 }
             } else if sq.is_hand() {
                 // TODO 持ち駒☆（＾～＾）
@@ -478,7 +478,7 @@ impl Position {
                         piece_get(sq, pc_ex);
                     }
                 } else {
-                    panic!("sq={:?}", sq.number())
+                    panic!("sq={:?}", sq)
                 }
             } else if sq.is_hand() {
                 // 持ち駒はここで調べるのは無駄な気がするよな☆（＾～＾）持ち駒に歩が１８個とか☆（＾～＾）

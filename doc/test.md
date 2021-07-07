@@ -37,6 +37,26 @@ pos
 genmove
 ```
 
+## 桂馬の利き見えてる？
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 2
+setoption name MaxDepth value 2
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
+position startpos moves 7g7f 8c8d 2h7h 1a1b 5i4h 2c2d 7i6h 8b3b 6h7g 6a5b 6i5h 5c5d 3i3h 6c6d 4h5i 2b1a 7g8f 5a6a 8f7e 5b6c 7e8d 3b2b 8d8c+ 6c7d 8h6f 4a5a 5i6h 9c9d 1g1f 2b6b 5g5f 6b4b 8c8d 7d8d 6f8d 4b7b 8d7e S*6c G*8c 7b2b 6h7g 4c4d 7g8h 5a5b 4g4f 5b6b 7e6f 9d9e 6f4d 6b5b 4d7a+ 6a5a 7a8a 9e9f 8c7c 9f9g+ 9i9g P*7g 8h7g 9a9g 7c6c 5b6c 8a6c 9g9i+ G*4a 5a6a S*6b 2b6b N*7c
+pos
+genmove
+```
+
 ## 後手の香車が後ろ向いて無いか？
 
 ```plain

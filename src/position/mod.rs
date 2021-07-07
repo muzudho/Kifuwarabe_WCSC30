@@ -107,7 +107,7 @@ pub fn square_to_hand_type(sq: Square) -> HandType {
         105 | 113 => HandType::Knight,
         106 | 114 => HandType::Lance,
         107 | 115 => HandType::Pawn,
-        _ => panic!("square_to_hand_type sq={}", sq.number()),
+        _ => panic!("square_to_hand_type sq={}", sq),
     }
 }
 

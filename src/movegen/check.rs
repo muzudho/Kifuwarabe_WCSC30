@@ -1,6 +1,7 @@
 // 玉が移動したとき、敵の長い利きが当たっているかどうか。
 // ただし、駒が動く前の position であることに注意してください。
 use crate::entities::cosmic::smart::features::PieceType;
+use crate::movegen::Beam;
 use crate::movegen::Direction;
 use crate::movegen::Phase;
 use crate::position::position::Position;
@@ -23,7 +24,7 @@ const DIRECTIONS_SQ_FROM_FIRST: [i8; 10] = [
     1,   // 下方向
     -9,  // 右下方向
     -12, // 桂右
-    12,  // 桂左
+    8,   // 桂左
 ];
 
 /// 後手から見た向き
@@ -38,11 +39,12 @@ const DIRECTIONS_SQ_FROM_SECOND: [i8; 10] = [
     -11, // 左下方向
     -1,  // 下方向
     9,   // 右下方向
-    12,  // 桂右
-    -12, // 桂左
+    -8,  // 桂右
+    12,  // 桂左
 ];
 
-pub fn king_is_adjacent_opponent_long_control(
+/// 長い利きで王手されているか
+pub fn is_long_check(
     us: Phase,
     position_before_move: &Position,
     ksq_from: Square,
@@ -143,7 +145,7 @@ pub fn king_is_adjacent_opponent_long_control(
 }
 
 // 隣接する敵の１マスの利きが利いているかどうか（桂も含む）
-pub fn is_adjacent_opponent_control(
+pub fn is_adjacent_check(
     us: Phase,
     position: &Position,
     ksq_to: Square,
@@ -157,7 +159,7 @@ pub fn is_adjacent_opponent_control(
     // 隣のマス
     let adjacent_sq = (ksq_to.number() as i8 + d_sq) as u8;
     // Beam::shoot(&format!(
-    //     "is_adjacent_opponent_control d_file={} d_rank={} adjacent_sq={}",
+    //     "is_adjacent_check d_file={} d_rank={} adjacent_sq={}",
     //     d_file, d_rank, adjacent_sq
     // ));
 
@@ -165,7 +167,6 @@ pub fn is_adjacent_opponent_control(
         if let Some(pc_ex) = position.piece_at_board(Square::new(adjacent_sq)) {
             if us != pc_ex.piece.phase() {
                 // 敵の駒なら
-                // TODO 桂馬
                 match direction {
                     Direction::Right | Direction::Left => match pc_ex.piece.type_() {
                         PieceType::K
@@ -228,7 +229,6 @@ pub fn is_adjacent_opponent_control(
                         _ => {}
                     },
                     // 桂馬
-                    // TODO 先後
                     Direction::TopRightKnight | Direction::TopLeftKnight => {
                         match pc_ex.piece.type_() {
                             PieceType::N => return true,
@@ -249,21 +249,25 @@ pub fn is_adjacent_opponent_control(
 /// # Returns
 ///
 /// 合い駒のマス, ピンしてる駒のマス、チェッカーのマス
-pub fn check_checker_pin(
+pub fn get_check(
     us: Phase,
     position: &Position,
     ksq: Square,
     direction: Direction,
     sq_list: &mut Vec<Square>,
+    is_debug: bool,
 ) -> (Option<Square>, Option<Square>, Option<Square>) {
+    // 先後の違いを吸収
     let d_sq = match us {
         Phase::First => DIRECTIONS_SQ_FROM_FIRST[direction as usize],
         Phase::Second => DIRECTIONS_SQ_FROM_SECOND[direction as usize],
     };
-    // Beam::shoot(&format!(
-    //     "# check_checker_pin us={} ksq={} d_sq={}",
-    //     us, ksq, d_sq
-    // ));
+    if is_debug {
+        Beam::shoot(&format!(
+            "# get_check us={} ksq={} d_sq={} direction={:?}",
+            us, ksq, d_sq, direction
+        ));
+    }
 
     let mut sq = Square::new((ksq.number() as i8 + d_sq) as u8);
     let mut pinned: Option<Square> = None; // 合い駒か、ただの自駒
@@ -279,11 +283,15 @@ pub fn check_checker_pin(
                 if let None = pinned {
                     // とりあえず 合い駒 候補
                     pinned = Some(sq);
-                    //Beam::shoot(&format!("# check_checker_pin sq={} (Pinned?)", sq));
+                    if is_debug {
+                        Beam::shoot(&format!("# get_check sq={} (Pinned?)", sq));
+                    }
                 } else {
                     // 味方の駒が２枚あれば長い利きは当たっていません
                     // ループ終了
-                    //Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
+                    if is_debug {
+                        Beam::shoot(&format!("# get_check sq={} (End)", sq));
+                    }
                     interval += 1;
                     break;
                 }
@@ -354,7 +362,6 @@ pub fn check_checker_pin(
                             _ => None,
                         },
                         // 桂馬
-                        // TODO 先後
                         Direction::TopRightKnight | Direction::TopLeftKnight => {
                             match pc_ex.piece.type_() {
                                 PieceType::N => Some(sq),
@@ -363,11 +370,13 @@ pub fn check_checker_pin(
                         }
                     };
 
-                    // if let None = checker {
-                    //     Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
-                    // } else {
-                    //     Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
-                    // }
+                    if is_debug {
+                        if let None = checker {
+                            Beam::shoot(&format!("# get_check sq={} (End)", sq));
+                        } else {
+                            Beam::shoot(&format!("# get_check sq={} (Checker)", sq));
+                        }
+                    }
                 } else {
                     // 離れたところにある長い利きの駒は ピンの頭か、チェッカーのどちらか（＾～＾）
                     let opponent = match direction {
@@ -395,12 +404,18 @@ pub fn check_checker_pin(
                         Direction::TopRightKnight | Direction::TopLeftKnight => None,
                     };
                     if let None = opponent {
-                        //Beam::shoot(&format!("# check_checker_pin sq={} (End)", sq));
+                        if is_debug {
+                            Beam::shoot(&format!("# get_check sq={} (End)", sq));
+                        }
                     } else if let None = pinned {
-                        //Beam::shoot(&format!("# check_checker_pin sq={} (Checker)", sq));
+                        if is_debug {
+                            Beam::shoot(&format!("# get_check sq={} (Checker)", sq));
+                        }
                         checker = opponent;
                     } else {
-                        //Beam::shoot(&format!("# check_checker_pin sq={} (PinHead)", sq));
+                        if is_debug {
+                            Beam::shoot(&format!("# get_check sq={} (PinHead)", sq));
+                        }
                         pin_head = opponent;
                     }
                 }
@@ -409,7 +424,9 @@ pub fn check_checker_pin(
                 break;
             }
         } else {
-            //Beam::shoot(&format!("# check_checker_pin sq={}", sq));
+            if is_debug {
+                Beam::shoot(&format!("# get_check sq={}", sq));
+            }
         }
 
         sq = Square::new((sq.number() as i8 + d_sq) as u8);
@@ -419,12 +436,16 @@ pub fn check_checker_pin(
     if let None = pin_head {
         // ピン頭は無かったので、合い駒もありません
         pinned = None;
-        //Beam::shoot("# check_checker_pin cancel pinned");
+        if is_debug {
+            Beam::shoot("# get_check cancel pinned");
+        }
     }
     if let None = checker {
         // チェッカーは無かったので、追加した分を減らします
         sq_list.truncate(sq_list.len() - interval);
-        //Beam::shoot(&format!("# check_checker_pin cancel interval={}", interval));
+        if is_debug {
+            Beam::shoot(&format!("# get_check cancel interval={}", interval));
+        }
     }
 
     (pinned, pin_head, checker)

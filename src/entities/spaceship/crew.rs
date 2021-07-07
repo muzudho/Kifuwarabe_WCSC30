@@ -195,7 +195,7 @@ impl Chiyuri {
                     "[{}]{}{}",
                     i,
                     if let Some(sq) = sq {
-                        format!(" {:?}", sq.number())
+                        format!(" {:?}", sq)
                     } else {
                         " --".to_string()
                     },

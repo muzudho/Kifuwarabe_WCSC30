@@ -63,7 +63,7 @@ pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
     sq_list2.sort();
 
     for (i, sq) in sq_list2.into_iter().enumerate() {
-        Beam::shoot(&format!("| [{}] {}", i, sq.number()));
+        Beam::shoot(&format!("| [{}] {}", i, sq));
     }
     Beam::shoot("+");
 }
@@ -71,7 +71,7 @@ pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
 /// 情報表示
 pub fn print_info(
     display: &mut DestinationDisplay,
-    cur_depth: Option<usize>,
+    depth: Option<usize>,
     state_nodes_nps: Option<(u64, u64)>,
     value: Option<CentiPawn>,
     move_: Option<Move>,
@@ -89,9 +89,9 @@ pub fn print_info(
         } else {
             "".to_string()
         },
-        if let Some(num) = cur_depth {
+        if let Some(depth) = depth {
             // 単に読み筋の長さ☆（＾～＾）
-            format!(" depth {}", num)
+            format!(" depth {}", depth)
         } else {
             "".to_string()
         },

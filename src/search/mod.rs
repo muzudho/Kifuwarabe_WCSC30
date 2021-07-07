@@ -73,9 +73,9 @@ impl Tree {
         let mut bestmove = RESIGN_MOVE;
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for max_depth in 0..universe.option_max_depth {
-            self.id_max_depth = max_depth;
-            self.id_depth = max_depth;
+        for depth in 0..(universe.option_max_depth + 1) {
+            self.id_max_depth = depth;
+            self.id_depth = depth;
             // 探索（＾～＾）
             let (mut value, move_) = self.search(&mut universe.game, -beta, -alpha);
             value = -value;
@@ -98,7 +98,7 @@ impl Tree {
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             print_info(
                 &mut universe.game.info,
-                Some(max_depth),
+                Some(depth),
                 Some((self.state_nodes, self.nps())),
                 Some(alpha),
                 Some(bestmove),
@@ -249,18 +249,18 @@ impl Tree {
                         }
                     }
                 }
-                if game.info.is_printable() {
-                    // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
-                    // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
-                    print_info(
-                        &mut game.info,
-                        Some(self.pv.len()),
-                        Some((self.state_nodes, self.nps())),
-                        Some(alpha),
-                        Some(bestmove),
-                        &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
-                    );
-                }
+                // if game.info.is_printable() {
+                //     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
+                //     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
+                //     print_info(
+                //         &mut game.info,
+                //         Some(self.id_max_depth - self.id_depth + 1), //self.pv.len()
+                //         Some((self.state_nodes, self.nps())),
+                //         Some(alpha),
+                //         Some(bestmove),
+                //         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
+                //     );
+                // }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.id_depth -= 1;

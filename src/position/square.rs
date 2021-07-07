@@ -1,6 +1,7 @@
 use crate::position::RelAdr;
 use crate::position::Square;
 use crate::position::{FILE_0, FILE_10, RANK_0, RANK_10};
+use std::fmt;
 
 impl Square {
     pub fn new(number: u8) -> Self {
@@ -88,5 +89,16 @@ impl Square {
             107 | 115 => "P*",
             _ => panic!("(Err.46) drop fail"),
         }
+    }
+}
+
+impl fmt::Display for Square {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.number())
+    }
+}
+impl fmt::Debug for Square {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}x {}y {}sq)", self.file(), self.rank(), self.number())
     }
 }

@@ -1,16 +1,16 @@
 //!
 //! 現局面を使った指し手生成☆（＾～＾）
 //!
-mod control;
+mod check;
 
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandPiece;
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::move_::new_move;
 use crate::entities::spaceship::equipment::Beam;
-use crate::movegen::control::check_checker_pin;
-use crate::movegen::control::is_adjacent_opponent_control;
-use crate::movegen::control::king_is_adjacent_opponent_long_control;
+use crate::movegen::check::get_check;
+use crate::movegen::check::is_adjacent_check;
+use crate::movegen::check::is_long_check;
 use crate::position::destructure_move;
 use crate::position::position::{PieceNum, Position};
 use crate::position::rotation::Angle;
@@ -63,7 +63,7 @@ impl Mobility {
 }
 
 /// 手番から見た向き
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Direction {
     Right,
     TopRight,
@@ -113,7 +113,7 @@ impl PseudoLegalMoves {
     ///
     /// 指し手の一覧
     pub fn generate(us: Phase, position: &Position, is_debug: bool) -> Vec<Move> {
-        // TODO その手を指して、王手が解消されない手は除外したい
+        // その手を指して、王手が解消されない手は除外したい
         // 本書では、「離れた王手」は玉とチェッカーの間に１マス以上の空きマスがあるものとします。また、桂を含みません。
         //
         // 離れた王手回避
@@ -122,14 +122,14 @@ impl PseudoLegalMoves {
         // 2. 離れた王手が１つなら、そのチェッカーのあるマスから玉の手前までのマスへ、玉以外の味方の駒を動かす（打含む）
         // （離れた利きのチェックでは、玉でチェッカーを取り返すことはできない）
 
-        // TODO 自玉の位置検索
+        // 自玉の位置検索
         let ksq = match us {
             Phase::First => position.location_at(PieceNum::King1),
             Phase::Second => position.location_at(PieceNum::King2),
         };
 
         if is_debug {
-            Beam::shoot(&format!("# generate ksq={}", ksq.number()));
+            Beam::shoot(&format!("# generate ksq={}", ksq));
         }
 
         if !ksq.is_board() {
@@ -154,10 +154,18 @@ impl PseudoLegalMoves {
             Direction::BottomLeft,
             Direction::Bottom,
             Direction::BottomRight,
+            Direction::TopRightKnight,
+            Direction::TopLeftKnight,
         ];
         for direction in directions {
-            let (pinned, pin_head, checker) =
-                check_checker_pin(us, position, ksq, direction, &mut long_control_sq_list);
+            let (pinned, pin_head, checker) = get_check(
+                us,
+                position,
+                ksq,
+                direction,
+                &mut long_control_sq_list,
+                is_debug,
+            );
             if let Some(pinned) = pinned {
                 pinned_list.push(pinned);
             }
@@ -177,10 +185,10 @@ impl PseudoLegalMoves {
         }
 
         let gen_type = if checker_list.is_empty() {
-            // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
+            // チェッカーがいなかったら、非回避(Non-evasions)モードへ
             GenType::NonEvasion
         } else {
-            // TODO チェッカーがいたら、ただちに 王手回避(Evasions)モードへ
+            // チェッカーがいたら、ただちに 王手回避(Evasions)モードへ
             GenType::Evasion
         };
 
@@ -234,21 +242,24 @@ impl PseudoLegalMoves {
             }
         }
 
-        // TODO 玉の自殺手を除外したい（＾～＾）
+        // 自玉が移動して、相手の利きに飛び込む手（自殺手）を除外したい（＾～＾）
         move_list.retain(|particle| {
             let (from, to, _) = destructure_move(*particle);
             if from == ksq {
                 // Control 1～12
-                let r = is_adjacent_opponent_control(us, position, to, Direction::Right);
-                let tr = is_adjacent_opponent_control(us, position, to, Direction::TopRight);
-                let t = is_adjacent_opponent_control(us, position, to, Direction::Top);
-                let tl = is_adjacent_opponent_control(us, position, to, Direction::TopLeft);
-                let l = is_adjacent_opponent_control(us, position, to, Direction::Left);
-                let bl = is_adjacent_opponent_control(us, position, to, Direction::BottomLeft);
-                let b = is_adjacent_opponent_control(us, position, to, Direction::Bottom);
-                let br = is_adjacent_opponent_control(us, position, to, Direction::BottomRight);
+                let r = is_adjacent_check(us, position, to, Direction::Right);
+                let tr = is_adjacent_check(us, position, to, Direction::TopRight);
+                let t = is_adjacent_check(us, position, to, Direction::Top);
+                let tl = is_adjacent_check(us, position, to, Direction::TopLeft);
+                let l = is_adjacent_check(us, position, to, Direction::Left);
+                let bl = is_adjacent_check(us, position, to, Direction::BottomLeft);
+                let b = is_adjacent_check(us, position, to, Direction::Bottom);
+                let br = is_adjacent_check(us, position, to, Direction::BottomRight);
+                // 桂馬の利き
+                let trn = is_adjacent_check(us, position, to, Direction::TopRightKnight);
+                let tln = is_adjacent_check(us, position, to, Direction::TopLeftKnight);
                 // 飛、香、竜の動き
-                let long_r = king_is_adjacent_opponent_long_control(
+                let long_r = is_long_check(
                     us,
                     position,
                     from,
@@ -256,10 +267,10 @@ impl PseudoLegalMoves {
                     Direction::Right,
                 );
                 let long_t =
-                    king_is_adjacent_opponent_long_control(us, position, from, to, Direction::Top);
+                    is_long_check(us, position, from, to, Direction::Top);
                 let long_l =
-                    king_is_adjacent_opponent_long_control(us, position, from, to, Direction::Left);
-                let long_b = king_is_adjacent_opponent_long_control(
+                    is_long_check(us, position, from, to, Direction::Left);
+                let long_b = is_long_check(
                     us,
                     position,
                     from,
@@ -267,28 +278,28 @@ impl PseudoLegalMoves {
                     Direction::Bottom,
                 );
                 // 角、馬の動き
-                let long_tr = king_is_adjacent_opponent_long_control(
+                let long_tr = is_long_check(
                     us,
                     position,
                     from,
                     to,
                     Direction::TopRight,
                 );
-                let long_tl = king_is_adjacent_opponent_long_control(
+                let long_tl = is_long_check(
                     us,
                     position,
                     from,
                     to,
                     Direction::TopLeft,
                 );
-                let long_bl = king_is_adjacent_opponent_long_control(
+                let long_bl = is_long_check(
                     us,
                     position,
                     from,
                     to,
                     Direction::BottomLeft,
                 );
-                let long_br = king_is_adjacent_opponent_long_control(
+                let long_br = is_long_check(
                     us,
                     position,
                     from,
@@ -303,6 +314,8 @@ impl PseudoLegalMoves {
                     || bl
                     || b
                     || br
+                    || trn
+                    || tln
                     || long_r
                     || long_t
                     || long_l
@@ -314,9 +327,9 @@ impl PseudoLegalMoves {
 
                 if is_debug && control {
                     Beam::shoot(&format!(
-                        "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
+                        "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} trn={:5} tln={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
                         to_move_code(*particle),
-                        from.number(),to.number(),control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
+                        from,to,control,r,tr,t,tl,l,bl,b,br, trn, tln,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
                     ));
                 }
                 !control
@@ -339,7 +352,7 @@ impl PseudoLegalMoves {
         let pc_ex = if let Some(pc_ex) = position.piece_at_board(ksq) {
             pc_ex
         } else {
-            panic!("ksq fail {:?}", ksq.number())
+            panic!("ksq fail {:?}", ksq)
         };
         // 座標ではなく、駒の背番号で検索
         PseudoLegalMoves::start_on_board(us, ksq, &pc_ex, position, move_list)
@@ -574,11 +587,8 @@ where
         )
     };
 
-    // これは単に `Mobility::new(Angle::Ccw270, MoveRange::Sliding)` を１回実行するだけ（＾～＾）
     for mobility in PieceType::L.mobility().iter() {
-        // TODO なぜか後手が後ろに進んでしまう（＾～＾）理由不明（＾～＾）
         push_piece_moves(Some(us), from, *mobility, fn_pass_destination);
-        // push_piece_moves(None, from, *mobility, fn_pass_destination);
     }
 }
 
