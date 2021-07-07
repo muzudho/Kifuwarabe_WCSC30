@@ -26,7 +26,6 @@ pub const REPITITION_VALUE: CentiPawn = -300;
 
 #[derive(Clone)]
 pub struct MoveEx {
-    pub value: CentiPawn,
     pub move_: Move,
     /// この指し手を選んだ理由☆（＾～＾）
     pub reason: Reason,
@@ -61,7 +60,7 @@ impl Tree {
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
-    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (MoveEx, TreeState) {
+    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (CentiPawn, MoveEx, TreeState) {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng().gen_range(
             universe.option_min_think_sec as u64,
@@ -74,11 +73,11 @@ impl Tree {
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.max_depth0 = 0;
-        let (mut bestmove, mut best_ts) = self.search(&mut universe.game, alpha, beta);
-        if beta < bestmove.value || bestmove.value < alpha {
+        let (node_value, mut bestmove, mut best_ts) = self.search(&mut universe.game, alpha, beta);
+        if node_value < alpha || beta < node_value {
             // 無視
-        } else if alpha < bestmove.value {
-            alpha = bestmove.value
+        } else if alpha < node_value {
+            alpha = node_value
         }
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -89,7 +88,7 @@ impl Tree {
                 &mut universe.game.info,
                 Some(self.max_depth0),
                 Some((self.state_nodes, self.nps())),
-                Some(bestmove.value),
+                Some(alpha),
                 Some(bestmove.move_),
                 &Some(PvString::PV(
                     self.msec(),
@@ -115,18 +114,23 @@ impl Tree {
             );
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
-            let (bestmove_tmp, ts) = self.search(&mut universe.game, -beta, -alpha);
-            bestmove = bestmove_tmp;
+            let (node_value, bestmove_tmp, ts) = self.search(&mut universe.game, -beta, -alpha);
             if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
+            }
+            if node_value < alpha || beta < node_value {
+                // 無視
+            } else if alpha < node_value {
+                alpha = node_value;
+                bestmove = bestmove_tmp;
             }
 
             // 無条件に更新だぜ☆（＾～＾）初手の高得点を引きずられて王手回避漏れされたら嫌だしな☆（＾～＾）
             best_ts = ts.clone();
         }
 
-        (bestmove, best_ts)
+        (-alpha, bestmove, best_ts)
     }
 
     /// 先手の気持ちで、勝てだぜ☆（*＾～＾*）
@@ -139,7 +143,12 @@ impl Tree {
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn search(&mut self, game: &mut Game, alpha: i16, beta: i16) -> (MoveEx, TreeState) {
+    fn search(
+        &mut self,
+        game: &mut Game,
+        mut alpha: i16,
+        beta: i16,
+    ) -> (CentiPawn, MoveEx, TreeState) {
         let mut ts = TreeState::default();
         let mut bestmove = MoveEx::default();
 
@@ -166,7 +175,7 @@ impl Tree {
 
         // 指せる手が無ければ投了☆（＾～＾）
         if move_list.is_empty() {
-            return (bestmove, ts);
+            return (-alpha, bestmove, ts);
         }
 
         // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
@@ -214,7 +223,7 @@ impl Tree {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                 ts.timeout = true;
-                return (bestmove, ts);
+                return (-alpha, bestmove, ts);
             }
 
             // 1手進めるぜ☆（＾～＾）
@@ -228,6 +237,7 @@ impl Tree {
                 if captured_piece_val.piece.type_() == PieceType::K {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     bestmove.catch_king(*move_);
+                    alpha = i16::MAX;
 
                     self.pv.pop();
                     game.undo_move();
@@ -247,16 +257,19 @@ impl Tree {
                 //     SEE::go(game, &movement.destination);
                 // }
 
-                // 現局面の駒割り評価値☆（＾～＾）
-                let value: CentiPawn = game.position.material_advantage(game.history.get_phase());
+                // 現局面（は相手の手番）の駒割り評価値をひっくり返したもの☆（＾～＾）
+                let leaf_value: CentiPawn =
+                    -game.position.material_advantage(game.history.get_phase());
                 {
                     if bestmove.move_ == RESIGN_MOVE {
                         // どんな葉も 投了よりは更新したいだろ☆（＾～＾）
-                        bestmove.update(*move_, value, Reason::AnyLeafBetterThanResign);
+                        bestmove.update(*move_, Reason::AnyLeafBetterThanResign);
+                        alpha = leaf_value;
                     } else {
-                        if bestmove.value < value {
+                        if alpha < leaf_value {
                             // 評価値が良かったから更新☆（＾～＾）
-                            bestmove.update(*move_, value, Reason::GoodPosition);
+                            bestmove.update(*move_, Reason::GoodPosition);
+                            alpha = leaf_value;
                         }
                     }
                 }
@@ -267,18 +280,18 @@ impl Tree {
                         &mut game.info,
                         Some(self.pv.len()),
                         Some((self.state_nodes, self.nps())),
-                        Some(bestmove.value),
+                        Some(alpha),
                         Some(bestmove.move_),
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                let (child_move, _) = self.search(game, -beta, -alpha);
+                let (node_value, child_move, _) = self.search(game, -beta, -alpha);
 
                 if ts.timeout {
                     // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-                    return (bestmove, ts);
+                    return (alpha, bestmove, ts);
                 }
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
@@ -288,19 +301,17 @@ impl Tree {
 
                     // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
 
-                    // 評価値は ひっくり返します。この指し手の駒の交換値も足します。
-                    let friend_centi_pawn2 = -child_move.value;
                     if bestmove.move_ != RESIGN_MOVE {
                         // どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
-                        bestmove.update(
-                            friend_move,
-                            friend_centi_pawn2,
-                            Reason::ThisBetterThanResign,
-                        );
+                        bestmove.update(friend_move, Reason::ThisBetterThanResign);
+                        alpha = node_value;
+                        bestmove = child_move;
                     } else {
-                        if bestmove.value < friend_centi_pawn2 {
+                        if alpha < node_value {
                             // 上方修正
-                            bestmove.update(friend_move, friend_centi_pawn2, Reason::ValueUp);
+                            bestmove.update(friend_move, Reason::ValueUp);
+                            alpha = node_value;
+                            bestmove = child_move;
                         }
                     }
                     false
@@ -311,7 +322,7 @@ impl Tree {
             game.undo_move();
 
             // ベータカット判定☆（＾～＾）
-            if beta < bestmove.value {
+            if beta < alpha {
                 // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
                 // これが　いわゆるベータカットだぜ☆（＾～＾）
                 break;
@@ -327,15 +338,12 @@ impl Tree {
         if !exists_lose {
             if bestmove.move_ == RESIGN_MOVE {
                 // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-                bestmove.update(
-                    ts.repetition_move,
-                    REPITITION_VALUE,
-                    Reason::RepetitionBetterThanResign,
-                );
+                bestmove.update(ts.repetition_move, Reason::RepetitionBetterThanResign);
+                alpha = REPITITION_VALUE;
             }
         }
 
-        (bestmove, ts)
+        (-alpha, bestmove, ts)
     }
 
     pub fn sec(&self) -> u64 {

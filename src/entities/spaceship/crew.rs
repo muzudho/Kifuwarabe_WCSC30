@@ -52,13 +52,13 @@ impl Kifuwarabe {
     pub fn go(universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let mut tree = Tree::new(universe.option_depth_not_to_give_up);
-        let (bestmove, _) = tree.iteration_deeping(universe);
+        let (node_value, bestmove, _) = tree.iteration_deeping(universe);
         // その手を選んだ理由☆（＾～＾）
         print_info(
             &mut universe.game.info,
             None,
             Some((tree.state_nodes, tree.nps())),
-            Some(bestmove.value),
+            Some(node_value),
             Some(bestmove.move_),
             &Some(PvString::String(bestmove.reason.to_string())),
         );
