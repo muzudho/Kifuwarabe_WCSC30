@@ -69,7 +69,8 @@ struct SpeedOfLight {
     /// 玉２枚引く☆（＾～＾）
     hand_types_legal_all: [HandPiece; HAND_ADDRESS_LEN - 2],
     hand_types: [[HandPiece; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
-    hand_type_to_type_table: [HandType; HAND_ADDRESS_LEN],
+    hand_piece_to_type_table: [HandType; HAND_ADDRESS_LEN],
+    hand_piece_to_phase_table: [Phase; HAND_ADDRESS_LEN],
     hand_type_to_captured_value: [CentiPawn; HAND_ADDRESS_TYPE_LEN],
 
     // 相対番地と角度☆（＾～＾）
@@ -594,7 +595,7 @@ impl Default for SpeedOfLight {
                 ],
             ],
 
-            hand_type_to_type_table: [
+            hand_piece_to_type_table: [
                 HandType::King,
                 HandType::Rook,
                 HandType::Bishop,
@@ -611,6 +612,24 @@ impl Default for SpeedOfLight {
                 HandType::Knight,
                 HandType::Lance,
                 HandType::Pawn,
+            ],
+            hand_piece_to_phase_table: [
+                Phase::First,
+                Phase::First,
+                Phase::First,
+                Phase::First,
+                Phase::First,
+                Phase::First,
+                Phase::First,
+                Phase::First,
+                Phase::Second,
+                Phase::Second,
+                Phase::Second,
+                Phase::Second,
+                Phase::Second,
+                Phase::Second,
+                Phase::Second,
+                Phase::Second,
             ],
 
             // よく使う、角度の付いた相対番地☆（＾～＾）
@@ -799,7 +818,10 @@ impl HandPiece {
         NINE_299792458.hand_types[phase as usize][adr as usize]
     }
     pub fn type_(self) -> HandType {
-        NINE_299792458.hand_type_to_type_table[self as usize]
+        NINE_299792458.hand_piece_to_type_table[self as usize]
+    }
+    pub fn phase(self) -> Phase {
+        NINE_299792458.hand_piece_to_phase_table[self as usize]
     }
 }
 

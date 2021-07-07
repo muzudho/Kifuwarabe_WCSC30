@@ -18,7 +18,7 @@ pub fn print_move_list(title: &str, position: &Position, move_list: &Vec<Move>) 
         let ss_str = format!(
             "{}{}",
             format!("{}", to_move_code(*move_)),
-            if let Some(captured) = position.piece_at(to) {
+            if let Some(captured) = position.piece_at_board(to) {
                 format!(" ({})", captured.piece)
             } else {
                 "".to_string()

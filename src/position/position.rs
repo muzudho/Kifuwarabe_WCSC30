@@ -16,6 +16,7 @@ use crate::position::hand_type_to_square;
 use crate::position::is_board_square;
 use crate::position::is_hand_square;
 use crate::position::square_from;
+use crate::position::square_to_hand_piece;
 use crate::position::Square;
 use crate::position::SQUARE_NONE;
 use crate::search::CentiPawn;
@@ -245,7 +246,7 @@ impl Position {
     pub fn init_controls(&mut self) {
         Area::for_all(&mut |source| {
             // そこに置いてある駒を調べようぜ☆（＾～＾）？
-            if let Some(pc_ex) = self.piece_at(&source) {
+            if let Some(pc_ex) = self.piece_at_board(&source) {
                 // 駒の利きを調べようぜ☆（＾～＾）？
                 for mobility in pc_ex.piece.type_().mobility() {
                     match mobility.agility {
@@ -273,7 +274,7 @@ impl Position {
                                     self.add_control(pc_ex.piece.phase(), &cur, 1);
 
                                     // 利きを調べたいだけなんで、味方／敵問わず駒が有れば終了だぜ☆（＾～＾）
-                                    if let Some(_collision_piece) = self.piece_at(&cur) {
+                                    if let Some(_collision_piece) = self.piece_at_board(&cur) {
                                         break;
                                     }
                                 } else {
@@ -304,7 +305,7 @@ impl Position {
     pub fn exists_pawn_on_file(&self, phase: Phase, file: u8) -> bool {
         for rank in RANK_1..RANK_10 {
             let sq = square_from(file, rank);
-            if let Some(pc_ex) = self.piece_at(sq) {
+            if let Some(pc_ex) = self.piece_at_board(sq) {
                 if pc_ex.piece.phase() == phase && pc_ex.piece.type_() == PieceType::P {
                     return true;
                 }
@@ -313,7 +314,7 @@ impl Position {
         false
     }
     /// 升で指定して駒を取得
-    pub fn piece_at(&self, sq: Square) -> Option<PieceEx> {
+    pub fn piece_at_board(&self, sq: Square) -> Option<PieceEx> {
         self.board[sq as usize]
     }
     /// 駒の背番号で指定して場所を取得
@@ -418,7 +419,7 @@ impl Position {
         for rank in RANK_1..RANK_10 {
             for file in (FILE_1..FILE_10).rev() {
                 let sq = square_from(file, rank);
-                if let Some(pc_ex) = self.piece_at(sq) {
+                if let Some(pc_ex) = self.piece_at_board(sq) {
                     hash ^= game.hash_seed.piece_hash[sq as usize][pc_ex.piece as usize];
                 }
             }
@@ -450,7 +451,7 @@ impl Position {
         for (i, sq) in self.pc_num_to_location.iter().enumerate() {
             if is_board_square(*sq) {
                 // 盤上の駒☆（＾～＾）
-                if let Some(pc_ex) = self.piece_at(*sq) {
+                if let Some(pc_ex) = self.piece_at_board(*sq) {
                     piece_get(i, Some(*sq), Some(pc_ex));
                 } else {
                     panic!("sq={:?}", sq)
@@ -476,7 +477,7 @@ impl Position {
             let sq = self.pc_num_to_location[*pc_num as usize];
             if is_board_square(sq) {
                 // 盤上の駒☆（＾～＾）
-                if let Some(pc_ex) = self.piece_at(sq) {
+                if let Some(pc_ex) = self.piece_at_board(sq) {
                     if pc_ex.piece.phase() == us {
                         piece_get(sq, pc_ex);
                     }
@@ -527,11 +528,20 @@ impl Position {
         let mut value = 0;
         for pc_num in 0..PIECE_NUM_LEN {
             let sq = self.pc_num_to_location[pc_num];
-            if let Some(pc_ex) = self.piece_at(sq) {
-                if us == pc_ex.piece.phase() {
-                    value += pc_ex.piece.hand_type().captured_value();
+            if is_board_square(sq) {
+                if let Some(pc_ex) = self.piece_at_board(sq) {
+                    if us == pc_ex.piece.phase() {
+                        value += pc_ex.piece.hand_type().captured_value();
+                    } else {
+                        value -= pc_ex.piece.hand_type().captured_value();
+                    }
+                }
+            } else if is_hand_square(sq) {
+                let hand_piece = square_to_hand_piece(sq);
+                if us == hand_piece.phase() {
+                    value += hand_piece.type_().captured_value();
                 } else {
-                    value -= pc_ex.piece.hand_type().captured_value();
+                    value -= hand_piece.type_().captured_value();
                 }
             }
         }

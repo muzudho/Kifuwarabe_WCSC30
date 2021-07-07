@@ -20,7 +20,7 @@ use crate::position::rank;
 use crate::position::square_from;
 use crate::position::square_offset;
 use crate::position::square_rotate_180;
-use crate::position::square_to_hand_type;
+use crate::position::square_to_hand_piece;
 use crate::position::square_wall;
 use crate::position::Square;
 use crate::take1base::Move;
@@ -143,7 +143,7 @@ fn king_is_adjacent_opponent_long_control(
 
         if adjacent_sq as u8 == ksq_from {
             // 動かす前の自玉があるマスは、何もないマスとして無視します
-        } else if let Some(pc_ex) = position_before_move.piece_at(adjacent_sq as u8) {
+        } else if let Some(pc_ex) = position_before_move.piece_at_board(adjacent_sq as u8) {
             if us == pc_ex.piece.phase() {
                 if pinned {
                     // 味方の駒が２つ有れば、ただちにディスカバード・アタックがくることは無い（＾～＾）
@@ -228,7 +228,7 @@ fn is_adjacent_opponent_control(
     //     d_file, d_rank, adjacent_sq
     // ));
 
-    if let Some(pc_ex) = position.piece_at(adjacent_sq) {
+    if let Some(pc_ex) = position.piece_at_board(adjacent_sq) {
         if us != pc_ex.piece.phase() {
             // 敵の駒なら
             // TODO 桂馬
@@ -334,7 +334,7 @@ fn check_checker_pin(
     while FILE_1 <= file(sq) && file(sq) < FILE_10 && RANK_1 <= rank(sq) && rank(sq) < RANK_10 {
         sq_list.push(sq);
 
-        if let Some(pc_ex) = position.piece_at(sq) {
+        if let Some(pc_ex) = position.piece_at_board(sq) {
             if us == pc_ex.piece.phase() {
                 // 合い駒か、ただの自駒か
                 if let None = pinned {
@@ -745,7 +745,7 @@ impl PseudoLegalMoves {
             Phase::Second => position.location_at(PieceNum::King2),
         };
         // 盤上の駒☆（＾～＾）
-        let pc_ex = if let Some(pc_ex) = position.piece_at(ksq) {
+        let pc_ex = if let Some(pc_ex) = position.piece_at_board(ksq) {
             pc_ex
         } else {
             panic!("ksq fail {:?}", ksq)
@@ -760,7 +760,7 @@ impl PseudoLegalMoves {
             if is_board_square(sq) {
                 PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, move_list)
             } else if is_hand_square(sq) {
-                PseudoLegalMoves::make_drop(us, square_to_hand_type(sq), position, move_list);
+                PseudoLegalMoves::make_drop(us, square_to_hand_piece(sq), position, move_list);
             } else {
                 std::panic::panic_any(Beam::trouble(
                     "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
@@ -792,7 +792,7 @@ impl PseudoLegalMoves {
         move_list: &mut Vec<Move>,
     ) {
         let moving = &mut |to, promotability, _agility, move_permission: Option<MovePermission>| {
-            let pseudo_captured = position.piece_at(to);
+            let pseudo_captured = position.piece_at_board(to);
 
             let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
                 if pseudo_captured_val.piece.phase() == us {
@@ -862,7 +862,7 @@ impl PseudoLegalMoves {
         if let Some(pc_ex) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
             let drop = &mut |to| {
-                if let None = position.piece_at(to) {
+                if let None = position.piece_at_board(to) {
                     // 駒が無いところに打つ
                     use crate::take1base::Piece::*;
                     match pc_ex.piece {

@@ -56,7 +56,7 @@ pub fn is_square(sq: Square) -> bool {
         || (100 <= sq && sq < 116)
 }
 
-pub fn square_to_hand_type(sq: Square) -> HandPiece {
+pub fn square_to_hand_piece(sq: Square) -> HandPiece {
     match sq {
         100 => HandPiece::King1,
         101 => HandPiece::Rook1,

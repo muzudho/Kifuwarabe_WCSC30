@@ -181,7 +181,7 @@ impl Tree {
         if 1 < move_list.len() {
             for i in 0..move_list.len() {
                 let (_, to, _) = destructure_move(move_list[i]);
-                if let Some(_captured) = game.position.piece_at(to) {
+                if let Some(_captured) = game.position.piece_at_board(to) {
                     // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
                     // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
                     move_list.swap(cap, i);
@@ -192,7 +192,7 @@ impl Tree {
             let mut king = 0;
             for i in 0..cap {
                 let (_, to, _) = destructure_move(move_list[i]);
-                if let Some(captured) = game.position.piece_at(to) {
+                if let Some(captured) = game.position.piece_at_board(to) {
                     match captured.piece.type_() {
                         PieceType::K => {
                             // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
