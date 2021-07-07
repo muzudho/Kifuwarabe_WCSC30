@@ -382,7 +382,7 @@ impl PseudoLegalMoves {
         position: &Position,
         move_list: &mut Vec<Move>,
     ) {
-        let moving =
+        let fn_make_move_list =
             &mut |to, promotability, _move_range, move_permission: Option<MovePermission>| {
                 let pseudo_captured = position.piece_at_board(to);
 
@@ -439,7 +439,31 @@ impl PseudoLegalMoves {
                 !space
             };
 
-        Area::piece_of(pc_ex.piece.type_(), us, from, moving);
+        // 先手から見た盤上の駒の動けるマスだぜ☆（＾～＾）
+        //
+        // # Arguments
+        //
+        // * `piece_type` - 駒の種類だぜ☆（＾～＾）
+        // * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
+        // * `from` - 移動元升だぜ☆（＾～＾）
+        // * `hopping` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+        // * `sliding` -
+        match pc_ex.piece.type_() {
+            PieceType::P => gen_pawn(us, from, fn_make_move_list),
+            PieceType::L => gen_lance(us, from, fn_make_move_list),
+            PieceType::N => gen_knight(us, from, fn_make_move_list),
+            PieceType::S => gen_silver(us, from, fn_make_move_list),
+            PieceType::G => gen_gold(us, from, fn_make_move_list),
+            PieceType::K => gen_king(from, fn_make_move_list),
+            PieceType::B => gen_bishop(us, from, fn_make_move_list),
+            PieceType::R => gen_rook(us, from, fn_make_move_list),
+            PieceType::PP => gen_gold(us, from, fn_make_move_list),
+            PieceType::PL => gen_gold(us, from, fn_make_move_list),
+            PieceType::PN => gen_gold(us, from, fn_make_move_list),
+            PieceType::PS => gen_gold(us, from, fn_make_move_list),
+            PieceType::PB => gen_horse(from, fn_make_move_list),
+            PieceType::PR => gen_dragon(from, fn_make_move_list),
+        }
     }
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
@@ -479,369 +503,364 @@ impl PseudoLegalMoves {
             use crate::entities::cosmic::smart::features::HandType::*;
             match ty {
                 // 歩、香
-                Pawn | Lance => Area::drop_pawn_lance(us, drop),
+                Pawn | Lance => drop_pawn_lance(us, drop),
                 // 桂
-                Knight => Area::drop_knight(us, drop),
+                Knight => drop_knight(us, drop),
                 // それ以外の駒が打てる範囲は盤面全体。
-                _ => Area::for_all(drop),
+                _ => foreach_square_in_board(drop),
             }
         }
     }
 }
 
-/// 次の升☆（＾～＾）
-pub struct Area {}
-impl Area {
-    /// 全升の面積だぜ☆（＾～＾）駒を打つときに使うぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    pub fn for_all<F1>(callback: &mut F1)
-    where
-        F1: FnMut(Square),
-    {
-        for rank in RANK_1..RANK_10 {
-            for file in (FILE_1..FILE_10).rev() {
-                callback(Square::from(file, rank));
-            }
+/// 全升の面積だぜ☆（＾～＾）駒を打つときに使うぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
+pub fn foreach_square_in_board<F1>(fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square),
+{
+    for rank in RANK_1..RANK_10 {
+        for file in (FILE_1..FILE_10).rev() {
+            fn_make_move_list(Square::from(file, rank));
         }
     }
+}
 
-    /// 先手から見た盤上の駒の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `piece_type` - 駒の種類だぜ☆（＾～＾）
-    /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `hopping` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    /// * `sliding` -
-    fn piece_of<F1>(piece_type: PieceType, us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        match piece_type {
-            PieceType::P => Area::pawn(us, from, moving),
-            PieceType::L => Area::lance(us, from, moving),
-            PieceType::N => Area::knight(us, from, moving),
-            PieceType::S => Area::silver(us, from, moving),
-            PieceType::G => Area::gold(us, from, moving),
-            PieceType::K => Area::king(from, moving),
-            PieceType::B => Area::bishop(us, from, moving),
-            PieceType::R => Area::rook(us, from, moving),
-            PieceType::PP => Area::gold(us, from, moving),
-            PieceType::PL => Area::gold(us, from, moving),
-            PieceType::PN => Area::gold(us, from, moving),
-            PieceType::PS => Area::gold(us, from, moving),
-            PieceType::PB => Area::horse(from, moving),
-            PieceType::PR => Area::dragon(from, moving),
-        }
+/// 先手から見た盤上の歩の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_pawn<F1>(us: Phase, from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination = &mut |to, _move_range| {
+        Promoting::pawn_lance(
+            us,
+            to,
+            fn_make_move_list,
+            Some(MovePermission::from_pawn_or_lance(us)),
+        )
+    };
+
+    for mobility in PieceType::P.mobility().iter() {
+        push_piece_moves(Some(us), from, *mobility, fn_pass_destination);
     }
+}
 
-    /// 先手から見た盤上の歩の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn pawn<F1>(us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        let moving = &mut |to, _move_range| {
-            Promoting::pawn_lance(us, to, moving, Some(MovePermission::from_pawn_or_lance(us)))
-        };
+/// 先手から見た盤上の香の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_lance<F1>(us: Phase, from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination = &mut |to, _move_range| {
+        Promoting::pawn_lance(
+            us,
+            to,
+            fn_make_move_list,
+            Some(MovePermission::from_pawn_or_lance(us)),
+        )
+    };
 
-        for mobility in PieceType::P.mobility().iter() {
-            Area::move_(Some(us), from, *mobility, moving);
-        }
+    for mobility in PieceType::L.mobility().iter() {
+        // TODO なぜか後手が後ろに進んでしまう（＾～＾）理由不明（＾～＾）
+        push_piece_moves(Some(us), from, *mobility, fn_pass_destination);
+        // push_piece_moves(None, from, *mobility, fn_pass_destination);
     }
+}
 
-    /// 先手から見た盤上の香の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn lance<F1>(us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        let moving = &mut |to, _move_range| {
-            Promoting::pawn_lance(us, to, moving, Some(MovePermission::from_pawn_or_lance(us)))
-        };
+/// 先手から見た盤上の桂の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_knight<F1>(us: Phase, from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination = &mut |to, _move_range| {
+        Promoting::knight(
+            us,
+            to,
+            fn_make_move_list,
+            Some(MovePermission::from_knight(us)),
+        )
+    };
 
-        for mobility in PieceType::L.mobility().iter() {
-            // TODO なぜか後手が後ろに進んでしまう（＾～＾）理由不明（＾～＾）
-            Area::move_(Some(us), from, *mobility, moving);
-            // Area::move_(None, from, *mobility, moving);
-        }
+    for mobility in PieceType::N.mobility().iter() {
+        push_piece_moves(Some(us), from, *mobility, fn_pass_destination);
     }
+}
 
-    /// 先手から見た盤上の桂の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn knight<F1>(us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        let moving = &mut |to, _move_range| {
-            Promoting::knight(us, to, moving, Some(MovePermission::from_knight(us)))
-        };
+/// 先手から見た盤上の銀の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_silver<F1>(us: Phase, from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination =
+        &mut |to, _move_range| Promoting::silver(us, from, to, fn_make_move_list);
 
-        for mobility in PieceType::N.mobility().iter() {
-            Area::move_(Some(us), from, *mobility, moving);
-        }
+    for mobility in PieceType::S.mobility().iter() {
+        push_piece_moves(Some(us), from, *mobility, fn_pass_destination);
     }
+}
 
-    /// 先手から見た盤上の銀の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn silver<F1>(us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        let moving = &mut |to, _move_range| Promoting::silver(us, from, to, moving);
+/// 先手から見た盤上の金、と、杏、圭、全の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_gold<F1>(us: Phase, from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool, // FnMut
+{
+    let fn_pass_destination = &mut |to, _move_range| {
+        fn_make_move_list(to, Promotability::Deny, MoveRange::Adjacent, None)
+    };
 
-        for mobility in PieceType::S.mobility().iter() {
-            Area::move_(Some(us), from, *mobility, moving);
-        }
+    for mobility in PieceType::G.mobility().iter() {
+        push_piece_moves(Some(us), from, *mobility, fn_pass_destination);
     }
+}
 
-    /// 先手から見た盤上の金、と、杏、圭、全の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn gold<F1>(us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool, // FnMut
-    {
-        let moving =
-            &mut |to, _move_range| moving(to, Promotability::Deny, MoveRange::Adjacent, None);
+/// 盤上の玉の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_king<F1>(from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination = &mut |to, _move_range| {
+        fn_make_move_list(to, Promotability::Deny, MoveRange::Adjacent, None)
+    };
 
-        for mobility in PieceType::G.mobility().iter() {
-            Area::move_(Some(us), from, *mobility, moving);
-        }
+    for mobility in PieceType::K.mobility().iter() {
+        // 先後同型
+        push_piece_moves(None, from, *mobility, fn_pass_destination);
     }
+}
 
-    /// 盤上の玉の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn king<F1>(from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        let moving =
-            &mut |to, _move_range| moving(to, Promotability::Deny, MoveRange::Adjacent, None);
-
-        for mobility in PieceType::K.mobility().iter() {
-            // 先後同型
-            Area::move_(None, from, *mobility, moving);
-        }
+/// 盤上の角の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_bishop<F1>(us: Phase, from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination =
+        &mut |to, _move_range| Promoting::bishop_rook(us, from, to, fn_make_move_list);
+    for mobility in PieceType::B.mobility().iter() {
+        push_piece_moves(
+            None, //&Some(us),// 先後同型なのでは（＾～＾）？
+            from,
+            *mobility,
+            fn_pass_destination,
+        );
     }
+}
 
-    /// 盤上の角の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn bishop<F1>(us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        let moving = &mut |to, _move_range| Promoting::bishop_rook(us, from, to, moving);
-        for mobility in PieceType::B.mobility().iter() {
-            Area::move_(
-                None, //&Some(us),// 先後同型なのでは（＾～＾）？
-                from, *mobility, moving,
-            );
-        }
+/// 盤上の飛の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_rook<F1>(us: Phase, from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination =
+        &mut |to, _move_range| Promoting::bishop_rook(us, from, to, fn_make_move_list);
+    for mobility in PieceType::R.mobility().iter() {
+        push_piece_moves(
+            None, //&Some(us),// 先後同型なのでは（＾～＾）？
+            from,
+            *mobility,
+            fn_pass_destination,
+        );
     }
+}
 
-    /// 盤上の飛の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn rook<F1>(us: Phase, from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        let moving = &mut |to, _move_range| Promoting::bishop_rook(us, from, to, moving);
-        for mobility in PieceType::R.mobility().iter() {
-            Area::move_(
-                None, //&Some(us),// 先後同型なのでは（＾～＾）？
-                from, *mobility, moving,
-            );
-        }
+/// 盤上の馬の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_horse<F1>(from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
+    let fn_pass_destination =
+        &mut |to, move_range| fn_make_move_list(to, Promotability::Deny, move_range, None);
+
+    for mobility in PieceType::PB.mobility().iter() {
+        // 先後同型（＾～＾）
+        push_piece_moves(None, from, *mobility, fn_pass_destination);
     }
+}
 
-    /// 盤上の馬の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn horse<F1>(from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+/// 盤上の竜の動けるマスだぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `from` - 移動元升だぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
+fn gen_dragon<F1>(from: Square, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
+{
     {
-        let moving = &mut |to, move_range| moving(to, Promotability::Deny, move_range, None);
+        let fn_pass_destination =
+            &mut |to, move_range| fn_make_move_list(to, Promotability::Deny, move_range, None);
 
-        for mobility in PieceType::PB.mobility().iter() {
+        for mobility in PieceType::PR.mobility().iter() {
             // 先後同型（＾～＾）
-            Area::move_(None, from, *mobility, moving);
+            push_piece_moves(None, from, *mobility, fn_pass_destination);
         }
     }
+}
 
-    /// 盤上の竜の動けるマスだぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `from` - 移動元升だぜ☆（＾～＾）
-    /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
-    fn dragon<F1>(from: Square, moving: &mut F1)
-    where
-        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
-    {
-        {
-            let moving = &mut |to, move_range| moving(to, Promotability::Deny, move_range, None);
+/// 先手から見た歩、香車の打てる面積だぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地を受け取れだぜ☆（＾～＾）
+pub fn drop_pawn_lance<F1>(us: Phase, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square),
+{
+    // 180°回転とかするより、for文の方を変えた方が高速だろ……☆（＾～＾）
+    let (min_rank, max_rank) = if us == Phase::First {
+        (RANK_2, RANK_10)
+    } else {
+        (RANK_1, RANK_9)
+    };
 
-            for mobility in PieceType::PR.mobility().iter() {
-                // 先後同型（＾～＾）
-                Area::move_(None, from, *mobility, moving);
-            }
+    for rank in min_rank..max_rank {
+        for file in (FILE_1..FILE_10).rev() {
+            fn_make_move_list(Square::from(file, rank));
         }
     }
+}
 
-    /// 先手から見た歩、香車の打てる面積だぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
-    /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    pub fn drop_pawn_lance<F1>(us: Phase, callback: &mut F1)
-    where
-        F1: FnMut(Square),
-    {
-        // 180°回転とかするより、for文の方を変えた方が高速だろ……☆（＾～＾）
-        let (min_rank, max_rank) = if us == Phase::First {
-            (RANK_2, RANK_10)
-        } else {
-            (RANK_1, RANK_9)
-        };
-
-        for rank in min_rank..max_rank {
-            for file in (FILE_1..FILE_10).rev() {
-                callback(Square::from(file, rank));
+/// 先手から見た桂馬の打てる面積だぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 手番☆（＾～＾）
+/// * `fn_make_move_list` - 絶対番地を受け取れだぜ☆（＾～＾）
+pub fn drop_knight<F1>(us: Phase, fn_make_move_list: &mut F1)
+where
+    F1: FnMut(Square),
+{
+    for rank in RANK_3..RANK_10 {
+        for file in (FILE_1..FILE_10).rev() {
+            let mut sq = Square::from(file, rank);
+            if us == Phase::Second {
+                sq = sq.rotate_180();
             }
+
+            fn_make_move_list(sq);
         }
     }
+}
 
-    /// 先手から見た桂馬の打てる面積だぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 手番☆（＾～＾）
-    /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
-    pub fn drop_knight<F1>(us: Phase, callback: &mut F1)
-    where
-        F1: FnMut(Square),
-    {
-        for rank in RANK_3..RANK_10 {
-            for file in (FILE_1..FILE_10).rev() {
-                let mut sq = Square::from(file, rank);
-                if us == Phase::Second {
-                    sq = sq.rotate_180();
-                }
-
-                callback(sq);
-            }
-        }
-    }
-
-    /// 盤上の駒を指すぜ☆（＾～＾）
-    ///
-    /// # Arguments
-    ///
-    /// * `us` - 先手か後手か、関係ないか☆（＾～＾）先後同型なら None ☆（＾～＾）
-    /// * `start` - 移動元升☆（＾～＾）
-    /// * `square` - 升☆（＾～＾）
-    /// * `mobility` - 動き方☆（＾～＾）
-    /// * `moving` - 絶対番地を受け取れだぜ☆（＾～＾）
-    fn move_<F1>(us: Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
-    where
-        F1: FnMut(Square, MoveRange) -> bool,
-    {
-        // 後手なら 180°ひっくり返す。 us が指定されていないとき、先後同型と見做して回転させません
-        let angle = if let Some(us) = us {
-            if us == Phase::First {
-                mobility.angle
-            } else {
-                // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
-                mobility.angle.rotate180()
-            }
-        } else {
-            // 先後同型だからそのままだぜ☆（＾～＾）
+/// 盤上の駒を指すぜ☆（＾～＾）
+///
+/// # Arguments
+///
+/// * `us` - 先手か後手か、関係ないか☆（＾～＾）先後同型なら None ☆（＾～＾）
+/// * `start` - 移動元升☆（＾～＾）
+/// * `square` - 升☆（＾～＾）
+/// * `mobility` - 動き方☆（＾～＾）
+/// * `fn_pass_destination` - 絶対番地を受け取れだぜ☆（＾～＾）
+fn push_piece_moves<F1>(
+    us: Option<Phase>,
+    start: Square,
+    mobility: Mobility,
+    fn_pass_destination: &mut F1,
+) where
+    F1: FnMut(Square, MoveRange) -> bool,
+{
+    // 後手なら 180°ひっくり返す。 us が指定されていないとき、先後同型と見做して回転させません
+    let angle = if let Some(us) = us {
+        if us == Phase::First {
             mobility.angle
-        };
+        } else {
+            // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
+            mobility.angle.rotate180()
+        }
+    } else {
+        // 先後同型だからそのままだぜ☆（＾～＾）
+        mobility.angle
+    };
 
-        match mobility.move_range {
-            // 飛、角、香、竜、馬
-            MoveRange::Sliding => {
-                let mut cur = start;
-                // 最初、西を向いている（＾～＾）これを角度を指定して回す（＾～＾）
-                let r = RelAdr::new(1, 0).rotate(mobility.angle).clone();
+    match mobility.move_range {
+        // 飛、角、香、竜、馬
+        MoveRange::Sliding => {
+            let mut cur = start;
+            // 最初、西を向いている（＾～＾）これを角度を指定して回す（＾～＾）
+            let r = RelAdr::new(1, 0).rotate(mobility.angle).clone();
 
-                loop {
-                    // 西隣から反時計回りだぜ☆（＾～＾）
-                    cur = cur.offset(&r);
-                    if cur.wall() {
-                        break;
-                    }
+            loop {
+                // 西隣から反時計回りだぜ☆（＾～＾）
+                cur = cur.offset(&r);
+                if cur.wall() {
+                    break;
+                }
 
-                    if moving(cur, mobility.move_range) {
-                        break;
-                    }
+                if fn_pass_destination(cur, mobility.move_range) {
+                    break;
                 }
             }
-            // 桂馬
-            MoveRange::Knight => {
-                let mut cur = start;
+        }
+        // 桂馬
+        MoveRange::Knight => {
+            let mut cur = start;
 
-                // 西隣から反時計回りだぜ☆（＾～＾）
-                cur = cur.offset(&angle.west_ccw_double_rank());
-                if !cur.wall() {
-                    moving(cur, mobility.move_range);
-                }
+            // 西隣から反時計回りだぜ☆（＾～＾）
+            cur = cur.offset(&angle.west_ccw_double_rank());
+            if !cur.wall() {
+                fn_pass_destination(cur, mobility.move_range);
             }
-            MoveRange::Adjacent => {
-                let mut cur = start;
+        }
+        MoveRange::Adjacent => {
+            let mut cur = start;
 
-                // 西隣から反時計回りだぜ☆（＾～＾）
-                cur = cur.offset(&angle.west_ccw());
-                if !cur.wall() {
-                    moving(cur, mobility.move_range);
-                }
+            // 西隣から反時計回りだぜ☆（＾～＾）
+            cur = cur.offset(&angle.west_ccw());
+            if !cur.wall() {
+                fn_pass_destination(cur, mobility.move_range);
             }
         }
     }
