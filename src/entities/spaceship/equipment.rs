@@ -1,6 +1,6 @@
 //! 宇宙船の備品だぜ☆（＾～＾）
-use crate::entities::cosmic::smart::square::test_rotation;
 use crate::entities::logging::{LOGFILE, LOG_ENABLED};
+use crate::position::rotation::test_rotation;
 use std::io::Write;
 use std::time::{Duration, Instant};
 

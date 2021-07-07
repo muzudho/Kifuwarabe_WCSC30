@@ -1,11 +1,11 @@
 use crate::entities::cosmic::recording::{History, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
 use crate::entities::cosmic::smart::features::{HandPiece, HAND_ADDRESS_LEN, HAND_MAX};
-use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
 use crate::entities::move_::to_move_object;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
 use crate::movegen::PieceEx;
 use crate::position::destructure_move;
 use crate::position::position::Position;
+use crate::position::BOARD_MEMORY_AREA;
 use crate::take1base::Move;
 use crate::take1base::PIECE_MEANING_LEN;
 use rand::Rng;

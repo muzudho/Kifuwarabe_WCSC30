@@ -294,52 +294,6 @@ pub fn test_rotation() {
     }
 }
 
-//
-// 盤、升、筋、段
-//
-
-// #[allow(non_camel_case_types)]
-// pub type isquare = isize;
-
-// 配列サイズなので 1 大きめだぜ☆（＾～＾）
-pub const BOARD_MEMORY_AREA: u8 = 100;
-
-/// 筋、段は 1 から始まる、という明示。
-/// usize が速い☆（＾～＾）
-pub const FILE_0: u8 = 0;
-pub const FILE_1: u8 = 1;
-pub const FILE_9: u8 = 9;
-pub const FILE_10: u8 = 10;
-// pub const FILE_11: u8 = 11;
-pub const RANK_0: u8 = 0;
-pub const RANK_1: u8 = 1;
-pub const RANK_2: u8 = 2;
-pub const RANK_3: u8 = 3;
-pub const RANK_4: u8 = 4;
-// pub const RANK_5: u8 = 5;
-pub const RANK_6: u8 = 6;
-pub const RANK_7: u8 = 7;
-pub const RANK_8: u8 = 8; //うさぎの打てる段の上限
-pub const RANK_9: u8 = 9;
-pub const RANK_10: u8 = 10;
-// pub const RANK_11: u8 = 11;
-
-/// 引き算もするところでは unsigned ではダメなところもある☆（＾～＾）
-// pub const I_FILE_0: i8 = 0;
-// pub const I_FILE_1: i8 = 1;
-// pub const I_FILE_9: i8 = 9;
-// pub const I_FILE_10: i8 = 10;
-// pub const I_RANK_0: i8 = 0;
-// pub const I_RANK_1: i8 = 1;
-// pub const I_RANK_2: i8 = 2;
-// pub const I_RANK_3: i8 = 3;
-// pub const I_RANK_4: i8 = 4;
-// pub const I_RANK_6: i8 = 6;
-// pub const I_RANK_7: i8 = 7;
-// pub const I_RANK_8: i8 = 8; //うさぎの打てる段の上限
-// pub const I_RANK_9: i8 = 9;
-// pub const I_RANK_10: i8 = 10;
-
 #[derive(Debug)]
 pub enum DictOrthant {
     /// 第２象限。x=0, y=0 ともに含みません。

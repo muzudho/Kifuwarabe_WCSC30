@@ -3,8 +3,9 @@
 //!
 use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::Phase;
-use crate::entities::cosmic::smart::square::{FILE_9, RANK_1};
 use crate::entities::spaceship::equipment::Beam;
+use crate::position::FILE_9;
+use crate::position::RANK_1;
 use crate::take1base::Move;
 use crate::take1base::Piece;
 use atoi::atoi;

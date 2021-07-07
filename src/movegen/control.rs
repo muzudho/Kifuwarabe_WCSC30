@@ -3,12 +3,12 @@
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::movegen::Direction;
 use crate::movegen::Phase;
-use crate::movegen::FILE_1;
-use crate::movegen::FILE_10;
-use crate::movegen::RANK_1;
-use crate::movegen::RANK_10;
 use crate::position::position::Position;
 use crate::position::Square;
+use crate::position::FILE_1;
+use crate::position::FILE_10;
+use crate::position::RANK_1;
+use crate::position::RANK_10;
 
 /// 先手から見た向き
 /// 筋は -1 すると右（＾～＾）

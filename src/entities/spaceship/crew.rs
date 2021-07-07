@@ -1,6 +1,5 @@
 use crate::config::*;
 use crate::entities::cosmic::playing::{Game, PosNums};
-use crate::entities::cosmic::smart::square::FILE_1;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::cryptographic::*;
 use crate::entities::law::usi::*;
@@ -9,6 +8,7 @@ use crate::entities::spaceship::facility::{CommandRoom, GameRoom};
 use crate::movegen::PseudoLegalMoves;
 use crate::position::to_move_code;
 use crate::position::Square;
+use crate::position::FILE_1;
 use crate::search::Tree;
 use crate::view::print_info;
 use crate::view::print_move_list;

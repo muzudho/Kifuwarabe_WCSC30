@@ -1,5 +1,4 @@
-use crate::entities::cosmic::smart::square::Angle;
-use crate::entities::cosmic::smart::square::Degree45Orthant;
+use crate::position::rotation::{Angle, Degree45Orthant};
 use crate::position::RelAdr;
 use std::fmt;
 
@@ -117,7 +116,7 @@ impl RelAdr {
     ///
     /// * `r` - (Relative file, relative rank).
     pub fn rotate(&mut self, angle: Angle) -> &mut Self {
-        use crate::entities::cosmic::smart::square::Angle::*;
+        use crate::position::rotation::Angle::*;
         match angle {
             Ccw0 => self,
             Ccw45 => self.rotate_45_ccw(),

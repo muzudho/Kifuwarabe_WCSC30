@@ -1,9 +1,6 @@
-use crate::entities::cosmic::smart::square::FILE_0;
-use crate::entities::cosmic::smart::square::FILE_10;
-use crate::entities::cosmic::smart::square::RANK_0;
-use crate::entities::cosmic::smart::square::RANK_10;
 use crate::position::RelAdr;
 use crate::position::Square;
+use crate::position::{FILE_0, FILE_10, RANK_0, RANK_10};
 
 impl Square {
     pub fn new(number: u8) -> Self {
