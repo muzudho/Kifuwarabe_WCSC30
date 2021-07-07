@@ -443,7 +443,7 @@ impl Tree {
     pub fn after_do_move(&mut self, captured_pc_ex: &Option<PieceEx>) -> CentiPawn {
         // 取った駒の価値を評価するぜ☆（＾～＾）
         let delta_captured_piece = if let Some(captured_pc_ex) = captured_pc_ex {
-            captured_pc_ex.piece.hand_address().type_().captured_value()
+            captured_pc_ex.piece.hand_type().type_().captured_value()
         } else {
             0
         };

@@ -3,7 +3,7 @@
 //!
 
 use crate::entities::cosmic::recording::Phase;
-use crate::entities::cosmic::smart::features::HandAddress;
+use crate::entities::cosmic::smart::features::HandPiece;
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::square::{
     Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4, RANK_6, RANK_7,
@@ -20,7 +20,7 @@ use crate::position::rank;
 use crate::position::square_from;
 use crate::position::square_offset;
 use crate::position::square_rotate_180;
-use crate::position::square_to_hand_address;
+use crate::position::square_to_hand_type;
 use crate::position::square_wall;
 use crate::position::Square;
 use crate::take1base::Move;
@@ -760,7 +760,7 @@ impl PseudoLegalMoves {
             if is_board_square(sq) {
                 PseudoLegalMoves::start_on_board(us, sq, &pc_ex, position, move_list)
             } else if is_hand_square(sq) {
-                PseudoLegalMoves::make_drop(us, square_to_hand_address(sq), position, move_list);
+                PseudoLegalMoves::make_drop(us, square_to_hand_type(sq), position, move_list);
             } else {
                 std::panic::panic_any(Beam::trouble(
                     "(Err.94) なんで駒が作業中なんだぜ☆（＾～＾）！",
@@ -858,7 +858,7 @@ impl PseudoLegalMoves {
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `move_list` - 指し手一覧☆（＾～＾）
-    fn make_drop(us: Phase, adr: HandAddress, position: &Position, move_list: &mut Vec<Move>) {
+    fn make_drop(us: Phase, adr: HandPiece, position: &Position, move_list: &mut Vec<Move>) {
         if let Some(pc_ex) = position.last_hand(adr) {
             // 打つぜ☆（＾～＾）
             let drop = &mut |to| {
@@ -876,10 +876,10 @@ impl PseudoLegalMoves {
                     }
                     let m = new_move(
                         us,
-                        None,                                     // 駒台
-                        to,                                       // どの升へ行きたいか
-                        false,                                    // 打に成りは無し
-                        Some(pc_ex.piece.hand_address().type_()), // 打った駒種類
+                        None,                                  // 駒台
+                        to,                                    // どの升へ行きたいか
+                        false,                                 // 打に成りは無し
+                        Some(pc_ex.piece.hand_type().type_()), // 打った駒種類
                     );
                     move_list.push(m);
                 }
@@ -887,7 +887,7 @@ impl PseudoLegalMoves {
 
             // 駒を持っていれば
             let ty = adr.type_();
-            use crate::entities::cosmic::smart::features::HandAddressType::*;
+            use crate::entities::cosmic::smart::features::HandType::*;
             match ty {
                 // 歩、香
                 Pawn | Lance => Area::drop_pawn_lance(us, drop),

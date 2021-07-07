@@ -12,7 +12,7 @@ use crate::entities::cosmic::recording::PHASE_LEN;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
 use crate::entities::cosmic::smart::features::PIECE_TYPE_LEN;
-use crate::entities::cosmic::smart::features::{HandAddress, HandAddressType, PieceType};
+use crate::entities::cosmic::smart::features::{HandPiece, HandType, PieceType};
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::movegen::{Agility, Mobility};
 use crate::position::position::PieceNum;
@@ -57,7 +57,7 @@ struct SpeedOfLight {
     /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
     piece_captured_table: [Piece; PIECE_MEANING_LEN],
-    piece_hand_address_table: [HandAddress; PIECE_MEANING_LEN],
+    piece_hand_type_table: [HandPiece; PIECE_MEANING_LEN],
 
     // 駒種類☆（＾～＾）
     //piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
@@ -66,10 +66,10 @@ struct SpeedOfLight {
     //piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
     /// 持ち駒☆（＾～＾）
     /// 玉２枚引く☆（＾～＾）
-    hand_addresses_legal_all: [HandAddress; HAND_ADDRESS_LEN - 2],
-    hand_addresses: [[HandAddress; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
-    hand_address_to_type_table: [HandAddressType; HAND_ADDRESS_LEN],
-    hand_address_to_captured_value: [CentiPawn; HAND_ADDRESS_TYPE_LEN],
+    hand_types_legal_all: [HandPiece; HAND_ADDRESS_LEN - 2],
+    hand_types: [[HandPiece; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
+    hand_type_to_type_table: [HandType; HAND_ADDRESS_LEN],
+    hand_type_to_captured_value: [CentiPawn; HAND_ADDRESS_TYPE_LEN],
 
     // 相対番地と角度☆（＾～＾）
     west_ccw: [RelAdr; ANGLE_LEN],
@@ -294,35 +294,35 @@ impl Default for SpeedOfLight {
                 L1, // PromotedLance2
                 P1, // PromotedPawn2
             ],
-            piece_hand_address_table: [
-                HandAddress::King1,   // King1
-                HandAddress::Rook1,   // Rook1
-                HandAddress::Bishop1, // Bishop1
-                HandAddress::Gold1,   // Gold1
-                HandAddress::Silver1, // Silver1
-                HandAddress::Knight1, // Knight1
-                HandAddress::Lance1,  // Lance1
-                HandAddress::Pawn1,   // Pawn1
-                HandAddress::Rook1,   // Dragon1
-                HandAddress::Bishop1, // Horse1
-                HandAddress::Silver1, // PromotedSilver1
-                HandAddress::Knight1, // PromotedKnight1
-                HandAddress::Lance1,  // PromotedLance1
-                HandAddress::Pawn1,   // PromotedPawn1
-                HandAddress::King2,   // King2
-                HandAddress::Rook2,   // Rook2
-                HandAddress::Bishop2, // Bishop2
-                HandAddress::Gold2,   // Gold2
-                HandAddress::Silver2, // Silver2
-                HandAddress::Knight2, // Knight2
-                HandAddress::Lance2,  // Lance2
-                HandAddress::Pawn2,   // Pawn2
-                HandAddress::Rook2,   // Dragon2
-                HandAddress::Bishop2, // Horse2
-                HandAddress::Silver2, // PromotedSilver2
-                HandAddress::Knight2, // PromotedKnight2
-                HandAddress::Lance2,  // PromotedLance2
-                HandAddress::Pawn2,   // PromotedPawn2
+            piece_hand_type_table: [
+                HandPiece::King1,   // King1
+                HandPiece::Rook1,   // Rook1
+                HandPiece::Bishop1, // Bishop1
+                HandPiece::Gold1,   // Gold1
+                HandPiece::Silver1, // Silver1
+                HandPiece::Knight1, // Knight1
+                HandPiece::Lance1,  // Lance1
+                HandPiece::Pawn1,   // Pawn1
+                HandPiece::Rook1,   // Dragon1
+                HandPiece::Bishop1, // Horse1
+                HandPiece::Silver1, // PromotedSilver1
+                HandPiece::Knight1, // PromotedKnight1
+                HandPiece::Lance1,  // PromotedLance1
+                HandPiece::Pawn1,   // PromotedPawn1
+                HandPiece::King2,   // King2
+                HandPiece::Rook2,   // Rook2
+                HandPiece::Bishop2, // Bishop2
+                HandPiece::Gold2,   // Gold2
+                HandPiece::Silver2, // Silver2
+                HandPiece::Knight2, // Knight2
+                HandPiece::Lance2,  // Lance2
+                HandPiece::Pawn2,   // Pawn2
+                HandPiece::Rook2,   // Dragon2
+                HandPiece::Bishop2, // Horse2
+                HandPiece::Silver2, // PromotedSilver2
+                HandPiece::Knight2, // PromotedKnight2
+                HandPiece::Lance2,  // PromotedLance2
+                HandPiece::Pawn2,   // PromotedPawn2
             ],
 
             // 成り駒か☆（＾～＾）？
@@ -524,62 +524,62 @@ impl Default for SpeedOfLight {
             //     1, // PromotedPawn
             // ],
             // 持ち駒☆（＾～＾）
-            hand_addresses_legal_all: [
-                HandAddress::Rook1,
-                HandAddress::Bishop1,
-                HandAddress::Gold1,
-                HandAddress::Silver1,
-                HandAddress::Knight1,
-                HandAddress::Lance1,
-                HandAddress::Pawn1,
-                HandAddress::Rook2,
-                HandAddress::Bishop2,
-                HandAddress::Gold2,
-                HandAddress::Silver2,
-                HandAddress::Knight2,
-                HandAddress::Lance2,
-                HandAddress::Pawn2,
+            hand_types_legal_all: [
+                HandPiece::Rook1,
+                HandPiece::Bishop1,
+                HandPiece::Gold1,
+                HandPiece::Silver1,
+                HandPiece::Knight1,
+                HandPiece::Lance1,
+                HandPiece::Pawn1,
+                HandPiece::Rook2,
+                HandPiece::Bishop2,
+                HandPiece::Gold2,
+                HandPiece::Silver2,
+                HandPiece::Knight2,
+                HandPiece::Lance2,
+                HandPiece::Pawn2,
             ],
-            hand_addresses: [
+            hand_types: [
                 [
-                    HandAddress::King1,
-                    HandAddress::Rook1,
-                    HandAddress::Bishop1,
-                    HandAddress::Gold1,
-                    HandAddress::Silver1,
-                    HandAddress::Knight1,
-                    HandAddress::Lance1,
-                    HandAddress::Pawn1,
+                    HandPiece::King1,
+                    HandPiece::Rook1,
+                    HandPiece::Bishop1,
+                    HandPiece::Gold1,
+                    HandPiece::Silver1,
+                    HandPiece::Knight1,
+                    HandPiece::Lance1,
+                    HandPiece::Pawn1,
                 ],
                 [
-                    HandAddress::King2,
-                    HandAddress::Rook2,
-                    HandAddress::Bishop2,
-                    HandAddress::Gold2,
-                    HandAddress::Silver2,
-                    HandAddress::Knight2,
-                    HandAddress::Lance2,
-                    HandAddress::Pawn2,
+                    HandPiece::King2,
+                    HandPiece::Rook2,
+                    HandPiece::Bishop2,
+                    HandPiece::Gold2,
+                    HandPiece::Silver2,
+                    HandPiece::Knight2,
+                    HandPiece::Lance2,
+                    HandPiece::Pawn2,
                 ],
             ],
 
-            hand_address_to_type_table: [
-                HandAddressType::King,
-                HandAddressType::Rook,
-                HandAddressType::Bishop,
-                HandAddressType::Gold,
-                HandAddressType::Silver,
-                HandAddressType::Knight,
-                HandAddressType::Lance,
-                HandAddressType::Pawn,
-                HandAddressType::King,
-                HandAddressType::Rook,
-                HandAddressType::Bishop,
-                HandAddressType::Gold,
-                HandAddressType::Silver,
-                HandAddressType::Knight,
-                HandAddressType::Lance,
-                HandAddressType::Pawn,
+            hand_type_to_type_table: [
+                HandType::King,
+                HandType::Rook,
+                HandType::Bishop,
+                HandType::Gold,
+                HandType::Silver,
+                HandType::Knight,
+                HandType::Lance,
+                HandType::Pawn,
+                HandType::King,
+                HandType::Rook,
+                HandType::Bishop,
+                HandType::Gold,
+                HandType::Silver,
+                HandType::Knight,
+                HandType::Lance,
+                HandType::Pawn,
             ],
 
             // よく使う、角度の付いた相対番地☆（＾～＾）
@@ -677,29 +677,13 @@ impl Default for SpeedOfLight {
 
             // 評価値☆（＾～＾）
             //promotion_value: [0, 1, 1, 0, 0, 1, 1, 1],
-            hand_address_to_captured_value: [
+            /// 駒割評価値（＾～＾） 成り駒を特別視しないので、 PieceType ではなく HandPiece を使うぜ（＾～＾）
+            hand_type_to_captured_value: [
                 // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
                 15000, // TODO 玉は 0 にしたい,
                 // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
                 1000, 900, 600, 500, 300, 200, 100,
             ],
-            /*
-            hand_address_to_captured_value: [
-                // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
-                0,
-                // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
-                1000, 900, 600, 500, 300, 200, 100,
-            ],
-            */
-            /* 変な動きをする☆（＾～＾）！
-            hand_address_to_captured_value: [
-                // 玉を取った時の評価は別にするから、ここではしないぜ☆（＾～＾）
-                15000, // TODO 玉は 0 にしたい,
-                // 駒割は取ったときにカウントしているので、成りを考慮しないぜ☆（＾～＾）
-                // 角は、金銀２枚より低めの中で大きく。
-                1300, 1000, 600, 460, 280, 190, 100,
-            ],
-            */
             // 座標☆（＾～＾）
             west: RelAdr::new(1, 0),
         }
@@ -738,8 +722,8 @@ impl Piece {
         NINE_299792458.piece_captured_table[self as usize]
     }
 
-    pub fn hand_address(self) -> HandAddress {
-        NINE_299792458.piece_hand_address_table[self as usize]
+    pub fn hand_type(self) -> HandPiece {
+        NINE_299792458.piece_hand_type_table[self as usize]
     }
 }
 
@@ -762,37 +746,37 @@ impl PieceType {
 }
 
 /// 持駒種類
-pub struct HandAddresses {}
-impl HandAddresses {
+pub struct HandPieces {}
+impl HandPieces {
     pub fn for_all<F1>(callback: &mut F1)
     where
-        F1: FnMut(HandAddress),
+        F1: FnMut(HandPiece),
     {
-        for adr in &NINE_299792458.hand_addresses_legal_all {
+        for adr in &NINE_299792458.hand_types_legal_all {
             callback(*adr);
         }
     }
 }
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
-impl HandAddress {
-    pub fn from_phase_and_type(phase: Phase, adr: HandAddressType) -> Self {
-        NINE_299792458.hand_addresses[phase as usize][adr as usize]
+impl HandPiece {
+    pub fn from_phase_and_type(phase: Phase, adr: HandType) -> Self {
+        NINE_299792458.hand_types[phase as usize][adr as usize]
     }
-    pub fn type_(self) -> HandAddressType {
-        NINE_299792458.hand_address_to_type_table[self as usize]
+    pub fn type_(self) -> HandType {
+        NINE_299792458.hand_type_to_type_table[self as usize]
     }
 }
 
 /*
 /// ハッシュ値を作る
-pub fn push_drop_to_hash(hash: u64, piece_type_o: Option<HandAddressType>) -> u64 {
+pub fn push_drop_to_hash(hash: u64, piece_type_o: Option<HandType>) -> u64 {
     let num = if let Some(piece_type) = piece_type_o {
         // 持ち駒の型は 7つ ＋ 持ち駒無しの 1つ なんで、8(=2^3) で OK
         piece_type as u64
     } else {
         // None の変わりに 玉を使うぜ☆（＾～＾）
-        HandAddressType::King as u64
+        HandType::King as u64
     };
     (hash << 3) + num
 }
@@ -800,19 +784,19 @@ pub fn push_drop_to_hash(hash: u64, piece_type_o: Option<HandAddressType>) -> u6
 
 /*
 /// ハッシュ値から作る
-pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandAddressType>) {
+pub fn pop_drop_from_hash(hash: u64) -> (u64, Option<HandType>) {
     // 使ってるのは8種類なんで、8(=2^3) で OK
-    (hash >> 3, HandAddressType::from_u64(hash & 0b111))
+    (hash >> 3, HandType::from_u64(hash & 0b111))
 }
 */
 
 /// コーディングを短くするためのものだぜ☆（＾～＾）
-impl HandAddressType {
+impl HandType {
     // pub fn promotion_value(self) -> CentiPawn {
     //     NINE_299792458.promotion_value[self as usize]
     // }
     pub fn captured_value(self) -> CentiPawn {
-        NINE_299792458.hand_address_to_captured_value[self as usize]
+        NINE_299792458.hand_type_to_captured_value[self as usize]
     }
 }
 

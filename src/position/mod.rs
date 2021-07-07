@@ -1,6 +1,6 @@
 pub mod position;
 
-use crate::entities::cosmic::smart::features::HandAddress;
+use crate::entities::cosmic::smart::features::HandPiece;
 use crate::entities::cosmic::smart::square::RelAdr;
 use crate::entities::cosmic::smart::square::FILE_0;
 use crate::entities::cosmic::smart::square::FILE_10;
@@ -56,45 +56,45 @@ pub fn is_square(sq: Square) -> bool {
         || (100 <= sq && sq < 116)
 }
 
-pub fn square_to_hand_address(sq: Square) -> HandAddress {
+pub fn square_to_hand_type(sq: Square) -> HandPiece {
     match sq {
-        100 => HandAddress::King1,
-        101 => HandAddress::Rook1,
-        102 => HandAddress::Bishop1,
-        103 => HandAddress::Gold1,
-        104 => HandAddress::Silver1,
-        105 => HandAddress::Knight1,
-        106 => HandAddress::Lance1,
-        107 => HandAddress::Pawn1,
-        108 => HandAddress::King2,
-        109 => HandAddress::Rook2,
-        110 => HandAddress::Bishop2,
-        111 => HandAddress::Gold2,
-        112 => HandAddress::Silver2,
-        113 => HandAddress::Knight2,
-        114 => HandAddress::Lance2,
-        115 => HandAddress::Pawn2,
+        100 => HandPiece::King1,
+        101 => HandPiece::Rook1,
+        102 => HandPiece::Bishop1,
+        103 => HandPiece::Gold1,
+        104 => HandPiece::Silver1,
+        105 => HandPiece::Knight1,
+        106 => HandPiece::Lance1,
+        107 => HandPiece::Pawn1,
+        108 => HandPiece::King2,
+        109 => HandPiece::Rook2,
+        110 => HandPiece::Bishop2,
+        111 => HandPiece::Gold2,
+        112 => HandPiece::Silver2,
+        113 => HandPiece::Knight2,
+        114 => HandPiece::Lance2,
+        115 => HandPiece::Pawn2,
         _ => panic!("(Err.44) Hand address fail"),
     }
 }
-pub fn hand_address_to_square(ha: HandAddress) -> Square {
+pub fn hand_type_to_square(ha: HandPiece) -> Square {
     match ha {
-        HandAddress::King1 => 100,
-        HandAddress::Rook1 => 101,
-        HandAddress::Bishop1 => 102,
-        HandAddress::Gold1 => 103,
-        HandAddress::Silver1 => 104,
-        HandAddress::Knight1 => 105,
-        HandAddress::Lance1 => 106,
-        HandAddress::Pawn1 => 107,
-        HandAddress::King2 => 108,
-        HandAddress::Rook2 => 109,
-        HandAddress::Bishop2 => 110,
-        HandAddress::Gold2 => 111,
-        HandAddress::Silver2 => 112,
-        HandAddress::Knight2 => 113,
-        HandAddress::Lance2 => 114,
-        HandAddress::Pawn2 => 115,
+        HandPiece::King1 => 100,
+        HandPiece::Rook1 => 101,
+        HandPiece::Bishop1 => 102,
+        HandPiece::Gold1 => 103,
+        HandPiece::Silver1 => 104,
+        HandPiece::Knight1 => 105,
+        HandPiece::Lance1 => 106,
+        HandPiece::Pawn1 => 107,
+        HandPiece::King2 => 108,
+        HandPiece::Rook2 => 109,
+        HandPiece::Bishop2 => 110,
+        HandPiece::Gold2 => 111,
+        HandPiece::Silver2 => 112,
+        HandPiece::Knight2 => 113,
+        HandPiece::Lance2 => 114,
+        HandPiece::Pawn2 => 115,
         // _ => panic!("(Err.44) Hand address fail"),
     }
 }

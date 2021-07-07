@@ -5,14 +5,14 @@ use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_LEN;
 use crate::entities::cosmic::smart::features::HAND_ADDRESS_TYPE_LEN;
-use crate::entities::cosmic::smart::features::{HandAddress, PieceType, HAND_MAX};
+use crate::entities::cosmic::smart::features::{HandPiece, PieceType, HAND_MAX};
 use crate::entities::cosmic::smart::square::{
     BOARD_MEMORY_AREA, FILE_0, FILE_1, FILE_10, RANK_0, RANK_1, RANK_10,
 };
-use crate::entities::law::speed_of_light::{HandAddresses, Nine299792458};
+use crate::entities::law::speed_of_light::{HandPieces, Nine299792458};
 use crate::entities::spaceship::equipment::Beam;
 use crate::movegen::PieceEx;
-use crate::position::hand_address_to_square;
+use crate::position::hand_type_to_square;
 use crate::position::is_board_square;
 use crate::position::is_hand_square;
 use crate::position::square_from;
@@ -123,7 +123,7 @@ pub struct Position {
     pc_num_to_location: [Square; PIECE_NUM_LEN],
     hand_index: [usize; HAND_ADDRESS_TYPE_LEN],
     /// 持ち駒☆（＾～＾）TODO 固定長サイズのスタックを用意したいぜ☆（＾～＾）
-    pub hands: [HandAddressTypeStack; HAND_ADDRESS_LEN],
+    pub hands: [HandTypeStack; HAND_ADDRESS_LEN],
     /* TODO
     /// 利きの数☆（＾～＾）
     controls: [ControlBoard; PHASE_LEN],
@@ -156,22 +156,22 @@ impl Default for Position {
             ],
             // 持ち駒
             hands: [
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
-                HandAddressTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
+                HandTypeStack::default(),
             ],
             // TODO controls: [ControlBoard::default(); PHASE_LEN],
         }
@@ -202,22 +202,22 @@ impl Position {
         ];
         // 持ち駒☆（＾～＾）
         self.hands = [
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
-            HandAddressTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
+            HandTypeStack::default(),
         ];
     }
 
@@ -362,7 +362,7 @@ impl Position {
                     PieceNum::King2
                 }
                 _ => {
-                    let hand_type = piece.hand_address().type_();
+                    let hand_type = piece.hand_type().type_();
                     self.pc_num_to_location[self.hand_index[hand_type as usize]] = from;
                     if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
                         self.hand_index[hand_type as usize] += 1;
@@ -378,10 +378,10 @@ impl Position {
     /// 駒台に置く
     pub fn push_hand_on_init(&mut self, piece: Piece, number: u8) {
         for _i in 0..number {
-            let ha = piece.hand_address();
+            let ha = piece.hand_type();
             let hand_type = ha.type_();
             let pc_num = self.hand_index[hand_type as usize];
-            self.pc_num_to_location[pc_num] = hand_address_to_square(ha);
+            self.pc_num_to_location[pc_num] = hand_type_to_square(ha);
             if let Some(pc_num) = PieceNum::from_usize(pc_num) {
                 self.hands[ha as usize].push(&PieceEx::new(piece, pc_num));
             } else {
@@ -393,20 +393,20 @@ impl Position {
         }
     }
     pub fn push_hand(&mut self, hand: &PieceEx) {
-        let adr = hand.piece.hand_address();
+        let adr = hand.piece.hand_type();
         self.hands[adr as usize].push(hand);
-        self.pc_num_to_location[hand.num as usize] = hand_address_to_square(adr);
+        self.pc_num_to_location[hand.num as usize] = hand_type_to_square(adr);
     }
-    pub fn pop_hand(&mut self, ha: HandAddress) -> PieceEx {
+    pub fn pop_hand(&mut self, ha: HandPiece) -> PieceEx {
         let pc_ex = self.hands[ha as usize].pop();
         self.pc_num_to_location[pc_ex.num as usize] = SQUARE_NONE;
         pc_ex
     }
     /// 指し手生成で使うぜ☆（＾～＾）
-    pub fn last_hand(&self, adr: HandAddress) -> Option<&PieceEx> {
+    pub fn last_hand(&self, adr: HandPiece) -> Option<&PieceEx> {
         self.hands[adr as usize].last()
     }
-    pub fn count_hand(&self, adr: HandAddress) -> usize {
+    pub fn count_hand(&self, adr: HandPiece) -> usize {
         self.hands[adr as usize].len()
     }
 
@@ -425,7 +425,7 @@ impl Position {
         }
 
         // 持ち駒ハッシュ
-        HandAddresses::for_all(&mut |adr| {
+        HandPieces::for_all(&mut |adr| {
             let count = self.count_hand(adr);
             debug_assert!(
                 count <= HAND_MAX,
@@ -493,31 +493,31 @@ impl Position {
             }
         }
 
-        const FIRST_SECOND: [[HandAddress; HAND_ADDRESS_TYPE_LEN - 1]; 2] = [
+        const FIRST_SECOND: [[HandPiece; HAND_ADDRESS_TYPE_LEN - 1]; 2] = [
             [
                 // King なし
-                HandAddress::Rook1,
-                HandAddress::Bishop1,
-                HandAddress::Gold1,
-                HandAddress::Silver1,
-                HandAddress::Knight1,
-                HandAddress::Lance1,
-                HandAddress::Pawn1,
+                HandPiece::Rook1,
+                HandPiece::Bishop1,
+                HandPiece::Gold1,
+                HandPiece::Silver1,
+                HandPiece::Knight1,
+                HandPiece::Lance1,
+                HandPiece::Pawn1,
             ],
             [
                 // King なし
-                HandAddress::Rook2,
-                HandAddress::Bishop2,
-                HandAddress::Gold2,
-                HandAddress::Silver2,
-                HandAddress::Knight2,
-                HandAddress::Lance2,
-                HandAddress::Pawn2,
+                HandPiece::Rook2,
+                HandPiece::Bishop2,
+                HandPiece::Gold2,
+                HandPiece::Silver2,
+                HandPiece::Knight2,
+                HandPiece::Lance2,
+                HandPiece::Pawn2,
             ],
         ];
         for ha in &FIRST_SECOND[us as usize] {
             if let Some(pc_ex) = self.last_hand(*ha) {
-                piece_get(hand_address_to_square(*ha), *pc_ex);
+                piece_get(hand_type_to_square(*ha), *pc_ex);
             }
         }
     }
@@ -540,20 +540,20 @@ impl Position {
 }
 
 #[derive(Clone)]
-pub struct HandAddressTypeStack {
+pub struct HandTypeStack {
     items: [PieceEx; HAND_MAX],
     count: usize,
 }
-impl Default for HandAddressTypeStack {
+impl Default for HandTypeStack {
     fn default() -> Self {
-        HandAddressTypeStack {
+        HandTypeStack {
             // ゴミ値で埋めるぜ☆（＾～＾）
             items: [PieceEx::new(Piece::K1, PieceNum::King1); HAND_MAX],
             count: 0,
         }
     }
 }
-impl HandAddressTypeStack {
+impl HandTypeStack {
     fn push(&mut self, pc_ex: &PieceEx) {
         self.items[self.count] = *pc_ex;
         self.count += 1;
@@ -578,7 +578,7 @@ impl HandAddressTypeStack {
         self.count
     }
 }
-impl fmt::Display for HandAddressTypeStack {
+impl fmt::Display for HandTypeStack {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
         for i in 0..=self.count {

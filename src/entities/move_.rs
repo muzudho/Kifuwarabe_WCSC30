@@ -1,5 +1,5 @@
 use crate::entities::cosmic::recording::Phase;
-use crate::entities::cosmic::smart::features::HandAddressType;
+use crate::entities::cosmic::smart::features::HandType;
 use crate::position::destructure_move;
 use crate::position::is_board_square;
 use crate::position::Square;
@@ -11,7 +11,7 @@ pub fn new_move(
     from: Option<Square>,
     to: Square,
     promote: bool,
-    drop: Option<HandAddressType>,
+    drop: Option<HandType>,
 ) -> Move {
     let mut num: u16;
 
@@ -23,24 +23,24 @@ pub fn new_move(
         // 打
         num = match phase {
             Phase::First => match drp {
-                HandAddressType::King => 100,
-                HandAddressType::Rook => 101,
-                HandAddressType::Bishop => 102,
-                HandAddressType::Gold => 103,
-                HandAddressType::Silver => 104,
-                HandAddressType::Knight => 105,
-                HandAddressType::Lance => 106,
-                HandAddressType::Pawn => 107,
+                HandType::King => 100,
+                HandType::Rook => 101,
+                HandType::Bishop => 102,
+                HandType::Gold => 103,
+                HandType::Silver => 104,
+                HandType::Knight => 105,
+                HandType::Lance => 106,
+                HandType::Pawn => 107,
             },
             Phase::Second => match drp {
-                HandAddressType::King => 108,
-                HandAddressType::Rook => 109,
-                HandAddressType::Bishop => 110,
-                HandAddressType::Gold => 111,
-                HandAddressType::Silver => 112,
-                HandAddressType::Knight => 113,
-                HandAddressType::Lance => 114,
-                HandAddressType::Pawn => 115,
+                HandType::King => 108,
+                HandType::Rook => 109,
+                HandType::Bishop => 110,
+                HandType::Gold => 111,
+                HandType::Silver => 112,
+                HandType::Knight => 113,
+                HandType::Lance => 114,
+                HandType::Pawn => 115,
             },
         };
     } else {
@@ -67,11 +67,8 @@ pub fn new_move(
 /// `Option<Square>` - from. 移動元升。Dropのときは None だぜ☆（＾～＾）
 /// `Square` - to. 移動先升
 /// `bool` - promote. 移動後に成るなら真
-/// `Option<HandAddressType>` - drop. 打の場合、打った駒種類
-pub fn to_move_object(
-    phase: Phase,
-    num: Move,
-) -> (Option<Square>, Square, bool, Option<HandAddressType>) {
+/// `Option<HandType>` - drop. 打の場合、打った駒種類
+pub fn to_move_object(phase: Phase, num: Move) -> (Option<Square>, Square, bool, Option<HandType>) {
     let (from, to, promote) = destructure_move(num);
 
     if is_board_square(from) {
@@ -81,25 +78,25 @@ pub fn to_move_object(
         // 打
         let hand = match phase {
             Phase::First => match from {
-                100 => HandAddressType::King,
-                101 => HandAddressType::Rook,
-                102 => HandAddressType::Bishop,
-                103 => HandAddressType::Gold,
-                104 => HandAddressType::Silver,
-                105 => HandAddressType::Knight,
-                106 => HandAddressType::Lance,
-                107 => HandAddressType::Pawn,
+                100 => HandType::King,
+                101 => HandType::Rook,
+                102 => HandType::Bishop,
+                103 => HandType::Gold,
+                104 => HandType::Silver,
+                105 => HandType::Knight,
+                106 => HandType::Lance,
+                107 => HandType::Pawn,
                 _ => panic!("move_::to_move_object phase={} from={}", phase, from),
             },
             Phase::Second => match from {
-                108 => HandAddressType::King,
-                109 => HandAddressType::Rook,
-                110 => HandAddressType::Bishop,
-                111 => HandAddressType::Gold,
-                112 => HandAddressType::Silver,
-                113 => HandAddressType::Knight,
-                114 => HandAddressType::Lance,
-                115 => HandAddressType::Pawn,
+                108 => HandType::King,
+                109 => HandType::Rook,
+                110 => HandType::Bishop,
+                111 => HandType::Gold,
+                112 => HandType::Silver,
+                113 => HandType::Knight,
+                114 => HandType::Lance,
+                115 => HandType::Pawn,
                 _ => panic!("move_::to_move_object phase={} from={}", phase, from),
             },
         };

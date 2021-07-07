@@ -1,5 +1,5 @@
 use crate::entities::cosmic::recording::{History, PHASE_FIRST, PHASE_LEN, PHASE_SECOND};
-use crate::entities::cosmic::smart::features::{HandAddress, HAND_ADDRESS_LEN, HAND_MAX};
+use crate::entities::cosmic::smart::features::{HandPiece, HAND_ADDRESS_LEN, HAND_MAX};
 use crate::entities::cosmic::smart::square::BOARD_MEMORY_AREA;
 use crate::entities::move_::to_move_object;
 use crate::entities::spaceship::equipment::{Beam, DestinationDisplay};
@@ -249,7 +249,7 @@ impl Game {
                 if let Some(drp) = drop2 {
                     Some(
                         self.position
-                            .pop_hand(HandAddress::from_phase_and_type(us, drp)),
+                            .pop_hand(HandPiece::from_phase_and_type(us, drp)),
                     )
                 } else {
                     std::panic::panic_any(Beam::trouble(
@@ -327,7 +327,7 @@ impl Game {
             if let Some(captured_piece_val) = captured {
                 // 自分の持ち駒を減らす
                 self.position
-                    .pop_hand(captured_piece_val.piece.captured().hand_address());
+                    .pop_hand(captured_piece_val.piece.captured().hand_type());
                 // 移動先の駒を、取った駒（あるいは空）に戻す
                 self.position.push_to_board(to2, captured);
             }

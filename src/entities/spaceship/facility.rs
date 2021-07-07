@@ -1,17 +1,17 @@
 use crate::entities::cosmic::playing::{Game, PosNums};
-use crate::entities::cosmic::smart::features::{HandAddress, PIECE_WHITE_SPACE};
+use crate::entities::cosmic::smart::features::{HandPiece, PIECE_WHITE_SPACE};
 use crate::entities::spaceship::equipment::Beam;
 use crate::movegen::PieceEx;
 
 /// 指令室はこちらだぜ☆（＾～＾）！
 pub struct CommandRoom {}
 impl CommandRoom {
-    // 対話モードのタイトル画面
-    pub fn print_title() {
-        // 横幅は 半角79文字使えるぜ☆（＾～＾）
-        // 80文字目を使うと、次の行が改行で空行になってしまう☆（＾～＾）
-        Beam::shoot(
-            &"\
+        // 対話モードのタイトル画面
+        pub fn print_title() {
+                // 横幅は 半角79文字使えるぜ☆（＾～＾）
+                // 80文字目を使うと、次の行が改行で空行になってしまう☆（＾～＾）
+                Beam::shoot(
+                        &"\
 +--------- --------- --------- --------- --------- --------- --------- -------+
 | KifuWarabe Shogi 2020                                                       |
 +---------+--------- --------- --------- --------- --------- --------- -------+
@@ -37,31 +37,31 @@ impl CommandRoom {
 22
 23\
 "
-            .to_string(),
-        );
-    }
+                        .to_string(),
+                );
+        }
 }
 
 /// ゲームルームはこちらだぜ☆（＾～＾）！
 pub struct GameRoom {}
 impl GameRoom {
-    fn to_string2(pc_ex: Option<PieceEx>) -> String {
-        if let Some(pc_ex) = pc_ex {
-            format!("{}", pc_ex.piece)
-        } else {
-            PIECE_WHITE_SPACE.to_string()
+        fn to_string2(pc_ex: Option<PieceEx>) -> String {
+                if let Some(pc_ex) = pc_ex {
+                        format!("{}", pc_ex.piece)
+                } else {
+                        PIECE_WHITE_SPACE.to_string()
+                }
         }
-    }
-    /// 表示
-    pub fn to_string(game: &Game, pos_nums: PosNums) -> String {
-        let position = game.get_board(pos_nums);
-        let ply = game.history.moves_num();
-        let phase = game.history.get_phase();
-        let same_pos_count = game.count_same_position();
+        /// 表示
+        pub fn to_string(game: &Game, pos_nums: PosNums) -> String {
+                let position = game.get_board(pos_nums);
+                let ply = game.history.moves_num();
+                let phase = game.history.get_phase();
+                let same_pos_count = game.count_same_position();
 
-        // 局面表示
-        format!(
-            "\
+                // 局面表示
+                format!(
+                        "\
 [{95} ply. {96} phase. {97} repeats.]
 
          9    8    7    6    5    4    3    2    1
@@ -85,108 +85,108 @@ P x{87:2}   |{63}|{64}|{65}|{66}|{67}|{68}|{69}|{70}|{71}| h    p x{94:2}
         |{72}|{73}|{74}|{75}|{76}|{77}|{78}|{79}|{80}| i
         +----+----+----+----+----+----+----+----+----+\
 ",
-            GameRoom::to_string2(position.piece_at(91u8)),
-            GameRoom::to_string2(position.piece_at(81u8)),
-            GameRoom::to_string2(position.piece_at(71u8)),
-            GameRoom::to_string2(position.piece_at(61u8)),
-            GameRoom::to_string2(position.piece_at(51u8)),
-            GameRoom::to_string2(position.piece_at(41u8)),
-            GameRoom::to_string2(position.piece_at(31u8)),
-            GameRoom::to_string2(position.piece_at(21u8)),
-            GameRoom::to_string2(position.piece_at(11u8)),
-            GameRoom::to_string2(position.piece_at(92u8)),
-            GameRoom::to_string2(position.piece_at(82u8)),
-            GameRoom::to_string2(position.piece_at(72u8)),
-            GameRoom::to_string2(position.piece_at(62u8)),
-            GameRoom::to_string2(position.piece_at(52u8)),
-            GameRoom::to_string2(position.piece_at(42u8)),
-            GameRoom::to_string2(position.piece_at(32u8)),
-            GameRoom::to_string2(position.piece_at(22u8)),
-            GameRoom::to_string2(position.piece_at(12u8)),
-            GameRoom::to_string2(position.piece_at(93u8)),
-            GameRoom::to_string2(position.piece_at(83u8)),
-            GameRoom::to_string2(position.piece_at(73u8)),
-            GameRoom::to_string2(position.piece_at(63u8)),
-            GameRoom::to_string2(position.piece_at(53u8)),
-            GameRoom::to_string2(position.piece_at(43u8)),
-            GameRoom::to_string2(position.piece_at(33u8)),
-            GameRoom::to_string2(position.piece_at(23u8)),
-            GameRoom::to_string2(position.piece_at(13u8)),
-            GameRoom::to_string2(position.piece_at(94u8)),
-            GameRoom::to_string2(position.piece_at(84u8)),
-            GameRoom::to_string2(position.piece_at(74u8)),
-            GameRoom::to_string2(position.piece_at(64u8)),
-            GameRoom::to_string2(position.piece_at(54u8)),
-            GameRoom::to_string2(position.piece_at(44u8)),
-            GameRoom::to_string2(position.piece_at(34u8)),
-            GameRoom::to_string2(position.piece_at(24u8)),
-            GameRoom::to_string2(position.piece_at(14u8)),
-            GameRoom::to_string2(position.piece_at(95u8)),
-            GameRoom::to_string2(position.piece_at(85u8)),
-            GameRoom::to_string2(position.piece_at(75u8)),
-            GameRoom::to_string2(position.piece_at(65u8)),
-            GameRoom::to_string2(position.piece_at(55u8)),
-            GameRoom::to_string2(position.piece_at(45u8)),
-            GameRoom::to_string2(position.piece_at(35u8)),
-            GameRoom::to_string2(position.piece_at(25u8)),
-            GameRoom::to_string2(position.piece_at(15u8)),
-            GameRoom::to_string2(position.piece_at(96u8)),
-            GameRoom::to_string2(position.piece_at(86u8)),
-            GameRoom::to_string2(position.piece_at(76u8)),
-            GameRoom::to_string2(position.piece_at(66u8)),
-            GameRoom::to_string2(position.piece_at(56u8)),
-            GameRoom::to_string2(position.piece_at(46u8)),
-            GameRoom::to_string2(position.piece_at(36u8)),
-            GameRoom::to_string2(position.piece_at(26u8)),
-            GameRoom::to_string2(position.piece_at(16u8)),
-            GameRoom::to_string2(position.piece_at(97u8)),
-            GameRoom::to_string2(position.piece_at(87u8)),
-            GameRoom::to_string2(position.piece_at(77u8)),
-            GameRoom::to_string2(position.piece_at(67u8)),
-            GameRoom::to_string2(position.piece_at(57u8)),
-            GameRoom::to_string2(position.piece_at(47u8)),
-            GameRoom::to_string2(position.piece_at(37u8)),
-            GameRoom::to_string2(position.piece_at(27u8)),
-            GameRoom::to_string2(position.piece_at(17u8)),
-            GameRoom::to_string2(position.piece_at(98u8)),
-            GameRoom::to_string2(position.piece_at(88u8)),
-            GameRoom::to_string2(position.piece_at(78u8)),
-            GameRoom::to_string2(position.piece_at(68u8)),
-            GameRoom::to_string2(position.piece_at(58u8)),
-            GameRoom::to_string2(position.piece_at(48u8)),
-            GameRoom::to_string2(position.piece_at(38u8)),
-            GameRoom::to_string2(position.piece_at(28u8)),
-            GameRoom::to_string2(position.piece_at(18u8)),
-            GameRoom::to_string2(position.piece_at(99u8)),
-            GameRoom::to_string2(position.piece_at(89u8)),
-            GameRoom::to_string2(position.piece_at(79u8)),
-            GameRoom::to_string2(position.piece_at(69u8)),
-            GameRoom::to_string2(position.piece_at(59u8)),
-            GameRoom::to_string2(position.piece_at(49u8)),
-            GameRoom::to_string2(position.piece_at(39u8)),
-            GameRoom::to_string2(position.piece_at(29u8)),
-            GameRoom::to_string2(position.piece_at(19u8)),
-            //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            position.count_hand(HandAddress::Rook1),
-            position.count_hand(HandAddress::Bishop1),
-            position.count_hand(HandAddress::Gold1),
-            position.count_hand(HandAddress::Silver1),
-            position.count_hand(HandAddress::Knight1),
-            position.count_hand(HandAddress::Lance1),
-            position.count_hand(HandAddress::Pawn1),
-            //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            position.count_hand(HandAddress::Rook2),
-            position.count_hand(HandAddress::Bishop2),
-            position.count_hand(HandAddress::Gold2),
-            position.count_hand(HandAddress::Silver2),
-            position.count_hand(HandAddress::Knight2),
-            position.count_hand(HandAddress::Lance2),
-            position.count_hand(HandAddress::Pawn2),
-            ply,
-            phase,
-            same_pos_count
-        )
-    }
+                        GameRoom::to_string2(position.piece_at(91u8)),
+                        GameRoom::to_string2(position.piece_at(81u8)),
+                        GameRoom::to_string2(position.piece_at(71u8)),
+                        GameRoom::to_string2(position.piece_at(61u8)),
+                        GameRoom::to_string2(position.piece_at(51u8)),
+                        GameRoom::to_string2(position.piece_at(41u8)),
+                        GameRoom::to_string2(position.piece_at(31u8)),
+                        GameRoom::to_string2(position.piece_at(21u8)),
+                        GameRoom::to_string2(position.piece_at(11u8)),
+                        GameRoom::to_string2(position.piece_at(92u8)),
+                        GameRoom::to_string2(position.piece_at(82u8)),
+                        GameRoom::to_string2(position.piece_at(72u8)),
+                        GameRoom::to_string2(position.piece_at(62u8)),
+                        GameRoom::to_string2(position.piece_at(52u8)),
+                        GameRoom::to_string2(position.piece_at(42u8)),
+                        GameRoom::to_string2(position.piece_at(32u8)),
+                        GameRoom::to_string2(position.piece_at(22u8)),
+                        GameRoom::to_string2(position.piece_at(12u8)),
+                        GameRoom::to_string2(position.piece_at(93u8)),
+                        GameRoom::to_string2(position.piece_at(83u8)),
+                        GameRoom::to_string2(position.piece_at(73u8)),
+                        GameRoom::to_string2(position.piece_at(63u8)),
+                        GameRoom::to_string2(position.piece_at(53u8)),
+                        GameRoom::to_string2(position.piece_at(43u8)),
+                        GameRoom::to_string2(position.piece_at(33u8)),
+                        GameRoom::to_string2(position.piece_at(23u8)),
+                        GameRoom::to_string2(position.piece_at(13u8)),
+                        GameRoom::to_string2(position.piece_at(94u8)),
+                        GameRoom::to_string2(position.piece_at(84u8)),
+                        GameRoom::to_string2(position.piece_at(74u8)),
+                        GameRoom::to_string2(position.piece_at(64u8)),
+                        GameRoom::to_string2(position.piece_at(54u8)),
+                        GameRoom::to_string2(position.piece_at(44u8)),
+                        GameRoom::to_string2(position.piece_at(34u8)),
+                        GameRoom::to_string2(position.piece_at(24u8)),
+                        GameRoom::to_string2(position.piece_at(14u8)),
+                        GameRoom::to_string2(position.piece_at(95u8)),
+                        GameRoom::to_string2(position.piece_at(85u8)),
+                        GameRoom::to_string2(position.piece_at(75u8)),
+                        GameRoom::to_string2(position.piece_at(65u8)),
+                        GameRoom::to_string2(position.piece_at(55u8)),
+                        GameRoom::to_string2(position.piece_at(45u8)),
+                        GameRoom::to_string2(position.piece_at(35u8)),
+                        GameRoom::to_string2(position.piece_at(25u8)),
+                        GameRoom::to_string2(position.piece_at(15u8)),
+                        GameRoom::to_string2(position.piece_at(96u8)),
+                        GameRoom::to_string2(position.piece_at(86u8)),
+                        GameRoom::to_string2(position.piece_at(76u8)),
+                        GameRoom::to_string2(position.piece_at(66u8)),
+                        GameRoom::to_string2(position.piece_at(56u8)),
+                        GameRoom::to_string2(position.piece_at(46u8)),
+                        GameRoom::to_string2(position.piece_at(36u8)),
+                        GameRoom::to_string2(position.piece_at(26u8)),
+                        GameRoom::to_string2(position.piece_at(16u8)),
+                        GameRoom::to_string2(position.piece_at(97u8)),
+                        GameRoom::to_string2(position.piece_at(87u8)),
+                        GameRoom::to_string2(position.piece_at(77u8)),
+                        GameRoom::to_string2(position.piece_at(67u8)),
+                        GameRoom::to_string2(position.piece_at(57u8)),
+                        GameRoom::to_string2(position.piece_at(47u8)),
+                        GameRoom::to_string2(position.piece_at(37u8)),
+                        GameRoom::to_string2(position.piece_at(27u8)),
+                        GameRoom::to_string2(position.piece_at(17u8)),
+                        GameRoom::to_string2(position.piece_at(98u8)),
+                        GameRoom::to_string2(position.piece_at(88u8)),
+                        GameRoom::to_string2(position.piece_at(78u8)),
+                        GameRoom::to_string2(position.piece_at(68u8)),
+                        GameRoom::to_string2(position.piece_at(58u8)),
+                        GameRoom::to_string2(position.piece_at(48u8)),
+                        GameRoom::to_string2(position.piece_at(38u8)),
+                        GameRoom::to_string2(position.piece_at(28u8)),
+                        GameRoom::to_string2(position.piece_at(18u8)),
+                        GameRoom::to_string2(position.piece_at(99u8)),
+                        GameRoom::to_string2(position.piece_at(89u8)),
+                        GameRoom::to_string2(position.piece_at(79u8)),
+                        GameRoom::to_string2(position.piece_at(69u8)),
+                        GameRoom::to_string2(position.piece_at(59u8)),
+                        GameRoom::to_string2(position.piece_at(49u8)),
+                        GameRoom::to_string2(position.piece_at(39u8)),
+                        GameRoom::to_string2(position.piece_at(29u8)),
+                        GameRoom::to_string2(position.piece_at(19u8)),
+                        //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
+                        position.count_hand(HandPiece::Rook1),
+                        position.count_hand(HandPiece::Bishop1),
+                        position.count_hand(HandPiece::Gold1),
+                        position.count_hand(HandPiece::Silver1),
+                        position.count_hand(HandPiece::Knight1),
+                        position.count_hand(HandPiece::Lance1),
+                        position.count_hand(HandPiece::Pawn1),
+                        //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
+                        position.count_hand(HandPiece::Rook2),
+                        position.count_hand(HandPiece::Bishop2),
+                        position.count_hand(HandPiece::Gold2),
+                        position.count_hand(HandPiece::Silver2),
+                        position.count_hand(HandPiece::Knight2),
+                        position.count_hand(HandPiece::Lance2),
+                        position.count_hand(HandPiece::Pawn2),
+                        ply,
+                        phase,
+                        same_pos_count
+                )
+        }
 }
 
 /* TODO
@@ -309,21 +309,21 @@ P x{87:2}   |{63:>4}|{64:>4}|{65:>4}|{66:>4}|{67:>4}|{68:>4}|{69:>4}|{70:>4}|{71
             RestRoom::to_string2(position.get_control(phase, (2, 9))),
             RestRoom::to_string2(position.get_control(phase, (1, 9))),
             //                   ▲き,　                   ▲ぞ,                     ▲い,                     ▲ね,                     ▲う,                     ▲し,                     ▲ひ,
-            position.count_hand(HandAddress::Rook1),
-            position.count_hand(HandAddress::Bishop1),
-            position.count_hand(HandAddress::Gold1),
-            position.count_hand(HandAddress::Silver1),
-            position.count_hand(HandAddress::Knight1),
-            position.count_hand(HandAddress::Lance1),
-            position.count_hand(HandAddress::Pawn1),
+            position.count_hand(HandPiece::Rook1),
+            position.count_hand(HandPiece::Bishop1),
+            position.count_hand(HandPiece::Gold1),
+            position.count_hand(HandPiece::Silver1),
+            position.count_hand(HandPiece::Knight1),
+            position.count_hand(HandPiece::Lance1),
+            position.count_hand(HandPiece::Pawn1),
             //                   ▽キ,                     ▽ゾ,                     ▽イ,                     ▽ネ,                     ▽ウ,                     ▽シ,                     ▽ヒ,
-            position.count_hand(HandAddress::Rook2),
-            position.count_hand(HandAddress::Bishop2),
-            position.count_hand(HandAddress::Gold2),
-            position.count_hand(HandAddress::Silver2),
-            position.count_hand(HandAddress::Knight2),
-            position.count_hand(HandAddress::Lance2),
-            position.count_hand(HandAddress::Pawn2),
+            position.count_hand(HandPiece::Rook2),
+            position.count_hand(HandPiece::Bishop2),
+            position.count_hand(HandPiece::Gold2),
+            position.count_hand(HandPiece::Silver2),
+            position.count_hand(HandPiece::Knight2),
+            position.count_hand(HandPiece::Lance2),
+            position.count_hand(HandPiece::Pawn2),
             ply,
             phase,
         )

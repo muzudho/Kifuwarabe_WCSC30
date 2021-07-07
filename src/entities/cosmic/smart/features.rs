@@ -74,7 +74,7 @@ impl fmt::Display for PieceType {
 
 pub const HAND_ADDRESS_TYPE_LEN: usize = 8;
 #[derive(Clone, Copy, Debug, FromPrimitive)]
-pub enum HandAddressType {
+pub enum HandType {
     King,
     Rook,
     Bishop,
@@ -86,7 +86,7 @@ pub enum HandAddressType {
 }
 
 #[derive(Clone, Copy, Debug)]
-pub enum HandAddress {
+pub enum HandPiece {
     King1,
     Rook1,
     Bishop1,
