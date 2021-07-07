@@ -7,7 +7,7 @@ use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::universe::Universe;
-use crate::entities::spaceship::equipment::{Beam, PvString};
+use crate::entities::spaceship::equipment::PvString;
 use crate::movegen::{PieceEx, PseudoLegalMoves};
 use crate::position::destructure_move;
 use crate::position::to_move_code;
@@ -26,7 +26,7 @@ pub const REPITITION_VALUE: CentiPawn = -300;
 
 #[derive(Clone)]
 pub struct MoveEx {
-    pub value: Value,
+    pub value: CentiPawn,
     pub move_: Move,
     /// この指し手を選んだ理由☆（＾～＾）
     pub reason: Reason,
@@ -74,18 +74,11 @@ impl Tree {
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.max_depth0 = 0;
-        let (mut bestmove, mut best_ts) = self.search(&mut universe.game, Value::Win, alpha, beta);
-        match bestmove.value {
-            Value::CentiPawn(value) => {
-                if beta < value || value < alpha {
-                    // 無視
-                } else if alpha < value {
-                    alpha = value
-                }
-            }
-            Value::Win | Value::Lose => {
-                return (bestmove, best_ts);
-            }
+        let (mut bestmove, mut best_ts) = self.search(&mut universe.game, alpha, beta);
+        if beta < bestmove.value || bestmove.value < alpha {
+            // 無視
+        } else if alpha < bestmove.value {
+            alpha = bestmove.value
         }
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
@@ -122,7 +115,7 @@ impl Tree {
             );
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
-            let (bestmove_tmp, ts) = self.search(&mut universe.game, Value::Win, -beta, -alpha);
+            let (bestmove_tmp, ts) = self.search(&mut universe.game, -beta, -alpha);
             bestmove = bestmove_tmp;
             if ts.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -146,13 +139,7 @@ impl Tree {
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn search(
-        &mut self,
-        game: &mut Game,
-        another_branch_best: Value,
-        alpha: i16,
-        beta: i16,
-    ) -> (MoveEx, TreeState) {
+    fn search(&mut self, game: &mut Game, alpha: i16, beta: i16) -> (MoveEx, TreeState) {
         let mut ts = TreeState::default();
         let mut bestmove = MoveEx::default();
 
@@ -260,39 +247,16 @@ impl Tree {
                 //     SEE::go(game, &movement.destination);
                 // }
 
-                // 評価を集計するぜ☆（＾～＾）
-                let value = Value::CentiPawn(0);
+                // 現局面の駒割り評価値☆（＾～＾）
+                let value: CentiPawn = game.position.material_advantage(game.history.get_phase());
                 {
                     if bestmove.move_ == RESIGN_MOVE {
-                        // どんな葉も 投了より良いだろ☆（＾～＾）
-                        // TODO でも、王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
+                        // どんな葉も 投了よりは更新したいだろ☆（＾～＾）
                         bestmove.update(*move_, value, Reason::AnyLeafBetterThanResign);
                     } else {
-                        match bestmove.value {
-                            Value::Win => std::panic::panic_any(Beam::trouble(
-                                "(Err.397) 自分が勝つ手を読んでるなら、ここに来るのはおかしいぜ☆（＾～＾）",
-                            )),
-                            Value::Lose => {
-                                // どんな評価値でも、負けるよりマシだろ☆（＾～＾）
-                                bestmove.update(*move_, value, Reason::AnyLeafMoreThanLose);
-                            }
-                            Value::CentiPawn(best_centi_pawn) => {
-                                match value {
-                                    Value::Win => {
-                                        // 勝つんだから更新するぜ☆（＾～＾）
-                                        bestmove.update(*move_, value, Reason::Win);
-                                    }
-                                    Value::Lose => {
-                                        // TODO ここは通らないぜ☆（＾～＾）要対応☆（＾～＾）
-                                    }
-                                    Value::CentiPawn(leaf_centi_pawn) => {
-                                        if best_centi_pawn < leaf_centi_pawn {
-                                            // 評価値が良かったから更新☆（＾～＾）
-                                            bestmove.update(*move_, value, Reason::GoodPosition);
-                                        }
-                                    }
-                                }
-                            }
+                        if bestmove.value < value {
+                            // 評価値が良かったから更新☆（＾～＾）
+                            bestmove.update(*move_, value, Reason::GoodPosition);
                         }
                     }
                 }
@@ -310,16 +274,7 @@ impl Tree {
                 }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                let (child_move, _) = self.search(
-                    game,
-                    match bestmove.value {
-                        Value::CentiPawn(centi_pawn) => Value::CentiPawn(-centi_pawn),
-                        Value::Win => Value::Lose,
-                        Value::Lose => Value::Win,
-                    },
-                    -beta,
-                    -alpha,
-                );
+                let (child_move, _) = self.search(game, -beta, -alpha);
 
                 if ts.timeout {
                     // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
@@ -333,91 +288,33 @@ impl Tree {
 
                     // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
 
-                    match child_move.value {
-                        Value::Win => {
-                            // 相手が勝ったので、自分は負けてるぜ☆（＾～＾）この手は選んではいけないぜ☆（＾～＾）
-                            true
-                        }
-                        Value::Lose => {
-                            // 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
-                            bestmove.update(friend_move, Value::Win, Reason::FriendWin);
-                            false
-                        }
-                        Value::CentiPawn(num) => {
-                            // 評価値は ひっくり返します。この指し手の駒の交換値も足します。
-                            let friend_centi_pawn2 = -num;
-                            if bestmove.move_ != RESIGN_MOVE {
-                                // どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
-                                bestmove.update(
-                                    friend_move,
-                                    Value::CentiPawn(friend_centi_pawn2),
-                                    Reason::ThisBetterThanResign,
-                                );
-                            } else {
-                                match bestmove.value {
-                        Value::Win => {
-                            std::panic::panic_any(Beam::trouble(
-                                "(Err.405) 自分が勝つ手を既に読んでるのに、ここに来るのはおかしいぜ☆（＾～＾）"
-                            ))
-                        }
-                        Value::Lose => {
-                            // 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
-                            bestmove.update(
-                                friend_move,
-                                Value::CentiPawn(friend_centi_pawn2),
-                                Reason::AnyMoveMoreThanLose,
-                            );
-                        }
-                        Value::CentiPawn(best_centi_pawn) => {
-                            if best_centi_pawn < friend_centi_pawn2 {
-                                // 上方修正
-                                bestmove.update(
-                                    friend_move,
-                                    Value::CentiPawn(friend_centi_pawn2),
-                                    Reason::ValueUp,
-                                );
-                            }
+                    // 評価値は ひっくり返します。この指し手の駒の交換値も足します。
+                    let friend_centi_pawn2 = -child_move.value;
+                    if bestmove.move_ != RESIGN_MOVE {
+                        // どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
+                        bestmove.update(
+                            friend_move,
+                            friend_centi_pawn2,
+                            Reason::ThisBetterThanResign,
+                        );
+                    } else {
+                        if bestmove.value < friend_centi_pawn2 {
+                            // 上方修正
+                            bestmove.update(friend_move, friend_centi_pawn2, Reason::ValueUp);
                         }
                     }
-                            }
-                            false
-                        }
-                    }
+                    false
                 };
             }
 
             self.pv.pop();
             game.undo_move();
 
-            match bestmove.value {
-                Value::Win => {
-                    // この手について、次の手ではなく、２手以上先で勝ったんだろ☆（＾～＾）もう探索しなくていいぜ☆（＾～＾）この手にしようぜ☆（＾～＾）！
-                    break;
-                }
-                Value::Lose => {
-                    // この手について、次の相手の番で王さまを取られたか、３手先以上の奇数番で詰められたんだろ☆（＾～＾）詰められてない別の手を探すんだぜ、続行☆（＾～＾）！
-                }
-                Value::CentiPawn(current_centi_pawn) => {
-                    // ベータカット判定☆（＾～＾）
-                    match another_branch_best {
-                        Value::CentiPawn(another_branch_best_centi_pawn) => {
-                            // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
-                            // これが　いわゆるベータカットだぜ☆（＾～＾）
-                            if another_branch_best_centi_pawn <= current_centi_pawn {
-                                break;
-                            }
-                        }
-                        Value::Win => {
-                            // 初手に、ゴミの最大値として入っているか、兄弟局面で勝ちの手があったようだぜ☆（＾～＾）
-                            // ベータカットは起こらないぜ☆（＾～＾）
-                        }
-                        Value::Lose => {
-                            // 兄弟局面に負けがあるんだったら、この
-                            // 負けに比べればどんな手でも良いぜ☆（＾～＾）ベータカットな☆（＾～＾）！
-                            break;
-                        }
-                    }
-                }
+            // ベータカット判定☆（＾～＾）
+            if beta < bestmove.value {
+                // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
+                // これが　いわゆるベータカットだぜ☆（＾～＾）
+                break;
             }
         }
 
@@ -432,7 +329,7 @@ impl Tree {
                 // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
                 bestmove.update(
                     ts.repetition_move,
-                    Value::CentiPawn(REPITITION_VALUE),
+                    REPITITION_VALUE,
                     Reason::RepetitionBetterThanResign,
                 );
             }
@@ -472,21 +369,6 @@ impl Default for TreeState {
             timeout: false,
         }
     }
-}
-
-/// 指し手の評価値だぜ☆（＾～＾）
-#[derive(Clone, Copy)]
-pub enum Value {
-    /// 歩１枚の交換値を 100 とするぜ☆（＾～＾）
-    /// 将棋は、相手は駒を取られて損、自分は駒を取って得という風に痛手が２倍広がるので、
-    /// 交換値が 100 ということは、200点差が開くということだぜ☆（＾～＾）
-    CentiPawn(i16),
-
-    /// 勝ち☆（＾～＾）
-    Win,
-
-    /// 負け☆（＾～＾）
-    Lose,
 }
 
 #[derive(Clone)]

@@ -4,7 +4,7 @@ use crate::entities::spaceship::equipment::PvString;
 use crate::position::destructure_move;
 use crate::position::position::Position;
 use crate::position::to_move_code;
-use crate::search::Value;
+use crate::search::CentiPawn;
 use crate::take1base::Move;
 
 /// 現在の局面での、指し手の一覧を表示するぜ☆（＾～＾）
@@ -72,7 +72,7 @@ pub fn print_info(
     display: &mut DestinationDisplay,
     cur_depth: Option<usize>,
     state_nodes_nps: Option<(u64, u64)>,
-    value: Option<Value>,
+    value: Option<CentiPawn>,
     move_: Option<Move>,
     pv_string: &Option<PvString>,
 ) {
@@ -99,19 +99,12 @@ pub fn print_info(
         } else {
             "".to_string()
         },
-        //if let Some(centi_pawn) = value {
-        if let Some(value_val) = value {
-            match value_val {
-                Value::Win => {
-                    // 自分が勝つ
-                    " score mate +".to_string()
-                }
-                Value::Lose => {
-                    // 自分が負ける
-                    " score mate -".to_string()
-                }
-                Value::CentiPawn(num) => format!(" score cp {}", num),
-            }
+        if let Some(value) = value {
+            // // 自分が勝つ
+            // " score mate +".to_string()
+            // // 自分が負ける
+            // " score mate -".to_string()
+            format!(" score cp {}", value)
         } else {
             "".to_string()
         },

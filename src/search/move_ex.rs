@@ -1,13 +1,13 @@
+use crate::search::CentiPawn;
 use crate::search::MoveEx;
 use crate::search::Reason;
-use crate::search::Value;
 use crate::search::RESIGN_MOVE;
 use crate::take1base::Move;
 
 impl Default for MoveEx {
     fn default() -> Self {
         MoveEx {
-            value: Value::Lose,
+            value: i16::MIN,
             move_: RESIGN_MOVE,
             // なんの手も無かったぜ☆（＾～＾）
             reason: Reason::NoUpdate,
@@ -19,10 +19,10 @@ impl MoveEx {
     pub fn catch_king(&mut self, move_: Move) {
         // 玉を取る手より強い手はないぜ☆（＾～＾）！
         self.move_ = move_;
-        self.value = Value::Win;
+        self.value = i16::MAX;
         self.reason = Reason::KingCatchIsStrongest;
     }
-    pub fn update(&mut self, move_: Move, value: Value, reason: Reason) {
+    pub fn update(&mut self, move_: Move, value: CentiPawn, reason: Reason) {
         self.move_ = move_;
         self.value = value;
         self.reason = reason;
