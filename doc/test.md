@@ -37,6 +37,26 @@ pos
 genmove
 ```
 
+## 謎のエラー
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 2
+setoption name MaxDepth value 2
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
+position startpos moves 7g7f 1c1d 6i7h 1d1e 5i6h 1e1f 1g1f 5a6b 1f1e 6b7b 1e1d 7b6b 4i5h 6b7b 8h6f 7b6b 6h7g 6b7b 7g8h
+pos
+go
+```
+
 ## 駒取りできるか？
 
 ```plain

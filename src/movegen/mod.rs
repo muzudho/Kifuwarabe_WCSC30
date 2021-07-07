@@ -228,76 +228,82 @@ fn is_adjacent_opponent_control(
     //     d_file, d_rank, adjacent_sq
     // ));
 
-    if let Some(pc_ex) = position.piece_at_board(adjacent_sq) {
-        if us != pc_ex.piece.phase() {
-            // 敵の駒なら
-            // TODO 桂馬
-            match direction {
-                Direction::Right | Direction::Left => match pc_ex.piece.type_() {
-                    PieceType::K
-                    | PieceType::R
-                    | PieceType::G
-                    | PieceType::PR
-                    | PieceType::PB
-                    | PieceType::PS
-                    | PieceType::PN
-                    | PieceType::PL
-                    | PieceType::PP => return true,
-                    _ => {}
-                },
-                Direction::TopRight | Direction::TopLeft => match pc_ex.piece.type_() {
-                    PieceType::K
-                    | PieceType::B
-                    | PieceType::G
-                    | PieceType::S
-                    | PieceType::PR
-                    | PieceType::PB
-                    | PieceType::PS
-                    | PieceType::PN
-                    | PieceType::PL
-                    | PieceType::PP => return true,
-                    _ => {}
-                },
-                Direction::Top => match pc_ex.piece.type_() {
-                    PieceType::K
-                    | PieceType::R
-                    | PieceType::G
-                    | PieceType::S
-                    | PieceType::L
-                    | PieceType::P
-                    | PieceType::PR
-                    | PieceType::PB
-                    | PieceType::PS
-                    | PieceType::PN
-                    | PieceType::PL
-                    | PieceType::PP => return true,
-                    _ => {}
-                },
-                Direction::BottomLeft | Direction::BottomRight => match pc_ex.piece.type_() {
-                    PieceType::K | PieceType::B | PieceType::S | PieceType::PR | PieceType::PB => {
-                        return true
+    if is_board_square(adjacent_sq) {
+        if let Some(pc_ex) = position.piece_at_board(adjacent_sq) {
+            if us != pc_ex.piece.phase() {
+                // 敵の駒なら
+                // TODO 桂馬
+                match direction {
+                    Direction::Right | Direction::Left => match pc_ex.piece.type_() {
+                        PieceType::K
+                        | PieceType::R
+                        | PieceType::G
+                        | PieceType::PR
+                        | PieceType::PB
+                        | PieceType::PS
+                        | PieceType::PN
+                        | PieceType::PL
+                        | PieceType::PP => return true,
+                        _ => {}
+                    },
+                    Direction::TopRight | Direction::TopLeft => match pc_ex.piece.type_() {
+                        PieceType::K
+                        | PieceType::B
+                        | PieceType::G
+                        | PieceType::S
+                        | PieceType::PR
+                        | PieceType::PB
+                        | PieceType::PS
+                        | PieceType::PN
+                        | PieceType::PL
+                        | PieceType::PP => return true,
+                        _ => {}
+                    },
+                    Direction::Top => match pc_ex.piece.type_() {
+                        PieceType::K
+                        | PieceType::R
+                        | PieceType::G
+                        | PieceType::S
+                        | PieceType::L
+                        | PieceType::P
+                        | PieceType::PR
+                        | PieceType::PB
+                        | PieceType::PS
+                        | PieceType::PN
+                        | PieceType::PL
+                        | PieceType::PP => return true,
+                        _ => {}
+                    },
+                    Direction::BottomLeft | Direction::BottomRight => match pc_ex.piece.type_() {
+                        PieceType::K
+                        | PieceType::B
+                        | PieceType::S
+                        | PieceType::PR
+                        | PieceType::PB => return true,
+                        _ => {}
+                    },
+                    Direction::Bottom => match pc_ex.piece.type_() {
+                        PieceType::K
+                        | PieceType::R
+                        | PieceType::G
+                        | PieceType::PR
+                        | PieceType::PB
+                        | PieceType::PS
+                        | PieceType::PN
+                        | PieceType::PL
+                        | PieceType::PP => return true,
+                        _ => {}
+                    },
+                    // 桂馬
+                    // TODO 先後
+                    Direction::TopRightKnight | Direction::TopLeftKnight => {
+                        match pc_ex.piece.type_() {
+                            PieceType::N => return true,
+                            _ => {}
+                        }
                     }
-                    _ => {}
-                },
-                Direction::Bottom => match pc_ex.piece.type_() {
-                    PieceType::K
-                    | PieceType::R
-                    | PieceType::G
-                    | PieceType::PR
-                    | PieceType::PB
-                    | PieceType::PS
-                    | PieceType::PN
-                    | PieceType::PL
-                    | PieceType::PP => return true,
-                    _ => {}
-                },
-                // 桂馬
-                // TODO 先後
-                Direction::TopRightKnight | Direction::TopLeftKnight => match pc_ex.piece.type_() {
-                    PieceType::N => return true,
-                    _ => {}
-                },
-            };
+                };
+            }
         }
     }
     false
