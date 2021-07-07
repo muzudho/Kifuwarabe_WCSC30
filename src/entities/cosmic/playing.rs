@@ -214,7 +214,7 @@ impl Game {
         self.set_move(move_);
         let us = self.history.get_phase();
         // let (from, to, pro) = destructure_move(move_);
-        let (from2, to2, promote2, drop2) = to_move_object(us, move_);
+        let (from2, to2, promote2, drop2) = to_move_object(move_);
 
         // TODO 利き
         {
@@ -285,10 +285,9 @@ impl Game {
         if 0 < self.history.moves_num() {
             // まず　手目を戻す
             self.history.decrease_moves_num();
-            let us = self.history.get_phase();
             let move_ = self.get_move();
             // let (from, to, pro) = destructure_move(move_);
-            let (from2, to2, promote2, drop2) = to_move_object(us, move_);
+            let (from2, to2, promote2, drop2) = to_move_object(move_);
             // 取った駒が有ったか。
             let captured: Option<PieceEx> =
                 self.history.captured_pieces[self.history.moves_num() as usize];

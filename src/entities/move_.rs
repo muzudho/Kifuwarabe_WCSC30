@@ -1,4 +1,3 @@
-use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandType;
 use crate::position::destructure_move;
 use crate::position::square_to_hand_type;
@@ -36,7 +35,7 @@ pub fn new_move(from: Square, to: Square, promote: bool) -> Move {
 /// `Square` - to. 移動先升
 /// `bool` - promote. 移動後に成るなら真
 /// `Option<HandType>` - drop. 打の場合、打った駒種類
-pub fn to_move_object(phase: Phase, num: Move) -> (Option<Square>, Square, bool, Option<HandType>) {
+pub fn to_move_object(num: Move) -> (Option<Square>, Square, bool, Option<HandType>) {
     let (from, to, promote) = destructure_move(num);
 
     if from.is_board() {
