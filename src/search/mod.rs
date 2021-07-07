@@ -261,8 +261,41 @@ impl Tree {
                 // }
 
                 // 評価を集計するぜ☆（＾～＾）
-                ts.choice_friend(&mut bestmove, Value::CentiPawn(0), *move_);
-
+                let value = Value::CentiPawn(0);
+                {
+                    if bestmove.move_ == RESIGN_MOVE {
+                        // どんな葉も 投了より良いだろ☆（＾～＾）
+                        // TODO でも、王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
+                        bestmove.update(*move_, value, Reason::AnyLeafBetterThanResign);
+                    } else {
+                        match bestmove.value {
+                            Value::Win => std::panic::panic_any(Beam::trouble(
+                                "(Err.397) 自分が勝つ手を読んでるなら、ここに来るのはおかしいぜ☆（＾～＾）",
+                            )),
+                            Value::Lose => {
+                                // どんな評価値でも、負けるよりマシだろ☆（＾～＾）
+                                bestmove.update(*move_, value, Reason::AnyLeafMoreThanLose);
+                            }
+                            Value::CentiPawn(best_centi_pawn) => {
+                                match value {
+                                    Value::Win => {
+                                        // 勝つんだから更新するぜ☆（＾～＾）
+                                        bestmove.update(*move_, value, Reason::Win);
+                                    }
+                                    Value::Lose => {
+                                        // TODO ここは通らないぜ☆（＾～＾）要対応☆（＾～＾）
+                                    }
+                                    Value::CentiPawn(leaf_centi_pawn) => {
+                                        if best_centi_pawn < leaf_centi_pawn {
+                                            // 評価値が良かったから更新☆（＾～＾）
+                                            bestmove.update(*move_, value, Reason::GoodPosition);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
                     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
@@ -437,47 +470,6 @@ impl Default for TreeState {
         TreeState {
             repetition_move: RESIGN_MOVE,
             timeout: false,
-        }
-    }
-}
-impl TreeState {
-    /// 指し手のベストを選ぶぜ☆（＾～＾）
-    pub fn choice_friend(&mut self, bestmove: &mut MoveEx, value: Value, move_: Move) {
-        if bestmove.move_ == RESIGN_MOVE {
-            // どんな葉も 投了より良いだろ☆（＾～＾）
-            // TODO でも、王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
-            bestmove.update(move_, value, Reason::AnyLeafBetterThanResign);
-            return;
-        } else {
-            match bestmove.value {
-                Value::Win => std::panic::panic_any(Beam::trouble(
-                    "(Err.397) 自分が勝つ手を読んでるなら、ここに来るのはおかしいぜ☆（＾～＾）",
-                )),
-                Value::Lose => {
-                    // どんな評価値でも、負けるよりマシだろ☆（＾～＾）
-                    bestmove.update(move_, value, Reason::AnyLeafMoreThanLose);
-                    return;
-                }
-                Value::CentiPawn(best_centi_pawn) => {
-                    match value {
-                        Value::Win => {
-                            // 勝つんだから更新するぜ☆（＾～＾）
-                            bestmove.update(move_, value, Reason::Win);
-                            return;
-                        }
-                        Value::Lose => {
-                            // TODO ここは通らないぜ☆（＾～＾）要対応☆（＾～＾）
-                        }
-                        Value::CentiPawn(leaf_centi_pawn) => {
-                            if best_centi_pawn < leaf_centi_pawn {
-                                // 評価値が良かったから更新☆（＾～＾）
-                                bestmove.update(move_, value, Reason::GoodPosition);
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
