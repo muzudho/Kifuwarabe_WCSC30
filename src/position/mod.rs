@@ -1,4 +1,5 @@
 pub mod position;
+pub mod rel_square;
 pub mod square;
 
 use crate::entities::cosmic::smart::features::HandPiece;
@@ -83,6 +84,24 @@ pub fn square_to_hand_piece(sq: Square) -> HandPiece {
         115 => HandPiece::Pawn2,
         _ => panic!("(Err.44) Hand address fail"),
     }
+}
+
+/// 相対番地。絶対番地と同じだが、回転の中心を原点に固定した操作が行われるぜ☆（＾～＾）
+///
+/// 18  8  -2 -12 -22
+/// 19  9  -1 -11 -21
+/// 20 10   0 -10 -20
+/// 21 11   1 - 9 -19
+/// 22 12   2 - 8 -18
+///
+/// file, rank から 相対番地は作れますが、相対番地から file, rank を作ることはできません(不定)。
+/// そこから、 file, rank で持ちます。
+///
+/// メモリを使わないようにしようぜ☆（＾～＾）
+#[derive(Clone, Copy)]
+pub struct RelAdr {
+    file: isize,
+    rank: isize,
 }
 
 pub fn destructure_move(m: Move) -> (Square, Square, bool) {

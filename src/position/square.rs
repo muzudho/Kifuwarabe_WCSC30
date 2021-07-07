@@ -1,8 +1,8 @@
-use crate::entities::cosmic::smart::square::RelAdr;
 use crate::entities::cosmic::smart::square::FILE_0;
 use crate::entities::cosmic::smart::square::FILE_10;
 use crate::entities::cosmic::smart::square::RANK_0;
 use crate::entities::cosmic::smart::square::RANK_10;
+use crate::position::RelAdr;
 use crate::position::Square;
 
 impl Square {

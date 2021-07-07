@@ -7,8 +7,7 @@ use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::smart::features::HandPiece;
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::smart::square::{
-    Angle, RelAdr, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4, RANK_6, RANK_7,
-    RANK_8, RANK_9,
+    Angle, FILE_1, FILE_10, RANK_1, RANK_10, RANK_2, RANK_3, RANK_4, RANK_6, RANK_7, RANK_8, RANK_9,
 };
 use crate::entities::move_::new_move;
 use crate::entities::spaceship::equipment::Beam;
@@ -19,6 +18,7 @@ use crate::position::destructure_move;
 use crate::position::position::{PieceNum, Position};
 use crate::position::square_to_hand_piece;
 use crate::position::to_move_code;
+use crate::position::RelAdr;
 use crate::position::Square;
 use crate::take1base::Move;
 use crate::take1base::Piece;
