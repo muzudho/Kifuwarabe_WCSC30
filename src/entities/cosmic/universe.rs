@@ -22,8 +22,6 @@ pub struct Universe {
     pub option_depth_not_to_give_up: usize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
     pub option_material_advantage_weight: i16,
-    /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_promotion_weight: i16,
 }
 impl Default for Universe {
     fn default() -> Self {
@@ -37,7 +35,6 @@ impl Default for Universe {
             option_max_think_sec: 17,
             option_many_ways_weight: 1000,
             option_material_advantage_weight: 1000,
-            option_promotion_weight: 1000,
         }
     }
 }

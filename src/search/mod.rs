@@ -10,7 +10,6 @@ use crate::entities::cosmic::universe::Universe;
 use crate::entities::spaceship::equipment::{Beam, PvString};
 use crate::movegen::{PieceEx, PseudoLegalMoves};
 use crate::position::destructure_move;
-use crate::position::is_board_square;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
@@ -53,12 +52,8 @@ pub struct Tree {
     material_advantage_weight: i16,
     /// 指し手がいっぱいあることを評価する重み☆（＾～＾）1000分率☆（＾～＾）
     many_ways_weight: i16,
-    /// 成りの重み☆（＾～＾）1000分率☆（＾～＾）
-    promotion_weight: i16,
     /// 駒割だぜ☆（＾～＾）
     piece_allocation_value: i16,
-    /// 成り駒ボーナスだぜ☆（＾～＾）
-    promotion_value: i16,
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）
     ways_value: i16,
 }
@@ -66,7 +61,6 @@ impl Tree {
     pub fn new(
         many_ways_weight: i16,
         material_advantage_weight: i16,
-        promotion_weight: i16,
         depth_not_to_give_up: usize,
     ) -> Self {
         Tree {
@@ -78,9 +72,7 @@ impl Tree {
             max_depth0: 0,
             material_advantage_weight: material_advantage_weight,
             many_ways_weight: many_ways_weight,
-            promotion_weight: promotion_weight,
             piece_allocation_value: 0,
-            promotion_value: 0,
             ways_value: 0,
         }
     }
@@ -269,18 +261,9 @@ impl Tree {
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
 
-            let (from, _, promote) = destructure_move(*move_);
-
-            let from_pc = if is_board_square(from) {
-                game.position.piece_at(from)
-            } else {
-                // 打
-                None
-            };
             let captured_piece: Option<PieceEx> = game.do_move(*move_);
             self.pv.push(*move_);
-            let (captured_piece_centi_pawn, delta_promotion_bonus) =
-                self.after_do_move(&from_pc, &captured_piece, promote);
+            let captured_piece_centi_pawn = self.after_do_move(&captured_piece);
 
             // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {
@@ -288,7 +271,7 @@ impl Tree {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     bestmove.catch_king(*move_);
 
-                    self.before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+                    self.before_undo_move(captured_piece_centi_pawn);
                     self.pv.pop();
                     game.undo_move();
                     break;
@@ -320,10 +303,9 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "move_list={} | material={} | promotion={}", //  | {} {} {} |
+                            "move_list={} | material={}",
                             self.move_list(),
                             self.material_advantage(),
-                            self.promotion(),
                             /* TODO
                             // サンプルを見ているだけだぜ☆（＾～＾）
                             game.position.get_control(
@@ -431,7 +413,7 @@ impl Tree {
                 };
             }
 
-            self.before_undo_move(captured_piece_centi_pawn, delta_promotion_bonus);
+            self.before_undo_move(captured_piece_centi_pawn);
             self.pv.pop();
             game.undo_move();
 
@@ -506,7 +488,7 @@ impl Tree {
     }
 
     pub fn centi_pawn(&self) -> CentiPawn {
-        self.move_list() + self.material_advantage() + self.promotion()
+        self.move_list() + self.material_advantage()
     }
     pub fn move_list(&self) -> CentiPawn {
         self.many_ways_weight * self.ways_value / 1000
@@ -514,88 +496,35 @@ impl Tree {
     pub fn material_advantage(&self) -> CentiPawn {
         self.material_advantage_weight * self.piece_allocation_value / 1000
     }
-    pub fn promotion(&self) -> CentiPawn {
-        self.promotion_weight * self.promotion_value / 1000
-    }
 
     pub fn before_search(&mut self) {
         // ひっくり返すぜ☆（＾～＾）
         self.piece_allocation_value *= -1;
-        self.promotion_value *= -1;
     }
 
     pub fn after_search(&mut self) {
         // ひっくり返すぜ☆（＾～＾）
         self.piece_allocation_value *= -1;
-        self.promotion_value *= -1;
     }
 
-    pub fn after_do_move(
-        &mut self,
-        from_pc_ex: &Option<PieceEx>,
-        captured_pc_ex: &Option<PieceEx>,
-        promotion: bool,
-    ) -> (CentiPawn, CentiPawn) {
+    /// # Returns
+    ///
+    /// 取った駒の価値
+    pub fn after_do_move(&mut self, captured_pc_ex: &Option<PieceEx>) -> CentiPawn {
         // 取った駒の価値を評価するぜ☆（＾～＾）
-        let delta_captured_piece = Tree::caputured_piece_value(captured_pc_ex);
-        self.piece_allocation_value += delta_captured_piece;
-
-        // 成り駒を取って降格させたら、成り駒評価値追加だぜ☆（＾～＾）
-        let delta_promotion = if let Some(captured_piece_val) = captured_pc_ex {
-            if captured_piece_val.piece
-                .type_()
-                .promoted()
-            {
-                captured_piece_val.piece.hand_address().type_().promotion_value()
-            } else {
-                0 as CentiPawn
-            }
+        let delta_captured_piece = if let Some(captured_pc_ex) = captured_pc_ex {
+            captured_pc_ex.piece.hand_address().type_().captured_value()
         } else {
-            0
-        }
-        // 進めた駒が成っても、評価値追加だぜ☆（＾～＾）
-        +
-        if let Some(source_piece_val) = from_pc_ex {
-            if promotion {
-                source_piece_val.piece.hand_address().type_().promotion_value()
-            } else {
-                0
-            }
-        } else {
-            // 打なら成りは無いぜ☆（＾～＾）
             0
         };
-        self.promotion_value += delta_promotion;
+        self.piece_allocation_value += delta_captured_piece;
 
-        (delta_captured_piece, delta_promotion)
+        delta_captured_piece
     }
 
-    pub fn before_undo_move(
-        &mut self,
-        delta_captured_piece: CentiPawn,
-        delta_promotion: CentiPawn,
-    ) {
+    pub fn before_undo_move(&mut self, delta_captured_piece: CentiPawn) {
         // 1手戻すぜ☆（＾～＾）
         self.piece_allocation_value -= delta_captured_piece;
-        self.promotion_value -= delta_promotion;
-    }
-
-    /// 取った駒は相手の駒に決まってるぜ☆（＾～＾）
-    /// 読みを深めていくと、当たってる駒を　あとで取っても同じだろ、とか思って取らないのは、駒割ではなく、別の方法で対応してくれだぜ☆（＾～＾）
-    ///
-    /// Returns
-    /// -------
-    /// Centi pawn.
-    fn caputured_piece_value(captured_pc_ex: &Option<PieceEx>) -> CentiPawn {
-        if let Some(captured_piece_val) = captured_pc_ex {
-            captured_piece_val
-                .piece
-                .hand_address()
-                .type_()
-                .captured_value()
-        } else {
-            0
-        }
     }
 
     pub fn add_control(&mut self, sign: isize, move_list: &Vec<Move>) {

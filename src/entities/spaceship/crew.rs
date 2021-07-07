@@ -54,7 +54,6 @@ impl Kifuwarabe {
         let mut tree = Tree::new(
             universe.option_many_ways_weight,
             universe.option_material_advantage_weight,
-            universe.option_promotion_weight,
             universe.option_depth_not_to_give_up,
         );
         let (bestmove, _) = tree.iteration_deeping(universe);
@@ -96,9 +95,6 @@ impl Kifuwarabe {
                 }
                 "MaterialAdvantageWeightPer1000" => {
                     universe.option_material_advantage_weight = value.parse().unwrap();
-                }
-                "PromotionWeightPer1000" => {
-                    universe.option_promotion_weight = value.parse().unwrap();
                 }
                 "MaxDepth" => {
                     universe.option_max_depth = value.parse().unwrap();
