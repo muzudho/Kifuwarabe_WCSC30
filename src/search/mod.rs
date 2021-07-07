@@ -67,19 +67,28 @@ impl Tree {
         // alpha値を上げていきたいが、beta値を超えたくない（＾～＾）
         let mut alpha = i16::MIN;
         let beta = i16::MAX;
-        // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
-        // 初手の３０手が葉になるぜ☆（＾～＾）
-        self.max_depth0 = 0;
-        let (node_value, mut bestmove) = self.search(&mut universe.game, alpha, beta);
-        if node_value < alpha || beta < node_value {
-            // 無視
-        } else if alpha < node_value {
-            alpha = node_value
-        }
+        let mut bestmove = RESIGN_MOVE;
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for id in 1..universe.option_max_depth {
-            self.max_depth0 = id;
+        for depth in 0..universe.option_max_depth {
+            self.max_depth0 = depth;
+            // 探索（＾～＾）
+            let (value, move_) = self.search(&mut universe.game, -beta, -alpha);
+            if self.timeout {
+                // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
+                break;
+            }
+            if move_ == RESIGN_MOVE {
+                // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
+                break;
+            }
+            if value < alpha || beta < value {
+                // 無視
+            } else if alpha < value {
+                alpha = value;
+                bestmove = move_;
+            }
+
             // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
             print_info(
                 &mut universe.game.info,
@@ -92,39 +101,9 @@ impl Tree {
                     format!("{}", format!("{}", to_move_code(bestmove))),
                 )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
             );
-
-            if bestmove == RESIGN_MOVE {
-                // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
-                break;
-            }
-
-            // 横線で仕切るぜ☆（＾～＾）
-            print_info(
-                &mut universe.game.info,
-                None,
-                None,
-                None,
-                None,
-                &Some(PvString::String(format!(
-                    "----------Iteration deeping----------"
-                ))),
-            );
-
-            // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
-            let (node_value, bestmove_tmp) = self.search(&mut universe.game, -beta, -alpha);
-            if self.timeout {
-                // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
-                break;
-            }
-            if node_value < alpha || beta < node_value {
-                // 無視
-            } else if alpha < node_value {
-                alpha = node_value;
-                bestmove = bestmove_tmp;
-            }
         }
 
-        (-alpha, bestmove)
+        (alpha, bestmove)
     }
 
     /// 先手の気持ちで、勝てだぜ☆（*＾～＾*）
