@@ -77,7 +77,8 @@ impl Tree {
             self.id_max_depth = max_depth;
             self.id_depth = max_depth;
             // 探索（＾～＾）
-            let (value, move_) = self.search(&mut universe.game, -beta, -alpha);
+            let (mut value, move_) = self.search(&mut universe.game, -beta, -alpha);
+            value = -value;
             if self.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
@@ -145,7 +146,7 @@ impl Tree {
 
         // 指せる手が無ければ投了☆（＾～＾）
         if move_list.is_empty() {
-            return (-alpha, bestmove);
+            return (alpha, bestmove);
         }
 
         // TODO 指し手のオーダリングをしたいが、難しいのでシャッフルしたろ（＾～＾）
@@ -198,7 +199,7 @@ impl Tree {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                 self.timeout = true;
-                return (-alpha, bestmove);
+                return (alpha, bestmove);
             }
 
             let captured_piece: Option<PieceEx> = game.do_move(*move_);
@@ -263,12 +264,13 @@ impl Tree {
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.id_depth -= 1;
-                let (node_value, _) = self.search(game, -beta, -alpha);
+                let (mut node_value, _) = self.search(game, -beta, -alpha);
+                node_value = -node_value;
                 self.id_depth += 1;
 
                 // if self.timeout {
                 //     // TODO すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-                //     return (-alpha, bestmove);
+                //     return (alpha, bestmove);
                 // }
 
                 if bestmove == RESIGN_MOVE {
@@ -305,7 +307,7 @@ impl Tree {
             alpha = REPITITION_VALUE;
         }
 
-        (-alpha, bestmove)
+        (alpha, bestmove)
     }
 
     pub fn sec(&self) -> u64 {

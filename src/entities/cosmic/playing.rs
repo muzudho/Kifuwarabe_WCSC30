@@ -277,6 +277,7 @@ impl Game {
         let ky_hash = self.create_current_position_hash();
         self.set_position_hash(ky_hash);
 
+        // do_move の最後で フェーズ反転
         self.history.increase_moves_num();
         cap
     }
