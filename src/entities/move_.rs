@@ -6,46 +6,14 @@ use crate::position::Square;
 use crate::take1base::Move;
 
 /// 初期値として 移動元マス、移動先マス、成りの有無 を指定してください
-pub fn new_move(
-    phase: Phase,
-    from: Option<Square>,
-    to: Square,
-    promote: bool,
-    drop: Option<HandType>,
-) -> Move {
+pub fn new_move(from: Square, to: Square, promote: bool) -> Move {
     let mut num: u16;
 
-    if let Some(src) = from {
-        // 移動元マス
-        // .... .... .sss ssss
-        num = src as u16;
-    } else if let Some(drp) = drop {
-        // 打
-        num = match phase {
-            Phase::First => match drp {
-                HandType::King => 100,
-                HandType::Rook => 101,
-                HandType::Bishop => 102,
-                HandType::Gold => 103,
-                HandType::Silver => 104,
-                HandType::Knight => 105,
-                HandType::Lance => 106,
-                HandType::Pawn => 107,
-            },
-            Phase::Second => match drp {
-                HandType::King => 108,
-                HandType::Rook => 109,
-                HandType::Bishop => 110,
-                HandType::Gold => 111,
-                HandType::Silver => 112,
-                HandType::Knight => 113,
-                HandType::Lance => 114,
-                HandType::Pawn => 115,
-            },
-        };
-    } else {
-        panic!("move_::new_move srouce error")
-    }
+    // 移動元マス
+    // .... .... .sss ssss
+    // 11～99: 盤
+    // 100～115: 持駒
+    num = from as u16;
 
     // 移動先マス
     // ..dd dddd d... ....

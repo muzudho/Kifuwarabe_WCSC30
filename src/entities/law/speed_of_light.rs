@@ -16,6 +16,7 @@ use crate::entities::cosmic::smart::features::{HandPiece, HandType, PieceType};
 use crate::entities::cosmic::smart::square::{Angle, RelAdr, ANGLE_LEN};
 use crate::movegen::{Agility, Mobility};
 use crate::position::position::PieceNum;
+use crate::position::Square;
 use crate::search::CentiPawn;
 use crate::take1base::{Piece, PIECE_MEANING_LEN};
 //use num_traits::FromPrimitive;
@@ -69,6 +70,7 @@ struct SpeedOfLight {
     /// 玉２枚引く☆（＾～＾）
     hand_pieces_legal_all: [HandPiece; HAND_ADDRESS_LEN - 2],
     hand_types: [[HandPiece; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
+    hand_piece_to_square_table: [Square; HAND_ADDRESS_LEN],
     hand_piece_to_type_table: [HandType; HAND_ADDRESS_LEN],
     hand_piece_to_phase_table: [Phase; HAND_ADDRESS_LEN],
     hand_type_to_captured_value: [CentiPawn; HAND_ADDRESS_TYPE_LEN],
@@ -595,6 +597,24 @@ impl Default for SpeedOfLight {
                 ],
             ],
 
+            hand_piece_to_square_table: [
+                100, // K1
+                101, // R1
+                102, // B1
+                103, // G1
+                104, // S1
+                105, // N1
+                106, // L1
+                107, // P1
+                108, // K2
+                109, // R2
+                110, // B2
+                111, // G2
+                112, // S2
+                113, // N2
+                114, // L2
+                115, // P2
+            ],
             hand_piece_to_type_table: [
                 HandType::King,
                 HandType::Rook,
@@ -816,6 +836,9 @@ impl HandPieces {
 impl HandPiece {
     pub fn from_phase_and_type(phase: Phase, adr: HandType) -> Self {
         NINE_299792458.hand_types[phase as usize][adr as usize]
+    }
+    pub fn square(self) -> Square {
+        NINE_299792458.hand_piece_to_square_table[self as usize]
     }
     pub fn type_(self) -> HandType {
         NINE_299792458.hand_piece_to_type_table[self as usize]

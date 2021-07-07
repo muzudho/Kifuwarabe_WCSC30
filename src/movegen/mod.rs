@@ -785,16 +785,16 @@ impl PseudoLegalMoves {
 
     /// 盤上を見ようぜ☆（＾～＾） 盤上の駒の動きを作るぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `pc_ex` - 駒だぜ☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
     /// * `move_list` - 指し手一覧☆（＾～＾）
     ///
-    /// Returns
-    /// -------
+    /// # Returns
+    ///
     /// F1:
     /// * 指し手ハッシュ
     /// * 移動先にあった駒
@@ -842,16 +842,16 @@ impl PseudoLegalMoves {
                     Any => {
                         // 成ったり、成れなかったりできるとき。
                         if !forbidden {
-                            let m = new_move(us, Some(from), to, false, None);
+                            let m = new_move(from, to, false);
                             move_list.push(m);
                         }
-                        let m = new_move(us, Some(from), to, true, None);
+                        let m = new_move(from, to, true);
                         move_list.push(m);
                     }
                     _ => {
                         // 成れるか、成れないかのどちらかのとき。
                         if promotion || !forbidden {
-                            let m = new_move(us, Some(from), to, promotion, None);
+                            let m = new_move(from, to, promotion);
                             move_list.push(m);
                         }
                     }
@@ -866,8 +866,7 @@ impl PseudoLegalMoves {
 
     /// 駒台を見ようぜ☆（＾～＾） 駒台の駒の動きを作るぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `position` - 現局面の盤上だぜ☆（＾～＾）
@@ -889,11 +888,9 @@ impl PseudoLegalMoves {
                         _ => {}
                     }
                     let m = new_move(
-                        us,
-                        None,                                   // 駒台
-                        to,                                     // どの升へ行きたいか
-                        false,                                  // 打に成りは無し
-                        Some(pc_ex.piece.hand_piece().type_()), // 打った駒種類
+                        pc_ex.piece.hand_piece().square(), // 駒台
+                        to,                                // どの升へ行きたいか
+                        false,                             // 打に成りは無し
                     );
                     move_list.push(m);
                 }
@@ -919,8 +916,8 @@ pub struct Area {}
 impl Area {
     /// 全升の面積だぜ☆（＾～＾）駒を打つときに使うぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
     pub fn for_all<F1>(callback: &mut F1)
     where
@@ -935,8 +932,7 @@ impl Area {
 
     /// 先手から見た盤上の駒の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `piece_type` - 駒の種類だぜ☆（＾～＾）
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
@@ -967,8 +963,7 @@ impl Area {
 
     /// 先手から見た盤上の歩の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
@@ -988,8 +983,7 @@ impl Area {
 
     /// 先手から見た盤上の香の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
@@ -1009,8 +1003,7 @@ impl Area {
 
     /// 先手から見た盤上の桂の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
@@ -1030,8 +1023,7 @@ impl Area {
 
     /// 先手から見た盤上の銀の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
@@ -1049,8 +1041,7 @@ impl Area {
 
     /// 先手から見た盤上の金、と、杏、圭、全の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `from` - 移動元升だぜ☆（＾～＾）
@@ -1068,8 +1059,7 @@ impl Area {
 
     /// 盤上の玉の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
@@ -1086,8 +1076,7 @@ impl Area {
 
     /// 盤上の角の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
@@ -1103,8 +1092,7 @@ impl Area {
 
     /// 盤上の飛の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
@@ -1120,8 +1108,7 @@ impl Area {
 
     /// 盤上の馬の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
@@ -1138,8 +1125,7 @@ impl Area {
 
     /// 盤上の竜の動けるマスだぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `from` - 移動元升だぜ☆（＾～＾）
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
@@ -1158,8 +1144,7 @@ impl Area {
 
     /// 先手から見た歩、香車の打てる面積だぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 後手視点にしたけりゃ us.turn() しろだぜ☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
@@ -1183,8 +1168,7 @@ impl Area {
 
     /// 先手から見た桂馬の打てる面積だぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` - 手番☆（＾～＾）
     /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
@@ -1206,8 +1190,8 @@ impl Area {
 
     /// 盤上の駒を指すぜ☆（＾～＾）
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `us` - 先手か後手か、関係ないか☆（＾～＾）先後同型なら関係ないしな☆（＾～＾）
     /// * `start` - 移動元升☆（＾～＾）
     /// * `square` - 升☆（＾～＾）
@@ -1217,12 +1201,12 @@ impl Area {
     where
         F1: FnMut(Square, Agility) -> bool,
     {
-        let angle = if let Some(friend_val) = us {
-            // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
-            if *friend_val == Phase::Second {
-                mobility.angle.rotate180()
-            } else {
+        let angle = if let Some(us) = us {
+            if *us == Phase::First {
                 mobility.angle
+            } else {
+                // 先後同型でない駒は、後手なら１８０°回転だぜ☆（＾～＾）
+                mobility.angle.rotate180()
             }
         } else {
             // 先後同型だからそのままだぜ☆（＾～＾）
@@ -1340,8 +1324,7 @@ struct Promoting {}
 impl Promoting {
     /// 歩と香のための、成れるか成れないか判定だぜ☆（＾～＾）！
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `to` -
@@ -1369,8 +1352,7 @@ impl Promoting {
 
     /// 桂のための、成れるか成れないか判定だぜ☆（＾～＾）！
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `to` -
@@ -1397,8 +1379,7 @@ impl Promoting {
     /// 銀のための、成れるか成れないか判定だぜ☆（＾～＾）！
     /// 自陣から見て奥から１～３段目に入るときに成れます。元位置が３段目のときは、動けば成るか選べます。
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `from` -
@@ -1420,8 +1401,7 @@ impl Promoting {
     /// 角と飛のための、成れるか成れないか判定だぜ☆（＾～＾）！
     /// 非敵陣にいるとき、敵陣で成れます。敵陣にいるとき、どこでも成れます。
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `from` -
@@ -1440,8 +1420,7 @@ impl Promoting {
 
     /// 自陣から見て、一番遠いの段
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `to` -
@@ -1450,8 +1429,7 @@ impl Promoting {
     }
     /// 自陣から見て、一番目、２番目に遠いの段
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `to` -
@@ -1460,8 +1438,7 @@ impl Promoting {
     }
     /// 自陣から見て、二番目、三番目に遠いの段
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `to` -
@@ -1471,8 +1448,7 @@ impl Promoting {
     }
     /// 自陣から見て、三番目に遠いの段
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `to` -
@@ -1481,8 +1457,7 @@ impl Promoting {
     }
     /// 敵陣
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
     ///
     /// * `us` -
     /// * `to` -

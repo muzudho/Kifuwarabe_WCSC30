@@ -52,7 +52,7 @@ setoption name KomawariWeightPer1000 value 1000
 setoption name ManyWaysPer1000 value 10
 setoption name PromotionWeightPer1000 value 1000
 usinewgame
-position sfen ll2k2ll/9/9/9/9/9/9/9/4K4 b 2r2b4g4s4n18p 1 moves 5i5h
+position sfen 4k4/2+P3+P2/3+P+P+P3/9/ll5ll/9/9/9/4K4 b 2R2B4G4S4N13P 1 moves 5i5h
 pos
 genmove
 go
