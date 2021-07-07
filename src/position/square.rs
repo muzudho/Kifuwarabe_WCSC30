@@ -12,7 +12,7 @@ impl Square {
     pub fn offset(&self, r: &RelAdr) -> Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
-        let sum = (self.0 as isize + r.get_address()) as u8;
+        let sum = (self.0 as i8 + r.number()) as u8;
         // Initialize.
         let mut rank = sum % 10;
         let mut file = 0;

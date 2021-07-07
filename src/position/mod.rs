@@ -147,8 +147,8 @@ pub fn square_to_hand_piece(sq: Square) -> HandPiece {
 /// メモリを使わないようにしようぜ☆（＾～＾）
 #[derive(Clone, Copy)]
 pub struct RelAdr {
-    file: isize,
-    rank: isize,
+    file: i8,
+    rank: i8,
 }
 
 pub fn destructure_move(m: Move) -> (Square, Square, bool) {

@@ -3,24 +3,24 @@ use crate::position::RelAdr;
 use std::fmt;
 
 impl RelAdr {
-    pub fn new(file: isize, rank: isize) -> Self {
+    pub fn new(file: i8, rank: i8) -> Self {
         RelAdr {
             file: file,
             rank: rank,
         }
     }
 
-    pub fn file(&self) -> isize {
+    pub fn file(&self) -> i8 {
         self.file
     }
-    pub fn rank(&self) -> isize {
+    pub fn rank(&self) -> i8 {
         self.rank
     }
 
     /// # Arguments
     ///
     /// * `r` - (Relative file, relative rank).
-    pub fn get_address(&self) -> isize {
+    pub fn number(&self) -> i8 {
         10 * self.file + self.rank
     }
 
@@ -150,12 +150,6 @@ impl RelAdr {
 /// 回転してみるまで象限は分からないので、出せるのは筋、段、相対番地だけだぜ☆（＾～＾）
 impl fmt::Debug for RelAdr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "({}x {}y {}adr)",
-            self.file,
-            self.rank,
-            self.get_address()
-        )
+        write!(f, "({}x {}y rel{}sq)", self.file, self.rank, self.number())
     }
 }
