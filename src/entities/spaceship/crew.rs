@@ -52,7 +52,6 @@ impl Kifuwarabe {
     pub fn go(universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
         let mut tree = Tree::new(
-            universe.option_many_ways_weight,
             universe.option_material_advantage_weight,
             universe.option_depth_not_to_give_up,
         );
@@ -87,9 +86,6 @@ impl Kifuwarabe {
             let value = &line[(label1_width + name_width + label2_width)..];
             // IO::writeln(&format!("Debug value=|{}|", value));
             match name {
-                "ManyWaysPer1000" => {
-                    universe.option_many_ways_weight = value.parse().unwrap();
-                }
                 "DepthNotToGiveUp" => {
                     universe.option_depth_not_to_give_up = value.parse().unwrap();
                 }

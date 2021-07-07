@@ -16,8 +16,6 @@ pub struct Universe {
     pub option_min_think_sec: usize,
     /// 思考時間の最大秒☆（＾～＾）
     pub option_max_think_sec: usize,
-    /// 指し手がいっぱいあることを評価する重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_many_ways_weight: i16,
     /// 諦めない深さ☆（＾～＾）読み終わるまで、思考時間を無視するぜ☆（＾～＾）max_depth - 1 より小さくしろだぜ☆（＾～＾）
     pub option_depth_not_to_give_up: usize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
@@ -33,7 +31,6 @@ impl Default for Universe {
             /// min < max にしろだぜ☆（＾～＾）
             option_min_think_sec: 7,
             option_max_think_sec: 17,
-            option_many_ways_weight: 1000,
             option_material_advantage_weight: 1000,
         }
     }

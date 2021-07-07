@@ -50,19 +50,13 @@ pub struct Tree {
     max_depth0: usize,
     /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
     material_advantage_weight: i16,
-    /// 指し手がいっぱいあることを評価する重み☆（＾～＾）1000分率☆（＾～＾）
-    many_ways_weight: i16,
     /// 駒割だぜ☆（＾～＾）
     piece_allocation_value: i16,
     /// 指し手生成でその升に移動したら、先手なら＋１、後手なら－１しろだぜ☆（＾～＾）
     ways_value: i16,
 }
 impl Tree {
-    pub fn new(
-        many_ways_weight: i16,
-        material_advantage_weight: i16,
-        depth_not_to_give_up: usize,
-    ) -> Self {
+    pub fn new(material_advantage_weight: i16, depth_not_to_give_up: usize) -> Self {
         Tree {
             stopwatch: Instant::now(),
             state_nodes: 0,
@@ -71,7 +65,6 @@ impl Tree {
             depth_not_to_give_up: depth_not_to_give_up,
             max_depth0: 0,
             material_advantage_weight: material_advantage_weight,
-            many_ways_weight: many_ways_weight,
             piece_allocation_value: 0,
             ways_value: 0,
         }
@@ -303,8 +296,7 @@ impl Tree {
                         None,
                         None,
                         &Some(PvString::String(format!(
-                            "move_list={} | material={}",
-                            self.move_list(),
+                            "material={}",
                             self.material_advantage(),
                             /* TODO
                             // サンプルを見ているだけだぜ☆（＾～＾）
@@ -488,10 +480,7 @@ impl Tree {
     }
 
     pub fn centi_pawn(&self) -> CentiPawn {
-        self.move_list() + self.material_advantage()
-    }
-    pub fn move_list(&self) -> CentiPawn {
-        self.many_ways_weight * self.ways_value / 1000
+        self.material_advantage()
     }
     pub fn material_advantage(&self) -> CentiPawn {
         self.material_advantage_weight * self.piece_allocation_value / 1000
