@@ -112,10 +112,12 @@ impl RelAdr {
         }
     }
 
+    /// 反時計回り(Counterclockwise;ccw)に回します
+    ///
     /// # Arguments
     ///
     /// * `r` - (Relative file, relative rank).
-    pub fn rotate(&mut self, angle: Angle) -> &mut Self {
+    pub fn rotate_ccw(&mut self, angle: Angle) -> &mut Self {
         use crate::position::rotation::Angle::*;
         match angle {
             Ccw0 => self,

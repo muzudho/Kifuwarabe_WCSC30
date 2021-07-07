@@ -9,7 +9,8 @@ impl Square {
     pub fn from(file: u8, rank: u8) -> Self {
         Square(file * 10 + rank)
     }
-    pub fn offset(&self, r: &RelAdr) -> Self {
+    /// 指定の方角へ進むぜ（＾～＾）
+    pub fn go_forward(&self, r: &RelAdr) -> Self {
         // TODO rankの符号はどうだったか……☆（＾～＾） 絶対番地の使い方をしてれば問題ないだろ☆（＾～＾）
         // TODO sum は負数になることもあり、そのときは明らかにイリーガルだぜ☆（＾～＾）
         let sum = (self.0 as i8 + r.number()) as u8;

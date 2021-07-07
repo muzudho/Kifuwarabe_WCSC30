@@ -657,37 +657,43 @@ impl Default for SpeedOfLight {
             // よく使う、角度の付いた相対番地☆（＾～＾）
             west_ccw: [
                 RelAdr::new(1, 0),
-                RelAdr::new(1, 0).rotate(Angle::Ccw45).clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw90).clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw135).clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw180).clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw225).clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw270).clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw315).clone(),
+                RelAdr::new(1, 0).rotate_ccw(Angle::Ccw45).clone(),
+                RelAdr::new(1, 0).rotate_ccw(Angle::Ccw90).clone(),
+                RelAdr::new(1, 0).rotate_ccw(Angle::Ccw135).clone(),
+                RelAdr::new(1, 0).rotate_ccw(Angle::Ccw180).clone(),
+                RelAdr::new(1, 0).rotate_ccw(Angle::Ccw225).clone(),
+                RelAdr::new(1, 0).rotate_ccw(Angle::Ccw270).clone(),
+                RelAdr::new(1, 0).rotate_ccw(Angle::Ccw315).clone(),
             ],
             /// 回転してからダブル・ランクしろだぜ☆（＾～＾）逆だと結果が違う☆（＾～＾）非可換の群、知ってるだろ☆ｍ９（＾～＾）ルービック・キューブと同じだぜ☆（＾～＾）
             west_ccw_double_rank: [
                 RelAdr::new(1, 0).double_rank().clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw45).double_rank().clone(),
-                RelAdr::new(1, 0).rotate(Angle::Ccw90).double_rank().clone(),
                 RelAdr::new(1, 0)
-                    .rotate(Angle::Ccw135)
+                    .rotate_ccw(Angle::Ccw45)
                     .double_rank()
                     .clone(),
                 RelAdr::new(1, 0)
-                    .rotate(Angle::Ccw180)
+                    .rotate_ccw(Angle::Ccw90)
                     .double_rank()
                     .clone(),
                 RelAdr::new(1, 0)
-                    .rotate(Angle::Ccw225)
+                    .rotate_ccw(Angle::Ccw135)
                     .double_rank()
                     .clone(),
                 RelAdr::new(1, 0)
-                    .rotate(Angle::Ccw270)
+                    .rotate_ccw(Angle::Ccw180)
                     .double_rank()
                     .clone(),
                 RelAdr::new(1, 0)
-                    .rotate(Angle::Ccw315)
+                    .rotate_ccw(Angle::Ccw225)
+                    .double_rank()
+                    .clone(),
+                RelAdr::new(1, 0)
+                    .rotate_ccw(Angle::Ccw270)
+                    .double_rank()
+                    .clone(),
+                RelAdr::new(1, 0)
+                    .rotate_ccw(Angle::Ccw315)
                     .double_rank()
                     .clone(),
             ],

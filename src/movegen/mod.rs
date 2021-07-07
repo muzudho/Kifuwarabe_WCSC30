@@ -574,6 +574,7 @@ where
         )
     };
 
+    // これは単に `Mobility::new(Angle::Ccw270, MoveRange::Sliding)` を１回実行するだけ（＾～＾）
     for mobility in PieceType::L.mobility().iter() {
         // TODO なぜか後手が後ろに進んでしまう（＾～＾）理由不明（＾～＾）
         push_piece_moves(Some(us), from, *mobility, fn_pass_destination);
@@ -828,39 +829,40 @@ fn push_piece_moves<F1>(
     match mobility.move_range {
         // 飛、角、香、竜、馬
         MoveRange::Sliding => {
-            let mut cur = start;
-            // 最初、西を向いている（＾～＾）これを角度を指定して回す（＾～＾）
-            let r = RelAdr::new(1, 0).rotate(mobility.angle).clone();
+            let mut to = start;
+            // 単にどっちに伸びるか相対角度を指定しているだけ（＾～＾）相対角度が 0 なら 西へ（＾～＾）
+            let r = RelAdr::new(1, 0).rotate_ccw(angle).clone();
+            // let r = RelAdr::new(1, 0).rotate_ccw(mobility.angle).clone();
 
             loop {
-                // 西隣から反時計回りだぜ☆（＾～＾）
-                cur = cur.offset(&r);
-                if cur.wall() {
+                // その方向へ１つ進めるぜ☆（＾～＾）
+                to = to.go_forward(&r);
+                if to.wall() {
                     break;
                 }
 
-                if fn_pass_destination(cur, mobility.move_range) {
+                if fn_pass_destination(to, mobility.move_range) {
                     break;
                 }
             }
         }
         // 桂馬
         MoveRange::Knight => {
-            let mut cur = start;
+            let mut to = start;
 
-            // 西隣から反時計回りだぜ☆（＾～＾）
-            cur = cur.offset(&angle.west_ccw_double_rank());
-            if !cur.wall() {
-                fn_pass_destination(cur, mobility.move_range);
+            // １つ進むだけ（＾～＾）
+            to = to.go_forward(&angle.west_ccw_double_rank());
+            if !to.wall() {
+                fn_pass_destination(to, mobility.move_range);
             }
         }
         MoveRange::Adjacent => {
-            let mut cur = start;
+            let mut to = start;
 
-            // 西隣から反時計回りだぜ☆（＾～＾）
-            cur = cur.offset(&angle.west_ccw());
-            if !cur.wall() {
-                fn_pass_destination(cur, mobility.move_range);
+            // １つ進むだけ（＾～＾）
+            to = to.go_forward(&angle.west_ccw());
+            if !to.wall() {
+                fn_pass_destination(to, mobility.move_range);
             }
         }
     }
