@@ -58,13 +58,13 @@ impl fmt::Debug for PieceEx {
 #[derive(Clone, Copy)]
 pub struct Mobility {
     pub angle: Angle,
-    pub agility: Agility,
+    pub move_range: MoveRange,
 }
 impl Mobility {
-    pub fn new(angle: Angle, agility: Agility) -> Self {
+    pub fn new(angle: Angle, move_range: MoveRange) -> Self {
         Mobility {
             angle: angle,
-            agility: agility,
+            move_range: move_range,
         }
     }
 }
@@ -389,61 +389,62 @@ impl PseudoLegalMoves {
         position: &Position,
         move_list: &mut Vec<Move>,
     ) {
-        let moving = &mut |to, promotability, _agility, move_permission: Option<MovePermission>| {
-            let pseudo_captured = position.piece_at_board(to);
+        let moving =
+            &mut |to, promotability, _move_range, move_permission: Option<MovePermission>| {
+                let pseudo_captured = position.piece_at_board(to);
 
-            let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
-                if pseudo_captured_val.piece.phase() == us {
-                    // 味方の駒を取った☆（＾～＾）なしだぜ☆（＾～＾）！
-                    (false, false)
-                } else {
-                    (true, false)
-                }
-            } else {
-                (true, true)
-            };
-
-            if ok {
-                // 成れるかどうかの判定☆（＾ｑ＾）
-                use crate::movegen::Promotability::*;
-                let promotion = match &promotability {
-                    Forced => true,
-                    _ => false,
-                };
-
-                // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
-                let forbidden = if let Some(move_permission_val) = move_permission {
-                    if move_permission_val.check(to) {
-                        false
+                let (ok, space) = if let Some(pseudo_captured_val) = pseudo_captured {
+                    if pseudo_captured_val.piece.phase() == us {
+                        // 味方の駒を取った☆（＾～＾）なしだぜ☆（＾～＾）！
+                        (false, false)
                     } else {
-                        true
+                        (true, false)
                     }
                 } else {
-                    false
+                    (true, true)
                 };
 
-                match &promotability {
-                    Any => {
-                        // 成ったり、成れなかったりできるとき。
-                        if !forbidden {
-                            let m = new_move(from, to, false);
-                            move_list.push(m);
-                        }
-                        let m = new_move(from, to, true);
-                        move_list.push(m);
-                    }
-                    _ => {
-                        // 成れるか、成れないかのどちらかのとき。
-                        if promotion || !forbidden {
-                            let m = new_move(from, to, promotion);
-                            move_list.push(m);
-                        }
-                    }
-                };
-            }
+                if ok {
+                    // 成れるかどうかの判定☆（＾ｑ＾）
+                    use crate::movegen::Promotability::*;
+                    let promotion = match &promotability {
+                        Forced => true,
+                        _ => false,
+                    };
 
-            !space
-        };
+                    // 成りじゃない場合は、行き先のない動きを制限されるぜ☆（＾～＾）
+                    let forbidden = if let Some(move_permission_val) = move_permission {
+                        if move_permission_val.check(to) {
+                            false
+                        } else {
+                            true
+                        }
+                    } else {
+                        false
+                    };
+
+                    match &promotability {
+                        Any => {
+                            // 成ったり、成れなかったりできるとき。
+                            if !forbidden {
+                                let m = new_move(from, to, false);
+                                move_list.push(m);
+                            }
+                            let m = new_move(from, to, true);
+                            move_list.push(m);
+                        }
+                        _ => {
+                            // 成れるか、成れないかのどちらかのとき。
+                            if promotion || !forbidden {
+                                let m = new_move(from, to, promotion);
+                                move_list.push(m);
+                            }
+                        }
+                    };
+                }
+
+                !space
+            };
 
         Area::piece_of(pc_ex.piece.type_(), us, from, moving);
     }
@@ -525,7 +526,7 @@ impl Area {
     /// * `sliding` -
     fn piece_of<F1>(piece_type: PieceType, us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
         match piece_type {
             PieceType::P => Area::pawn(us, from, moving),
@@ -554,9 +555,9 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn pawn<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| {
+        let moving = &mut |to, _move_range| {
             Promoting::pawn_lance(us, to, moving, Some(MovePermission::from_pawn_or_lance(us)))
         };
 
@@ -574,9 +575,9 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn lance<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| {
+        let moving = &mut |to, _move_range| {
             Promoting::pawn_lance(us, to, moving, Some(MovePermission::from_pawn_or_lance(us)))
         };
 
@@ -594,9 +595,9 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn knight<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| {
+        let moving = &mut |to, _move_range| {
             Promoting::knight(us, to, moving, Some(MovePermission::from_knight(us)))
         };
 
@@ -614,9 +615,9 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn silver<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| Promoting::silver(us, from, to, moving);
+        let moving = &mut |to, _move_range| Promoting::silver(us, from, to, moving);
 
         for mobility in PieceType::S.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
@@ -632,9 +633,10 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn gold<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
+        let moving =
+            &mut |to, _move_range| moving(to, Promotability::Deny, MoveRange::Adjacent, None);
 
         for mobility in PieceType::G.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
@@ -649,9 +651,10 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn king<F1>(from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| moving(to, Promotability::Deny, Agility::Hopping, None);
+        let moving =
+            &mut |to, _move_range| moving(to, Promotability::Deny, MoveRange::Adjacent, None);
 
         for mobility in PieceType::K.mobility().iter() {
             Area::move_(&None, from, *mobility, moving);
@@ -666,9 +669,9 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn bishop<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| Promoting::bishop_rook(us, from, to, moving);
+        let moving = &mut |to, _move_range| Promoting::bishop_rook(us, from, to, moving);
         for mobility in PieceType::B.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
@@ -682,9 +685,9 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn rook<F1>(us: Phase, from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, _agility| Promoting::bishop_rook(us, from, to, moving);
+        let moving = &mut |to, _move_range| Promoting::bishop_rook(us, from, to, moving);
         for mobility in PieceType::R.mobility().iter() {
             Area::move_(&Some(us), from, *mobility, moving);
         }
@@ -698,9 +701,9 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn horse<F1>(from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
-        let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
+        let moving = &mut |to, move_range| moving(to, Promotability::Deny, move_range, None);
 
         for mobility in PieceType::PB.mobility().iter() {
             Area::move_(&None, from, *mobility, moving);
@@ -715,10 +718,10 @@ impl Area {
     /// * `moving` - 絶対番地、成れるか、動き方、移動できるかを受け取れだぜ☆（＾～＾）
     fn dragon<F1>(from: Square, moving: &mut F1)
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
         {
-            let moving = &mut |to, agility| moving(to, Promotability::Deny, agility, None);
+            let moving = &mut |to, move_range| moving(to, Promotability::Deny, move_range, None);
 
             for mobility in PieceType::PR.mobility().iter() {
                 Area::move_(&None, from, *mobility, moving);
@@ -783,7 +786,7 @@ impl Area {
     /// * `moving` - 絶対番地を受け取れだぜ☆（＾～＾）
     fn move_<F1>(us: &Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
     where
-        F1: FnMut(Square, Agility) -> bool,
+        F1: FnMut(Square, MoveRange) -> bool,
     {
         let angle = if let Some(us) = us {
             if *us == Phase::First {
@@ -797,9 +800,11 @@ impl Area {
             mobility.angle
         };
 
-        match mobility.agility {
-            Agility::Sliding => {
+        match mobility.move_range {
+            // 飛、角、香、竜、馬
+            MoveRange::Sliding => {
                 let mut cur = start;
+                // 最初、西を向いている（＾～＾）これを角度を指定して回す（＾～＾）
                 let r = RelAdr::new(1, 0).rotate(mobility.angle).clone();
 
                 loop {
@@ -809,28 +814,28 @@ impl Area {
                         break;
                     }
 
-                    if moving(cur, mobility.agility) {
+                    if moving(cur, mobility.move_range) {
                         break;
                     }
                 }
             }
-            // 桂馬専用☆（＾～＾）行き先の無いところに置いてないはずだぜ☆（＾～＾）
-            Agility::Knight => {
+            // 桂馬
+            MoveRange::Knight => {
                 let mut cur = start;
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 cur = square_offset(cur, &angle.west_ccw_double_rank());
                 if !square_wall(cur) {
-                    moving(cur, mobility.agility);
+                    moving(cur, mobility.move_range);
                 }
             }
-            Agility::Hopping => {
+            MoveRange::Adjacent => {
                 let mut cur = start;
 
                 // 西隣から反時計回りだぜ☆（＾～＾）
                 cur = square_offset(cur, &angle.west_ccw());
                 if !square_wall(cur) {
-                    moving(cur, mobility.agility);
+                    moving(cur, mobility.move_range);
                 }
             }
         }
@@ -839,9 +844,9 @@ impl Area {
 
 /// 機敏性。
 #[derive(Clone, Copy, Debug)]
-pub enum Agility {
+pub enum MoveRange {
     /// 隣へ１つ進む駒。
-    Hopping,
+    Adjacent,
     /// 長い利き。
     Sliding,
     /// 桂馬。
@@ -921,16 +926,26 @@ impl Promoting {
         move_permission: Option<MovePermission>,
     ) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
         if Promoting::is_farthest_rank_from_friend(us, to) {
             // 自陣から見て一番奥の段
-            callback(to, Promotability::Forced, Agility::Hopping, move_permission)
+            callback(
+                to,
+                Promotability::Forced,
+                MoveRange::Adjacent,
+                move_permission,
+            )
         } else if Promoting::is_second_third_farthest_rank_from_friend(us, to) {
             // 自陣から見て二番、三番目の奥の段
-            callback(to, Promotability::Any, Agility::Hopping, move_permission)
+            callback(to, Promotability::Any, MoveRange::Adjacent, move_permission)
         } else {
-            callback(to, Promotability::Deny, Agility::Hopping, move_permission)
+            callback(
+                to,
+                Promotability::Deny,
+                MoveRange::Adjacent,
+                move_permission,
+            )
         }
     }
 
@@ -949,14 +964,19 @@ impl Promoting {
         move_permission: Option<MovePermission>,
     ) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
         if Promoting::is_first_second_farthest_rank_from_friend(us, to) {
-            callback(to, Promotability::Forced, Agility::Knight, move_permission)
+            callback(
+                to,
+                Promotability::Forced,
+                MoveRange::Knight,
+                move_permission,
+            )
         } else if Promoting::is_third_farthest_rank_from_friend(us, to) {
-            callback(to, Promotability::Any, Agility::Knight, move_permission)
+            callback(to, Promotability::Any, MoveRange::Knight, move_permission)
         } else {
-            callback(to, Promotability::Deny, Agility::Knight, move_permission)
+            callback(to, Promotability::Deny, MoveRange::Knight, move_permission)
         }
     }
 
@@ -971,14 +991,14 @@ impl Promoting {
     /// * `callback` -
     fn silver<F1>(us: Phase, from: Square, to: Square, callback: &mut F1) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
         if Promoting::is_third_farthest_rank_from_friend(us, from) {
-            callback(to, Promotability::Any, Agility::Hopping, None)
+            callback(to, Promotability::Any, MoveRange::Adjacent, None)
         } else if Promoting::is_opponent_region(us, to) {
-            callback(to, Promotability::Any, Agility::Hopping, None)
+            callback(to, Promotability::Any, MoveRange::Adjacent, None)
         } else {
-            callback(to, Promotability::Deny, Agility::Hopping, None)
+            callback(to, Promotability::Deny, MoveRange::Adjacent, None)
         }
     }
 
@@ -993,12 +1013,12 @@ impl Promoting {
     /// * `callback` -
     fn bishop_rook<F1>(us: Phase, from: Square, to: Square, callback: &mut F1) -> bool
     where
-        F1: FnMut(Square, Promotability, Agility, Option<MovePermission>) -> bool,
+        F1: FnMut(Square, Promotability, MoveRange, Option<MovePermission>) -> bool,
     {
         if Promoting::is_opponent_region(us, from) || Promoting::is_opponent_region(us, to) {
-            callback(to, Promotability::Any, Agility::Sliding, None)
+            callback(to, Promotability::Any, MoveRange::Sliding, None)
         } else {
-            callback(to, Promotability::Deny, Agility::Sliding, None)
+            callback(to, Promotability::Deny, MoveRange::Sliding, None)
         }
     }
 

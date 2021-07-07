@@ -439,15 +439,15 @@ impl RelAdr {
         }
     }
 
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `r` - (Relative file, relative rank).
     pub fn get_address(&self) -> isize {
         10 * self.file + self.rank
     }
 
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `r` - (Relative file, relative rank).
     pub fn rotate_180(&mut self) -> &mut Self {
         self.file *= -1;
@@ -457,8 +457,8 @@ impl RelAdr {
 
     /// Counterclockwise
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `r` - (Relative file, relative rank).
     pub fn rotate_90_ccw(&mut self) -> &mut Self {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
@@ -472,8 +472,8 @@ impl RelAdr {
 
     /// Counterclockwise
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `r` - (Relative file, relative rank).
     pub fn rotate_45_ccw(&mut self) -> &mut Self {
         // 象限は、何度回転するかによって境界線の位置が変わってくるので、回転の直前で調べるしかないぜ☆（＾～＾）
@@ -534,8 +534,8 @@ impl RelAdr {
         }
     }
 
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `r` - (Relative file, relative rank).
     pub fn rotate(&mut self, angle: Angle) -> &mut Self {
         use crate::entities::cosmic::smart::square::Angle::*;
@@ -553,8 +553,8 @@ impl RelAdr {
 
     /// 段を２倍にします。桂馬に使います。
     ///
-    /// Arguments
-    /// ---------
+    /// # Arguments
+    ///
     /// * `r` - (Relative file, relative rank).
     pub fn double_rank(&mut self) -> &mut Self {
         let rank2 = 2 * self.rank;

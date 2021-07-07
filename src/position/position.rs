@@ -249,8 +249,8 @@ impl Position {
             if let Some(pc_ex) = self.piece_at_board(&source) {
                 // 駒の利きを調べようぜ☆（＾～＾）？
                 for mobility in pc_ex.piece.type_().mobility() {
-                    match mobility.agility {
-                        Agility::Hopping => {
+                    match mobility.move_range {
+                        MoveRange::Adjacent => {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle);
@@ -261,7 +261,7 @@ impl Position {
                                 self.add_control(pc_ex.piece.phase(), &cur, 1);
                             }
                         }
-                        Agility::Sliding => {
+                        MoveRange::Sliding => {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle);
@@ -283,7 +283,7 @@ impl Position {
                                 }
                             }
                         }
-                        Agility::Knight => {
+                        MoveRange::Knight => {
                             let mut cur = source.clone();
                             let mut rel = RelAdr::new(1, 0);
                             rel.rotate(mobility.angle).double_rank();
