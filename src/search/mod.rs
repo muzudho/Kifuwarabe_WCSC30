@@ -38,6 +38,10 @@ pub struct Tree {
     pub depth_not_to_give_up: usize,
     // 読みの深さの上限☆（＾～＾）１手を読み切るなら 0 を指定しろだぜ☆（＾～＾）
     max_depth0: usize,
+    // 時間切れ（＾～＾）
+    pub timeout: bool,
+    // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
+    pub repetition_move: Move,
 }
 impl Tree {
     pub fn new(depth_not_to_give_up: usize) -> Self {
@@ -48,6 +52,8 @@ impl Tree {
             think_sec: 0,
             depth_not_to_give_up: depth_not_to_give_up,
             max_depth0: 0,
+            timeout: false,
+            repetition_move: RESIGN_MOVE,
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
@@ -106,7 +112,7 @@ impl Tree {
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
             let (node_value, bestmove_tmp, ts) = self.search(&mut universe.game, -beta, -alpha);
-            if ts.timeout {
+            if self.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
             }
@@ -213,7 +219,7 @@ impl Tree {
             if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-                ts.timeout = true;
+                self.timeout = true;
                 return (-alpha, bestmove, ts);
             }
 
@@ -239,7 +245,7 @@ impl Tree {
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
                 // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
-                ts.repetition_move = *move_;
+                self.repetition_move = *move_;
             } else if self.max_depth0 < self.pv.len() {
                 // 葉だぜ☆（＾～＾）
 
@@ -280,7 +286,7 @@ impl Tree {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 let (node_value, _, _) = self.search(game, -beta, -alpha);
 
-                if ts.timeout {
+                if self.timeout {
                     // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                     return (alpha, bestmove, ts);
                 }
@@ -326,7 +332,7 @@ impl Tree {
         if !exists_lose {
             if bestmove == RESIGN_MOVE {
                 // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-                bestmove = ts.repetition_move;
+                bestmove = self.repetition_move;
                 alpha = REPITITION_VALUE;
             }
         }
@@ -353,17 +359,10 @@ impl Tree {
 }
 
 #[derive(Clone)]
-pub struct TreeState {
-    // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
-    pub repetition_move: Move,
-    pub timeout: bool,
-}
+pub struct TreeState {}
 impl Default for TreeState {
     fn default() -> Self {
-        TreeState {
-            repetition_move: RESIGN_MOVE,
-            timeout: false,
-        }
+        TreeState {}
     }
 }
 
