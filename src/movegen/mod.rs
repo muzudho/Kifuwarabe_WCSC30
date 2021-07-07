@@ -876,10 +876,10 @@ impl PseudoLegalMoves {
                     }
                     let m = new_move(
                         us,
-                        None,                                  // 駒台
-                        to,                                    // どの升へ行きたいか
-                        false,                                 // 打に成りは無し
-                        Some(pc_ex.piece.hand_type().type_()), // 打った駒種類
+                        None,                                   // 駒台
+                        to,                                     // どの升へ行きたいか
+                        false,                                  // 打に成りは無し
+                        Some(pc_ex.piece.hand_piece().type_()), // 打った駒種類
                     );
                     move_list.push(m);
                 }

@@ -57,7 +57,8 @@ struct SpeedOfLight {
     /// この駒を取ったら、先後が反転して、相手の駒になる、というリンクだぜ☆（＾～＾）
     /// 探索部では、玉のような取れない駒も　らいおんきゃっち　しているので、玉も取れるように作っておけだぜ☆（＾～＾）
     piece_captured_table: [Piece; PIECE_MEANING_LEN],
-    piece_hand_type_table: [HandPiece; PIECE_MEANING_LEN],
+    piece_to_hand_piece_table: [HandPiece; PIECE_MEANING_LEN],
+    piece_to_hand_type_table: [HandType; PIECE_MEANING_LEN],
 
     // 駒種類☆（＾～＾）
     //piece_type_to_promoted_table: [bool; PIECE_TYPE_LEN],
@@ -294,7 +295,7 @@ impl Default for SpeedOfLight {
                 L1, // PromotedLance2
                 P1, // PromotedPawn2
             ],
-            piece_hand_type_table: [
+            piece_to_hand_piece_table: [
                 HandPiece::King1,   // King1
                 HandPiece::Rook1,   // Rook1
                 HandPiece::Bishop1, // Bishop1
@@ -323,6 +324,36 @@ impl Default for SpeedOfLight {
                 HandPiece::Knight2, // PromotedKnight2
                 HandPiece::Lance2,  // PromotedLance2
                 HandPiece::Pawn2,   // PromotedPawn2
+            ],
+            piece_to_hand_type_table: [
+                HandType::King,   // King1
+                HandType::Rook,   // Rook1
+                HandType::Bishop, // Bishop1
+                HandType::Gold,   // Gold1
+                HandType::Silver, // Silver1
+                HandType::Knight, // Knight1
+                HandType::Lance,  // Lance1
+                HandType::Pawn,   // Pawn1
+                HandType::Rook,   // Dragon1
+                HandType::Bishop, // Horse1
+                HandType::Silver, // PromotedSilver1
+                HandType::Knight, // PromotedKnight1
+                HandType::Lance,  // PromotedLance1
+                HandType::Pawn,   // PromotedPawn1
+                HandType::King,   // King2
+                HandType::Rook,   // Rook2
+                HandType::Bishop, // Bishop2
+                HandType::Gold,   // Gold2
+                HandType::Silver, // Silver2
+                HandType::Knight, // Knight2
+                HandType::Lance,  // Lance2
+                HandType::Pawn,   // Pawn2
+                HandType::Rook,   // Dragon2
+                HandType::Bishop, // Horse2
+                HandType::Silver, // PromotedSilver2
+                HandType::Knight, // PromotedKnight2
+                HandType::Lance,  // PromotedLance2
+                HandType::Pawn,   // PromotedPawn2
             ],
 
             // 成り駒か☆（＾～＾）？
@@ -722,8 +753,12 @@ impl Piece {
         NINE_299792458.piece_captured_table[self as usize]
     }
 
-    pub fn hand_type(self) -> HandPiece {
-        NINE_299792458.piece_hand_type_table[self as usize]
+    pub fn hand_piece(self) -> HandPiece {
+        NINE_299792458.piece_to_hand_piece_table[self as usize]
+    }
+
+    pub fn hand_type(self) -> HandType {
+        NINE_299792458.piece_to_hand_type_table[self as usize]
     }
 }
 

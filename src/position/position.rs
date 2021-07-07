@@ -362,13 +362,13 @@ impl Position {
                     PieceNum::King2
                 }
                 _ => {
-                    let hand_type = piece.hand_type().type_();
-                    self.pc_num_to_location[self.hand_index[hand_type as usize]] = from;
-                    if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_type as usize]) {
-                        self.hand_index[hand_type as usize] += 1;
+                    let hand_piece = piece.hand_piece().type_();
+                    self.pc_num_to_location[self.hand_index[hand_piece as usize]] = from;
+                    if let Some(pn) = PieceNum::from_usize(self.hand_index[hand_piece as usize]) {
+                        self.hand_index[hand_piece as usize] += 1;
                         pn
                     } else {
-                        panic!("hand_index={}", self.hand_index[hand_type as usize])
+                        panic!("hand_index={}", self.hand_index[hand_piece as usize])
                     }
                 }
             };
@@ -378,22 +378,22 @@ impl Position {
     /// 駒台に置く
     pub fn push_hand_on_init(&mut self, piece: Piece, number: u8) {
         for _i in 0..number {
-            let ha = piece.hand_type();
-            let hand_type = ha.type_();
-            let pc_num = self.hand_index[hand_type as usize];
+            let ha = piece.hand_piece();
+            let hand_piece = ha.type_();
+            let pc_num = self.hand_index[hand_piece as usize];
             self.pc_num_to_location[pc_num] = hand_type_to_square(ha);
             if let Some(pc_num) = PieceNum::from_usize(pc_num) {
                 self.hands[ha as usize].push(&PieceEx::new(piece, pc_num));
             } else {
                 panic!("pc_num={}", pc_num)
             }
-            self.hand_index[hand_type as usize] += 1;
+            self.hand_index[hand_piece as usize] += 1;
 
             // Beam::shoot(&format!("# hand[{}]{} pc_num={}", i, piece, pc_num));
         }
     }
     pub fn push_hand(&mut self, hand: &PieceEx) {
-        let adr = hand.piece.hand_type();
+        let adr = hand.piece.hand_piece();
         self.hands[adr as usize].push(hand);
         self.pc_num_to_location[hand.num as usize] = hand_type_to_square(adr);
     }
@@ -529,9 +529,9 @@ impl Position {
             let sq = self.pc_num_to_location[pc_num];
             if let Some(pc_ex) = self.piece_at(sq) {
                 if us == pc_ex.piece.phase() {
-                    //value += pc_ex.piece.type_().captured_value;
+                    value += pc_ex.piece.hand_type().captured_value();
                 } else {
-                    //value -= pc_ex.piece.type_().captured_value;
+                    value -= pc_ex.piece.hand_type().captured_value();
                 }
             }
         }

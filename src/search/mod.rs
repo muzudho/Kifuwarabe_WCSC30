@@ -221,14 +221,6 @@ impl Tree {
             }
         }
 
-        let coverage_sign = if self.pv.len() % 2 == 0 {
-            // 先手が指すところだぜ☆（＾～＾）
-            1
-        } else {
-            // 後手が指すところだぜ☆（＾～＾）
-            -1
-        };
-        self.add_control(coverage_sign, &move_list);
         for move_ in move_list.iter() {
             // 時間を見ようぜ☆（＾～＾）？
             if self.think_sec < self.sec() && self.depth_not_to_give_up <= self.max_depth0 {
@@ -243,7 +235,6 @@ impl Tree {
 
             let captured_piece: Option<PieceEx> = game.do_move(*move_);
             self.pv.push(*move_);
-            let captured_piece_centi_pawn = self.after_do_move(&captured_piece);
 
             // TODO 廃止方針☆（＾～＾）
             if let Some(captured_piece_val) = captured_piece {
@@ -251,7 +242,6 @@ impl Tree {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
                     bestmove.catch_king(*move_);
 
-                    self.before_undo_move();
                     self.pv.pop();
                     game.undo_move();
                     break;
@@ -363,7 +353,6 @@ impl Tree {
                 };
             }
 
-            self.before_undo_move();
             self.pv.pop();
             game.undo_move();
 
@@ -398,7 +387,6 @@ impl Tree {
                 }
             }
         }
-        self.add_control(-1 * coverage_sign, &move_list);
 
         // TODO 利き削除☆（＾～＾）
         // for destination in &controls {
@@ -436,26 +424,6 @@ impl Tree {
             0
         }
     }
-
-    /// # Returns
-    ///
-    /// 取った駒の価値
-    pub fn after_do_move(&mut self, captured_pc_ex: &Option<PieceEx>) -> CentiPawn {
-        // 取った駒の価値を評価するぜ☆（＾～＾）
-        let delta_captured_piece = if let Some(captured_pc_ex) = captured_pc_ex {
-            captured_pc_ex.piece.hand_type().type_().captured_value()
-        } else {
-            0
-        };
-
-        delta_captured_piece
-    }
-
-    pub fn before_undo_move(&mut self) {
-        // 1手戻すぜ☆（＾～＾）
-    }
-
-    pub fn add_control(&mut self, sign: isize, move_list: &Vec<Move>) {}
 }
 
 #[derive(Clone)]

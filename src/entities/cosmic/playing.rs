@@ -327,7 +327,7 @@ impl Game {
             if let Some(captured_piece_val) = captured {
                 // 自分の持ち駒を減らす
                 self.position
-                    .pop_hand(captured_piece_val.piece.captured().hand_type());
+                    .pop_hand(captured_piece_val.piece.captured().hand_piece());
                 // 移動先の駒を、取った駒（あるいは空）に戻す
                 self.position.push_to_board(to2, captured);
             }

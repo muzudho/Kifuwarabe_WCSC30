@@ -62,7 +62,7 @@
 //         //                     // 自分の駒が取られるということだぜ☆（＾～＾）
 //         //                     centi_pawn -= current_target_piece
 //         //                         .piece
-//         //                         .hand_type()
+//         //                         .hand_piece()
 //         //                         .type_()
 //         //                         .captured_value();
 //         //                     next_target_piece = pc_ex;
