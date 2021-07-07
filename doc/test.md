@@ -37,6 +37,48 @@ pos
 genmove
 ```
 
+## 後手の香車が後ろ向いて無いか？
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 2
+setoption name MaxDepth value 2
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
+position sfen ll2k2ll/9/9/9/9/9/9/9/4K4 b 2r2b4g4s4n18p 1 moves 5i5h
+pos
+genmove
+go
+```
+
+## まだ指せるのでは
+
+```plain
+usi
+isready
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 2
+setoption name MaxDepth value 2
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+setoption name KomawariWeightPer1000 value 1000
+setoption name ManyWaysPer1000 value 10
+setoption name PromotionWeightPer1000 value 1000
+usinewgame
+position startpos moves 2g2f 3c3d 2f2e 8b4b 2e2d 2c2d 2h2d P*2c 2d2c+ 2b4d 3i2h 7a7b 2h2g 5a5b 2g3f 5b5a 3f2e 4d5e 4i3h 6a7a 2e3d 2a3c 3d3c+ 4b5b 3c4c 5b6b 4c5c 6b6a 5g5f 5e6d 7g7f 7c7d 8h1a+ 7a8b 1a2a 6d5c 2c5c S*5b 5c1c 3a4b L*4f 4b4c 4f4c+ 5b4c 1c4c L*3c 4c3c 5a6b 2a4c 7d7e 7f7e 6a5a 6i5h 5a5f L*5g 5f5g+ 5h5g L*9d P*5d P*7h 7i7h 8a7c 5d5c+ 6b7a 5c6c 7b6c 4c5c P*6b N*5d 6c7b 5d6b+ 7a8a 6b7b 8a7b 7e7d 4a5b 5c5b 7c6e 5g5h 8c8d 3c6c 7b7a 5b6b 7a8a 7d7c+ 8b9b 6g6f N*2d 6f6e 9b8b 7c8b 8a8b P*7d P*7g 7h6g 7g7h 6g7h 8b8a 7d7c+ 2d1f 6e6d 8a9b 7c7b 8d8e 6c7c 1f2h+ 3h2h 8e8f S*7f 8f8g 7f8g P*8a 7h7g 8a8b 8g8f 8b8c 7g7f 8c8d S*8h 8d8e 7f8e
+pos
+genmove
+go
+```
+
 ## 謎のエラー
 
 ```plain

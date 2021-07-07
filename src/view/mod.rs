@@ -4,6 +4,7 @@ use crate::entities::spaceship::equipment::PvString;
 use crate::position::destructure_move;
 use crate::position::position::Position;
 use crate::position::to_move_code;
+use crate::position::Square;
 use crate::search::CentiPawn;
 use crate::take1base::Move;
 
@@ -54,18 +55,18 @@ pub fn print_move_list(title: &str, position: &Position, move_list: &Vec<Move>) 
 }
 
 // マスの一覧を表示するぜ☆（＾～＾）
-// pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
-//     Beam::shoot(&format!("+\n| {}", title));
-//     Beam::shoot(&format!("| Square count={}", sq_list.len()));
-//     // ソート
-//     let mut sq_list2 = sq_list.clone();
-//     sq_list2.sort();
+pub fn print_sq_list(title: &str, sq_list: &Vec<Square>) {
+    Beam::shoot(&format!("+\n| {}", title));
+    Beam::shoot(&format!("| Square count={}", sq_list.len()));
+    // ソート
+    let mut sq_list2 = sq_list.clone();
+    sq_list2.sort();
 
-//     for (i, sq) in sq_list2.into_iter().enumerate() {
-//         Beam::shoot(&format!("| [{}] {}", i, sq));
-//     }
-//     Beam::shoot("+");
-// }
+    for (i, sq) in sq_list2.into_iter().enumerate() {
+        Beam::shoot(&format!("| [{}] {}", i, sq));
+    }
+    Beam::shoot("+");
+}
 
 /// 情報表示
 pub fn print_info(

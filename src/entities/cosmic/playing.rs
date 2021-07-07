@@ -23,8 +23,8 @@ pub enum PosNums {
 pub struct GameHashSeed {
     // 盤上の駒
     pub piece_hash: [[u64; PIECE_MEANING_LEN]; BOARD_MEMORY_AREA as usize],
-    // 持ち駒
-    pub hands: [[u64; HAND_MAX]; HAND_ADDRESS_LEN],
+    // 持ち駒の枚数 最大で 0～18 の 19サイズ
+    pub hand_hash: [[u64; HAND_MAX + 1]; HAND_ADDRESS_LEN],
     // 先後
     pub phase: [u64; PHASE_LEN],
 }
@@ -53,7 +53,7 @@ impl Default for Game {
                 // 盤上の駒
                 piece_hash: [[0; PIECE_MEANING_LEN]; BOARD_MEMORY_AREA as usize],
                 // 持ち駒
-                hands: [[0; HAND_MAX]; HAND_ADDRESS_LEN],
+                hand_hash: [[0; HAND_MAX + 1]; HAND_ADDRESS_LEN],
                 // 先後
                 phase: [0; PHASE_LEN],
             },
@@ -85,8 +85,8 @@ impl Game {
         }
         // 持ち駒
         for i_piece in 0..HAND_ADDRESS_LEN {
-            for i_count in 0..HAND_MAX {
-                self.hash_seed.hands[i_piece][i_count] =
+            for i_count in 0..HAND_MAX + 1 {
+                self.hash_seed.hand_hash[i_piece][i_count] =
                     rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
             }
         }

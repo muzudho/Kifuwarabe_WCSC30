@@ -22,9 +22,12 @@ use crate::position::square_offset;
 use crate::position::square_rotate_180;
 use crate::position::square_to_hand_piece;
 use crate::position::square_wall;
+use crate::position::to_move_code;
 use crate::position::Square;
 use crate::take1base::Move;
 use crate::take1base::Piece;
+use crate::view::print_move_list;
+use crate::view::print_sq_list;
 use std::fmt;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -532,7 +535,7 @@ impl PseudoLegalMoves {
     /// # Returns
     ///
     /// 指し手の一覧
-    pub fn generate(us: Phase, position: &Position) -> Vec<Move> {
+    pub fn generate(us: Phase, position: &Position, is_debug: bool) -> Vec<Move> {
         // TODO その手を指して、王手が解消されない手は除外したい
         // 本書では、「離れた王手」は玉とチェッカーの間に１マス以上の空きマスがあるものとします。また、桂を含みません。
         //
@@ -548,7 +551,9 @@ impl PseudoLegalMoves {
             Phase::Second => position.location_at(PieceNum::King2),
         };
 
-        // Beam::shoot(&format!("# generate ksq={}", ksq));
+        if is_debug {
+            Beam::shoot(&format!("# generate ksq={}", ksq));
+        }
 
         if !is_board_square(ksq) {
             panic!("(Err.93) ksq fail")
@@ -586,10 +591,13 @@ impl PseudoLegalMoves {
                 checker_list.push(checker);
             }
         }
-        // print_sq_list("pinned_list", &pinned_list);
-        // print_sq_list("pin_head_list", &pin_head_list);
-        // print_sq_list("checker_list", &checker_list);
-        // print_sq_list("long_control_sq_list", &long_control_sq_list);
+
+        if is_debug {
+            print_sq_list("pinned_list", &pinned_list);
+            print_sq_list("pin_head_list", &pin_head_list);
+            print_sq_list("checker_list", &checker_list);
+            print_sq_list("long_control_sq_list", &long_control_sq_list);
+        }
 
         let gen_type = if checker_list.is_empty() {
             // TODO チェッカーがいなかったら、非回避(Non-evasions)モードへ
@@ -607,15 +615,17 @@ impl PseudoLegalMoves {
         } else {
             // チェッカーが１つ以下なら
             PseudoLegalMoves::generate_non_evasion(us, position, &mut move_list);
-            //print_move_list("generate_non_evasion", position, &move_list);
+            if is_debug {
+                print_move_list("generate_non_evasion", position, &move_list);
+            }
             // とりあえず、合い駒を動かす手を除外します
             // TODO 合い駒でも、動かしていい方向はあるはず
             move_list.retain(|particle| {
                 let (from, _, _) = destructure_move(*particle);
                 let retain = !pinned_list.contains(&from);
-                // if !retain {
-                //     Beam::shoot(&format!("# remove pinned-move={}", to_move_code(*particle)));
-                // }
+                if is_debug && !retain {
+                    Beam::shoot(&format!("# remove pinned-move={}", to_move_code(*particle)));
+                }
                 retain
             });
 
@@ -626,17 +636,19 @@ impl PseudoLegalMoves {
                     move_list.retain(|particle| {
                         let (from, to, _) = destructure_move(*particle);
                         if from == ksq {
-                            //Beam::shoot(&format!("# retain king={}", to_move_code(*particle)));
+                            if is_debug {
+                                Beam::shoot(&format!("# retain king={}", to_move_code(*particle)));
+                            }
                             true
                         } else {
                             // 利きを止めるような動きでなければ除外
                             let retain = long_control_sq_list.contains(&to);
-                            // if !retain {
-                            //     Beam::shoot(&format!(
-                            //         "# remove not-pinned-move={}",
-                            //         to_move_code(*particle)
-                            //     ));
-                            // }
+                            if is_debug && !retain {
+                                Beam::shoot(&format!(
+                                    "# remove not-pinned-move={}",
+                                    to_move_code(*particle)
+                                ));
+                            }
                             retain
                         }
                     });
@@ -723,17 +735,13 @@ impl PseudoLegalMoves {
                     || long_bl
                     || long_br;
 
-                // Beam::shoot(&format!(
-                //     "# suicide-check from={} to={} control={}",
-                //     from, to, control
-                // ));
-                // if control {
-                //     Beam::shoot(&format!(
-                //         "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
-                //         to_move_code(*particle),
-                //         from,to,control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
-                //     ));
-                // }
+                if is_debug && control {
+                    Beam::shoot(&format!(
+                        "# remove suicide-move={:5} from={:3} to={:3} control={:5} r={:5} tr={:5} t={:5} tl={:5} l={:5} bl={:5} b={:5} br={:5} long_r={:5} long_t={:5} long_l={:5} long_b={:5} long_tr={:5} long_tl={:5} long_bl={:5} long_br={:5}",
+                        to_move_code(*particle),
+                        from,to,control,r,tr,t,tl,l,bl,b,br,long_r,long_t,long_l,long_b,long_tr,long_tl,long_bl,long_br
+                    ));
+                }
                 !control
             } else {
                 // 玉以外の駒の動きは残す
@@ -1202,9 +1210,9 @@ impl Area {
     /// ---------
     /// * `us` - 先手か後手か、関係ないか☆（＾～＾）先後同型なら関係ないしな☆（＾～＾）
     /// * `start` - 移動元升☆（＾～＾）
-    /// * `angle` - 角度☆（＾～＾）
-    /// * `agility` - 動き方☆（＾～＾）
-    /// * `callback` - 絶対番地を受け取れだぜ☆（＾～＾）
+    /// * `square` - 升☆（＾～＾）
+    /// * `mobility` - 動き方☆（＾～＾）
+    /// * `moving` - 絶対番地を受け取れだぜ☆（＾～＾）
     fn move_<F1>(us: &Option<Phase>, start: Square, mobility: Mobility, moving: &mut F1)
     where
         F1: FnMut(Square, Agility) -> bool,

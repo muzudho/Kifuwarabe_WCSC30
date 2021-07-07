@@ -156,8 +156,8 @@ impl Chiyuri {
         }
     }
     pub fn genmove(game: &Game) {
-        // Generation move.
-        let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position);
+        // Generation move for debug
+        let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position, true);
         print_move_list("genmove", &game.position, &move_list);
     }
     pub fn hash(universe: &Universe) {

@@ -67,7 +67,7 @@ struct SpeedOfLight {
     //piece_type_to_see_order_table: [usize; PIECE_TYPE_LEN],
     /// 持ち駒☆（＾～＾）
     /// 玉２枚引く☆（＾～＾）
-    hand_types_legal_all: [HandPiece; HAND_ADDRESS_LEN - 2],
+    hand_pieces_legal_all: [HandPiece; HAND_ADDRESS_LEN - 2],
     hand_types: [[HandPiece; HAND_ADDRESS_TYPE_LEN]; PHASE_LEN],
     hand_piece_to_type_table: [HandType; HAND_ADDRESS_LEN],
     hand_piece_to_phase_table: [Phase; HAND_ADDRESS_LEN],
@@ -556,7 +556,7 @@ impl Default for SpeedOfLight {
             //     1, // PromotedPawn
             // ],
             // 持ち駒☆（＾～＾）
-            hand_types_legal_all: [
+            hand_pieces_legal_all: [
                 HandPiece::Rook1,
                 HandPiece::Bishop1,
                 HandPiece::Gold1,
@@ -806,8 +806,8 @@ impl HandPieces {
     where
         F1: FnMut(HandPiece),
     {
-        for adr in &NINE_299792458.hand_types_legal_all {
-            callback(*adr);
+        for hand_pc in &NINE_299792458.hand_pieces_legal_all {
+            callback(*hand_pc);
         }
     }
 }

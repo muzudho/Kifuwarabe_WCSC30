@@ -12,10 +12,11 @@ use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 use crate::view::print_info;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use rand::Rng;
 use std::fmt;
 use std::time::Instant;
-
 /// 評価値（＾～＾）
 pub type CentiPawn = i16;
 
@@ -67,7 +68,7 @@ impl Tree {
         );
 
         // alpha値を上げていきたいが、beta値を超えたくない（＾～＾）
-        let mut alpha = i16::MIN;
+        let mut alpha = i16::MIN + 1; // -32768 を - しても +32768 は無いので調整（＾～＾）
         let beta = i16::MAX;
         let mut bestmove = RESIGN_MOVE;
 
@@ -81,10 +82,11 @@ impl Tree {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
             }
-            if move_ == RESIGN_MOVE {
-                // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
-                break;
-            }
+            // 最後まで指せだぜ（＾～＾）
+            // if move_ == RESIGN_MOVE {
+            //     // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
+            //     break;
+            // }
             if value < alpha || beta < value {
                 // 無視
             } else if alpha < value {
@@ -134,7 +136,8 @@ impl Tree {
                 lioncatch.checks
             } else {
                 //   */
-            let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position);
+            let move_list =
+                PseudoLegalMoves::generate(game.history.get_phase(), &game.position, false);
 
             move_list
             //}
@@ -144,6 +147,9 @@ impl Tree {
         if move_list.is_empty() {
             return (-alpha, bestmove);
         }
+
+        // TODO 指し手のオーダリングをしたいが、難しいのでシャッフルしたろ（＾～＾）
+        move_list.shuffle(&mut thread_rng());
 
         // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
         // いわば、１光手 利きカウントボードだぜ☆（＾～＾）

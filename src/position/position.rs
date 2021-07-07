@@ -407,6 +407,7 @@ impl Position {
     pub fn last_hand(&self, adr: HandPiece) -> Option<&PieceEx> {
         self.hands[adr as usize].last()
     }
+    /// 持駒の枚数
     pub fn count_hand(&self, adr: HandPiece) -> usize {
         self.hands[adr as usize].len()
     }
@@ -426,16 +427,16 @@ impl Position {
         }
 
         // 持ち駒ハッシュ
-        HandPieces::for_all(&mut |adr| {
-            let count = self.count_hand(adr);
+        HandPieces::for_all(&mut |hand_pc| {
+            let count = self.count_hand(hand_pc);
             debug_assert!(
                 count <= HAND_MAX,
                 "持ち駒 {:?} の枚数 {} <= {}",
-                adr,
+                hand_pc,
                 count,
                 HAND_MAX
             );
-            hash ^= game.hash_seed.hands[adr as usize][count as usize];
+            hash ^= game.hash_seed.hand_hash[hand_pc as usize][count as usize];
         });
 
         // 手番ハッシュ はここでは算出しないぜ☆（＾～＾）
