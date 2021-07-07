@@ -4,7 +4,7 @@ use crate::entities::cosmic::smart::square::FILE_1;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::cryptographic::*;
 use crate::entities::law::usi::*;
-use crate::entities::spaceship::equipment::{Beam, PvString, Telescope};
+use crate::entities::spaceship::equipment::{Beam, Telescope};
 use crate::entities::spaceship::facility::{CommandRoom, GameRoom};
 use crate::movegen::PseudoLegalMoves;
 use crate::position::square_from;
@@ -59,12 +59,12 @@ impl Kifuwarabe {
             None,
             Some((tree.state_nodes, tree.nps())),
             Some(node_value),
-            Some(bestmove.move_),
-            &Some(PvString::String(bestmove.reason.to_string())),
+            Some(bestmove),
+            &None,
         );
         // 例: bestmove 7g7f
         // 例: bestmove resign
-        Beam::shoot(&format!("bestmove {}", to_move_code(bestmove.move_)));
+        Beam::shoot(&format!("bestmove {}", to_move_code(bestmove)));
     }
     pub fn isready() {
         Beam::shoot("readyok");
@@ -102,7 +102,7 @@ impl Kifuwarabe {
     pub fn usi() {
         let engine_file = EngineFile::read();
         // const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-        const VERSION: &'static str = "B2";
+        const VERSION: &'static str = "B3";
         Beam::shoot(&format!("id name {} {}", engine_file.engine.name, VERSION));
         Beam::shoot(&format!("id author {}", engine_file.engine.author));
 

@@ -1,8 +1,6 @@
 //!
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
-pub mod move_ex;
-
 use crate::entities::cosmic::playing::Game;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::features::PieceType;
@@ -23,13 +21,6 @@ pub type CentiPawn = i16;
 
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: CentiPawn = -300;
-
-#[derive(Clone)]
-pub struct MoveEx {
-    pub move_: Move,
-    /// この指し手を選んだ理由☆（＾～＾）
-    pub reason: Reason,
-}
 
 pub struct Tree {
     // この木を生成したと同時にストップ・ウォッチを開始するぜ☆（＾～＾）
@@ -60,7 +51,7 @@ impl Tree {
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
-    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (CentiPawn, MoveEx, TreeState) {
+    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (CentiPawn, Move, TreeState) {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng().gen_range(
             universe.option_min_think_sec as u64,
@@ -89,14 +80,14 @@ impl Tree {
                 Some(self.max_depth0),
                 Some((self.state_nodes, self.nps())),
                 Some(alpha),
-                Some(bestmove.move_),
+                Some(bestmove),
                 &Some(PvString::PV(
                     self.msec(),
-                    format!("{}", format!("{}", to_move_code(bestmove.move_))),
+                    format!("{}", format!("{}", to_move_code(bestmove))),
                 )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
             );
 
-            if bestmove.move_ == RESIGN_MOVE {
+            if bestmove == RESIGN_MOVE {
                 // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
                 break;
             }
@@ -148,9 +139,9 @@ impl Tree {
         game: &mut Game,
         mut alpha: i16,
         beta: i16,
-    ) -> (CentiPawn, MoveEx, TreeState) {
+    ) -> (CentiPawn, Move, TreeState) {
         let mut ts = TreeState::default();
-        let mut bestmove = MoveEx::default();
+        let mut bestmove = RESIGN_MOVE;
 
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
         let mut exists_lose = false;
@@ -236,7 +227,7 @@ impl Tree {
             if let Some(captured_piece_val) = captured_piece {
                 if captured_piece_val.piece.type_() == PieceType::K {
                     // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    bestmove.catch_king(*move_);
+                    bestmove = *move_;
                     alpha = i16::MAX;
 
                     self.pv.pop();
@@ -261,14 +252,14 @@ impl Tree {
                 let leaf_value: CentiPawn =
                     -game.position.material_advantage(game.history.get_phase());
                 {
-                    if bestmove.move_ == RESIGN_MOVE {
+                    if bestmove == RESIGN_MOVE {
                         // どんな葉も 投了よりは更新したいだろ☆（＾～＾）
-                        bestmove.update(*move_, Reason::AnyLeafBetterThanResign);
+                        bestmove = *move_;
                         alpha = leaf_value;
                     } else {
                         if alpha < leaf_value {
                             // 評価値が良かったから更新☆（＾～＾）
-                            bestmove.update(*move_, Reason::GoodPosition);
+                            bestmove = *move_;
                             alpha = leaf_value;
                         }
                     }
@@ -281,13 +272,13 @@ impl Tree {
                         Some(self.pv.len()),
                         Some((self.state_nodes, self.nps())),
                         Some(alpha),
-                        Some(bestmove.move_),
+                        Some(bestmove),
                         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
                     );
                 }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                let (node_value, child_move, _) = self.search(game, -beta, -alpha);
+                let (node_value, _, _) = self.search(game, -beta, -alpha);
 
                 if ts.timeout {
                     // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
@@ -295,23 +286,20 @@ impl Tree {
                 }
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
-                let friend_move = *move_;
                 exists_lose = {
                     // TODO 玉を取られてたら、ここは投了すべき☆（＾～＾）？
 
                     // TODO 相手が投了してたら、必ず選ぶべき☆（＾～＾）？
 
-                    if bestmove.move_ != RESIGN_MOVE {
+                    if bestmove != RESIGN_MOVE {
                         // どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
-                        bestmove.update(friend_move, Reason::ThisBetterThanResign);
                         alpha = node_value;
-                        bestmove = child_move;
+                        bestmove = *move_;
                     } else {
                         if alpha < node_value {
                             // 上方修正
-                            bestmove.update(friend_move, Reason::ValueUp);
                             alpha = node_value;
-                            bestmove = child_move;
+                            bestmove = *move_;
                         }
                     }
                     false
@@ -336,9 +324,9 @@ impl Tree {
         // }
 
         if !exists_lose {
-            if bestmove.move_ == RESIGN_MOVE {
+            if bestmove == RESIGN_MOVE {
                 // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-                bestmove.update(ts.repetition_move, Reason::RepetitionBetterThanResign);
+                bestmove = ts.repetition_move;
                 alpha = REPITITION_VALUE;
             }
         }
@@ -415,52 +403,5 @@ impl fmt::Display for PrincipalVariation {
             buffer.push_str(&format!("{} ", to_move_code(self.moves[i])));
         }
         write!(f, "{}", buffer.trim_end())
-    }
-}
-
-#[derive(Clone)]
-pub enum Reason {
-    /// 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-    RepetitionBetterThanResign,
-    /// なんの手も無かったぜ☆（＾～＾）
-    NoUpdate,
-    /// 玉を取る手より強い手はないぜ☆（＾～＾）！
-    KingCatchIsStrongest,
-    /// 相手が負けてるので、自分が勝ってるぜ☆（＾～＾）
-    FriendWin,
-    /// どんな悪手も、詰みでなければ 投了より良いだろ☆（＾～＾）
-    ThisBetterThanResign,
-    /// どんな葉も 投了より良いだろ☆（＾～＾）でも、王さんが利きに飛び込んでいるかもしれないな……☆（＾～＾）
-    AnyLeafBetterThanResign,
-    /// どんな評価値でも、負けるよりマシだろ☆（＾～＾）
-    AnyLeafMoreThanLose,
-    /// 勝つんだから更新するぜ☆（＾～＾）
-    Win,
-    /// 評価値が良かったから更新☆（＾～＾）
-    GoodPosition,
-    /// 自分が負けるところを、まだそうでない手があるのなら、更新するぜ☆（＾～＾）
-    AnyMoveMoreThanLose,
-    /// 上方修正
-    ValueUp,
-}
-impl fmt::Display for Reason {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Reason::RepetitionBetterThanResign => "RepetitionBetterThanResign",
-                Reason::NoUpdate => "NoUpdate",
-                Reason::KingCatchIsStrongest => "KingCatchIsStrongest",
-                Reason::FriendWin => "FriendWin",
-                Reason::ThisBetterThanResign => "ThisBetterThanResign",
-                Reason::AnyLeafBetterThanResign => "AnyLeafBetterThanResign",
-                Reason::AnyLeafMoreThanLose => "AnyLeafMoreThanLose",
-                Reason::Win => "Win",
-                Reason::GoodPosition => "GoodPosition",
-                Reason::AnyMoveMoreThanLose => "AnyMoveMoreThanLose",
-                Reason::ValueUp => "ValueUp",
-            }
-        )
     }
 }
