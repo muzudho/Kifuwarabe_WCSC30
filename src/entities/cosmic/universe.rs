@@ -18,8 +18,6 @@ pub struct Universe {
     pub option_max_think_sec: usize,
     /// 諦めない深さ☆（＾～＾）読み終わるまで、思考時間を無視するぜ☆（＾～＾）max_depth - 1 より小さくしろだぜ☆（＾～＾）
     pub option_depth_not_to_give_up: usize,
-    /// 駒割の重み☆（＾～＾）1000分率☆（＾～＾）
-    pub option_material_advantage_weight: i16,
 }
 impl Default for Universe {
     fn default() -> Self {
@@ -31,7 +29,6 @@ impl Default for Universe {
             /// min < max にしろだぜ☆（＾～＾）
             option_min_think_sec: 7,
             option_max_think_sec: 17,
-            option_material_advantage_weight: 1000,
         }
     }
 }
