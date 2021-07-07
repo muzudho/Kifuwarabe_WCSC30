@@ -57,7 +57,7 @@ impl Tree {
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
-    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (CentiPawn, Move, TreeState) {
+    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (CentiPawn, Move) {
         universe.game.info.clear();
         self.think_sec = rand::thread_rng().gen_range(
             universe.option_min_think_sec as u64,
@@ -70,7 +70,7 @@ impl Tree {
         // とりあえず 1手読み を叩き台にするぜ☆（＾～＾）
         // 初手の３０手が葉になるぜ☆（＾～＾）
         self.max_depth0 = 0;
-        let (node_value, mut bestmove, mut best_ts) = self.search(&mut universe.game, alpha, beta);
+        let (node_value, mut bestmove) = self.search(&mut universe.game, alpha, beta);
         if node_value < alpha || beta < node_value {
             // 無視
         } else if alpha < node_value {
@@ -111,7 +111,7 @@ impl Tree {
             );
 
             // 探索局面数は引き継ぐぜ☆（＾～＾）積み上げていった方が見てて面白いだろ☆（＾～＾）
-            let (node_value, bestmove_tmp, ts) = self.search(&mut universe.game, -beta, -alpha);
+            let (node_value, bestmove_tmp) = self.search(&mut universe.game, -beta, -alpha);
             if self.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
@@ -122,12 +122,9 @@ impl Tree {
                 alpha = node_value;
                 bestmove = bestmove_tmp;
             }
-
-            // 無条件に更新だぜ☆（＾～＾）初手の高得点を引きずられて王手回避漏れされたら嫌だしな☆（＾～＾）
-            best_ts = ts.clone();
         }
 
-        (-alpha, bestmove, best_ts)
+        (-alpha, bestmove)
     }
 
     /// 先手の気持ちで、勝てだぜ☆（*＾～＾*）
@@ -140,13 +137,7 @@ impl Tree {
     /// # Returns
     ///
     /// Best movement, Value, Sum nodes
-    fn search(
-        &mut self,
-        game: &mut Game,
-        mut alpha: i16,
-        beta: i16,
-    ) -> (CentiPawn, Move, TreeState) {
-        let mut ts = TreeState::default();
+    fn search(&mut self, game: &mut Game, mut alpha: i16, beta: i16) -> (CentiPawn, Move) {
         let mut bestmove = RESIGN_MOVE;
 
         // この手を指すと負けてしまう、という手が見えていたら、このフラグを立てろだぜ☆（＾～＾）
@@ -172,7 +163,7 @@ impl Tree {
 
         // 指せる手が無ければ投了☆（＾～＾）
         if move_list.is_empty() {
-            return (-alpha, bestmove, ts);
+            return (-alpha, bestmove);
         }
 
         // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
@@ -220,7 +211,7 @@ impl Tree {
                 // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
                 // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
                 self.timeout = true;
-                return (-alpha, bestmove, ts);
+                return (-alpha, bestmove);
             }
 
             // 1手進めるぜ☆（＾～＾）
@@ -284,11 +275,11 @@ impl Tree {
                 }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                let (node_value, _, _) = self.search(game, -beta, -alpha);
+                let (node_value, _) = self.search(game, -beta, -alpha);
 
                 if self.timeout {
                     // すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-                    return (alpha, bestmove, ts);
+                    return (-alpha, bestmove);
                 }
 
                 // 下の木の結果を、ひっくり返して、引き継ぎます。
@@ -337,7 +328,7 @@ impl Tree {
             }
         }
 
-        (-alpha, bestmove, ts)
+        (-alpha, bestmove)
     }
 
     pub fn sec(&self) -> u64 {
@@ -355,14 +346,6 @@ impl Tree {
         } else {
             0
         }
-    }
-}
-
-#[derive(Clone)]
-pub struct TreeState {}
-impl Default for TreeState {
-    fn default() -> Self {
-        TreeState {}
     }
 }
 
