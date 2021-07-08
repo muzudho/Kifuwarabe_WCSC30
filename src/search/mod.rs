@@ -68,7 +68,9 @@ impl Tree {
         );
 
         // alpha値を上げていきたいが、beta値を超えたくない（＾～＾）
-        let mut alpha = i16::MIN + 1; // -32768 を - しても +32768 は無いので調整（＾～＾）
+        // -32768 を - しても +32768 は無いので + 1 して調整（＾～＾）
+        let mut alpha = i16::MIN + 1;
+        // beta値は 相手の alpha値の正負を反対にしたもの
         let beta = i16::MAX;
         let mut bestmove = RESIGN_MOVE;
 

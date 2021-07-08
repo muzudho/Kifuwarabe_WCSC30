@@ -8,9 +8,6 @@ use crate::entities::cosmic::smart::features::HandPiece;
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::move_::new_move;
 use crate::entities::spaceship::equipment::Beam;
-use crate::movegen::check::get_check;
-use crate::movegen::check::is_adjacent_check;
-use crate::movegen::check::is_long_check;
 use crate::position::destructure_move;
 use crate::position::position::{PieceNum, Position};
 use crate::position::rotation::Angle;
@@ -26,6 +23,9 @@ use crate::take1base::Piece;
 use crate::view::print_move_list;
 use crate::view::print_sq_list;
 use std::fmt;
+
+/// 王手に関する関数の集まり
+pub struct Check();
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct PieceEx {
@@ -158,7 +158,7 @@ impl PseudoLegalMoves {
             Direction::TopLeftKnight,
         ];
         for direction in directions {
-            let (pinned, pin_head, checker) = get_check(
+            let (pinned, pin_head, checker) = Check::get_square(
                 us,
                 position,
                 ksq,
@@ -247,19 +247,19 @@ impl PseudoLegalMoves {
             let (from, to, _) = destructure_move(*particle);
             if from == ksq {
                 // Control 1～12
-                let r = is_adjacent_check(us, position, to, Direction::Right);
-                let tr = is_adjacent_check(us, position, to, Direction::TopRight);
-                let t = is_adjacent_check(us, position, to, Direction::Top);
-                let tl = is_adjacent_check(us, position, to, Direction::TopLeft);
-                let l = is_adjacent_check(us, position, to, Direction::Left);
-                let bl = is_adjacent_check(us, position, to, Direction::BottomLeft);
-                let b = is_adjacent_check(us, position, to, Direction::Bottom);
-                let br = is_adjacent_check(us, position, to, Direction::BottomRight);
+                let r = Check::is_adjacent(us, position, to, Direction::Right);
+                let tr = Check::is_adjacent(us, position, to, Direction::TopRight);
+                let t = Check::is_adjacent(us, position, to, Direction::Top);
+                let tl = Check::is_adjacent(us, position, to, Direction::TopLeft);
+                let l = Check::is_adjacent(us, position, to, Direction::Left);
+                let bl = Check::is_adjacent(us, position, to, Direction::BottomLeft);
+                let b = Check::is_adjacent(us, position, to, Direction::Bottom);
+                let br = Check::is_adjacent(us, position, to, Direction::BottomRight);
                 // 桂馬の利き
-                let trn = is_adjacent_check(us, position, to, Direction::TopRightKnight);
-                let tln = is_adjacent_check(us, position, to, Direction::TopLeftKnight);
+                let trn = Check::is_adjacent(us, position, to, Direction::TopRightKnight);
+                let tln = Check::is_adjacent(us, position, to, Direction::TopLeftKnight);
                 // 飛、香、竜の動き
-                let long_r = is_long_check(
+                let long_r = Check::is_long(
                     us,
                     position,
                     from,
@@ -267,10 +267,10 @@ impl PseudoLegalMoves {
                     Direction::Right,
                 );
                 let long_t =
-                    is_long_check(us, position, from, to, Direction::Top);
+                Check::is_long(us, position, from, to, Direction::Top);
                 let long_l =
-                    is_long_check(us, position, from, to, Direction::Left);
-                let long_b = is_long_check(
+                Check::is_long(us, position, from, to, Direction::Left);
+                let long_b = Check::is_long(
                     us,
                     position,
                     from,
@@ -278,28 +278,28 @@ impl PseudoLegalMoves {
                     Direction::Bottom,
                 );
                 // 角、馬の動き
-                let long_tr = is_long_check(
+                let long_tr = Check::is_long(
                     us,
                     position,
                     from,
                     to,
                     Direction::TopRight,
                 );
-                let long_tl = is_long_check(
+                let long_tl = Check::is_long(
                     us,
                     position,
                     from,
                     to,
                     Direction::TopLeft,
                 );
-                let long_bl = is_long_check(
+                let long_bl = Check::is_long(
                     us,
                     position,
                     from,
                     to,
                     Direction::BottomLeft,
                 );
-                let long_br = is_long_check(
+                let long_br = Check::is_long(
                     us,
                     position,
                     from,
