@@ -79,8 +79,8 @@ impl Tree {
             self.id_max_depth = depth;
             self.id_depth = depth;
             // 探索（＾～＾）
-            let (mut value, move_) = self.search(&mut universe.game, alpha, beta);
-            value = -value;
+            let (node_value, move_) = self.search(&mut universe.game, alpha, beta);
+            //node_value = -node_value;
             if self.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
@@ -90,10 +90,10 @@ impl Tree {
             //     // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
             //     break;
             // }
-            if value < alpha || beta < value {
+            if node_value < alpha || beta < node_value {
                 // 無視
-            } else if bestmove <= RESIGN_MOVE || alpha <= value {
-                alpha = value;
+            } else if bestmove <= RESIGN_MOVE || alpha <= node_value {
+                alpha = node_value;
                 bestmove = move_;
             }
 
@@ -137,7 +137,7 @@ impl Tree {
             // }
 
             // 現局面（は相手の手番）の駒割り評価値をひっくり返したもの☆（＾～＾）
-            let leaf_value: CentiPawn = -game.position.material_advantage(game.history.get_phase());
+            let leaf_value: CentiPawn = game.position.material_advantage(game.history.get_phase());
 
             // 局面を評価するだけ（＾～＾） 指し手は返さないぜ（＾～＾）
             return (leaf_value, RESIGN_MOVE);
@@ -245,8 +245,8 @@ impl Tree {
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.id_depth -= 1;
-                let (mut node_value, _) = self.search(game, -beta, -alpha);
-                node_value = -node_value;
+                let (mut edge_value, _) = self.search(game, -beta, -alpha);
+                edge_value = -edge_value;
                 self.id_depth += 1;
 
                 // if self.timeout {
@@ -255,10 +255,10 @@ impl Tree {
                 // }
 
                 // 初期状態が 投了なので、更新したい（＾～＾）
-                if bestmove == RESIGN_MOVE || alpha <= node_value {
+                if bestmove == RESIGN_MOVE || alpha <= edge_value {
                     // (1) どんな悪手も、投了より良いだろ☆（＾～＾）
                     // (2) アルファー・アップデート
-                    alpha = node_value;
+                    alpha = edge_value;
                     bestmove = *move_;
                 }
             }
@@ -266,7 +266,7 @@ impl Tree {
             self.pv.pop();
             game.undo_move();
 
-            // すべての弟ノードのベータカット判定☆（＾～＾）
+            // ベータカット判定☆（＾～＾）
             if beta < alpha {
                 // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
                 // これが　いわゆるベータカットだぜ☆（＾～＾）
