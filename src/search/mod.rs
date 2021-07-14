@@ -79,7 +79,7 @@ impl Tree {
             self.id_max_depth = depth;
             self.id_depth = depth;
             // 探索（＾～＾）
-            let (mut value, move_) = self.search(&mut universe.game, -beta, -alpha);
+            let (mut value, move_) = self.search(&mut universe.game, alpha, beta);
             value = -value;
             if self.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
@@ -92,7 +92,7 @@ impl Tree {
             // }
             if value < alpha || beta < value {
                 // 無視
-            } else if alpha < value {
+            } else if bestmove <= RESIGN_MOVE || alpha <= value {
                 alpha = value;
                 bestmove = move_;
             }
@@ -127,6 +127,21 @@ impl Tree {
     fn search(&mut self, game: &mut Game, mut alpha: i16, beta: i16) -> (CentiPawn, Move) {
         let mut bestmove = RESIGN_MOVE;
 
+        // TODO 葉ノードなら、評価値を返して終了（＾～＾）
+        if self.id_depth < 1 {
+            // 葉だぜ☆（＾～＾）
+
+            // if let Some(_captured) = move_.captured {
+            //     // TODO SEEやろうぜ☆（＾～＾）
+            //     SEE::go(game, &movement.destination);
+            // }
+
+            // 現局面（は相手の手番）の駒割り評価値をひっくり返したもの☆（＾～＾）
+            let leaf_value: CentiPawn = -game.position.material_advantage(game.history.get_phase());
+
+            // 局面を評価するだけ（＾～＾） 指し手は返さないぜ（＾～＾）
+            return (leaf_value, RESIGN_MOVE);
+        }
         // TODO let mut controls = Vec::<Square>::new();
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
@@ -225,44 +240,8 @@ impl Tree {
 
             // 千日手かどうかを判定する☆（＾～＾）
             if SENNTITE_NUM <= game.count_same_position() {
-                // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）
+                // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）何もせず次へ（＾～＾）
                 self.repetition_move = *move_;
-            } else if self.id_depth < 1 {
-                // 葉だぜ☆（＾～＾）
-
-                // if let Some(_captured) = move_.captured {
-                //     // TODO SEEやろうぜ☆（＾～＾）
-                //     SEE::go(game, &movement.destination);
-                // }
-
-                // 現局面（は相手の手番）の駒割り評価値をひっくり返したもの☆（＾～＾）
-                let leaf_value: CentiPawn =
-                    -game.position.material_advantage(game.history.get_phase());
-                {
-                    if bestmove == RESIGN_MOVE {
-                        // どんな葉も 投了よりは更新したいだろ☆（＾～＾）
-                        bestmove = *move_;
-                        alpha = leaf_value;
-                    } else {
-                        if alpha < leaf_value {
-                            // 評価値が良かったから更新☆（＾～＾）
-                            bestmove = *move_;
-                            alpha = leaf_value;
-                        }
-                    }
-                }
-                // if game.info.is_printable() {
-                //     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
-                //     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
-                //     print_info(
-                //         &mut game.info,
-                //         Some(self.id_max_depth - self.id_depth + 1), //self.pv.len()
-                //         Some((self.state_nodes, self.nps())),
-                //         Some(alpha),
-                //         Some(bestmove),
-                //         &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
-                //     );
-                // }
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.id_depth -= 1;
@@ -275,12 +254,10 @@ impl Tree {
                 //     return (alpha, bestmove);
                 // }
 
-                if bestmove == RESIGN_MOVE {
-                    // どんな悪手も、投了より良いだろ☆（＾～＾）
-                    alpha = node_value;
-                    bestmove = *move_;
-                } else if alpha < node_value {
-                    // 上方修正
+                // 初期状態が 投了なので、更新したい（＾～＾）
+                if bestmove == RESIGN_MOVE || alpha <= node_value {
+                    // (1) どんな悪手も、投了より良いだろ☆（＾～＾）
+                    // (2) アルファー・アップデート
                     alpha = node_value;
                     bestmove = *move_;
                 }
