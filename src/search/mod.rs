@@ -21,7 +21,7 @@ pub type CentiPawn = i16;
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: CentiPawn = -300;
 
-pub struct Tree {
+pub struct SearchStack {
     // 自分
     us: Phase,
     // この木を生成したと同時にストップ・ウォッチを開始するぜ☆（＾～＾）
@@ -45,9 +45,9 @@ pub struct Tree {
     // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     pub repetition_move: Move,
 }
-impl Tree {
+impl SearchStack {
     pub fn new(depth_not_to_give_up: usize) -> Self {
-        Tree {
+        SearchStack {
             us: Phase::First,
             stopwatch: Instant::now(),
             state_nodes: 0,

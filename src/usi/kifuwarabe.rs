@@ -1,23 +1,64 @@
 use crate::config::*;
+use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::to_move_code;
-use crate::search::Tree;
+use crate::search::SearchStack;
 use crate::usi::Kifuwarabe;
 use crate::view::print_info;
 
 impl Kifuwarabe {
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
-    pub fn go(universe: &mut Universe) {
+    pub fn go(universe: &mut Universe, tokens: &Vec<&str>) {
+        // # Example
+        //
+        // ```
+        // go btime 60000 wtime 50000 byoyomi 10000
+        // .  .     2     .     4     .       6
+        //
         // go btime 40000 wtime 50000 binc 10000 winc 10000
-        let mut tree = Tree::new(universe.option_depth_not_to_give_up);
-        let (node_value, bestmove) = tree.iteration_deeping(universe);
+        // .  .     2     .     4     .    6     .    8
+        // ```
+
+        let (btime, wtime, byoyomi, binc, winc) = {
+            if 8 <= tokens.len() && tokens[5] == "binc" {
+                // フィッシャー・クロック・ルール
+                (
+                    tokens[2].parse::<i64>().unwrap(),
+                    tokens[4].parse::<i64>().unwrap(),
+                    0,
+                    tokens[6].parse::<i64>().unwrap(),
+                    tokens[8].parse::<i64>().unwrap(),
+                )
+            } else if 6 <= tokens.len() {
+                // 秒読みルール
+                (
+                    tokens[2].parse::<i64>().unwrap(),
+                    tokens[4].parse::<i64>().unwrap(),
+                    tokens[6].parse::<i64>().unwrap(),
+                    0,
+                    0,
+                )
+            } else {
+                (0, 0, 0, 0, 0)
+            }
+        };
+
+        let time = {
+            match universe.game.history.get_phase() {
+                Phase::First => btime + byoyomi + binc,
+                Phase::Second => wtime + byoyomi + winc,
+            }
+        };
+
+        let mut search_stack = SearchStack::new(universe.option_depth_not_to_give_up);
+        let (node_value, bestmove) = search_stack.iteration_deeping(universe);
         // その手を選んだ理由☆（＾～＾）
         print_info(
             &mut universe.game.info,
             None,
-            Some((tree.state_nodes, tree.nps())),
+            Some((search_stack.state_nodes, search_stack.nps())),
             Some(node_value),
             Some(bestmove),
             &None,

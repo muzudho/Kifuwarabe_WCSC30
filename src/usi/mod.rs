@@ -89,7 +89,7 @@ pub fn main_loop(universe: &mut Universe) {
                     Kifuwarabe::usi();
                 }
                 "go" => {
-                    Kifuwarabe::go(universe);
+                    Kifuwarabe::go(universe, &tokens);
                 }
                 "gameover" => {
                     // gameover win
