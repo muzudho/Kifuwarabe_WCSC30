@@ -21,22 +21,23 @@ impl Kifuwarabe {
         // .  .     2     .     4     .    6     .    8
         // ```
 
+        // パース
         let (btime, wtime, byoyomi, binc, winc) = {
             if 8 <= tokens.len() && tokens[5] == "binc" {
                 // フィッシャー・クロック・ルール
                 (
-                    tokens[2].parse::<i64>().unwrap(),
-                    tokens[4].parse::<i64>().unwrap(),
+                    tokens[2].parse::<u64>().unwrap(),
+                    tokens[4].parse::<u64>().unwrap(),
                     0,
-                    tokens[6].parse::<i64>().unwrap(),
-                    tokens[8].parse::<i64>().unwrap(),
+                    tokens[6].parse::<u64>().unwrap(),
+                    tokens[8].parse::<u64>().unwrap(),
                 )
             } else if 6 <= tokens.len() {
                 // 秒読みルール
                 (
-                    tokens[2].parse::<i64>().unwrap(),
-                    tokens[4].parse::<i64>().unwrap(),
-                    tokens[6].parse::<i64>().unwrap(),
+                    tokens[2].parse::<u64>().unwrap(),
+                    tokens[4].parse::<u64>().unwrap(),
+                    tokens[6].parse::<u64>().unwrap(),
                     0,
                     0,
                 )
@@ -45,15 +46,36 @@ impl Kifuwarabe {
             }
         };
 
-        let time = {
-            match universe.game.history.get_phase() {
-                Phase::First => btime + byoyomi + binc,
-                Phase::Second => wtime + byoyomi + winc,
+        // 時間管理
+        let think_sec = {
+            let (think_ms, inc_ms) = match universe.game.history.get_phase() {
+                Phase::First => (btime + byoyomi + binc, binc),
+                Phase::Second => (wtime + byoyomi + winc, winc),
+            };
+
+            // 130手で使いつくす想定（＾～＾）
+            let seconds = think_ms / 1000;
+            let mut think_sec = seconds / 130;
+            let inc_sec = inc_ms / 1000;
+
+            if 0 < inc_sec {
+                // フィッシャー・クロック・ルール
+                // 最低でも （加算時間-1秒）は使おう
+                if think_sec < inc_sec - 1 {
+                    think_sec = inc_sec - 1;
+                }
+            } else {
+                // 最低でも 1秒は使おう
+                if think_sec < 1 {
+                    think_sec = 1;
+                }
             }
+
+            think_sec
         };
 
         let mut search_stack = SearchStack::new(universe.option_depth_not_to_give_up);
-        let (node_value, bestmove) = search_stack.iteration_deeping(universe);
+        let (node_value, bestmove) = search_stack.iteration_deeping(universe, think_sec);
         // その手を選んだ理由☆（＾～＾）
         print_info(
             &mut universe.game.info,
@@ -89,12 +111,12 @@ impl Kifuwarabe {
             "MaxDepth" => {
                 universe.option_max_depth = value.parse().unwrap();
             }
-            "MinThinkSec" => {
-                universe.option_min_think_sec = value.parse().unwrap();
-            }
-            "MaxThinkSec" => {
-                universe.option_max_think_sec = value.parse().unwrap();
-            }
+            // "MinThinkSec" => {
+            //     universe.option_min_think_sec = value.parse().unwrap();
+            // }
+            // "MaxThinkSec" => {
+            //     universe.option_max_think_sec = value.parse().unwrap();
+            // }
             _ => {}
         }
     }

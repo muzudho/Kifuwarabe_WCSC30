@@ -12,10 +12,10 @@ pub struct Universe {
     pub dialogue_mode: bool,
     /// 読みの最大深さ。
     pub option_max_depth: usize,
-    /// 思考時間の最小秒☆（＾～＾）
-    pub option_min_think_sec: usize,
-    /// 思考時間の最大秒☆（＾～＾）
-    pub option_max_think_sec: usize,
+    // /// 思考時間の最小秒☆（＾～＾）
+    // pub option_min_think_sec: usize,
+    // /// 思考時間の最大秒☆（＾～＾）
+    // pub option_max_think_sec: usize,
     /// 諦めない深さ☆（＾～＾）読み終わるまで、思考時間を無視するぜ☆（＾～＾）max_depth - 1 より小さくしろだぜ☆（＾～＾）
     pub option_depth_not_to_give_up: usize,
 }
@@ -26,9 +26,9 @@ impl Default for Universe {
             dialogue_mode: false,
             option_max_depth: 1,
             option_depth_not_to_give_up: 2,
-            /// min < max にしろだぜ☆（＾～＾）
-            option_min_think_sec: 7,
-            option_max_think_sec: 17,
+            // /// min < max にしろだぜ☆（＾～＾）
+            // option_min_think_sec: 7,
+            // option_max_think_sec: 17,
         }
     }
 }

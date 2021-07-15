@@ -1,5 +1,24 @@
 # Test
 
+## なぜ投了？
+
+```plain
+usi
+usiok
+setoption name USI_Ponder value true
+setoption name USI_Hash value 256
+setoption name DepthNotToGiveUp value 0
+setoption name MaxDepth value 5
+setoption name MinThinkSec value 30
+setoption name MaxThinkSec value 35
+isready
+readyok
+usinewgame
+position startpos moves 7g7f 3c3d 2g2f 2b8h+ 7i8h B*1e B*4e 1e2d 4i5h 2d3c 6i7h 3c8h 7h8h S*6e 4e6c+ 3a4b 6c6d 6e7f 6d7e 7f8g 8h8g 8b6b S*2b 6b6g+ 5h6g 3d3e 2b2a+ 1a1b R*2b 2c2d N*3d 4b3c B*4b 4a4b 3d4b+ 3c4b G*3b B*3d 3b4b
+pos
+go btime 80000 wtime 73000 binc 2000 winc 2000
+```
+
 ## パーサー変えたので
 
 ```plain

@@ -32,7 +32,7 @@ pub struct SearchStack {
     // 読み筋(Principal variation)☆（＾～＾）
     pv: PrincipalVariation,
 
-    // 思考時間（秒）をランダムにすることで、指し手を変えるぜ☆（＾～＾）
+    // 1手に費やす思考時間（秒）
     think_sec: u64,
 
     // 反復深化探索の１回目だけ真☆（＾～＾）
@@ -61,10 +61,15 @@ impl SearchStack {
         }
     }
     /// 反復深化探索だぜ☆（＾～＾）
-    pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (CentiPawn, Move) {
+    pub fn iteration_deeping(
+        &mut self,
+        universe: &mut Universe,
+        think_sec: u64,
+    ) -> (CentiPawn, Move) {
         universe.game.info.clear();
-        self.think_sec = rand::thread_rng()
-            .gen_range(universe.option_min_think_sec as u64..universe.option_max_think_sec as u64);
+        self.think_sec = think_sec;
+        // self.think_sec = rand::thread_rng()
+        //     .gen_range(universe.option_min_think_sec as u64..universe.option_max_think_sec as u64);
 
         self.us = universe.game.history.get_phase();
 
