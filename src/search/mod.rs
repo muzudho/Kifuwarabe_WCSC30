@@ -2,6 +2,7 @@
 //! 駒たちが躍動するぜ☆（＾～＾）
 //!
 use crate::entities::cosmic::playing::Game;
+use crate::entities::cosmic::recording::Phase;
 use crate::entities::cosmic::recording::{PLY_LEN, SENNTITE_NUM};
 use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::universe::Universe;
@@ -24,6 +25,8 @@ pub type CentiPawn = i16;
 pub const REPITITION_VALUE: CentiPawn = -300;
 
 pub struct Tree {
+    // 自分
+    us: Phase,
     // この木を生成したと同時にストップ・ウォッチを開始するぜ☆（＾～＾）
     stopwatch: Instant,
     // 状態ノード数☆（＾～＾）
@@ -48,6 +51,7 @@ pub struct Tree {
 impl Tree {
     pub fn new(depth_not_to_give_up: usize) -> Self {
         Tree {
+            us: Phase::First,
             stopwatch: Instant::now(),
             state_nodes: 0,
             pv: PrincipalVariation::default(),
@@ -66,6 +70,8 @@ impl Tree {
             universe.option_min_think_sec as u64,
             universe.option_max_think_sec as u64,
         );
+
+        self.us = universe.game.history.get_phase();
 
         // alpha値を上げていきたいが、beta値を超えたくない（＾～＾）
         // -32768 を - しても +32768 は無いので + 1 して調整（＾～＾）
@@ -128,7 +134,7 @@ impl Tree {
         let mut bestmove = RESIGN_MOVE;
 
         // TODO 葉ノードなら、評価値を返して終了（＾～＾）
-        if self.id_depth < 1 {
+        if self.id_depth <= 0 {
             // 葉だぜ☆（＾～＾）
 
             // if let Some(_captured) = move_.captured {
@@ -219,9 +225,6 @@ impl Tree {
                 return (alpha, bestmove);
             }
 
-            // TODO ルートノードで、3秒経過していたら info を出力したいぜ（＾～＾）
-            // TODO infoの出力は pv でやる（＾～＾）？
-
             let captured_piece: Option<PieceEx> = game.do_move(*move_);
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
@@ -248,9 +251,41 @@ impl Tree {
             } else {
                 // 枝局面なら、更に深く進むぜ☆（＾～＾）
                 self.id_depth -= 1;
-                let (mut edge_value, _) = self.search(game, -beta, -alpha);
-                edge_value = -edge_value;
+                let (node_value, _) = self.search(game, -beta, -alpha);
+                let edge_value = -node_value;
                 self.id_depth += 1;
+
+                // TODO ルートノードで、3秒経過していたら info を出力したいぜ（＾～＾）
+                // TODO infoの出力は pv でやる（＾～＾）？
+                if game.info.is_printable() {
+                    // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
+                    // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
+                    // let movement = ts.bestmove.movement;
+                    // print_info(
+                    //     None,
+                    //     None,
+                    //     None,
+                    //     None,
+                    //     &Some(PvString::String(format!(
+                    //         "ways={} | komawari={} | promotion={}", //  | {} {} {} |
+                    //         self.evaluation.ways(),
+                    //         self.evaluation.komawari(),
+                    //         self.evaluation.promotion(),
+                    //     ))),
+                    // );
+                    print_info(
+                        &mut game.info,
+                        Some(self.id_max_depth - self.id_depth),
+                        Some((self.state_nodes, self.nps())),
+                        Some(if game.history.get_phase() == self.us {
+                            edge_value
+                        } else {
+                            node_value
+                        }),
+                        Some(*move_),
+                        &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
+                    );
+                }
 
                 // if self.timeout {
                 //     // TODO すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
