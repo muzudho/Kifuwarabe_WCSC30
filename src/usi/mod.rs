@@ -21,18 +21,32 @@ pub struct Yumemi {}
 
 pub fn main_loop(universe: &mut Universe) {
     loop {
-        let mut input: String = String::new();
+        let input: String = {
+            let mut input: String = String::new();
 
-        // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
-        match std_io::stdin().read_line(&mut input) {
-            Ok(_n) => {}
-            Err(e) => std::panic::panic_any(Beam::trouble(&format!(
-                "(Err.28)  Failed to read line. / {}",
-                e
-            ))),
+            // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
+            match std_io::stdin().read_line(&mut input) {
+                Ok(_n) => {}
+                Err(e) => std::panic::panic_any(Beam::trouble(&format!(
+                    "(Err.28)  Failed to read line. / {}",
+                    e
+                ))),
+            };
+            // 末尾の改行を除こうぜ☆（＾～＾）
+            // trim すると空白も消えるぜ☆（＾～＾）
+            match input.trim().parse() {
+                Ok(n) => n,
+                Err(e) => std::panic::panic_any(Beam::trouble(&format!(
+                    "(Err.38)  Failed to parse. / {}",
+                    e
+                ))),
+            }
         };
-
         let tokens: Vec<&str> = input.split(' ').collect();
+        // Beam::shoot(&format!("tokens.len()=[{}]", tokens.len()));
+        // for token in &tokens {
+        //     Beam::shoot(&format!("token=[{}]", token));
+        // }
 
         if tokens.len() == 0 {
             // 任せろだぜ☆（＾～＾）
