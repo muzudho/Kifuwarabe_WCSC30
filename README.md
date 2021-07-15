@@ -43,10 +43,6 @@ KomawariWeightPer1000 [ 1000 ]    ManyWaysPer1000 [ 1000 ]
 PromotionWeightPer1000[ 1000 ]
 ```
 
-## 直近のTODO
-
-(^_^)
-
 ## Compile
 
 Visual Studio Code `[Terminal] - [New Terminal]`.  

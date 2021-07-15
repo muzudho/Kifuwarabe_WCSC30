@@ -315,9 +315,10 @@ pub fn set_position(game: &mut Game, tokens: &Vec<&str>) {
     // 0        1    2                                                     3 4 5 6     7..
     // ```
 
-    if tokens[1] == "startpos" {
+    let moves_index = if tokens[1] == "startpos" {
         // 別途用意した平手初期局面文字列を読取
         read_board(game, &STARTPOS.to_string());
+        3
     } else if tokens[1] == "sfen" {
         let board = tokens[2];
         let phase = tokens[3];
@@ -421,8 +422,11 @@ pub fn set_position(game: &mut Game, tokens: &Vec<&str>) {
             } //loop
         } //else
 
-        if ply == "1" {}
-    }
+        if ply == "1" {};
+        7
+    } else {
+        0
+    };
 
     // 初期局面を、現局面にコピーします
     game.position.copy_from(&game.starting_board);
@@ -432,7 +436,7 @@ pub fn set_position(game: &mut Game, tokens: &Vec<&str>) {
     */
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
-    for i in 7..tokens.len() {
+    for i in moves_index..tokens.len() {
         if read_move_code(game, tokens[i]) {
             // 次の do_move で増えるので、手目をいったん戻す
             game.history.decrease_moves_num();
