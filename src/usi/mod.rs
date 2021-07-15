@@ -58,7 +58,12 @@ pub fn main_loop(universe: &mut Universe) {
                     Kifuwarabe::usinewgame(universe);
                 }
                 "position" => {
-                    if tokens[3] == "*0" {
+                    // # Example
+                    //
+                    // ```
+                    // position startpos moves *0
+                    // ```
+                    if tokens.len() == 4 && tokens[3] == "*0" {
                         // 将棋所の連続対局中に
                         // 相手が 時間切れを知らずに bestmove を返すと、
                         // 将棋所は `isready` など次の対局が始まっている最中に

@@ -297,9 +297,11 @@ pub fn read_board(game: &mut Game, board_str: &str) {
 /// position コマンド読取
 pub fn set_position(game: &mut Game, tokens: &Vec<&str>) {
     assert_eq!(tokens[0], "position");
-    assert!(Regex::new(r"^[startpos|sfen]$")
-        .unwrap()
-        .is_match(tokens[1]));
+    assert!(
+        Regex::new(r"[startpos|sfen]").unwrap().is_match(tokens[1]),
+        "tokens1=[{}]",
+        tokens[1].to_string()
+    );
 
     // 局面をクリアー。手目も 0 に戻します。
     game.clear();
