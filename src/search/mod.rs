@@ -87,7 +87,6 @@ impl SearchStack {
             self.id_depth = depth;
             // 探索（＾～＾）
             let (node_value, move_) = self.search(&mut universe.game, alpha, beta);
-            //node_value = -node_value;
             if self.timeout {
                 // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
                 break;
