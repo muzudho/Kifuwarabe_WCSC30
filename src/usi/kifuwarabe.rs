@@ -6,37 +6,8 @@ use crate::position::to_move_code;
 use crate::search::Tree;
 use crate::usi::Kifuwarabe;
 use crate::view::print_info;
-use std::io as std_io;
 
 impl Kifuwarabe {
-    pub fn catch_the_message() -> (String, usize, usize) {
-        let mut line: String = String::new();
-
-        // まず最初に、コマンドライン入力を待機しろだぜ☆（＾～＾）
-        match std_io::stdin().read_line(&mut line) {
-            Ok(_n) => {}
-            Err(e) => std::panic::panic_any(Beam::trouble(&format!(
-                "(Err.28)  Failed to read line. / {}",
-                e
-            ))),
-        };
-
-        // 末尾の改行を除こうぜ☆（＾～＾）
-        // trim すると空白も消えるぜ☆（＾～＾）
-        let line: String = match line.trim().parse() {
-            Ok(n) => n,
-            Err(e) => std::panic::panic_any(Beam::trouble(&format!(
-                "(Err.38)  Failed to parse. / {}",
-                e
-            ))),
-        };
-
-        // 文字数を調べようぜ☆（＾～＾）
-        let len = line.chars().count();
-        let starts = 0;
-
-        (line, len, starts)
-    }
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
     pub fn go(universe: &mut Universe) {
         // go btime 40000 wtime 50000 binc 10000 winc 10000
@@ -58,35 +29,33 @@ impl Kifuwarabe {
     pub fn isready() {
         Beam::shoot("readyok");
     }
-    pub fn position(universe: &mut Universe, line: &String) {
+    pub fn position(universe: &mut Universe, tokens: &Vec<&str>) {
         // positionコマンドの読取を丸投げ
-        set_position(&line, &mut universe.game);
+        set_position(&mut universe.game, tokens);
     }
-    pub fn setoption_name(universe: &mut Universe, line: &String) {
-        // Example: setoption name USI_Ponder value true
-        let label1_width = "setoption name ".len(); // 15
-        if let Some(name_width) = line[label1_width..].find(' ') {
-            let name = &line[label1_width..(label1_width + name_width)];
-            // IO::writeln(&format!("Debug name=|{}|", name));
-            let label2_width = " value ".len(); // 7
-            let value = &line[(label1_width + name_width + label2_width)..];
-            // IO::writeln(&format!("Debug value=|{}|", value));
-            match name {
-                "DepthNotToGiveUp" => {
-                    universe.option_depth_not_to_give_up = value.parse().unwrap();
-                }
-                "MaxDepth" => {
-                    universe.option_max_depth = value.parse().unwrap();
-                }
-                "MinThinkSec" => {
-                    universe.option_min_think_sec = value.parse().unwrap();
-                }
-                "MaxThinkSec" => {
-                    universe.option_max_think_sec = value.parse().unwrap();
-                }
-                _ => {}
+    pub fn setoption_name(universe: &mut Universe, tokens: &Vec<&str>) {
+        // # Example:
+        //
+        // ```
+        // setoption name USI_Ponder value true
+        // ```
+        let name = tokens[2];
+        let value = tokens[4];
+        match name {
+            "DepthNotToGiveUp" => {
+                universe.option_depth_not_to_give_up = value.parse().unwrap();
             }
-        };
+            "MaxDepth" => {
+                universe.option_max_depth = value.parse().unwrap();
+            }
+            "MinThinkSec" => {
+                universe.option_min_think_sec = value.parse().unwrap();
+            }
+            "MaxThinkSec" => {
+                universe.option_max_think_sec = value.parse().unwrap();
+            }
+            _ => {}
+        }
     }
     pub fn usi() {
         let engine_file = EngineFile::read();

@@ -120,177 +120,177 @@ pub fn test_rotation() {
     }
     // 相対番地のテスト
     {
-        test_rsq("b1", "(0x -1y -1adr)", &RelAdr::new(0, -1));
-        test_rsq("b2", "(1x -1y 9adr)", &RelAdr::new(1, -1));
-        test_rsq("b3", "(1x 0y 10adr)", &Nine299792458::west());
-        test_rsq("b4", "(1x 1y 11adr)", &RelAdr::new(1, 1));
-        test_rsq("b5", "(0x 1y 1adr)", &RelAdr::new(0, 1));
-        test_rsq("b6", "(-1x 1y -9adr)", &RelAdr::new(-1, 1));
-        test_rsq("b7", "(-1x 0y -10adr)", &RelAdr::new(-1, 0));
-        test_rsq("b8", "(-1x -1y -11adr)", &RelAdr::new(-1, -1));
+        test_rsq("b1", "(0x -1y rel-1sq)", &RelAdr::new(0, -1));
+        test_rsq("b2", "(1x -1y rel9sq)", &RelAdr::new(1, -1));
+        test_rsq("b3", "(1x 0y rel10sq)", &Nine299792458::west());
+        test_rsq("b4", "(1x 1y rel11sq)", &RelAdr::new(1, 1));
+        test_rsq("b5", "(0x 1y rel1sq)", &RelAdr::new(0, 1));
+        test_rsq("b6", "(-1x 1y rel-9sq)", &RelAdr::new(-1, 1));
+        test_rsq("b7", "(-1x 0y rel-10sq)", &RelAdr::new(-1, 0));
+        test_rsq("b8", "(-1x -1y rel-11sq)", &RelAdr::new(-1, -1));
     }
     // 45°回転のテスト
     {
         let mut r = RelAdr::new(0, -1);
-        test_rsq("a1", "(0x -1y -1adr)", &r);
+        test_rsq("a1", "(0x -1y rel-1sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a2", "(1x -1y 9adr)", &r);
+        test_rsq("a2", "(1x -1y rel9sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a3", "(1x 0y 10adr)", &r);
+        test_rsq("a3", "(1x 0y rel10sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a4", "(1x 1y 11adr)", &r);
+        test_rsq("a4", "(1x 1y rel11sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a5", "(0x 1y 1adr)", &r);
+        test_rsq("a5", "(0x 1y rel1sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a6", "(-1x 1y -9adr)", &r);
+        test_rsq("a6", "(-1x 1y rel-9sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a7", "(-1x 0y -10adr)", &r);
+        test_rsq("a7", "(-1x 0y rel-10sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a8", "(-1x -1y -11adr)", &r);
+        test_rsq("a8", "(-1x -1y rel-11sq)", &r);
         r.rotate_45_ccw();
-        test_rsq("a9", "(0x -1y -1adr)", &r);
+        test_rsq("a9", "(0x -1y rel-1sq)", &r);
     }
     // 90°回転のテスト＜その１＞
     {
         let mut r = RelAdr::new(0, -1);
-        test_rsq("c1", "(0x -1y -1adr)", &r);
+        test_rsq("c1", "(0x -1y rel-1sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("c2", "(1x 0y 10adr)", &r);
+        test_rsq("c2", "(1x 0y rel10sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("c3", "(0x 1y 1adr)", &r);
+        test_rsq("c3", "(0x 1y rel1sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("c4", "(-1x 0y -10adr)", &r);
+        test_rsq("c4", "(-1x 0y rel-10sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("c5", "(0x -1y -1adr)", &r);
+        test_rsq("c5", "(0x -1y rel-1sq)", &r);
     }
     // 90°回転のテスト＜その２＞
     {
         let mut r = RelAdr::new(1, -1);
-        test_rsq("d1", "(1x -1y 9adr)", &r);
+        test_rsq("d1", "(1x -1y rel9sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("d2", "(1x 1y 11adr)", &r);
+        test_rsq("d2", "(1x 1y rel11sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("d3", "(-1x 1y -9adr)", &r);
+        test_rsq("d3", "(-1x 1y rel-9sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("d4", "(-1x -1y -11adr)", &r);
+        test_rsq("d4", "(-1x -1y rel-11sq)", &r);
         r.rotate_90_ccw();
-        test_rsq("d5", "(1x -1y 9adr)", &r);
+        test_rsq("d5", "(1x -1y rel9sq)", &r);
     }
     // 桂馬のテスト
     {
         let mut r = RelAdr::new(0, -1);
-        test_rsq("g1", "(0x -1y -1adr)", &r);
+        test_rsq("g1", "(0x -1y rel-1sq)", &r);
         r.rotate_ccw(Angle::Ccw45);
-        test_rsq("g2", "(1x -1y 9adr)", &r);
+        test_rsq("g2", "(1x -1y rel9sq)", &r);
         r.double_rank();
-        test_rsq("g3", "(1x -2y 8adr)", &r);
+        test_rsq("g3", "(1x -2y rel8sq)", &r);
 
         let mut r = RelAdr::new(0, -1);
-        test_rsq("g4", "(0x -1y -1adr)", &r);
+        test_rsq("g4", "(0x -1y rel-1sq)", &r);
         r.rotate_ccw(Angle::Ccw315);
-        test_rsq("g5", "(-1x -1y -11adr)", &r);
+        test_rsq("g5", "(-1x -1y rel-11sq)", &r);
         r.double_rank();
-        test_rsq("g6", "(-1x -2y -12adr)", &r);
+        test_rsq("g6", "(-1x -2y rel-12sq)", &r);
 
         let mut r = RelAdr::new(0, 1);
-        test_rsq("g7", "(0x 1y 1adr)", &r);
+        test_rsq("g7", "(0x 1y rel1sq)", &r);
         r.rotate_ccw(Angle::Ccw45);
-        test_rsq("g8", "(-1x 1y -9adr)", &r);
+        test_rsq("g8", "(-1x 1y rel-9sq)", &r);
         r.double_rank();
-        test_rsq("g9", "(-1x 2y -8adr)", &r);
+        test_rsq("g9", "(-1x 2y rel-8sq)", &r);
 
         let mut r = RelAdr::new(0, 1);
-        test_rsq("g10", "(0x 1y 1adr)", &r);
+        test_rsq("g10", "(0x 1y rel1sq)", &r);
         r.rotate_ccw(Angle::Ccw315);
-        test_rsq("g11", "(1x 1y 11adr)", &r);
+        test_rsq("g11", "(1x 1y rel11sq)", &r);
         r.double_rank();
-        test_rsq("g12", "(1x 2y 12adr)", &r);
+        test_rsq("g12", "(1x 2y rel12sq)", &r);
     }
     // 角度指定回転のテスト(北から)
     {
         // 0
         let mut r = RelAdr::new(0, -1);
-        test_rsq("h1", "(0x -1y -1adr)", &r);
+        test_rsq("h1", "(0x -1y rel-1sq)", &r);
         r.rotate_ccw(Angle::Ccw0);
-        test_rsq("h2", "(0x -1y -1adr)", &r);
+        test_rsq("h2", "(0x -1y rel-1sq)", &r);
 
         // 45
         r = RelAdr::new(0, -1);
         r.rotate_ccw(Angle::Ccw45);
-        test_rsq("h3", "(1x -1y 9adr)", &r);
+        test_rsq("h3", "(1x -1y rel9sq)", &r);
 
         // 90
         r = RelAdr::new(0, -1);
         r.rotate_ccw(Angle::Ccw90);
-        test_rsq("h4", "(1x 0y 10adr)", &r);
+        test_rsq("h4", "(1x 0y rel10sq)", &r);
 
         // 135
         r = RelAdr::new(0, -1);
         r.rotate_ccw(Angle::Ccw135);
-        test_rsq("h5", "(1x 1y 11adr)", &r);
+        test_rsq("h5", "(1x 1y rel11sq)", &r);
 
         // 180
         r = RelAdr::new(0, -1);
         r.rotate_ccw(Angle::Ccw180);
-        test_rsq("h6", "(0x 1y 1adr)", &r);
+        test_rsq("h6", "(0x 1y rel1sq)", &r);
 
         // 225
         r = RelAdr::new(0, -1);
         r.rotate_ccw(Angle::Ccw225);
-        test_rsq("h7", "(-1x 1y -9adr)", &r);
+        test_rsq("h7", "(-1x 1y rel-9sq)", &r);
 
         // 270
         r = RelAdr::new(0, -1);
         r.rotate_ccw(Angle::Ccw270);
-        test_rsq("h8", "(-1x 0y -10adr)", &r);
+        test_rsq("h8", "(-1x 0y rel-10sq)", &r);
 
         // 315
         r = RelAdr::new(0, -1);
         r.rotate_ccw(Angle::Ccw315);
-        test_rsq("h9", "(-1x -1y -11adr)", &r);
+        test_rsq("h9", "(-1x -1y rel-11sq)", &r);
     }
     // 角度指定回転のテスト(南から)
     {
         // 0
         let mut r = RelAdr::new(0, 1);
-        test_rsq("h1", "(0x 1y 1adr)", &r);
+        test_rsq("h1", "(0x 1y rel1sq)", &r);
         r.rotate_ccw(Angle::Ccw0);
-        test_rsq("h2", "(0x 1y 1adr)", &r);
+        test_rsq("h2", "(0x 1y rel1sq)", &r);
 
         // 45
         r = RelAdr::new(0, 1);
         r.rotate_ccw(Angle::Ccw45);
-        test_rsq("h3", "(-1x 1y -9adr)", &r);
+        test_rsq("h3", "(-1x 1y rel-9sq)", &r);
 
         // 90
         r = RelAdr::new(0, 1);
         r.rotate_ccw(Angle::Ccw90);
-        test_rsq("h4", "(-1x 0y -10adr)", &r);
+        test_rsq("h4", "(-1x 0y rel-10sq)", &r);
 
         // 135
         r = RelAdr::new(0, 1);
         r.rotate_ccw(Angle::Ccw135);
-        test_rsq("h5", "(-1x -1y -11adr)", &r);
+        test_rsq("h5", "(-1x -1y rel-11sq)", &r);
 
         // 180
         r = RelAdr::new(0, 1);
         r.rotate_ccw(Angle::Ccw180);
-        test_rsq("h6", "(0x -1y -1adr)", &r);
+        test_rsq("h6", "(0x -1y rel-1sq)", &r);
 
         // 225
         r = RelAdr::new(0, 1);
         r.rotate_ccw(Angle::Ccw225);
-        test_rsq("h7", "(1x -1y 9adr)", &r);
+        test_rsq("h7", "(1x -1y rel9sq)", &r);
 
         // 270
         r = RelAdr::new(0, 1);
         r.rotate_ccw(Angle::Ccw270);
-        test_rsq("h8", "(1x 0y 10adr)", &r);
+        test_rsq("h8", "(1x 0y rel10sq)", &r);
 
         // 315
         r = RelAdr::new(0, 1);
         r.rotate_ccw(Angle::Ccw315);
-        test_rsq("h9", "(1x 1y 11adr)", &r);
+        test_rsq("h9", "(1x 1y rel11sq)", &r);
     }
 }
 

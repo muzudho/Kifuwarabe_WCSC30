@@ -80,20 +80,20 @@ impl Game {
             for i_piece in 0..PIECE_MEANING_LEN {
                 // FIXME 18446744073709551615 が含まれないだろ、どうなってるんだぜ☆（＾～＾）！？
                 self.hash_seed.piece_hash[i_square as usize][i_piece] =
-                    rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
+                    rand::thread_rng().gen_range(0..18_446_744_073_709_551_615);
             }
         }
         // 持ち駒
         for i_piece in 0..HAND_ADDRESS_LEN {
             for i_count in 0..HAND_MAX + 1 {
                 self.hash_seed.hand_hash[i_piece][i_count] =
-                    rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
+                    rand::thread_rng().gen_range(0..18_446_744_073_709_551_615);
             }
         }
         // 先後
         for i_phase in 0..PHASE_LEN {
             self.hash_seed.phase[i_phase] =
-                rand::thread_rng().gen_range(0, 18_446_744_073_709_551_615);
+                rand::thread_rng().gen_range(0..18_446_744_073_709_551_615);
         }
     }
 

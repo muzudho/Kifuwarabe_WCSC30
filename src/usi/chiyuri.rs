@@ -12,10 +12,9 @@ use crate::view::print_move_list;
 use rand::Rng;
 
 impl Chiyuri {
-    pub fn do_(universe: &mut Universe, line: &str, len: usize, mut starts: usize) {
-        starts += 3;
+    pub fn do_(universe: &mut Universe, move_code: &str) {
         // コマンド読取。棋譜に追加され、手目も増える
-        if read_sasite(&line, &mut starts, len, &mut universe.game) {
+        if read_move_code(&mut universe.game, move_code) {
             // 次の do_move で増えるので、手目をいったん戻す
             universe.game.history.decrease_moves_num();
             // 入っている指し手の通り指すぜ☆（＾～＾）
@@ -34,9 +33,9 @@ impl Chiyuri {
         let s = universe.game.get_positions_hash_text();
         Beam::shoot(&s);
     }
-    pub fn how_much(line: &str) {
+    pub fn how_much(tokens: &Vec<&str>) {
         // Example: how-much 7g7f
-        let bestmove = &line[9..];
+        let bestmove = tokens[1];
         Beam::shoot(&format!("Debug   | bestmove=|{}|", bestmove));
     }
     /// デバッグ用に棋譜（指し手の一覧）表示
@@ -105,7 +104,7 @@ impl Chiyuri {
     pub fn rand() {
         Beam::shoot("3<len rand");
         // 乱数の試し
-        let secret_number = rand::thread_rng().gen_range(1, 101); //1~100
+        let secret_number = rand::thread_rng().gen_range(1..101); //1~100
         Beam::shoot(&format!("乱数={}", secret_number));
     }
     pub fn same(universe: &Universe) {
@@ -114,7 +113,8 @@ impl Chiyuri {
     }
     pub fn startpos(universe: &mut Universe) {
         // 平手初期局面
-        set_position(&POS_1.to_string(), &mut universe.game);
+        let tokens: Vec<&str> = POS_1.split(' ').collect();
+        set_position(&mut universe.game, &tokens);
     }
     pub fn teigi_conv() {
         Beam::shoot("teigi::convのテスト");

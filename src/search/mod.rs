@@ -8,7 +8,6 @@ use crate::entities::cosmic::smart::features::PieceType;
 use crate::entities::cosmic::universe::Universe;
 use crate::entities::spaceship::equipment::PvString;
 use crate::movegen::{PieceEx, PseudoLegalMoves};
-use crate::position::destructure_move;
 use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
@@ -64,10 +63,8 @@ impl Tree {
     /// 反復深化探索だぜ☆（＾～＾）
     pub fn iteration_deeping(&mut self, universe: &mut Universe) -> (CentiPawn, Move) {
         universe.game.info.clear();
-        self.think_sec = rand::thread_rng().gen_range(
-            universe.option_min_think_sec as u64,
-            universe.option_max_think_sec as u64,
-        );
+        self.think_sec = rand::thread_rng()
+            .gen_range(universe.option_min_think_sec as u64..universe.option_max_think_sec as u64);
 
         self.us = universe.game.history.get_phase();
 

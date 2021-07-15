@@ -9,6 +9,7 @@ use crate::position::RANK_1;
 use crate::take1base::Move;
 use crate::take1base::Piece;
 use atoi::atoi;
+use regex::Regex;
 
 // 局面の最多合法手５９３手
 //pub const MAX_WAYS: usize = 593;
@@ -31,68 +32,71 @@ pub const POS_2: &str =
 */
 
 /// USIプロトコル表記: 平手初期局面（の盤上の駒配置部分のみ）
-pub const STARTPOS_LN: usize = 57;
 pub const STARTPOS: &str = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL";
+//pub const STARTPOS_LN: usize = 57;
 
 /// 指し手読取
 /// 例: 7g7f
 ///
 /// 読み取った指し手は、棋譜に入れる。
 /// 現在の手目のところに入れ、手目のカウントアップも行う。
-pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) -> bool {
+pub fn read_move_code(game: &mut Game, move_code: &str) -> bool {
+    let len = move_code.len();
     // 4文字か5文字あるはず。
-    if (len - *starts) < 4 {
+    if len < 4 {
         // 指し手読取終了時にここを通るぜ☆（＾～＾）
         // 残り４文字もない。
         return false;
     }
 
-    let from = match &line[*starts..=*starts] {
+    let mut starts = 0;
+
+    let from = match &move_code[starts..=starts] {
         // 1文字目が駒だったら打。2文字目は必ず「*」なはずなので読み飛ばす。
         "R" => {
-            *starts += 2;
+            starts += 2;
             match game.history.get_phase() {
                 Phase::First => 101,
                 Phase::Second => 109,
             }
         }
         "B" => {
-            *starts += 2;
+            starts += 2;
             match game.history.get_phase() {
                 Phase::First => 102,
                 Phase::Second => 110,
             }
         }
         "G" => {
-            *starts += 2;
+            starts += 2;
             match game.history.get_phase() {
                 Phase::First => 103,
                 Phase::Second => 111,
             }
         }
         "S" => {
-            *starts += 2;
+            starts += 2;
             match game.history.get_phase() {
                 Phase::First => 104,
                 Phase::Second => 112,
             }
         }
         "N" => {
-            *starts += 2;
+            starts += 2;
             match game.history.get_phase() {
                 Phase::First => 105,
                 Phase::Second => 113,
             }
         }
         "L" => {
-            *starts += 2;
+            starts += 2;
             match game.history.get_phase() {
                 Phase::First => 106,
                 Phase::Second => 114,
             }
         }
         "P" => {
-            *starts += 2;
+            starts += 2;
             match game.history.get_phase() {
                 Phase::First => 107,
                 Phase::Second => 115,
@@ -101,17 +105,17 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
         _ => {
             // 残りは「筋の数字」、「段のアルファベット」のはず。
             // 数字じゃないものが入ったら強制終了するんじゃないか☆（＾～＾）
-            let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
+            let file = if let Some(num) = atoi::<usize>(move_code[starts..=starts].as_bytes()) {
                 num
             } else {
                 std::panic::panic_any(Beam::trouble(&format!(
                     "(Err.72)  '{}' だった。",
-                    &line[*starts..=*starts]
+                    &move_code[starts..=starts]
                 )))
             };
-            *starts += 1;
+            starts += 1;
 
-            let rank = match &line[*starts..=*starts] {
+            let rank = match &move_code[starts..=starts] {
                 "a" => 1,
                 "b" => 2,
                 "c" => 3,
@@ -124,11 +128,11 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
                 _ => {
                     std::panic::panic_any(Beam::trouble(&format!(
                         "(Err.90)  '{}' だった。",
-                        &line[*starts..=*starts]
+                        &move_code[starts..=starts]
                     )));
                 }
             };
-            *starts += 1;
+            starts += 1;
 
             file * 10 + rank
         }
@@ -137,19 +141,19 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
     // 残りは「筋の数字」、「段のアルファベット」のはず。
     let to = {
         // 3文字目
-        let file = if let Some(num) = atoi::<usize>(line[*starts..=*starts].as_bytes()) {
+        let file = if let Some(num) = atoi::<usize>(move_code[starts..=starts].as_bytes()) {
             num
         } else {
             std::panic::panic_any(Beam::trouble(&format!(
                 "(Err.118)  '{}' だった。 line='{}'",
-                &line[*starts..=*starts],
-                &line
+                &move_code[starts..=starts],
+                &move_code
             )));
         };
-        *starts += 1;
+        starts += 1;
 
         // 4文字目
-        let rank = match &line[*starts..=*starts] {
+        let rank = match &move_code[starts..=starts] {
             "a" => 1,
             "b" => 2,
             "c" => 3,
@@ -162,28 +166,22 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
             _ => {
                 std::panic::panic_any(Beam::trouble(&format!(
                     "(Err.136)  '{}' だった。",
-                    &line[*starts..=*starts]
+                    &move_code[starts..=starts]
                 )));
             }
         };
-        *starts += 1;
+        starts += 1;
 
         // 行き先。
         file * 10 + rank
     };
 
     // 5文字に「+」があれば成り。
-    let promote = if 0 < (len - *starts) && &line[*starts..=*starts] == "+" {
-        *starts += 1;
+    let promote = if 0 < (len - starts) && &move_code[starts..=starts] == "+" {
         1
     } else {
         0
     };
-
-    // 続きにスペース「 」が１つあれば読み飛ばす
-    if 0 < (len - *starts) && &line[*starts..=*starts] == " " {
-        *starts += 1;
-    }
 
     let move_ = ((promote << 14) + (to << 7) + from) as Move;
 
@@ -196,7 +194,7 @@ pub fn read_sasite(line: &str, starts: &mut usize, len: usize, game: &mut Game) 
 
 /// position コマンド 盤上部分のみ 読取
 /// 初期化は既に終わらせてあります。
-pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
+pub fn read_board(game: &mut Game, board_str: &str) {
     // 初期盤面
     let position = game.mut_starting();
     let mut file = FILE_9; //９筋から右方向へ読取
@@ -212,8 +210,11 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
         Alphabet(Piece),
     }
 
-    'ban: while 0 < (len - *starts) {
-        let board_part = match &line[*starts..=*starts] {
+    let len = board_str.len();
+    let mut starts = 0;
+
+    'ban: while 0 < (len - starts) {
+        let board_part = match &board_str[starts..=starts] {
             "/" => BoardPart::NewLine,
             "1" => BoardPart::Number(1),
             "2" => BoardPart::Number(2),
@@ -241,9 +242,9 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
             "l" => BoardPart::Alphabet(Piece::L2),
             "p" => BoardPart::Alphabet(Piece::P2),
             "+" => {
-                *starts += 1;
+                starts += 1;
                 // 次に必ず１文字が来るぜ☆（＾～＾）
-                match &line[*starts..=*starts] {
+                match &board_str[starts..=starts] {
                     "R" => BoardPart::Alphabet(Piece::PR1),
                     "B" => BoardPart::Alphabet(Piece::PB1),
                     "S" => BoardPart::Alphabet(Piece::PS1),
@@ -259,7 +260,7 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
                     _ => {
                         std::panic::panic_any(Beam::trouble(&format!(
                             "(Err.235)  盤部(0) '{}' だった。",
-                            &line[*starts..=*starts]
+                            &board_str[starts..=starts]
                         )));
                     }
                 }
@@ -271,17 +272,17 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
 
         match board_part {
             BoardPart::Alphabet(pc) => {
-                *starts += 1;
+                starts += 1;
                 position.push_piece_on_init(file, rank, Some(pc));
                 file -= 1;
             }
             BoardPart::Number(space_num) => {
-                *starts += 1;
+                starts += 1;
                 // もともと空升なんで、飛ばそうぜ☆（＾～＾）
                 file -= space_num;
             }
             BoardPart::NewLine => {
-                *starts += 1;
+                starts += 1;
                 file = FILE_9;
                 rank += 1;
             }
@@ -294,46 +295,44 @@ pub fn read_board(line: &str, starts: &mut usize, len: usize, game: &mut Game) {
 }
 
 /// position コマンド読取
-pub fn set_position(line: &str, game: &mut Game) {
-    let mut starts = 0;
-
-    // 全体の長さ
-    let len = line.chars().count();
+pub fn set_position(game: &mut Game, tokens: &Vec<&str>) {
+    assert_eq!(tokens[0], "position");
+    assert!(Regex::new(r"^[startpos|sfen]$")
+        .unwrap()
+        .is_match(tokens[1]));
 
     // 局面をクリアー。手目も 0 に戻します。
     game.clear();
 
-    if 16 < (len - starts) && &line[starts..(starts + 17)] == "position startpos" {
-        // 'position startpos' を読み飛ばし
-        starts += 17;
+    // # Examples
+    //
+    // ```
+    // position startpos moves 7g7f 3c3d 2g2f
+    // 0        1        2     3..
+    // position sfen lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1 moves 5a6b 7g7f 3a3b
+    // 0        1    2                                                     3 4 5 6     7..
+    // ```
+
+    if tokens[1] == "startpos" {
         // 別途用意した平手初期局面文字列を読取
-        let mut local_starts = 0;
-        read_board(&STARTPOS.to_string(), &mut local_starts, STARTPOS_LN, game);
+        read_board(game, &STARTPOS.to_string());
+    } else if tokens[1] == "sfen" {
+        let board = tokens[2];
+        let phase = tokens[3];
+        let hand = tokens[4];
+        let ply = tokens[5];
+        read_board(game, &board);
 
-        if 0 < (len - starts) && &line[starts..=starts] == " " {
-            // ' ' を読み飛ばした。
-            starts += 1;
-        }
-    } else if 13 < (len - starts) && &line[starts..(starts + 14)] == "position sfen " {
-        starts += 14; // 'position sfen ' を読み飛ばし
-        read_board(line, &mut starts, len, game);
-
-        if 0 < (len - starts) && &line[starts..=starts] == " " {
-            starts += 1;
-        }
-
-        if 0 < (len - starts) && (&line[starts..=starts] == "w" || &line[starts..=starts] == "b") {
-            starts += 1;
-        }
-
-        if 0 < (len - starts) && &line[starts..=starts] == " " {
-            starts += 1;
+        if phase == "w" || phase == "b" {
+            // TODO フェーズ
         }
 
         // 持ち駒の読取
-        if 0 < (len - starts) && &line[starts..=starts] == "-" {
-            starts += 1;
+        if hand == "-" {
+            // 持駒なし
         } else {
+            let len = hand.len();
+            let mut starts = 0;
             enum HandCount {
                 // 数字なし
                 N0Digit,
@@ -346,10 +345,10 @@ pub fn set_position(line: &str, game: &mut Game) {
                 if 0 < (len - starts) {
                     // 数字か、数字でないかで大きく分かれるぜ☆（＾～＾）
                     // let mut count = 1;
-                    let hand_count = match &line[starts..=starts] {
+                    let hand_count = match &hand[starts..=starts] {
                         "1" => {
                             // 1枚のときは数字は付かないので、10～18 と確定☆
-                            match &line[starts + 1..=starts + 1] {
+                            match &hand[starts + 1..=starts + 1] {
                                 "0" => HandCount::N2Digit(10),
                                 "1" => HandCount::N2Digit(11),
                                 "2" => HandCount::N2Digit(12),
@@ -362,7 +361,7 @@ pub fn set_position(line: &str, game: &mut Game) {
                                 _ => {
                                     std::panic::panic_any(Beam::trouble(&format!(
                                         "(Err.346)  持駒部(0) '{}' だった。",
-                                        &line[starts..(starts + 2)]
+                                        &hand[starts..(starts + 2)]
                                     )));
                                 }
                             }
@@ -394,7 +393,7 @@ pub fn set_position(line: &str, game: &mut Game) {
                     };
 
                     use crate::take1base::Piece::*;
-                    let hand = match &line[starts..=starts] {
+                    let hand = match &hand[starts..=starts] {
                         "R" => R1,
                         "B" => B1,
                         "G" => G1,
@@ -420,20 +419,7 @@ pub fn set_position(line: &str, game: &mut Game) {
             } //loop
         } //else
 
-        if 2 < (len - starts) && &line[starts..(starts + 3)] == " 1 " {
-            starts += 3;
-        }
-    } else {
-        Beam::shoot("'position startpos' でも、'position sfen ' でも始まらなかった。");
-        return;
-    }
-
-    if 4 < (len - starts) && &line[starts..(starts + 5)] == "moves" {
-        starts += 5;
-    }
-
-    if 0 < (len - starts) && &line[starts..=starts] == " " {
-        starts += 1;
+        if ply == "1" {}
     }
 
     // 初期局面を、現局面にコピーします
@@ -444,11 +430,13 @@ pub fn set_position(line: &str, game: &mut Game) {
     */
 
     // 指し手を全部読んでいくぜ☆（＾～＾）手目のカウントも増えていくぜ☆（＾～＾）
-    while read_sasite(line, &mut starts, len, game) {
-        // 次の do_move で増えるので、手目をいったん戻す
-        game.history.decrease_moves_num();
-        // 入っている指し手の通り指すぜ☆（＾～＾）
-        let ply = game.history.moves_num();
-        game.do_move(game.history.moves[ply as usize]);
+    for i in 7..tokens.len() {
+        if read_move_code(game, tokens[i]) {
+            // 次の do_move で増えるので、手目をいったん戻す
+            game.history.decrease_moves_num();
+            // 入っている指し手の通り指すぜ☆（＾～＾）
+            let ply = game.history.moves_num();
+            game.do_move(game.history.moves[ply as usize]);
+        }
     }
 }
