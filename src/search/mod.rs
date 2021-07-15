@@ -32,7 +32,7 @@ pub struct Tree {
     // 状態ノード数☆（＾～＾）
     pub state_nodes: u64,
 
-    // Principal variation(読み筋)☆（＾～＾）
+    // 読み筋(Principal variation)☆（＾～＾）
     pv: PrincipalVariation,
 
     // 思考時間（秒）をランダムにすることで、指し手を変えるぜ☆（＾～＾）
@@ -257,6 +257,7 @@ impl Tree {
 
                 // TODO ルートノードで、3秒経過していたら info を出力したいぜ（＾～＾）
                 // TODO infoの出力は pv でやる（＾～＾）？
+                // TODO タイミングによっては、読みの浅い所で表示してしまうが（＾～＾）？
                 if game.info.is_printable() {
                     // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
                     // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）

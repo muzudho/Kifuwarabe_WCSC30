@@ -47,9 +47,12 @@ impl DestinationDisplay {
         self.first = true;
     }
 
+    /// 表示していいタイミングか？
     pub fn is_printable(&self) -> bool {
-        // 初回か、前回より1秒以上経過していれば。
-        self.first || self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs()
+        // 初回であれば、3秒経過してから
+        (self.first && self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs()) ||
+        // そうでなければ、前回より1秒以上経過していれば。
+        self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs()
     }
 }
 
