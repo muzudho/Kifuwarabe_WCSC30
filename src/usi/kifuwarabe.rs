@@ -4,13 +4,10 @@ use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::to_move_code;
 use crate::search::Tree;
+use crate::usi::Kifuwarabe;
 use crate::view::print_info;
 use std::io as std_io;
 
-/// 船長：きふわらべ
-///
-/// 対局で許されている命令だけをするぜ☆（＾～＾）
-pub struct Kifuwarabe {}
 impl Kifuwarabe {
     pub fn catch_the_message() -> (String, usize, usize) {
         let mut line: String = String::new();

@@ -1,10 +1,21 @@
-use crate::usi::chiyuri::Chiyuri;
-use crate::usi::kifuwarabe::Kifuwarabe;
 use crate::Universe;
 
 mod chiyuri;
 mod kifuwarabe;
 pub mod yumemi;
+
+/// 副船長：ちゆり
+///
+/// 対局でやっちゃいかん命令なら任せろだぜ☆（＾～＾）
+pub struct Chiyuri {}
+
+/// 船長：きふわらべ
+///
+/// 対局で許されている命令だけをするぜ☆（＾～＾）
+pub struct Kifuwarabe {}
+
+/// 乗組員：夢美
+pub struct Yumemi {}
 
 pub fn main_loop(universe: &mut Universe) {
     loop {

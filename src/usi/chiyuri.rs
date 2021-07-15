@@ -7,13 +7,10 @@ use crate::entities::spaceship::facility::{CommandRoom, GameRoom};
 use crate::movegen::PseudoLegalMoves;
 use crate::position::Square;
 use crate::position::FILE_1;
+use crate::usi::Chiyuri;
 use crate::view::print_move_list;
 use rand::Rng;
 
-/// 副船長：ちゆり
-///
-/// 対局でやっちゃいかん命令なら任せろだぜ☆（＾～＾）
-pub struct Chiyuri {}
 impl Chiyuri {
     pub fn do_(universe: &mut Universe, line: &str, len: usize, mut starts: usize) {
         starts += 3;

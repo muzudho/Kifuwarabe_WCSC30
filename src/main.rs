@@ -32,7 +32,7 @@ mod view;
 
 use crate::entities::cosmic::universe::Universe;
 use crate::usi::main_loop;
-use crate::usi::yumemi::Yumemi;
+use crate::usi::Yumemi;
 
 fn main() {
     // 宇宙☆（＾～＾）変化するぜ☆（＾～＾）
