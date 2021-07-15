@@ -12,9 +12,9 @@ use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 use crate::view::print_info;
-use rand::Rng;
 use std::fmt;
 use std::time::Instant;
+//use rand::Rng;
 /// 評価値（＾～＾）
 pub type CentiPawn = i16;
 
