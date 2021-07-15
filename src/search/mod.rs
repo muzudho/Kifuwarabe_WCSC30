@@ -13,8 +13,6 @@ use crate::position::to_move_code;
 use crate::record::RESIGN_MOVE;
 use crate::take1base::Move;
 use crate::view::print_info;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use rand::Rng;
 use std::fmt;
 use std::time::Instant;
@@ -151,7 +149,7 @@ impl Tree {
         // TODO let mut controls = Vec::<Square>::new();
 
         // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let mut move_list = {
+        let move_list = {
             /*
             // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
             let mut lioncatch = Lioncatch::new(game);
@@ -172,47 +170,12 @@ impl Tree {
             return (alpha, RESIGN_MOVE);
         }
 
-        // TODO 指し手のオーダリングをしたいが、難しいのでシャッフルしたろ（＾～＾）
-        move_list.shuffle(&mut thread_rng());
-
         // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
         // いわば、１光手 利きカウントボードだぜ☆（＾～＾）
         // for destination in &controls {
         //     game.position
         //         .add_control(game.history.get_phase(), destination, 1);
         // }
-
-        // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
-        let mut cap = 0;
-        if 1 < move_list.len() {
-            for i in 0..move_list.len() {
-                let (_, to, _) = destructure_move(move_list[i]);
-                if let Some(_captured) = game.position.piece_at_board(to) {
-                    // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
-                    // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                    move_list.swap(cap, i);
-                    cap += 1;
-                }
-            }
-            // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
-            let mut king = 0;
-            for i in 0..cap {
-                let (_, to, _) = destructure_move(move_list[i]);
-                if let Some(captured) = game.position.piece_at_board(to) {
-                    match captured.piece.type_() {
-                        PieceType::K => {
-                            // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
-                            // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
-                            move_list.swap(king, i);
-                            king += 1;
-                        }
-                        _ => {}
-                    }
-                } else {
-                    panic!("captured fail")
-                }
-            }
-        }
 
         for move_ in move_list.iter() {
             // 時間を見ようぜ☆（＾～＾）？

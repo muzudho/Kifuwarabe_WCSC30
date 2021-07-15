@@ -22,6 +22,8 @@ use crate::take1base::Move;
 use crate::take1base::Piece;
 use crate::view::print_move_list;
 use crate::view::print_sq_list;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use std::fmt;
 
 /// 王手に関する関数の集まり
@@ -339,6 +341,40 @@ impl PseudoLegalMoves {
             }
         });
 
+        // TODO 指し手のオーダリングをしたいが、難しいのでシャッフルしたろ（＾～＾）
+        move_list.shuffle(&mut thread_rng());
+
+        // 指し手のオーダリングをしたいぜ☆（＾～＾） 取った駒は指し手生成の段階で調べているし☆（＾～＾）
+        let mut cap = 0;
+        if 1 < move_list.len() {
+            for i in 0..move_list.len() {
+                let (_, to, _) = destructure_move(move_list[i]);
+                if let Some(_captured) = position.piece_at_board(to) {
+                    // 駒を取った手は、リストの先頭に集めるぜ☆（＾～＾）
+                    // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
+                    move_list.swap(cap, i);
+                    cap += 1;
+                }
+            }
+            // 次は駒を取ったグループの中で、玉を取った手をグループの先頭に集めるぜ☆（＾～＾）
+            let mut king = 0;
+            for i in 0..cap {
+                let (_, to, _) = destructure_move(move_list[i]);
+                if let Some(captured) = position.piece_at_board(to) {
+                    match captured.piece.type_() {
+                        PieceType::K => {
+                            // 玉を取った手は、リストの先頭に集めるぜ☆（＾～＾）
+                            // TODO .clone()いやなんで、インデックスだけソートした方がいいのか☆（＾～＾）？
+                            move_list.swap(king, i);
+                            king += 1;
+                        }
+                        _ => {}
+                    }
+                } else {
+                    panic!("captured fail")
+                }
+            }
+        }
         move_list
     }
 
