@@ -219,6 +219,9 @@ impl Tree {
                 return (alpha, bestmove);
             }
 
+            // TODO ルートノードで、3秒経過していたら info を出力したいぜ（＾～＾）
+            // TODO infoの出力は pv でやる（＾～＾）？
+
             let captured_piece: Option<PieceEx> = game.do_move(*move_);
             // 1手進めるぜ☆（＾～＾）
             self.state_nodes += 1;
@@ -332,9 +335,9 @@ impl PrincipalVariation {
         // ゴミの値は消さないぜ☆（＾～＾）
     }
 
-    fn len(&self) -> usize {
-        self.ply
-    }
+    // fn len(&self) -> usize {
+    //     self.ply
+    // }
 }
 impl fmt::Display for PrincipalVariation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

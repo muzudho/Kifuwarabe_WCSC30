@@ -47,10 +47,10 @@ impl DestinationDisplay {
         self.first = true;
     }
 
-    pub fn is_printable(&self) -> bool {
-        // 初回か、前回より1秒以上経過していれば。
-        self.first || self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs()
-    }
+    // pub fn is_printable(&self) -> bool {
+    //     // 初回か、前回より1秒以上経過していれば。
+    //     self.first || self.previous.as_secs() + 1 < self.stopwatch.elapsed().as_secs()
+    // }
 }
 
 pub struct Log {}
