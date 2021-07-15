@@ -18,6 +18,9 @@ use std::time::Instant;
 /// 評価値（＾～＾）
 pub type CentiPawn = i16;
 
+/// 正、負の符号を付けた時に、どちらでも使える最大の数
+pub const VALUE_INFINITE: i16 = 32767;
+
 /// TODO 千日手の価値☆（＾～＾） ENGIN OPTIONにしたいぜ☆（＾～＾）
 pub const REPITITION_VALUE: CentiPawn = -300;
 
@@ -73,11 +76,9 @@ impl SearchStack {
 
         self.us = universe.game.history.get_phase();
 
-        // alpha値を上げていきたいが、beta値を超えたくない（＾～＾）
-        // -32768 を - しても +32768 は無いので + 1 して調整（＾～＾）
-        let mut alpha = i16::MIN + 1;
-        // beta値は 相手の alpha値の正負を反対にしたもの
-        let beta = i16::MAX;
+        // アルファベータ探索
+        let mut alpha = -VALUE_INFINITE;
+        let beta = VALUE_INFINITE;
         let mut bestmove = RESIGN_MOVE;
 
         // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
