@@ -44,7 +44,7 @@ pub struct SearchStack {
     id_depth: usize,
     id_max_depth: usize,
     // 時間切れ（＾～＾）
-    pub timeout: bool,
+    pub is_time_up: bool,
     // あれば千日手の手☆（＾～＾）投了よりはマシ☆（＾～＾）
     pub repetition_move: Move,
 }
@@ -59,7 +59,7 @@ impl SearchStack {
             depth_not_to_give_up: depth_not_to_give_up,
             id_depth: 0,
             id_max_depth: 0,
-            timeout: false,
+            is_time_up: false,
             repetition_move: RESIGN_MOVE,
         }
     }
@@ -106,7 +106,7 @@ pub fn iterative_deepening_search(
         ss.id_depth = depth;
         // 探索（＾～＾）
         let (node_value, move_) = search(&mut universe.game, ss, alpha, beta);
-        if ss.timeout {
+        if ss.is_time_up {
             // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
             break;
         }
@@ -202,8 +202,9 @@ fn search(game: &mut Game, ss: &mut SearchStack, mut alpha: i16, beta: i16) -> (
         if ss.think_sec < ss.sec() && ss.depth_not_to_give_up <= ss.id_max_depth - ss.id_depth {
             // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
             // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-            ss.timeout = true;
-            return (alpha, bestmove);
+            ss.is_time_up = true;
+            // タイムアウトしたときの探索結果は使わないぜ（＾～＾）
+            return (0, RESIGN_MOVE);
         }
 
         let captured_piece: Option<PieceEx> = game.do_move(*move_);
@@ -268,11 +269,6 @@ fn search(game: &mut Game, ss: &mut SearchStack, mut alpha: i16, beta: i16) -> (
                     &Some(PvString::PV(ss.msec(), format!("{}", ss.pv))),
                 );
             }
-
-            // if ss.timeout {
-            //     // TODO すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-            //     return (alpha, bestmove);
-            // }
 
             // 初期状態が 投了なので、更新したい（＾～＾）
             if bestmove == RESIGN_MOVE || alpha <= edge_value {
