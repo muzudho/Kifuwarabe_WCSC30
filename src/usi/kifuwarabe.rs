@@ -4,9 +4,11 @@ use crate::entities::cosmic::universe::Universe;
 use crate::entities::law::usi::*;
 use crate::entities::spaceship::equipment::Beam;
 use crate::position::to_move_code;
+use crate::search::iterative_deepening_search;
 use crate::search::SearchStack;
 use crate::usi::Kifuwarabe;
 use crate::view::print_info;
+use std::cmp::min;
 
 impl Kifuwarabe {
     /// bestmoveコマンドを送るぜ☆（＾～＾） 思考するのもこの中だぜ☆（＾～＾）
@@ -48,15 +50,17 @@ impl Kifuwarabe {
 
         // 時間管理
         let think_sec = {
-            let (think_ms, inc_ms) = match universe.game.history.get_phase() {
-                Phase::First => (btime + byoyomi + binc, binc),
-                Phase::Second => (wtime + byoyomi + winc, winc),
+            let (think_sec, inc_sec) = match universe.game.history.get_phase() {
+                Phase::First => ((btime + byoyomi + binc) / 1000, binc / 1000),
+                Phase::Second => ((wtime + byoyomi + winc) / 1000, winc / 1000),
             };
 
-            // 130手で使いつくす想定（＾～＾）
-            let seconds = think_ms / 1000;
-            let mut think_sec = seconds / 130;
-            let inc_sec = inc_ms / 1000;
+            if universe.game.one_move_sec == 0 {
+                // 対局開始時に設定
+                // 130手で使いつくす想定（＾～＾）
+                universe.game.one_move_sec = think_sec / 130;
+            }
+            let mut think_sec = min(universe.game.one_move_sec, think_sec);
 
             if 0 < inc_sec {
                 // フィッシャー・クロック・ルール
@@ -75,7 +79,8 @@ impl Kifuwarabe {
         };
 
         let mut search_stack = SearchStack::new(universe.option_depth_not_to_give_up);
-        let (node_value, bestmove) = search_stack.iteration_deeping(universe, think_sec);
+        let (node_value, bestmove) =
+            iterative_deepening_search(universe, &mut search_stack, think_sec);
         // その手を選んだ理由☆（＾～＾）
         print_info(
             &mut universe.game.info,

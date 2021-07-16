@@ -42,6 +42,8 @@ pub struct Game {
     pub position: Position,
     /// 情報表示担当
     pub info: DestinationDisplay,
+    /// 時間管理用
+    pub one_move_sec: u64,
 }
 impl Default for Game {
     fn default() -> Game {
@@ -59,6 +61,7 @@ impl Default for Game {
             },
             position: Position::default(),
             info: DestinationDisplay::default(),
+            one_move_sec: 0,
         }
     }
 }
@@ -70,6 +73,7 @@ impl Game {
         self.starting_position_hash = 0;
         self.starting_board.clear();
         self.position.clear();
+        self.one_move_sec = 0;
     }
     /// 宇宙誕生
     pub fn big_bang(&mut self) {

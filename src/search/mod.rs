@@ -63,235 +63,6 @@ impl SearchStack {
             repetition_move: RESIGN_MOVE,
         }
     }
-    /// 反復深化探索だぜ☆（＾～＾）
-    pub fn iteration_deeping(
-        &mut self,
-        universe: &mut Universe,
-        think_sec: u64,
-    ) -> (CentiPawn, Move) {
-        universe.game.info.clear();
-        self.think_sec = think_sec;
-        // self.think_sec = rand::thread_rng()
-        //     .gen_range(universe.option_min_think_sec as u64..universe.option_max_think_sec as u64);
-
-        self.us = universe.game.history.get_phase();
-
-        // アルファベータ探索
-        let mut alpha = -VALUE_INFINITE;
-        let beta = VALUE_INFINITE;
-        let mut bestmove = RESIGN_MOVE;
-
-        // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
-        for depth in 0..(universe.option_max_depth + 1) {
-            self.id_max_depth = depth;
-            self.id_depth = depth;
-            // 探索（＾～＾）
-            let (node_value, move_) = self.search(&mut universe.game, alpha, beta);
-            if self.timeout {
-                // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
-                break;
-            }
-            // 最後まで指せだぜ（＾～＾）
-            // if move_ == RESIGN_MOVE {
-            //     // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
-            //     break;
-            // }
-            if node_value < alpha || beta < node_value {
-                // 無視
-            } else if bestmove <= RESIGN_MOVE || alpha <= node_value {
-                alpha = node_value;
-                bestmove = move_;
-            }
-
-            // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
-            print_info(
-                &mut universe.game.info,
-                Some(depth),
-                Some((self.state_nodes, self.nps())),
-                Some(alpha),
-                Some(bestmove),
-                &Some(PvString::PV(
-                    self.msec(),
-                    format!("{}", format!("{}", to_move_code(bestmove))),
-                )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
-            );
-        }
-
-        (alpha, bestmove)
-    }
-
-    /// 先手の気持ちで、勝てだぜ☆（*＾～＾*）
-    ///
-    /// # Arguments
-    ///
-    /// * `game` - 対局。
-    /// * `sibling_best` - アルファベータ探索のベータ値。兄弟で一番良い評価値。
-    ///
-    /// # Returns
-    ///
-    /// Best movement, Value, Sum nodes
-    fn search(&mut self, game: &mut Game, mut alpha: i16, beta: i16) -> (CentiPawn, Move) {
-        let mut bestmove = RESIGN_MOVE;
-
-        // TODO 葉ノードなら、評価値を返して終了（＾～＾）
-        if self.id_depth <= 0 {
-            // 葉だぜ☆（＾～＾）
-
-            // if let Some(_captured) = move_.captured {
-            //     // TODO SEEやろうぜ☆（＾～＾）
-            //     SEE::go(game, &movement.destination);
-            // }
-
-            // 現局面（は相手の手番）の駒割り評価値をひっくり返したもの☆（＾～＾）
-            let leaf_value: CentiPawn = game.position.material_advantage(game.history.get_phase());
-
-            // 局面を評価するだけ（＾～＾） 指し手は返さないぜ（＾～＾）
-            return (leaf_value, RESIGN_MOVE);
-        }
-        // TODO let mut controls = Vec::<Square>::new();
-
-        // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
-        let move_list = {
-            /*
-            // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
-            let mut lioncatch = Lioncatch::new(game);
-            lioncatch.init(game).pinned_pieces(game).checkers(game);
-            if !lioncatch.checks.is_empty() {
-                lioncatch.checks
-            } else {
-                //   */
-            let move_list =
-                PseudoLegalMoves::generate(game.history.get_phase(), &game.position, false);
-
-            move_list
-            //}
-        };
-
-        // 指せる手が無ければ投了☆（＾～＾）
-        if move_list.is_empty() {
-            return (alpha, RESIGN_MOVE);
-        }
-
-        // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
-        // いわば、１光手 利きカウントボードだぜ☆（＾～＾）
-        // for destination in &controls {
-        //     game.position
-        //         .add_control(game.history.get_phase(), destination, 1);
-        // }
-
-        for move_ in move_list.iter() {
-            // 時間を見ようぜ☆（＾～＾）？
-            if self.think_sec < self.sec()
-                && self.depth_not_to_give_up <= self.id_max_depth - self.id_depth
-            {
-                // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
-                // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-                self.timeout = true;
-                return (alpha, bestmove);
-            }
-
-            let captured_piece: Option<PieceEx> = game.do_move(*move_);
-            // 1手進めるぜ☆（＾～＾）
-            self.state_nodes += 1;
-
-            self.pv.push(*move_);
-
-            // TODO 廃止方針☆（＾～＾）
-            if let Some(captured_piece_val) = captured_piece {
-                if captured_piece_val.piece.type_() == PieceType::K {
-                    // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
-                    bestmove = *move_;
-                    alpha = i16::MAX;
-
-                    self.pv.pop();
-                    game.undo_move();
-                    break;
-                }
-            }
-
-            // 千日手かどうかを判定する☆（＾～＾）
-            if SENNTITE_NUM <= game.count_same_position() {
-                // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）何もせず次へ（＾～＾）
-                self.repetition_move = *move_;
-            } else {
-                // 枝局面なら、更に深く進むぜ☆（＾～＾）
-                self.id_depth -= 1;
-                let (node_value, _) = self.search(game, -beta, -alpha);
-                let edge_value = -node_value;
-                self.id_depth += 1;
-
-                // TODO ルートノードで、3秒経過していたら info を出力したいぜ（＾～＾）
-                // TODO infoの出力は pv でやる（＾～＾）？
-                // TODO タイミングによっては、読みの浅い所で表示してしまうが（＾～＾）？
-                if game.info.is_printable() {
-                    // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
-                    // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
-                    // let movement = ts.bestmove.movement;
-                    // print_info(
-                    //     None,
-                    //     None,
-                    //     None,
-                    //     None,
-                    //     &Some(PvString::String(format!(
-                    //         "ways={} | komawari={} | promotion={}", //  | {} {} {} |
-                    //         self.evaluation.ways(),
-                    //         self.evaluation.komawari(),
-                    //         self.evaluation.promotion(),
-                    //     ))),
-                    // );
-                    print_info(
-                        &mut game.info,
-                        Some(self.id_max_depth - self.id_depth),
-                        Some((self.state_nodes, self.nps())),
-                        Some(if game.history.get_phase() == self.us {
-                            edge_value
-                        } else {
-                            node_value
-                        }),
-                        Some(*move_),
-                        &Some(PvString::PV(self.msec(), format!("{}", self.pv))),
-                    );
-                }
-
-                // if self.timeout {
-                //     // TODO すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
-                //     return (alpha, bestmove);
-                // }
-
-                // 初期状態が 投了なので、更新したい（＾～＾）
-                if bestmove == RESIGN_MOVE || alpha <= edge_value {
-                    // (1) どんな悪手も、投了より良いだろ☆（＾～＾）
-                    // (2) アルファー・アップデート
-                    alpha = edge_value;
-                    bestmove = *move_;
-                }
-            }
-
-            self.pv.pop();
-            game.undo_move();
-
-            // ベータカット判定☆（＾～＾）
-            if beta < alpha {
-                // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
-                // これが　いわゆるベータカットだぜ☆（＾～＾）
-                break;
-            }
-        }
-
-        // TODO 利き削除☆（＾～＾）
-        // for destination in &controls {
-        //     game.position
-        //         .add_control(game.history.get_phase(), destination, -1);
-        // }
-
-        if bestmove == RESIGN_MOVE {
-            // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
-            bestmove = self.repetition_move;
-            alpha = REPITITION_VALUE;
-        }
-
-        (alpha, bestmove)
-    }
 
     pub fn sec(&self) -> u64 {
         self.stopwatch.elapsed().as_secs()
@@ -309,6 +80,233 @@ impl SearchStack {
             0
         }
     }
+}
+
+/// 反復深化探索だぜ☆（＾～＾）
+pub fn iterative_deepening_search(
+    universe: &mut Universe,
+    ss: &mut SearchStack,
+    think_sec: u64,
+) -> (CentiPawn, Move) {
+    universe.game.info.clear();
+    ss.think_sec = think_sec;
+    // ss.think_sec = rand::thread_rng()
+    //     .gen_range(universe.option_min_think_sec as u64..universe.option_max_think_sec as u64);
+
+    ss.us = universe.game.history.get_phase();
+
+    // アルファベータ探索
+    let mut alpha = -VALUE_INFINITE;
+    let beta = VALUE_INFINITE;
+    let mut bestmove = RESIGN_MOVE;
+
+    // 一番深く潜ったときの最善手を選ぼうぜ☆（＾～＾）
+    for depth in 0..(universe.option_max_depth + 1) {
+        ss.id_max_depth = depth;
+        ss.id_depth = depth;
+        // 探索（＾～＾）
+        let (node_value, move_) = search(&mut universe.game, ss, alpha, beta);
+        if ss.timeout {
+            // 思考時間切れなら この探索結果は使わないぜ☆（＾～＾）
+            break;
+        }
+        // 最後まで指せだぜ（＾～＾）
+        // if move_ == RESIGN_MOVE {
+        //     // すでに投了が見えているのなら探索終了だぜ☆（＾～＾）
+        //     break;
+        // }
+        if node_value < alpha || beta < node_value {
+            // 無視
+        } else if bestmove <= RESIGN_MOVE || alpha <= node_value {
+            alpha = node_value;
+            bestmove = move_;
+        }
+
+        // 現在のベストムーブ表示☆（＾～＾） PV にすると将棋所は符号を日本語に翻訳してくれるぜ☆（＾～＾）
+        print_info(
+            &mut universe.game.info,
+            Some(depth),
+            Some((ss.state_nodes, ss.nps())),
+            Some(alpha),
+            Some(bestmove),
+            &Some(PvString::PV(
+                ss.msec(),
+                format!("{}", format!("{}", to_move_code(bestmove))),
+            )), // この指し手を選んだ時の pv の読み筋が欲しいぜ☆（＾～＾）
+        );
+    }
+
+    (alpha, bestmove)
+}
+
+/// 先手の気持ちで、勝てだぜ☆（*＾～＾*）
+///
+/// # Arguments
+///
+/// * `game` - 対局。
+/// * `sibling_best` - アルファベータ探索のベータ値。兄弟で一番良い評価値。
+///
+/// # Returns
+///
+/// Best movement, Value, Sum nodes
+fn search(game: &mut Game, ss: &mut SearchStack, mut alpha: i16, beta: i16) -> (CentiPawn, Move) {
+    let mut bestmove = RESIGN_MOVE;
+
+    // TODO 葉ノードなら、評価値を返して終了（＾～＾）
+    if ss.id_depth <= 0 {
+        // 葉だぜ☆（＾～＾）
+
+        // if let Some(_captured) = move_.captured {
+        //     // TODO SEEやろうぜ☆（＾～＾）
+        //     SEE::go(game, &movement.destination);
+        // }
+
+        // 現局面（は相手の手番）の駒割り評価値をひっくり返したもの☆（＾～＾）
+        let leaf_value: CentiPawn = game.position.material_advantage(game.history.get_phase());
+
+        // 局面を評価するだけ（＾～＾） 指し手は返さないぜ（＾～＾）
+        return (leaf_value, RESIGN_MOVE);
+    }
+    // TODO let mut controls = Vec::<Square>::new();
+
+    // 指し手の一覧を作るぜ☆（＾～＾） 指し手はハッシュ値で入っている☆（＾～＾）
+    let move_list = {
+        /*
+        // TODO 1手詰めは必ず仕留めなければいけないぜ☆（＾～＾）？
+        let mut lioncatch = Lioncatch::new(game);
+        lioncatch.init(game).pinned_pieces(game).checkers(game);
+        if !lioncatch.checks.is_empty() {
+            lioncatch.checks
+        } else {
+            //   */
+        let move_list = PseudoLegalMoves::generate(game.history.get_phase(), &game.position, false);
+
+        move_list
+        //}
+    };
+
+    // 指せる手が無ければ投了☆（＾～＾）
+    if move_list.is_empty() {
+        return (alpha, RESIGN_MOVE);
+    }
+
+    // TODO この利きは、この１手を指すまえの利き（１年前の夜空を見ていることを１光年と言うだろ）をキープしているということに注意しろだぜ☆（＾～＾）
+    // いわば、１光手 利きカウントボードだぜ☆（＾～＾）
+    // for destination in &controls {
+    //     game.position
+    //         .add_control(game.history.get_phase(), destination, 1);
+    // }
+
+    for move_ in move_list.iter() {
+        // 時間を見ようぜ☆（＾～＾）？
+        if ss.think_sec < ss.sec() && ss.depth_not_to_give_up <= ss.id_max_depth - ss.id_depth {
+            // とりあえず ランダム秒で探索を打ち切ろうぜ☆（＾～＾）？
+            // タイムアウトしたんだったら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
+            ss.timeout = true;
+            return (alpha, bestmove);
+        }
+
+        let captured_piece: Option<PieceEx> = game.do_move(*move_);
+        // 1手進めるぜ☆（＾～＾）
+        ss.state_nodes += 1;
+
+        ss.pv.push(*move_);
+
+        // TODO 廃止方針☆（＾～＾）
+        if let Some(captured_piece_val) = captured_piece {
+            if captured_piece_val.piece.type_() == PieceType::K {
+                // 玉を取る手より強い手はないぜ☆（＾～＾）！探索終了～☆（＾～＾）！この手を選べだぜ☆（＾～＾）！
+                bestmove = *move_;
+                alpha = i16::MAX;
+
+                ss.pv.pop();
+                game.undo_move();
+                break;
+            }
+        }
+
+        // 千日手かどうかを判定する☆（＾～＾）
+        if SENNTITE_NUM <= game.count_same_position() {
+            // 千日手か……☆（＾～＾） 一応覚えておくぜ☆（＾～＾）何もせず次へ（＾～＾）
+            ss.repetition_move = *move_;
+        } else {
+            // 枝局面なら、更に深く進むぜ☆（＾～＾）
+            ss.id_depth -= 1;
+            let (node_value, _) = search(game, ss, -beta, -alpha);
+            let edge_value = -node_value;
+            ss.id_depth += 1;
+
+            // TODO ルートノードで、3秒経過していたら info を出力したいぜ（＾～＾）
+            // TODO infoの出力は pv でやる（＾～＾）？
+            // TODO タイミングによっては、読みの浅い所で表示してしまうが（＾～＾）？
+            if game.info.is_printable() {
+                // 何かあったタイミングで読み筋表示するのではなく、定期的に表示しようぜ☆（＾～＾）
+                // PV を表示するには、葉のタイミングで出すしかないぜ☆（＾～＾）
+                // let movement = ts.bestmove.movement;
+                // print_info(
+                //     None,
+                //     None,
+                //     None,
+                //     None,
+                //     &Some(PvString::String(format!(
+                //         "ways={} | komawari={} | promotion={}", //  | {} {} {} |
+                //         ss.evaluation.ways(),
+                //         ss.evaluation.komawari(),
+                //         ss.evaluation.promotion(),
+                //     ))),
+                // );
+                print_info(
+                    &mut game.info,
+                    Some(ss.id_max_depth - ss.id_depth),
+                    Some((ss.state_nodes, ss.nps())),
+                    Some(if game.history.get_phase() == ss.us {
+                        edge_value
+                    } else {
+                        node_value
+                    }),
+                    Some(*move_),
+                    &Some(PvString::PV(ss.msec(), format!("{}", ss.pv))),
+                );
+            }
+
+            // if ss.timeout {
+            //     // TODO すでにタイムアウトしていたのなら、終了処理 すっとばして早よ終われだぜ☆（＾～＾）
+            //     return (alpha, bestmove);
+            // }
+
+            // 初期状態が 投了なので、更新したい（＾～＾）
+            if bestmove == RESIGN_MOVE || alpha <= edge_value {
+                // (1) どんな悪手も、投了より良いだろ☆（＾～＾）
+                // (2) アルファー・アップデート
+                alpha = edge_value;
+                bestmove = *move_;
+            }
+        }
+
+        ss.pv.pop();
+        game.undo_move();
+
+        // ベータカット判定☆（＾～＾）
+        if beta < alpha {
+            // 兄弟局面より良い手を見つけたのなら、相手から見ればこの手は選ばないから、もう探索しなくていいぜ☆（＾～＾）
+            // これが　いわゆるベータカットだぜ☆（＾～＾）
+            break;
+        }
+    }
+
+    // TODO 利き削除☆（＾～＾）
+    // for destination in &controls {
+    //     game.position
+    //         .add_control(game.history.get_phase(), destination, -1);
+    // }
+
+    if bestmove == RESIGN_MOVE {
+        // 負けを認めていないうえで、投了するぐらいなら千日手を選ぶぜ☆（＾～＾）
+        bestmove = ss.repetition_move;
+        alpha = REPITITION_VALUE;
+    }
+
+    (alpha, bestmove)
 }
 
 #[derive(Clone)]
