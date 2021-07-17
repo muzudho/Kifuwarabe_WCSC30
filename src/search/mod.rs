@@ -270,10 +270,10 @@ fn search(game: &mut Game, ss: &mut SearchStack, mut alpha: i16, beta: i16) -> (
                 );
             }
 
-            // 初期状態が 投了なので、更新したい（＾～＾）
-            if bestmove == RESIGN_MOVE || alpha <= edge_value {
-                // (1) どんな悪手も、投了より良いだろ☆（＾～＾）
-                // (2) アルファー・アップデート
+            // 説明変数：何か１つは指し手を選んでおかないと、投了してしまうから、最初の１手は候補に入れておけだぜ（＾～＾）
+            let is_any_one_move = bestmove == RESIGN_MOVE;
+            if is_any_one_move || alpha <= edge_value {
+                // アルファー・アップデート
                 alpha = edge_value;
                 bestmove = *move_;
             }

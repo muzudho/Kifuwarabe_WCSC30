@@ -108,21 +108,23 @@ impl Kifuwarabe {
         // setoption name USI_Ponder value true
         // ```
         let name = tokens[2];
-        let value = tokens[4];
-        match name {
-            "DepthNotToGiveUp" => {
-                universe.option_depth_not_to_give_up = value.parse().unwrap();
+        if 5 <= tokens.len() {
+            let value = tokens[4];
+            match name {
+                "DepthNotToGiveUp" => {
+                    universe.option_depth_not_to_give_up = value.parse().unwrap();
+                }
+                "MaxDepth" => {
+                    universe.option_max_depth = value.parse().unwrap();
+                }
+                // "MinThinkSec" => {
+                //     universe.option_min_think_sec = value.parse().unwrap();
+                // }
+                // "MaxThinkSec" => {
+                //     universe.option_max_think_sec = value.parse().unwrap();
+                // }
+                _ => {}
             }
-            "MaxDepth" => {
-                universe.option_max_depth = value.parse().unwrap();
-            }
-            // "MinThinkSec" => {
-            //     universe.option_min_think_sec = value.parse().unwrap();
-            // }
-            // "MaxThinkSec" => {
-            //     universe.option_max_think_sec = value.parse().unwrap();
-            // }
-            _ => {}
         }
     }
     pub fn usi() {
